@@ -140,6 +140,27 @@ def fx_creak(d=1.6):          # a steel hull groaning under load
     ph = 2 * np.pi * np.cumsum(f) / SR; x = np.sign(np.sin(ph)) * 0.5 + 0.5 * np.sin(2 * ph)
     return lp_fast(x, 700, 2) * env(len(t), .3, .5) * (0.6 + 0.4 * np.sin(2 * np.pi * 2.3 * t))
 
+def fx_spray(d=2.0):          # water jets hissing from the spray arm, with a slow swirl
+    t = t_(d); x = hp_fast(noise(len(t)), 1800) * (0.75 + 0.25 * np.sin(2 * np.pi * 1.4 * t))
+    x += 0.5 * lp_fast(noise(len(t)), 900, 2) * (0.6 + 0.4 * np.sin(2 * np.pi * 2.8 * t))
+    return (x + 0.25 * bubbles(d, 10, 600, 1500, decay=False)) * env(len(t), .25, .5)
+def fx_fizz(d=1.4):           # tablet dissolving
+    n = int(d * SR); x = np.zeros(n, np.float32)
+    for _ in range(int(120 * d)):
+        s = int(rng.random() * (n - 200)); L = int(rng.uniform(40, 160)); x[s:s + L] += rng.uniform(.2, 1) * hp_fast(noise(L), 5000) * np.hanning(L)
+    return x * env(n, .05, .4) + 0.3 * bubbles(d, 20, 1500, 3500)
+def fx_snip(d=0.25):          # small scissors
+    t = t_(d); x = hp_fast(noise(len(t)), 3500) * np.exp(-t * 40) + 0.5 * np.sin(2 * np.pi * 3200 * t) * np.exp(-t * 60)
+    return x.astype(np.float32)
+def fx_drip(d=0.35):          # a single drop
+    return np.pad(bubble(rng.uniform(900, 1400), 0.09, 2.2), (0, int(d * SR)))[: int(d * SR)]
+def fx_hum(d=2.0):            # heater / pump electrical hum
+    t = t_(d); x = 0.6 * np.sin(2 * np.pi * 100 * t) + 0.3 * np.sin(2 * np.pi * 200 * t) + 0.1 * np.sin(2 * np.pi * 300 * t)
+    return (x * env(len(t), .3, .4)).astype(np.float32)
+def fx_steam(d=1.6):
+    n = int(d * SR); t = t_(d); x = hp_fast(noise(n), 3000) * (0.6 + 0.4 * np.sin(2 * np.pi * 0.8 * t))
+    return lp_fast(x, 9000, 1) * env(n, .4, .5)
+
 FX = {k[3:]: v for k, v in globals().items() if k.startswith("fx_")}
 
 # ── music bed: soft chords + plucks, 84 bpm, voice band carved out ──
