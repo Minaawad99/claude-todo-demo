@@ -24,7 +24,7 @@ const TAIL = +(process.env.TAIL || 2.3);
     '-vf', `fade=t=out:st=${end - 0.6}:d=0.6`,
     '-c:v', 'libx264', '-profile:v', 'high', '-level', '4.2', '-preset', 'slow', '-crf', '15',
     '-pix_fmt', 'yuv420p', '-r', String(FPS), '-g', String(FPS * 2),
-    '-af', `apad,afade=t=out:st=${end - 0.8}:d=0.8`, '-c:a', 'aac', '-b:a', '192k', '-ar', '48000',
+    '-af', `apad,afade=t=out:st=${end - 0.8}:d=0.8,loudnorm=I=-14:TP=-1.5:LRA=11`, '-c:a', 'aac', '-b:a', '192k', '-ar', '48000',
     '-movflags', '+faststart', out], { stdio: ['pipe', 'inherit', 'inherit'] });
   for (let i = 0; i < N; i++) {
     await p.evaluate(t => renderAt(t), i / FPS);
