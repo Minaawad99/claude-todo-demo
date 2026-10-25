@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>Reel cover — dishwasher vs hand</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../../design-system/components/bundle.css">
+<style>
+  /* 540×960 at 2x. A head-to-head: by hand (10 buckets, red) vs dishwasher (1 bucket, blue).
+     Everything that matters sits in y 120–760 (Instagram 3:4 grid, above the reel caption). */
+  body { margin: 0; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; font-family: var(--font-sans); color: var(--ink);
+    background-color: var(--paper);
+    background-image: linear-gradient(to right, var(--paper-grid) 1px, transparent 1px), linear-gradient(to bottom, var(--paper-grid) 1px, transparent 1px);
+    background-size: 36px 36px; background-position: 18px 12px; }
+  .cover > svg { position: absolute; inset: 0; }
+  .t { position: absolute; left: 0; right: 0; text-align: center; margin: 0; }
+</style>
+</head>
+<body>
+<div class="cover">
+  <svg viewBox="0 0 540 960" width="540" height="960">
+    <defs>
+      <g id="mark"><rect x="84" y="4" width="32" height="10" style="fill:var(--ink)"/><rect x="94" y="14" width="12" height="14" style="fill:var(--ink)"/>
+        <path style="fill:var(--ink)" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)"/>
+        <path style="fill:var(--paper-raised);stroke:var(--ink);stroke-width:7;stroke-linejoin:round" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z"/>
+        <text x="106" y="140" text-anchor="middle" style="font:800 120px var(--font-sans);fill:var(--heat)">؟</text></g>
+      <!-- bucket, 34 × 40 -->
+      <g id="bk"><path d="M2 6 H32 L28 40 H6 Z" style="fill:var(--water-body);stroke:var(--ink);stroke-width:2;stroke-linejoin:round"/>
+        <path d="M2 6 H32 L31 13 H3 Z" style="fill:var(--paper-raised);stroke:var(--ink);stroke-width:2;stroke-linejoin:round"/>
+        <path d="M4 6 Q17 -10 30 6" style="fill:none;stroke:var(--ink);stroke-width:2"/></g>
+      <g id="plate"><circle r="20" style="fill:var(--paper-raised);stroke:var(--ink);stroke-width:2"/><circle r="12" style="fill:none;stroke:var(--ink);stroke-width:1.5"/></g>
+    </defs>
+
+    <rect x="22" y="22" width="496" height="916" style="fill:none;stroke:var(--ink);stroke-width:3"/>
+    <rect x="30" y="30" width="480" height="900" style="fill:none;stroke:var(--ink);stroke-width:1.2"/>
+
+    <!-- divider + VS badge -->
+    <path d="M270 252 V700" style="stroke:var(--ink);stroke-width:2;stroke-dasharray:8 6"/>
+    <circle cx="270" cy="470" r="30" style="fill:var(--ink)"/>
+    <text x="270" y="480" text-anchor="middle" style="font:800 24px var(--font-sans);fill:var(--paper)">ضد</text>
+
+    <!-- RIGHT: by hand — running tap, 10 buckets -->
+    <g>
+      <rect x="296" y="252" width="200" height="448" style="fill:var(--heat-soft);opacity:.35"/>
+      <!-- sink + tap -->
+      <path d="M318 382 H474 L462 432 H330 Z" style="fill:var(--paper-raised);stroke:var(--ink);stroke-width:3;stroke-linejoin:round"/>
+      <path d="M330 414 H462 L458 430 H334 Z" style="fill:var(--water-body)"/>
+      <path d="M452 382 V320 Q452 304 436 304 H414 V316" style="fill:none;stroke:var(--ink);stroke-width:7;stroke-linecap:round"/>
+      <path d="M414 322 V412" style="stroke:var(--water);stroke-width:8;stroke-linecap:round;opacity:.85"/>
+      <g transform="translate(370 404) rotate(-18)"><use href="#plate"/></g>
+      <!-- 10 buckets -->
+      <g transform="translate(318 462)">
+        <use href="#bk" x="0" y="0"/><use href="#bk" x="38" y="0"/><use href="#bk" x="76" y="0"/><use href="#bk" x="114" y="0"/>
+        <use href="#bk" x="0" y="46"/><use href="#bk" x="38" y="46"/><use href="#bk" x="76" y="46"/><use href="#bk" x="114" y="46"/>
+        <use href="#bk" x="19" y="92"/><use href="#bk" x="95" y="92"/>
+      </g>
+      <text x="396" y="660" text-anchor="middle" style="font:800 46px var(--font-numeral);fill:var(--heat)">100</text>
+      <text x="396" y="688" text-anchor="middle" style="font:700 17px var(--font-sans);fill:var(--heat-text)">لتر مية</text>
+      <path d="M470 270 L494 294 M494 270 L470 294" style="stroke:var(--heat);stroke-width:7;stroke-linecap:round"/>
+    </g>
+
+    <!-- LEFT: dishwasher — 1 bucket -->
+    <g>
+      <rect x="44" y="252" width="200" height="448" style="fill:var(--water-body);opacity:.35"/>
+      <!-- dishwasher, open front -->
+      <g transform="translate(64 300)">
+        <rect x="0" y="0" width="160" height="150" style="fill:var(--paper-raised);stroke:var(--ink);stroke-width:3"/>
+        <rect x="10" y="10" width="140" height="118" style="fill:#ddd6c4;stroke:var(--ink);stroke-width:2"/>
+        <g transform="translate(40 58)"><use href="#plate"/></g><g transform="translate(68 58)"><use href="#plate"/></g><g transform="translate(96 58)"><use href="#plate"/></g><g transform="translate(124 58)"><use href="#plate"/></g>
+        <rect x="24" y="100" width="112" height="8" style="fill:var(--olive);stroke:var(--ink);stroke-width:2"/>
+        <path d="M40 100 L32 76 M64 100 L60 76 M96 100 L100 76 M120 100 L128 76" style="fill:none;stroke:var(--water);stroke-width:2.6;stroke-dasharray:5 4;stroke-linecap:round"/>
+        <rect x="0" y="128" width="160" height="22" style="fill:var(--khaki);stroke:var(--ink);stroke-width:2"/>
+      </g>
+      <!-- one bucket, bigger -->
+      <g transform="translate(110 486) scale(1.6)"><use href="#bk"/></g>
+      <text x="144" y="660" text-anchor="middle" style="font:800 46px var(--font-numeral);fill:var(--water)">10</text>
+      <text x="144" y="688" text-anchor="middle" style="font:700 17px var(--font-sans);fill:var(--water)">لتر بس</text>
+      <path d="M54 284 L66 296 L88 272" style="fill:none;stroke:var(--olive-text);stroke-width:7;stroke-linecap:round;stroke-linejoin:round"/>
+    </g>
+  </svg>
+
+  <div class="t" style="top:130px;display:flex;justify-content:center;align-items:center;gap:8px;font:700 17px var(--font-sans)"><svg width="26" height="26" viewBox="0 0 200 200"><use href="#mark"/></svg>إيه الحكاية؟</div>
+  <p class="t" style="top:168px;font:800 40px/1.25 var(--font-sans)">نفس المواعين... <span style="color:var(--heat)">مين أوفر؟</span></p>
+  <p class="t" style="top:262px;display:flex;justify-content:space-around;font:800 22px var(--font-sans);padding-inline:44px">
+    <span>بالإيد</span><span>بالغسالة</span></p>
+  <p class="t" style="top:716px;font:800 30px/1.3 var(--font-sans)">الغسالة بتوفر <span style="color:var(--water)">حوالي 90%</span> من المية!<br><span style="font-size:22px;color:var(--ink-muted)">إزاي؟</span></p>
+</div>
+<script src="../../design-system/components/bundle.js"></script>
+</body>
+</html>
