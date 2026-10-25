@@ -1,4 +1,4 @@
-/* @ds-bundle: {"format":4,"namespace":"TebEzay","components":[{"name":"SceneFrame"},{"name":"Caption"},{"name":"Callout"},{"name":"Inset"},{"name":"Counter"},{"name":"BrandMark"},{"name":"CategoryTag"},{"name":"Legend"},{"name":"AskBox"},{"name":"VideoCard"}]} */
+/* @ds-bundle: {"format":4,"namespace":"TebEzay","components":[{"name":"SceneFrame"},{"name":"Caption"},{"name":"Callout"},{"name":"Inset"},{"name":"Counter"},{"name":"BrandMark"},{"name":"CategoryTag"},{"name":"Legend"},{"name":"AskBox"},{"name":"VideoCard"},{"name":"Iso3D"}]} */
 (function () {
   "use strict";
 
@@ -181,6 +181,80 @@
     io.observe(root);
   }
 
+
+  // ── Iso3D: every machine is drawn as a 3D isometric cutaway ─────────────
+  // TebEzay.iso(svgGroup, {scale, x, y}) returns drawing helpers in model units:
+  // x runs right-down, y left-down, z up; the viewer sees the top, +x and +y faces.
+  function iso(root, opts) {
+    opts = opts || {};
+    var K = opts.scale || 0.6, OX = opts.x == null ? 180 : opts.x, OY = opts.y == null ? 292 : opts.y;
+    function P(x, y, z) { return [OX + (x - y) * 0.866 * K, OY + (x + y) * 0.5 * K - z * K]; }
+    function d(list, close) {
+      return "M" + list.map(function (p) { var q = P(p[0], p[1], p[2]); return q[0].toFixed(1) + " " + q[1].toFixed(1); }).join(" L") + (close === false ? "" : " Z");
+    }
+    function el(tag, attrs, parent) {
+      var e = document.createElementNS(SVGNS, tag);
+      for (var k in attrs) e.setAttribute(k, attrs[k]);
+      (parent || root).appendChild(e);
+      return e;
+    }
+    function group(parent, attrs) { return el("g", attrs || {}, parent); }
+    function face(g, list, cls, attrs) { var a = { d: d(list), "class": cls }; for (var k in attrs || {}) a[k] = attrs[k]; return el("path", a, g); }
+    function line(g, list, cls) { return el("path", { d: d(list, false), "class": cls }, g); }
+    // a solid box: the +y face (left, khaki), +x face (right, deeper + hatch), top (lightest)
+    function box(g, x0, x1, y0, y1, z0, z1, c) {
+      c = c || {};
+      face(g, [[x0, y1, z0], [x1, y1, z0], [x1, y1, z1], [x0, y1, z1]], c.y || "iso-y");
+      face(g, [[x1, y0, z0], [x1, y1, z0], [x1, y1, z1], [x1, y0, z1]], c.x || "iso-x");
+      if (c.hatch !== false) face(g, [[x1, y0, z0], [x1, y1, z0], [x1, y1, z1], [x1, y0, z1]], "tz-pat-hatch");
+      return face(g, [[x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]], c.z || "iso-top");
+    }
+    // points on a circle: plane "z" lies flat, "x" and "y" stand up
+    function ring(cx, cy, cz, r, n, plane, a0, a1) {
+      var out = []; n = n || 28; a0 = a0 || 0; a1 = a1 == null ? Math.PI * 2 : a1;
+      for (var i = 0; i <= n; i++) {
+        var a = a0 + (a1 - a0) * i / n, co = Math.cos(a) * r, si = Math.sin(a) * r;
+        out.push(plane === "x" ? [cx, cy + co, cz + si] : plane === "y" ? [cx + co, cy, cz + si] : [cx + co, cy + si, cz]);
+      }
+      return out;
+    }
+    function disc(g, cx, cy, cz, r, plane, cls) { return face(g, ring(cx, cy, cz, r, 30, plane), cls); }
+    // upright cylinder (tank, cup, motor)
+    function cyl(g, cx, cy, r, z0, z1, side, top) {
+      var front = ring(cx, cy, z1, r, 18, "z", -Math.PI / 4, Math.PI * 3 / 4);
+      var back = front.slice().reverse().map(function (p) { return [p[0], p[1], z0]; });
+      face(g, front.concat(back), side || "iso-steel");
+      return face(g, ring(cx, cy, z1, r, 28, "z"), top || "iso-top");
+    }
+    // a pipe: dark outline + light core ("iso-pipe-dirty" for waste)
+    function pipe(g, list, inner) { line(g, list, "iso-pipe-o"); return line(g, list, inner || "iso-pipe-i"); }
+    // the standard cutaway room: back walls, floor slab with cut edges, and a clip for what sits under it
+    function cutaway(g, W, D, H, T, B, id) {
+      face(g, [[-W / 2, -D / 2, B], [-W / 2, D / 2, B], [-W / 2, D / 2, H], [-W / 2, -D / 2, H]], "iso-wall");
+      face(g, [[-W / 2, -D / 2, B], [W / 2, -D / 2, B], [W / 2, -D / 2, H], [-W / 2, -D / 2, H]], "iso-wall2");
+      face(g, [[-W / 2, -D / 2, B], [W / 2, -D / 2, B], [W / 2, -D / 2, H], [-W / 2, -D / 2, H]], "tz-pat-hatch", { style: "opacity:.25" });
+      face(g, [[-W / 2, -D / 2, B], [W / 2, -D / 2, B], [W / 2, D / 2, B], [-W / 2, D / 2, B]], "iso-x");
+      box(g, -W / 2, W / 2, -D / 2, D / 2, -T, 0, { z: "iso-floor" });
+      var cp = el("clipPath", { id: id || "iso-under" }, g), q = [P(-W / 2 - 60, D / 2, -T), P(-W / 2, D / 2, -T), P(W / 2, D / 2, -T), P(W / 2, -D / 2, -T), P(W / 2 + 60, -D / 2, -T)];
+      el("path", { d: "M" + q.map(function (v) { return v[0].toFixed(1) + " " + v[1].toFixed(1); }).join(" L") + " L" + (OX + 4000) + " " + (OY + 4000) + " L" + (OX - 4000) + " " + (OY + 4000) + " Z" }, cp);
+      return group(g, { "clip-path": "url(#" + (id || "iso-under") + ")" });
+    }
+    // a flat bar turning about z in true 3D (spray arm, fan blade, rotor); redraw every frame
+    function rotor(g, o) {
+      var cu = Math.cos(o.angle), su = Math.sin(o.angle), L = o.length, w = o.width, z = o.z, th = o.thick || 8;
+      function c(a, b) { return [o.x + cu * a - su * b, o.y + su * a + cu * b]; }
+      var C = [c(-L, -w), c(L, -w), c(L, w), c(-L, w)];
+      var bot = C.map(function (p) { return [p[0], p[1], z]; }), top = C.map(function (p) { return [p[0], p[1], z + th]; });
+      for (var i = 0; i < 4; i++) {
+        var a = C[i], b = C[(i + 1) % 4], nx = b[1] - a[1], ny = -(b[0] - a[0]);
+        if (nx + ny > 0) face(g, [bot[i], bot[(i + 1) % 4], top[(i + 1) % 4], top[i]], nx > ny ? (o.sideX || "iso-part-x") : (o.side || "iso-part"));
+      }
+      face(g, top, o.top || "iso-part-top");
+      cyl(g, o.x, o.y, Math.max(w + 2, 8), z - 4, z + th + 2, "iso-steel", "iso-top");
+    }
+    return { P: P, d: d, el: el, group: group, face: face, line: line, box: box, ring: ring, disc: disc, cyl: cyl, pipe: pipe, cutaway: cutaway, rotor: rotor, scale: K };
+  }
+
   window.TebEzay = {
     timing: T,
     play: play,
@@ -188,6 +262,7 @@
     onView: onView,
     patterns: patterns,
     splitWords: splitWords,
-    countUp: countUp
+    countUp: countUp,
+    iso: iso
   };
 })();
