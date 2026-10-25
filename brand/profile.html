@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>Profile pictures — طب إزاي؟</title>
+<link rel="stylesheet" href="../design-system/tokens.css">
+<link rel="stylesheet" href="../design-system/components/bundle.css">
+<style>
+  /* Each option is a 540×540 tile rendered at 2x = 1080×1080. Facebook crops to a circle: keep the idea inside it. */
+  body { margin: 0; background: var(--paper); font-family: var(--font-sans); }
+  .tile { width: 540px; height: 540px; position: relative; overflow: hidden; background: var(--paper); }
+  .tile svg { display: block; width: 540px; height: 540px; }
+  .grid { background-image: linear-gradient(to right, var(--paper-grid) 1px, transparent 1px), linear-gradient(to bottom, var(--paper-grid) 1px, transparent 1px); background-size: 45px 45px; background-position: 22px 22px; }
+  .ink { fill: none; stroke: var(--ink); stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; }
+  .ink2 { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+  .heat { fill: var(--heat); } .heat-s { fill: none; stroke: var(--heat); stroke-linecap: round; }
+  .water { fill: var(--water); } .olive { fill: var(--olive); } .khaki { fill: var(--khaki); } .deep { fill: var(--khaki-deep); } .lit { fill: var(--paper-raised); } .ink-f { fill: var(--ink); }
+  .q { font: 700 300px/1 var(--font-sans); }
+</style>
+</head>
+<body>
+
+<!-- A · The stopwatch with a question mark inside -->
+<div class="tile grid" id="A">
+  <svg viewBox="0 0 540 540">
+    <circle cx="270" cy="290" r="170" class="lit"/>
+    <circle cx="270" cy="290" r="170" style="fill:none;stroke:var(--paper-grid);stroke-width:14"/>
+    <circle cx="270" cy="290" r="170" pathLength="100" transform="rotate(-90 270 290)" style="fill:none;stroke:var(--heat);stroke-width:16;stroke-dasharray:78 100;stroke-linecap:round"/>
+    <circle cx="270" cy="290" r="186" class="ink"/>
+    <rect x="236" y="70" width="68" height="22" class="ink-f"/><rect x="258" y="92" width="24" height="24" class="ink-f"/>
+    <path d="M410 140 l22 -22 l18 18 l-22 22 z" class="ink-f"/>
+    <text x="270" y="392" text-anchor="middle" class="q" style="fill:var(--ink)">؟</text>
+    <circle cx="270" cy="290" r="8" class="heat"/>
+  </svg>
+</div>
+
+<!-- B · A magnifier revealing gears inside the question mark -->
+<div class="tile grid" id="B">
+  <svg viewBox="0 0 540 540">
+    <defs>
+      <clipPath id="lens"><circle cx="250" cy="250" r="150"/></clipPath>
+      <g id="gear12"><path d="M0 -62 l10 0 l4 14 a50 50 0 0 1 14 6 l13 -7 l14 14 l-7 13 a50 50 0 0 1 6 14 l14 4 l0 20 l-14 4 a50 50 0 0 1 -6 14 l7 13 l-14 14 l-13 -7 a50 50 0 0 1 -14 6 l-4 14 l-20 0 l-4 -14 a50 50 0 0 1 -14 -6 l-13 7 l-14 -14 l7 -13 a50 50 0 0 1 -6 -14 l-14 -4 l0 -20 l14 -4 a50 50 0 0 1 6 -14 l-7 -13 l14 -14 l13 7 a50 50 0 0 1 14 -6 l4 -14 z" transform="translate(-5 0)"/></g>
+    </defs>
+    <circle cx="250" cy="250" r="150" class="lit"/>
+    <g clip-path="url(#lens)">
+      <rect x="100" y="100" width="300" height="300" class="lit"/>
+      <g transform="translate(205 220)"><use href="#gear12" class="olive" style="stroke:var(--ink);stroke-width:3"/><circle r="20" class="lit" style="stroke:var(--ink);stroke-width:3"/></g>
+      <g transform="translate(318 300) scale(.7) rotate(20)"><use href="#gear12" class="heat" style="stroke:var(--ink);stroke-width:4"/><circle r="20" class="lit" style="stroke:var(--ink);stroke-width:4"/></g>
+      <g transform="translate(232 352) scale(.55) rotate(8)"><use href="#gear12" class="water" style="stroke:var(--ink);stroke-width:5"/><circle r="20" class="lit" style="stroke:var(--ink);stroke-width:5"/></g>
+      <path d="M100 400 L400 100" style="stroke:var(--paper);stroke-width:18;opacity:.35"/>
+    </g>
+    <circle cx="250" cy="250" r="150" class="ink" style="stroke-width:12"/>
+    <circle cx="250" cy="250" r="162" class="ink2"/>
+    <path d="M362 362 L452 452" style="stroke:var(--ink);stroke-width:34;stroke-linecap:round"/>
+    <path d="M370 370 L446 446" style="stroke:var(--heat);stroke-width:18;stroke-linecap:round"/>
+  </svg>
+</div>
+
+<!-- C · The name set as the mark: «طب إزاي؟» with the stopwatch as the dot -->
+<div class="tile" id="C" style="background:var(--heat)">
+  <svg viewBox="0 0 540 540">
+    <circle cx="270" cy="270" r="200" class="lit"/>
+    <circle cx="270" cy="270" r="200" class="ink" style="stroke-width:6"/>
+    <circle cx="270" cy="270" r="186" class="ink2" style="stroke-dasharray:3 9"/>
+    <text x="270" y="250" text-anchor="middle" style="font:700 96px/1 var(--font-sans);fill:var(--ink)">طب</text>
+    <text x="270" y="360" text-anchor="middle" style="font:700 104px/1 var(--font-sans);fill:var(--ink)">إزاي<tspan style="fill:var(--heat)">؟</tspan></text>
+    <g transform="translate(270 94)"><rect x="-16" y="-6" width="32" height="10" class="ink-f"/><rect x="-6" y="4" width="12" height="10" class="ink-f"/></g>
+  </svg>
+</div>
+
+<script src="../design-system/components/bundle.js"></script>
+</body>
+</html>
