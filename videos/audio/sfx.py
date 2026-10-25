@@ -87,9 +87,59 @@ def fx_pop(d=0.18):           # UI pop for numbers / icons
     t = t_(d); return (np.sin(2 * np.pi * (520 + 900 * t) * t) * np.exp(-t * 28)).astype(np.float32)
 def fx_tick(d=0.05):
     t = t_(d); return (np.sin(2 * np.pi * 2200 * t) * np.exp(-t * 120)).astype(np.float32)
-def fx_splash(d=0.8):
-    n = int(d * SR); t = t_(d); x = lp_fast(noise(n), 2500) * np.exp(-t * 6) + 0.3 * np.sin(2 * np.pi * (300 - 200 * t) * t) * np.exp(-t * 8)
+# ── water & metal foley (physically inspired) ─────────────
+def bubble(f0, d=0.12, rise=1.6):
+    # a bubble rings at its Minnaert frequency and chirps upward as it nears the surface
+    t = t_(d); f = f0 * (1 + rise * t / d); ph = 2 * np.pi * np.cumsum(f) / SR
+    return (np.sin(ph) * np.exp(-t * (9 / d) * 0.35)).astype(np.float32) * env(len(t), .002, .02)
+def bubbles(d=1.0, rate=14, lo=500, hi=1600, decay=True):
+    n = int(d * SR); x = np.zeros(n, np.float32)
+    for _ in range(int(rate * d)):
+        s = int(rng.random() * (n - 0.15 * SR)); f = rng.uniform(lo, hi); b = bubble(f, rng.uniform(.05, .14))
+        g = rng.uniform(.3, 1) * ((1 - s / n) if decay else 1); x[s:s + len(b)] += g * b[: n - s]
     return x
+def fx_drop(d=0.5):           # small object (nail, drop) enters water: plip + a few bubbles
+    t = t_(d); x = 0.9 * bubble(1400, 0.08, 2.5)
+    x = np.pad(x, (0, len(t) - len(x))); x += 0.35 * hp_fast(noise(len(t)), 3000) * np.exp(-t * 60)
+    x += 0.6 * bubbles(d, rate=10, lo=900, hi=2200)
+    return x
+def fx_plunk(d=1.1):          # heavy object enters water: thump + splash + bubble cloud
+    t = t_(d); thump = np.sin(2 * np.pi * (160 * np.exp(-t * 10) + 60) * t) * np.exp(-t * 12)
+    spl = lp_fast(noise(len(t)), 2600, 2) * np.exp(-t * 7) * 1.6
+    return (0.9 * thump + spl + 0.7 * bubbles(d, rate=26, lo=300, hi=1100)).astype(np.float32)
+def fx_splash(d=1.0):
+    t = t_(d); spl = lp_fast(noise(len(t)), 3500, 1) * np.exp(-t * 5) * (1 - np.exp(-t * 80))
+    drops = np.zeros(len(t), np.float32)
+    for _ in range(18):
+        s = int(rng.uniform(.08, .8) * SR); b = bubble(rng.uniform(1200, 3000), .04, 2)
+        drops[s:s + len(b)] += .4 * b[: len(t) - s]
+    return (spl + drops + 0.4 * bubbles(d, 12, 400, 1200)).astype(np.float32)
+def fx_waves(d=6.0):          # gentle lapping water, for long ambience
+    t = t_(d); base = lp_fast(noise(len(t)), 500, 3) * 3
+    swell = 0.55 + 0.45 * np.sin(2 * np.pi * 0.22 * t + 1) * np.sin(2 * np.pi * 0.13 * t)
+    x = base * swell + 0.18 * bubbles(d, rate=3, lo=400, hi=900, decay=False)
+    return x * env(len(t), .8, 1.2)
+def fx_slosh(d=1.2):          # water moving in a tub
+    t = t_(d); x = lp_fast(noise(len(t)), 900, 2) * 2.2 * np.sin(np.pi * t / d) ** 1.5 * (0.6 + 0.4 * np.sin(2 * np.pi * 3.2 * t))
+    return (x + 0.5 * bubbles(d, 9, 300, 900)).astype(np.float32)
+def fx_fill(d=1.8):           # water rushing in / rising
+    t = t_(d); x = lp_fast(noise(len(t)), 1400, 2) * 2 * np.minimum(1, t / .3) * env(len(t), .01, .4)
+    return (x + 0.8 * bubbles(d, 30, 250, 800, decay=False)).astype(np.float32)
+def fx_clink(d=0.9, f=1700):  # steel ting: inharmonic bar modes
+    t = t_(d); x = sum(a * np.sin(2 * np.pi * f * r * t) * np.exp(-t * k) for r, a, k in [(1, 1, 6), (2.76, .5, 9), (5.40, .3, 14), (8.93, .15, 20)])
+    return (x * (1 - np.exp(-t * 900))).astype(np.float32)
+def fx_clank(d=0.7):          # heavy steel (container, plate) hitting steel
+    t = t_(d); x = sum(a * np.sin(2 * np.pi * 220 * r * t) * np.exp(-t * k) for r, a, k in [(1, 1, 8), (2.4, .7, 11), (3.9, .5, 16), (6.1, .3, 24)])
+    x += 0.6 * lp_fast(noise(len(t)), 2500, 1) * np.exp(-t * 40)
+    return x.astype(np.float32)
+def fx_thud(d=0.5):           # weight lands on something solid
+    t = t_(d); x = np.sin(2 * np.pi * (110 * np.exp(-t * 14) + 45) * t) * np.exp(-t * 11) + 0.4 * lp_fast(noise(len(t)), 600, 2) * np.exp(-t * 25)
+    return x.astype(np.float32)
+def fx_creak(d=1.6):          # a steel hull groaning under load
+    t = t_(d); f = 70 + 25 * np.sin(2 * np.pi * 0.9 * t) + 10 * rng.standard_normal(len(t)).cumsum() / SR * 30
+    ph = 2 * np.pi * np.cumsum(f) / SR; x = np.sign(np.sin(ph)) * 0.5 + 0.5 * np.sin(2 * ph)
+    return lp_fast(x, 700, 2) * env(len(t), .3, .5) * (0.6 + 0.4 * np.sin(2 * np.pi * 2.3 * t))
+
 FX = {k[3:]: v for k, v in globals().items() if k.startswith("fx_")}
 
 # ── music bed: soft chords + plucks, 84 bpm, voice band carved out ──
