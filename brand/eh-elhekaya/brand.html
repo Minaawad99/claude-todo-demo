@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>إيه الحكاية؟ — brand</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../../design-system/components/bundle.css">
+<style>
+  /* The mark: a square-cornered speech bubble (the story) holding a red ؟ (the question),
+     with the stopwatch crown on top (explained in a minute). */
+  body { margin: 0; background: var(--paper); font-family: var(--font-sans); }
+  .grid { background-color: var(--paper); background-image: linear-gradient(to right, var(--paper-grid) 1px, transparent 1px), linear-gradient(to bottom, var(--paper-grid) 1px, transparent 1px); }
+  #profile { width: 540px; height: 540px; background-size: 45px 45px; background-position: 22px 22px; }
+  #cover { position: relative; width: 820px; height: 428px; overflow: hidden; background-size: 30px 30px; background-position: 10px 4px; }
+  #mark-sm { width: 120px; height: 120px; }
+  .bubble { fill: var(--paper-raised); stroke: var(--ink); stroke-linejoin: round; }
+  .shadow { fill: var(--ink); }
+  .q { font-family: var(--font-sans); font-weight: 800; fill: var(--heat); }
+  .crown { fill: var(--ink); }
+  .name { margin: 0; font: 800 66px/1.15 var(--font-sans); color: var(--ink); white-space: nowrap; }
+  .name b { color: var(--heat); }
+  .tag { margin: 0; font: 500 19px/1.6 var(--font-sans); color: var(--ink); }
+  .tag span { color: var(--water); }
+  .cats { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+  .cats span { font: 600 12px/1 var(--font-sans); padding: 6px 10px; border: 1.5px solid var(--ink); background: var(--paper-raised); }
+  .cats span:first-child { background: var(--heat-text); border-color: var(--heat-text); color: var(--on-heat); }
+  .body-lit { fill: var(--paper-raised); } .body-shade { fill: var(--khaki); }
+  .hl { fill: none; stroke: var(--paper); stroke-width: 2; opacity: .9; }
+  .cloud { fill: var(--paper); stroke: var(--ink); stroke-width: 1.5; }
+  .arrow { fill: var(--c); stroke: var(--ink); stroke-width: 1.5; stroke-linejoin: round; }
+  .lbl { font: 600 14px var(--font-sans); fill: var(--c); paint-order: stroke; stroke: var(--paper); stroke-width: 4px; stroke-linejoin: round; }
+  .box1 { fill: var(--heat); } .box2 { fill: var(--water); } .box3 { fill: var(--olive); } .box4 { fill: var(--khaki); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <!-- the mark, 200 × 200 units -->
+    <g id="mark">
+      <rect class="crown" x="84" y="4" width="32" height="10"/><rect class="crown" x="94" y="14" width="12" height="14"/>
+      <path class="shadow" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)"/>
+      <path class="bubble" style="stroke-width:7" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z"/>
+      <text class="q" x="106" y="140" text-anchor="middle" style="font-size:120px">؟</text>
+    </g>
+  </defs>
+</svg>
+
+<!-- Profile 1080×1080 -->
+<div id="profile" class="grid">
+  <svg viewBox="0 0 540 540" width="540" height="540"><g transform="translate(74 70) scale(1.9)"><use href="#mark"/></g></svg>
+</div>
+
+<!-- Small mark for video corners -->
+<div id="mark-sm"><svg viewBox="0 0 200 200" width="120" height="120"><use href="#mark"/></svg></div>
+
+<!-- Cover 1640×856 -->
+<div id="cover" class="grid">
+  <svg viewBox="0 0 820 428" width="820" height="428" style="position:absolute;inset:0">
+    <defs>
+      <clipPath id="fus"><path d="M24 46 C8 47 2 54 2 60 C2 67 10 72 26 73 L250 73 C268 72 286 62 298 50 L298 43 L268 43 L240 46 Z"/></clipPath>
+      <g id="jet">
+        <path class="tz-f-deep tz-ink" d="M150 50 L222 22 L238 22 L198 52 Z"/><path class="tz-pat-hatch" d="M150 50 L222 22 L238 22 L198 52 Z"/>
+        <path class="tz-f-deep tz-ink" d="M262 46 L290 30 L299 30 L284 48 Z"/>
+        <path class="body-lit tz-ink" d="M244 46 L268 43 L298 2 L281 2 Z"/><path class="tz-pat-hatch" d="M268 43 L298 2 L291 2 L262 44 Z"/>
+        <path class="body-lit" d="M24 46 C8 47 2 54 2 60 C2 67 10 72 26 73 L250 73 C268 72 286 62 298 50 L298 43 L268 43 L240 46 Z"/>
+        <g clip-path="url(#fus)"><rect class="body-shade" x="0" y="63" width="300" height="12"/><rect class="tz-pat-hatch" x="0" y="67" width="300" height="8"/><path class="hl" d="M30 50 L236 49"/></g>
+        <path class="tz-ink" style="fill:none" d="M24 46 C8 47 2 54 2 60 C2 67 10 72 26 73 L250 73 C268 72 286 62 298 50 L298 43 L268 43 L240 46 Z"/>
+        <path class="tz-f-water tz-ink" d="M8 54 Q12 50 22 50 L22 55 Z"/>
+        <path class="tz-ink" style="fill:none;stroke-width:2.6;stroke-dasharray:1.2 6.8;stroke-linecap:round" d="M40 56 H228"/>
+        <path class="body-shade tz-ink" d="M118 64 L178 66 L240 100 L220 102 L132 74 Z"/><path class="tz-pat-hatch" d="M178 66 L240 100 L232 101 L170 68 Z"/>
+        <path class="body-shade tz-ink" d="M150 78 L184 78 Q190 84 184 90 L150 90 Z"/><ellipse class="tz-f-deep tz-ink" cx="150" cy="84" rx="4.5" ry="6"/>
+        <path class="body-shade tz-ink" d="M258 62 L300 76 L290 78 L254 68 Z"/>
+      </g>
+      <g id="cloud"><path class="tz-pat-hatch" d="M-4 34 H86 V40 H-4 Z"/><path class="cloud" d="M0 34 C0 24 8 19 16 21 C18 10 34 6 42 14 C48 6 64 9 66 20 C76 19 84 26 82 34 Z"/></g>
+      <g id="printer">
+        <path class="body-lit tz-ink" d="M20 60 L60 30 L260 30 L220 60 Z"/>
+        <path class="body-shade tz-ink" d="M220 60 L260 30 L260 160 L220 190 Z"/><path class="tz-pat-hatch" d="M220 60 L260 30 L260 160 L220 190 Z"/>
+        <rect class="body-lit tz-ink" x="20" y="60" width="200" height="130"/>
+        <rect class="tz-f-deep tz-ink" x="40" y="74" width="120" height="10"/>
+        <rect class="body-shade tz-ink" x="30" y="150" width="180" height="30"/>
+        <rect class="tz-f-water tz-ink" x="176" y="96" width="32" height="18"/><circle class="tz-f-heat tz-ink" cx="186" cy="128" r="5"/>
+      </g>
+    </defs>
+    <use href="#cloud" transform="translate(80 92) scale(.9)"/><use href="#cloud" transform="translate(330 150) scale(.6)"/>
+    <g transform="translate(40 76) rotate(-8 150 60) scale(.8)"><use href="#jet"/></g>
+    <path class="arrow" style="--c:var(--water)" d="M157 122 V82 H149 L164 60 L179 82 H171 V122 Z"/>
+    <text class="lbl" style="--c:var(--water)" x="186" y="96">الرفع</text>
+    <!-- printer, with its page -->
+    <path class="tz-ink" style="stroke-width:2" d="M190 332 H340"/><g transform="translate(196 236) scale(.5)"><use href="#printer"/></g>
+    <path d="M218 272 L274 272 L277 228 L215 228 Z" style="fill:#fbf7ec;stroke:var(--ink);stroke-width:1.5"/>
+    <path transform="translate(190 75.6) scale(.8)" d="M70 236 C58 228 48 220 48 211 C48 204 53 200 59 200 C64 200 68 203 70 207 C72 203 76 200 81 200 C87 200 92 204 92 211 C92 220 82 228 70 236 Z" style="fill:var(--ink)"/>
+    <!-- sea + ship -->
+    <path class="tz-f-water" d="M330 332 Q370 326 410 332 T490 332 T570 332 L570 428 L330 428 Z"/>
+    <path style="fill:none;stroke:var(--water);stroke-width:2" d="M330 332 Q370 326 410 332 T490 332 T570 332"/>
+    <g transform="translate(334 282) scale(.45)">
+      <path class="tz-f-deep tz-ink" d="M10 86 L330 86 L316 122 L36 122 Z"/><path class="tz-f-heat" d="M22 110 L324 110 L316 122 L36 122 Z"/>
+      <g class="tz-ink" style="stroke-width:1.2"><rect class="box1" x="40" y="66" width="34" height="20"/><rect class="box2" x="74" y="66" width="34" height="20"/><rect class="box3" x="108" y="66" width="34" height="20"/><rect class="box4" x="142" y="66" width="34" height="20"/><rect class="box2" x="176" y="66" width="34" height="20"/><rect class="box1" x="210" y="66" width="34" height="20"/></g>
+      <path class="body-lit tz-ink" d="M260 26 L300 26 L300 86 L260 86 Z"/>
+    </g>
+  </svg>
+  <div style="position:absolute;right:52px;top:78px;width:350px;display:grid;gap:10px;text-align:right">
+    <div style="display:flex;align-items:center;gap:14px;justify-content:flex-start">
+      <svg viewBox="0 0 200 200" width="78" height="78"><use href="#mark"/></svg>
+      <h1 class="name">إيه الحكاية<b>؟</b></h1>
+    </div>
+    <p class="tag">الحاجات اللي حوالينا بتشتغل إزاي...<br>مرسومة ومشروحة <span>في دقيقة.</span></p>
+    <div class="cats"><span>أجهزة البيت</span><span>طيران</span><span>بحر</span><span>تكنولوجيا</span></div>
+  </div>
+</div>
+
+<script src="../../design-system/components/bundle.js"></script>
+<script>TebEzay.patterns();</script>
+</body>
+</html>
