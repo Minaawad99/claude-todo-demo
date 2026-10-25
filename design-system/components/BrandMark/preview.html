@@ -1,0 +1,42 @@
+<!-- @dsCard group="Brand" height=260 subtitle="Stopwatch + name. The ring fills on the opening beat: one minute" -->
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>BrandMark — preview</title>
+<style>
+  body { margin: 0; padding: 16px; background: var(--paper); color: var(--ink); font-family: var(--font-sans); }
+  .row { display: flex; flex-wrap: wrap; gap: 32px 56px; align-items: center; }
+  .hero { display: grid; justify-items: center; gap: 12px; text-align: center; }
+  .hero .tz-brand__name { font-size: 30px; font-weight: 600; color: var(--ink); }
+  .hero p { margin: 0; font-size: 16px; }
+</style>
+</head>
+<body>
+<div id="brand" class="row">
+  <div class="hero">
+    <svg class="tz-watch" data-tz="ring" style="--watch-size:120px" viewBox="0 0 48 54" aria-hidden="true">
+      <rect class="crown" x="20" y="0" width="8" height="3"/><rect class="crown" x="23" y="3" width="2" height="4"/>
+      <circle class="track" cx="24" cy="30" r="20"/>
+      <circle class="arc" cx="24" cy="30" r="20" pathLength="100" transform="rotate(-90 24 30)"/>
+    </svg>
+    <span class="tz-brand__name" data-tz="type">طب إزاي؟</span>
+    <p data-tz="ink">هشرحهالك في <span class="tz-k tz-k--heat" data-tz="key">دقيقة.</span></p>
+  </div>
+  <span class="tz-brand">
+    <svg class="tz-watch" viewBox="0 0 48 54" aria-hidden="true">
+      <rect class="crown" x="20" y="0" width="8" height="3"/><rect class="crown" x="23" y="3" width="2" height="4"/>
+      <circle class="arc" cx="24" cy="30" r="20" pathLength="100"/>
+      <circle class="core" cx="24" cy="30" r="6"/>
+    </svg>
+    <span class="tz-brand__name">طب إزاي؟</span>
+  </span>
+</div>
+<p><button type="button" id="replay" class="tz-replay">إعادة الحركة</button></p>
+<script>
+  var b = document.getElementById("brand");
+  TebEzay.play(b);
+  document.getElementById("replay").addEventListener("click", function () { TebEzay.play(b); });
+</script>
+</body>
+</html>

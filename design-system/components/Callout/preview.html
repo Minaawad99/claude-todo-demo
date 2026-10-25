@@ -1,0 +1,49 @@
+<!-- @dsCard group="Scene" height=300 subtitle="Dot, hairline leader, tinted chip. Names one part of the drawing" -->
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Callout — preview</title>
+<style>
+  body { margin: 0; padding: 16px; background: var(--paper); color: var(--ink); font-family: var(--font-sans); }
+  .stage { position: relative; height: 240px; max-width: 560px; border: var(--stroke-frame) solid var(--ink); }
+  .stage svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<div id="stage" class="stage tz-paper">
+  <svg viewBox="0 0 560 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    <rect class="tz-f-water" x="0" y="150" width="560" height="90"/>
+    <path class="tz-s-water" d="M0 150 Q35 144 70 150 T140 150 T210 150 T280 150 T350 150 T420 150 T490 150 T560 150"/>
+    <polygon class="tz-f-paper tz-ink" points="210,70 360,70 400,96 250,96"/>
+    <polygon class="tz-pat-dots" points="210,70 360,70 400,96 250,96"/>
+    <polygon class="tz-f-paper tz-ink" points="250,96 400,96 400,128 250,128"/>
+    <polygon class="tz-pat-lines" points="250,112 400,112 400,128 250,128"/>
+    <polygon class="tz-f-part tz-ink-h" points="250,128 400,128 400,160 250,160"/>
+    <polygon class="tz-f-deep tz-ink" points="210,70 250,96 250,160 210,134"/>
+    <circle class="tz-bubble" style="--d:0s" cx="120" cy="220" r="5"/>
+    <circle class="tz-bubble" style="--d:1.1s" cx="460" cy="214" r="4"/>
+    <circle class="tz-bubble" style="--d:2s" cx="330" cy="228" r="3"/>
+  </svg>
+  <span class="tz-callout tz-callout--part" data-tz="callout" style="--x:56%;--y:60%;--angle:140deg;--len:90px">
+    <span class="tz-callout__line"></span><span class="tz-callout__dot"></span>
+    <span class="tz-callout__chip">زي المقصات</span>
+  </span>
+  <span class="tz-callout tz-callout--water" data-tz="callout" style="--x:78%;--y:88%;--angle:-150deg;--len:60px;--chip-shift:-100% -100%">
+    <span class="tz-callout__line"></span><span class="tz-callout__dot"></span>
+    <span class="tz-callout__chip">بتمسك الأملاح</span>
+  </span>
+  <span class="tz-callout tz-callout--heat" data-tz="callout" style="--x:66%;--y:34%;--angle:-40deg;--len:56px;--chip-shift:0% -100%">
+    <span class="tz-callout__line"></span><span class="tz-callout__dot"></span>
+    <span class="tz-callout__chip">بيدوب في 60°</span>
+  </span>
+</div>
+<p><button type="button" id="replay" class="tz-replay">إعادة الحركة</button></p>
+<script>
+  TebEzay.patterns();
+  var s = document.getElementById("stage");
+  TebEzay.play(s);
+  document.getElementById("replay").addEventListener("click", function () { TebEzay.play(s); });
+</script>
+</body>
+</html>

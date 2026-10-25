@@ -1,0 +1,52 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<title>طب إزاي؟</title>
+<style>
+  html, body { margin: 0; height: 100%; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--font-sans); overflow: hidden; }
+  .cover { position: relative; height: 288px; width: 960px; overflow: hidden; }
+  .art { position: absolute; top: 0; left: 480px; width: 480px; height: 288px; overflow: hidden; }
+  .art svg { display: block; width: 480px; height: 288px; }
+  .slab  { fill: var(--khaki); }
+  .hatch { stroke: var(--khaki-deep); stroke-width: var(--stroke-line); }
+  .heat  { fill: var(--heat); }
+  .water { fill: var(--water); }
+  .part  { fill: var(--olive); }
+  .deep  { fill: var(--ink); }
+  .sq    { rx: var(--radius-0); }
+  .words { position: absolute; left: var(--space-8); bottom: var(--space-8); width: 440px; direction: rtl; text-align: right; }
+  .name  { margin: 0; font-size: 88px; line-height: 1.15; white-space: nowrap; font-weight: 600; color: var(--ink); }
+  .tag   { margin: var(--space-4) 0 0; font-size: 14px; line-height: 20px; color: var(--ink-muted); }
+</style>
+</head>
+<body>
+<div class="cover">
+  <div class="art" aria-hidden="true">
+    <svg viewBox="0 0 480 288" width="480" height="288">
+      <!--
+        blocks      khaki slab 160×240 bled off the top (the drawn object) · heat disc r72 (the stopwatch ring, the brand) · water 288×64 bled right · olive 120×120 bled right · ink 160×24 (the outline weight) — ≈32% of 960×288
+        arrangement one tall slab with satellites; bottoms on y=264, gutters space-4, a grid-cell (40) rhythm
+        pattern     hatch from "depth comes from diagonal hatching, never shadows": khaki-deep stroke-line hatch cut across the slab, 14 lines at an 8px pitch
+        scales      sides in grid-cell / space-2 multiples; gutters space-4; corners radius-0 (square like a drawing sheet); disc radius-round
+      -->
+      <defs><clipPath id="slabclip"><rect x="16" y="-8" width="160" height="248"/></clipPath></defs>
+      <rect class="slab sq" x="16" y="-8" width="160" height="248"/>
+      <g clip-path="url(#slabclip)">
+        <path class="hatch" d="M16 40 L64 -8 M16 64 L88 -8 M16 88 L112 -8 M16 112 L136 -8 M16 136 L160 -8 M16 160 L176 0 M16 184 L176 24 M16 208 L176 48 M16 232 L176 72 M32 240 L176 96 M56 240 L176 120 M80 240 L176 144 M104 240 L176 168 M128 240 L176 192"/>
+      </g>
+      <rect class="deep sq" x="16" y="248" width="160" height="16"/>
+      <circle class="heat" cx="264" cy="112" r="72"/>
+      <rect class="part sq" x="360" y="40" width="120" height="120"/>
+      <rect class="water sq" x="192" y="200" width="288" height="64"/>
+    </svg>
+  </div>
+  <div class="words">
+    <h1 class="name">طب إزاي؟</h1>
+    <p class="tag">إزاي الحاجات المعقدة بتشتغل، مرسومة ومشروحة في دقيقة.</p>
+  </div>
+</div>
+</body>
+</html>
