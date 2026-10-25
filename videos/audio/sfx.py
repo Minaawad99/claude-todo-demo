@@ -180,7 +180,8 @@ def mix(voice, cues, use_bed=True, bed_db=-18.0, fx_db=-10.0, duck_db=-8.0, tail
         sm[i] = prev + k * (act[i] - prev)
     duck = np.repeat(sm, hop); duck = np.pad(duck, (0, n - len(duck)), constant_values=0)
     gain = 10 ** (duck * duck_db / 20)
-    speech_rms = rms_db(v[np.repeat(act, hop)[: len(v)] > 0]) if act.any() else -20
+    mask = np.pad(np.repeat(act, hop), (0, max(0, len(v) - len(act) * hop)))[: len(v)] > 0
+    speech_rms = rms_db(v[mask]) if act.any() else -20
     out = v.copy()
     if use_bed:
         b = bed(n / SR)[:n]; b *= 10 ** ((speech_rms + bed_db - rms_db(b)) / 20); out += b * gain
