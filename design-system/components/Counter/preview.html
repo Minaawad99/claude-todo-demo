@@ -1,0 +1,34 @@
+<!-- @dsCard group="Data" height=200 subtitle="The one number an episode is about. Counts up, coloured by meaning" -->
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Counter — preview</title>
+<style>
+  body { margin: 0; padding: 16px; background: var(--paper); color: var(--ink); font-family: var(--font-sans); }
+  .row { display: flex; flex-wrap: wrap; gap: 24px 48px; align-items: center; }
+</style>
+</head>
+<body>
+<div id="nums" class="row">
+  <div class="tz-counter">
+    <span class="tz-counter__num" data-tz="count" data-to="10">10</span>
+    <span class="tz-counter__unit">لتر مية في الغسلة كلها قدام حوالي 100 لتر بالإيد</span>
+  </div>
+  <div class="tz-counter tz-counter--water" style="--num-size:64px">
+    <span class="tz-counter__num" data-tz="count" data-to="10" data-tz-with="prev">10</span>
+    <span class="tz-counter__unit">لتر</span>
+  </div>
+  <div class="tz-counter" style="--num-size:40px">
+    <span class="tz-counter__num" data-tz="count" data-to="60" data-tz-with="prev">60</span>
+    <span class="tz-counter__unit">درجة، أسخن من اللي إيدك تستحمله</span>
+  </div>
+</div>
+<p><button type="button" id="replay" class="tz-replay">إعادة الحركة</button></p>
+<script>
+  var n = document.getElementById("nums");
+  TebEzay.play(n);
+  document.getElementById("replay").addEventListener("click", function () { TebEzay.play(n); });
+</script>
+</body>
+</html>

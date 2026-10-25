@@ -1,0 +1,74 @@
+<!-- @dsCard group="Scene" height=620 subtitle="One beat of an episode: illustration on graph paper, rule, two-line caption" -->
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>SceneFrame — preview</title>
+<style>
+  body { margin: 0; padding: 16px; background: var(--paper); font-family: var(--font-sans); color: var(--ink); }
+  .row { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+  .tz-frame { width: 300px; --tz-caption-size: 20px; }
+  .bar { margin-top: 12px; }
+</style>
+</head>
+<body>
+<div class="row">
+  <figure id="scene" class="tz-frame" style="margin:0">
+    <div class="tz-frame__stage tz-paper">
+      <svg viewBox="0 0 360 410" aria-hidden="true">
+        <g data-tz="fade">
+          <polygon class="tz-f-khaki" points="90,60 330,60 330,300 90,300"/>
+          <polygon class="tz-f-deep" points="40,110 90,60 90,300 40,350"/>
+          <polygon class="tz-pat-hatch" points="40,110 90,60 90,300 40,350"/>
+          <polygon class="tz-f-paper" points="40,350 90,300 330,300 280,350"/>
+          <polygon class="tz-ink" points="90,60 330,60 330,300 90,300"/>
+          <polyline class="tz-ink" points="90,60 40,110 40,350 280,350 330,300"/>
+          <line class="tz-ink" x1="40" y1="350" x2="90" y2="300"/>
+          <g>
+            <ellipse class="tz-f-paper tz-ink" cx="146" cy="160" rx="40" ry="46"/>
+            <ellipse class="tz-f-paper tz-ink" cx="152" cy="160" rx="40" ry="46"/>
+            <ellipse class="tz-f-paper tz-ink" cx="158" cy="160" rx="40" ry="46"/>
+            <ellipse class="tz-ink" cx="158" cy="160" rx="24" ry="28"/>
+            <ellipse class="tz-f-paper tz-ink" cx="250" cy="166" rx="40" ry="46"/>
+            <ellipse class="tz-f-paper tz-ink" cx="256" cy="166" rx="40" ry="46"/>
+            <ellipse class="tz-f-paper tz-ink" cx="262" cy="166" rx="40" ry="46"/>
+            <ellipse class="tz-ink" cx="262" cy="166" rx="24" ry="28"/>
+          </g>
+          <path class="tz-ink" d="M70 222 H318 M100 222 V196 M130 222 V196 M190 222 V196 M220 222 V196 M290 222 V196"/>
+        </g>
+        <g data-tz="draw" data-tz-with="prev" data-tz-delay="400">
+          <path class="tz-s-heat" d="M66 292 C66 250 120 256 200 256 S334 252 306 292"/>
+        </g>
+        <g data-tz="fade">
+          <path class="tz-steam" style="--d:0s" d="M150 246 q-4 -6 0 -12 q4 -6 0 -12"/>
+          <path class="tz-steam" style="--d:.4s" d="M230 246 q-4 -6 0 -12 q4 -6 0 -12"/>
+          <path class="tz-steam" style="--d:.8s" d="M300 268 q-4 -6 0 -12 q4 -6 0 -12"/>
+        </g>
+        <g data-tz="pop">
+          <rect class="tz-f-part tz-ink" x="120" y="264" width="160" height="12"/>
+          <circle class="tz-pat-dot" cx="140" cy="270" r="2"/><circle class="tz-pat-dot" cx="170" cy="270" r="2"/>
+          <circle class="tz-pat-dot" cx="230" cy="270" r="2"/><circle class="tz-pat-dot" cx="260" cy="270" r="2"/>
+          <rect class="tz-f-deep tz-ink" x="190" y="276" width="20" height="18"/>
+        </g>
+      </svg>
+      <span class="tz-callout tz-callout--heat" data-tz="callout" data-tz-at="2600" style="--x:85%;--y:71%;--angle:115deg;--len:44px;--chip-shift:-100% 0%">
+        <span class="tz-callout__line"></span><span class="tz-callout__dot"></span>
+        <span class="tz-callout__chip">السخان</span>
+      </span>
+    </div>
+    <div class="tz-frame__rule"></div>
+    <figcaption class="tz-frame__caption">
+      <p class="tz-caption" data-tz="type">وتحت فيه <span class="tz-k tz-k--heat" data-tz="key">سخان...</span></p>
+      <p class="tz-caption" data-tz="type">زي سخان الحمام.</p>
+    </figcaption>
+  </figure>
+</div>
+<div class="bar"><button type="button" id="replay" class="tz-replay">إعادة الحركة</button></div>
+<script>
+  TebEzay.patterns();
+  var s = document.getElementById("scene");
+  TebEzay.play(s);
+  document.getElementById("replay").addEventListener("click", function () { TebEzay.play(s); });
+</script>
+</body>
+</html>
