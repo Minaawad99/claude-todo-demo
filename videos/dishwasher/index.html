@@ -58,6 +58,37 @@
   .steam { fill: none; stroke: var(--heat); stroke-width: 2; stroke-linecap: round; opacity: .6; }
   .counter { position: absolute; }
   .counter > div { background: var(--paper-raised); padding: 2px 8px; }
+  /* 3D model */
+  #iso .f-top { fill: var(--paper-raised); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+  #iso .f-left { fill: var(--khaki); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+  #iso .f-right { fill: var(--khaki-deep); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+  #iso .f-top-dark { fill: var(--khaki); stroke: var(--ink); stroke-width: 1.4; }
+  #iso .f-wall { fill: #d9d0ba; stroke: var(--ink); stroke-width: 1.6; }
+  #iso .f-wall2 { fill: #cfc5ad; stroke: var(--ink); stroke-width: 1.6; }
+  #iso .f-floor { fill: #e9e2cf; stroke: var(--ink); stroke-width: 1.6; }
+  #iso .f-steel { fill: #e2dccb; stroke: var(--ink); stroke-width: 1.4; }
+  #iso .f-water { fill: var(--water-body); stroke: var(--water); stroke-width: 1.2; }
+  #iso .f-water-side { fill: var(--water); stroke: var(--ink); stroke-width: 1.2; }
+  #iso .f-part { fill: var(--olive); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+  #iso .f-part-r { fill: color-mix(in srgb, var(--olive) 70%, var(--ink)); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+  #iso .f-part-top { fill: color-mix(in srgb, var(--olive) 55%, var(--paper)); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+  #iso .f-plate { fill: var(--paper-raised); stroke: var(--ink); stroke-width: 1.4; }
+  #iso .plate-rim { fill: none; stroke: var(--ink); stroke-width: 1; opacity: .7; }
+  #iso .f-cup { fill: #d6dcdc; stroke: var(--ink); stroke-width: 1.3; }
+  #iso .f-cup-top { fill: #e8eeee; stroke: var(--ink); stroke-width: 1.3; }
+  #iso .f-ink { fill: var(--ink); }
+  #iso .f-tablet { fill: #f4f1e8; stroke: var(--ink); stroke-width: 1.2; }
+  #iso .wire { fill: none; stroke: var(--ink); stroke-width: .8; opacity: .55; }
+  #iso .wire-h { fill: none; stroke: var(--ink); stroke-width: 1.6; }
+  #iso .mesh { fill: none; stroke: var(--ink); stroke-width: 1.2; stroke-dasharray: 2 2; }
+  #iso .pipe-o { fill: none; stroke: var(--ink); stroke-width: 8; stroke-linejoin: round; stroke-linecap: round; }
+  #iso .pipe-i { fill: none; stroke: #cfd7d8; stroke-width: 5; stroke-linejoin: round; stroke-linecap: round; }
+  #iso .pipe-dirty { fill: none; stroke: #c9b79c; stroke-width: 5; stroke-linejoin: round; stroke-linecap: round; }
+  #iso .heater { fill: none; stroke: var(--heat); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+  #iso .heater-glow { fill: none; stroke: var(--heat-soft); stroke-width: 13; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+  #iso .jet { fill: none; stroke: var(--water); stroke-width: 1.8; stroke-dasharray: 6 6; stroke-linecap: round; }
+  #iso .heater-glow { opacity: .85; }
+  #iso #sumpwater { transform-box: fill-box; transform-origin: center; }
 </style>
 </head>
 <body>
@@ -157,92 +188,7 @@
   <div class="frame">
     <div class="stage tz-paper">
       <svg viewBox="0 0 360 488">
-        <defs><clipPath id="sump"><path d="M150 326 V352 Q150 362 160 362 H200 Q210 362 210 352 V326 Z"/></clipPath>
-              <clipPath id="tub"><rect x="34" y="34" width="292" height="292"/></clipPath></defs>
-        <g data-cam="4:0:180:200:1|4:1.4:180:200:1|5:0:300:120:1.9|6:0.2:180:330:2.3|7:0:72:318:2.8|8:0:180:310:1.6|10:0:222:358:2.6|11:0.3:250:250:1.2|12:0:180:286:2.0|15:0:180:212:1.05|16:0:52:200:3.0|21:0:180:220:1.05|22:0:180:290:1.5|23:0:180:340:2.8|24:0:250:300:1.3|25:0:180:212:1|27:0:110:360:2.4|28:0:300:130:1.6|29:0:180:300:1.5|30:0:180:220:1.5|31:0:290:180:1.9|32:0:300:240:1.8|33:0:180:212:1">
-          <!-- cabinet + tub -->
-          <rect class="lit tz-ink-h" x="14" y="14" width="332" height="372"/>
-          <rect class="steel-back" x="34" y="34" width="292" height="292"/>
-          <rect class="tz-pat-hatch" x="34" y="34" width="292" height="292" style="opacity:.35"/>
-          <path class="tz-ink" style="fill:none;stroke-width:2" d="M34 34 H326 V326 H34 Z"/>
-          <path class="steel" d="M34 326 H326 V334 H34 Z"/>
-          <!-- inlet valve, top right, outside the tub -->
-          <path class="pipe-o" d="M360 58 H318 V70"/><path class="pipe-i" d="M360 58 H318 V70"/>
-          <rect class="deep tz-ink" x="328" y="46" width="16" height="24"/>
-          <!-- pipes: pump → back wall → both spray arms -->
-          <path class="pipe-o" d="M222 372 H312 V168 H196 M312 292 H196"/><path class="pipe-i" d="M222 372 H312 V168 H196 M312 292 H196"/>
-          <path class="pipe-o" d="M204 356 Q214 372 222 372"/><path class="pipe-i" d="M204 356 Q214 372 222 372"/>
-          <!-- drain: sump → drain pump → out -->
-          <path class="pipe-o" d="M154 356 Q140 372 128 372 H8"/><path class="pipe-i" d="M154 356 Q140 372 128 372 H8"/>
-          <!-- sump with water, filter, heater -->
-          <path class="steel tz-ink-h" d="M150 326 V352 Q150 362 160 362 H200 Q210 362 210 352 V326"/>
-          <g clip-path="url(#sump)"><g data-v="grow" class="o-b" data-l="5" data-o="0.4" data-d="2.2" data-axis="y" data-ease="io"><rect class="water" x="148" y="330" width="64" height="34"/></g></g>
-          <g clip-path="url(#tub)"><g data-v="grow" class="o-b" data-l="6" data-o="0.2" data-d="1.2" data-axis="y" data-ease="io"><rect class="water" x="34" y="320" width="292" height="8"/></g></g>
-          <rect x="157" y="330" width="46" height="26" style="fill:none;stroke:var(--ink);stroke-width:1.3;stroke-dasharray:2 2"/>
-          <g data-v="fade" data-l="8" data-o="0.5" data-d="1"><path class="heater-glow" d="M48 316 H140 M220 316 H312"/></g>
-          <path class="heater" d="M48 316 H140 M220 316 H312"/>
-          <!-- float switch -->
-          <rect class="lit tz-ink" x="54" y="300" width="22" height="22"/>
-          <g data-v="move" data-l="7" data-o="0.6" data-d="0.8" data-dx="0" data-dy="-8"><circle class="tz-f-water tz-ink" cx="65" cy="316" r="5"/></g>
-          <!-- detergent box on the left wall: lid swings open on line 16 -->
-          <rect class="lit tz-ink-h" x="36" y="186" width="26" height="30"/>
-          <g data-v="fade" data-l="16" data-o="0.4" data-d="0.3" style="opacity:1"><rect class="tz-ink" x="41" y="194" width="16" height="10" style="fill:var(--paper)"/><rect class="tz-f-water" x="41" y="194" width="16" height="3.5"/><rect class="hot" x="41" y="200.5" width="16" height="3.5"/></g>
-          <g data-v="rot" data-l="16" data-o="0.4" data-d="0.6" data-from="0" data-to="-70" data-cx="36" data-cy="186"><rect class="shade tz-ink" x="36" y="182" width="26" height="4"/></g>
-          <!-- racks, cups, plates -->
-          <path class="tz-ink" style="fill:none;stroke-width:2" d="M48 150 H312 M48 262 H312"/>
-          <path class="tz-ink" style="fill:none;stroke-width:1" d="M60 150 V140 M100 150 V140 M140 150 V140 M180 150 V140 M220 150 V140 M260 150 V140 M300 150 V140 M60 262 V246 M300 262 V246"/>
-          <use href="#cup" x="76" y="148"/><use href="#cup" x="128" y="148"/><use href="#cup" x="180" y="148"/><use href="#cup" x="232" y="148"/><use href="#cup" x="284" y="148"/>
-          <use href="#plate" x="86" y="228"/><use href="#plate" x="134" y="228"/><use href="#plate" x="182" y="228"/><use href="#plate" x="230" y="228"/><use href="#plate" x="278" y="228"/>
-          <!-- spray arms (seen edge-on, turning: they shorten and lengthen) -->
-          <g data-loop="flip" data-f="1.4" data-cx="180"><rect class="part tz-ink" x="90" y="286" width="180" height="11"/><path class="mark" style="stroke:var(--ink)" d="M110 291 h4 M140 291 h4 M216 291 h4 M246 291 h4"/></g>
-          <circle class="deep tz-ink-h" cx="180" cy="292" r="10"/>
-          <g data-loop="flip" data-f="1.7" data-cx="180"><rect class="part tz-ink" x="126" y="163" width="108" height="9"/></g>
-          <circle class="deep tz-ink-h" cx="180" cy="168" r="8"/>
-          <!-- pumps -->
-          <circle class="shade tz-ink-h" cx="222" cy="372" r="13"/><g data-loop="rot" data-speed="900" data-cx="222" data-cy="372" data-until="36"><path class="mark" style="stroke:var(--ink)" d="M222 362 V382 M212 372 H232"/></g>
-          <circle class="shade tz-ink-h" cx="122" cy="372" r="10"/><g data-v="fade" data-l="27" data-o="0.3" data-d="0.2"><g data-v="out" data-l="28" data-o="0" data-d="0.3"><g data-loop="rot" data-speed="900" data-cx="122" data-cy="372"><path class="mark" style="stroke:var(--ink)" d="M122 364 V380 M114 372 H130"/></g></g></g>
-
-          <!-- water: in from the valve (5, 28) -->
-          <g data-v="fade" data-l="5" data-o="0" data-d="0.3"><g data-v="out" data-l="7" data-o="0" data-d="0.4">
-            <g data-particles data-n="8" data-speed="140" data-dot="pt-w" data-r="2.2"><path class="stream" d="M318 72 V318 C300 322 240 326 206 338"/></g></g></g>
-          <g data-v="fade" data-l="28" data-o="0" data-d="0.3"><g data-v="out" data-l="29" data-o="0.3" data-d="0.4">
-            <g data-particles data-n="8" data-speed="140" data-dot="pt-w" data-r="2.2"><path class="stream" d="M318 72 V318 C300 322 240 326 206 338"/></g></g></g>
-          <!-- pumped water up the pipe and out of both arms (from line 11) -->
-          <g data-v="fade" data-l="11" data-o="0.4" data-d="0.4"><g data-v="out" data-l="36" data-o="0" data-d="0.3">
-            <g data-particles data-n="12" data-speed="120" data-dot="pt-w" data-r="2"><path class="stream" d="M222 372 H312 V168 H196"/><path class="stream" d="M312 292 H196" data-speed="90"/></g>
-          </g></g>
-          <g data-v="fade" data-l="12" data-o="0.5" data-d="0.4"><g data-v="out" data-l="36" data-o="0" data-d="0.3">
-            <g data-particles data-n="5" data-speed="150" data-dot="pt-w" data-r="1.8">
-              <path class="stream" d="M110 288 L96 196"/><path class="stream" d="M140 288 L134 196"/><path class="stream" d="M220 288 L226 196"/><path class="stream" d="M250 288 L266 196"/>
-              <path class="stream" d="M140 164 L130 60"/><path class="stream" d="M180 162 L180 56"/><path class="stream" d="M220 164 L232 60"/>
-            </g>
-          </g></g>
-          <!-- water falls back off the dishes (from line 15) -->
-          <g data-v="fade" data-l="15" data-o="0.4" data-d="0.4"><g data-v="out" data-l="36" data-o="0" data-d="0.3">
-            <g data-particles data-n="4" data-speed="70" data-dot="pt-w2" data-r="1.8">
-              <path class="stream" d="M86 258 V322"/><path class="stream" d="M134 258 V322"/><path class="stream" d="M230 258 V322"/><path class="stream" d="M278 258 V322"/>
-            </g>
-          </g></g>
-          <!-- food bits caught by the filter (23) -->
-          <g data-v="fade" data-l="22" data-o="0.4" data-d="0.4"><g data-v="out" data-l="25" data-o="0" data-d="0.4">
-            <g data-particles data-n="4" data-speed="40" data-dot="pt-dirt" data-r="2.6"><path class="stream" d="M120 322 C140 326 150 330 160 334"/><path class="stream" d="M240 322 C220 326 210 330 200 334"/><path class="stream" d="M182 262 V332"/></g>
-          </g></g>
-          <!-- dirty water pumped out (27) -->
-          <g data-v="fade" data-l="27" data-o="0.3" data-d="0.3"><g data-v="out" data-l="28" data-o="0.2" data-d="0.3">
-            <g data-particles data-n="9" data-speed="130" data-dot="pt-dirt" data-r="2.4"><path class="stream" d="M154 356 Q140 372 128 372 H0"/></g>
-          </g></g>
-          <!-- steam and condensation (30–32) -->
-          <g data-v="fade" data-l="30" data-o="0.4" data-d="0.5"><g data-v="out" data-l="34" data-o="0" data-d="0.4">
-            <g data-loop="bob" data-a="2" data-f="3"><path class="steam" d="M86 196 q-4 -8 0 -16 q4 -8 0 -16 M134 196 q-4 -8 0 -16 q4 -8 0 -16 M182 196 q-4 -8 0 -16 q4 -8 0 -16 M230 196 q-4 -8 0 -16 q4 -8 0 -16 M278 196 q-4 -8 0 -16 q4 -8 0 -16"/></g>
-          </g></g>
-          <g data-v="fade" data-l="31" data-o="0.2" data-d="0.4"><g data-v="out" data-l="34" data-o="0" data-d="0.4">
-            <g data-particles data-n="5" data-speed="40" data-dot="pt-steam" data-r="3.2"><path class="stream" d="M200 190 C250 170 290 150 322 140"/><path class="stream" d="M240 200 C270 190 300 180 322 176"/></g>
-          </g></g>
-          <g data-v="fade" data-l="32" data-o="0" data-d="0.4"><g data-v="out" data-l="34" data-o="0" data-d="0.4">
-            <g data-particles data-n="5" data-speed="30" data-dot="pt-w" data-r="2.2"><path class="stream" d="M322 120 V320"/><path class="stream" d="M318 160 V320" data-speed="24"/></g>
-          </g></g>
-          <g id="halos"></g>
-        </g>
+        <g id="cam"><g id="iso"></g><g id="isofx"></g><g id="halos"></g></g>
       </svg>
 
       <!-- line 4: the door shuts -->
@@ -402,25 +348,6 @@
   (function () {
     var NS = "http://www.w3.org/2000/svg";
     function el(tag, attrs, parent) { var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; }
-    // halos: [from, to, shape, label, x, y, colour]
-    var H = [[4, 6, ["rect", { x: 326, y: 42, width: 22, height: 32 }], "المحبس", 326, 92, "c-part"],
-             [6, 7, ["path", { d: "M146 322 V354 Q146 366 160 366 H200 Q214 366 214 354 V322" }], "الحوض", 180, 392, "c-water"],
-             [7, 8, ["rect", { x: 50, y: 296, width: 30, height: 30 }], "العوامة", 66, 288, "c-part"],
-             [8, 10, ["path", { d: "M46 316 H142 M218 316 H314" }], "السخان", 96, 306, "c-heat"],
-             [10, 12, ["circle", { cx: 222, cy: 372, r: 18 }], "المضخة", 256, 360, "c-part"],
-             [12, 16, ["rect", { x: 86, y: 282, width: 188, height: 19 }], "الدراع", 180, 318, "c-part"],
-             [16, 18, ["rect", { x: 32, y: 182, width: 34, height: 38 }], "القرص", 49, 236, "c-heat"],
-             [23, 24, ["rect", { x: 153, y: 326, width: 54, height: 34 }], "الفلتر", 180, 316, "c-part"],
-             [27, 28, ["circle", { cx: 122, cy: 372, r: 15 }], "مضخة التصريف", 100, 352, "c-part"],
-             [31, 33, ["path", { d: "M324 40 V320" }], "الجدار الأبرد", 290, 110, "c-water"]];
-    var hz = document.getElementById("halos");
-    H.forEach(function (h) {
-      var o = el("g", { "data-v": "out", "data-l": String(h[1]), "data-o": "-0.1", "data-d": "0.3" }, hz);
-      var f = el("g", { "data-v": "fade", "data-l": String(h[0]), "data-o": "0.4", "data-d": "0.4" }, o);
-      var pl = el("g", { "data-loop": "pulse", "data-f": "5", "data-a": "0.03" }, f);
-      var at = h[2][1]; at["class"] = "halo"; el(h[2][0], at, pl);
-      var tx = el("text", { "class": "callout " + h[6], x: h[4], y: h[5], "text-anchor": "middle" }, f); tx.textContent = h[3];
-    });
     // scissors snipping (line 18)
     var sc = document.getElementById("scissors");
     [[120, 250], [240, 240]].forEach(function (p, i) {
@@ -447,6 +374,8 @@
     };
   })();
 </script>
+<script src="iso.js"></script>
+<script src="iso-scene.js"></script>
 <script src="../engine.js"></script>
 <script>(function () { var r = window.renderAt; window.renderAt = function (t) { r(t); window.__extra(t); }; renderAt(window.VIDEO_END); })();</script>
 </body>
