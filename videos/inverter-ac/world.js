@@ -154,7 +154,9 @@
     var a = SH[0], b = SH[0];
     for (var i = 0; i < SH.length; i++) if (SH[i][0] <= t) { a = SH[i - 1] || SH[i]; b = SH[i]; }
     var k = easeIO((t - b[0]) / 1.0); if (t < b[0]) k = 0;
-    var z = Math.exp(lerp(Math.log(a[2]), Math.log(b[2]), k)) * (1 + 0.05 * Math.sin(t * 0.37));
+    // during a hold the camera keeps creeping in; the creep built up on the last shot eases out as the next move starts
+    var hold = Math.max(0, t - b[0] - 1.0), prev = a === b ? 0 : Math.max(0, Math.min(3, b[0] - a[0] - 1.0));
+    var z = Math.exp(lerp(Math.log(a[2] * (1 + 0.035 * prev)), Math.log(b[2]), k)) * (1 + 0.05 * Math.sin(t * 0.37)) * (1 + 0.035 * Math.min(hold, 3));
     return { p: [lerp(a[1][0], b[1][0], k), lerp(a[1][1], b[1][1], k), lerp(a[1][2], b[1][2], k)], z: z };
   }
   function theta(t) { return -0.5 + 0.17 * Math.sin(t * 0.2) + 0.06 * Math.sin(t * 0.53 + 1.0); }  // the outside wall seen nearly edge-on, like the reference
@@ -180,9 +182,9 @@
     var o13 = win(t, L(13) + 1.0, L(14) + 0.2); if (o13 > 0) { var cp = I.P(282, 6, 200); var tt = I.el("text", { x: cp[0].toFixed(1), y: cp[1].toFixed(1), "text-anchor": "middle", "class": "bignum red", style: "opacity:" + o13 + ";font-size:" + (30 / c.z).toFixed(1) + "px;stroke-width:" + (7 / c.z).toFixed(1) + "px" }, g); tt.textContent = "×4"; }
     return sp;
   };
-  window.__roomStatic = function (svg, t, K, ox, oy) {   // intro + outro: a fixed small view that still turns slowly
+  window.__roomStatic = function (svg, t, K, ox, oy) {   // intro + outro: a small view that keeps turning
     while (svg.firstChild) svg.removeChild(svg.firstChild);
-    var I = makeIso(theta(t), K, ox, oy), g = document.createElementNS(NS, "g"); svg.appendChild(g);
+    var I = makeIso(theta(t) + 0.09 * Math.sin(t * 0.85), K, ox, oy), g = document.createElementNS(NS, "g"); svg.appendChild(g);
     drawScene(g, I, t, { flows: true }); return I;
   };
   window.__speed = speed; window.__makeIso = makeIso; window.__phase = phase;

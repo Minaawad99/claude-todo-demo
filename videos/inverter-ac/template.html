@@ -66,7 +66,7 @@
 <!-- ═══ Brand (3) ═══ -->
 <section class="scene" data-scene="3-3">
   <div class="frame" style="grid-template-rows:1fr">
-    <div style="display:grid;place-items:center;align-content:center;gap:14px;text-align:center">
+    <div id="stinger" style="display:grid;place-items:center;align-content:center;gap:14px;text-align:center">
       <svg viewBox="0 0 220 220" style="width:200px;height:200px;overflow:visible">
         <circle cx="110" cy="118" r="98" style="fill:none;stroke:var(--line-soft);stroke-width:2;opacity:.35"/>
         <circle data-v="ring" data-l="3" data-o="-0.3" data-d="1.6" cx="110" cy="118" r="98" pathLength="100" transform="rotate(-90 110 118)" style="fill:none;stroke:var(--heat);stroke-width:3;stroke-dasharray:100"/>
@@ -157,14 +157,16 @@
     var room = document.getElementById("room"), intro = document.getElementById("introroom"), out = document.getElementById("outroom"), NS = "http://www.w3.org/2000/svg";
     window.__extra = function (t) {
       if (t > L(4) - 0.6 && t < L(29)) window.__room(room, t);
-      if (t < L(3)) window.__roomStatic(intro, t, 0.42, 160, 230);
+      if (t < L(3)) window.__roomStatic(intro, t, 0.42 * (1 + 0.16 * Math.min(1, t / L(3))), 160, 230 + 18 * Math.min(1, t / L(3)));
       if (t > L(29) - 0.6) {
-        var I = window.__roomStatic(out, t, 0.27, 130, 104);
+        var I = window.__roomStatic(out, t, 0.27 * (1 + 0.08 * Math.min(1, (t - L(29) + 0.6) / 3)), 130, 104);
         [[282, 6, 165, "1"], [281, -40, 205, "2"], [65, -150, 300, "3"], [160, -148, 200, "4"]].forEach(function (c) {
           var q = I.P(c[0], c[1], c[2]), ci = document.createElementNS(NS, "circle"); ci.setAttribute("cx", q[0]); ci.setAttribute("cy", q[1]); ci.setAttribute("r", 7); ci.setAttribute("class", "calldot"); out.appendChild(ci);
           var tx = document.createElementNS(NS, "text"); tx.setAttribute("x", q[0]); tx.setAttribute("y", q[1] + 4); tx.setAttribute("text-anchor", "middle"); tx.setAttribute("class", "callnum"); tx.textContent = c[3]; out.appendChild(tx);
         });
       }
+      // the logo card slowly pushes in and tilts so it never sits frozen
+      if (t > L(3) - 0.5 && t < L(4)) { var u = Math.max(0, (t - L(3)) / (L(4) - L(3))); document.getElementById("stinger").style.transform = "scale(" + (1 + 0.12 * u).toFixed(4) + ") rotate(" + (-2 + 4 * u).toFixed(2) + "deg)"; }
       window.__panels(t);
     };
     window.__extra(10); window.__extra(L(29) + 1);
