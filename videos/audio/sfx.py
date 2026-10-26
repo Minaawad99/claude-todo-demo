@@ -161,6 +161,45 @@ def fx_steam(d=1.6):
     n = int(d * SR); t = t_(d); x = hp_fast(noise(n), 3000) * (0.6 + 0.4 * np.sin(2 * np.pi * 0.8 * t))
     return lp_fast(x, 9000, 1) * env(n, .4, .5)
 
+# ── engine foley ──────────────────────────────────────────
+def pulses(t, rate, sharp=6.0):  # one pressure pulse per firing, as an amplitude train
+    return np.exp(-sharp * ((t * rate) % 1.0))
+def fx_idle(d=3.0, rate=14):  # engine rumble: low firing pulses through a muffler
+    t = t_(d); p = pulses(t, rate, 5)
+    x = (0.7 * np.sin(2 * np.pi * rate * 2 * t) + 0.8 * lp_fast(noise(len(t)), 300, 2) * 6) * p
+    return lp_fast(x, 500, 2) * env(len(t), .2, .5)
+def fx_rev(d=1.8):            # engine revving up: firing rate climbs
+    t = t_(d); rate = 12 + 60 * (t / d) ** 1.5; ph = np.cumsum(rate) / SR
+    p = np.exp(-4 * (ph % 1.0)); x = (np.sin(2 * np.pi * 2 * ph) + 4 * lp_fast(noise(len(t)), 600, 2)) * p
+    return lp_fast(x, 1400, 1) * env(len(t), .05, .3)
+def fx_intake(d=0.9):         # air sucked in: rising filtered hiss
+    t = t_(d); nz = noise(len(t)); k = t / d
+    x = lp_fast(nz, 900, 1) * (1 - k) + hp_fast(lp_fast(nz, 4000, 1), 800) * k
+    return x * np.sin(np.pi * k) ** 1.5 * 1.6
+def fx_squeeze(d=1.0):        # compression: pitch rises, pressure builds
+    t = t_(d); f = 70 + 160 * (t / d) ** 2; ph = 2 * np.pi * np.cumsum(f) / SR
+    x = np.sin(ph) * 0.7 + 0.3 * np.sign(np.sin(ph)) + 0.3 * lp_fast(noise(len(t)), 1200, 1)
+    return lp_fast(x, 1800, 1) * np.linspace(.2, 1, len(t)) * env(len(t), .05, .08)
+def fx_spark(d=0.35):         # spark plug: sharp electric crack + buzz
+    t = t_(d); x = hp_fast(noise(len(t)), 3000) * np.exp(-t * 50) * 1.4
+    x += 0.4 * np.sign(np.sin(2 * np.pi * 120 * t)) * hp_fast(noise(len(t)), 1500) * np.exp(-t * 14)
+    return x.astype(np.float32)
+def fx_boom(d=1.4):           # contained explosion: punch + low rumble tail
+    t = t_(d); punch = np.sin(2 * np.pi * (180 * np.exp(-t * 16) + 38) * t) * np.exp(-t * 6)
+    body = lp_fast(noise(len(t)), 700, 3) * 8 * np.exp(-t * 4) * (1 - np.exp(-t * 300))
+    crack = hp_fast(noise(len(t)), 2000) * np.exp(-t * 60) * 0.6
+    return (punch + body + crack).astype(np.float32)
+def fx_exhaust(d=0.7):        # burnt gas puffed out the pipe
+    t = t_(d); x = lp_fast(noise(len(t)), 1200, 2) * 4 * np.exp(-t * 6) * (1 - np.exp(-t * 120))
+    return (x + 0.4 * np.sin(2 * np.pi * 60 * t) * np.exp(-t * 9)).astype(np.float32)
+def fx_gear(d=0.9):           # gearbox: clunk then a short whine
+    t = t_(d); cl = fx_clank(d) * np.exp(-t * 4) * 0.7
+    f = 500 + 300 * t / d; wh = 0.35 * np.sin(2 * np.pi * np.cumsum(f) / SR) * np.sin(np.pi * t / d) * (t > .12)
+    return (cl + wh).astype(np.float32)
+def fx_coolant(d=2.0):        # liquid rushing through hoses
+    t = t_(d); x = lp_fast(noise(len(t)), 1100, 2) * 2 * (0.7 + 0.3 * np.sin(2 * np.pi * 2.2 * t))
+    return (x + 0.5 * bubbles(d, 14, 300, 900, decay=False)) * env(len(t), .3, .5)
+
 FX = {k[3:]: v for k, v in globals().items() if k.startswith("fx_")}
 
 # ── music bed: soft chords + plucks, 84 bpm, voice band carved out ──

@@ -125,7 +125,7 @@
           el.style.transform = "scale(" + (d.axis === "x" ? (f + (to - f) * g) + ",1" : d.axis === "y" ? "1," + (f + (to - f) * g) : (f + (to - f) * g)) + ")"; break;
         case "rot": setT(el, "rotate(" + (+d.from + (+d.to - +d.from) * easeIO(raw)) + " " + d.cx + " " + d.cy + ")"); break;
         case "move": var q = easeIO(raw); setT(el, "translate(" + (+d.dx * q) + " " + (+d.dy * q) + ")"); break;
-        case "count": el.textContent = Math.round(+d.from + (+d.to - +d.from) * p); break;
+        case "count": var cv = Math.round(+d.from + (+d.to - +d.from) * p); el.textContent = d.fmt === "comma" ? cv.toLocaleString("en-US") : cv; break;
       }
     });
     loops.forEach(function (el) {

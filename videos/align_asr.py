@@ -14,7 +14,7 @@ import sherpa_onnx
 
 ap = argparse.ArgumentParser()
 ap.add_argument("voice"); ap.add_argument("script"); ap.add_argument("out")
-ap.add_argument("--model", required=True); ap.add_argument("--db", type=float, default=-38); ap.add_argument("--gap", type=float, default=0.14)
+ap.add_argument("--model", required=True); ap.add_argument("--lang", default="ar"); ap.add_argument("--db", type=float, default=-38); ap.add_argument("--gap", type=float, default=0.14)
 a = ap.parse_args()
 
 # speech chunks between pauses
@@ -30,7 +30,7 @@ if dur - cur > 0.12: segs.append((cur, dur))
 
 m = a.model.rstrip("/"); pre = "small" if "small" in m else ("base" if "base" in m else "tiny")
 rec = sherpa_onnx.OfflineRecognizer.from_whisper(encoder=f"{m}/{pre}-encoder.int8.onnx", decoder=f"{m}/{pre}-decoder.int8.onnx",
-                                                tokens=f"{m}/{pre}-tokens.txt", language="ar", task="transcribe", num_threads=4)
+                                                tokens=f"{m}/{pre}-tokens.txt", language=a.lang, task="transcribe", num_threads=4)
 texts = []
 for s, e in segs:
     chunk = x[int(max(0, s - 0.05) * SR): int(min(dur, e + 0.05) * SR)]
@@ -38,6 +38,7 @@ for s, e in segs:
     rec.decode_stream(stream); texts.append(stream.result.text.strip())
 
 def norm(t):
+    if a.lang != "ar": return re.sub(r"[^a-z0-9]", "", t.lower())
     t = re.sub(r"[ً-ْـ]", "", t)                       # tashkeel, tatweel
     t = t.translate(str.maketrans("أإآىةؤئ", "اااهةوي")).replace("ة", "ه")
     return re.sub(r"[^ء-ي0-9]", "", t)
@@ -47,7 +48,7 @@ LG = [grams(l) for l in lines]; SG = [grams(t) for t in texts]
 N, M = len(lines), len(segs)
 def score(i, j, k):  # line i covers chunks j..k-1
     g = set().union(*SG[j:k]); inter = len(g & LG[i]); u = len(g | LG[i]) or 1
-    d = segs[k - 1][1] - segs[j][0]; L = len(norm(lines[i])) / 14.0  # ~14 chars/s
+    d = segs[k - 1][1] - segs[j][0]; L = len(norm(lines[i])) / (14.0 if a.lang == "ar" else 15.0)  # chars/s
     return inter / u - 0.15 * abs(d - L) / max(L, 1)
 INF = -1e9; dp = [[INF] * (M + 1) for _ in range(N + 1)]; bk = [[0] * (M + 1) for _ in range(N + 1)]; dp[0][0] = 0
 for i in range(1, N + 1):

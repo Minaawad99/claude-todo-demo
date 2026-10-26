@@ -338,3 +338,6 @@ label.tz-ask__line { white-space: nowrap; }
 .iso-jet   { fill: none; stroke: var(--water); stroke-width: 1.8; stroke-dasharray: 6 6; stroke-linecap: round; }
 .iso-halo  { fill: none; stroke: #e2a92c; stroke-width: 2.5; }
 .iso-label { font: 700 12px var(--font-sans); fill: var(--c, var(--ink)); paint-order: stroke; stroke: var(--paper); stroke-width: 4px; stroke-linejoin: round; }
+
+/* ── English pages (Here's the Deal): <html dir="ltr"> flips every component to left-to-right ── */
+[dir="ltr"] :is(.tz-frame, .tz-callout__chip, .tz-counter, .tz-brand, .tz-legend, .tz-ask, .tz-card) { direction: ltr; }
