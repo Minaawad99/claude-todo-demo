@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>How does a plane fly? — Here's the Deal</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../../design-system/components/bundle.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@500;600;700;800;900&display=swap">
+<style>
+  /* 360×640 at 3x. A real 3D world (three.js) under paper-styled overlays. Air & lift blue, thrust & heat red, parts olive, weight ink. */
+  :root { --font-sans: "Noto Sans", "Inter", system-ui, sans-serif; --fuel: #d99a1e; --fuel-text: #a8700a; --grey: #6f695f; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  html, body { margin: 0; width: 360px; height: 640px; overflow: hidden; background: #b9d4e6; }
+  body { font-family: var(--font-sans); color: var(--ink); }
+  #gl { position: absolute; inset: 0; width: 360px; height: 640px; display: block; }
+  .ui { position: absolute; inset: 0; pointer-events: none; }
+  .brand { position: absolute; left: 14px; top: 14px; display: flex; align-items: center; gap: 6px; font: 800 11px var(--font-sans); background: color-mix(in srgb, var(--paper-raised) 88%, transparent); padding: 5px 9px 5px 6px; border-radius: 999px; }
+  .caps { position: absolute; left: 14px; right: 14px; bottom: 26px; height: 104px; }
+  .cap { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; opacity: 0; }
+  .cap p { margin: 0; font: 700 18px / 1.42 var(--font-sans); text-wrap: balance; background: color-mix(in srgb, var(--paper-raised) 94%, transparent); padding: 10px 14px; border-radius: 14px; box-shadow: 0 1px 0 rgba(43,38,32,.12); }
+  .w { --wc: var(--ink); color: color-mix(in srgb, var(--wc) var(--mix, 100%), var(--ink-ghost)); }
+  .w.tz-k--heat { --wc: var(--heat-text); } .w.tz-k--water { --wc: var(--water); } .w.tz-k--part { --wc: var(--olive-text); }
+  .w.tz-k--fuel { --wc: var(--fuel-text); } .w.tz-k--ink { --wc: var(--ink); font-weight: 900; } .w.tz-k--grey { --wc: var(--grey); }
+  .lab { position: absolute; transform: translate(-50%, -50%); font: 800 12px/1 var(--font-sans); padding: 5px 9px; border-radius: 999px; background: var(--paper-raised); color: var(--c, var(--ink)); white-space: nowrap; opacity: 0; border: 1.5px solid currentColor; }
+  .lab.big { font-size: 15px; padding: 6px 11px; }
+  .c-water { --c: var(--water); } .c-heat { --c: var(--heat-text); } .c-part { --c: var(--olive-text); } .c-fuel { --c: var(--fuel-text); } .c-ink { --c: var(--ink); } .c-grey { --c: var(--grey); }
+  .counter { position: absolute; opacity: 0; }
+  .counter > div { display: flex; gap: 6px; align-items: center; background: var(--paper-raised); padding: 4px 10px; border-radius: 12px; }
+  .num { font: 700 40px / 1 var(--font-numeral); color: var(--heat); font-variant-numeric: tabular-nums; }
+  .num.blue { color: var(--water); } .num.ink { color: var(--ink); } .num.olive { color: var(--olive-text); }
+  .unit { font: 800 12px / 1.2 var(--font-sans); }
+  .steps { position: absolute; left: 12px; right: 12px; top: 54px; opacity: 0; }
+  .steps__row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+  .step { position: relative; font: 800 11px/1 var(--font-sans); letter-spacing: .04em; text-align: center; padding: 7px 0 6px; background: var(--paper-raised); border-radius: 10px; overflow: hidden; }
+  .step b { display: block; font: 700 15px/1 var(--font-numeral); margin-bottom: 3px; }
+  .step > i { position: absolute; inset: 0; opacity: 0; } .step > i > i { position: absolute; inset: 0; background: var(--sc); mix-blend-mode: multiply; }
+  .step.c-water { --sc: color-mix(in srgb, var(--water) 45%, transparent); } .step.c-fuel { --sc: color-mix(in srgb, var(--fuel) 50%, transparent); }
+  .step.c-heat { --sc: color-mix(in srgb, var(--heat) 50%, transparent); } .step.c-grey { --sc: color-mix(in srgb, #8d877c 55%, transparent); }
+  .cut { position: absolute; inset: 0; opacity: 0; } .cut > div { position: absolute; inset: 0; background: var(--paper); }
+  .card { position: absolute; left: 22px; right: 22px; top: 50%; translate: 0 -50%; opacity: 0; }
+  .card > div { background: var(--paper-raised); border-radius: 22px; padding: 22px 18px; box-shadow: 0 10px 40px rgba(43,38,32,.18); }
+  .ink-f { fill: var(--ink); } .lit { fill: var(--paper-raised); }
+  .tz-ask { margin: 0; }
+</style>
+</head>
+<body>
+<canvas id="gl" width="1080" height="1920"></canvas>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="mark">
+    <rect x="84" y="4" width="32" height="10" class="ink-f"/><rect x="94" y="14" width="12" height="14" class="ink-f"/>
+    <path class="ink-f" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)"/>
+    <path class="lit" style="stroke:var(--ink);stroke-width:7;stroke-linejoin:round" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z"/>
+    <rect x="94" y="58" width="24" height="54" rx="4" style="fill:var(--heat)"/><rect x="94" y="120" width="24" height="20" rx="4" style="fill:var(--heat)"/>
+  </g></defs></svg>
+
+<div class="ui">
+  <div class="brand"><svg viewBox="0 0 200 200" width="20" height="20"><use href="#mark"/></svg>Here's the Deal</div>
+  <div id="labels"></div>
+
+  <!-- counters -->
+  <div class="counter" style="right:14px;top:54px" data-v="fade" data-l="0" data-o="0.6" data-d="0.3"><div data-v="out" data-l="2" data-o="0" data-d="0.3"><span class="num ink" data-v="count" data-l="0" data-o="0.6" data-d="1.6" data-from="0" data-to="987000" data-fmt="comma">987,000</span><span class="unit">pounds</span></div></div>
+  <div class="counter" style="right:14px;top:54px" data-v="fade" data-l="15" data-o="0.8" data-d="0.3"><div data-v="out" data-l="16" data-o="0.6" data-d="0.3"><span class="num" data-v="count" data-l="15" data-o="0.8" data-d="1.8" data-from="0" data-to="180">180</span><span class="unit">mph</span></div></div>
+  <div class="counter" style="right:14px;top:54px" data-v="fade" data-l="32" data-o="0.4" data-d="0.3"><div data-v="out" data-l="33" data-o="0" data-d="0.3"><span class="num blue" data-v="count" data-l="32" data-o="0.4" data-d="2" data-from="0" data-to="35000" data-fmt="comma">35,000</span><span class="unit">feet</span></div></div>
+  <div class="counter" style="right:14px;top:54px" data-v="fade" data-l="33" data-o="1.4" data-d="0.3"><div data-v="out" data-l="34" data-o="0.6" data-d="0.3"><span class="num olive" data-v="count" data-l="33" data-o="1.4" data-d="1.4" data-from="0" data-to="25">25</span><span class="unit">feet of<br>wing flex</span></div></div>
+
+  <!-- suck · squeeze · bang · blow (10–14) -->
+  <div class="steps" data-v="fade" data-l="10" data-o="0" data-d="0.3"><div data-v="out" data-l="15" data-o="-0.3" data-d="0.3" class="steps__row">
+    <div class="step c-water"><b>1</b>SUCK<i data-v="fade" data-l="10" data-o="0" data-d="0.15"><i data-v="out" data-l="10" data-o="0.45" data-d="0.15"></i></i><i data-v="fade" data-l="11" data-o="0" data-d="0.25"><i data-v="out" data-l="12" data-o="-0.1" data-d="0.25"></i></i></div>
+    <div class="step c-fuel"><b>2</b>SQUEEZE<i data-v="fade" data-l="10" data-o="0.45" data-d="0.15"><i data-v="out" data-l="10" data-o="0.9" data-d="0.15"></i></i><i data-v="fade" data-l="12" data-o="0" data-d="0.25"><i data-v="out" data-l="12" data-o="1.6" data-d="0.25"></i></i></div>
+    <div class="step c-heat"><b>3</b>BANG<i data-v="fade" data-l="10" data-o="0.9" data-d="0.15"><i data-v="out" data-l="10" data-o="1.35" data-d="0.15"></i></i><i data-v="fade" data-l="12" data-o="1.6" data-d="0.25"><i data-v="out" data-l="13" data-o="-0.1" data-d="0.25"></i></i></div>
+    <div class="step c-grey"><b>4</b>BLOW<i data-v="fade" data-l="10" data-o="1.35" data-d="0.15"><i data-v="out" data-l="11" data-o="-0.2" data-d="0.15"></i></i><i data-v="fade" data-l="13" data-o="0" data-d="0.25"><i data-v="out" data-l="15" data-o="-0.3" data-d="0.25"></i></i></div>
+  </div></div>
+
+  <div class="caps">
+    <div class="cap" data-cap="0"><p data-words="0">A jumbo jet can weigh <span class="tz-k tz-k--ink">almost a million pounds</span>.</p></div>
+    <div class="cap" data-cap="1"><p data-words="1">And it just <span class="tz-k tz-k--water">floats on air</span>. Like, literally air.</p></div>
+    <div class="cap" data-cap="2"><p data-words="2">No magic, no anti-gravity. Just a <span class="tz-k tz-k--water">really smart wing</span>.</p></div>
+    <div class="cap" data-cap="3"></div>
+    <div class="cap" data-cap="4"><p data-words="4">Every plane is fighting <span class="tz-k tz-k--heat">four forces</span> at once.</p></div>
+    <div class="cap" data-cap="5"><p data-words="5"><span class="tz-k tz-k--ink">Weight</span> pulls it down. <span class="tz-k tz-k--water">Lift</span> pushes it up.</p></div>
+    <div class="cap" data-cap="6"><p data-words="6"><span class="tz-k tz-k--heat">Thrust</span> shoves it forward. <span class="tz-k tz-k--grey">Drag</span> holds it back.</p></div>
+    <div class="cap" data-cap="7"><p data-words="7">To fly, <span class="tz-k tz-k--water">lift has to beat weight</span>, and <span class="tz-k tz-k--heat">thrust has to beat drag</span>.</p></div>
+    <div class="cap" data-cap="8"><p data-words="8">Let&#x27;s start with <span class="tz-k tz-k--heat">thrust</span>: the <span class="tz-k tz-k--part">jet engines</span>.</p></div>
+    <div class="cap" data-cap="9"><p data-words="9">And get this, they run the <span class="tz-k tz-k--heat">same routine</span> as your car engine.</p></div>
+    <div class="cap" data-cap="10"><p data-words="10"><span class="tz-k tz-k--water">Suck,</span> <span class="tz-k tz-k--fuel">squeeze,</span> <span class="tz-k tz-k--heat">bang,</span> <span class="tz-k tz-k--grey">blow.</span></p></div>
+    <div class="cap" data-cap="11"><p data-words="11">A <span class="tz-k tz-k--part">giant fan</span> up front sucks in <span class="tz-k tz-k--water">tons of air</span>.</p></div>
+    <div class="cap" data-cap="12"><p data-words="12"><span class="tz-k tz-k--part">Compressor blades</span> squeeze it, <span class="tz-k tz-k--fuel">fuel sprays in</span>, and it <span class="tz-k tz-k--heat">explodes</span>.</p></div>
+    <div class="cap" data-cap="13"><p data-words="13">That <span class="tz-k tz-k--heat">blast</span> shoots out the back and spins a <span class="tz-k tz-k--part">turbine</span>, which keeps the whole thing turning.</p></div>
+    <div class="cap" data-cap="14"><p data-words="14">But here&#x27;s the twist: <span class="tz-k tz-k--heat">most of the push</span> actually comes from that <span class="tz-k tz-k--part">big fan</span>.</p></div>
+    <div class="cap" data-cap="15"><p data-words="15">Now the plane&#x27;s racing down the runway at around <span class="tz-k tz-k--heat">180 miles an hour</span>.</p></div>
+    <div class="cap" data-cap="16"><p data-words="16">And that&#x27;s where <span class="tz-k tz-k--water">the wing</span> comes in.</p></div>
+    <div class="cap" data-cap="17"><p data-words="17">Look at it from the side. It&#x27;s <span class="tz-k tz-k--water">curved on top</span> and <span class="tz-k tz-k--water">tilted up</span> a little.</p></div>
+    <div class="cap" data-cap="18"><p data-words="18">So as air hits it, the wing <span class="tz-k tz-k--water">shoves that air down</span>.</p></div>
+    <div class="cap" data-cap="19"><p data-words="19">Push air down, and the air pushes you up. <span class="tz-k tz-k--water">That&#x27;s lift.</span></p></div>
+    <div class="cap" data-cap="20"><p data-words="20">Plus, the air rushing over the curved top <span class="tz-k tz-k--water">speeds up</span>, and its <span class="tz-k tz-k--water">pressure drops</span>.</p></div>
+    <div class="cap" data-cap="21"><p data-words="21">So you&#x27;ve got <span class="tz-k tz-k--water">high pressure</span> under the wing and <span class="tz-k tz-k--water">low pressure</span> on top.</p></div>
+    <div class="cap" data-cap="22"><p data-words="22">The wing basically gets <span class="tz-k tz-k--water">sucked upward</span>.</p></div>
+    <div class="cap" data-cap="23"><p data-words="23">Ever stuck your <span class="tz-k tz-k--part">hand out a car window</span> and tilted it? Same deal.</p></div>
+    <div class="cap" data-cap="24"><p data-words="24">Tilt it up, and <span class="tz-k tz-k--heat">boom</span>, <span class="tz-k tz-k--water">your hand flies</span>.</p></div>
+    <div class="cap" data-cap="25"><p data-words="25">For takeoff, the wings even slide out extra panels called <span class="tz-k tz-k--part">flaps</span>.</p></div>
+    <div class="cap" data-cap="26"><p data-words="26">They make the wing bigger and curvier, so you get <span class="tz-k tz-k--water">more lift</span> at low speed.</p></div>
+    <div class="cap" data-cap="27"><p data-words="27">Then the pilot pulls back, and the <span class="tz-k tz-k--part">nose tips up</span>.</p></div>
+    <div class="cap" data-cap="28"><p data-words="28">But how does it <span class="tz-k tz-k--part">steer</span> up there?</p></div>
+    <div class="cap" data-cap="29"><p data-words="29"><span class="tz-k tz-k--part">Ailerons</span> on the wings tip it <span class="tz-k tz-k--part">left or right</span>.</p></div>
+    <div class="cap" data-cap="30"><p data-words="30">The <span class="tz-k tz-k--part">elevator</span> on the tail points the nose <span class="tz-k tz-k--part">up or down</span>.</p></div>
+    <div class="cap" data-cap="31"><p data-words="31">And the <span class="tz-k tz-k--part">rudder</span> swings it <span class="tz-k tz-k--part">side to side</span>.</p></div>
+    <div class="cap" data-cap="32"><p data-words="32">Up at <span class="tz-k tz-k--water">35,000 feet</span>, the air is way thinner, so there&#x27;s <span class="tz-k tz-k--heat">way less drag</span>.</p></div>
+    <div class="cap" data-cap="33"><p data-words="33">And here&#x27;s the wild part: a Boeing <span class="tz-k tz-k--part">787&#x27;s wings can flex up about 25 feet</span>.</p></div>
+    <div class="cap" data-cap="34"><p data-words="34">So next time you fly, remember, you&#x27;re basically <span class="tz-k tz-k--water">surfing on air</span>.</p></div>
+    <div class="cap" data-cap="35"></div>
+  </div>
+
+  <!-- scene cuts -->
+  <div class="cut" data-v="fade" data-l="9" data-o="-0.4" data-d="0.25"><div data-v="out" data-l="9" data-o="0.05" data-d="0.35"></div></div>
+  <div class="cut" data-v="fade" data-l="15" data-o="-0.4" data-d="0.25"><div data-v="out" data-l="15" data-o="0.05" data-d="0.35"></div></div>
+  <div class="cut" data-v="fade" data-l="17" data-o="-0.4" data-d="0.25"><div data-v="out" data-l="17" data-o="0.05" data-d="0.35"></div></div>
+  <div class="cut" data-v="fade" data-l="23" data-o="-0.4" data-d="0.25"><div data-v="out" data-l="23" data-o="0.05" data-d="0.35"></div></div>
+  <div class="cut" data-v="fade" data-l="25" data-o="-0.4" data-d="0.25"><div data-v="out" data-l="25" data-o="0.05" data-d="0.35"></div></div>
+  <div class="cut" data-v="fade" data-l="28" data-o="-0.4" data-d="0.25"><div data-v="out" data-l="28" data-o="0.05" data-d="0.35"></div></div>
+
+  <!-- brand card (3) -->
+  <div class="card" style="text-align:center" data-v="fade" data-l="3" data-o="-0.2" data-d="0.35"><div data-v="out" data-l="4" data-o="-0.3" data-d="0.3">
+    <svg viewBox="0 0 220 220" style="width:130px;height:130px;overflow:visible">
+      <circle cx="110" cy="118" r="98" style="fill:none;stroke:var(--line-soft);stroke-width:3;opacity:.35"/>
+      <circle data-v="ring" data-l="3" data-o="-0.1" data-d="1.6" cx="110" cy="118" r="98" pathLength="100" transform="rotate(-90 110 118)" style="fill:none;stroke:var(--heat);stroke-width:4;stroke-dasharray:100"/>
+      <g transform="translate(40 40) scale(.7)"><use href="#mark"/></g>
+    </svg>
+    <div style="font:900 28px/1.2 var(--font-sans);margin-top:8px">Here's the Deal<span style="color:var(--heat)">.</span></div>
+    <div style="font:700 15px/1.4 var(--font-sans);margin-top:6px"><span data-words="3">So, here's the deal. Let me break it down in <span class="tz-k tz-k--heat">a minute.</span></span></div>
+  </div></div>
+
+  <!-- outro card (35) -->
+  <div class="card" data-v="fade" data-l="35" data-o="-0.2" data-d="0.4"><div>
+    <div style="font:900 21px/1.25 var(--font-sans);margin-bottom:12px">How does a plane fly?</div>
+    <ol class="tz-legend" style="font-size:12px;line-height:16px;--cols:1;gap:6px">
+      <li><span class="tz-num">1</span>Engines suck, squeeze, bang, blow: thrust beats drag</li>
+      <li><span class="tz-num">2</span>The tilted, curved wing pushes air down: lift beats weight</li>
+      <li><span class="tz-num">3</span>Flaps for slow speed; ailerons, elevator and rudder to steer</li>
+    </ol>
+    <div class="tz-ask" style="margin-top:14px;padding:10px;gap:0">
+      <span class="tz-ask__lead" style="font-size:15px">So, what should we</span>
+      <span class="tz-ask__line" style="font-size:18px">break down next? <span class="tz-ask__blank" style="min-width:2.5em"></span></span>
+    </div>
+    <div style="font:700 13px/1.4 var(--font-sans);margin-top:10px;text-align:center"><span data-words="35">So, what should we break down next? Drop it in the comments.</span></div>
+  </div></div>
+</div>
+
+<script src="timing.js"></script>
+<script src="../../design-system/components/bundle.js"></script>
+<script src="../lib/three.min.js"></script>
+<script src="world.js"></script>
+<script>
+  // HTML labels pinned to 3D points: [anchor, text, colour, from line, offset, to line, offset, big]
+  (function () {
+    var LB = [["plane", "987,000 lb jumbo jet", "c-ink", 1, 0.2, 2, 0, 1], ["wing", "the wing", "c-water", 2, 1.0, 3, -0.3, 1],
+      ["lift", "LIFT", "c-water", 5, 1.2, 8, 0, 1], ["weight", "WEIGHT", "c-ink", 5, 0.3, 8, 0, 1], ["thrust", "THRUST", "c-heat", 6, 0.3, 8, 0, 1], ["drag", "DRAG", "c-grey", 6, 1.5, 8, 0, 1],
+      ["engine", "jet engine", "c-part", 8, 0.8, 9, -0.3, 1],
+      ["fan", "fan", "c-part", 11, 0.2, 12, 0], ["comp", "compressor", "c-part", 12, 0.1, 13, 0], ["burn", "fuel + fire", "c-heat", 12, 1.6, 13, 0.4], ["turb", "turbine", "c-heat", 13, 0.8, 14, 0], ["bypass", "most of the push", "c-water", 14, 0.8, 15, -0.3, 1],
+      ["low", "LOW PRESSURE", "c-water", 21, 0.3, 23, -0.3], ["high", "HIGH PRESSURE", "c-water", 21, 1.2, 23, -0.3], ["foilLift", "LIFT", "c-water", 19, 1.0, 23, -0.3, 1], ["down", "air pushed down", "c-water", 18, 1.2, 20, 0],
+      ["handLift", "LIFT", "c-water", 24, 1.2, 25, -0.3, 1], ["flap", "flaps", "c-part", 25, 1.2, 27, 0, 1],
+      ["aileron", "aileron", "c-part", 29, 0.1, 30, 0, 1], ["elevator", "elevator", "c-part", 30, 0.1, 31, 0, 1], ["rudder", "rudder", "c-part", 31, 0.1, 32, 0, 1]];
+    var host = document.getElementById("labels"), LN = TIMING.lines;
+    function S(i) { return LN[Math.min(i, LN.length - 1)].start; }
+    LB.forEach(function (b) { var d = document.createElement("div"); d.className = "lab " + b[2] + (b[7] ? " big" : ""); d.textContent = b[1]; host.appendChild(d); b.el = d; });
+    window.__labels = function (t) {
+      LB.forEach(function (b) {
+        var a = S(b[3]) + b[4], z = S(b[5]) + b[6], o = Math.min(1, Math.max(0, (t - a) / 0.3), Math.max(0, (z - t) / 0.3));
+        if (o <= 0) { b.el.style.opacity = 0; return; }
+        var p = window.__project(b[0]); if (!p || p[2] > 1) { b.el.style.opacity = 0; return; }
+        b.el.style.opacity = o.toFixed(3); b.el.style.left = Math.max(40, Math.min(320, p[0])).toFixed(1) + "px"; b.el.style.top = Math.max(60, Math.min(500, p[1])).toFixed(1) + "px";
+      });
+    };
+  })();
+</script>
+<script src="../engine.js"></script>
+<script>(function () { var r = window.renderAt; window.renderAt = function (t) { r(t); window.__world(t); window.__labels(t); }; renderAt(0.5); })();</script>
+</body>
+</html>

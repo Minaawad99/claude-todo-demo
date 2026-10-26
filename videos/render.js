@@ -11,7 +11,7 @@ const SCALE = +(process.env.SCALE || 3);
 const TAIL = +(process.env.TAIL || 2.3);
 
 (async () => {
-  const b = await chromium.launch();
+  const b = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] }); // WebGL for three.js scenes
   const p = await b.newPage({ viewport: { width: 360, height: 640 }, deviceScaleFactor: SCALE });
   await p.goto('file://' + html);
   await p.waitForTimeout(3000); // fonts

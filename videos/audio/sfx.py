@@ -200,6 +200,21 @@ def fx_coolant(d=2.0):        # liquid rushing through hoses
     t = t_(d); x = lp_fast(noise(len(t)), 1100, 2) * 2 * (0.7 + 0.3 * np.sin(2 * np.pi * 2.2 * t))
     return (x + 0.5 * bubbles(d, 14, 300, 900, decay=False)) * env(len(t), .3, .5)
 
+# ── aviation foley ────────────────────────────────────────
+def fx_jet(d=3.0):            # turbofan: low roar + fan whine
+    t = t_(d); roar = lp_fast(noise(len(t)), 600, 3) * 6
+    wh = 0.25 * np.sin(2 * np.pi * np.cumsum(1800 + 200 * np.sin(2 * np.pi * 0.3 * t)) / SR) + 0.12 * np.sin(2 * np.pi * np.cumsum(3600 + 400 * np.sin(2 * np.pi * 0.3 * t)) / SR)
+    return (roar + wh) * env(len(t), .4, .6)
+def fx_spool(d=2.0):          # engine spooling up: whine rises
+    t = t_(d); f = 600 + 2200 * (t / d) ** 1.4; wh = 0.4 * np.sin(2 * np.pi * np.cumsum(f) / SR)
+    return (wh + lp_fast(noise(len(t)), 800, 2) * 4 * (t / d)) * env(len(t), .1, .3)
+def fx_wind(d=3.0):           # steady airflow over a wing
+    t = t_(d); x = lp_fast(noise(len(t)), 1500, 2) * 3 * (0.75 + 0.25 * np.sin(2 * np.pi * 0.4 * t))
+    return x * env(len(t), .5, .7)
+def fx_servo(d=0.8):          # flap / control-surface actuator
+    t = t_(d); f = 380 + 120 * np.sin(np.pi * t / d); x = 0.5 * np.sign(np.sin(2 * np.pi * np.cumsum(f) / SR)) + 0.3 * np.sin(2 * np.pi * np.cumsum(2 * f) / SR)
+    return lp_fast(x, 2200, 1) * env(len(t), .05, .15) * 0.7
+
 FX = {k[3:]: v for k, v in globals().items() if k.startswith("fx_")}
 
 # ── music bed: soft chords + plucks, 84 bpm, voice band carved out ──
