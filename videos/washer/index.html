@@ -19,22 +19,22 @@
   .w { --wc: #2e2b27; color: color-mix(in srgb, var(--wc) var(--mix, 100%), rgba(46,43,39,.25)); }
   .w.k-blue { --wc: #2f6f9f; } .w.k-red { --wc: #c2452a; } .w.k-or { --wc: #d9741e; }
   /* drawing */
-  .w-cab { fill: #f4f2ec; stroke: #4a4744; stroke-width: 1.4; } .w-cab-top { fill: #e3e0d8; stroke: #4a4744; stroke-width: 1.2; } .w-foot { fill: #5b5753; }
-  .w-tub { fill: #dfe5e8; stroke: #4a4744; stroke-width: 1.6; } .w-drum { fill: rgba(199,211,220,.62); stroke: #4a4744; stroke-width: 1.4; }
+  .w-cab { fill: url(#gCab); stroke: #4a4744; stroke-width: 1.4; } .w-cab-top { fill: url(#gCabTop); stroke: #4a4744; stroke-width: 1.2; } .w-foot { fill: #5b5753; }
+  .w-tub { fill: url(#gTub); stroke: #4a4744; stroke-width: 1.6; } .w-drum { fill: url(#gDrum); stroke: url(#gChrome); stroke-width: 4; }
   .w-pulley-ghost { fill: none; stroke: #6d7780; stroke-width: 1; stroke-dasharray: 4 4; opacity: .7; }
-  .w-holes { fill: none; stroke: #7d8a96; stroke-width: 3.2; stroke-linecap: round; } .w-blur { fill: none; stroke: rgba(125,138,150,.35); stroke-width: 22; }
-  .w-paddle { fill: #c9d2d9; stroke: #4a4744; stroke-width: 1.2; stroke-linejoin: round; } .w-hub { fill: #8d969e; stroke: #4a4744; stroke-width: 1.2; }
-  .w-water { fill: rgba(126,178,214,.55); stroke: #5d9cc8; stroke-width: 1; }
+  .w-holes { fill: none; stroke: #4f5d68; stroke-width: 3.4; stroke-linecap: round; } .w-holes-hi { fill: none; stroke: rgba(255,255,255,.7); stroke-width: 1.4; stroke-linecap: round; } .w-blur { fill: none; stroke: rgba(125,138,150,.35); stroke-width: 22; }
+  .w-paddle { fill: url(#gSteel); stroke: #4a4744; stroke-width: 1.2; stroke-linejoin: round; } .w-hub { fill: url(#gChrome); stroke: #4a4744; stroke-width: 1.2; }
+  .w-water { fill: url(#gWater); stroke: #4f93c6; stroke-width: 1.2; } .w-bubble { fill: rgba(255,255,255,.75); stroke: rgba(79,147,198,.6); stroke-width: .6; }
   .w-heater { fill: none; stroke-width: 2.6; stroke-linejoin: round; stroke-linecap: round; } .w-heater-glow { fill: none; stroke: #f5a27a; stroke-width: 9; stroke-linejoin: round; }
-  .w-concrete { fill: #bdb6a8; stroke: #4a4744; stroke-width: 1.2; } .w-concrete-dots { fill: url(#tz-dots); opacity: .35; }
+  .w-concrete { fill: url(#gConcrete); stroke: #4a4744; stroke-width: 1.2; } .w-concrete-dots { fill: url(#tz-dots); opacity: .35; }
   .w-spring { fill: none; stroke: #4a4744; stroke-width: 1.4; stroke-linejoin: round; }
-  .w-damper { stroke: #5b5753; stroke-width: 7; stroke-linecap: round; } .w-rod { stroke: #a9a49c; stroke-width: 3.2; stroke-linecap: round; } .w-pin { fill: #f4f2ec; stroke: #4a4744; stroke-width: 1; }
-  .w-motor { fill: #8d969e; stroke: #4a4744; stroke-width: 1.4; } .w-pulley { fill: #c9d2d9; stroke: #4a4744; stroke-width: 1.2; } .w-spoke { stroke: #4a4744; stroke-width: 1.4; }
+  .w-damper { stroke: url(#gDamper); stroke-width: 8; stroke-linecap: round; } .w-rod { stroke: #a9a49c; stroke-width: 3.2; stroke-linecap: round; } .w-pin { fill: #f4f2ec; stroke: #4a4744; stroke-width: 1; }
+  .w-motor { fill: url(#gMotor); stroke: #4a4744; stroke-width: 1.4; } .w-pulley { fill: url(#gChrome); stroke: #4a4744; stroke-width: 1.2; } .w-spoke { stroke: #4a4744; stroke-width: 1.4; }
   .w-belt { fill: none; stroke: #3b3835; stroke-width: 2; }
-  .w-pump { fill: #b9c3ca; stroke: #4a4744; stroke-width: 1.2; } .w-blade { stroke: #4a4744; stroke-width: 1.6; }
+  .w-pump { fill: url(#gMotor); stroke: #4a4744; stroke-width: 1.2; } .w-blade { stroke: #4a4744; stroke-width: 1.6; }
   .w-hose { fill: none; stroke: #8d969e; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; } .w-hose-thin { fill: none; stroke: #8d969e; stroke-width: 3; stroke-linecap: round; }
   .w-valve { fill: #c9d2d9; stroke: #4a4744; stroke-width: 1; } .w-drawer { fill: #f4f2ec; stroke: #4a4744; stroke-width: 1.2; }
-  .w-cloth { stroke: rgba(46,43,39,.55); stroke-width: .9; }
+  .w-cloth { stroke: rgba(46,43,39,.6); stroke-width: .9; } .w-cloth-shade { fill: url(#gShade); } .w-fold { fill: none; stroke: rgba(0,0,0,.28); stroke-width: 1; stroke-linecap: round; } .w-shadow { fill: url(#gFloorShadow); }
   .w-drop { fill: #5d9cc8; } .w-dirty { fill: #8a6a48; } .w-powder { fill: #ffffff; stroke: #8d969e; stroke-width: .5; }
   .w-lock { fill: #d9741e; stroke: #4a4744; stroke-width: 1; } .w-lock-arc { fill: none; stroke: #4a4744; stroke-width: 2; }
   .c-lead { fill: none; stroke: #6d6a65; stroke-width: 1; } .c-dot { fill: #f4f2ec; stroke: #4a4744; stroke-width: 1.2; } .c-num { font: 800 13px var(--font-sans); fill: #2e2b27; }
@@ -44,10 +44,10 @@
   .b-socket { fill: #f8f6f1; stroke: #4a4744; stroke-width: 1.2; } .b-plug { fill: #3b3835; } .b-cable { fill: none; stroke: #3b3835; stroke-width: 2.2; }
   .b-tap { fill: none; stroke: #8d969e; stroke-width: 4; stroke-linecap: round; } .b-hose { fill: none; stroke: #8d969e; stroke-width: 5; stroke-linecap: round; } .b-drain { fill: #8d969e; }
   .b-motion { fill: none; stroke: #6d6a65; stroke-width: 2; stroke-linecap: round; }
-  .m-front { fill: #f8f7f3; stroke: #4a4744; stroke-width: 1.4; } .m-side { fill: #dedad1; stroke: #4a4744; stroke-width: 1.4; } .m-top { fill: #ece9e2; stroke: #4a4744; stroke-width: 1.4; }
+  .m-front { fill: url(#gCab); stroke: #4a4744; stroke-width: 1.4; } .m-side { fill: url(#gSide); stroke: #4a4744; stroke-width: 1.4; } .m-top { fill: url(#gCabTop); stroke: #4a4744; stroke-width: 1.4; }
   .m-panel { fill: #eceae4; stroke: #4a4744; stroke-width: 1; } .m-drawer { fill: #f8f7f3; stroke: #4a4744; stroke-width: 1; } .m-knob { fill: #f8f7f3; stroke: #4a4744; stroke-width: 1.4; }
   .m-display { fill: #2e2b27; } .m-digits { font: 700 10px var(--font-numeral); fill: #e8453a; } .m-btn { fill: #d9d6ce; stroke: #4a4744; stroke-width: .6; }
-  .m-door { fill: #d9dde0; stroke: #4a4744; stroke-width: 1.6; } .m-glass { fill: #c7d3dc; stroke: #4a4744; stroke-width: 1.2; } .m-handle { stroke: #4a4744; stroke-width: 4; stroke-linecap: round; }
+  .m-door { fill: #e7eaec; stroke: url(#gChrome); stroke-width: 8; } .m-glass { fill: url(#gGlass); stroke: #4a4744; stroke-width: 1.2; } .m-refl { fill: none; stroke: rgba(255,255,255,.75); stroke-width: 4; stroke-linecap: round; } .m-handle { stroke: #4a4744; stroke-width: 4; stroke-linecap: round; }
   /* strips at the bottom */
   .strip { position: absolute; left: 24px; right: 24px; bottom: 34px; height: 64px; opacity: 0; }
   .strip svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
@@ -70,6 +70,22 @@
 </head>
 <body>
 <div class="canvas" id="paper"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="gCab" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#f1efea"/><stop offset="1" stop-color="#dcd8cf"/></linearGradient>
+  <linearGradient id="gCabTop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7f6f2"/><stop offset="1" stop-color="#cfcac0"/></linearGradient>
+  <linearGradient id="gSide" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d8d4cb"/><stop offset="1" stop-color="#b9b3a7"/></linearGradient>
+  <radialGradient id="gTub" cx=".4" cy=".35" r=".75"><stop offset="0" stop-color="#f2f5f7"/><stop offset=".7" stop-color="#cdd6dc"/><stop offset="1" stop-color="#9eabb4"/></radialGradient>
+  <radialGradient id="gDrum" cx=".36" cy=".3" r=".8"><stop offset="0" stop-color="#ffffff" stop-opacity=".9"/><stop offset=".45" stop-color="#d3dce2" stop-opacity=".75"/><stop offset="1" stop-color="#8496a3" stop-opacity=".85"/></radialGradient>
+  <linearGradient id="gChrome" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbfbfb"/><stop offset=".35" stop-color="#a7b0b7"/><stop offset=".6" stop-color="#eef1f3"/><stop offset="1" stop-color="#7f8a92"/></linearGradient>
+  <linearGradient id="gSteel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eef2f4"/><stop offset="1" stop-color="#8d9ba6"/></linearGradient>
+  <linearGradient id="gWater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd0ee" stop-opacity=".55"/><stop offset="1" stop-color="#3f86bf" stop-opacity=".75"/></linearGradient>
+  <linearGradient id="gConcrete" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6d0c3"/><stop offset="1" stop-color="#9f978a"/></linearGradient>
+  <radialGradient id="gMotor" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#d4dadf"/><stop offset="1" stop-color="#5f6a72"/></radialGradient>
+  <radialGradient id="gGlass" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#eaf3f8" stop-opacity=".9"/><stop offset=".6" stop-color="#a9bfcd" stop-opacity=".75"/><stop offset="1" stop-color="#5d7686" stop-opacity=".9"/></radialGradient>
+  <linearGradient id="gShade" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".45"/><stop offset=".5" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity=".35"/></linearGradient>
+  <linearGradient id="gDamper" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3b3835"/><stop offset=".45" stop-color="#7a7570"/><stop offset="1" stop-color="#2e2b28"/></linearGradient>
+  <radialGradient id="gFloorShadow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".28"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+</defs></svg>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
   <g id="mark">
     <rect x="84" y="4" width="32" height="10" class="ink-f"/><rect x="94" y="14" width="12" height="14" class="ink-f"/>
@@ -114,7 +130,7 @@
 </div>
 
 <!-- 0: the concrete, ~25 kg -->
-<div class="card" style="top:430px;left:70px;right:70px" data-v="fade" data-l="0" data-o="1.2" data-d="0.4"><div data-v="out" data-l="1" data-o="0" data-d="0.3"><span class="big" style="font-size:30px">≈ ٢٥ كجم</span></div></div>
+<div class="card" style="top:468px;left:80px;right:80px" data-v="fade" data-l="0" data-o="1.2" data-d="0.4"><div data-v="out" data-l="1" data-o="0" data-d="0.3"><span class="big" style="font-size:30px">≈ ٢٥ كجم</span></div></div>
 <!-- 3: brand -->
 <div class="card" data-v="fade" data-l="3" data-o="-0.2" data-d="0.35"><div data-v="out" data-l="4" data-o="-0.3" data-d="0.3">
   <svg viewBox="0 0 200 200" width="90" height="90"><use href="#mark"/></svg>

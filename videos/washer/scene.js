@@ -45,7 +45,7 @@
   }
 
   // garments: colour, size, phase
-  var CL = [["#8b5a3c", 15, 0.0], ["#a8704a", 12, 0.18], ["#c99a6a", 13, 0.37], ["#7a4a30", 11, 0.55], ["#b98058", 14, 0.71], ["#9a6440", 10, 0.86], ["#d3a77a", 9, 0.44]];
+  var CL = [["#3f5f8f", 24, 0.0], ["#c8452f", 20, 0.18], ["#f1efe8", 22, 0.37], ["#e8b830", 17, 0.55], ["#4f8f5a", 21, 0.71], ["#8d939a", 19, 0.86], ["#e48aa0", 15, 0.44]];   // jeans, red tee, white towel, yellow, green, grey hoodie, pink
   function garment(t, i, cx, cy, R) {
     var m = mode(t), th = drumA(t), c = CL[i];
     var pinned = function (base) { var a = base + th; return [cx + Math.cos(a) * (R - c[1] * 0.6), cy + Math.sin(a) * (R - c[1] * 0.6), a]; };
@@ -74,7 +74,8 @@
   function section(g, t) {
     var s = shake(t), cx = 180 + s[0], cy = 318 + s[1], RO = 100, R = 87, th = drumA(t), m = mode(t), sp = omega(t);
     // cabinet
-    el("rect", { x: 66, y: 148, width: 228, height: 336, rx: 4, "class": "w-cab" }, g);
+    el("ellipse", { cx: 180, cy: 494, rx: 150, ry: 12, "class": "w-shadow" }, g);
+    el("rect", { x: 66, y: 148, width: 228, height: 336, rx: 8, "class": "w-cab" }, g);
     el("rect", { x: 66, y: 148, width: 228, height: 12, "class": "w-cab-top" }, g);
     el("rect", { x: 82, y: 484, width: 20, height: 6, "class": "w-foot" }, g); el("rect", { x: 258, y: 484, width: 20, height: 6, "class": "w-foot" }, g);
     // inlet: tap → valve → detergent drawer → tub
@@ -98,6 +99,7 @@
       var yW = cy + RO - wl * 2 * RO, hw = Math.sqrt(Math.max(0, RO * RO - Math.pow(yW - cy, 2))) - 2, wav = 2.5 * Math.sin(t * 4);
       el("path", { d: "M" + f1(cx - hw) + " " + f1(yW) + " Q" + f1(cx) + " " + f1(yW + wav) + " " + f1(cx + hw) + " " + f1(yW) + " A" + (RO - 2) + " " + (RO - 2) + " 0 0 1 " + f1(cx - hw) + " " + f1(yW) + " Z", "class": "w-water" }, g);
     }
+    if (wl > 0.05 && mode(t) === "tumble") for (var bb = 0; bb < 10; bb++) { var ub = ((bb * 0.41 + t * 0.6) % 1), bx = cx - 60 + bb * 13, by = cy + RO - 6 - ub * wl * 2 * RO * 0.9; el("circle", { cx: f1(bx + Math.sin(t * 3 + bb) * 3), cy: f1(by), r: (1.5 + (bb % 3)).toFixed(1), "class": "w-bubble", style: "opacity:" + (1 - ub).toFixed(2) }, g); }
     var hot = win(t, L(13) + 0.3, L(14) + 0.2);
     el("path", { d: "M" + f1(cx - 30) + " " + f1(cy + 92) + " l7 -6 l7 6 l7 -6 l7 6 l7 -6 l7 6 l7 -6 l7 6", "class": "w-heater", style: "stroke:" + (hot ? "#d8452a" : "#9a8f80") }, g);
     if (hot) el("path", { d: "M" + f1(cx - 30) + " " + f1(cy + 92) + " l7 -6 l7 6 l7 -6 l7 6 l7 -6 l7 6 l7 -6 l7 6", "class": "w-heater-glow", style: "opacity:" + (0.5 * hot * (0.7 + 0.3 * Math.sin(t * 9))).toFixed(2) }, g);
@@ -110,6 +112,7 @@
     el("circle", { cx: f1(cx), cy: f1(cy), r: R - 30, "class": "w-pulley-ghost" }, g);
     var holes = []; for (var ring = 0; ring < 4; ring++) { var rr = 22 + ring * 18, nn = 6 + ring * 7; for (var h = 0; h < nn; h++) { var a = th + h / nn * Math.PI * 2 + ring * 0.3; holes.push("M" + f1(cx + Math.cos(a) * rr) + " " + f1(cy + Math.sin(a) * rr) + "h0.01"); } }
     el("path", { d: holes.join(""), "class": "w-holes" }, g);
+    el("path", { d: holes.join("").replace(/M([\d.\-]+) ([\d.\-]+)/g, function (m0, x, y) { return "M" + (+x - 0.6).toFixed(1) + " " + (+y - 0.6).toFixed(1); }), "class": "w-holes-hi" }, g);
     if (sp > 12) el("circle", { cx: f1(cx), cy: f1(cy), r: R - 8, "class": "w-blur" }, g);
     for (var p = 0; p < 3; p++) { var pa2 = th + p * Math.PI * 2 / 3, x1 = cx + Math.cos(pa2 - 0.12) * R, y1 = cy + Math.sin(pa2 - 0.12) * R, x2 = cx + Math.cos(pa2 + 0.12) * R, y2 = cy + Math.sin(pa2 + 0.12) * R, x3 = cx + Math.cos(pa2) * (R - 16), y3 = cy + Math.sin(pa2) * (R - 16);
       el("path", { d: "M" + f1(x1) + " " + f1(y1) + " L" + f1(x3) + " " + f1(y3) + " L" + f1(x2) + " " + f1(y2) + " Z", "class": "w-paddle" }, g); }
@@ -118,7 +121,9 @@
     CL.forEach(function (c, i) {
       var q = garment(t, i, cx, cy, R), rot = q[2] * 57.3;
       var gg = el("g", { transform: "translate(" + f1(q[0]) + " " + f1(q[1]) + ") rotate(" + f1(rot) + ")" }, g);
-      el("path", { d: "M" + (-c[1]) + " " + (-c[1] * 0.55) + " q" + c[1] * 0.4 + " " + (-c[1] * 0.5) + " " + c[1] * 1.1 + " " + (-c[1] * 0.1) + " q" + c[1] * 0.9 + " " + c[1] * 0.2 + " " + c[1] * 0.9 + " " + c[1] * 0.75 + " q" + (-c[1] * 0.3) + " " + c[1] * 0.6 + " " + (-c[1] * 1.2) + " " + c[1] * 0.45 + " q" + (-c[1] * 0.8) + " " + (-c[1] * 0.2) + " " + (-c[1] * 0.8) + " " + (-c[1] * 1.1) + " Z", fill: c[0], "class": "w-cloth" }, gg);
+      var cd = "M" + (-c[1]) + " " + (-c[1] * 0.55) + " q" + c[1] * 0.4 + " " + (-c[1] * 0.5) + " " + c[1] * 1.1 + " " + (-c[1] * 0.1) + " q" + c[1] * 0.9 + " " + c[1] * 0.2 + " " + c[1] * 0.9 + " " + c[1] * 0.75 + " q" + (-c[1] * 0.3) + " " + c[1] * 0.6 + " " + (-c[1] * 1.2) + " " + c[1] * 0.45 + " q" + (-c[1] * 0.8) + " " + (-c[1] * 0.2) + " " + (-c[1] * 0.8) + " " + (-c[1] * 1.1) + " Z";
+      el("path", { d: cd, fill: c[0], "class": "w-cloth" }, gg); el("path", { d: cd, "class": "w-cloth-shade" }, gg);
+      el("path", { d: "M" + (-c[1] * 0.5) + " " + (-c[1] * 0.2) + " q" + c[1] * 0.5 + " " + c[1] * 0.35 + " " + c[1] * 1.2 + " " + c[1] * 0.15 + " M" + (-c[1] * 0.3) + " " + c[1] * 0.25 + " q" + c[1] * 0.4 + " " + c[1] * 0.2 + " " + c[1] * 0.8 + " 0", "class": "w-fold" }, gg);
     });
     // water flung out through the holes during the spin (19)
     var fling = win(t, L(19), L(20) + 0.2);
@@ -146,6 +151,7 @@
     var jx = walk ? Math.sin(t * 40) * 2.2 + walk * 10 : 0, jy = walk ? Math.abs(Math.sin(t * 33)) * -1.5 : 0;
     var m = el("g", { transform: "translate(" + f1(jx) + " " + f1(jy) + ")" }, g);
     el("path", { d: "M167 143 C170 190 130 200 120 228", "class": "b-cable" }, m);
+    el("ellipse", { cx: 196, cy: 414, rx: 128, ry: 12, "class": "w-shadow" }, m);
     el("path", { d: "M268 210 L300 186 V380 L268 410 Z", "class": "m-side" }, m);
     el("path", { d: "M92 210 L124 186 H300 L268 210 Z", "class": "m-top" }, m);
     el("rect", { x: 92, y: 210, width: 176, height: 200, rx: 3, "class": "m-front" }, m);
@@ -160,7 +166,8 @@
     var th = drumA(t), holes = [];
     for (var h = 0; h < 24; h++) { var a = th + h / 24 * Math.PI * 2, rr = 16 + (h % 3) * 11; holes.push("M" + f1(dcx + Math.cos(a) * rr) + " " + f1(dcy + Math.sin(a) * rr) + "h0.01"); }
     el("path", { d: holes.join(""), "class": "w-holes" }, m);
-    [0, 2, 4].forEach(function (i) { var q = garment(t, i, dcx, dcy, 48); var c = CL[i]; el("ellipse", { cx: f1(q[0]), cy: f1(q[1]), rx: c[1] * 0.8, ry: c[1] * 0.5, fill: c[0], "class": "w-cloth", transform: "rotate(" + f1(q[2] * 57.3) + " " + f1(q[0]) + " " + f1(q[1]) + ")" }, m); });
+    [0, 2, 4].forEach(function (i) { var q = garment(t, i, dcx, dcy, 48); var c = CL[i]; el("ellipse", { cx: f1(q[0]), cy: f1(q[1]), rx: c[1] * 0.55, ry: c[1] * 0.35, fill: c[0], "class": "w-cloth", transform: "rotate(" + f1(q[2] * 57.3) + " " + f1(q[0]) + " " + f1(q[1]) + ")" }, m); });
+    el("path", { d: "M" + (dcx - 34) + " " + (dcy - 22) + " A40 40 0 0 1 " + (dcx - 6) + " " + (dcy - 40), "class": "m-refl" }, m);
     el("path", { d: "M244 312 v20", "class": "m-handle" }, m);
     el("path", { d: "M300 330 C330 340 330 420 310 440 H280", "class": "b-hose" }, m);
     el("rect", { x: 270, y: 436, width: 26, height: 8, "class": "b-drain" }, cvs);
