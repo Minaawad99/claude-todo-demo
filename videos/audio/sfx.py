@@ -215,6 +215,30 @@ def fx_servo(d=0.8):          # flap / control-surface actuator
     t = t_(d); f = 380 + 120 * np.sin(np.pi * t / d); x = 0.5 * np.sign(np.sin(2 * np.pi * np.cumsum(f) / SR)) + 0.3 * np.sin(2 * np.pi * np.cumsum(2 * f) / SR)
     return lp_fast(x, 2200, 1) * env(len(t), .05, .15) * 0.7
 
+# robot vacuum
+def fx_vac(d=3.0):            # vacuum fan: airy hiss + a high motor whine, slow wobble
+    t = t_(d); whine = 0.25 * np.sin(2 * np.pi * (1180 + 25 * np.sin(2 * np.pi * 0.7 * t)) * t)
+    return (lp_fast(hp_fast(noise(len(t)), 300), 4000, 1) * 0.5 + whine) * env(len(t), .3, .4)
+def fx_bump(d=0.3):           # plastic bumper knocks into something
+    t = t_(d); x = np.sin(2 * np.pi * (220 * np.exp(-t * 20) + 140) * t) * np.exp(-t * 28) + 0.4 * lp_fast(noise(len(t)), 2500, 1) * np.exp(-t * 60)
+    return x.astype(np.float32)
+def fx_ping(d=0.5):           # sonar: short high ping with an echo
+    t = t_(d); p = lambda t0, a: a * np.sin(2 * np.pi * 2600 * (t - t0)) * np.exp(-np.maximum(0, t - t0) * 40) * (t >= t0)
+    return (p(0, 1) + p(0.16, 0.35)).astype(np.float32)
+def fx_beep(d=0.7):           # low battery: two falling beeps
+    t = t_(d); f = np.where(t < 0.3, 1320, 990); g = ((t % 0.35) < 0.2).astype(np.float32)
+    return (0.6 * np.sign(np.sin(2 * np.pi * f * t)) * 0.3 + 0.5 * np.sin(2 * np.pi * f * t)) * g * env(len(t), .005, .05)
+def fx_chime(d=1.0):          # docked / charging: rising three-note chime
+    t = t_(d); x = np.zeros(len(t), np.float32)
+    for k, f in enumerate([784, 988, 1319]):
+        t0 = k * 0.13; m = t >= t0; x[m] += (np.sin(2 * np.pi * f * (t[m] - t0)) * np.exp(-(t[m] - t0) * 6)).astype(np.float32)
+    return x
+def fx_notify(d=0.6):         # phone notification: two soft bubbles
+    t = t_(d); x = np.zeros(len(t), np.float32)
+    for t0, f in [(0, 880), (0.14, 1175)]:
+        m = t >= t0; x[m] += (np.sin(2 * np.pi * f * (t[m] - t0)) * np.exp(-(t[m] - t0) * 12)).astype(np.float32)
+    return x
+
 FX = {k[3:]: v for k, v in globals().items() if k.startswith("fx_")}
 
 # ── music bed: soft chords + plucks, 84 bpm, voice band carved out ──
