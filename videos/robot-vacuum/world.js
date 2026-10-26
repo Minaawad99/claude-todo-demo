@@ -81,7 +81,7 @@
               K_(12, 2.3, -80, 140), K_(13, 0, -40, 105), K_(14, 0, 40, 155), K_(15, 0.8, 166, 155), K_(15, 1.4, 166, 155), K_(15, 2.4, 118, 155, 1),
               K_(16, 0, 0, 100), K_(16, 1.0, -12, -60), K_(16, 2.2, -110, -150), K_(18, 0.2, -110, -150), K_(18, 1.4, -60, -70, 1), K_(19, 0.9, -12, 0),
               K_(22, 0, -12, 0), K_(22, 1.0, -12, -80), K_(22, 3.6, 200, -80), K_(23, 1.6, 200, 80), K_(24, 0.4, 100, 80), K_(25, 2.4, -20, 140),
-              K_(26, 0.6, -20, 140), K_(26, 1.8, -70, 145), K_(27, 0.6, -170, 140), K_(27, 1.6, -180, 40), K_(27, 2.6, D[0], D[1]),
+              K_(26, 0.1, -28, 141), K_(26, 1.8, -70, 145), K_(27, 0.6, -170, 140), K_(27, 1.6, -180, 40), K_(27, 2.6, D[0], D[1]),
               K_(28, 1.2, D[0], D[1]), K_(28, 1.9, -165, 40, 1), K_(28, 2.7, -170, 140), K_(29, 0.4, -20, 140), K_(30, 0, 80, 150), [200, 80, 150]];
   function route(t) { return t < L(4) ? HOOK : MAIN; }
   function legAt(R, t) { var i = 0; while (i < R.length - 2 && R[i + 1][0] <= t) i++; return i; }
@@ -111,7 +111,8 @@
     // stuck under the sofa: wheels spin, the body only rocks and twists
     var stuck = win(t, L(16) + 2.2, L(18) + 0.2, 0.2);
     if (stuck) { x += Math.sin(t * 31) * 1.6 * stuck; h += (0.35 * Math.sin((t - L(16)) * 2.2)) * stuck; }
-    // bumper hit the toy
+    // low battery: it stops and turns in place, looking for the dock's signal
+    var look = clamp((t - L(25) - 2.4) / (L(26) + 1.0 - L(25) - 2.4)); if (look > 0 && look < 1) h += 2 * Math.PI * easeIO(look);   // one full turn, scanning
     return { x: x, y: y, h: h, stuck: stuck };
   }
   function bumpAmt(t) { var a = L(11) + 0.4; return t > a - 0.05 && t < a + 0.5 ? Math.exp(-Math.max(0, t - a) * 9) : 0; }
@@ -265,14 +266,15 @@
   var SH = [[0, "R", 1.17], [L(4), "R", 1.95], [L(5), "R", 2.99], [L(6), "R", 1.95], [L(7), [0, 0, 0], 0.8], [L(8), "R", 1.82], [L(9), "R", 1.82], [L(10), "R", 2.08],
             [L(11), "R", 2.86], [L(12), "R", 2.21], [L(13), "R", 1.82], [L(14), [150, 150, -10], 2.0], [L(15) + 0.6, [168, 155, -20], 2.6], [L(16), "R", 1.69], [L(16) + 2.0, [-110, -150, 10], 2.2],
             [L(18), "R", 1.69], [L(19), [10, 0, 0], 2.2], [L(20) + 0.6, [8, 0, 0], 2.6], [L(22), [95, 0, 0], 1.3], [L(23), [20, 0, 0], 0.95], [L(24), "R", 1.82],
-            [L(25), "R", 2.47], [L(26), [-180, 60, 10], 1.5], [L(27), [-80, 80, 0], 0.95], [L(27) + 2.2, [D[0], D[1], 10], 2.2], [L(28) + 1.6, "R", 1.69], [L(29), [0, 0, 0], 0.9]];
+            [L(25), "R", 2.47], [L(26), [-180, 60, 10], 1.5], [L(27), [-80, 80, 0], 0.95], [L(27) + 2.2, [D[0], D[1], 10], 2.2], [L(28) + 1.6, "R", 1.69], [L(29), "R", 1.25]];
   function tgt(v, t) { if (v === "R") { var r = robot(t); return [r.x, r.y, 14]; } return v; }
   function camAt(t) {
     var i = 0; while (i < SH.length - 1 && SH[i + 1][0] <= t) i++;
     var b = SH[i], a = SH[Math.max(0, i - 1)], k = easeIO((t - b[0]) / 1.0); if (i === 0) k = 1;
     var pa = tgt(a[1], t), pb = tgt(b[1], t), hold = Math.max(0, t - b[0] - 1.0), prev = i === 0 ? 0 : Math.max(0, Math.min(3, b[0] - a[0] - 1.0));
     var z = Math.exp(lerp(Math.log(a[2] * (1 + 0.035 * prev)), Math.log(b[2]), k)) * (1 + 0.04 * Math.sin(t * 0.43)) * (1 + 0.035 * Math.min(hold, 3));
-    return { p: [lerp(pa[0], pb[0], k), lerp(pa[1], pb[1], k), lerp(pa[2], pb[2], k)], z: z };
+    // a slow drift on top, so even a held shot keeps floating
+    return { p: [lerp(pa[0], pb[0], k) + 9 * Math.sin(t * 0.52), lerp(pa[1], pb[1], k) + 9 * Math.cos(t * 0.41), lerp(pa[2], pb[2], k)], z: z };
   }
   function theta(t) { return 0.06 + 0.26 * Math.sin(t * 0.21) + 0.08 * Math.sin(t * 0.63 + 1.0); }
 
