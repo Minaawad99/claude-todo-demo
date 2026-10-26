@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light"><head><meta charset="utf-8"><title>Reel cover — robot vacuum</title>
+<link rel="stylesheet" href="../../design-system/tokens.css"><link rel="stylesheet" href="../../design-system/components/bundle.css">
+<style>
+  /* 540×960 at 2x. Key content in y 120–760. The picture is the video's own scene, drawn live. */
+  body { margin: 0; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; font-family: var(--font-sans); color: var(--ink); background: var(--paper); }
+  .shot { position: absolute; left: 30px; right: 30px; top: 282px; height: 410px; border: 2px solid var(--ink); overflow: hidden; background: var(--paper); }
+  .shot svg { position: absolute; left: 50%; top: 50%; width: 480px; height: 650px; translate: -50% -50%; }
+  .t { position: absolute; left: 0; right: 0; text-align: center; margin: 0; }
+  /* robot vacuum: isometric flat redrawn every frame, the robot carries the story, live charts, framed close-ups */
+  #cstage :is(path) { vector-effect: non-scaling-stroke; }
+  .iso-top { fill: var(--paper-raised); stroke: var(--ink); stroke-width: 1; stroke-linejoin: round; } .iso-x { fill: var(--khaki-deep); stroke: var(--ink); stroke-width: 1; } .iso-y { fill: var(--khaki); stroke: var(--ink); stroke-width: 1; }
+  .iso-wall { fill: color-mix(in srgb, var(--khaki) 50%, var(--paper)); stroke: var(--ink); stroke-width: 1; } .iso-wall2 { fill: color-mix(in srgb, var(--khaki) 75%, var(--paper)); stroke: var(--ink); stroke-width: 1; }
+  .iso-floor { fill: color-mix(in srgb, var(--paper-raised) 60%, var(--paper)); stroke: var(--ink); stroke-width: 1; } .iso-cut { fill: var(--khaki); stroke: var(--ink); stroke-width: 1; }
+  .iso-wall-out { fill: color-mix(in srgb, var(--khaki-deep) 80%, var(--paper)); stroke: var(--ink); stroke-width: 1; }
+  .iso-sky { fill: #cfe1ec; stroke: var(--ink); stroke-width: 1; } .iso-sun { fill: #e9a24a; stroke: var(--ink); stroke-width: 1; } .iso-frame { fill: none; stroke: var(--ink); stroke-width: 1.3; stroke-linecap: round; }
+  .iso-thermo { fill: none; stroke: var(--heat); stroke-width: 3; stroke-linecap: round; } .iso-hot { fill: var(--heat); stroke: var(--ink); stroke-width: 1; }
+  .iso-rug { fill: color-mix(in srgb, var(--heat) 22%, var(--paper-raised)); stroke: var(--ink); stroke-width: .8; }
+  .iso-sofa { fill: #c9a98a; stroke: var(--ink); stroke-width: 1; } .iso-sofa-x { fill: #b08e70; stroke: var(--ink); stroke-width: 1; } .iso-sofa-top { fill: #dcc2a6; stroke: var(--ink); stroke-width: 1; }
+  .iso-pot { fill: #b9442a; stroke: var(--ink); stroke-width: 1; } .iso-soil { fill: #5d4a2e; stroke: var(--ink); stroke-width: 1; } .iso-leaf { fill: var(--olive); stroke: var(--ink); stroke-width: 1; }
+  .iso-shade { fill: #f2dc85; stroke: var(--ink); stroke-width: 1; } .iso-shade-top { fill: #f8ecbf; stroke: var(--ink); stroke-width: 1; } .iso-glow { fill: #ffe9a0; mix-blend-mode: multiply; }
+  .iso-unit { fill: #f8f6f0; stroke: var(--ink); stroke-width: 1; } .iso-unit-x { fill: #e6e1d6; stroke: var(--ink); stroke-width: 1; } .iso-unit-top { fill: #fbfaf6; stroke: var(--ink); stroke-width: 1; }
+  .iso-old { fill: #d9c9a6; stroke: var(--ink); stroke-width: 1; }
+  .iso-slat { fill: none; stroke: var(--ink); stroke-width: .7; opacity: .6; } .iso-led { fill: #8d877c; } .iso-led-on { fill: #5bbf6a; }
+  .iso-pipe-o { fill: none; stroke: var(--ink); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+  .iso-pipe-cold { fill: none; stroke: #8fb3cf; stroke-width: 3.6; stroke-linecap: round; stroke-linejoin: round; } .iso-pipe-hot { fill: none; stroke: #d98a6e; stroke-width: 3.6; stroke-linecap: round; stroke-linejoin: round; }
+  .iso-coil { fill: none; stroke: #c98a5e; stroke-width: 2; } .iso-fanring { fill: color-mix(in srgb, var(--khaki) 40%, var(--paper-raised)); stroke: var(--ink); stroke-width: 1.2; }
+  .iso-blade { fill: color-mix(in srgb, var(--khaki-deep) 60%, var(--paper-raised)); stroke: var(--ink); stroke-width: 1; } .iso-hub { fill: var(--ink); }
+  .iso-comp { fill: #a5492e; stroke: var(--ink); stroke-width: 1.2; } .iso-comp-top { fill: #c46a46; stroke: var(--ink); stroke-width: 1.2; }
+  .iso-board { fill: #5d6b55; stroke: var(--ink); stroke-width: 1; } .iso-board-x { fill: #4a5643; stroke: var(--ink); stroke-width: 1; } .iso-board-top { fill: #7d8c72; stroke: var(--ink); stroke-width: 1; }
+  .iso-pcb { fill: #3f6b4a; stroke: var(--ink); stroke-width: 1; } .iso-pcb-x { fill: #335a3d; stroke: var(--ink); stroke-width: 1; } .iso-pcb-top { fill: #5f8f63; stroke: var(--ink); stroke-width: 1; }
+  .iso-chip { fill: #2b2620; stroke: var(--ink); stroke-width: 1; } .iso-chip-top { fill: #4a443b; stroke: var(--ink); stroke-width: 1; }
+  .iso-cap { fill: #2f6f9f; stroke: var(--ink); stroke-width: 1; } .iso-cap-top { fill: #c0c4c8; stroke: var(--ink); stroke-width: 1; }
+  .iso-wire-live { fill: none; stroke: #e2a92c; stroke-width: 3; stroke-dasharray: 6 5; stroke-linecap: round; } .iso-rotor { fill: none; stroke: var(--paper-raised); stroke-width: 3; stroke-linecap: round; }
+  .iso-road { fill: #8d877c; stroke: var(--ink); stroke-width: 1; } .iso-dash { fill: #f4f1ea; } .iso-car { fill: #2f6f9f; stroke: var(--ink); stroke-width: 1; } .iso-car-x { fill: #245780; stroke: var(--ink); stroke-width: 1; } .iso-car-top { fill: #5c93bd; stroke: var(--ink); stroke-width: 1; }
+  .iso-glass { fill: #cfe1ec; stroke: var(--ink); stroke-width: 1; } .iso-tire { fill: #3b352e; stroke: var(--ink); stroke-width: 1; } .iso-steel { fill: #c9c4b8; stroke: var(--ink); stroke-width: 1; }
+  .iso-halo { fill: none; stroke: #e2a92c; }
+  .iso-label { font: 700 12px var(--font-sans); fill: var(--c, var(--ink)); paint-order: stroke; stroke: var(--paper); stroke-linejoin: round; }
+  .bignum { font: 700 34px var(--font-numeral); paint-order: stroke; stroke: var(--paper); stroke-linejoin: round; direction: ltr; } .bignum.blue { fill: var(--water); } .bignum.red { fill: var(--heat-text); }
+  .pt-heat { fill: #f08a3c; } .pt-cold { fill: var(--water); } .pt-hot { fill: var(--heat); }
+  .callnum { font: 700 11px var(--font-numeral); fill: var(--paper); } .calldot { fill: var(--ink); }
+  .panel > .inset { inset: 18px 14px 18px; border: 2px solid var(--ink); box-shadow: 0 6px 0 rgba(43,38,32,.12); }
+  .chart { position: absolute; left: 14px; right: 14px; bottom: 10px; height: 86px; opacity: 0; }
+  .chart > div { position: absolute; inset: 0; background: color-mix(in srgb, var(--paper-raised) 94%, transparent); border: 1px solid var(--ink); }
+  .chart .row { position: absolute; left: 6px; right: 6px; height: 34px; } .chart .row svg { position: absolute; inset: 0 0 0 58px; width: calc(100% - 58px); height: 100%; }
+  .chart .row b { position: absolute; left: 0; top: 10px; font: 700 10px var(--font-sans); }
+  .chart h4 { position: absolute; right: 6px; top: 2px; margin: 0; font: 700 10px var(--font-sans); }
+  .ln { fill: none; stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; } .ln.blue { stroke: var(--water); } .ln.red { stroke: var(--heat); }
+  .rb-floor { fill: #f1ece1; stroke: var(--ink); stroke-width: 1; } .rb-grout { fill: none; stroke: var(--ink); stroke-width: .5; opacity: .18; }
+  .rb-step { fill: #e9e2d2; stroke: var(--ink); stroke-width: 1; } .rb-step-y { fill: #cdbf9f; stroke: var(--ink); stroke-width: 1; }
+  .rb-rug { fill: #b5523a; stroke: var(--ink); stroke-width: 1; } .rb-rug-in { fill: #d9a35e; stroke: #7a3424; stroke-width: 1.2; stroke-dasharray: 3 2; } .rb-fringe { fill: none; stroke: #f0e3c4; stroke-width: 1.4; stroke-linecap: round; }
+  .rb-trail { fill: none; stroke: #8fb9d6; stroke-linecap: round; stroke-linejoin: round; mix-blend-mode: multiply; }
+  .rb-dust { fill: #7a6a55; opacity: .65; }
+  .rb-wood { fill: #a67b52; stroke: var(--ink); stroke-width: 1; } .rb-wood-x { fill: #8c6440; stroke: var(--ink); stroke-width: 1; } .rb-wood-top { fill: #c39a6e; stroke: var(--ink); stroke-width: 1; }
+  .rb-chair { fill: #6f8f7a; stroke: var(--ink); stroke-width: 1; } .rb-chair-x { fill: #587663; stroke: var(--ink); stroke-width: 1; } .rb-chair-top { fill: #8eae98; stroke: var(--ink); stroke-width: 1; }
+  .rb-toy { fill: #e2b035; stroke: var(--ink); stroke-width: 1; } .rb-toy-x { fill: #c9962a; stroke: var(--ink); stroke-width: 1; } .rb-toy-top { fill: #f2cf62; stroke: var(--ink); stroke-width: 1; }
+  .rb-dock { fill: #3b3832; stroke: var(--ink); stroke-width: 1; } .rb-dock-x { fill: #2b2924; stroke: var(--ink); stroke-width: 1; } .rb-dock-top { fill: #56524a; stroke: var(--ink); stroke-width: 1; }
+  .rb-ir-win { fill: #6b1f28; stroke: var(--ink); stroke-width: .8; } .rb-contact { fill: #d8b25a; stroke: var(--ink); stroke-width: .6; }
+  .rb-shadow { fill: var(--ink); opacity: .16; stroke: none; }
+  .rb-body { fill: #2f2d2a; stroke: var(--ink); stroke-width: 1.1; } .rb-top { fill: #f4f2ec; stroke: var(--ink); stroke-width: 1.1; } .rb-ring { fill: none; stroke: #b9b3a6; stroke-width: 1; }
+  .rb-bumper { fill: #55524c; stroke: var(--ink); stroke-width: 1; } .rb-bumper-hit { fill: var(--heat); stroke: var(--ink); stroke-width: 1; }
+  .rb-turret { fill: #3e3b36; stroke: var(--ink); stroke-width: 1; } .rb-turret-top { fill: #67635b; stroke: var(--ink); stroke-width: 1; }
+  .rb-laser-dot { fill: #ff3b2f; } .rb-led { fill: #4fbf6a; } .rb-led-low { fill: var(--heat); }
+  .rb-brush { fill: none; stroke: #6a655c; stroke-width: 1.4; stroke-linecap: round; }
+  .rb-laser { fill: none; stroke: #ff3b2f; stroke-width: 1.4; } .rb-hit { fill: #ff3b2f; stroke: var(--paper); stroke-width: .8; }
+  .rb-ir { fill: none; stroke: #c2342b; stroke-width: 3.4; stroke-dasharray: 5 3; } .rb-ir-back { fill: none; stroke: #c2342b; stroke-width: 1.4; opacity: .6; } .rb-ir-dot { fill: #ff3b2f; stroke: var(--paper); stroke-width: 1; }
+  .rb-sonar { fill: none; stroke: var(--water); stroke-width: 2.2; }
+  .rb-beacon { fill: none; stroke: #b23a8a; stroke-width: 2; stroke-dasharray: 5 4; }
+  .rb-x { fill: none; stroke: var(--heat); stroke-width: 3.2; stroke-linecap: round; } .rb-burst { stroke: var(--heat); stroke-width: 2.2; stroke-linecap: round; }
+  .rb-mapveil { fill: #2b2620; stroke: none; } .rb-mappt { fill: #ff5a43; } .rb-nogo { fill: color-mix(in srgb, var(--water) 55%, transparent); stroke: var(--water); stroke-width: 2; }
+  .rb-mapme { fill: #f4f2ec; stroke: var(--water); stroke-width: 2.4; } .rb-route { fill: none; stroke: #f4f2ec; stroke-width: 2.4; stroke-dasharray: 6 4; }
+  .batt { position: absolute; left: 14px; top: 12px; display: flex; align-items: center; gap: 6px; padding: 4px 8px; background: var(--paper-raised); border: 1px solid var(--ink); opacity: 0; font: 700 14px var(--font-numeral); direction: ltr; }
+  .batt i { display: block; width: 46px; height: 16px; border: 2px solid var(--ink); position: relative; } .batt i::after { content: ""; position: absolute; right: -6px; top: 3px; width: 3px; height: 6px; background: var(--ink); }
+  .batt b { position: absolute; left: 1px; top: 1px; bottom: 1px; background: #4fbf6a; } .batt.low b { background: var(--heat); } .batt .bolt { color: #e2a92c; font-size: 16px; }
+  .phone { position: absolute; left: 50%; top: 14px; width: 230px; translate: -50% 0; background: #f8f6f0; border: 2px solid var(--ink); border-radius: 14px; padding: 8px 12px; box-shadow: 0 6px 0 rgba(43,38,32,.15); opacity: 0; }
+  .phone small { display: block; font: 600 10px var(--font-sans); color: var(--olive-text); } .phone p { margin: 2px 0 0; font: 700 15px var(--font-sans); }
+  .zoom { position: absolute; left: 12px; top: 12px; width: 140px; height: 140px; border-radius: 50%; border: 2px solid var(--ink); background: var(--paper-raised); overflow: hidden; opacity: 0; box-shadow: 0 4px 0 rgba(43,38,32,.12); }
+</style></head><body>
+<div class="cover">
+  <svg width="0" height="0" style="position:absolute"><defs><g id="mark"><rect x="84" y="4" width="32" height="10" style="fill:var(--ink)"/><rect x="94" y="14" width="12" height="14" style="fill:var(--ink)"/>
+    <path style="fill:var(--ink)" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)"/><path style="fill:var(--paper-raised);stroke:var(--ink);stroke-width:7;stroke-linejoin:round" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z"/>
+    <text x="106" y="140" text-anchor="middle" style="font:800 120px var(--font-sans);fill:var(--heat)">؟</text></g></defs></svg>
+  <div class="t" style="top:128px;display:flex;justify-content:center;align-items:center;gap:8px;font:700 17px var(--font-sans)"><svg width="26" height="26" viewBox="0 0 200 200"><use href="#mark"/></svg>إيه الحكاية؟</div>
+  <p class="t" style="top:162px;font:800 38px/1.3 var(--font-sans)">إزاي <span style="color:var(--heat-text)">مبتقعش</span> من السلم؟</p>
+  <p class="t" style="top:224px;font:700 20px/1.4 var(--font-sans);color:var(--ink-muted)">سر المكنسة <span style="color:var(--water)">الذكية</span></p>
+  <div class="shot"><svg id="cstage" viewBox="0 40 360 488"></svg></div>
+  <p class="t" style="top:706px;font:800 30px/1.3 var(--font-sans)">وبترجع <span style="color:var(--water)">تشحن لوحدها!</span></p>
+</div>
+<script src="../../videos/robot-vacuum/timing.js"></script>
+<script src="../../design-system/components/bundle.js"></script>
+<script>TebEzay.patterns();</script>
+<script src="../../videos/robot-vacuum/world.js"></script>
+<script>(function () { var L = function (i) { return TIMING.lines[i].start; }; window.__flat(document.getElementById("cstage"), L(15) + 1.2); })();</script>
+</body></html>
