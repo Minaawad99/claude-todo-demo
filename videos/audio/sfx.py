@@ -239,6 +239,14 @@ def fx_notify(d=0.6):         # phone notification: two soft bubbles
         m = t >= t0; x[m] += (np.sin(2 * np.pi * f * (t[m] - t0)) * np.exp(-(t[m] - t0) * 12)).astype(np.float32)
     return x
 
+# helicopter
+def fx_rotor(d=4.0, rate=6.5):   # main rotor "chop": low thumps per blade pass + turbine whine
+    t = t_(d); thump = np.exp(-((t * rate) % 1) * 9) * np.sin(2 * np.pi * 70 * t)
+    whine = 0.12 * np.sin(2 * np.pi * (1900 + 30 * np.sin(2 * np.pi * 0.3 * t)) * t)
+    return (lp_fast(thump + 0.25 * noise(len(t)) * np.exp(-((t * rate) % 1) * 6), 900, 1) + whine).astype(np.float32) * env(len(t), .4, .5)
+def fx_windmill(d=3.0):          # rotor coasting without the engine: slower chop, airy
+    return fx_rotor(d, 4.2) * 0.6 + lp_fast(noise(int(d * SR)), 1200, 1) * 0.3 * env(int(d * SR), .5, .5)
+
 FX = {k[3:]: v for k, v in globals().items() if k.startswith("fx_")}
 
 # ── music bed: soft chords + plucks, 84 bpm, voice band carved out ──
