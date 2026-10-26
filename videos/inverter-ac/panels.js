@@ -41,7 +41,7 @@
     // 1981: the first home inverter AC
     var o = document.getElementById("p1981");
     if (t > L(25) - 0.5 && t < L(26) + 0.5) {
-      clear(o); var K = __makeIso(th, 1.2 * (1 + (push(L(25), L(26)) - 1) * 0.4), 180, 215), Q = g(o);
+      clear(o); var K = __makeIso(th * 1.8 + 0.12 * Math.sin(t * 2.1), 1.2 * (1 + (push(L(25), L(26)) - 1) * 0.4), 180, 215), Q = g(o);
       K.box(Q, -110, 110, -40, 40, 0, 90, { z: "iso-unit-top", x: "iso-unit-x", y: "iso-old", hatch: false });
       for (var s = 0; s < 6; s++) K.line(Q, [[-96, 41, 14 + s * 10], [10, 41, 14 + s * 10]], "iso-slat");
       K.face(Q, [[30, 41, 20], [96, 41, 20], [96, 41, 76], [30, 41, 76]], "iso-top"); for (var bt = 0; bt < 3; bt++) K.disc(Q, 46 + bt * 18, 42, 36, 5, "y", Math.floor(t * 3) % 3 === bt ? "iso-leaf" : "iso-chip");
