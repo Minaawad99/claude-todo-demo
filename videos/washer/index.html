@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>إزاي الغسالة بتشتغل؟ — إيه الحكاية؟</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../../design-system/components/bundle.css">
+<style>
+  /* 360×640 at 3x. Clean technical-diagram style: full-bleed paper, thin grey outlines, light fills, few words on screen. */
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  html, body { margin: 0; width: 360px; height: 640px; overflow: hidden; background: #e9e0cd; }
+  body { font-family: var(--font-sans); color: #2e2b27; }
+  .canvas { position: absolute; inset: 0; background: #e9e0cd center / cover; }
+  #stage { position: absolute; inset: 0; width: 360px; height: 640px; }
+  .mark { position: absolute; right: 14px; top: 14px; display: flex; gap: 5px; align-items: center; font: 700 10px var(--font-sans); opacity: .75; }
+  .caps { position: absolute; left: 20px; right: 20px; top: 60px; height: 60px; }
+  .cap { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; opacity: 0; }
+  .cap p { margin: 0; font: 800 23px / 1.3 var(--font-sans); }
+  .w { --wc: #2e2b27; color: color-mix(in srgb, var(--wc) var(--mix, 100%), rgba(46,43,39,.25)); }
+  .w.k-blue { --wc: #2f6f9f; } .w.k-red { --wc: #c2452a; } .w.k-or { --wc: #d9741e; }
+  /* drawing */
+  .w-cab { fill: #f4f2ec; stroke: #4a4744; stroke-width: 1.4; } .w-cab-top { fill: #e3e0d8; stroke: #4a4744; stroke-width: 1.2; } .w-foot { fill: #5b5753; }
+  .w-tub { fill: #dfe5e8; stroke: #4a4744; stroke-width: 1.6; } .w-drum { fill: rgba(199,211,220,.62); stroke: #4a4744; stroke-width: 1.4; }
+  .w-pulley-ghost { fill: none; stroke: #6d7780; stroke-width: 1; stroke-dasharray: 4 4; opacity: .7; }
+  .w-holes { fill: none; stroke: #7d8a96; stroke-width: 3.2; stroke-linecap: round; } .w-blur { fill: none; stroke: rgba(125,138,150,.35); stroke-width: 22; }
+  .w-paddle { fill: #c9d2d9; stroke: #4a4744; stroke-width: 1.2; stroke-linejoin: round; } .w-hub { fill: #8d969e; stroke: #4a4744; stroke-width: 1.2; }
+  .w-water { fill: rgba(126,178,214,.55); stroke: #5d9cc8; stroke-width: 1; }
+  .w-heater { fill: none; stroke-width: 2.6; stroke-linejoin: round; stroke-linecap: round; } .w-heater-glow { fill: none; stroke: #f5a27a; stroke-width: 9; stroke-linejoin: round; }
+  .w-concrete { fill: #bdb6a8; stroke: #4a4744; stroke-width: 1.2; } .w-concrete-dots { fill: url(#tz-dots); opacity: .35; }
+  .w-spring { fill: none; stroke: #4a4744; stroke-width: 1.4; stroke-linejoin: round; }
+  .w-damper { stroke: #5b5753; stroke-width: 7; stroke-linecap: round; } .w-rod { stroke: #a9a49c; stroke-width: 3.2; stroke-linecap: round; } .w-pin { fill: #f4f2ec; stroke: #4a4744; stroke-width: 1; }
+  .w-motor { fill: #8d969e; stroke: #4a4744; stroke-width: 1.4; } .w-pulley { fill: #c9d2d9; stroke: #4a4744; stroke-width: 1.2; } .w-spoke { stroke: #4a4744; stroke-width: 1.4; }
+  .w-belt { fill: none; stroke: #3b3835; stroke-width: 2; }
+  .w-pump { fill: #b9c3ca; stroke: #4a4744; stroke-width: 1.2; } .w-blade { stroke: #4a4744; stroke-width: 1.6; }
+  .w-hose { fill: none; stroke: #8d969e; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; } .w-hose-thin { fill: none; stroke: #8d969e; stroke-width: 3; stroke-linecap: round; }
+  .w-valve { fill: #c9d2d9; stroke: #4a4744; stroke-width: 1; } .w-drawer { fill: #f4f2ec; stroke: #4a4744; stroke-width: 1.2; }
+  .w-cloth { stroke: rgba(46,43,39,.55); stroke-width: .9; }
+  .w-drop { fill: #5d9cc8; } .w-dirty { fill: #8a6a48; } .w-powder { fill: #ffffff; stroke: #8d969e; stroke-width: .5; }
+  .w-lock { fill: #d9741e; stroke: #4a4744; stroke-width: 1; } .w-lock-arc { fill: none; stroke: #4a4744; stroke-width: 2; }
+  .c-lead { fill: none; stroke: #6d6a65; stroke-width: 1; } .c-dot { fill: #f4f2ec; stroke: #4a4744; stroke-width: 1.2; } .c-num { font: 800 13px var(--font-sans); fill: #2e2b27; }
+  .c-warn { fill: none; stroke: #c2452a; stroke-width: 2; stroke-linejoin: round; } .c-warn-t { font: 800 14px var(--font-sans); fill: #c2452a; }
+  /* bathroom */
+  .b-tile { fill: #efe9dc; stroke: #d3cab7; stroke-width: 1; } .b-floor { fill: #e2dac9; stroke: #c4baa5; } .b-edge { stroke: #b8ae99; stroke-width: 2; }
+  .b-socket { fill: #f8f6f1; stroke: #4a4744; stroke-width: 1.2; } .b-plug { fill: #3b3835; } .b-cable { fill: none; stroke: #3b3835; stroke-width: 2.2; }
+  .b-tap { fill: none; stroke: #8d969e; stroke-width: 4; stroke-linecap: round; } .b-hose { fill: none; stroke: #8d969e; stroke-width: 5; stroke-linecap: round; } .b-drain { fill: #8d969e; }
+  .b-motion { fill: none; stroke: #6d6a65; stroke-width: 2; stroke-linecap: round; }
+  .m-front { fill: #f8f7f3; stroke: #4a4744; stroke-width: 1.4; } .m-side { fill: #dedad1; stroke: #4a4744; stroke-width: 1.4; } .m-top { fill: #ece9e2; stroke: #4a4744; stroke-width: 1.4; }
+  .m-panel { fill: #eceae4; stroke: #4a4744; stroke-width: 1; } .m-drawer { fill: #f8f7f3; stroke: #4a4744; stroke-width: 1; } .m-knob { fill: #f8f7f3; stroke: #4a4744; stroke-width: 1.4; }
+  .m-display { fill: #2e2b27; } .m-digits { font: 700 10px var(--font-numeral); fill: #e8453a; } .m-btn { fill: #d9d6ce; stroke: #4a4744; stroke-width: .6; }
+  .m-door { fill: #d9dde0; stroke: #4a4744; stroke-width: 1.6; } .m-glass { fill: #c7d3dc; stroke: #4a4744; stroke-width: 1.2; } .m-handle { stroke: #4a4744; stroke-width: 4; stroke-linecap: round; }
+  /* strips at the bottom */
+  .strip { position: absolute; left: 24px; right: 24px; bottom: 34px; height: 64px; opacity: 0; }
+  .strip svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .sig { fill: none; stroke: #d9741e; stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; } .axis { fill: none; stroke: #4a4744; stroke-width: 1.2; }
+  .slab { font: 700 11px var(--font-sans); fill: #2e2b27; }
+  .prog { position: absolute; left: 60px; right: 60px; bottom: 44px; height: 34px; display: grid; grid-template-columns: repeat(3, 1fr); border: 1.2px solid #4a4744; opacity: 0; }
+  .prog span { display: grid; place-items: center; font: 800 12px var(--font-sans); color: #1f4f74; background: #b9d6ec; border-inline-start: 1px solid #4a4744; }
+  .prog span:first-child { border: 0; }
+  .prog i { position: absolute; top: -12px; width: 0; height: 0; border: 6px solid transparent; border-top-color: #d9741e; translate: 6px 0; }
+  .legend { position: absolute; right: 16px; top: 130px; background: rgba(248,246,241,.92); border: 1px solid #6d6a65; padding: 4px 8px; opacity: 0; font: 800 13px/1.7 var(--font-sans); }
+  .legend div { opacity: .35; } .legend div b { display: inline-grid; place-items: center; width: 17px; height: 17px; border: 1.2px solid #4a4744; border-radius: 50%; font-size: 11px; margin-inline-start: 6px; }
+  .inset { position: absolute; left: 22px; top: 400px; width: 120px; height: 120px; opacity: 0; }
+  .inset > div { border-radius: 50%; border: 2px solid #4a4744; background: #f4f2ec; overflow: hidden; }
+  .inset svg { width: 100%; height: 100%; }
+  .card { position: absolute; left: 50px; right: 50px; top: 230px; text-align: center; opacity: 0; }
+  .card > div { padding: 18px; background: rgba(248,246,241,.96); border: 1.4px solid #4a4744; }
+  .big { font: 800 40px var(--font-sans); }
+  .ink-f { fill: #2e2b27; } .lit { fill: #f8f6f1; }
+</style>
+</head>
+<body>
+<div class="canvas" id="paper"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="mark">
+    <rect x="84" y="4" width="32" height="10" class="ink-f"/><rect x="94" y="14" width="12" height="14" class="ink-f"/>
+    <path class="ink-f" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)"/>
+    <path class="lit" style="stroke:#2e2b27;stroke-width:7;stroke-linejoin:round" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z"/>
+    <text x="106" y="140" text-anchor="middle" style="font:800 120px var(--font-sans);fill:#c2452a">؟</text>
+  </g></defs></svg>
+<svg id="stage" viewBox="0 0 360 640"></svg>
+<div class="mark"><svg viewBox="0 0 200 200" width="18" height="18"><use href="#mark"/></svg>إيه الحكاية؟</div>
+
+<div class="caps">
+  <div class="cap" data-cap="0"><p data-words="0">حتة <span class="k-red">خرسانة</span> جوه الغسالة!</p></div>
+  <div class="cap" data-cap="1"><p data-words="1">كانت <span class="k-red">هتتمشى!</span></p></div>
+  <div class="cap" data-cap="2"><p data-words="2">سرعة <span class="k-or">مجنونة</span></p></div>
+  <div class="cap" data-cap="3"></div>
+  <div class="cap" data-cap="4"><p data-words="4">الباب يتقفل… و<span class="k-blue">المية</span> تدخل</p></div>
+  <div class="cap" data-cap="5"><p data-words="5">درج <span class="k-blue">المسحوق</span></p></div>
+  <div class="cap" data-cap="6"><p data-words="6"><span class="k-blue">حلتين</span></p></div>
+  <div class="cap" data-cap="7"><p data-words="7">البرانية: شايلة <span class="k-blue">المية</span></p></div>
+  <div class="cap" data-cap="8"><p data-words="8">الجوانية: <span class="k-blue">خروم</span></p></div>
+  <div class="cap" data-cap="9"><p data-words="9">موتور + <span class="k-or">سير</span></p></div>
+  <div class="cap" data-cap="10"><p data-words="10"><span class="k-or">زعانف</span></p></div>
+  <div class="cap" data-cap="11"><p data-words="11">ترفع… <span class="k-blue">وتقع</span></p></div>
+  <div class="cap" data-cap="12"><p data-words="12">زي <span class="k-or">الطشت</span> زمان</p></div>
+  <div class="cap" data-cap="13"><p data-words="13"><span class="k-red">سخان</span></p></div>
+  <div class="cap" data-cap="14"><p data-words="14">مضخة ← <span class="k-blue">البلاعة</span></p></div>
+  <div class="cap" data-cap="15"><p data-words="15"><span class="k-blue">شطف</span></p></div>
+  <div class="cap" data-cap="16"><p data-words="16"><span class="k-or">العصر</span></p></div>
+  <div class="cap" data-cap="17"><p><span class="k-or" id="rpm" style="color:#d9741e">١٤٠٠</span> لفة في الدقيقة</p></div>
+  <div class="cap" data-cap="18"><p data-words="18">قوة قد <span class="k-red">٥٠٠ مرة</span> وزنها</p></div>
+  <div class="cap" data-cap="19"><p data-words="19">المية <span class="k-blue">بتطير</span></p></div>
+  <div class="cap" data-cap="20"><p data-words="20"><span class="k-red">مشكلة!</span></p></div>
+  <div class="cap" data-cap="21"><p data-words="21">الهدوم <span class="k-red">مش متوزعة</span></p></div>
+  <div class="cap" data-cap="22"><p data-words="22"><span class="k-red">رجّة</span></p></div>
+  <div class="cap" data-cap="23"><p data-words="23"><span class="k-or">٣</span> حاجات</p></div>
+  <div class="cap" data-cap="24"><p data-words="24">١ <span class="k-or">سوست</span></p></div>
+  <div class="cap" data-cap="25"><p data-words="25">٢ <span class="k-or">مساعدين</span></p></div>
+  <div class="cap" data-cap="26"><p data-words="26">٣ <span class="k-or">خرسانة</span></p></div>
+  <div class="cap" data-cap="27"><p data-words="27">بالراحة <span class="k-blue">الأول</span></p></div>
+  <div class="cap" data-cap="28"><p data-words="28"><span class="k-or">خبط</span> + <span class="k-blue">سرعة</span></p></div>
+  <div class="cap" data-cap="29"><p data-words="29">حكاية إيه <span class="k-red">المرة الجاية؟</span></p></div>
+</div>
+
+<!-- 0: the concrete, ~25 kg -->
+<div class="card" style="top:430px;left:70px;right:70px" data-v="fade" data-l="0" data-o="1.2" data-d="0.4"><div data-v="out" data-l="1" data-o="0" data-d="0.3"><span class="big" style="font-size:30px">≈ ٢٥ كجم</span></div></div>
+<!-- 3: brand -->
+<div class="card" data-v="fade" data-l="3" data-o="-0.2" data-d="0.35"><div data-v="out" data-l="4" data-o="-0.3" data-d="0.3">
+  <svg viewBox="0 0 200 200" width="90" height="90"><use href="#mark"/></svg>
+  <div style="font:800 28px/1.3 var(--font-sans)">إيه الحكاية<span style="color:#c2452a">؟</span></div>
+  <div style="font:600 15px var(--font-sans)"><span data-words="3">هشرحهالك في <span class="k-red">دقيقة.</span></span></div>
+</div></div>
+<!-- 12: the washing tub of the old days -->
+<div class="inset" data-v="fade" data-l="12" data-o="0.2" data-d="0.35"><div data-v="out" data-l="13" data-o="-0.1" data-d="0.3" style="position:absolute;inset:0"><svg id="inset-tub" viewBox="0 0 120 120"></svg></div></div>
+<!-- 19: mud off a tyre -->
+<div class="inset" data-v="fade" data-l="19" data-o="0.8" data-d="0.35"><div data-v="out" data-l="20" data-o="0" data-d="0.3" style="position:absolute;inset:0"><svg id="inset-tyre" viewBox="0 0 120 120"></svg></div></div>
+<!-- program strip: wash → rinse → spin -->
+<div class="prog" data-v="fade" data-l="13" data-o="0.2" data-d="0.3"><span>غسيل</span><span>شطف</span><span>عصر</span><i id="progmark"></i></div>
+<!-- drum speed -->
+<div class="strip" data-v="fade" data-l="16" data-o="0.4" data-d="0.3"><div data-v="out" data-l="20" data-o="-0.1" data-d="0.3" style="position:absolute;inset:0"><svg viewBox="0 0 312 64">
+  <path class="axis" d="M300 56 H4 M300 56 V4"/><text class="slab" x="308" y="20" text-anchor="start">سرعة الحلة</text>
+  <path class="sig" data-v="draw" data-ease="lin" data-l="16" data-o="0.5" data-d="6.2" d="M296 52 H230 C200 52 170 10 120 8 H6"/></svg></div></div>
+<!-- shaking -->
+<div class="strip" data-v="fade" data-l="21" data-o="0.2" data-d="0.3"><div data-v="out" data-l="27" data-o="0.2" data-d="0.3" style="position:absolute;inset:0"><svg viewBox="0 0 312 64">
+  <path class="axis" d="M300 32 H4"/><text class="slab" x="308" y="36" text-anchor="start">الرجّة</text>
+  <path class="sig" data-v="draw" data-ease="lin" data-l="21" data-o="0.3" data-d="10.5" d="M296 32 Q290 6 284 32 T272 32 T260 32 T248 32 T236 32 Q230 10 224 32 T212 32 T200 32 Q194 14 188 32 T176 32 T164 32 Q158 20 152 32 T140 32 T128 32 Q122 24 116 32 T104 32 T92 32 Q86 27 80 32 T68 32 T56 32 Q50 29 44 32 T32 32 T6 32"/></svg></div></div>
+<!-- legend 1-2-3 -->
+<div class="legend" data-v="fade" data-l="23" data-o="0.3" data-d="0.35"><div data-v="out" data-l="28" data-o="-0.2" data-d="0.3" style="opacity:1">
+  <div id="lg1"><b>١</b>سوست</div><div id="lg2"><b>٢</b>مساعدين</div><div id="lg3"><b>٣</b>خرسانة</div></div></div>
+<!-- outro -->
+<div class="card" style="top:470px" data-v="fade" data-l="29" data-o="0.1" data-d="0.4"><div style="padding:10px">
+  <div style="font:800 17px/1.4 var(--font-sans)">قولولنا، عايزين تعرفوا</div>
+  <div style="font:800 22px/1.4 var(--font-sans);color:#c2452a">حكاية إيه ____ ؟</div>
+</div></div>
+
+<div class="caps" style="display:none"></div>
+<script src="timing.js"></script>
+<script src="../../design-system/components/bundle.js"></script>
+<script>TebEzay.patterns();</script>
+<script src="scene.js"></script>
+<script>
+  (function () {
+    // warm, cloudy paper made once (no grid)
+    var cv = document.createElement("canvas"); cv.width = 360; cv.height = 640; var x = cv.getContext("2d");
+    x.fillStyle = "#e9e0cd"; x.fillRect(0, 0, 360, 640);
+    var seed = 3; function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+    for (var i = 0; i < 260; i++) { var r = 20 + rnd() * 70, gx = rnd() * 360, gy = rnd() * 640, g = x.createRadialGradient(gx, gy, 0, gx, gy, r), d = rnd() > 0.5;
+      g.addColorStop(0, d ? "rgba(150,130,100,0.022)" : "rgba(255,250,240,0.045)"); g.addColorStop(1, "rgba(0,0,0,0)"); x.fillStyle = g; x.fillRect(gx - r, gy - r, r * 2, r * 2); }
+    for (var j = 0; j < 9000; j++) { x.fillStyle = "rgba(90,70,50," + (rnd() * 0.05).toFixed(3) + ")"; x.fillRect(rnd() * 360, rnd() * 640, 1, 1); }
+    document.getElementById("paper").style.backgroundImage = "url(" + cv.toDataURL() + ")";
+
+    var NS = "http://www.w3.org/2000/svg", L = window.__L, win = window.__win, AR = "٠١٢٣٤٥٦٧٨٩";
+    function ar(n) { return String(n).replace(/[0-9]/g, function (d) { return AR[+d]; }); }
+    function el(tag, a, p) { var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); p.appendChild(e); return e; }
+    var stage = document.getElementById("stage"), tub = document.getElementById("inset-tub"), tyre = document.getElementById("inset-tyre");
+    window.__extra = function (t) {
+      window.__washer(stage, t);
+      // rpm counter (17)
+      var u = Math.min(1, Math.max(0, (t - L(17) - 0.2) / 1.6)); document.getElementById("rpm").textContent = ar(Math.round(1400 * (1 - Math.pow(1 - u, 3))));
+      // program marker: wash → rinse → spin
+      var pm = document.getElementById("progmark"), slot = t < L(15) ? 0 : t < L(16) ? 1 : 2; pm.style.right = (slot * 80 + 34) + "px";
+      document.querySelector(".prog").style.opacity = String(win(t, L(13) + 0.2, L(17) + 0.6));
+      // legend highlight
+      ["lg1", "lg2", "lg3"].forEach(function (id, i) { document.getElementById(id).style.opacity = t > L(24 + i) - 0.1 ? 1 : 0.35; });
+      // inset: clothes slapped in a basin
+      if (t > L(12) - 0.5 && t < L(13) + 0.5) { while (tub.firstChild) tub.removeChild(tub.firstChild);
+        el("ellipse", { cx: 60, cy: 82, rx: 46, ry: 14, fill: "#c9d2d9", stroke: "#4a4744" }, tub); el("path", { d: "M14 82 L24 106 H96 L106 82", fill: "#dfe5e8", stroke: "#4a4744" }, tub);
+        el("ellipse", { cx: 60, cy: 84, rx: 40, ry: 10, fill: "rgba(126,178,214,.6)" }, tub);
+        var up = Math.abs(Math.sin(t * 3.2)); el("ellipse", { cx: 60, cy: 76 - up * 44, rx: 18, ry: 8, fill: "#a8704a", stroke: "#4a4744", transform: "rotate(" + (-20 + up * 40) + " 60 " + (76 - up * 44) + ")" }, tub);
+        if (up < 0.25) for (var s = 0; s < 5; s++) el("circle", { cx: 40 + s * 10, cy: 70 - s % 2 * 6, r: 2, fill: "#5d9cc8" }, tub); }
+      // inset: mud flung off a spinning tyre
+      if (t > L(19) - 0.5 && t < L(20) + 0.5) { while (tyre.firstChild) tyre.removeChild(tyre.firstChild);
+        var a = t * 9; el("circle", { cx: 60, cy: 64, r: 34, fill: "#3b3835" }, tyre); el("circle", { cx: 60, cy: 64, r: 18, fill: "#c9d2d9", stroke: "#4a4744" }, tyre);
+        for (var sp = 0; sp < 5; sp++) { var b = a + sp * 1.26; el("line", { x1: 60, y1: 64, x2: 60 + Math.cos(b) * 16, y2: 64 + Math.sin(b) * 16, stroke: "#4a4744", "stroke-width": 1.6 }, tyre); }
+        for (var m = 0; m < 10; m++) { var uu = (m * 0.31 + t * 1.3) % 1, ang = -0.6 + (m % 4) * 0.35; el("circle", { cx: 60 + Math.cos(ang) * (34 + uu * 30), cy: 64 + Math.sin(ang) * (34 + uu * 30) - uu * 4, r: 2.6, fill: "#8a6a48", opacity: 1 - uu }, tyre); } }
+    };
+    window.__extra(10);
+  })();
+</script>
+<script src="../engine.js"></script>
+<script>(function () { var r = window.renderAt; window.renderAt = function (t) { r(t); window.__extra(t); }; renderAt(window.VIDEO_END); })();</script>
+</body>
+</html>
