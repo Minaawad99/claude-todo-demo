@@ -237,7 +237,7 @@
       I.face(g, I.ring(sxx, syy, 1.6, 4 + su * 34, 24, "z"), "rb-sonar", "opacity:" + (son * (1 - su) * (onRug && su > 0.5 ? 0.3 : 0.9)).toFixed(2));
     }
     // dock beacon: infrared arcs fanning out from the dock
-    var ir = Math.max(win(t, L(26), L(27) + 2.4, 0.3), 0.8 * win(t, L(2) + 0.8, L(2) + 3.2, 0.3));
+    var ir = Math.max(win(t, L(26), L(27) + 2.4, 0.3), 0.8 * win(t, L(2) + 0.8, L(3) + 0.5, 0.3));
     if (ir > 0) for (var ik = 0; ik < 4; ik++) {
       var iu = ((t * 0.8) + ik / 4) % 1, rr = 20 + iu * 170;
       I.line(g, I.ring(DOCK[1], 40, 10, rr, 22, "z", -0.9, 0.9), "rb-beacon", "opacity:" + (ir * (1 - iu)).toFixed(2));

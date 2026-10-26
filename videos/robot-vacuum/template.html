@@ -183,7 +183,7 @@
     }
     window.__extra = function (t) {
       if (t > L(4) - 0.6 && t < L(30)) window.__flat(flat, t);
-      if (t < L(3)) { var u = clamp(t / L(3)); window.__flatStatic(intro, t, 0.36 * (1 + 0.14 * u), 150, 205 + 14 * u, 0.12 * Math.sin(t * 0.9)); batt(document.getElementById("batt-intro"), t, win(t, L(2), L(3) + 1)); }
+      if (t < L(3)) { var u = clamp(t / L(3)), e = clamp((t - L(2) - 2.4) / (L(3) - L(2) - 2.4)); e = e * e * (3 - 2 * e); window.__flatStatic(intro, t, 0.36 * (1 + 0.14 * u + 0.35 * e), 150 + 55 * e, 205 + 14 * u + 12 * e, 0.045 * t - 0.25); batt(document.getElementById("batt-intro"), t, win(t, L(2), L(3) + 1)); }
       batt(document.getElementById("batt"), t, win(t, L(25), L(29) + 0.6));
       var ph = document.getElementById("phone"), po = win(t, L(17) + 2.0, L(18) + 0.6); ph.style.opacity = po.toFixed(2); ph.style.translate = "-50% " + (-30 * (1 - Math.min(1, po * 1.4))).toFixed(1) + "px";
       if (t > L(3) - 0.5 && t < L(4)) { var s = Math.max(0, (t - L(3)) / (L(4) - L(3))); document.getElementById("stinger").style.transform = "scale(" + (1 + 0.12 * s).toFixed(4) + ") rotate(" + (-2 + 4 * s).toFixed(2) + "deg)"; }
