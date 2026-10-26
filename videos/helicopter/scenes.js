@@ -191,10 +191,10 @@
     return s + tag("مش مروحة…", 230, 90, u, 0.3, -4, 20) + tag("دي أجنحة!", 440, 100, u, 1.2, 3, 20);
   });
   // 5 — same shape as an airliner's wing: two cross-sections side by side, air flowing over both
-  shot(5, function (u, d) { return [320, 180, lerp(1.08, 1.0, u / d)]; }, function (u, d, t) {
+  shot(5, function (u, d) { return [lerp(280, 360, u / d), 180, lerp(1.0, 1.15, u / d)]; }, function (u, d, t) {
     var s = sky("day") + clouds(t, 20, 10, 5, 0.6);
     s += '<rect x="20" y="70" width="280" height="220" rx="14" fill="#f4efe4" stroke="#1c1c1c" stroke-width="2"/><rect x="340" y="70" width="280" height="220" rx="14" fill="#f4efe4" stroke="#1c1c1c" stroke-width="2"/>';
-    s += '<g transform="translate(160 120) scale(.42)"><use href="#plane"/></g><g transform="translate(480 128) scale(.4)">' + heli(0, 0, t, PH(t), {}) + '</g>';
+    s += '<g transform="translate(160 ' + f(120 + Math.sin(t * 2.4) * 4) + ') scale(.42)"><use href="#plane"/></g><g transform="translate(480 ' + f(128 + Math.sin(t * 2.4 + 1) * 4) + ') scale(.4)">' + heli(0, 0, t, PH(t), {}) + '</g>';
     s += airflow(t, 50, 270, 220, 6, "#5d93ad", 0.8, 3) + airflow(t, 370, 590, 220, 6, "#5d93ad", 0.8, 3);
     s += airfoil(160, 222, 1.3, 4 + Math.sin(t) * 1, "#c9d0d6") + airfoil(480, 222, 1.3, 4 + Math.sin(t) * 1, "#c23a26");
     var eq = pop((u - 1.0) / 1.2); s += '<text x="320" y="230" text-anchor="middle" style="font:900 ' + f(44 * eq) + 'px sans-serif;fill:#1c1c1c">=</text>';
@@ -237,8 +237,8 @@
     return cockpit(t) + pilotBig(320, 250, t, "curious", { kind: "collective", v: 0.2 * Math.sin(t * 2) }, Math.sin(t * 1.5)) + tag("يطلع وينزل إزاي؟", 470, 70, u, 0.2, 3, 20);
   });
   // 10 — same rpm, the pilot changes all the blades' angle at once
-  shot(10, function (u, d) { return [lerp(300, 340, u / d), 180, lerp(1.0, 1.1, u / d)]; }, function (u, d, t) {
-    var pit = 4 + 10 * (0.5 + 0.5 * Math.sin((u - 1.5) * 1.6)) * clamp((u - 1.2) / 0.6), s = sky("day") + clouds(t, 20, 10, 5, 0.7);
+  shot(10, function (u, d) { return [lerp(290, 360, u / d), 180, lerp(1.0, 1.25, u / d)]; }, function (u, d, t) {
+    var pit = 4 + 10 * (0.5 + 0.5 * Math.sin((u - 1.5) * 1.6)) * clamp((u - 1.2) / 0.6) + 2 * Math.sin(u * 5.3), s = sky("day") + clouds(t, 20, 10, 5, 0.7);
     s += '<rect x="30" y="40" width="360" height="280" rx="16" fill="#f4efe4" stroke="#1c1c1c" stroke-width="2"/>';
     s += airflow(t, 60, 340, 180, 7, "#5d93ad", 1.2, 2) + airfoil(210, 180, 2.0, pit, "#c23a26");
     s += '<path d="M90 180 H330" stroke="#1c1c1c" stroke-dasharray="5 5" opacity=".5"/><path d="M130 180 A80 80 0 0 1 ' + f(210 - Math.cos(pit * Math.PI / 180) * 80) + ' ' + f(180 - Math.sin(pit * Math.PI / 180) * 80) + '" stroke="#e2523a" stroke-width="3" fill="none"/>';
@@ -368,8 +368,8 @@
     return s + tag("جناح بيلف", 150, 70, u, 1.0, -4, 21) + tag("وميلة مظبوطة", 470, 290, u, 2.4, 3, 21);
   });
   // 26 — outro: pilot waving at us
-  shot(26, function (u, d) { return [320, 215, lerp(1.0, 1.15, u / d)]; }, function (u, d, t) {
-    var s = cockpit(t) + pilotBig(320, 250, t, "happy", null, 0);
+  shot(26, function (u, d) { return [lerp(290, 350, u / d), 215, lerp(1.0, 1.35, u / d)]; }, function (u, d, t) {
+    var s = cockpit(t * 3) + pilotBig(320, 250, t, "happy", null, 0);
     var wv = Math.sin(t * 8) * 18; s += '<path d="M362 306 Q400 ' + f(260 + wv * 0.3) + ' ' + f(410 + wv) + ' 210" stroke="#3f6f8f" stroke-width="16" fill="none" stroke-linecap="round"/><circle cx="' + f(410 + wv) + '" cy="206" r="12" fill="#fbfbf7" stroke="#1c1c1c" stroke-width="2.4"/>';
     return s + tag("حكاية إيه المرة الجاية؟", 320, 60, u, 0.3, -2, 20);
   });
