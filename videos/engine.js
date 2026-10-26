@@ -118,7 +118,7 @@
         case "out": el.style.opacity = 1 - p; break;
         case "pop": var b = back(raw); el.style.opacity = p; el.style.transform = "scale(" + (0.6 + 0.4 * b) + ")"; break;
         case "rise": el.style.opacity = p; el.style.transform = "translateY(" + (16 * (1 - p)) + "px)"; break;
-        case "draw": Array.prototype.forEach.call(shapesOf(el), function (s) { s.style.strokeDashoffset = 100 * (1 - p); }); break;
+        case "draw": var dp = d.ease === "lin" ? clamp(raw) : p; Array.prototype.forEach.call(shapesOf(el), function (s) { s.style.strokeDashoffset = 100 * (1 - dp); }); break;
         case "ring": el.style.strokeDashoffset = 100 * (1 - easeIO(raw)); break;
         case "grow":
           var f = d.from != null ? +d.from : 0, to = d.to != null ? +d.to : 1, g = d.ease === "io" ? easeIO(raw) : p;

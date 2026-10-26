@@ -86,6 +86,22 @@
   .pt-heat { fill: #f08a3c; } .pt-air { fill: #a9cbe2; } .pt-bub { fill: #ffffff; stroke: var(--water); stroke-width: .8; }
   .heatwave { fill: none; stroke: var(--heat); stroke-width: 2.4; stroke-linecap: round; opacity: .75; }
   .coldwave { fill: none; stroke: var(--water); stroke-width: 2.4; stroke-linecap: round; opacity: .75; }
+  /* reference look: thin calm lines, kitchen context, charts, framed close-ups */
+  #cam :is(.iso-top, .iso-x, .iso-y, .iso-wall, .iso-wall2, .iso-floor, .iso-steel, .iso-cut, .iso-glass, .iso-bottle, .iso-jar, .iso-ice, .iso-veg, .iso-cake, .iso-frost, .iso-shelf, .iso-counter-top, .iso-part, .iso-part-x, .iso-part-top) { stroke-width: 1; }
+  .iso-sky { fill: #cfe1ec; stroke: var(--ink); stroke-width: 1; } .iso-sun { fill: #e9a24a; stroke: var(--ink); stroke-width: 1; }
+  .iso-frame { fill: none; stroke: var(--ink); stroke-width: 1.4; } .iso-counter-top { fill: #b9ad8d; stroke: var(--ink); stroke-width: 1; }
+  .iso-thermo { fill: none; stroke: var(--heat); stroke-width: 3; stroke-linecap: round; }
+  .bignum { font: 700 34px var(--font-numeral); paint-order: stroke; stroke: var(--paper); stroke-width: 7px; stroke-linejoin: round; direction: ltr; }
+  .bignum.blue { fill: var(--water); } .bignum.red { fill: var(--heat-text); }
+  .callnum { font: 700 11px var(--font-numeral); fill: var(--paper); } .calldot { fill: var(--ink); }
+  .panel > .inset { inset: 18px 14px 18px; border: 2px solid var(--ink); box-shadow: 0 6px 0 rgba(43,38,32,.12); }
+  .chart { position: absolute; left: 14px; right: 14px; bottom: 10px; height: 66px; opacity: 0; }
+  .chart > div { position: absolute; inset: 0; background: color-mix(in srgb, var(--paper-raised) 94%, transparent); border: 1px solid var(--ink); }
+  .chart svg { position: absolute; inset: 14px 6px 4px; width: calc(100% - 12px); height: calc(100% - 18px); }
+  .chart b { position: absolute; right: 6px; top: 2px; font: 700 10px var(--font-sans); }
+  .chart i { position: absolute; left: 6px; top: 2px; font: 600 9px var(--font-sans); font-style: normal; color: var(--ink-muted); }
+  .ln { fill: none; stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; } .ln.blue { stroke: var(--water); } .ln.red { stroke: var(--heat); } .ln.olive { stroke: var(--olive-text); stroke-width: 1.6; }
+  .ln.target { stroke: var(--ink-muted); stroke-width: 1; stroke-dasharray: 3 3; }
   [data-v="pop"], [data-v="grow"], [data-loop="pulse"] { transform-box: fill-box; transform-origin: center; }
 </style>
 </head>
@@ -115,7 +131,7 @@
       <div class="cap" data-cap="1" style="font:700 21px/1.55 var(--font-sans);padding:12px 4px;text-align:right"><p data-words="1">ولو فتحت بابها عشان تبرّد المطبخ في الحر،<br><span class="tz-k tz-k--heat">المطبخ هيسخن أكتر!</span></p></div>
       <div class="cap" data-cap="2" style="font:700 21px/1.55 var(--font-sans);padding:12px 4px;text-align:right"><p data-words="2">لأن التلاجة مبتعملش برد، دي <span class="tz-k tz-k--heat">بتشيل الحرارة</span> من جوه <span class="tz-k tz-k--heat">وترميها برة</span>.</p></div>
     </div>
-    <svg viewBox="0 0 290 330" style="position:absolute;left:0;bottom:0;width:100%;height:330px"><g id="introfr"></g><g id="introfx"></g></svg>
+    <svg viewBox="0 0 290 330" style="position:absolute;left:0;bottom:0;width:100%;height:330px"><g id="introkit"></g><g id="introfr"></g><g id="introfx"></g></svg>
   </div>
 </section>
 
@@ -138,29 +154,34 @@
 <section class="scene" data-scene="4-36">
   <div class="frame">
     <div class="stage tz-paper">
-      <svg viewBox="0 0 360 488"><g id="cam"><g id="fridge"></g><g id="fx"></g><g id="halos"></g></g></svg>
+      <svg viewBox="0 0 360 488"><g id="cam"><g id="kitchen"></g><g id="fridge"></g><g id="fx"></g><g id="halos"></g></g></svg>
       <!-- 6–8: a glass of refrigerant boiling, ice-cold -->
-      <div class="panel" data-v="fade" data-l="6" data-o="0.2" data-d="0.35"><div class="panel tz-paper" data-v="out" data-l="8" data-o="-0.2" data-d="0.3" style="opacity:1">
+      <div class="panel" data-v="fade" data-l="6" data-o="0.2" data-d="0.35"><div class="panel tz-paper inset" data-v="out" data-l="8" data-o="-0.2" data-d="0.3" style="opacity:1">
         <svg viewBox="0 0 360 488"><g id="pglass"></g><text class="lbl c-water" x="180" y="70" text-anchor="middle">بيفور، وهو ساقع تلج</text>
           <text class="lbl c-heat" x="180" y="440" text-anchor="middle" data-v="fade" data-l="7" data-o="0.3" data-d="0.4">بيسحب الحرارة من حواليه</text></svg>
       </div></div>
       <!-- 8: alcohol on a hand -->
-      <div class="panel" data-v="fade" data-l="8" data-o="-0.2" data-d="0.3"><div class="panel tz-paper" data-v="out" data-l="9" data-o="-0.2" data-d="0.3" style="opacity:1">
+      <div class="panel" data-v="fade" data-l="8" data-o="-0.2" data-d="0.3"><div class="panel tz-paper inset" data-v="out" data-l="9" data-o="-0.2" data-d="0.3" style="opacity:1">
         <svg viewBox="0 0 360 488"><g id="phand"></g><text class="lbl c-water" x="180" y="80" text-anchor="middle">الكحول بيتبخر… فإيدك تبرد</text></svg>
       </div></div>
       <!-- 13: a bike pump getting hot -->
-      <div class="panel" data-v="fade" data-l="13" data-o="0" data-d="0.35"><div class="panel tz-paper" data-v="out" data-l="14" data-o="-0.2" data-d="0.3" style="opacity:1">
+      <div class="panel" data-v="fade" data-l="13" data-o="0" data-d="0.35"><div class="panel tz-paper inset" data-v="out" data-l="14" data-o="-0.2" data-d="0.3" style="opacity:1">
         <svg viewBox="0 0 360 488"><g id="ppump"></g><text class="lbl c-heat" x="180" y="60" text-anchor="middle">تضغط الهوا… يسخن</text></svg>
       </div></div>
       <!-- 18–20: the narrow tube -->
-      <div class="panel" data-v="fade" data-l="18" data-o="1.4" data-d="0.35"><div class="panel tz-paper" data-v="out" data-l="20" data-o="1.6" data-d="0.3" style="opacity:1">
+      <div class="panel" data-v="fade" data-l="18" data-o="1.4" data-d="0.35"><div class="panel tz-paper inset" data-v="out" data-l="20" data-o="1.6" data-d="0.3" style="opacity:1">
         <svg viewBox="0 0 360 488"><g id="pcap"></g>
           <text class="lbl c-heat" x="90" y="120" text-anchor="middle">ضغط عالي</text><text class="lbl c-water" x="270" y="380" text-anchor="middle" data-v="fade" data-l="19" data-o="0.3" data-d="0.4">الضغط يقع… يغلي ويبرد</text></svg>
       </div></div>
-      <!-- counters -->
-      <div class="counter" style="left:10px;top:10px;opacity:0" data-v="fade" data-l="5" data-o="0.5" data-d="0.3"><div data-v="out" data-l="7" data-o="0" data-d="0.3" style="display:flex;gap:6px;align-items:center"><span class="num blue" style="font-size:38px;direction:ltr" data-v="count" data-l="5" data-o="0.5" data-d="1.4" data-from="20" data-to="-12">-12</span><span class="unit">درجة<br>بيغلي</span></div></div>
-      <div class="counter" style="left:10px;top:10px;opacity:0" data-v="fade" data-l="29" data-o="0.4" data-d="0.3"><div data-v="out" data-l="30" data-o="0" data-d="0.3" style="display:flex;gap:6px;align-items:center"><span class="num blue" style="font-size:38px" data-v="count" data-l="29" data-o="0.4" data-d="1.2" data-from="10" data-to="4">4</span><span class="unit">درجات<br>جوه التلاجة</span></div></div>
-      <div class="counter" style="left:10px;top:10px;opacity:0" data-v="fade" data-l="30" data-o="0.2" data-d="0.3"><div data-v="out" data-l="31" data-o="0.3" data-d="0.3" style="display:flex;gap:6px;align-items:center"><span class="num blue" style="font-size:38px;direction:ltr" data-v="count" data-l="30" data-o="0.2" data-d="1.2" data-from="0" data-to="-18">-18</span><span class="unit">في<br>الفريزر</span></div></div>
+      <!-- live charts under the scene -->
+      <div class="chart" data-v="fade" data-l="18" data-o="0.2" data-d="0.3"><div data-v="out" data-l="21" data-o="0.2" data-d="0.3"><b>الضغط في المواسير</b><i>الماسورة الرفيعة</i>
+        <svg viewBox="0 0 300 44" preserveAspectRatio="none"><path class="ln red" data-v="draw" data-ease="lin" data-l="18" data-o="0.3" data-d="4.2" d="M4 8 H206 C212 8 214 38 222 38 H296"/></svg></div></div>
+      <div class="chart" data-v="fade" data-l="27" data-o="0.2" data-d="0.3"><div data-v="out" data-l="33" data-o="-0.1" data-d="0.3"><b>حرارة جوه التلاجة</b><i>الكباس ━ شغال</i>
+        <svg viewBox="0 0 300 44" preserveAspectRatio="none"><path class="ln target" d="M4 30 H296"/>
+          <path class="ln blue" data-v="draw" data-ease="lin" data-l="27" data-o="0.3" data-d="12.5" d="M4 6 C40 10 70 28 110 30 C140 31 150 30 160 28 C180 22 200 17 222 16 C240 18 262 28 296 30"/>
+          <path class="ln olive" data-v="draw" data-ease="lin" data-l="27" data-o="0.3" data-d="12.5" d="M4 40 H122 V44 H222 V40 H296"/></svg></div></div>
+      <div class="chart" data-v="fade" data-l="33" data-o="0.3" data-d="0.3"><div data-v="out" data-l="37" data-o="-0.2" data-d="0.3"><b>حرارة المطبخ</b><i>الباب مفتوح ↑</i>
+        <svg viewBox="0 0 300 44" preserveAspectRatio="none"><path class="ln red" data-v="draw" data-ease="lin" data-l="33" data-o="0.4" data-d="12" d="M4 36 C80 34 140 33 170 32 C200 30 230 20 296 6"/></svg></div></div>
     </div>
     <div class="rule"></div>
     <div class="caps">
@@ -207,13 +228,7 @@
   <div class="sheet" style="padding:18px;display:grid;align-content:start;gap:10px">
     <span style="display:flex;align-items:center;gap:6px;font:600 11px var(--font-sans)"><svg viewBox="0 0 200 200" width="22" height="22"><use href="#mark"/></svg>إيه الحكاية؟</span>
     <h2 style="margin:0;font:700 20px/1.5 var(--font-sans);text-align:right">إزاي التلاجة بتبرّد؟</h2>
-    <div style="display:flex;justify-content:space-around;align-items:center;background:var(--panel);padding:12px 6px">
-      <div style="text-align:center"><div class="num blue" style="font-size:34px">4°</div><div class="unit">جوه</div></div>
-      <div style="font:700 26px var(--font-sans);color:var(--heat)">←</div>
-      <div style="text-align:center"><div class="num" style="font-size:22px">الحرارة</div><div class="unit">بتتنقل</div></div>
-      <div style="font:700 26px var(--font-sans);color:var(--heat)">←</div>
-      <div style="text-align:center"><div class="num" style="font-size:34px">دافي</div><div class="unit">ورا</div></div>
-    </div>
+    <svg viewBox="0 0 290 170" style="width:100%;height:170px;background:var(--panel)"><g id="outkit"></g><g id="outfr"></g><g id="outcall"></g></svg>
     <ol class="tz-legend" style="font-size:11.5px;line-height:19px;--cols:1">
       <li><span class="tz-num">1</span>الكباس يضغط الغاز، فيسخن</li>
       <li><span class="tz-num">2</span>المكثف ورا يرمي الحرارة في المطبخ، فيبقى سائل</li>

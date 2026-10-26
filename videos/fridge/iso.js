@@ -86,3 +86,28 @@
     return { iso: I, update: update, gasket: gasket, evap: evap, cond: cond };
   };
 })();
+
+/* The kitchen around the fridge: floor slab, two walls, a window, a counter with a kettle and a wall thermometer.
+   Drawn into its own group behind the fridge with the same projection. */
+(function () {
+  window.KitchenModel = function (root, opts) {
+    var I = TebEzay.iso(root, opts), g = I.group(root);
+    var XA = -300, XB = 240, YA = -170, YB = 190, H = 560;
+    I.box(g, XA, XB, YA, YB, -16, 0, { z: "iso-floor" });
+    I.face(g, [[XA, YA, 0], [XB, YA, 0], [XB, YA, H], [XA, YA, H]], "iso-wall2"); I.face(g, [[XA, YA, 0], [XB, YA, 0], [XB, YA, H], [XA, YA, H]], "tz-pat-hatch", { style: "opacity:.35" });
+    I.face(g, [[XA, YA, 0], [XA, YB, 0], [XA, YB, H], [XA, YA, H]], "iso-wall"); I.face(g, [[XA, YA, 0], [XA, YB, 0], [XA, YB, H], [XA, YA, H]], "tz-pat-hatch", { style: "opacity:.35" });
+    // window on the back wall, with the sun outside
+    I.face(g, [[-260, YA + 1, 290], [-150, YA + 1, 290], [-150, YA + 1, 410], [-260, YA + 1, 410]], "iso-top");
+    I.face(g, [[-252, YA + 2, 298], [-158, YA + 2, 298], [-158, YA + 2, 402], [-252, YA + 2, 402]], "iso-sky");
+    I.disc(g, -180, YA + 3, 380, 12, "y", "iso-sun");
+    I.line(g, [[-205, YA + 3, 298], [-205, YA + 3, 402]], "iso-frame"); I.line(g, [[-252, YA + 3, 350], [-158, YA + 3, 350]], "iso-frame");
+    // counter + kettle
+    I.box(g, -290, -120, YA, YA + 80, 0, 170, { z: "iso-counter-top" });
+    I.line(g, [[-205, YA + 80, 10], [-205, YA + 80, 160]], "iso-frame");
+    I.cyl(g, -250, YA + 40, 18, 170, 210, "iso-steel", "iso-top");
+    // wall thermometer (the kitchen's temperature)
+    I.face(g, [[-70, YA + 1, 300], [-50, YA + 1, 300], [-50, YA + 1, 400], [-70, YA + 1, 400]], "iso-top");
+    I.line(g, [[-60, YA + 2, 316], [-60, YA + 2, 390]], "iso-thermo"); I.disc(g, -60, YA + 2, 312, 6, "y", "iso-hot");
+    return { iso: I };
+  };
+})();
