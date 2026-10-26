@@ -67,3 +67,26 @@ What should we break down next? Drop it in the comments 👇
 - **TikTok:** pick the cover from "Upload cover" → `reel-cover-car-engine-1080x1920.png`. Pin a comment with the question "What should we break down next?".
 - **Facebook:** upload as a Reel (not a regular video) and add the same cover.
 - Reply to the first comments fast; it pushes the video further.
+
+## Video 2: How a plane flies
+
+Thumbnail: `reel-cover-airplane-1080x1920.png` (made from a real frame of the 3D scene, `thumb-airplane.html`).
+
+**TikTok caption:**
+```
+A jumbo jet weighs almost a million pounds and just… floats on air 🤯✈️ Here's the deal: thrust, lift, and a really smart wing 👇 What should we break down next?
+#howitworks #aviation #planes #avgeek #pilot #engineering #physics #learnontiktok #3danimation #explained
+```
+
+**Facebook Reel title:** `Almost a million pounds… floating on air ✈️`
+
+**Facebook Reel description:**
+```
+How does something that heavy just stay up there? Four forces, a jet engine that goes suck, squeeze, bang, blow, and a wing that shoves air down. All in under 2 minutes, in 3D. ✈️
+
+Fun fact: a Boeing 787's wings can flex up about 25 feet.
+
+What should we break down next? Drop it in the comments 👇
+
+#howitworks #aviation #planes #avgeek #explained
+```
