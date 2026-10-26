@@ -11,7 +11,9 @@ const SCALE = +(process.env.SCALE || 3);
 const TAIL = +(process.env.TAIL || 2.3);
 
 (async () => {
-  const b = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] }); // WebGL for three.js scenes
+  // Software WebGL (SwiftShader) only for real-3D pages (three.js): it makes plain SVG pages ~3× slower.
+  const gl = /<canvas id="gl"/.test(require('fs').readFileSync(html, 'utf8'));
+  const b = await chromium.launch(gl ? { args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] } : {});
   const p = await b.newPage({ viewport: { width: 360, height: 640 }, deviceScaleFactor: SCALE });
   await p.goto('file://' + html);
   await p.waitForTimeout(3000); // fonts
