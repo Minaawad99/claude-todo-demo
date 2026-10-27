@@ -28,7 +28,7 @@
       for (var g = 0; g < 14; g++) { var gx = -380 + hash(k * 31 + g) * 1400, gy = by(k, gx) + th * (0.3 + hash(g + k) * 0.5); s += '<ellipse cx="' + f(gx) + '" cy="' + f(gy) + '" rx="' + f(4 + hash(g * 3 + k) * 6) + '" ry="2" fill="#000" opacity=".12"/>'; }
     }
     if (o.oil && dome) {   // oil fills the top of the reservoir layer, right under the cap
-      var rk = (o.capK || 3) + 1, lev = by(rk, cx) + th * 0.9 - (dome * 0.9) * clamp(o.oil), d = "";
+      var rk = (o.capK || 3) + 1, lev = by(rk, cx) + dome * 0.75 * clamp(o.oil), d = "";
       for (var x2 = cx - w * 1.6; x2 <= cx + w * 1.6; x2 += 10) { var yt = by(rk, x2); if (yt < lev) d += (d ? " L" : "M") + x2 + " " + f(yt); }
       if (d) { s += '<path d="' + d + ' L' + f(cx + w * 1.6) + ' ' + f(lev) + ' L' + f(cx - w * 1.6) + ' ' + f(lev) + ' Z" fill="url(#oilG)" opacity=".92"/>';
         s += '<clipPath id="oc' + (++OILN) + '"><path d="' + d + ' Z"/></clipPath>'; for (var q = 0; q < 10; q++) { var qx = cx + (hash(q) - 0.5) * w * 1.8, qy = lev - 4 - hash(q + 9) * 26 + Math.sin(t * 2 + q) * 2; s += '<circle cx="' + f(qx) + '" cy="' + f(qy) + '" r="2" fill="#ffd98a" opacity="' + f(0.3 + 0.3 * Math.sin(t * 3 + q)) + '"/>'; } }
@@ -430,6 +430,9 @@
     var s = graphPaper(t) + engineer(230, 180, t, "happy", { point: true, s: 0.9 }) + drop(430, 230, 40, "happy", t, { look: -1 });
     return s + qmark(470, 110, t, 60) + qmark(530, 150, t + 1, 40) + tag("حكاية إيه المرة الجاية؟", 320, 330, u, 0.2, -2, 19);
   });
+
+  // the parts, for the reel cover
+  window.__parts = { sea: sea, waves: waves, strata: strata, seabed: seabed, drillship: drillship, drop: drop, bop: bop, tag: tag, bubbles: bubbles, fish: fish };
 
   window.__panel = function (svg, t) {
     OILN = 0; var i = at(t), sh = SH[i], next = i + 1 < SH.length ? SH[i + 1].a : L(LN.length), u = t - sh.a, d = Math.max(0.5, next - sh.a);
