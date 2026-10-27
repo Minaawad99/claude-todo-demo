@@ -3,7 +3,8 @@
     "watch@claude-video": true,
     "superpowers@superpowers-marketplace": true,
     "humanizer@humanizer": true,
-    "andrej-karpathy-skills@karpathy-skills": true
+    "andrej-karpathy-skills@karpathy-skills": true,
+    "impeccable@impeccable": true
   },
   "extraKnownMarketplaces": {
     "claude-video": {
@@ -28,6 +29,12 @@
       "source": {
         "source": "github",
         "repo": "multica-ai/andrej-karpathy-skills"
+      }
+    },
+    "impeccable": {
+      "source": {
+        "source": "github",
+        "repo": "pbakaus/impeccable"
       }
     }
   }
