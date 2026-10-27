@@ -259,10 +259,13 @@
     for (var i = 0; i < SH.length; i++) if (SH[i].t <= t) { a = SH[i - 1] || SH[i]; b = SH[i]; }
     var k = easeIO((t - b.t) / b[5]);
     var pa = rel(a, 2, t), pb = rel(b, 2, t), ta = rel(a, 3, t), tb = rel(b, 3, t);
-    cam.position.copy(pa.lerp(pb, k)); cam.fov = lerp(a[4], b[4], k); cam.updateProjectionMatrix();
-    cam.lookAt(ta.lerp(tb, k));
-    // a slow handheld drift keeps every frame alive
+    var pos = pa.lerp(pb, k), tgt = ta.lerp(tb, k);
+    // never a frozen frame: a slow orbit + breathing dolly around the target, plus a light handheld drift
+    var off = pos.clone().sub(tgt), ang = .07 * Math.sin(t * .42) + .05 * Math.sin(t * .23 + 1);
+    off.applyAxisAngle(V(0, 1, 0), ang).multiplyScalar(1 - .045 * Math.sin(t * .31));
+    cam.position.copy(tgt).add(off); cam.fov = lerp(a[4], b[4], k); cam.updateProjectionMatrix();
     cam.position.x += Math.sin(t * .7) * .04; cam.position.y += Math.sin(t * .53) * .03;
+    cam.lookAt(tgt);
   }
   // shots marked "follow" are written relative to where the car stood when the scene began
   function rel(s, i, t) {

@@ -159,7 +159,6 @@
 
   // ── chips pinned to 3D points: [anchor, text, colour, from, offset, to, offset, dx, dy] ──
   var LB = [
-    ["car", "ستة أنفار", "d", 0, .4, 1, 0, 0, -10],
     ["carTop", "حبال حديد", "y", 4, .4, 5, .2, 0, -30],
     ["rope1", "1", "y", 5, .2, 5, 2.2, -50, 60], ["rope1", "2", "y", 5, .45, 5, 2.2, -30, 60], ["rope1", "3", "y", 5, .7, 5, 2.2, -10, 60], ["rope1", "4", "y", 5, .95, 5, 2.2, 10, 60], ["rope1", "5", "y", 5, 1.2, 5, 2.2, 30, 60], ["rope1", "6", "y", 5, 1.45, 5, 2.2, 50, 60],
     ["rope1", "حبل واحد = كفاية ✓", "g", 6, .3, 7, -.1, 0, -40],
@@ -219,6 +218,9 @@
       if (o.pop) o.el.style.transform = "scale(" + (.86 + .14 * back(i)).toFixed(4) + ")";
     });
     COUNT.forEach(function (c) { c.el.textContent = Math.round(c.f + (c.to - c.f) * ease((t - c.t) / 1.2)); });
+    var fl = Math.sin(t * 1.3) * 2.5;
+    document.querySelector(".final").style.translate = "0 " + fl.toFixed(2) + "px";
+    document.querySelector(".brand").style.translate = "0 " + (-fl).toFixed(2) + "px";
     document.getElementById("ring").style.strokeDashoffset = 100 * (1 - ease((t - S(3) + .1) / 1.4));
     LB.forEach(function (b) {
       var a = S(b[3]) + b[4], z = S(b[5]) + b[6], o = Math.min(ease((t - a) / .25), ease((z - t) / .25));
