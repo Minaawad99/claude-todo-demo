@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — GPS traffic</title>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Noto+Sans+Arabic:wght@600;800;900&family=Noto+Serif:wght@700&display=swap" rel="stylesheet">
+<style>
+  /* TikTok cover, 540×960 at 2x, full bleed. TikTok covers the right edge (buttons) and the bottom ~28% (caption),
+     so the hook text and the phone sit in y 90–640 and away from the right 70px. */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #1f252e; }
+  #art { position: absolute; inset: 0; width: 540px; height: 960px; }
+  .tag { font-family: "Noto Sans Arabic", sans-serif; font-weight: 800; fill: #2b2016; }
+  .t { position: absolute; left: 20px; right: 70px; margin: 0; text-align: center; }
+  .big { top: 92px; font: 900 96px/1 "Noto Sans Arabic", sans-serif; color: #ffd23a; -webkit-text-stroke: 7px #1c1c1c; paint-order: stroke fill; transform: rotate(-4deg); text-shadow: 0 8px 0 #1c1c1c; }
+  .mid { top: 206px; font: 800 38px/1.25 "Noto Sans Arabic", sans-serif; color: #fff; -webkit-text-stroke: 6px #1c1c1c; paint-order: stroke fill; transform: rotate(-2deg); }
+  .mid b { color: #ff4a3a; }
+  .brand { position: absolute; top: 40px; left: 20px; right: 70px; text-align: center; font: 700 20px "Aref Ruqaa", serif; color: #fff; }
+  .brand span { background: #1c1c1c; padding: 4px 14px; border-radius: 20px; border: 2px solid #ffd23a; }
+</style></head><body>
+<div class="cover">
+  <svg id="art" viewBox="0 0 540 960"></svg>
+  <p class="brand"><span>إيه الحكاية؟</span></p>
+  <p class="t big">99 موبايل</p>
+  <p class="t mid">ضحكوا على الخريطة<br>وقلبوا الشارع <b>أحمر!</b></p>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter>
+  <filter id="soft2" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="1.8"/></filter>
+  <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3"/></filter>
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .45  0 0 0 0 .4  0 0 0 .08 0"/></filter>
+  <linearGradient id="sky-day" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fb7e0"/><stop offset=".55" stop-color="#b9d8ec"/><stop offset="1" stop-color="#f3dfc2"/></linearGradient>
+  <linearGradient id="sky-dusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9a06e"/><stop offset=".5" stop-color="#f7d0a0"/><stop offset="1" stop-color="#fbe9cc"/></linearGradient>
+  <linearGradient id="sky-night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1730"/><stop offset=".6" stop-color="#1e3458"/><stop offset="1" stop-color="#2f4a72"/></linearGradient>
+  <linearGradient id="sky-dawn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4a7a"/><stop offset=".55" stop-color="#c98aa0"/><stop offset="1" stop-color="#f6c99a"/></linearGradient>
+  <linearGradient id="grass-day" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9dbb6e"/><stop offset="1" stop-color="#6f9548"/></linearGradient>
+  <linearGradient id="grass-dusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b3a66a"/><stop offset="1" stop-color="#857a44"/></linearGradient>
+  <linearGradient id="grass-night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b4a35"/><stop offset="1" stop-color="#16281c"/></linearGradient>
+  <linearGradient id="grass-dawn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a9a5a"/><stop offset="1" stop-color="#5a6a3a"/></linearGradient>
+  <linearGradient id="road" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6d6a66"/><stop offset="1" stop-color="#3f3d3a"/></linearGradient>
+  <linearGradient id="bld" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c79a7b"/><stop offset="1" stop-color="#a77a5c"/></linearGradient>
+  <linearGradient id="roof" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a958c"/><stop offset="1" stop-color="#6f6a62"/></linearGradient>
+  <linearGradient id="gHeliBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2523a"/><stop offset=".55" stop-color="#c23a26"/><stop offset="1" stop-color="#8f2618"/></linearGradient>
+  <linearGradient id="gGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9eef7"/><stop offset=".6" stop-color="#8fc2da"/><stop offset="1" stop-color="#5d93ad"/></linearGradient>
+  <linearGradient id="gMetal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a8f96"/><stop offset="1" stop-color="#4b5056"/></linearGradient>
+  <linearGradient id="gPlane" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#e4e8ec"/><stop offset="1" stop-color="#b9c1c9"/></linearGradient>
+  <linearGradient id="sea1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4fb3d9"/><stop offset=".6" stop-color="#2b86b5"/><stop offset="1" stop-color="#1c5f8f"/></linearGradient>
+  <linearGradient id="sea2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b86b5"/><stop offset=".6" stop-color="#1c5f8f"/><stop offset="1" stop-color="#123f66"/></linearGradient>
+  <linearGradient id="sea3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#163f66"/><stop offset=".6" stop-color="#0d2a48"/><stop offset="1" stop-color="#071a30"/></linearGradient>
+  <linearGradient id="gSub" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a8796"/><stop offset=".35" stop-color="#55606d"/><stop offset=".75" stop-color="#3a434d"/><stop offset="1" stop-color="#262c33"/></linearGradient>
+  <linearGradient id="gSubDark" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a6470"/><stop offset="1" stop-color="#2b3138"/></linearGradient>
+  <linearGradient id="gInner" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a7b1bc"/><stop offset=".5" stop-color="#7d8894"/><stop offset="1" stop-color="#58626d"/></linearGradient>
+  <linearGradient id="gTank" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2f6f4f"/><stop offset=".45" stop-color="#5fa37a"/><stop offset="1" stop-color="#245a3e"/></linearGradient>
+  <clipPath id="port"><circle cx="520" cy="190" r="64"/></clipPath>
+  <linearGradient id="gBezel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3f46"/><stop offset="1" stop-color="#16191d"/></linearGradient>
+  <linearGradient id="gWall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9d8bf"/><stop offset="1" stop-color="#d9c3a2"/></linearGradient>
+  <linearGradient id="gFloor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a7774e"/><stop offset="1" stop-color="#7a5434"/></linearGradient>
+  <linearGradient id="gSofa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5f8f9a"/><stop offset="1" stop-color="#3d6670"/></linearGradient>
+  <linearGradient id="gRod" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7a5ab0"/><stop offset=".5" stop-color="#c9b4f0"/><stop offset="1" stop-color="#6a4aa0"/></linearGradient>
+  <radialGradient id="gGlowW" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#fff6d8" stop-opacity=".7"/><stop offset="1" stop-color="#fff6d8" stop-opacity="0"/></radialGradient>
+  <linearGradient id="gPic" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a3a8a"/><stop offset=".45" stop-color="#d4508c"/><stop offset=".7" stop-color="#f2a85a"/><stop offset="1" stop-color="#f7d98a"/></linearGradient>
+  <linearGradient id="gChip" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a4f56"/><stop offset="1" stop-color="#22262b"/></linearGradient>
+  <linearGradient id="gSpace" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#050a1a"/><stop offset="1" stop-color="#16244a"/></linearGradient>
+  <radialGradient id="gEarth" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#5fb0e8"/><stop offset=".6" stop-color="#2f6f9f"/><stop offset="1" stop-color="#16325a"/></radialGradient>
+  <linearGradient id="gSatPanel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a5ab0"/><stop offset="1" stop-color="#16285a"/></linearGradient>
+  <linearGradient id="gFoil" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3dc9e"/><stop offset=".5" stop-color="#c9a04e"/><stop offset="1" stop-color="#8a6a30"/></linearGradient>
+  <linearGradient id="gAsphalt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a5752"/><stop offset="1" stop-color="#3f3d3a"/></linearGradient>
+  <path id="swash" d="M6 14 C40 4 120 2 196 8 C214 10 222 20 214 30 C206 44 140 46 70 44 C30 44 4 40 2 30 C0 24 2 18 6 14 Z"/>
+  <linearGradient id="seaS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4f74"/><stop offset="1" stop-color="#14223a"/></linearGradient>
+  <linearGradient id="hullB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2d5c9a"/><stop offset="1" stop-color="#16325a"/></linearGradient>
+  <linearGradient id="hullW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f2ec"/><stop offset="1" stop-color="#bdb8ad"/></linearGradient>
+  <linearGradient id="steel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5a6068"/><stop offset=".45" stop-color="#c9ced4"/><stop offset=".6" stop-color="#9aa2ac"/><stop offset="1" stop-color="#4a5058"/></linearGradient>
+  <linearGradient id="bitBody" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3a3d42"/><stop offset=".4" stop-color="#8a9098"/><stop offset=".55" stop-color="#b9bfc6"/><stop offset="1" stop-color="#2b2e33"/></linearGradient>
+  <radialGradient id="cone" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#d4d9de"/><stop offset=".55" stop-color="#8a929c"/><stop offset="1" stop-color="#3a3f46"/></radialGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3dc9e"/><stop offset=".5" stop-color="#c9a04e"/><stop offset="1" stop-color="#7a5a24"/></linearGradient>
+  <linearGradient id="leg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1f524b"/><stop offset=".45" stop-color="#5fa597"/><stop offset="1" stop-color="#1d4a44"/></linearGradient>
+  <linearGradient id="steelD" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3a3f46"/><stop offset=".45" stop-color="#7a828c"/><stop offset="1" stop-color="#2b2e33"/></linearGradient>
+  <radialGradient id="pdc" cx=".35" cy=".35" r=".7"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#d9dee4"/><stop offset="1" stop-color="#6a727c"/></radialGradient>
+  <linearGradient id="bopRed" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7a1c14"/><stop offset=".45" stop-color="#d8452e"/><stop offset="1" stop-color="#6a1810"/></linearGradient>
+  <linearGradient id="bopYel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9a6a10"/><stop offset=".45" stop-color="#f2c230"/><stop offset="1" stop-color="#8a5c0c"/></linearGradient>
+  <linearGradient id="deep" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0e3a5c"/><stop offset="1" stop-color="#04121f"/></linearGradient>
+  <linearGradient id="rock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a7a5a"/><stop offset="1" stop-color="#5a4a34"/></linearGradient>
+  <linearGradient id="skyS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a3a6a"/><stop offset=".45" stop-color="#d46a3c"/><stop offset=".7" stop-color="#f2a85a"/><stop offset="1" stop-color="#f7c98a"/></linearGradient>
+  <linearGradient id="oilG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a4a3a"/><stop offset=".5" stop-color="#1e1812"/><stop offset="1" stop-color="#0a0806"/></linearGradient>
+  <linearGradient id="mudG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6a4a2a"/><stop offset=".5" stop-color="#9a7048"/><stop offset="1" stop-color="#5a3c20"/></linearGradient>
+  <linearGradient id="tankR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8452e"/><stop offset="1" stop-color="#8f2618"/></linearGradient>
+  <linearGradient id="screen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0f2a3a"/><stop offset="1" stop-color="#06141e"/></linearGradient>
+</defs></svg>
+<script src="../../videos/gps-traffic/timing.js"></script>
+<script src="../../videos/gps-traffic/cartoon/scenes.js"></script>
+<script>
+  (function () {
+    var P = window.__parts, t = 70.4, s = "", INK = "#1c1c1c";
+    function f(n) { return (+n).toFixed(1); }
+    function ball(x, y, r, happy) { return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="#fbfbf7" stroke="' + INK + '" stroke-width="' + f(r / 8) + '"/><circle cx="' + f(x - r * 0.35) + '" cy="' + f(y - r * 0.4) + '" r="' + f(r * 0.25) + '" fill="#fff"/>' +
+      (happy ? '<path d="M' + f(x - r * 0.5) + ' ' + f(y - r * 0.05) + ' q' + f(r * 0.22) + ' ' + f(-r * 0.35) + ' ' + f(r * 0.44) + ' 0 M' + f(x + r * 0.06) + ' ' + f(y - r * 0.05) + ' q' + f(r * 0.22) + ' ' + f(-r * 0.35) + ' ' + f(r * 0.44) + ' 0" stroke="' + INK + '" stroke-width="' + f(r / 9) + '" fill="none" stroke-linecap="round"/><path d="M' + f(x - r * 0.4) + ' ' + f(y + r * 0.3) + ' q' + f(r * 0.4) + ' ' + f(r * 0.4) + ' ' + f(r * 0.8) + ' 0" stroke="' + INK + '" stroke-width="' + f(r / 9) + '" fill="#c23a26"/>' : ""); }
+    // the empty street, stretched to fill the cover (the street art lives in a 640×360 world)
+    s += '<g transform="translate(-270 -150) scale(2.6)">' + P.street(t, { jam: 0, v: 0 }).replace(/<g transform="translate\(([-\d.]+) (2[0-9]{2}|3[0-9]{2})[^"]*"[^>]*>[\s\S]*?<\/g><\/g>/g, "") + '</g>';
+    s += '<rect width="540" height="960" fill="#000" opacity=".18"/><rect width="540" height="330" fill="url(#gSpace)" opacity=".55"/>';
+    // a red glow behind the phone + the phone showing the street turned red
+    s += '<circle cx="250" cy="520" r="190" fill="#ff3b2f" opacity=".28" filter="url(#soft)"/>';
+    s += P.phoneIn(250, 520, 0.98, t, function (w, h) { return P.navApp(w, h, t, { jam: 1, mins: 40 }); }, { rot: -8 });
+    s += P.tag("زحمة؟!", 420, 420, 9, 0, 8, 26, "#ffb08a");
+    // the artist with the red hand cart full of phones, walking down the empty road
+    var x = 380, y = 820, g = '<g transform="translate(' + x + ' ' + y + ')">';
+    g += '<path d="M-26 0 L-80 18" stroke="' + INK + '" stroke-width="6"/><rect x="-250" y="-6" width="176" height="46" rx="8" fill="#c23a26" stroke="' + INK + '" stroke-width="4"/>';
+    for (var p = 0; p < 48; p++) g += '<rect x="' + (-244 + (p % 16) * 10.6) + '" y="' + (-24 - Math.floor(p / 16) * 15 - (p % 2) * 2) + '" width="9.6" height="17" rx="2" fill="#1c1e22" stroke="#e9e4d8" stroke-width="1.2"/>';
+    g += '<circle cx="-226" cy="44" r="15" fill="' + INK + '"/><circle cx="-100" cy="44" r="15" fill="' + INK + '"/>';
+    g += '<path d="M0 -10 L-14 48 M0 -10 L14 48" stroke="#26405e" stroke-width="14" stroke-linecap="round"/><path d="M-30 -96 C-34 -50 -24 -8 0 -8 C24 -8 30 -50 26 -96 Z" fill="#3a3d42" stroke="' + INK + '" stroke-width="4"/><path d="M-16 -74 L-40 6" stroke="#3a3d42" stroke-width="14" stroke-linecap="round"/>' + ball(0, -126, 32, true);
+    s += g + '</g>';
+    s += '<g transform="translate(150 700) rotate(-6)"><rect x="-74" y="-26" width="148" height="52" rx="12" fill="' + INK + '" stroke="#ffd23a" stroke-width="3"/><text y="10" text-anchor="middle" style="font:800 26px Noto Sans Arabic;fill:#7cf29a">شارع فاضي!</text></g>';
+    document.getElementById("art").innerHTML = s + '<rect width="540" height="960" filter="url(#grain)"/>';
+  })();
+</script>
+</body></html>
