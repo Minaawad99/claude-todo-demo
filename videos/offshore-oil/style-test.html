@@ -4,6 +4,7 @@
 <style>
   /* realistic-detail test: each piece of kit drawn from its real shape, lit like a 3D model */
   body { margin: 0; background: #000; }
+  #frames { display: flex; }
   .frame { position: relative; width: 360px; height: 640px; background: #000; overflow: hidden; }
   .title { position: absolute; left: 0; right: 0; top: 92px; text-align: center; font: 700 30px/1.2 "Aref Ruqaa", serif; color: #fff; }
   .sub { position: absolute; left: 0; right: 0; top: 136px; text-align: center; font: 700 19px/1.2 "Aref Ruqaa", serif; color: #f2c230; }
@@ -26,7 +27,10 @@
   <linearGradient id="hullW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f2ec"/><stop offset="1" stop-color="#bdb8ad"/></linearGradient>
   <linearGradient id="steel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5a6068"/><stop offset=".45" stop-color="#c9ced4"/><stop offset=".6" stop-color="#9aa2ac"/><stop offset="1" stop-color="#4a5058"/></linearGradient>
   <linearGradient id="bitBody" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3a3d42"/><stop offset=".4" stop-color="#8a9098"/><stop offset=".55" stop-color="#b9bfc6"/><stop offset="1" stop-color="#2b2e33"/></linearGradient>
-  <radialGradient id="cone" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#c9a65a"/><stop offset=".6" stop-color="#8a6a30"/><stop offset="1" stop-color="#4a3818"/></radialGradient>
+  <radialGradient id="cone" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#d4d9de"/><stop offset=".55" stop-color="#8a929c"/><stop offset="1" stop-color="#3a3f46"/></radialGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3dc9e"/><stop offset=".5" stop-color="#c9a04e"/><stop offset="1" stop-color="#7a5a24"/></linearGradient>
+  <linearGradient id="leg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1f524b"/><stop offset=".45" stop-color="#5fa597"/><stop offset="1" stop-color="#1d4a44"/></linearGradient>
+  <linearGradient id="steelD" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3a3f46"/><stop offset=".45" stop-color="#7a828c"/><stop offset="1" stop-color="#2b2e33"/></linearGradient>
   <radialGradient id="pdc" cx=".35" cy=".35" r=".7"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#d9dee4"/><stop offset="1" stop-color="#6a727c"/></radialGradient>
   <linearGradient id="bopRed" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7a1c14"/><stop offset=".45" stop-color="#d8452e"/><stop offset="1" stop-color="#6a1810"/></linearGradient>
   <linearGradient id="bopYel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9a6a10"/><stop offset=".45" stop-color="#f2c230"/><stop offset="1" stop-color="#8a5c0c"/></linearGradient>
@@ -37,7 +41,7 @@
 <script>
 function tag(t, x, y, r, sz, col) { var w = t.length * (sz || 20) * 0.52 + 40; return '<g transform="translate(' + x + ' ' + y + ') rotate(' + (r || -3) + ')"><use href="#swash" fill="' + (col || "#e8c48e") + '" transform="translate(' + (-w / 2) + ' ' + (-(sz || 20) * 1.05) + ') scale(' + (w / 220) + ' ' + ((sz || 20) * 0.072) + ')"/><text x="0" y="' + ((sz || 20) * 0.35) + '" text-anchor="middle" class="tag" style="font-size:' + (sz || 20) + 'px">' + t + '</text></g>'; }
 // lattice derrick: tapered steel truss with X-bracing
-function derrick(x, y, w0, w1, h) { var s = '<path d="M' + (x - w0 / 2) + ' ' + y + ' L' + (x - w1 / 2) + ' ' + (y - h) + ' M' + (x + w0 / 2) + ' ' + y + ' L' + (x + w1 / 2) + ' ' + (y - h) + '" stroke="#e9e4d8" stroke-width="3"/>'; for (var k = 0; k < 9; k++) { var a = y - h * k / 9, b = y - h * (k + 1) / 9, wa = w0 + (w1 - w0) * k / 9, wb = w0 + (w1 - w0) * (k + 1) / 9; s += '<path d="M' + (x - wa / 2) + ' ' + a + ' L' + (x + wb / 2) + ' ' + b + ' M' + (x + wa / 2) + ' ' + a + ' L' + (x - wb / 2) + ' ' + b + ' M' + (x - wb / 2) + ' ' + b + ' H' + (x + wb / 2) + '" stroke="#d9d3c4" stroke-width="1.4"/>'; } return s + '<rect x="' + (x - w1 / 2 - 4) + '" y="' + (y - h - 8) + '" width="' + (w1 + 8) + '" height="8" fill="#c23a26" stroke="#1c1c1c"/>'; }
+function derrick(x, y, w0, w1, h) { var s = '<path d="M' + (x - w0 / 2) + ' ' + y + ' L' + (x - w1 / 2) + ' ' + (y - h) + ' M' + (x + w0 / 2) + ' ' + y + ' L' + (x + w1 / 2) + ' ' + (y - h) + '" stroke="#2f343a" stroke-width="4"/>'; for (var k = 0; k < 9; k++) { var a = y - h * k / 9, b = y - h * (k + 1) / 9, wa = w0 + (w1 - w0) * k / 9, wb = w0 + (w1 - w0) * (k + 1) / 9; s += '<path d="M' + (x - wa / 2) + ' ' + a + ' L' + (x + wb / 2) + ' ' + b + ' M' + (x + wa / 2) + ' ' + a + ' L' + (x - wb / 2) + ' ' + b + ' M' + (x - wb / 2) + ' ' + b + ' H' + (x + wb / 2) + '" stroke="#3d434a" stroke-width="1.8"/>'; } return s + '<rect x="' + (x - w1 / 2 - 4) + '" y="' + (y - h - 8) + '" width="' + (w1 + 8) + '" height="8" fill="#c23a26" stroke="#1c1c1c"/>'; }
 var P = [];
 // 1) the drillship at sunset (real layout: helideck at the bow, derrick amidships, cranes, accommodation block)
 P.push({ cap: "بعدها ييجي دور <b>الحفر</b>، من <b>سفينة حفر</b>", svg:
@@ -51,47 +55,67 @@ P.push({ cap: "بعدها ييجي دور <b>الحفر</b>، من <b>سفينة
   '<rect x="120" y="178" width="90" height="44" fill="url(#hullW)" stroke="#5a5a5a"/>' + Array.from({ length: 12 }, (_, i) => '<rect x="' + (126 + (i % 6) * 14) + '" y="' + (186 + Math.floor(i / 6) * 16) + '" width="9" height="7" fill="#ffd98a"/>').join("") +
   '<path d="M96 172 H186 L176 180 H106 Z" fill="#e2b035" stroke="#5a4a20"/><circle cx="141" cy="175" r="6" fill="none" stroke="#fff" stroke-width="1.6"/>' +
   // derrick amidships + drill floor + pipe rack
-  '<rect x="300" y="200" width="100" height="22" fill="url(#hullW)" stroke="#5a5a5a"/>' + derrick(350, 200, 66, 20, 150) +
+  '<rect x="300" y="200" width="100" height="22" fill="url(#hullW)" stroke="#5a5a5a"/>' + derrick(350, 200, 84, 30, 156) +
   '<rect x="420" y="208" width="90" height="14" fill="#8a929c" stroke="#3a3d42"/>' + Array.from({ length: 6 }, (_, i) => '<path d="M424 ' + (210 + i * 2) + ' H506" stroke="#5a6068" stroke-width="1.6"/>').join("") +
   // cranes
   '<path d="M240 222 V176 L296 150" stroke="#f2c230" stroke-width="5" fill="none"/><path d="M520 222 V184 L570 160" stroke="#f2c230" stroke-width="5" fill="none"/>' +
   // lights
   '<circle cx="350" cy="44" r="5" fill="#ff3b2f" filter="url(#glow)"/>' + [260, 300, 400, 470].map(x => '<circle cx="' + x + '" cy="218" r="2.4" fill="#fff6c8"/>').join("") +
   tag("سفينة حفر", 520, 70, 3) });
-// 2) the two real drill bits: tricone (3 rolling cones with steel teeth) and PDC (blades with diamond cutters)
+// 2) the two real drill bits, from the Commons photos: tricone (green legs, 3 steel cones with rows of teeth) and PDC (gold body, spiral blades with round diamond cutters)
+function cone(x, y, rot, flip) {
+  var s = '<g transform="translate(' + x + ' ' + y + ') rotate(' + rot + ') scale(' + (flip ? -1 : 1) + ' 1)">';
+  s += '<path d="M-46 -40 Q-58 0 -46 40 L30 13 Q42 0 30 -13 Z" fill="url(#cone)" stroke="#1c1c1c" stroke-width="2"/>';
+  [0.12, 0.42, 0.72].forEach(function (t, r) { var cx = -46 + 76 * t, hh = 40 * (1 - t) + 13 * t, n = 5 - r;
+    s += '<path d="M' + cx + ' ' + (-hh) + ' Q' + (cx - 6) + ' 0 ' + cx + ' ' + hh + '" stroke="#2b2e33" stroke-width="1.4" fill="none"/>';
+    for (var k = 0; k < n; k++) { var yy = -hh + (2 * hh) * (k + 0.5) / n; s += '<path d="M' + (cx - 5) + ' ' + (yy - 5) + ' L' + (cx + 7) + ' ' + yy + ' L' + (cx - 5) + ' ' + (yy + 5) + ' Z" fill="#dfe3e8" stroke="#1c1c1c" stroke-width=".9"/>'; }
+    s += '<path d="M' + (cx - 3) + ' ' + (-hh - 1) + ' l5 -9 l5 9 Z M' + (cx - 3) + ' ' + (hh + 1) + ' l5 9 l5 -9 Z" fill="#dfe3e8" stroke="#1c1c1c" stroke-width=".9"/>'; });
+  return s + '</g>';
+}
+function pdc(x, y, t) {
+  var R = 78, yG = -40, D = 86, s = '<g transform="translate(' + x + ' ' + y + ')">';
+  s += '<path d="M-26 -150 H26 L22 -110 H-22 Z" fill="url(#bitBody)" stroke="#1c1c1c" stroke-width="2"/>' + Array.from({ length: 6 }, (_, i) => '<path d="M-24 ' + (-146 + i * 7) + ' L24 ' + (-142 + i * 7) + '" stroke="#2b2e33" stroke-width="1.6"/>').join("");
+  s += '<path d="M-40 -110 H40 L' + R + ' -70 V' + yG + ' H' + (-R) + ' V-70 Z" fill="url(#gold)" stroke="#1c1c1c" stroke-width="2"/>';
+  s += '<path d="M' + (-R) + ' ' + yG + ' A' + R + ' ' + D + ' 0 0 0 ' + R + ' ' + yG + ' Z" fill="#6e5426" stroke="#1c1c1c" stroke-width="2"/>';
+  var blades = [], cut = [];
+  for (var j = 0; j < 7; j++) { var ph0 = j * 2 * Math.PI / 7 + (t || 0), pts = [];
+    for (var k = 0; k <= 12; k++) { var u = k / 12, ph = ph0 + 0.9 * u, r = R * Math.cos(u * 1.45), px = r * Math.sin(ph), py = yG + D * Math.sin(u * 1.45) - 6 * Math.cos(ph) * (1 - u), vis = Math.cos(ph);
+      pts.push([px, py, vis, u]); }
+    var front = pts.filter(p => p[2] > -0.05); if (front.length < 2) continue;
+    blades.push([front.reduce((m, p) => m + p[2], 0) / front.length, front]); }
+  blades.sort((a, b) => a[0] - b[0]).forEach(function (bl) { var p = bl[1], d = "M" + p.map(q => q[0].toFixed(1) + " " + q[1].toFixed(1)).join(" L");
+    s += '<path d="' + d + '" stroke="#1c1c1c" stroke-width="23" stroke-linecap="round" fill="none"/><path d="' + d + '" stroke="url(#gold)" stroke-width="19" stroke-linecap="round" fill="none"/>';
+    p.forEach(function (q, i) { if (i % 2 || q[3] > 0.85) return; var rr = 3 + 3.2 * Math.max(0.2, q[2]); s += '<ellipse cx="' + q[0].toFixed(1) + '" cy="' + (q[1] - 3).toFixed(1) + '" rx="' + (rr * (0.45 + 0.55 * Math.max(0, q[2]))).toFixed(1) + '" ry="' + rr.toFixed(1) + '" fill="url(#pdc)" stroke="#1c1c1c" stroke-width="1.1"/>'; }); });
+  return s + '</g>';
+}
 P.push({ cap: "وفي آخرها <b>بريمة</b>، فيها <b>تروس مسننة</b> أو <b>ألماظ صناعي</b>", svg:
   '<rect width="640" height="360" fill="#e9e1cf"/>' + Array.from({ length: 17 }, (_, i) => '<path d="M' + (i * 40) + ' 0 V360" stroke="#d9cdb3" stroke-width="2"/>').join("") + Array.from({ length: 10 }, (_, i) => '<path d="M0 ' + (i * 40) + ' H640" stroke="#d9cdb3" stroke-width="2"/>').join("") +
-  // tricone: pin (threaded), shank, three legs, three cones
+  // tricone: threaded pin, shank, three painted legs, three cones meeting at the centre
   '<g transform="translate(180 175)"><ellipse cx="0" cy="118" rx="96" ry="14" fill="#2b2620" opacity=".25" filter="url(#soft2)"/>' +
-  '<path d="M-26 -150 H26 L22 -96 H-22 Z" fill="url(#bitBody)" stroke="#1c1c1c" stroke-width="2"/>' + Array.from({ length: 8 }, (_, i) => '<path d="M-24 ' + (-146 + i * 7) + ' L24 ' + (-142 + i * 7) + '" stroke="#2b2e33" stroke-width="1.6"/>').join("") +
-  '<path d="M-58 -96 H58 L66 -40 C66 -20 50 -6 30 0 H-30 C-50 -6 -66 -20 -66 -40 Z" fill="url(#bitBody)" stroke="#1c1c1c" stroke-width="2"/>' +
-  '<g><path d="M-70 -10 C-96 30 -80 80 -40 92 C-10 100 4 60 -6 30 Z" fill="url(#cone)" stroke="#1c1c1c" stroke-width="2"/>' + Array.from({ length: 12 }, (_, i) => { var a = i / 12; return '<path d="M' + (-80 + a * 60) + ' ' + (10 + a * 70) + ' l-8 6 l10 2 Z" fill="#d9dee4" stroke="#1c1c1c" stroke-width=".8"/>'; }).join("") + '</g>' +
-  '<g><path d="M70 -10 C96 30 80 80 40 92 C10 100 -4 60 6 30 Z" fill="url(#cone)" stroke="#1c1c1c" stroke-width="2"/>' + Array.from({ length: 12 }, (_, i) => { var a = i / 12; return '<path d="M' + (80 - a * 60) + ' ' + (10 + a * 70) + ' l8 6 l-10 2 Z" fill="#d9dee4" stroke="#1c1c1c" stroke-width=".8"/>'; }).join("") + '</g>' +
-  '<g><path d="M-30 20 C-40 60 -20 104 0 108 C20 104 40 60 30 20 Z" fill="url(#cone)" stroke="#1c1c1c" stroke-width="2"/>' + Array.from({ length: 9 }, (_, i) => '<path d="M' + (-18 + (i % 3) * 18) + ' ' + (40 + Math.floor(i / 3) * 22) + ' l6 -8 l6 8 Z" fill="#d9dee4" stroke="#1c1c1c" stroke-width=".8"/>').join("") + '</g>' +
-  '<circle cx="-40" cy="-30" r="5" fill="#1c1c1c"/><circle cx="40" cy="-30" r="5" fill="#1c1c1c"/></g>' +
-  // PDC: pin, body, 5 spiral blades studded with round diamond cutters
-  '<g transform="translate(460 175)"><ellipse cx="0" cy="104" rx="96" ry="14" fill="#2b2620" opacity=".25" filter="url(#soft2)"/>' +
-  '<path d="M-26 -150 H26 L22 -96 H-22 Z" fill="url(#bitBody)" stroke="#1c1c1c" stroke-width="2"/>' + Array.from({ length: 8 }, (_, i) => '<path d="M-24 ' + (-146 + i * 7) + ' L24 ' + (-142 + i * 7) + '" stroke="#2b2e33" stroke-width="1.6"/>').join("") +
-  '<path d="M-70 -96 H70 L76 40 C76 74 40 96 0 96 C-40 96 -76 74 -76 40 Z" fill="#2f3438" stroke="#1c1c1c" stroke-width="2"/>' +
-  [-56, -28, 0, 28, 56].map((bx, j) => '<path d="M' + (bx - 10) + ' -94 L' + (bx + 10) + ' -94 L' + (bx * 0.7 + 12) + ' 90 L' + (bx * 0.7 - 12) + ' 90 Z" fill="url(#bitBody)" stroke="#1c1c1c" stroke-width="1.6"/>' + Array.from({ length: 6 }, (_, i) => '<circle cx="' + (bx * (1 - i * 0.06)) + '" cy="' + (-70 + i * 30) + '" r="7" fill="url(#pdc)" stroke="#1c1c1c" stroke-width="1.2"/>').join("")).join("") +
-  [-40, 0, 40].map(nx => '<circle cx="' + nx + '" cy="60" r="5" fill="#1c1c1c"/>').join("") + '</g>' +
+  '<path d="M-26 -150 H26 L22 -104 H-22 Z" fill="url(#bitBody)" stroke="#1c1c1c" stroke-width="2"/>' + Array.from({ length: 7 }, (_, i) => '<path d="M-24 ' + (-146 + i * 7) + ' L24 ' + (-142 + i * 7) + '" stroke="#2b2e33" stroke-width="1.6"/>').join("") +
+  '<path d="M-44 -104 H44 L60 -70 V-20 L36 10 H-36 L-60 -20 V-70 Z" fill="url(#leg)" stroke="#1c1c1c" stroke-width="2"/><path d="M-20 -100 L-24 6 M20 -100 L24 6" stroke="#1d4a44" stroke-width="3"/>' +
+  '<circle cx="-40" cy="-44" r="6" fill="#1c1c1c"/><circle cx="40" cy="-44" r="6" fill="#1c1c1c"/>' +
+  cone(-46, 40, 48, false) + cone(46, 40, -48, true) + cone(0, 62, 90, false) + '</g>' +
+  // PDC
+  '<g><ellipse cx="460" cy="292" rx="92" ry="13" fill="#2b2620" opacity=".25" filter="url(#soft2)"/>' + pdc(460, 175, 0.3) + '</g>' +
   tag("Tricone: تروس بتلف", 180, 340, -2, 16) + tag("PDC: ألماظ صناعي", 460, 340, 2, 16) });
-// 3) on the seabed: the BOP stack (red ram preventers + yellow annular), riser up to the ship, wellhead into the rock
+// 3) on the seabed: the BOP stack as in the photo — a tall yellow frame holding annulars + ram blocks, red hydraulic hoses, riser above, wellhead below
 P.push({ cap: "وعلى القاع، فيه جهاز ضخم اسمه <b>مانع الانفجار</b>", svg:
   '<rect width="640" height="360" fill="url(#deep)"/>' + Array.from({ length: 40 }, (_, i) => '<circle cx="' + ((i * 97) % 640) + '" cy="' + ((i * 53) % 300) + '" r="1.4" fill="#fff" opacity=".35"/>').join("") +
   '<path d="M0 300 Q160 288 320 300 T640 296 V360 H0 Z" fill="url(#rock)"/>' +
-  // riser with buoyancy modules
-  '<rect x="306" y="0" width="28" height="160" fill="url(#steel)" stroke="#1c1c1c"/>' + [10, 60, 110].map(y => '<rect x="292" y="' + y + '" width="56" height="34" rx="6" fill="#e9e4d8" stroke="#1c1c1c"/>').join("") +
-  // LMRP + annulars (yellow), ram stack (red) with side outlets, frame, wellhead
-  '<rect x="250" y="160" width="140" height="10" fill="#5a6068" stroke="#1c1c1c"/>' +
-  '<rect x="276" y="170" width="88" height="34" rx="8" fill="url(#bopYel)" stroke="#1c1c1c" stroke-width="2"/>' +
-  [204, 232, 260].map(y => '<rect x="262" y="' + y + '" width="116" height="24" rx="4" fill="url(#bopRed)" stroke="#1c1c1c" stroke-width="2"/><rect x="236" y="' + (y + 6) + '" width="26" height="12" fill="url(#steel)" stroke="#1c1c1c"/><rect x="378" y="' + (y + 6) + '" width="26" height="12" fill="url(#steel)" stroke="#1c1c1c"/>').join("") +
-  '<path d="M246 160 V292 M394 160 V292" stroke="#c9ced4" stroke-width="6"/><path d="M246 292 H394" stroke="#c9ced4" stroke-width="6"/>' +
-  '<rect x="300" y="284" width="40" height="22" fill="url(#steel)" stroke="#1c1c1c"/><rect x="310" y="306" width="20" height="54" fill="#3a3d42" stroke="#1c1c1c"/>' +
-  '<circle cx="420" cy="190" r="6" fill="#5bbf6a" filter="url(#glow)"/>' +
-  // ROV lights for depth feel
-  '<g transform="translate(520 220)"><rect x="-40" y="-24" width="80" height="48" rx="8" fill="#f2c230" stroke="#1c1c1c" stroke-width="2"/><circle cx="-40" cy="0" r="7" fill="#fff6c8" filter="url(#glow)"/><path d="M-40 0 L-150 -30 L-150 30 Z" fill="#fff6c8" opacity=".12"/></g>' +
-  tag("مانع الانفجار", 150, 70, -3) });
+  '<rect x="308" y="0" width="24" height="110" fill="url(#steel)" stroke="#1c1c1c"/>' + [0, 46].map(y => '<rect x="292" y="' + y + '" width="56" height="34" rx="6" fill="#f2c230" stroke="#1c1c1c"/><path d="M292 ' + (y + 17) + ' H348" stroke="#b8901c" stroke-width="2"/>').join("") +
+  '<path d="M332 100 C380 96 400 120 396 150" stroke="#c23a26" stroke-width="4" fill="none"/><path d="M308 100 C262 96 242 124 246 160" stroke="#c23a26" stroke-width="4" fill="none"/>' +
+  // inner stack: LMRP connector, two annulars (dark domes), four rams, wellhead connector
+  '<rect x="296" y="106" width="48" height="16" fill="url(#steel)" stroke="#1c1c1c"/>' +
+  [124, 158].map(y => '<path d="M276 ' + (y + 30) + ' V' + (y + 12) + ' Q276 ' + y + ' 296 ' + y + ' H344 Q364 ' + y + ' 364 ' + (y + 12) + ' V' + (y + 30) + ' Z" fill="url(#steelD)" stroke="#1c1c1c" stroke-width="2"/>').join("") +
+  [192, 216, 240, 264].map((y, i) => '<rect x="266" y="' + y + '" width="108" height="20" rx="3" fill="' + (i % 2 ? "url(#steelD)" : "url(#bopRed)") + '" stroke="#1c1c1c" stroke-width="2"/><rect x="232" y="' + (y + 4) + '" width="34" height="12" rx="3" fill="url(#steel)" stroke="#1c1c1c"/><rect x="374" y="' + (y + 4) + '" width="34" height="12" rx="3" fill="url(#steel)" stroke="#1c1c1c"/>').join("") +
+  // yellow frame (front posts + braces) drawn over the stack, like the real one
+  '<g stroke="#1c1c1c" stroke-width="1.5" fill="url(#bopYel)"><rect x="222" y="112" width="12" height="180"/><rect x="406" y="112" width="12" height="180"/><rect x="216" y="104" width="208" height="10"/><rect x="216" y="186" width="208" height="7"/><rect x="210" y="288" width="220" height="10"/></g>' +
+  '<path d="M234 120 L272 184 M406 120 L368 184" stroke="#e2b035" stroke-width="5"/>' +
+  '<rect x="300" y="298" width="40" height="12" fill="url(#steel)" stroke="#1c1c1c"/><rect x="310" y="310" width="20" height="50" fill="#3a3d42" stroke="#1c1c1c"/>' +
+  '<circle cx="428" cy="150" r="5" fill="#5bbf6a" filter="url(#glow)"/>' +
+  '<g transform="translate(540 220)"><rect x="-40" y="-24" width="80" height="48" rx="8" fill="#f2c230" stroke="#1c1c1c" stroke-width="2"/><rect x="-36" y="-30" width="72" height="8" fill="#e9e4d8" stroke="#1c1c1c"/><circle cx="-40" cy="0" r="7" fill="#fff6c8" filter="url(#glow)"/><path d="M-40 0 L-140 -30 L-140 30 Z" fill="#fff6c8" opacity=".12"/><path d="M-30 24 l-14 14 M-20 24 l-6 16" stroke="#3a3d42" stroke-width="3"/></g>' +
+  tag("مانع الانفجار", 120, 70, -3) });
 var host = document.getElementById("frames");
 P.forEach(function (p) { host.insertAdjacentHTML("beforeend", '<div class="frame"><div class="title">إزاي بيطلّعوا النفط؟</div><div class="sub">من تحت قاع المحيط!</div><div class="panel"><svg viewBox="0 0 640 360">' + p.svg + '<rect width="640" height="360" filter="url(#grain)"/></svg></div><div class="cap">' + p.cap + '</div></div>'); });
 </script>
