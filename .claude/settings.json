@@ -1,7 +1,8 @@
 {
   "enabledPlugins": {
     "watch@claude-video": true,
-    "superpowers@superpowers-marketplace": true
+    "superpowers@superpowers-marketplace": true,
+    "humanizer@humanizer": true
   },
   "extraKnownMarketplaces": {
     "claude-video": {
@@ -14,6 +15,12 @@
       "source": {
         "source": "github",
         "repo": "obra/superpowers-marketplace"
+      }
+    },
+    "humanizer": {
+      "source": {
+        "source": "github",
+        "repo": "blader/humanizer"
       }
     }
   }
