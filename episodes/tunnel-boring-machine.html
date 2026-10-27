@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>حفارة الأنفاق · طب إزاي؟</title>
+<link rel="stylesheet" href="../design-system/tokens.css">
+<link rel="stylesheet" href="../design-system/components/bundle.css">
+<script>
+  // Follow the OS theme unless the page already carries an explicit data-theme.
+  (function () {
+    var root = document.documentElement, mq = window.matchMedia("(prefers-color-scheme: dark)");
+    if (root.hasAttribute("data-theme")) return;
+    var apply = function () { root.setAttribute("data-theme", mq.matches ? "dark" : "light"); root.dataset.themeAuto = "1"; };
+    apply();
+    mq.addEventListener("change", function () { if (root.dataset.themeAuto) apply(); });
+  })();
+</script>
+<style>
+  /* Layout: episode page. Question + script on one side, the playing episode on the other. */
+  :root { color-scheme: light; }
+  :root[data-theme="dark"] { color-scheme: dark; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-sans); }
+  .wrap {
+    max-width: 1120px; margin-inline: auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  header.site { border-bottom: var(--stroke-hair) solid var(--ink); }
+  header.site .wrap { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding-block: var(--space-3); flex-wrap: wrap; }
+  .site .tz-brand__name { font-size: 18px; font-weight: 600; color: var(--ink); }
+  nav.links { display: flex; gap: var(--space-6); flex-wrap: wrap; }
+  nav.links a { color: var(--ink); text-decoration: none; font-size: 14px; padding-block: 4px; border-bottom: var(--stroke-line) solid transparent; }
+  nav.links a:hover { border-color: var(--ink); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  .episode { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: var(--space-12); align-items: start; padding-block: var(--space-12); }
+  .episode__text { display: grid; gap: var(--space-4); justify-items: start; min-width: 0; }
+  .episode__text h1 { margin: 0; font-size: clamp(28px, 4.2vw, 40px); line-height: 1.45; font-weight: 600; text-wrap: balance; }
+  .episode__text > p { margin: 0; font-size: 18px; line-height: 32px; max-width: 52ch; }
+
+  .script { list-style: none; margin: var(--space-6) 0 0; padding: 0; width: 100%; border-top: var(--stroke-hair) solid var(--ink); counter-reset: beat; }
+  .script-title { font-size: 30px; line-height: 42px; font-weight: 600; margin: var(--space-6) 0 var(--space-2); }
+  .beat { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; gap: var(--space-2) var(--space-4); align-items: start; padding-block: var(--space-4); border-bottom: var(--stroke-hair) solid var(--paper-grid); }
+  .beat .tz-num { margin-top: 4px; }
+  .beat__say { margin: 0; font-size: 18px; line-height: 30px; font-weight: 500; }
+  .beat__show { margin: 4px 0 0; font-size: 14px; line-height: 22px; color: var(--ink-muted); }
+  .beat__show code { font-family: inherit; font-size: 12px; color: var(--ink); border: var(--stroke-hair) solid var(--ink-ghost); padding: 0 4px; direction: ltr; unicode-bidi: isolate; }
+  .beat.is-on .tz-num { background: var(--heat-text); border-color: var(--heat-text); color: var(--on-heat); }
+  .note { font-size: 12px; line-height: 18px; color: var(--ink-muted); margin: var(--space-4) 0 0; }
+
+  .player { position: sticky; top: var(--space-6); width: 100%; max-width: 340px; justify-self: center; }
+  .player .tz-frame { position: absolute; inset: 0; margin: 0; opacity: 0; transition: opacity var(--tz-dur) var(--tz-ease); --tz-caption-size: 19px; }
+  .player .tz-frame.is-on { opacity: 1; }
+  .player__box { position: relative; aspect-ratio: 9 / 16; }
+  .player .sheet { background: var(--paper); border: var(--stroke-frame) solid var(--ink); outline: var(--stroke-hair) solid var(--ink); outline-offset: -6px; padding: 24px 22px; display: grid; align-content: start; gap: var(--space-3); text-align: right; }
+  .player .sheet h2 { margin: 0; font-size: 22px; line-height: 1.55; font-weight: 600; }
+  .player .sheet h3 { margin: 0; font-size: 17px; line-height: 1.6; font-weight: 600; }
+  .player .sheet svg.sketch { width: 100%; height: auto; display: block; }
+  .player__bar { display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-3); }
+  .dots { display: flex; gap: 6px; }
+  .dots span { width: 14px; height: 3px; background: var(--paper-grid); }
+  .dots span.is-on { background: var(--ink); }
+  .stage-num { position: absolute; }
+  .sum-art { position: relative; }
+  .sum-art .tz-num { position: absolute; margin: -12px; }
+  .tz-ask--small { padding: var(--space-3); margin: 8px; }
+  .tz-ask--small .tz-ask__lead { font-size: 15px; }
+  .tz-ask--small .tz-ask__line { font-size: 18px; }
+  svg text { font-family: var(--font-sans); fill: var(--ink); font-size: 14px; font-weight: 500; }
+
+  footer { border-top: var(--stroke-hair) solid var(--ink); }
+  footer .wrap { padding-block: var(--space-6); display: flex; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; font-size: 12px; color: var(--ink-muted); }
+
+  @media (max-width: 820px) {
+    .episode { grid-template-columns: minmax(0, 1fr); gap: var(--space-8); padding-block: var(--space-8); }
+    .player { position: relative; top: 0; grid-row: 1; max-width: 320px; }
+    .beat { grid-template-columns: 24px minmax(0, 1fr); }
+    .beat .tz-replay { grid-column: 2; justify-self: start; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="tz-brand" href="../index.html" style="text-decoration:none">
+      <svg class="tz-watch" viewBox="0 0 48 54" aria-hidden="true">
+        <rect class="crown" x="20" y="0" width="8" height="3"/><rect class="crown" x="23" y="3" width="2" height="4"/>
+        <circle class="arc" cx="24" cy="30" r="20"/><circle class="core" cx="24" cy="30" r="6"/>
+      </svg>
+      <span class="tz-brand__name">طب إزاي؟</span>
+    </a>
+    <nav class="links" aria-label="الأقسام">
+      <a href="../index.html#library">الحلقات</a>
+      <a href="../index.html#ask">اقترح سؤال</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap episode">
+  <div class="episode__text">
+    <span class="tz-tag">المدن والهندسة · حلقة جديدة</span>
+    <h1>إزاي حفارة طولها 100 متر بتعدّي تحت العمارات من غير ما تهزّها؟</h1>
+    <p>الحفارة مبتسيبش الأرض فاضية ولا لحظة. قدام بتزقّ في التراب بنفس قوته، وورا بتلبّس النفق حلقات خرسانة، والفراغ اللي بينهم بيتملي على طول. وفوق، المباني متراقبة بالملّي.</p>
+    <div class="tz-counter" style="--num-size:72px">
+      <span class="tz-counter__num">10</span>
+      <span class="tz-counter__unit">ملّي بالكتير، ده الحد اللي المباني متنزلش أكتر منه</span>
+    </div>
+
+    <section style="width:100%" aria-labelledby="script-title">
+      <h2 id="script-title" class="script-title">سكريبت الحلقة · 1:36</h2>
+      <ol class="script" id="script">
+        <li class="beat is-on">
+          <span class="tz-num">1</span>
+          <div>
+            <p class="beat__say">حفارة بتعدّي تحت العمارات... والعمارة متنزلش أكتر من سنتي واحد.</p>
+            <p class="beat__show">الافتتاحية: السؤال بيتكتب كلمة كلمة <code>type</code>، و«سنتي» تاخد لون <code>key</code>، والرقم 10 بيعدّ <code>count</code>.</p>
+          </div>
+          <button type="button" class="tz-replay" data-go="0">شوف المشهد</button>
+        </li>
+        <li class="beat">
+          <span class="tz-num">2</span>
+          <div>
+            <p class="beat__say">طب إزاي؟ هشرحهالك في دقيقة.</p>
+            <p class="beat__show">البراند: الساعة بتتملي <code>ring</code>، و«دقيقة» تاخد لونها.</p>
+          </div>
+          <button type="button" class="tz-replay" data-go="1">شوف المشهد</button>
+        </li>
+        <li class="beat">
+          <span class="tz-num">3</span>
+          <div>
+            <p class="beat__say">تحت الشارع بتمشي حفارة طولها 100 متر... زي عمارة 30 دور نايمة على جنبها.</p>
+            <p class="beat__show">مقطع للشارع: العمارات فوق، والحفارة بتظهر تحت <code>pop</code>، وخط مقاس بيترسم تحتها <code>draw</code>. اللون الزيتي بس (جزء ميكانيكي).</p>
+          </div>
+          <button type="button" class="tz-replay" data-go="2">شوف المشهد</button>
+        </li>
+        <li class="beat">
+          <span class="tz-num">4</span>
+          <div>
+            <p class="beat__say">وفي وشها راس بيلف بالراحة... بيقشّر التراب زي المبشرة.</p>
+            <p class="beat__show">منظر من قدام: الراس بأسنانه بيلف طول المشهد <code>tz-spin</code>، وتسمية «راس القطع» <code>callout</code>.</p>
+          </div>
+          <button type="button" class="tz-replay" data-go="3">شوف المشهد</button>
+        </li>
+        <li class="beat">
+          <span class="tz-num">5</span>
+          <div>
+            <p class="beat__say">التراب المقشور بيتحبس ورا الراس ويزقّ قدامه... زي ما تسند باب حد بيزقّه من الناحية التانية.</p>
+            <p class="beat__show">مقطع جانبي: أسهم الأرض بتزقّ، وبعدها أسهم الغرفة بتزقّ عكسها بنفس الطول <code>draw</code>. الفكرة: الضغطين متساويين، فمفيش حاجة بتقع.</p>
+          </div>
+          <button type="button" class="tz-replay" data-go="4">شوف المشهد</button>
+        </li>
+        <li class="beat">
+          <span class="tz-num">6</span>
+          <div>
+            <p class="beat__say">وكل متر ونص، بتركّب ورا ضهرها حلقة خرسانة... زي الطوب، بس متركّب دايرة.</p>
+            <p class="beat__show">الحلقات القديمة موجودة، والجديدة بتظهر لازقة في الحفارة <code>pop</code>، والرقم 1.5 بيعدّ.</p>
+          </div>
+          <button type="button" class="tz-replay" data-go="5">شوف المشهد</button>
+        </li>
+        <li class="beat">
+          <span class="tz-num">7</span>
+          <div>
+            <p class="beat__say">والفراغ الصغير ما بين الحلقة والتراب... بيتملي على طول بمونة سايلة، زي المعجون في الشق.</p>
+            <p class="beat__show">خط أزرق بيجري في الفراغ <code>draw</code>، ودايرة تكبير بتوري التراب والمونة والخرسانة <code>pop</code>. اللون الأزرق بس (سايل).</p>
+          </div>
+          <button type="button" class="tz-replay" data-go="6">شوف المشهد</button>
+        </li>
+        <li class="beat">
+          <span class="tz-num">8</span>
+          <div>
+            <p class="beat__say">وفوق، أجهزة بتقيس كل عمارة بالملّي... ولو اتحركت، الحفارة بتظبط ضغطها على طول.</p>
+            <p class="beat__show">علامات صغيرة على العمارات <code>pop</code>، وخطوط القياس بتوصلها بالجهاز <code>draw</code>، والقراية بتعدّ لحد 2 ملّي.</p>
+          </div>
+          <button type="button" class="tz-replay" data-go="7">شوف المشهد</button>
+        </li>
+        <li class="beat">
+          <span class="tz-num">9</span>
+          <div>
+            <p class="beat__say">الملخص: الراس، وغرفة الضغط، والحلقات، والمونة، وأجهزة القياس... و10 ملّي بالكتير.</p>
+            <p class="beat__show">الرسمة بأرقامها <code>pop</code> والقايمة <code>fade</code>، والرقم الكبير، وفي الآخر «طب إزاي ___؟».</p>
+          </div>
+          <button type="button" class="tz-replay" data-go="8">شوف المشهد</button>
+        </li>
+      </ol>
+      <p class="note">الأرقام تقريبية: طول الحفارة مع العربيات اللي وراها بيوصل لحوالي 100 متر، وعرض الحلقة غالبًا ما بين 1.2 و2 متر، وحد هبوط المباني بيختلف من مشروع للتاني.</p>
+    </section>
+  </div>
+
+  <div class="player" aria-label="الحلقة">
+    <div class="player__box" id="player">
+
+      <!-- 1 · Intro sheet -->
+      <div class="tz-frame tz-frame--sheet sheet is-on" style="margin:0">
+        <span class="tz-brand"><svg class="tz-watch" style="--watch-size:22px" viewBox="0 0 48 54" aria-hidden="true"><rect class="crown" x="20" y="0" width="8" height="3"/><rect class="crown" x="23" y="3" width="2" height="4"/><circle class="arc" cx="24" cy="30" r="20"/><circle class="core" cx="24" cy="30" r="6"/></svg><span class="tz-brand__name">طب إزاي؟</span></span>
+        <span class="tz-tag" style="justify-self:center">المدن والهندسة</span>
+        <h2 data-tz="type">حفارة بتعدّي تحت العمارات... والعمارة متنزلش أكتر من <span class="tz-k tz-k--heat" data-tz="key">سنتي</span> واحد.</h2>
+        <svg class="sketch tz-paper" viewBox="0 0 280 150" aria-hidden="true" data-tz="fade">
+          <rect class="tz-f-khaki" x="0" y="80" width="280" height="70"/>
+          <line class="tz-ink" x1="0" y1="80" x2="280" y2="80"/>
+          <rect class="tz-f-paper tz-ink" x="40" y="20" width="60" height="60"/><rect class="tz-pat-hatch" x="40" y="20" width="8" height="60"/>
+          <rect class="tz-f-paper tz-ink" x="160" y="8" width="70" height="72"/><rect class="tz-pat-hatch" x="160" y="8" width="8" height="72"/>
+          <rect class="tz-f-paper tz-ink" x="90" y="108" width="190" height="26"/>
+          <rect class="tz-f-part tz-ink" x="40" y="104" width="60" height="34"/>
+          <rect class="tz-f-deep tz-ink" x="34" y="100" width="6" height="42"/>
+        </svg>
+        <div class="tz-counter" style="--num-size:64px;justify-self:end" data-tz="fade">
+          <span class="tz-counter__num" data-tz="count" data-to="10">10</span>
+          <span class="tz-counter__unit">ملّي بالكتير</span>
+        </div>
+      </div>
+
+      <!-- 2 · Brand ring -->
+      <div class="tz-frame" style="grid-template-rows:auto">
+        <div style="display:grid;place-items:center;align-content:center;gap:16px;text-align:center">
+          <svg class="tz-watch" data-tz="ring" style="--watch-size:120px" viewBox="0 0 48 54" aria-hidden="true">
+            <rect class="crown" x="20" y="0" width="8" height="3"/><rect class="crown" x="23" y="3" width="2" height="4"/>
+            <circle class="track" cx="24" cy="30" r="20"/>
+            <circle class="arc" cx="24" cy="30" r="20" pathLength="100" transform="rotate(-90 24 30)"/>
+          </svg>
+          <span style="font-size:30px;font-weight:600">طب إزاي؟</span>
+          <span style="font-size:16px" data-tz="ink">هشرحهالك في <span class="tz-k tz-k--heat" data-tz="key">دقيقة.</span></span>
+        </div>
+      </div>
+
+      <!-- 3 · The machine under the street -->
+      <figure class="tz-frame">
+        <div class="tz-frame__stage tz-paper">
+          <svg viewBox="0 0 360 410" aria-hidden="true">
+            <g data-tz="fade">
+              <rect class="tz-f-khaki" x="0" y="120" width="360" height="290"/>
+              <rect class="tz-pat-dots" x="0" y="120" width="360" height="290" opacity=".2"/>
+              <line class="tz-ink" x1="0" y1="120" x2="360" y2="120"/>
+              <rect class="tz-f-paper tz-ink" x="24" y="40" width="70" height="80"/><rect class="tz-pat-hatch" x="24" y="40" width="10" height="80"/>
+              <path class="tz-ink" d="M44 56h14M70 56h14M44 76h14M70 76h14M44 96h14M70 96h14"/>
+              <rect class="tz-f-paper tz-ink" x="112" y="70" width="56" height="50"/><rect class="tz-pat-hatch" x="112" y="70" width="8" height="50"/>
+              <rect class="tz-f-paper tz-ink" x="188" y="24" width="84" height="96"/><rect class="tz-pat-hatch" x="188" y="24" width="10" height="96"/>
+              <path class="tz-ink" d="M208 40h16M248 40h16M208 62h16M248 62h16M208 84h16M248 84h16"/>
+              <rect class="tz-f-paper tz-ink" x="290" y="60" width="50" height="60"/><rect class="tz-pat-hatch" x="290" y="60" width="8" height="60"/>
+              <rect class="tz-f-paper tz-ink" x="150" y="246" width="210" height="72"/>
+              <path class="tz-ink" d="M180 246v72M210 246v72M240 246v72M270 246v72M300 246v72M330 246v72"/>
+            </g>
+            <g data-tz="pop">
+              <rect class="tz-f-part tz-ink" x="40" y="246" width="120" height="72"/>
+              <rect class="tz-pat-hatch" x="40" y="246" width="120" height="14"/>
+              <rect class="tz-f-deep tz-ink" x="30" y="240" width="10" height="84"/>
+              <rect class="tz-ink" x="160" y="264" width="186" height="36"/>
+              <path class="tz-ink" d="M222 264v36M284 264v36"/>
+              <circle class="tz-f-paper tz-ink" cx="180" cy="306" r="5"/><circle class="tz-f-paper tz-ink" cx="242" cy="306" r="5"/><circle class="tz-f-paper tz-ink" cx="304" cy="306" r="5"/>
+            </g>
+            <g data-tz="draw"><path class="tz-ink" d="M30 352H346M30 344v16M346 344v16"/></g>
+            <text data-tz="fade" x="188" y="378" text-anchor="middle">100 متر</text>
+          </svg>
+          <span class="tz-callout tz-callout--part" data-tz="callout" data-tz-at="1800" style="--x:28%;--y:69%;--angle:300deg;--len:50px;--chip-shift:0% -50%">
+            <span class="tz-callout__line"></span><span class="tz-callout__dot"></span><span class="tz-callout__chip">الحفارة</span>
+          </span>
+        </div>
+        <div class="tz-frame__rule"></div>
+        <figcaption class="tz-frame__caption">
+          <p class="tz-caption" data-tz="type">تحت الشارع بتمشي حفارة <span class="tz-k tz-k--part" data-tz="key">طولها 100 متر...</span></p>
+          <p class="tz-caption" data-tz="type">زي عمارة 30 دور نايمة على جنبها.</p>
+        </figcaption>
+      </figure>
+
+      <!-- 4 · The cutterhead -->
+      <figure class="tz-frame">
+        <div class="tz-frame__stage tz-paper">
+          <svg viewBox="0 0 360 410" aria-hidden="true">
+            <g data-tz="fade">
+              <rect class="tz-f-khaki" x="0" y="0" width="360" height="410"/>
+              <rect class="tz-pat-dots" x="0" y="0" width="360" height="410" opacity=".2"/>
+              <circle class="tz-f-deep tz-ink" cx="180" cy="205" r="140"/>
+            </g>
+            <g data-tz="pop">
+              <g class="tz-spin" style="animation-duration:10s">
+                <circle class="tz-f-part tz-ink" cx="180" cy="205" r="128"/>
+                <path class="tz-ink-h" d="M180 77V333M52 205H308M89.5 114.5L270.5 295.5M270.5 114.5L89.5 295.5"/>
+                <g class="tz-f-paper tz-ink">
+                  <circle cx="180" cy="155" r="7"/><circle cx="180" cy="110" r="7"/><circle cx="180" cy="255" r="7"/><circle cx="180" cy="300" r="7"/>
+                  <circle cx="130" cy="205" r="7"/><circle cx="85" cy="205" r="7"/><circle cx="230" cy="205" r="7"/><circle cx="275" cy="205" r="7"/>
+                  <circle cx="130.5" cy="155.5" r="7"/><circle cx="229.5" cy="254.5" r="7"/><circle cx="229.5" cy="155.5" r="7"/><circle cx="130.5" cy="254.5" r="7"/>
+                </g>
+                <circle class="tz-f-deep tz-ink" cx="180" cy="205" r="22"/>
+              </g>
+            </g>
+          </svg>
+          <span class="tz-callout tz-callout--part" data-tz="callout" style="--x:50%;--y:50%;--angle:300deg;--len:70px;--chip-shift:0% -50%">
+            <span class="tz-callout__line"></span><span class="tz-callout__dot"></span><span class="tz-callout__chip">راس القطع</span>
+          </span>
+        </div>
+        <div class="tz-frame__rule"></div>
+        <figcaption class="tz-frame__caption">
+          <p class="tz-caption" data-tz="type">وفي وشها <span class="tz-k tz-k--part" data-tz="key">راس</span> بيلف بالراحة...</p>
+          <p class="tz-caption" data-tz="type">بيقشّر التراب زي المبشرة.</p>
+        </figcaption>
+      </figure>
+
+      <!-- 5 · Pressure balance at the face -->
+      <figure class="tz-frame">
+        <div class="tz-frame__stage tz-paper">
+          <svg viewBox="0 0 360 410" aria-hidden="true">
+            <g data-tz="fade">
+              <rect class="tz-f-khaki" x="0" y="0" width="360" height="410"/>
+              <rect class="tz-pat-dots" x="0" y="0" width="360" height="410" opacity=".2"/>
+              <rect class="tz-f-paper" x="140" y="74" width="220" height="262"/>
+              <rect class="tz-f-part tz-ink" x="140" y="60" width="220" height="14"/>
+              <rect class="tz-f-part tz-ink" x="140" y="336" width="220" height="14"/>
+              <rect class="tz-f-part tz-ink" x="132" y="74" width="12" height="262"/>
+              <rect class="tz-f-deep tz-ink" x="238" y="74" width="10" height="262"/>
+            </g>
+            <g data-tz="fade">
+              <rect class="tz-f-deep" x="144" y="74" width="94" height="262" opacity=".5"/>
+              <rect class="tz-pat-dots" x="144" y="74" width="94" height="262"/>
+            </g>
+            <g data-tz="draw"><path class="tz-ink-h" d="M24 140H112M100 130l12 10-12 10M24 205H112M100 195l12 10-12 10M24 270H112M100 260l12 10-12 10"/></g>
+            <g data-tz="draw"><path class="tz-ink-h" style="stroke:var(--olive-text)" d="M232 140H156M168 130l-12 10 12 10M232 205H156M168 195l-12 10 12 10M232 270H156M168 260l-12 10 12 10"/></g>
+            <text data-tz="fade" x="68" y="110" text-anchor="middle">الأرض</text>
+          </svg>
+          <span class="tz-callout tz-callout--part" data-tz="callout" style="--x:53%;--y:27%;--angle:300deg;--len:44px;--chip-shift:0% -50%">
+            <span class="tz-callout__line"></span><span class="tz-callout__dot"></span><span class="tz-callout__chip">غرفة الضغط</span>
+          </span>
+        </div>
+        <div class="tz-frame__rule"></div>
+        <figcaption class="tz-frame__caption">
+          <p class="tz-caption" data-tz="type">التراب المقشور بيتحبس ورا الراس <span class="tz-k tz-k--part" data-tz="key">ويزقّ</span> قدامه...</p>
+          <p class="tz-caption" data-tz="type">زي ما تسند باب حد بيزقّه من الناحية التانية.</p>
+        </figcaption>
+      </figure>
+
+      <!-- 6 · Concrete rings -->
+      <figure class="tz-frame">
+        <div class="tz-frame__stage tz-paper">
+          <svg viewBox="0 0 360 410" aria-hidden="true">
+            <g data-tz="fade">
+              <rect class="tz-f-khaki" x="0" y="0" width="360" height="410"/>
+              <rect class="tz-pat-dots" x="0" y="0" width="360" height="410" opacity=".2"/>
+              <rect class="tz-f-paper" x="0" y="186" width="360" height="156"/>
+              <rect class="tz-f-part tz-ink" x="20" y="186" width="130" height="156"/>
+              <rect class="tz-pat-hatch" x="20" y="186" width="130" height="16"/>
+              <rect class="tz-f-deep tz-ink" x="10" y="180" width="10" height="168"/>
+              <g class="tz-f-paper tz-ink">
+                <rect x="180" y="186" width="30" height="16"/><rect x="210" y="186" width="30" height="16"/><rect x="240" y="186" width="30" height="16"/><rect x="270" y="186" width="30" height="16"/><rect x="300" y="186" width="30" height="16"/><rect x="330" y="186" width="30" height="16"/>
+                <rect x="180" y="326" width="30" height="16"/><rect x="210" y="326" width="30" height="16"/><rect x="240" y="326" width="30" height="16"/><rect x="270" y="326" width="30" height="16"/><rect x="300" y="326" width="30" height="16"/><rect x="330" y="326" width="30" height="16"/>
+              </g>
+            </g>
+            <g data-tz="draw"><path class="tz-ink-h" style="stroke:var(--olive-text)" d="M110 264L150 230L162 214"/></g>
+            <g data-tz="pop">
+              <rect class="tz-f-paper tz-ink-h" x="150" y="186" width="30" height="16"/>
+              <rect class="tz-f-paper tz-ink-h" x="150" y="326" width="30" height="16"/>
+            </g>
+          </svg>
+          <div class="tz-counter stage-num" style="--num-size:40px;top:8%;right:8%" data-tz="fade">
+            <span class="tz-counter__num" data-tz="count" data-to="1.5">1.5</span>
+            <span class="tz-counter__unit">متر كل حلقة</span>
+          </div>
+          <span class="tz-callout tz-callout--part" data-tz="callout" style="--x:46%;--y:47%;--angle:240deg;--len:40px">
+            <span class="tz-callout__line"></span><span class="tz-callout__dot"></span><span class="tz-callout__chip">حلقة جديدة</span>
+          </span>
+        </div>
+        <div class="tz-frame__rule"></div>
+        <figcaption class="tz-frame__caption">
+          <p class="tz-caption" data-tz="type">وكل متر ونص، بتركّب ورا ضهرها <span class="tz-k tz-k--part" data-tz="key">حلقة خرسانة...</span></p>
+          <p class="tz-caption" data-tz="type">زي الطوب، بس متركّب دايرة.</p>
+        </figcaption>
+      </figure>
+
+      <!-- 7 · Grout fills the gap -->
+      <figure class="tz-frame">
+        <div class="tz-frame__stage tz-paper">
+          <svg viewBox="0 0 360 410" aria-hidden="true">
+            <g data-tz="fade">
+              <rect class="tz-f-khaki" x="0" y="0" width="360" height="410"/>
+              <rect class="tz-pat-dots" x="0" y="0" width="360" height="410" opacity=".2"/>
+              <rect class="tz-f-paper tz-ink" x="0" y="186" width="360" height="156"/>
+              <rect class="tz-f-part tz-ink" x="20" y="186" width="110" height="156"/>
+              <rect class="tz-f-deep tz-ink" x="10" y="180" width="10" height="168"/>
+              <g class="tz-f-paper tz-ink">
+                <rect x="130" y="198" width="38" height="16"/><rect x="168" y="198" width="38" height="16"/><rect x="206" y="198" width="38" height="16"/><rect x="244" y="198" width="38" height="16"/><rect x="282" y="198" width="38" height="16"/><rect x="320" y="198" width="40" height="16"/>
+                <rect x="130" y="314" width="38" height="16"/><rect x="168" y="314" width="38" height="16"/><rect x="206" y="314" width="38" height="16"/><rect x="244" y="314" width="38" height="16"/><rect x="282" y="314" width="38" height="16"/><rect x="320" y="314" width="40" height="16"/>
+              </g>
+            </g>
+            <g data-tz="draw"><path class="tz-s-water" style="stroke-width:3" d="M130 192H360M130 336H360"/></g>
+            <g data-tz="fade">
+              <rect class="tz-f-water" x="130" y="187" width="230" height="10"/>
+              <rect class="tz-f-water" x="130" y="331" width="230" height="10"/>
+            </g>
+          </svg>
+          <div class="tz-inset" data-tz="pop" style="--x:6%;--y:4%;--size:40%">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <rect class="tz-f-khaki" x="0" y="0" width="100" height="38"/>
+              <rect class="tz-pat-dots" x="0" y="0" width="100" height="38"/>
+              <rect class="tz-f-water" x="0" y="38" width="100" height="22"/>
+              <path class="tz-s-water tz-wave" d="M-10 44 q6 -4 12 0 t12 0 t12 0 t12 0 t12 0 t12 0 t12 0 t12 0 t12 0 t12 0"/>
+              <rect class="tz-f-paper" x="0" y="60" width="100" height="40"/>
+              <rect class="tz-pat-hatch" x="0" y="60" width="100" height="40"/>
+              <path class="tz-ink" d="M0 38H100M0 60H100"/>
+            </svg>
+          </div>
+          <span class="tz-callout tz-callout--water" data-tz="callout" style="--x:83%;--y:47%;--angle:120deg;--len:44px">
+            <span class="tz-callout__line"></span><span class="tz-callout__dot"></span><span class="tz-callout__chip">المونة</span>
+          </span>
+        </div>
+        <div class="tz-frame__rule"></div>
+        <figcaption class="tz-frame__caption">
+          <p class="tz-caption" data-tz="type">والفراغ الصغير ما بين الحلقة والتراب...</p>
+          <p class="tz-caption" data-tz="type">بيتملي على طول <span class="tz-k tz-k--water" data-tz="key">بمونة سايلة</span>، زي المعجون في الشق.</p>
+        </figcaption>
+      </figure>
+
+      <!-- 8 · Buildings watched to the millimetre -->
+      <figure class="tz-frame">
+        <div class="tz-frame__stage tz-paper">
+          <svg viewBox="0 0 360 410" aria-hidden="true">
+            <g data-tz="fade">
+              <rect class="tz-f-khaki" x="0" y="230" width="360" height="180"/>
+              <rect class="tz-pat-dots" x="0" y="230" width="360" height="180" opacity=".2"/>
+              <line class="tz-ink" x1="0" y1="230" x2="360" y2="230"/>
+              <rect class="tz-f-paper tz-ink" x="30" y="90" width="90" height="140"/><rect class="tz-pat-hatch" x="30" y="90" width="10" height="140"/>
+              <path class="tz-ink" d="M54 112h18M88 112h18M54 142h18M88 142h18M54 172h18M88 172h18M54 202h18M88 202h18"/>
+              <rect class="tz-f-paper tz-ink" x="150" y="150" width="60" height="80"/><rect class="tz-pat-hatch" x="150" y="150" width="8" height="80"/>
+              <rect class="tz-f-paper tz-ink" x="240" y="70" width="90" height="160"/><rect class="tz-pat-hatch" x="240" y="70" width="10" height="160"/>
+              <path class="tz-ink" d="M264 92h18M298 92h18M264 122h18M298 122h18M264 152h18M298 152h18M264 182h18M298 182h18"/>
+              <circle class="tz-f-paper tz-ink" cx="200" cy="340" r="40"/>
+              <circle class="tz-f-part tz-ink" cx="200" cy="340" r="32"/>
+              <path class="tz-ink" d="M200 308V372M168 340H232"/>
+              <path class="tz-ink" d="M172 150L180 132L188 150M180 132V122"/><rect class="tz-f-deep tz-ink" x="172" y="112" width="16" height="10"/>
+            </g>
+            <g data-tz="pop">
+              <path class="tz-f-heat tz-ink" d="M120 104l10 -7v14z"/>
+              <path class="tz-f-heat tz-ink" d="M240 84l-10 -7v14z"/>
+              <path class="tz-f-heat tz-ink" d="M120 196l10 -7v14z"/>
+              <path class="tz-f-heat tz-ink" d="M240 200l-10 -7v14z"/>
+            </g>
+            <g data-tz="draw"><path class="tz-ink" style="stroke:var(--heat)" d="M172 117L130 104M188 117L230 84M172 117L130 196M188 117L230 200"/></g>
+          </svg>
+          <div class="tz-counter stage-num" style="--num-size:40px;top:4%;left:6%" data-tz="fade">
+            <span class="tz-counter__num" data-tz="count" data-to="2">2</span>
+            <span class="tz-counter__unit">ملّي لحد دلوقتي</span>
+          </div>
+        </div>
+        <div class="tz-frame__rule"></div>
+        <figcaption class="tz-frame__caption">
+          <p class="tz-caption" data-tz="type">وفوق، أجهزة بتقيس كل عمارة <span class="tz-k tz-k--heat" data-tz="key">بالملّي...</span></p>
+          <p class="tz-caption" data-tz="type">ولو اتحركت، الحفارة بتظبط ضغطها على طول.</p>
+        </figcaption>
+      </figure>
+
+      <!-- 9 · Summary sheet -->
+      <div class="tz-frame tz-frame--sheet sheet" style="margin:0">
+        <h3>إزاي حفارة طولها 100 متر بتعدّي تحت العمارات من غير ما تهزّها؟</h3>
+        <div class="sum-art">
+          <svg class="sketch tz-paper" viewBox="0 0 280 150" aria-hidden="true">
+            <rect class="tz-f-khaki" x="0" y="70" width="280" height="80"/>
+            <rect class="tz-pat-dots" x="0" y="70" width="280" height="80" opacity=".2"/>
+            <line class="tz-ink" x1="0" y1="70" x2="280" y2="70"/>
+            <rect class="tz-f-paper tz-ink" x="36" y="14" width="56" height="56"/><rect class="tz-pat-hatch" x="36" y="14" width="8" height="56"/>
+            <rect class="tz-f-paper tz-ink" x="176" y="6" width="64" height="64"/><rect class="tz-pat-hatch" x="176" y="6" width="8" height="64"/>
+            <path class="tz-f-heat tz-ink" d="M92 30l7 -5v10z"/><path class="tz-f-heat tz-ink" d="M176 40l-7 -5v10z"/>
+            <rect class="tz-f-water" x="96" y="96" width="184" height="6"/><rect class="tz-f-water" x="96" y="132" width="184" height="6"/>
+            <rect class="tz-f-paper tz-ink" x="96" y="102" width="184" height="30"/>
+            <path class="tz-ink" d="M122 102v30M148 102v30M174 102v30M200 102v30M226 102v30M252 102v30"/>
+            <rect class="tz-f-part tz-ink" x="30" y="96" width="66" height="42"/>
+            <rect class="tz-f-deep tz-ink" x="30" y="96" width="20" height="42" opacity=".7"/>
+            <rect class="tz-f-deep tz-ink" x="24" y="92" width="6" height="50"/>
+          </svg>
+          <span class="tz-num" data-tz="pop" style="left:8.5%;top:56%">1</span>
+          <span class="tz-num" data-tz="pop" style="left:14%;top:78%">2</span>
+          <span class="tz-num" data-tz="pop" style="left:68%;top:78%">3</span>
+          <span class="tz-num" data-tz="pop" style="left:86%;top:56%">4</span>
+          <span class="tz-num" data-tz="pop" style="left:50%;top:22%">5</span>
+        </div>
+        <ol class="tz-legend" data-tz="fade" style="font-size:13px;line-height:20px">
+          <li><span class="tz-num">1</span>راس القطع</li>
+          <li><span class="tz-num">2</span>غرفة الضغط</li>
+          <li><span class="tz-num">3</span>حلقات الخرسانة</li>
+          <li><span class="tz-num">4</span>المونة</li>
+          <li><span class="tz-num">5</span>أجهزة القياس</li>
+        </ol>
+        <div class="tz-counter" style="--num-size:48px;justify-self:center" data-tz="fade">
+          <span class="tz-counter__num" data-tz="count" data-to="10">10</span>
+          <span class="tz-counter__unit">ملّي بالكتير</span>
+        </div>
+        <div class="tz-ask tz-ask--small" data-tz="fade">
+          <span class="tz-ask__lead">قولولنا... عايزين تعرفوا</span>
+          <span class="tz-ask__line">طب إزاي <span class="tz-ask__blank"></span>؟</span>
+        </div>
+      </div>
+
+    </div>
+    <div class="player__bar">
+      <div class="dots" id="dots" aria-hidden="true"><span class="is-on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <button type="button" class="tz-replay" id="replay">إعادة من الأول</button>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>طب إزاي؟ · الحاجات المعقدة، مرسومة ومشروحة في دقيقة.</span>
+    <span>الرسومات مبسطة للشرح، والأرقام تقريبية.</span>
+  </div>
+</footer>
+
+<script src="../design-system/components/bundle.js"></script>
+<script>
+  TebEzay.patterns();
+
+  // Player: play each beat, hold, crossfade to the next, loop. The script list follows along.
+  (function () {
+    var frames = Array.prototype.slice.call(document.querySelectorAll("#player > .tz-frame"));
+    var dots = document.querySelectorAll("#dots span");
+    var beats = document.querySelectorAll("#script .beat");
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var HOLD = 1800, i = 0, t = null;
+    function show(n) {
+      frames.forEach(function (f, k) { f.classList.toggle("is-on", k === n); });
+      dots.forEach(function (d, k) { d.classList.toggle("is-on", k === n); });
+      beats.forEach(function (b, k) { b.classList.toggle("is-on", k === n); });
+    }
+    function beat(n) {
+      clearTimeout(t);
+      i = n % frames.length;
+      show(i);
+      var len = TebEzay.play(frames[i]);
+      if (!reduce) t = setTimeout(function () { beat(i + 1); }, len + HOLD);
+    }
+    document.getElementById("replay").addEventListener("click", function () { beat(0); });
+    document.querySelectorAll("[data-go]").forEach(function (b) {
+      b.addEventListener("click", function () { beat(+b.dataset.go); });
+    });
+    if (reduce) { show(0); return; }
+    var io = "IntersectionObserver" in window ? new IntersectionObserver(function (e) {
+      if (e[0].isIntersecting) { io.disconnect(); beat(0); }
+    }, { threshold: 0.4 }) : null;
+    if (io) io.observe(document.getElementById("player")); else beat(0);
+  })();
+</script>
+</body>
+</html>
