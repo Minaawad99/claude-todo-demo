@@ -165,3 +165,20 @@
 - **تشبيه واحد قوي لكل فكرة** من حاجة كل الناس جربتها (حزام العربية، الميزان، خرطوم المية، دينامو العجلة).
 - **الصوت:** بيتعمل برّه ببرنامج Google. السكريبت اللي بيتسلّم يكون نص صافي جاهز للنسخ: الأرقام مكتوبة بالحروف بالمصري، و«...» للوقفة، من غير علامات أو عناوين.
 - **التسليم:** السكريبت في بلوك نصي جاهز للنسخ + ملف في `scripts/` فيه جدول اللقطات.
+
+---
+
+## 11. برومبت الصوت في Google AI Studio (Speech)
+
+حط ده في خانة Style instructions، والسكريبت في خانة النص:
+
+```
+Read this in natural Egyptian Arabic (Cairo dialect), like a friendly science YouTuber explaining something amazing to a friend.
+Tone: warm, curious and energetic, but calm — never shouting or salesy.
+Pace: fairly quick and conversational, with short natural pauses at "..." and a slightly longer pause between paragraphs.
+Make questions sound like real questions (rising intonation), and give a small dramatic beat before surprising facts.
+Emphasize numbers and key words a little. Smile while talking.
+Keep the whole read under 90 seconds.
+```
+
+الصوت المقترح: **Puck** (حيوي) أو **Charon** (هادي وواضح).
