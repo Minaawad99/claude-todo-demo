@@ -4,7 +4,7 @@
   function graphPaper(t) { var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#f4efe4"/>', o = (t * 36) % 40, d = "";
     for (var x = -400; x < 1060; x += 40) d += "M" + f(x + o) + " -300 V660 "; for (var y = -300; y < 680; y += 40) d += "M-400 " + f(y + o * 0.6) + " H1040 ";
     return s + '<path d="' + d + '" stroke="#d9cdb3" stroke-width="2"/>'; }
-  function dark(t) { var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#141a24"/>'; for (var i = 0; i < 30; i++) { var u = (t * 0.05 + hash(i)) % 1; s += '<circle cx="' + f(-200 + hash(i + 3) * 1040) + '" cy="' + f(lerp(400, -100, u)) + '" r="' + f(1 + hash(i) * 2) + '" fill="' + CY + '" opacity="' + f(0.3 * Math.sin(Math.PI * u)) + '"/>'; } return s; }
+  function dark(t) { var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#141a24"/>'; for (var i = 0; i < 50; i++) { var u = (t * 0.12 + hash(i)) % 1; s += '<circle cx="' + f(-200 + hash(i + 3) * 1040 + 20 * Math.sin(t + i)) + '" cy="' + f(lerp(420, -120, u)) + '" r="' + f(2 + hash(i) * 3) + '" fill="' + CY + '" opacity="' + f(0.5 * Math.sin(Math.PI * u)) + '"/>'; } return s; }
   function qmark(x, y, t, sz, col) { return '<text x="' + f(x) + '" y="' + f(y + Math.sin(t * 4 + x) * 4) + '" text-anchor="middle" style="font:800 ' + sz + 'px Noto Sans Arabic;fill:' + (col || YEL) + ';stroke:#1c1c1c;stroke-width:2;paint-order:stroke">؟</text>'; }
   // isometric projection: (x, y) on the layer plane, z up
   var IS = { cx: 320, cy: 210, k: 1 };
@@ -43,7 +43,7 @@
     var fill = o.glove ? "url(#gGlove)" : "url(#gSkin)";
     s += '<path d="M-18 -170 L-16 -16 C-16 6 16 6 16 -16 L18 -170 Z" fill="' + fill + '" stroke="' + INK + '" stroke-width="2.4"/>';
     if (!o.glove) s += '<path d="M-9 -12 C-9 -30 9 -30 9 -12 Z" fill="#f4d4c0" stroke="#a8704a" stroke-width="1" transform="scale(1 -1) translate(0 34)" opacity="0"/><path d="M-8 -36 C-8 -50 8 -50 8 -36 L8 -26 C8 -22 -8 -22 -8 -26 Z" fill="#f6dccb" stroke="#a8704a" stroke-width="1.2" transform="rotate(180 0 -31)"/><path d="M-16 -90 q16 6 32 0 M-16 -126 q16 6 32 0" stroke="#a8704a" stroke-width="1.4" fill="none"/>';
-    else { s += '<path d="M-16 -90 q16 6 32 0 M-16 -60 q16 6 32 0" stroke="#2b3a5a" stroke-width="1.4" fill="none"/>'; if (o.thread) s += '<path d="M-16 -16 C-16 6 16 6 16 -16 L16 -30 L-16 -30 Z" fill="#c9ced4" stroke="' + INK + '" stroke-width="1.6"/><path d="M-12 -26 l24 0 M-12 -20 l24 0 M-10 -14 l20 0" stroke="#8a929c" stroke-width="1.2"/>'; }
+    else { s += '<path d="M-16 -90 q16 6 32 0 M-16 -60 q16 6 32 0" stroke="#5a1a16" stroke-width="1.4" fill="none"/>'; if (o.thread) s += '<path d="M-16 -16 C-16 6 16 6 16 -16 L16 -30 L-16 -30 Z" fill="#c9ced4" stroke="' + INK + '" stroke-width="1.6"/><path d="M-12 -26 l24 0 M-12 -20 l24 0 M-10 -14 l20 0" stroke="#8a929c" stroke-width="1.2"/>'; }
     return s + '</g>'; }
   function fieldArcs(x, y, t, r, bend) {   // little field lines above a node; bend pulls them up toward a finger
     var s = ""; for (var k = 0; k < 5; k++) { var w = r * (0.4 + k * 0.15), h = (8 + k * 5) * (1 + (bend || 0) * 1.5), ph = (t * 2 + k * 0.2) % 1; s += '<path d="M' + f(x - w) + ' ' + f(y) + ' Q' + f(x) + ' ' + f(y - h * 2) + ' ' + f(x + w) + ' ' + f(y) + '" stroke="' + CY + '" stroke-width="1.6" fill="none" opacity="' + f(0.3 + 0.5 * (1 - ph)) + '" stroke-dasharray="4 4" stroke-dashoffset="' + f(-t * 20) + '"/>'; } return s; }
@@ -80,7 +80,7 @@
   });
   // 4 — under the glass, a very fine grid of transparent wires you can't see (the glass lifts off in 3D)
   shot(4, function (u, d) { return [320, 170, lerp(0.75, 0.85, u / d)]; }, function (u, d, t) {
-    IS.cx = 320; IS.cy = 120; var e = ease(clamp(u / 1.6)) + 0.12 * Math.sin(t * 2.2) * clamp(u - 1.2), s = dark(t) + stack(t, { e: e, glassOp: 0.6, glow: function (a, b) { return 0.35 + 0.35 * Math.sin(t * 5 + a * 0.9 + b * 0.6); } });
+    IS.cx = 320; IS.cy = 120; var e = ease(clamp(u / 1.6)) + 0.25 * Math.sin(t * 2.6) * clamp(u - 1.2), s = dark(t) + stack(t, { e: e, glassOp: 0.6, glow: function (a, b) { return 0.35 + 0.35 * Math.sin(t * 5 + a * 0.9 + b * 0.6); } });
     return s + tag("الإزاز", 520, 40, u, 0.6, 3, 16) + tag("شبكة شفافة!", 520, 200, u, 1.6, -3, 17);
   });
   // 5 — the wires conduct electricity and still let light through like glass (microscope: ITO diamonds, light passing)
@@ -101,12 +101,13 @@
   // 7 — at every crossing a tiny electric field (zoom on one crossing, field arcs)
   shot(7, function (u, d) { return [320, 190, lerp(1.0, 1.12, u / d)]; }, function (u, d, t) {
     var s = dark(t) + '<path d="M60 200 H580" stroke="' + BLUE + '" stroke-width="18" opacity=".6"/><path d="M320 40 V340" stroke="' + OR + '" stroke-width="18" opacity=".6"/>';
-    s += '<path d="M320 150 L370 200 L320 250 L270 200 Z" fill="' + BLUE + '" opacity=".5" stroke="' + CY + '" stroke-width="2"/>' + fieldArcs(320, 200, t, 70, 0) + '<circle cx="320" cy="200" r="' + f(18 + 4 * Math.sin(t * 6)) + '" fill="url(#gNode)"/>';
+    s += '<path d="M320 150 L370 200 L320 250 L270 200 Z" fill="' + BLUE + '" opacity=".5" stroke="' + CY + '" stroke-width="2"/>' + fieldArcs(320, 200, t, 70, 0) + '<circle cx="320" cy="200" r="' + f(22 + 8 * Math.sin(t * 6)) + '" fill="url(#gNode)"/>';
+    for (var q = 0; q < 6; q++) { var qa = t * 2.4 + q * 1.047; s += '<circle cx="' + f(320 + Math.cos(qa) * 90) + '" cy="' + f(200 + Math.sin(qa) * 50) + '" r="5" fill="' + YEL + '" stroke="' + INK + '" stroke-width="1"/>'; }
     return s + tag("مجال كهربا صغير", 320, 50, u, 0.6, -3, 17);
   });
   // 8 — thousands of points, each holding a waiting charge (zoom out across the whole grid, nodes twinkle)
   shot(8, function (u, d) { var k = ease(clamp(u / d)); return [320, 180, lerp(1.6, 0.8, k)]; }, function (u, d, t) {
-    IS.cx = 320; IS.cy = 90; var s = dark(t) + sensor(220, 380, 30, t, { n: 10, m: 16, glow: function (a, b) { return 0.5 + 0.4 * Math.sin(t * 4 + a * 0.7 + b * 0.5); } });
+    IS.cx = 320; IS.cy = 90; var s = dark(t) + sensor(220, 380, 30, t, { n: 10, m: 16, glow: function (a, b) { var w = (t * 6) % 22 - 3; return 0.45 + 0.3 * Math.sin(t * 4 + a * 0.7 + b * 0.5) + (Math.abs(a + b * 0.6 - w) < 1.2 ? 0.6 : 0); } });
     var n = Math.round(lerp(1, 8000, clamp(u / (d - 0.4)))); s += '<g transform="translate(330 330)"><rect x="-80" y="-20" width="160" height="38" rx="9" fill="' + INK + '" stroke="' + CY + '" stroke-width="3"/><text y="8" text-anchor="middle" style="font:800 17px Noto Sans Arabic;fill:' + CY + '">' + n.toLocaleString("en") + ' نقطة</text></g>';
     return s;
   });
@@ -119,7 +120,7 @@
   });
   // 10 — as your finger comes near a point it pulls part of its charge toward itself (field lines bend up into the finger)
   shot(10, function (u, d) { return [320, 170, lerp(1.0, 1.1, u / d)]; }, function (u, d, t) {
-    var k = ease(clamp(u / 1.6)), fy = lerp(40, 150, k), s = dark(t) + '<path d="M60 260 H580" stroke="' + BLUE + '" stroke-width="16" opacity=".55"/><path d="M320 100 V360" stroke="' + OR + '" stroke-width="16" opacity=".5"/><rect x="40" y="226" width="560" height="10" fill="#cfeaf4" opacity=".35"/>';
+    var k = ease(clamp(u / 1.6)), fy = lerp(40, 150, k) - 14 * Math.abs(Math.sin(t * 3)) * clamp(u - 1.6), s = dark(t) + '<path d="M60 260 H580" stroke="' + BLUE + '" stroke-width="16" opacity=".55"/><path d="M320 100 V360" stroke="' + OR + '" stroke-width="16" opacity=".5"/><rect x="40" y="226" width="560" height="10" fill="#cfeaf4" opacity=".35"/>';
     s += fieldArcs(320, 260, t, 60, k) + '<circle cx="320" cy="260" r="' + f(22 * (1 - 0.5 * k) + 3 * Math.sin(t * 6)) + '" fill="url(#gNode)"/>';
     for (var q = 0; q < 8; q++) { var qu = (t * 1.2 + q / 8) % 1; if (k > 0.5) s += '<circle cx="' + f(320 + Math.sin(q * 2) * 10) + '" cy="' + f(lerp(250, fy + 10, qu)) + '" r="3.4" fill="' + YEL + '" stroke="' + INK + '" stroke-width=".8" opacity="' + f(1 - qu * 0.4) + '"/>'; }
     s += finger(320, fy, 0, { s: 1.1 });
@@ -158,15 +159,15 @@
     return s + tag("صباعين مع بعض", 520, 80, u, 0.5, 3, 17);
   });
   // 16 — and the glove? it insulates, pulls no charge, so the screen feels nothing (field lines don't bend)
-  shot(16, function (u, d) { return [320, 170, lerp(1.0, 1.1, u / d)]; }, function (u, d, t) {
-    var k = ease(clamp(u / 1.2)), fy = lerp(40, 150, k), s = dark(t) + '<path d="M60 260 H580" stroke="' + BLUE + '" stroke-width="16" opacity=".55"/><path d="M320 100 V360" stroke="' + OR + '" stroke-width="16" opacity=".5"/><rect x="40" y="226" width="560" height="10" fill="#cfeaf4" opacity=".35"/>';
-    s += fieldArcs(320, 260, t, 60, 0) + '<circle cx="320" cy="260" r="' + f(22 + 3 * Math.sin(t * 6)) + '" fill="url(#gNode)"/>' + finger(320, fy, 0, { s: 1.1, glove: true });
-    if (u > 1.4) s += '<path d="M420 90 l40 40 M460 90 l-40 40" stroke="' + RED + '" stroke-width="8" stroke-linecap="round"/>';
+  shot(16, function (u, d) { return [320, lerp(150, 200, u / d), lerp(0.95, 1.35, u / d)]; }, function (u, d, t) {
+    var k = ease(clamp(u / 0.8)), fy = lerp(70, 150, k) - 34 * Math.abs(Math.sin(t * 3.2)), s = dark(t) + '<path d="M60 260 H580" stroke="' + BLUE + '" stroke-width="16" opacity=".55"/><path d="M320 100 V360" stroke="' + OR + '" stroke-width="16" opacity=".5"/><rect x="40" y="226" width="560" height="10" fill="#cfeaf4" opacity=".35"/>';
+    s += fieldArcs(320, 260, t, 60, 0) + '<circle cx="320" cy="260" r="' + f(24 + 9 * Math.sin(t * 6)) + '" fill="url(#gNode)"/>' + finger(320, fy, 0, { s: 1.1, glove: true });
+    if (u > 1.4) s += '<g transform="translate(440 110) scale(' + f(1 + 0.25 * Math.sin(t * 6)) + ')"><path d="M-20 -20 l40 40 M20 -20 l-40 40" stroke="' + RED + '" stroke-width="8" stroke-linecap="round"/></g>';
     return s + tag("عازل!", 160, 110, u, 0.6, -3, 19, "#ffb08a");
   });
   // 17 — that's why touch gloves have conductive thread in their fingertips (silver tip, the charge is pulled again)
-  shot(17, function (u, d) { return [320, 170, lerp(1.0, 1.1, u / d)]; }, function (u, d, t) {
-    var k = ease(clamp(u / 1.2)), fy = lerp(40, 150, k), s = dark(t) + '<path d="M60 260 H580" stroke="' + BLUE + '" stroke-width="16" opacity=".55"/><path d="M320 100 V360" stroke="' + OR + '" stroke-width="16" opacity=".5"/>';
+  shot(17, function (u, d) { return [320, lerp(150, 200, u / d), lerp(0.95, 1.3, u / d)]; }, function (u, d, t) {
+    var k = ease(clamp(u / 1.2)), fy = lerp(40, 150, k) - 30 * Math.abs(Math.sin(t * 3.2)) * clamp(u - 1.2), s = dark(t) + '<path d="M60 260 H580" stroke="' + BLUE + '" stroke-width="16" opacity=".55"/><path d="M320 100 V360" stroke="' + OR + '" stroke-width="16" opacity=".5"/>';
     s += fieldArcs(320, 260, t, 60, k) + '<circle cx="320" cy="260" r="' + f(22 * (1 - 0.5 * k) + 3 * Math.sin(t * 6)) + '" fill="url(#gNode)"/>';
     for (var q = 0; q < 8; q++) { var qu = (t * 1.2 + q / 8) % 1; if (k > 0.5) s += '<circle cx="' + f(320 + Math.sin(q * 2) * 10) + '" cy="' + f(lerp(250, fy + 10, qu)) + '" r="3.4" fill="' + YEL + '" stroke="' + INK + '" stroke-width=".8"/>'; }
     s += finger(320, fy, 0, { s: 1.1, glove: true, thread: true });
@@ -193,8 +194,9 @@
   shot(20, function (u, d) { return [lerp(300, 340, u / d), 180, lerp(1.0, 1.1, u / d)]; }, function (u, d, t) {
     var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#e7d4ae"/><rect x="-400" y="250" width="1440" height="300" fill="#8a6a48"/><rect x="300" y="80" width="230" height="170" rx="16" fill="#5a5048" stroke="' + INK + '" stroke-width="4"/><ellipse cx="415" cy="165" rx="90" ry="66" fill="#1f3a2a" stroke="' + INK + '" stroke-width="3"/>';
     for (var w = 0; w < 6; w++) s += '<path d="M' + (335 + w * 32) + ' 105 V225" stroke="#c9a04e" stroke-width="1.4" opacity=".7"/>';
+    for (var bl = 0; bl < 4; bl++) s += '<circle cx="' + f(380 + bl * 22 + 14 * Math.sin(t * 0.9 + bl)) + '" cy="' + f(140 + bl * 12 + 10 * Math.cos(t * 1.1 + bl)) + '" r="4" fill="#7cf29a" opacity="' + f(0.5 + 0.5 * Math.sin(t * 5 + bl)) + '"/>';
     var a = t * 1.6; s += '<path d="M415 165 L' + f(415 + Math.cos(a) * 80) + ' ' + f(165 + Math.sin(a) * 60) + '" stroke="#7cf29a" stroke-width="2.4" opacity=".8"/>';
-    s += '<g transform="translate(180 150)"><path d="M-46 140 C-50 50 -30 28 0 28 C30 28 50 50 46 140 Z" fill="#3a3530" stroke="' + INK + '" stroke-width="3"/><path d="M-14 30 L0 60 L14 30" fill="#fbf6e6" stroke="' + INK + '" stroke-width="2"/>' + head(0, -20, 38, "curious", t, 1) + '<rect x="-30" y="-30" width="24" height="14" rx="6" fill="none" stroke="' + INK + '" stroke-width="2.4"/><rect x="6" y="-30" width="24" height="14" rx="6" fill="none" stroke="' + INK + '" stroke-width="2.4"/></g>';
+    s += '<g transform="translate(180 150)"><path d="M-46 140 C-50 50 -30 28 0 28 C30 28 50 50 46 140 Z" fill="#3a3530" stroke="' + INK + '" stroke-width="3"/><path d="M-14 30 L0 60 L14 30" fill="#fbf6e6" stroke="' + INK + '" stroke-width="2"/>' + head(0, -20 + 3 * Math.sin(t * 2), 38, "curious", t, Math.sin(t * 1.3)) + '<rect x="-30" y="-30" width="24" height="14" rx="6" fill="none" stroke="' + INK + '" stroke-width="2.4"/><rect x="6" y="-30" width="24" height="14" rx="6" fill="none" stroke="' + INK + '" stroke-width="2.4"/></g>';
     s += '<rect x="-400" y="-300" width="1440" height="960" fill="#704214" opacity=".18"/>';
     var y = Math.round(lerp(2026, 1965, clamp(u / 1.4))); s += '<g transform="translate(415 40)"><rect x="-60" y="-20" width="120" height="38" rx="9" fill="' + INK + '" stroke="#c9a650" stroke-width="3"/><text y="8" text-anchor="middle" style="font:800 20px Noto Serif;fill:#ffd23a">' + y + '</text></g>';
     return s + tag("جونسون", 120, 80, u, 0.6, -3, 19);
