@@ -203,7 +203,8 @@
   });
   // 18 — that's what your body does too: sweat evaporates off your skin and cools you
   shot(18, function (u, d) { return [320, 180, lerp(1.0, 1.08, u / d)]; }, function (u, d, t) {
-    var cool = clamp((u - 1.4) / 1.2), s = hotDay(t) + person(320, 170, t, cool > 0.5 ? "happy" : "worry", { col: "#e0584a", s: 1.1 });
+    var cool = clamp((u - 1.4) / 1.2), s = hotDay(t) + person(320, 170 + 5 * Math.sin(t * 3), t, cool > 0.5 ? "happy" : "worry", { col: "#e0584a", s: 1.1, look: Math.sin(t * 1.5) });
+    s += '<g transform="translate(400 150) rotate(' + f(25 * Math.sin(t * 7)) + ')"><path d="M0 0 L46 -30 A56 56 0 0 1 56 22 Z" fill="#f2c230" stroke="' + INK + '" stroke-width="2"/><path d="M0 0 L50 -6 M0 0 L52 10" stroke="' + INK + '" stroke-width="1.2"/></g>' + breeze(t, 90, 200, 5, 0.7);
     for (var k = 0; k < 6; k++) { var ph = (t * 0.6 + k / 6) % 1; s += '<ellipse cx="' + f(290 + k * 12) + '" cy="' + f(130 + ph * 30) + '" rx="3" ry="4.5" fill="#bfe8ff" stroke="#5a8aa8" stroke-width=".6" opacity="' + f(1 - ph) + '"/>'; }
     s += vapor(320, 110, t, 50, 0.8) + thermo(520, 280, lerp(0.75, 0.45, cool), "", t);
     return s + tag("العرق", 140, 100, u, 0.4, -3, 17);
