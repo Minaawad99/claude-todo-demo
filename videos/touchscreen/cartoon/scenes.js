@@ -219,7 +219,7 @@
   });
   // 4 — under the glass, a very fine grid of transparent wires you can't see (the glass lifts off in 3D)
   shot(4, function (u, d) { return [320, 170, lerp(0.75, 0.85, u / d)]; }, function (u, d, t) {
-    IS.cx = 320; IS.cy = 120; var e = ease(clamp(u / 1.6)), s = dark(t) + stack(t, { e: e, glassOp: 0.6, glow: function (a, b) { return 0.2 + 0.2 * Math.sin(t * 3 + a + b); } });
+    IS.cx = 320; IS.cy = 120; var e = ease(clamp(u / 1.6)) + 0.12 * Math.sin(t * 2.2) * clamp(u - 1.2), s = dark(t) + stack(t, { e: e, glassOp: 0.6, glow: function (a, b) { return 0.35 + 0.35 * Math.sin(t * 5 + a * 0.9 + b * 0.6); } });
     return s + tag("الإزاز", 520, 40, u, 0.6, 3, 16) + tag("شبكة شفافة!", 520, 200, u, 1.6, -3, 17);
   });
   // 5 — the wires conduct electricity and still let light through like glass (microscope: ITO diamonds, light passing)
