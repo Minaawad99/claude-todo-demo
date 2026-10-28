@@ -5,7 +5,7 @@ global.window = {}; eval(require('fs').readFileSync(__dirname + '/timing.js', 'u
 const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration : T[i].start, D = i => L(i + 1) - L(i), c = [];
 const a = (t, fx, gain, dur) => c.push(Object.assign({ t: +t.toFixed(2), fx, gain }, dur ? { dur } : {}));
 const rec = (t, file, gain, from, dur) => c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), file: 'sfx/px-' + file + '.mp3', gain, from: from || 0 }, dur ? { dur: +dur.toFixed(2) } : {}));
-let eo = 0; const engine = (i, gain) => { rec(L(i), 'old-engine-running', gain, 6 + (eo * 2.3) % 11, D(i) + 0.3); eo++; };   // steady running engine, a different stretch each time
+let eo = 0; const engine = (i, gain) => { c.push({ t: +L(i).toFixed(2), file: 'sfx/px-old-engine-running.mp3', gain: +(gain * 0.6).toFixed(2), from: 6 + (eo * 2.3) % 11, dur: +(D(i) + 0.3).toFixed(2), duck: 1.8 }); eo++; };   // the running-engine bed sits well under the voice (it carries room tone)   // steady running engine, a different stretch each time
 for (let i = 1; i < T.length; i++) a(L(i) - 0.08, 'whoosh', 0.35);
 rec(L(0) + 0.2, 'car-pass', 0.8); engine(0, 0.45); for (let k = 0; k < 10; k++) a(L(0) + 2.4 + k * 0.16, 'tick', 0.25); a(L(0) + 1.4, 'pop', 0.6);
 rec(L(1), 'engine-roar', 0.9, 0, D(1) + 0.3); a(L(1) + 0.2, 'pop', 0.5);

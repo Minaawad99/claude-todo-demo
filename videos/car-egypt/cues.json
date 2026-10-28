@@ -130,9 +130,10 @@
   {
    "t": 0.21,
    "file": "sfx/px-old-engine-running.mp3",
-   "gain": 0.45,
+   "gain": 0.27,
    "from": 6,
-   "dur": 5.97
+   "dur": 5.97,
+   "duck": 1.8
   },
   {
    "t": 2.61,
@@ -219,9 +220,10 @@
   {
    "t": 8.14,
    "file": "sfx/px-old-engine-running.mp3",
-   "gain": 0.3,
+   "gain": 0.18,
    "from": 8.3,
-   "dur": 2.53
+   "dur": 2.53,
+   "duck": 1.8
   },
   {
    "t": 10.42,
@@ -236,9 +238,10 @@
   {
    "t": 10.37,
    "file": "sfx/px-old-engine-running.mp3",
-   "gain": 0.3,
+   "gain": 0.18,
    "from": 10.6,
-   "dur": 2.21
+   "dur": 2.21,
+   "duck": 1.8
   },
   {
    "t": 12.58,
@@ -272,9 +275,10 @@
   {
    "t": 17.17,
    "file": "sfx/px-old-engine-running.mp3",
-   "gain": 0.6,
+   "gain": 0.36,
    "from": 12.899999999999999,
-   "dur": 4.24
+   "dur": 4.24,
+   "duck": 1.8
   },
   {
    "t": 17.67,
@@ -289,9 +293,10 @@
   {
    "t": 21.11,
    "file": "sfx/px-old-engine-running.mp3",
-   "gain": 0.45,
+   "gain": 0.27,
    "from": 15.2,
-   "dur": 3.49
+   "dur": 3.49,
+   "duck": 1.8
   },
   {
    "t": 21.71,
@@ -308,9 +313,10 @@
   {
    "t": 24.3,
    "file": "sfx/px-old-engine-running.mp3",
-   "gain": 0.35,
+   "gain": 0.21,
    "from": 6.5,
-   "dur": 4.96
+   "dur": 4.96,
+   "duck": 1.8
   },
   {
    "t": 24.3,
@@ -335,9 +341,10 @@
   {
    "t": 28.96,
    "file": "sfx/px-old-engine-running.mp3",
-   "gain": 0.35,
+   "gain": 0.21,
    "from": 8.799999999999999,
-   "dur": 4.05
+   "dur": 4.05,
+   "duck": 1.8
   },
   {
    "t": 29.16,
@@ -381,9 +388,10 @@
   {
    "t": 37.33,
    "file": "sfx/px-old-engine-running.mp3",
-   "gain": 0.35,
+   "gain": 0.21,
    "from": 11.099999999999998,
-   "dur": 3.47
+   "dur": 3.47,
+   "duck": 1.8
   },
   {
    "t": 37.83,
@@ -398,9 +406,10 @@
   {
    "t": 40.5,
    "file": "sfx/px-old-engine-running.mp3",
-   "gain": 0.4,
+   "gain": 0.24,
    "from": 13.399999999999999,
-   "dur": 3.77
+   "dur": 3.77,
+   "duck": 1.8
   },
   {
    "t": 40.8,
@@ -472,9 +481,10 @@
   {
    "t": 48.53,
    "file": "sfx/px-old-engine-running.mp3",
-   "gain": 0.3,
+   "gain": 0.18,
    "from": 15.7,
-   "dur": 3.19
+   "dur": 3.19,
+   "duck": 1.8
   },
   {
    "t": 48.93,
@@ -484,9 +494,10 @@
   {
    "t": 51.42,
    "file": "sfx/px-old-engine-running.mp3",
-   "gain": 0.4,
+   "gain": 0.24,
    "from": 7,
-   "dur": 6.3
+   "dur": 6.3,
+   "duck": 1.8
   },
   {
    "t": 51.82,
@@ -536,9 +547,10 @@
   {
    "t": 64.84,
    "file": "sfx/px-old-engine-running.mp3",
-   "gain": 0.35,
+   "gain": 0.21,
    "from": 9.299999999999997,
-   "dur": 2.97
+   "dur": 2.97,
+   "duck": 1.8
   },
   {
    "t": 65.34,
@@ -666,9 +678,10 @@
   {
    "t": 90.52,
    "file": "sfx/px-old-engine-running.mp3",
-   "gain": 0.35,
+   "gain": 0.21,
    "from": 11.599999999999998,
-   "dur": 6
+   "dur": 6,
+   "duck": 1.8
   },
   {
    "t": 90.82,
