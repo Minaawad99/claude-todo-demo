@@ -21,3 +21,7 @@ Facts checked:
 Sound:
 - `sfx/f14-boom-short.wav`, `sfx/f14-boom-long.wav` — the real boom used in every boom cue: cut from "F-14 Tomcat sonic boom.ogv"
   (US Navy, low supersonic pass filmed from a carrier deck; public domain, Wikimedia Commons). Its two hits 0.15 s apart are the nose and tail shocks.
+- `sfx/px-*.mp3` — Pixabay sound effects (Pixabay Content License), downloaded by the channel and kept out of git (`sfx/.gitignore`):
+  fighter jets passing overhead (jet scenes), jet plane flyby (hook), engine (engine cut-away), afterburner + afterburner ramp
+  (flame scenes; the ramp lights at the flame), prop plane (1940s plane, B-29), rocket launch (X-1), beep warning (shaking plane),
+  whip snap (whip), ocean waves (boat). Put the same files back in `sfx/` to rebuild the mix.

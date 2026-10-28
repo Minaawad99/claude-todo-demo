@@ -2,8 +2,9 @@
 
 Usage: python sfx.py voice.wav cues.json out.wav [--start S --dur D]
 cues.json: {"bed": true, "cues": [{"t": 3.2, "fx": "laser", "gain": 1.0, "dur": 0.4}, ...]}
-A cue can also play a recorded sound instead of a synthesized one: {"t": 3.2, "file": "sfx/boom.wav", "gain": 1.0}
-(path relative to cues.json). Everything else is synthesized here; credit any recorded file you use.
+A cue can also play a recorded sound instead of a synthesized one: {"t": 3.2, "file": "sfx/boom.wav", "gain": 1.0,
+"from": 0.0, "dur": 2.0} (path relative to cues.json; any format ffmpeg reads; "from"/"dur" cut a slice with short fades).
+Everything else is synthesized here; credit any recorded file you use.
 """
 import sys, os, json, wave, argparse
 import numpy as np
@@ -20,6 +21,18 @@ def read_wav(p):
     if sr != SR:  # linear resample is fine for speech at these rates
         t = np.arange(int(len(x) * SR / sr)) * sr / SR
         x = np.interp(t, np.arange(len(x)), x).astype(np.float32)
+    return x
+
+_clips = {}
+def clip(c):   # a slice of a recorded file, decoded once with ffmpeg, faded in/out so loops and cuts don't click
+    p = c["file"]
+    if p not in _clips:
+        import subprocess
+        raw = subprocess.run(["ffmpeg", "-v", "error", "-i", p, "-ac", "1", "-ar", str(SR), "-f", "f32le", "-"], capture_output=True, check=True).stdout
+        _clips[p] = np.frombuffer(raw, dtype=np.float32)
+    x = _clips[p]; a = int(c.get("from", 0) * SR); b = a + int(c["dur"] * SR) if c.get("dur") else len(x)
+    x = x[a:b].copy(); k = min(len(x) // 2, int(0.12 * SR))
+    if c.get("from") or c.get("dur"): x[:k] *= np.linspace(0, 1, k); x[len(x) - k:] *= np.linspace(1, 0, k)
     return x
 
 def write_wav(p, x):
@@ -294,7 +307,7 @@ def mix(voice, cues, use_bed=True, bed_db=-18.0, fx_db=-10.0, duck_db=-8.0, tail
     if use_bed:
         b = bed(n / SR)[:n]; b *= 10 ** ((speech_rms + bed_db - rms_db(b)) / 20); out += b * gain
     for c in cues:
-        f = read_wav(c["file"]) if "file" in c else FX[c["fx"]](c.get("dur", None) or FX[c["fx"]].__defaults__[0]); s = int(c["t"] * SR)
+        f = clip(c) if "file" in c else FX[c["fx"]](c.get("dur", None) or FX[c["fx"]].__defaults__[0]); s = int(c["t"] * SR)
         f = f / (np.max(np.abs(f)) + 1e-9) * 10 ** ((speech_rms + 3 + fx_db) / 20) * c.get("gain", 1.0)
         e = min(n, s + len(f)); out[s:e] += f[: e - s] * gain[s:e]
     peak = np.max(np.abs(out))
