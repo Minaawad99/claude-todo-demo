@@ -133,7 +133,9 @@ ffmpeg -y -i <mp4> -c:v copy -af "alimiter=limit=0.6:level=false:attack=1:releas
 python3 qa.py <fixed.mp4>
 ```
 
-The limiter remux keeps the audio peak under -0.5 dBFS. QA must say PASS:
+The limiter remux keeps the audio peak under -0.5 dBFS. If qa.py still reports a true peak above -0.5 dBTP (loud recorded engine/jet beds clip into square waves that overshoot
+after AAC), remux the mix onto the rendered video with an oversampled limiter instead of re-rendering:
+`-af "apad,afade=t=out:st=<end-0.8>:d=0.8,volume=-3dB,loudnorm=I=-14:TP=-2:LRA=11,aresample=192000,alimiter=limit=0.6:level=false:attack=1:release=60,aresample=48000"`. QA must say PASS:
 
 - no still stretch over 0.75 s;
 - frozen total within budget;
