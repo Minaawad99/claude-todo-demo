@@ -176,14 +176,32 @@
     if (o.ripple) { var ru = o.ripple[2]; if (ru > 0 && ru < 1) s += '<circle cx="' + o.ripple[0] + '" cy="' + o.ripple[1] + '" r="' + f(6 + ru * 40) + '" fill="none" stroke="#fff" stroke-width="3" opacity="' + f(1 - ru) + '"/>'; }
     if (o.x) s += '<path d="M-30 -30 L30 30 M30 -30 L-30 30" stroke="' + RED + '" stroke-width="10" stroke-linecap="round" opacity="' + f(o.x) + '"/>';
     return s + '</g>'; }
-  function finger(x, y, ang, o) {   // an index finger pointing down at (x,y): skin, nail; o: {glove, sausage, s}
+  // a real-looking hand pointing down, fingertip at (x,y): short index finger (nail, two joint creases) coming out of a fist
+  // with curled fingers and a thumb, then the cuff; o: {glove, thread, sausage, s}
+  function finger(x, y, ang, o) {
     o = o || {}; var s = '<g transform="translate(' + f(x) + ' ' + f(y) + ') rotate(' + f(ang || 0) + ') scale(' + (o.s || 1) + ')">';
-    if (o.sausage) return s + '<path d="M-14 -150 L-14 -10 C-14 4 14 4 14 -10 L14 -150" fill="url(#gSausage)" stroke="' + INK + '" stroke-width="2.4"/><path d="M-6 -140 V-20" stroke="#f2a08a" stroke-width="3" opacity=".6"/><path d="M-26 -150 h52 v-70 h-52 Z" fill="url(#gGlove)" stroke="' + INK + '" stroke-width="2.4"/></g>';
-    var fill = o.glove ? "url(#gGlove)" : "url(#gSkin)";
-    s += '<path d="M-18 -170 L-16 -16 C-16 6 16 6 16 -16 L18 -170 Z" fill="' + fill + '" stroke="' + INK + '" stroke-width="2.4"/>';
-    if (!o.glove) s += '<path d="M-9 -12 C-9 -30 9 -30 9 -12 Z" fill="#f4d4c0" stroke="#a8704a" stroke-width="1" transform="scale(1 -1) translate(0 34)" opacity="0"/><path d="M-8 -36 C-8 -50 8 -50 8 -36 L8 -26 C8 -22 -8 -22 -8 -26 Z" fill="#f6dccb" stroke="#a8704a" stroke-width="1.2" transform="rotate(180 0 -31)"/><path d="M-16 -90 q16 6 32 0 M-16 -126 q16 6 32 0" stroke="#a8704a" stroke-width="1.4" fill="none"/>';
-    else { s += '<path d="M-16 -90 q16 6 32 0 M-16 -60 q16 6 32 0" stroke="#5a1a16" stroke-width="1.4" fill="none"/>'; if (o.thread) s += '<path d="M-16 -16 C-16 6 16 6 16 -16 L16 -30 L-16 -30 Z" fill="#c9ced4" stroke="' + INK + '" stroke-width="1.6"/><path d="M-12 -26 l24 0 M-12 -20 l24 0 M-10 -14 l20 0" stroke="#8a929c" stroke-width="1.2"/>'; }
+    var gl = o.glove || o.sausage, fill = gl ? "url(#gGlove)" : "url(#gSkin)", ln = gl ? "#5a1a16" : "#a8704a";
+    s += '<path d="M-4 -262 L-2 -170 L66 -170 L70 -262 Z" fill="' + (gl ? "#7a2420" : "#2f4a6a") + '" stroke="' + INK + '" stroke-width="2.4"/>' +
+      '<path d="M-4 -186 L68 -186" stroke="' + (gl ? "#5a1a16" : "#1f3350") + '" stroke-width="5"/>' + (gl ? '' : '<path d="M-3 -172 L67 -172 L66 -162 L-2 -162 Z" fill="#f4f1e8" stroke="' + INK + '" stroke-width="1.6"/>');
+    if (o.sausage) s += '<path d="M-13 -104 L-13 -10 C-13 5 13 5 13 -10 L13 -104 Z" fill="url(#gSausage)" stroke="' + INK + '" stroke-width="2.4"/><path d="M-5 -96 V-18" stroke="#f2a08a" stroke-width="3" opacity=".6"/><path d="M-13 -60 q13 5 26 0" stroke="#7a2a1a" stroke-width="1.2" fill="none"/>';
+    else s += '<path d="M-15 -104 L-14 -14 C-14 4 14 4 14 -14 L13 -104 Z" fill="' + fill + '" stroke="' + INK + '" stroke-width="2.4"/>' +
+      '<path d="M-14 -38 q7 4 14 0 M-14 -68 q14 5 27 0 M-15 -96 q15 5 28 0" stroke="' + ln + '" stroke-width="1.4" fill="none" opacity=".8"/>' +
+      '<path d="M8 -100 L8 -20" stroke="#fff" stroke-width="3" opacity=".18"/>';
+    if (!gl) s += '<path d="M-8 -6 C-8 -1 8 -1 8 -6 L7 -24 C7 -29 -7 -29 -7 -24 Z" fill="#f7dccd" stroke="' + ln + '" stroke-width="1.2"/><path d="M-4 -22 L-4 -8" stroke="#fff" stroke-width="1.6" opacity=".6"/>';
+    if (o.thread) s += '<path d="M-14 -14 C-14 4 14 4 14 -14 L14 -30 L-14 -30 Z" fill="#c9ced4" stroke="' + INK + '" stroke-width="1.6"/><path d="M-11 -26 h22 M-11 -20 h22 M-9 -14 h18" stroke="#8a929c" stroke-width="1.2"/>';
+    s += '<path d="M-18 -92 C-28 -124 -22 -168 4 -174 L58 -174 C78 -166 82 -128 74 -104 C68 -86 52 -80 36 -82 L14 -86 C2 -84 -12 -84 -18 -92 Z" fill="' + fill + '" stroke="' + INK + '" stroke-width="2.4"/>';
+    [[27, -84, 11, 9], [48, -86, 11, 9], [65, -95, 9, 9]].forEach(function (k) { s += '<ellipse cx="' + k[0] + '" cy="' + k[1] + '" rx="' + k[2] + '" ry="' + k[3] + '" fill="' + fill + '" stroke="' + INK + '" stroke-width="2"/>'; });
+    s += '<path d="M-16 -152 C-30 -132 -26 -108 -10 -102 C2 -100 8 -112 2 -126 C-2 -138 -6 -146 -16 -152 Z" fill="' + fill + '" stroke="' + INK + '" stroke-width="2.2"/>' +
+      (gl ? '' : '<path d="M-6 -118 C-2 -112 -2 -106 -6 -104" stroke="' + ln + '" stroke-width="1.2" fill="none"/>') +
+      '<path d="M10 -160 C30 -152 50 -152 66 -160" stroke="' + ln + '" stroke-width="1.2" fill="none" opacity=".6"/>';
     return s + '</g>'; }
+  // a real photo (the channel's reference photos in ./photos), cover-fitted to the panel, slow push-in on (fx, fy)
+  ["photos/johnson-1.jpg", "photos/johnson-2.jpg"].forEach(function (h) { try { var im = new Image(); im.src = h; } catch (e) {} });
+  function photo(href, iw, ih, fx, fy, z, extra) {
+    var sc = Math.max(600 / iw, 344 / ih), w = iw * sc, h = ih * sc, bx = 320 - w / 2, by = 180 - h / 2, px = bx + fx * w, py = by + fy * h;
+    return '<clipPath id="phc"><rect x="20" y="8" width="600" height="344" rx="10"/></clipPath><g clip-path="url(#phc)"><g transform="translate(' + f(px) + ' ' + f(py) + ') scale(' + z.toFixed(4) + ') translate(' + f(-px) + ' ' + f(-py) + ')"><image href="' + href + '" x="' + f(bx) + '" y="' + f(by) + '" width="' + f(w) + '" height="' + f(h) + '" preserveAspectRatio="none"/>' + (extra ? extra(bx, by, w, h) : '') + '</g><rect x="20" y="8" width="600" height="344" fill="#704214" opacity=".12"/></g><rect x="20" y="8" width="600" height="344" rx="10" fill="none" stroke="#e7d4ae" stroke-width="8"/><rect x="20" y="8" width="600" height="344" rx="10" fill="none" stroke="' + INK + '" stroke-width="2"/>';
+  }
+  function scratches(t) { var s = ""; for (var k = 0; k < 3; k++) { var x = 40 + ((t * 97 + k * 211) % 560); s += '<path d="M' + f(x) + ' 10 V350" stroke="#fff" stroke-width="1" opacity="' + f(0.15 + 0.15 * Math.sin(t * 13 + k)) + '"/>'; } return s; }
   function fieldArcs(x, y, t, r, bend) {   // little field lines above a node; bend pulls them up toward a finger
     var s = ""; for (var k = 0; k < 5; k++) { var w = r * (0.4 + k * 0.15), h = (8 + k * 5) * (1 + (bend || 0) * 1.5), ph = (t * 2 + k * 0.2) % 1; s += '<path d="M' + f(x - w) + ' ' + f(y) + ' Q' + f(x) + ' ' + f(y - h * 2) + ' ' + f(x + w) + ' ' + f(y) + '" stroke="' + CY + '" stroke-width="1.6" fill="none" opacity="' + f(0.3 + 0.5 * (1 - ph)) + '" stroke-dasharray="4 4" stroke-dashoffset="' + f(-t * 20) + '"/>'; } return s; }
 
@@ -252,8 +270,8 @@
   });
   // 9 — your body has water and salts: it conducts (inside the fingertip, ions moving)
   shot(9, function (u, d) { return [320, 170, lerp(1.0, 1.1, u / d)]; }, function (u, d, t) {
-    var s = graphPaper(t) + finger(320, 300, 0, { s: 1.6 }) + '<clipPath id="fc"><rect x="292" y="40" width="56" height="256"/></clipPath><g clip-path="url(#fc)">';
-    for (var k = 0; k < 24; k++) { var ku = (t * 0.6 + hash(k)) % 1, x = 296 + hash(k + 3) * 48, y = lerp(60, 300, ku); s += '<circle cx="' + f(x + Math.sin(t * 4 + k) * 3) + '" cy="' + f(y) + '" r="4" fill="' + (k % 3 ? CY : "#fff") + '" stroke="' + INK + '" stroke-width=".8"/>' + (k % 3 === 0 ? '<text x="' + f(x) + '" y="' + f(y + 3) + '" text-anchor="middle" style="font:800 7px Noto Serif;fill:' + INK + '">+</text>' : ''); }
+    var s = graphPaper(t) + finger(320, 300, 0, { s: 1.6 }) + '<clipPath id="fc"><rect x="298" y="140" width="44" height="160"/></clipPath><g clip-path="url(#fc)">';
+    for (var k = 0; k < 24; k++) { var ku = (t * 0.6 + hash(k)) % 1, x = 300 + hash(k + 3) * 40, y = lerp(150, 296, ku); s += '<circle cx="' + f(x + Math.sin(t * 4 + k) * 3) + '" cy="' + f(y) + '" r="4" fill="' + (k % 3 ? CY : "#fff") + '" stroke="' + INK + '" stroke-width=".8"/>' + (k % 3 === 0 ? '<text x="' + f(x) + '" y="' + f(y + 3) + '" text-anchor="middle" style="font:800 7px Noto Serif;fill:' + INK + '">+</text>' : ''); }
     s += '</g>';
     return s + tag("مية + أملاح", 160, 80, u, 0.4, -3, 18) + tag("بيوصّل!", 480, 230, u, 1.4, 3, 18);
   });
@@ -329,25 +347,20 @@
     if (g > 0.5) s += '<text x="515" y="' + f(170 - 40 * g) + '" text-anchor="middle" style="font:800 18px Noto Sans Arabic;fill:' + RED + '">+40%</text>';
     return s + tag("مية + ملح", 180, 300, u, 0.4, -3, 17) + tag("المبيعات", 480, 320, u, 1.6, 3, 15);
   });
-  // 20 — the idea was invented by an English engineer, Johnson, in 1965 (sepia lab, a CRT with a touch overlay)
-  shot(20, function (u, d) { return [lerp(300, 340, u / d), 180, lerp(1.0, 1.1, u / d)]; }, function (u, d, t) {
-    var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#e7d4ae"/><rect x="-400" y="250" width="1440" height="300" fill="#8a6a48"/><rect x="300" y="80" width="230" height="170" rx="16" fill="#5a5048" stroke="' + INK + '" stroke-width="4"/><ellipse cx="415" cy="165" rx="90" ry="66" fill="#1f3a2a" stroke="' + INK + '" stroke-width="3"/>';
-    for (var w = 0; w < 6; w++) s += '<path d="M' + (335 + w * 32) + ' 105 V225" stroke="#c9a04e" stroke-width="1.4" opacity=".7"/>';
-    for (var bl = 0; bl < 4; bl++) s += '<circle cx="' + f(380 + bl * 22 + 14 * Math.sin(t * 0.9 + bl)) + '" cy="' + f(140 + bl * 12 + 10 * Math.cos(t * 1.1 + bl)) + '" r="4" fill="#7cf29a" opacity="' + f(0.5 + 0.5 * Math.sin(t * 5 + bl)) + '"/>';
-    var a = t * 1.6; s += '<path d="M415 165 L' + f(415 + Math.cos(a) * 80) + ' ' + f(165 + Math.sin(a) * 60) + '" stroke="#7cf29a" stroke-width="2.4" opacity=".8"/>';
-    s += '<g transform="translate(180 150)"><path d="M-46 140 C-50 50 -30 28 0 28 C30 28 50 50 46 140 Z" fill="#3a3530" stroke="' + INK + '" stroke-width="3"/><path d="M-14 30 L0 60 L14 30" fill="#fbf6e6" stroke="' + INK + '" stroke-width="2"/>' + head(0, -20 + 3 * Math.sin(t * 2), 38, "curious", t, Math.sin(t * 1.3)) + '<rect x="-30" y="-30" width="24" height="14" rx="6" fill="none" stroke="' + INK + '" stroke-width="2.4"/><rect x="6" y="-30" width="24" height="14" rx="6" fill="none" stroke="' + INK + '" stroke-width="2.4"/></g>';
-    s += '<rect x="-400" y="-300" width="1440" height="960" fill="#704214" opacity=".18"/>';
-    var y = Math.round(lerp(2026, 1965, clamp(u / 1.4))); s += '<g transform="translate(415 40)"><rect x="-60" y="-20" width="120" height="38" rx="9" fill="' + INK + '" stroke="#c9a650" stroke-width="3"/><text y="8" text-anchor="middle" style="font:800 20px Noto Serif;fill:#ffd23a">' + y + '</text></g>';
-    return s + tag("جونسون", 120, 80, u, 0.6, -3, 19);
+  // 20 — the idea was invented by an English engineer, Johnson, in 1965 (his own photo at the Royal Radar Establishment, Malvern)
+  shot(20, function (u, d) { return [320, 180, 1.0]; }, function (u, d, t) {
+    var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#1c1a17"/>' + photo("photos/johnson-1.jpg", 567, 459, 0.32, 0.3, lerp(1.0, 1.22, ease(clamp(u / d)))) + scratches(t);
+    var y = Math.round(lerp(2026, 1965, clamp(u / 1.4))); s += '<g transform="translate(520 40)"><rect x="-60" y="-20" width="120" height="38" rx="9" fill="' + INK + '" stroke="#c9a650" stroke-width="3"/><text y="8" text-anchor="middle" style="font:800 20px Noto Serif;fill:#ffd23a">' + y + '</text></g>';
+    return s + tag("جونسون", 120, 310, u, 0.6, -3, 19) + tag("إنجلترا", 520, 310, u, 1.6, 3, 16);
   });
-  // 21 — so air-traffic controllers could pick a plane on the radar with their finger
-  shot(21, function (u, d) { return [320, 180, lerp(1.0, 1.08, u / d)]; }, function (u, d, t) {
-    var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#0b1a12"/><circle cx="320" cy="180" r="150" fill="#0f2a1a" stroke="#3a5a40" stroke-width="6"/>';
-    for (var r = 1; r <= 3; r++) s += '<circle cx="320" cy="180" r="' + (r * 48) + '" fill="none" stroke="#2f6a3a" stroke-width="1.4"/>';
-    var a = t * 1.8; s += '<path d="M320 180 L' + f(320 + Math.cos(a) * 150) + ' ' + f(180 + Math.sin(a) * 150) + '" stroke="#7cf29a" stroke-width="3" opacity=".9"/>';
-    var planes = [[250, 120], [400, 230], [360, 100], [230, 250]]; planes.forEach(function (p, k) { var px = p[0] + Math.sin(t * 0.4 + k) * 8, py = p[1] + Math.cos(t * 0.4 + k) * 6, sel = k === 1 && u > 1.6; s += '<circle cx="' + f(px) + '" cy="' + f(py) + '" r="5" fill="#7cf29a"/>' + (sel ? '<rect x="' + f(px - 14) + '" y="' + f(py - 14) + '" width="28" height="28" fill="none" stroke="' + YEL + '" stroke-width="3"/>' : ''); });
-    var k2 = ease(clamp((u - 0.6) / 1.0)); s += finger(lerp(520, 404, k2), lerp(60, 226, k2), -20, { s: 0.8 });
-    return s + tag("رادار", 120, 60, u, 0.4, -3, 17);
+  // 21 — so air-traffic controllers could pick a plane on the radar with their finger (his photo: a finger on the touch display)
+  shot(21, function (u, d) { return [320, 180, 1.0]; }, function (u, d, t) {
+    var z = lerp(1.0, 1.35, ease(clamp(u / d)));
+    var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#1c1a17"/>' + photo("photos/johnson-2.jpg", 500, 375, 0.36, 0.5, z, function (bx, by, w, h) {
+      var cx = bx + 0.37 * w, cy = by + 0.5 * h, r = (t * 1.3) % 1;
+      return '<circle cx="' + f(cx) + '" cy="' + f(cy) + '" r="' + f(8 + r * 34) + '" fill="none" stroke="' + YEL + '" stroke-width="3" opacity="' + f(1 - r) + '"/><circle cx="' + f(cx) + '" cy="' + f(cy) + '" r="7" fill="' + YEL + '" opacity="' + f(0.5 + 0.4 * Math.sin(t * 8)) + '"/>';
+    }) + scratches(t);
+    return s + tag("مراقبين الطيارات", 150, 40, u, 0.4, -3, 16) + tag("اختار بصباعه!", 500, 320, u, 1.6, 3, 16);
   });
   // 22 — that's also why a drop of water on the screen can make a touch by itself (ghost touch)
   shot(22, function (u, d) { return [320, 180, lerp(1.0, 1.1, u / d)]; }, function (u, d, t) {
