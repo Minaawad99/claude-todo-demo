@@ -18,9 +18,12 @@ def read_wav(p):
         x = np.frombuffer(w.readframes(n), dtype={2: np.int16, 4: np.int32}[sw]).astype(np.float32)
         x /= 32768.0 if sw == 2 else 2147483648.0
     if ch > 1: x = x.reshape(-1, ch).mean(1)
-    if sr != SR:  # linear resample is fine for speech at these rates
-        t = np.arange(int(len(x) * SR / sr)) * sr / SR
-        x = np.interp(t, np.arange(len(x)), x).astype(np.float32)
+    if sr != SR:
+        # a proper band-limited resample (soxr). Linear interpolation mirrored the 24 kHz narration's top octave into
+        # 12–24 kHz as a fizzy, "re-recorded" haze, so the voice no longer goes through np.interp.
+        import subprocess
+        raw = subprocess.run(["ffmpeg", "-v", "error", "-i", p, "-ac", "1", "-af", f"aresample={SR}:resampler=soxr:precision=28", "-f", "f32le", "-"], capture_output=True, check=True).stdout
+        x = np.frombuffer(raw, dtype=np.float32).copy()
     return x
 
 def rms_lin(x):   # RMS of the loud part, so a clip with a long quiet fade isn't over-boosted

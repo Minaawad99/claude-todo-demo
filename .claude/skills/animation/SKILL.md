@@ -41,6 +41,8 @@ Speak in casual Egyptian Arabic (Cairo dialect), like a friendly YouTuber reveal
 ```
 
 - Natural speed only. Never speed the voice up with atempo (the user rejected fast narration).
+- AI Studio delivers 24 kHz audio. `audio/sfx.py` resamples it to 48 kHz with soxr; never with linear interpolation, which
+  mirrors the top octave into 12–24 kHz and makes the narrator sound "re-recorded" (the user heard it).
 
 ## 3. Reference research (real shapes, so drawings are realistic)
 
