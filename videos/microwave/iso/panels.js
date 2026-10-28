@@ -44,7 +44,7 @@
       return s + label(180, 100, "الرز والخضار والفراخ", INK, 17) + (u > 2.4 ? label(180, 420, "كلهم مليانين مية", BLU, 18) : "");
     }],
     [7, function (t, u) {   // the water molecule: + end and − end, like a tiny magnet
-      var s = mol(180, 260, -Math.PI / 2 + 0.15 * Math.sin(t * 2), 4, true);
+      var s = mol(180 + 8 * Math.sin(t * 1.7), 260 + 8 * Math.cos(t * 2.3), -Math.PI / 2 + 0.35 * Math.sin(t * 2.5), 4 + 0.15 * Math.sin(t * 4), true);
       if (u > 1.6) s += '<g transform="translate(180 410) rotate(' + f(4 * Math.sin(t * 2)) + ')"><path d="M-30 -30 V6 A30 30 0 0 0 30 6 V-30 H12 V6 A12 12 0 0 1 -12 6 V-30 Z" fill="' + RED + '" stroke="' + INK + '" stroke-width="2"/><rect x="-30" y="-40" width="18" height="10" fill="#e9ecef" stroke="' + INK + '"/><rect x="12" y="-40" width="18" height="10" fill="#e9ecef" stroke="' + INK + '"/></g>';
       return s + label(80, 170, "موجب", BLU, 15) + label(80, 330, "سالب", RED, 15) + label(180, 100, "جزيء المية", INK, 17);
     }],
@@ -84,7 +84,7 @@
       return s + label(180, 100, "الموجات بتدخل…", INK, 17) + label(300, 330, "١ - ٢ سم", RED, 15);
     }],
     [18, function (t, u) {   // the middle waits for the heat to crawl in
-      var k = clamp(u / 5), s = '<path d="M40 380 C30 200 330 200 320 380 Z" fill="#f2c79a" stroke="' + INK + '" stroke-width="2.4"/>';
+      var k = clamp(u / 5) * (0.9 + 0.1 * Math.sin(t * 3)), s = '<path d="M40 380 C30 200 330 200 320 380 Z" fill="#f2c79a" stroke="' + INK + '" stroke-width="2.4"/>';
       for (var r = 0; r < 5; r++) { var heat = clamp(k * 1.4 - r * 0.22); s += '<path d="M' + (40 + 24 * r) + ' 380 C' + (30 + 26 * r) + ' ' + (200 + 20 * r) + ' ' + (330 - 26 * r) + ' ' + (200 + 20 * r) + ' ' + (320 - 24 * r) + ' 380 Z" fill="' + RED + '" opacity="' + f(0.15 + 0.35 * heat) + '"/>'; }
       s += '<g transform="translate(300 170)"><circle r="26" fill="' + PAPER + '" stroke="' + INK + '" stroke-width="2"/><path d="M0 0 V-18" stroke="' + INK + '" stroke-width="2.4" transform="rotate(' + f(t * 120) + ')"/></g>';
       return s + label(160, 100, "الوسط بيستنى…", INK, 17) + (u > 3 ? label(180, 430, "استنى دقيقة!", RED, 19) : "");
