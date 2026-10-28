@@ -33,7 +33,8 @@
     s += '<circle cx="' + x + '" cy="' + cy0 + '" r="' + (R + 10) + '" fill="#8a929c" stroke="' + INK + '" stroke-width="2.4"/><circle cx="' + f(cx) + '" cy="' + f(cyc) + '" r="8" fill="#2b2e33"/><circle cx="' + x + '" cy="' + cy0 + '" r="6" fill="#2b2e33"/>';
     s += '<path d="M' + (x - 70) + ' ' + (y - 10) + ' H' + (x + 70) + ' V' + (y - 44) + ' H' + (x - 70) + ' Z" fill="url(#gBlock)" stroke="' + INK + '" stroke-width="2.4"/>';
     var iv = clamp(o.inV || 0) * 12, ev = clamp(o.exV || 0) * 12;
-    s += '<path d="M' + (x - 26) + ' ' + f(y - 50 + iv) + ' V' + f(y - 6 + iv) + ' M' + (x - 36) + ' ' + f(y - 6 + iv) + ' h20" stroke="#c9ced4" stroke-width="5"/><path d="M' + (x + 26) + ' ' + f(y - 50 + ev) + ' V' + f(y - 6 + ev) + ' M' + (x + 16) + ' ' + f(y - 6 + ev) + ' h20" stroke="#c9ced4" stroke-width="5"/>';
+    [[x - 26, iv], [x + 26, ev]].forEach(function (v) { var sp = ""; for (var k = 0; k < 6; k++) sp += (k ? " L" : "M") + (v[0] + (k % 2 ? 7 : -7)) + " " + f(y - 78 + k * 5 + v[1] * 0.5); s += '<path d="' + sp + '" stroke="#3a3f46" stroke-width="2.4" fill="none"/>'; });   // valve springs, as in the photos with the rocker cover off
+    s += '<path d="M' + (x - 26) + ' ' + f(y - 80 + iv) + ' V' + f(y - 6 + iv) + ' M' + (x - 36) + ' ' + f(y - 6 + iv) + ' h20" stroke="#c9ced4" stroke-width="5"/><path d="M' + (x + 26) + ' ' + f(y - 50 + ev) + ' V' + f(y - 6 + ev) + ' M' + (x + 16) + ' ' + f(y - 6 + ev) + ' h20" stroke="#c9ced4" stroke-width="5"/>';
     s += '<path d="M' + (x - 70) + ' ' + (y - 30) + ' H' + (x - 110) + '" stroke="#5a6068" stroke-width="16"/><path d="M' + (x + 70) + ' ' + (y - 30) + ' H' + (x + 110) + '" stroke="#5a6068" stroke-width="16"/>';
     s += '<rect x="' + (x - 5) + '" y="' + (y - 64) + '" width="10" height="26" fill="#fbf6e6" stroke="' + INK + '" stroke-width="1.6"/><rect x="' + (x - 4) + '" y="' + (y - 44) + '" width="8" height="10" fill="#8a929c"/>';
     if (o.spark) s += '<path d="M' + x + ' ' + (y - 10) + ' l-6 10 l8 0 l-6 12" stroke="' + YEL + '" stroke-width="3" fill="none"/><circle cx="' + x + '" cy="' + (y + 4) + '" r="10" fill="' + YEL + '" opacity=".6" filter="url(#glow)"/>';
@@ -57,7 +58,9 @@
     s += spoked(90, 16, 30);
     if (o.smoke) for (var k = 0; k < 6; k++) { var u = (t * 0.7 + k / 6) % 1; s += '<circle cx="' + f(-100 - u * 70) + '" cy="' + f(-40 - u * 40) + '" r="' + f(5 + u * 12) + '" fill="#8a857a" opacity="' + f(0.6 * (1 - u)) + '"/>'; }
     return s + '</g>'; }
-  function bertha(x, y, t, mood, o) { o = o || {}; return '<g transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + (o.s || 1) + ')"><path d="M-44 140 C-50 50 -30 28 0 28 C30 28 50 50 44 140 Z" fill="#3a2a4a" stroke="' + INK + '" stroke-width="3"/>' + head(0, -20, 36, mood, t, o.look || 0) + '<path d="M-48 -40 C-46 -60 46 -60 48 -40 Z" fill="#5a3a2a" stroke="' + INK + '" stroke-width="3"/><path d="M-30 -56 C-20 -80 24 -80 30 -56" fill="#7a3a5a" stroke="' + INK + '" stroke-width="3"/><path d="M14 -70 L40 -96" stroke="' + YEL + '" stroke-width="2.4"/></g>'; }
+  // Bertha as in the 1888 photos: a cream shawl over her head and shoulders, a long light dress
+  function bertha(x, y, t, mood, o) { o = o || {}; return '<g transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + (o.s || 1) + ')"><path d="M-50 150 C-56 50 -30 28 0 28 C30 28 56 50 50 150 Z" fill="#a9c2a0" stroke="' + INK + '" stroke-width="3"/><path d="M-30 80 h60 M-36 110 h72" stroke="#7a9a72" stroke-width="2"/>' + head(0, -20, 36, mood, t, o.look || 0) + '<path d="M-44 -10 C-50 -60 -24 -70 0 -70 C24 -70 50 -60 44 -10 C36 -40 24 -52 0 -52 C-24 -52 -36 -40 -44 -10 Z" fill="#f1e6c8" stroke="' + INK + '" stroke-width="3"/><path d="M-44 -10 C-40 20 -30 40 -46 60 M44 -10 C40 20 30 40 46 60" stroke="#f1e6c8" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M18 -60 L36 -80" stroke="#c9a04e" stroke-width="2"/></g>'; }
+  function boy(x, y, t, o) { o = o || {}; return '<g transform="translate(' + f(x) + ' ' + f(y + Math.sin(t * 6 + x) * 2) + ') scale(' + (o.s || 1) + ')"><path d="M-36 140 C-40 50 -24 28 0 28 C24 28 40 50 36 140 Z" fill="#6a6a6a" stroke="' + INK + '" stroke-width="3"/>' + head(0, -14, 30, "happy", t, o.look || 0) + '<path d="M-30 -30 C-30 -54 30 -54 34 -30 L44 -26 L-30 -26 Z" fill="#5a5a5a" stroke="' + INK + '" stroke-width="2.4"/>' + (o.push ? '<path d="M' + (o.push * 30) + ' 50 l' + (o.push * 40) + ' -6" stroke="#6a6a6a" stroke-width="12" stroke-linecap="round"/>' : '') + '</g>'; }
 
   var SH = [];
   function shot(line, cam, draw) { SH.push({ a: L(line), cam: cam, draw: draw }); }
@@ -92,7 +95,7 @@
     s += '<g transform="translate(140 170)"><circle r="56" fill="#3a3f46" stroke="#8a929c" stroke-width="4"/><circle r="18" fill="#1c1c1c"/><g transform="rotate(' + f(-60 + 90 * turn) + ')"><rect x="-6" y="-60" width="12" height="44" rx="3" fill="#c9ced4" stroke="' + INK + '" stroke-width="2"/><path d="M-22 -96 C-22 -112 22 -112 22 -96 V-64 H-22 Z" fill="#3a3f46" stroke="' + INK + '" stroke-width="2"/></g>';
     ["OFF", "ON", "START"].forEach(function (l, k) { var a = (-60 + 45 * k) * Math.PI / 180; s += '<text x="' + f(Math.sin(a) * 74) + '" y="' + f(-Math.cos(a) * 74 + 4) + '" text-anchor="middle" style="font:700 10px Noto Serif;fill:#e9e4d8;direction:ltr">' + l + '</text>'; }); s += '</g>';
     s += gear(420, 170, 100, 40, crank * 2.2, "url(#gGear)") + '<circle cx="420" cy="170" r="60" fill="#5a6068" stroke="' + INK + '" stroke-width="2"/>';
-    var engaged = u > 0.8; s += '<rect x="' + (engaged ? 240 : 220) + '" y="236" width="80" height="44" rx="10" fill="#2f4a6a" stroke="' + INK + '" stroke-width="2.4"/>' + gear(engaged ? 320 : 300, 258, 16, 9, -crank * 14);
+    var engaged = u > 0.8, sx = engaged ? 240 : 220; s += '<rect x="' + sx + '" y="236" width="80" height="44" rx="10" fill="#5a6068" stroke="' + INK + '" stroke-width="2.4"/><rect x="' + (sx + 10) + '" y="214" width="56" height="24" rx="8" fill="#8a929c" stroke="' + INK + '" stroke-width="2"/><circle cx="' + (sx + 8) + '" cy="226" r="4" fill="#c9a04e" stroke="' + INK + '"/>' + gear(engaged ? 320 : 300, 258, 16, 9, -crank * 14);
     if (u > 0.8 && u < 2.6) s += '<path d="M180 250 q20 -20 40 0" stroke="' + YEL + '" stroke-width="3" fill="none" opacity="' + f(0.5 + 0.5 * Math.sin(t * 20)) + '"/>';
     return s + tag("المارش", 260, 320, u, 1.0, -3, 18) + tag("أول لفة", 470, 40, u, 1.6, 3, 16);
   });
@@ -191,14 +194,18 @@
     s += '<g transform="translate(' + f(cx) + ' ' + f(cy) + ') rotate(' + f(ang * 57.3 + 90) + ')"><rect x="-50" y="-26" width="100" height="52" rx="12" fill="url(#gCar)" stroke="' + INK + '" stroke-width="2.4"/><rect x="-14" y="-22" width="36" height="44" rx="6" fill="#9fd2e8" stroke="' + INK + '" stroke-width="1.6"/>';
     s += '<rect x="-42" y="-34" width="22" height="10" rx="3" fill="#1c1c1c"/><rect x="-42" y="24" width="22" height="10" rx="3" fill="#1c1c1c"/><rect x="22" y="-34" width="22" height="10" rx="3" fill="#1c1c1c"/><rect x="22" y="24" width="22" height="10" rx="3" fill="#1c1c1c"/></g>';
     s += '<path d="M' + f(320 + 340 * Math.cos(ang - 0.3)) + ' ' + f(420 + 340 * Math.sin(ang - 0.3)) + ' A340 340 0 0 1 ' + f(320 + 340 * Math.cos(ang)) + ' ' + f(420 + 340 * Math.sin(ang)) + '" stroke="' + RED + '" stroke-width="5" fill="none"/><path d="M' + f(320 + 262 * Math.cos(ang - 0.3)) + ' ' + f(420 + 262 * Math.sin(ang - 0.3)) + ' A262 262 0 0 1 ' + f(320 + 262 * Math.cos(ang)) + ' ' + f(420 + 262 * Math.sin(ang)) + '" stroke="' + BLUE + '" stroke-width="5" fill="none"/>';
-    var p = pop((u - 1.0) / 0.8); if (p > 0) s += '<g transform="translate(520 260) scale(' + f(p) + ')"><circle r="66" fill="#fbfaf6" stroke="' + INK + '" stroke-width="3"/>' + gear(0, 0, 34, 14, t * 2, "url(#gBrass)") + gear(-40, 0, 14, 7, -t * 5) + gear(40, 0, 14, 7, -t * 3) + '</g>';
+    var p = pop((u - 1.0) / 0.8); if (p > 0) { s += '<g transform="translate(520 260) scale(' + f(p) + ')"><path d="M-70 -40 L-40 -70 H40 L70 -40 V40 L40 70 H-40 L-70 40 Z" fill="#3a3f46" stroke="' + INK + '" stroke-width="3"/>';
+      for (var bo = 0; bo < 10; bo++) { var ba = bo / 10 * Math.PI * 2; s += '<circle cx="' + f(Math.cos(ba) * 62) + '" cy="' + f(Math.sin(ba) * 62) + '" r="3" fill="#9aa2ac"/>'; }
+      s += '<ellipse cx="-10" cy="0" rx="18" ry="50" fill="url(#gBrass)" stroke="' + INK + '" stroke-width="2"/>';
+      for (var tt = 0; tt < 16; tt++) { var ty = -46 + ((tt * 6 + t * 30) % 92); s += '<path d="M-24 ' + f(ty) + ' l12 4" stroke="#7a5a24" stroke-width="2"/>'; }
+      s += '<rect x="2" y="-30" width="50" height="60" rx="8" fill="#8a929c" stroke="' + INK + '" stroke-width="2"/>' + gear(27, -14, 9, 6, t * 4) + gear(27, 14, 9, 6, -t * 4 + 0.4) + '</g>'; }
     return s + tag("الدفرنس", 520, 170, u, 1.2, 3, 17) + tag("برا أسرع", 130, 60, u, 2.0, -3, 15, "#ffb08a");
   });
   // 19 — the first long trip by car was made by a woman, Bertha Benz, in 1888 (sepia, the Patent-Motorwagen)
   shot(19, function (u, d) { return [lerp(300, 340, u / d), 180, lerp(1.0, 1.1, u / d)]; }, function (u, d, t) {
     var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#e7d4ae"/>' + clouds(t, 30, 10, 5, 0.5) + '<rect x="-400" y="250" width="1440" height="300" fill="#c9a87a"/>';
     for (var tr = 0; tr < 8; tr++) { var tx = ((tr * 120 - t * 40) % 960 + 960) % 960 - 160; s += '<path d="M' + f(tx) + ' 250 V190" stroke="#7a5a3a" stroke-width="6"/><circle cx="' + f(tx) + '" cy="180" r="22" fill="#8a9a5a" opacity=".7"/>'; }
-    s += motorwagen(330, 240, t, { s: 1.1, smoke: true }) + bertha(330, 124, t, "happy", { s: 0.5 });
+    s += motorwagen(330, 240, t, { s: 1.1, smoke: true }) + bertha(330, 124, t, "happy", { s: 0.5 }) + boy(210, 170, t, { s: 0.48, push: 1, look: 1 }) + boy(450, 170, t + 1, { s: 0.46, push: -1, look: -1 });
     s += '<rect x="-400" y="-300" width="1440" height="960" fill="#704214" opacity=".18"/>';
     var y = Math.round(lerp(2026, 1888, clamp(u / 1.6))); s += '<g transform="translate(130 50)"><rect x="-60" y="-20" width="120" height="38" rx="9" fill="' + INK + '" stroke="#c9a650" stroke-width="3"/><text y="8" text-anchor="middle" style="font:800 20px Noto Serif;fill:#ffd23a">' + y + '</text></g>';
     return s + tag("بيرتا بنز", 500, 60, u, 1.0, 3, 19);
@@ -242,7 +249,7 @@
     return s + qmark(500, 80, t, 56) + qmark(550, 120, t + 1, 36) + tag("حكاية إيه المرة الجاية؟", 320, 300, u, 0.2, -2, 19);
   });
 
-  window.__parts = { car: car, road: road, cylinder: cylinder, gear: gear, tacho: tacho, motorwagen: motorwagen, bertha: bertha, boom: boom, wheel: wheel, tag: tag };
+  window.__parts = { boy: boy, car: car, road: road, cylinder: cylinder, gear: gear, tacho: tacho, motorwagen: motorwagen, bertha: bertha, boom: boom, wheel: wheel, tag: tag };
   window.__panel = function (svg, t) {
     var i = at(t), sh = SH[i], next = i + 1 < SH.length ? SH[i + 1].a : L(LN.length), u = t - sh.a, d = Math.max(0.5, next - sh.a);
     var c = sh.cam(u, d), cx = c[0] + 16 * Math.sin(t * 1.2), cy = c[1] + 12 * Math.cos(t * 1.2), z = c[2] * (1 + 0.03 * Math.sin(t * 1.1));   // a slow circle: the drift never comes to rest
