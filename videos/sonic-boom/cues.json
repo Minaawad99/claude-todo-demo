@@ -131,10 +131,10 @@
   {
    "t": 2.86,
    "file": "sfx/f14-boom-long.wav",
-   "gain": 1.275,
+   "gain": 0.935,
    "from": 0,
    "dur": 2,
-   "duck": false
+   "duck": 0.5
   },
   {
    "t": 4.38,
@@ -156,10 +156,10 @@
   {
    "t": 8.54,
    "file": "sfx/f14-boom-long.wav",
-   "gain": 1.35,
+   "gain": 0.9900000000000001,
    "from": 0,
    "dur": 2,
-   "duck": false
+   "duck": 0.5
   },
   {
    "t": 10.04,
@@ -425,9 +425,9 @@
   {
    "t": 52.05,
    "file": "sfx/f14-boom-short.wav",
-   "gain": 1.0499999999999998,
+   "gain": 0.77,
    "from": 0,
-   "duck": false
+   "duck": 0.5
   },
   {
    "t": 54.19,
@@ -575,9 +575,9 @@
   {
    "t": 80.59,
    "file": "sfx/f14-boom-short.wav",
-   "gain": 1.0499999999999998,
+   "gain": 0.77,
    "from": 0,
-   "duck": false
+   "duck": 0.5
   },
   {
    "t": 80.91,
@@ -618,10 +618,10 @@
   {
    "t": 92.77,
    "file": "sfx/f14-boom-long.wav",
-   "gain": 1.35,
+   "gain": 0.9900000000000001,
    "from": 0,
    "dur": 2,
-   "duck": false
+   "duck": 0.5
   },
   {
    "t": 93.71,
@@ -643,16 +643,16 @@
   {
    "t": 94.67,
    "file": "sfx/f14-boom-short.wav",
-   "gain": 1.125,
+   "gain": 0.8250000000000001,
    "from": 0,
-   "duck": false
+   "duck": 0.5
   },
   {
    "t": 95.71,
    "file": "sfx/f14-boom-short.wav",
-   "gain": 1.125,
+   "gain": 0.8250000000000001,
    "from": 0,
-   "duck": false
+   "duck": 0.5
   },
   {
    "t": 97.87,
@@ -707,21 +707,21 @@
    "file": "sfx/px-whip.mp3",
    "gain": 0.98,
    "from": 0,
-   "duck": false
+   "duck": 0.5
   },
   {
    "t": 104.28,
    "file": "sfx/px-whip.mp3",
    "gain": 0.98,
    "from": 0,
-   "duck": false
+   "duck": 0.5
   },
   {
    "t": 105.71,
    "file": "sfx/px-whip.mp3",
    "gain": 0.98,
    "from": 0,
-   "duck": false
+   "duck": 0.5
   },
   {
    "t": 103.55,
@@ -738,16 +738,16 @@
   {
    "t": 106.26,
    "file": "sfx/f14-boom-short.wav",
-   "gain": 0.675,
+   "gain": 0.49500000000000005,
    "from": 0,
-   "duck": false
+   "duck": 0.5
   },
   {
    "t": 107.76,
    "file": "sfx/f14-boom-short.wav",
-   "gain": 0.675,
+   "gain": 0.49500000000000005,
    "from": 0,
-   "duck": false
+   "duck": 0.5
   },
   {
    "t": 106.96,
