@@ -100,6 +100,7 @@ Drawing language (`_helpers.js`):
   - keep `window.__panel` as it is: a circular drift that never stops, plus a small tilt;
   - export the parts the cover needs on `window.__parts`.
 - `build.py`: set `K` (keywords per line). Run `python3 build.py` → `scenes.js` + `index.html`.
+- Long script lines (more than 13 words) get a 17px caption so they don't wrap into the brand mark (see `template.html` in `videos/bridge-water/cartoon/`).
 - Check with a contact sheet: `node ../../tools/sheet.js $PWD/index.html <prefix> 2.0`, then look at it and fix
   cut-off tags, overlaps, empty or black areas, and unreadable parts.
 

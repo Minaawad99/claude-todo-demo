@@ -126,7 +126,8 @@
       window.__panel(panel, t);
       var i = 0; while (i < LN.length - 1 && LN[i + 1].start - 0.05 <= t) i++;
       var c = CAPS[i], l = LN[i];
-      if (i !== cur) { cap.innerHTML = c.w.map(function (w, k) { return '<span class="' + (c.k[k] ? "k" : "") + '">' + w + '</span>'; }).join(" "); cur = i; }
+      if (i !== cur) { cap.style.fontSize = c.w.length > 13 ? "17px" : "";   // long lines would wrap into the brand mark
+        cap.innerHTML = c.w.map(function (w, k) { return '<span class="' + (c.k[k] ? "k" : "") + '">' + w + '</span>'; }).join(" "); cur = i; }
       // reveal words in step with the voice (by length)
       var tot = c.w.join("").length, acc = 0, sp = cap.children;
       for (var k = 0; k < sp.length; k++) { var at = l.start + (l.end - l.start) * (acc / tot) - 0.05; sp[k].classList.toggle("on", t >= at); acc += c.w[k].length; }

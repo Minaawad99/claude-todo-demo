@@ -292,10 +292,13 @@
     return s + tag("فاصل", 320, 60, u, 0.4, -3, 18);
   });
   // 22 — Tahya Misr bridge over the Nile: Guinness record, the world's widest cable-stayed bridge, about 67 m
-  shot(22, function (u, d) { return [lerp(300, 340, u / d), 170, lerp(1.0, 1.1, u / d)]; }, function (u, d, t) {
+  shot(22, function (u, d) { return [lerp(300, 340, u / d), 150, lerp(0.94, 1.0, u / d)]; }, function (u, d, t) {
     var s = sky("dusk") + '<rect x="-400" y="-300" width="1440" height="470" fill="url(#gSunset)" opacity=".5"/>' + cairo(t, 170) + '<rect x="-400" y="170" width="1440" height="500" fill="url(#gNile)"/>';
     for (var i = 0; i < 18; i++) { var wu = (t * 0.1 + hash(i)) % 1; s += '<path d="M' + f(lerp(-300, 940, wu)) + ' ' + f(190 + hash(i + 2) * 150) + ' h26" stroke="#ffe7c0" stroke-width="2" opacity="' + f(0.4 * Math.sin(Math.PI * wu)) + '"/>'; }
-    [180, 460].forEach(function (px) { s += '<path d="M' + (px - 26) + ' 160 L' + px + ' 20 L' + (px + 26) + ' 160" stroke="url(#gConcrete)" stroke-width="12" fill="none"/><path d="M' + (px - 26) + ' 160 L' + px + ' 20 L' + (px + 26) + ' 160" stroke="' + INK + '" stroke-width="1.6" fill="none"/>'; for (var c = 1; c <= 7; c++) { s += '<path d="M' + px + ' ' + (30 + c * 6) + ' L' + (px - c * 22) + ' 148 M' + px + ' ' + (30 + c * 6) + ' L' + (px + c * 22) + ' 148" stroke="#fbf6e6" stroke-width="1.2"/>'; } s += pierBody(px, 170, 230, 40, { cap: false }); });
+    // H-shaped pylons (two straight legs tied by cross-beams, as in the photos of the real bridge), fan of white-sheathed stay cables
+    [180, 460].forEach(function (px) { for (var c = 1; c <= 8; c++) { var ay = 26 + c * 7; s += '<path d="M' + px + ' ' + ay + ' L' + (px - c * 20) + ' 148 M' + px + ' ' + ay + ' L' + (px + c * 20) + ' 148" stroke="#f4f1e8" stroke-width="1.6"/>'; }
+      [-9, 9].forEach(function (o) { s += '<rect x="' + (px + o - 6) + '" y="10" width="12" height="190" fill="url(#gConcrete)" stroke="' + INK + '" stroke-width="1.8"/>'; });
+      s += '<rect x="' + (px - 15) + '" y="44" width="30" height="8" fill="url(#gConcreteV)" stroke="' + INK + '" stroke-width="1.6"/><rect x="' + (px - 15) + '" y="164" width="30" height="10" fill="url(#gConcreteV)" stroke="' + INK + '" stroke-width="1.6"/>' + pierBody(px, 196, 236, 44, { cap: false }); });
     s += deck(-200, 840, 148, t, { cars: true });
     var w = Math.round(67 * clamp((u - 0.8) / 1.4)); s += '<g transform="translate(320 270)"><rect x="-120" y="-24" width="240" height="46" rx="10" fill="' + INK + '" stroke="' + YEL + '" stroke-width="3"/><text y="9" text-anchor="middle" style="font:800 20px Noto Sans Arabic;fill:' + YEL + '">عرضه ' + w + ' متر</text></g>';
     var p = pop((u - 2.0) / 0.8); if (p > 0) s += '<g transform="translate(540 60) scale(' + f(p) + ') rotate(' + f(8 * Math.sin(t * 2)) + ')"><circle r="34" fill="url(#gold)" stroke="' + INK + '" stroke-width="3"/><text y="6" text-anchor="middle" style="font:800 13px Noto Serif;fill:' + INK + ';direction:ltr">GUINNESS</text></g>';
