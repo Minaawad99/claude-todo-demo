@@ -6,12 +6,12 @@ const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration :
 const a = (t, fx, gain, dur) => c.push(Object.assign({ t: +t.toFixed(2), fx, gain }, dur ? { dur } : {}));
 const rec = (t, file, gain, from, dur, hit) => c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), file: 'sfx/' + file, gain, from: from || 0 }, dur ? { dur: +dur.toFixed(2) } : {}, hit ? { duck: 0.5 } : {}));
 // the boom's first hit is 0.12 s into the clip
-const LONG = new Set([0, 2, 19]), boomAt = (t, gain, line) => rec(t - 0.12, LONG.has(line) ? 'f14-boom-long.wav' : 'f14-boom-short.wav', gain * 1.1, 0, LONG.has(line) ? 2.0 : 0, true);   // booms get only half the ducking under the voice
+const LONG = new Set([0, 19]), boomAt = (t, gain, line) => rec(t - 0.12, LONG.has(line) ? 'f14-boom-long.wav' : 'f14-boom-short.wav', gain * 1.1, 0, LONG.has(line) ? 2.0 : 0, true);   // booms get only half the ducking under the voice
 let jo = 0; const jet = (t, gain, dur) => { rec(t, 'px-fighter-jets-overhead.mp3', gain * 2.0, 2 + (jo * 4.3) % 22, dur); jo++; };
 for (let i = 1; i < T.length; i++) a(L(i) - 0.08, 'whoosh', 0.35);
 rec(L(0), 'px-jet-flyby.mp3', 0.9, 1.5, 6.0); boomAt(L(0) + 2.8, 0.85, 0); a(L(0) + 4.2, 'pop', 0.6);
-rec(L(1), 'px-jet-flyby.mp3', 1.1, 4.0, 1.7); a(L(1) + 0.3, 'pop', 0.6);
-boomAt(L(2) + 0.02, 0.9, 2); a(L(2) + 1.4, 'zap', 0.3); a(L(2) + 1.5, 'creak', 0.35); a(L(2) + 1.8, 'pop', 0.6);
+rec(L(1), 'px-afterburner.mp3', 0.9, 0.5, 1.7);   // not the flyby again: the hook just used it a(L(1) + 0.3, 'pop', 0.6);
+a(L(2) + 0.02, 'boom', 0.75); a(L(2) + 0.05, 'thud', 0.5);   // a different, deeper boom: the real one was heard 3 s ago in the hook a(L(2) + 1.4, 'zap', 0.3); a(L(2) + 1.5, 'creak', 0.35); a(L(2) + 1.8, 'pop', 0.6);
 a(L(3) + 0.05, 'pop', 0.9); a(L(3) + 0.2, 'chime', 0.5);
 a(L(4) + 0.1, 'wind', 0.25, 3.6); for (let k = 0; k < 6; k++) a(L(4) + 0.2 + k * 0.32, 'tick', 0.25); a(L(4) + 0.5, 'pop', 0.6); a(L(4) + 2.8, 'beep', 0.4);
 jet(L(5), 0.3, 3.5); a(L(5) + 1.0, 'pop', 0.6);

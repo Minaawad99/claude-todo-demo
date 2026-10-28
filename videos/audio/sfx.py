@@ -292,7 +292,7 @@ def bed(total):
 
 def rms_db(x): return 20 * np.log10(np.sqrt(np.mean(x ** 2)) + 1e-9)
 
-def mix(voice, cues, use_bed=True, bed_db=-18.0, fx_db=-10.0, duck_db=-8.0, tail=2.5, rec_db=0.0):
+def mix(voice, cues, use_bed=True, bed_db=-18.0, fx_db=-10.0, duck_db=-8.0, tail=2.5, rec_db=-4.0):
     n = len(voice) + int(tail * SR)
     v = np.zeros(n, np.float32); v[:len(voice)] = voice
     v_peak = np.max(np.abs(v)) + 1e-9; v *= 0.89 / v_peak          # voice peaks ~ -1 dBFS
