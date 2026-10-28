@@ -10,37 +10,58 @@
     for (var k = 0; k < 6; k++) { var y = 260 + k * 14, o = (t * 40 + k * 30) % 80; s += '<path d="M' + f(-40 + o) + ' ' + y + ' q20 -6 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" stroke="#fff" stroke-width="1.6" fill="none" opacity=".35"/>'; }
     return s; }
   function qmark(x, y, t, sz, col) { return '<text x="' + f(x) + '" y="' + f(y + Math.sin(t * 4 + x) * 4) + '" text-anchor="middle" style="font:800 ' + sz + 'px Noto Sans Arabic;fill:' + (col || YEL) + ';stroke:#1c1c1c;stroke-width:2;paint-order:stroke">؟</text>'; }
-  // the qolla, foot at (x,y), 200 tall at s=1; o: {s, wet 0..1 (dark damp clay + beads of water), glaze, vapor, t, tilt}
+  // the qolla after the channel's photos: narrow foot ring, belly low down, a sharp shoulder, a cone tapering into a long
+  // neck, a clay lid with a knob; cream bands and a wavy line. Foot at (x,y), ~218 tall at s=1.
+  // o: {s, wet 0..1 (damp clay + beads of water), glaze (painted and glossy), lid (default true), saucer, vapor, t, tilt}
+  var QB = 'M-22 0 L-24 -10 C-50 -22 -66 -48 -64 -72 C-63 -86 -62 -94 -60 -98 C-44 -116 -30 -134 -24 -150 L-21 -192 L-25 -196 L25 -196 L21 -192 L24 -150 C30 -134 44 -116 60 -98 C62 -94 63 -86 64 -72 C66 -48 50 -22 24 -10 L22 0 Z';
+  function qW(y) { var v = -y; return v < 10 ? 23 : v < 72 ? lerp(24, 64, (v - 10) / 62) : v < 98 ? 62 : v < 150 ? lerp(60, 24, (v - 98) / 52) : 22; }
   function qolla(x, y, t, o) {
-    o = o || {}; var s = '<g transform="translate(' + f(x) + ' ' + f(y) + ') rotate(' + f(o.tilt || 0) + ') scale(' + (o.s || 1) + ')">';
-    var body = 'M-22 -186 C-22 -166 -24 -152 -32 -142 C-72 -128 -70 -22 -40 -8 C-20 2 20 2 40 -8 C70 -22 72 -128 32 -142 C24 -152 22 -166 22 -186 L31 -200 L-31 -200 Z';
-    s += '<ellipse cx="4" cy="2" rx="52" ry="8" fill="#000" opacity=".18"/>';
-    s += '<path d="' + body + '" fill="' + (o.glaze ? "url(#gGlaze)" : "url(#gClay)") + '" stroke="' + INK + '" stroke-width="2.6"/>';
-    if (!o.glaze && o.wet) s += '<path d="' + body + '" fill="url(#gClayW)" opacity="' + f(0.75 * o.wet) + '"/>';
-    s += '<path d="M-58 -112 Q0 -100 58 -112 M-62 -84 Q0 -72 62 -84 M-26 -160 Q0 -156 26 -160" stroke="' + (o.glaze ? "#bfe0ff" : "#7a3a1a") + '" stroke-width="1.6" fill="none" opacity=".7"/>';
-    if (o.glaze) s += '<path d="M-40 -60 q10 -10 20 0 t20 0 t20 0 t20 0" stroke="#fff" stroke-width="2.4" fill="none" opacity=".8"/><path d="M-50 -120 C-56 -90 -52 -50 -40 -26" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".45"/>';
-    else s += '<path d="M-48 -118 C-54 -90 -50 -52 -38 -30" stroke="#ffd8b8" stroke-width="5" stroke-linecap="round" opacity=".3"/>';
-    s += '<ellipse cx="0" cy="-200" rx="31" ry="6" fill="#3a1a0a" stroke="' + INK + '" stroke-width="2"/><ellipse cx="0" cy="-199" rx="20" ry="3.4" fill="#2f7fd8" opacity=".6"/>';
-    if (!o.glaze && o.wet && o.t != null) for (var k = 0; k < 14; k++) {   // beads of water sweating out and sliding down
-      var u = (o.t * (0.12 + hash(k) * 0.1) + hash(k + 7)) % 1, ax = -48 + hash(k + 3) * 96, ay = -130 + u * 110, r = (2 + hash(k) * 2.4) * (0.4 + 0.6 * Math.sin(Math.PI * u));
-      var wx = ax * (1 - Math.pow((ay + 70) / 80, 2) * 0.25);
+    o = o || {}; var s = '<g transform="translate(' + f(x) + ' ' + f(y) + ') rotate(' + f(o.tilt || 0) + ') scale(' + (o.s || 1) + ')">', lid = o.lid !== false;
+    s += '<clipPath id="qcl"><path d="' + QB + '"/></clipPath>';
+    if (o.saucer) s += '<path d="M-56 -16 C-54 8 54 8 56 -16 Z" fill="url(#gClay)" stroke="' + INK + '" stroke-width="2.2"/>';
+    else s += '<ellipse cx="4" cy="2" rx="46" ry="7" fill="#000" opacity=".18"/>';
+    s += '<path d="' + QB + '" fill="' + (o.glaze ? "url(#gGlaze)" : "url(#gClay)") + '" stroke="' + INK + '" stroke-width="2.6"/>';
+    if (!o.glaze && o.wet) s += '<path d="' + QB + '" fill="url(#gClayW)" opacity="' + f(0.75 * o.wet) + '"/>';
+    var band = o.glaze ? "#ffffff" : "#ecd9bc";
+    s += '<g clip-path="url(#qcl)" opacity="' + (o.glaze ? 0.9 : 0.75) + '"><path d="M-70 -40 Q0 -32 70 -40 M-70 -86 Q0 -78 70 -86 M-70 -126 Q0 -120 70 -126 M-70 -168 Q0 -164 70 -168" stroke="' + band + '" stroke-width="' + (o.glaze ? 7 : 5) + '" fill="none"/>' +
+      '<path d="M-64 -60 q8 -7 16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0" stroke="' + band + '" stroke-width="2.4" fill="none"/>' + (o.glaze ? '<path d="M-70 -106 Q0 -100 70 -106" stroke="#3fc0a8" stroke-width="10" fill="none"/>' : '') + '</g>';
+    s += '<path d="M-60 -98 Q0 -90 60 -98" stroke="' + (o.glaze ? "#0f2a4a" : "#6a3418") + '" stroke-width="1.6" fill="none" opacity=".6"/>';
+    s += o.glaze ? '<path d="M-48 -112 C-56 -84 -52 -48 -38 -24" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".55"/><path d="M-14 -186 V-156" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".5"/>'
+      : '<path d="M-46 -94 C-54 -72 -50 -46 -36 -26" stroke="#ffd8b8" stroke-width="5" stroke-linecap="round" opacity=".3"/>';
+    if (lid) s += '<path d="M-31 -196 L31 -196 L29 -203 C20 -209 -20 -209 -29 -203 Z" fill="url(#gClay)" stroke="' + INK + '" stroke-width="2"/><path d="M-30 -199 h60" stroke="#ecd9bc" stroke-width="1.6" stroke-dasharray="3 3" opacity=".8"/><path d="M-7 -207 C-8 -218 8 -218 7 -207 Z" fill="url(#gClay)" stroke="' + INK + '" stroke-width="1.8"/>';
+    else s += '<ellipse cx="0" cy="-196" rx="25" ry="5" fill="#3a1a0a" stroke="' + INK + '" stroke-width="2"/><ellipse cx="0" cy="-195" rx="16" ry="2.8" fill="#2f7fd8" opacity=".6"/>';
+    if (!o.glaze && o.wet && o.t != null) for (var k = 0; k < 16; k++) {   // beads of water sweating out and sliding down
+      var u = (o.t * (0.12 + hash(k) * 0.1) + hash(k + 7)) % 1, ay = -140 + u * 125, wx = (hash(k + 3) * 2 - 1) * qW(ay) * 0.85, r = (2 + hash(k) * 2.4) * (0.4 + 0.6 * Math.sin(Math.PI * u));
       s += '<ellipse cx="' + f(wx) + '" cy="' + f(ay) + '" rx="' + f(r * o.wet) + '" ry="' + f(r * 1.3 * o.wet) + '" fill="#bfe8ff" stroke="#5a8aa8" stroke-width=".6" opacity=".9"/><circle cx="' + f(wx - r * 0.3) + '" cy="' + f(ay - r * 0.4) + '" r="' + f(r * 0.3 * o.wet) + '" fill="#fff"/>';
     }
-    if (o.vapor && o.t != null) s += vapor(0, -110, o.t, 70, o.vapor);
+    if (o.vapor && o.t != null) s += vapor(0, -100, o.t, 64, o.vapor);
     return s + '</g>'; }
   function vapor(x, y, t, w, k) {   // wisps of vapour rising off a surface
     var s = ""; for (var i = 0; i < 7; i++) { var u = (t * 0.35 + i / 7) % 1, xx = x - w + (i / 6) * 2 * w + Math.sin(t * 2 + i) * 8; s += '<path d="M' + f(xx) + ' ' + f(y - u * 90) + ' q8 -12 0 -24 t0 -24" stroke="#fff" stroke-width="' + f(4 * (1 - u)) + '" fill="none" stroke-linecap="round" opacity="' + f(0.7 * k * Math.sin(Math.PI * u)) + '"/>'; } return s; }
-  // the zeer on its iron stand, with a wooden lid and a tin cup
+  // the zeer after the photos: a big jar whose pointed bottom hangs through a square iron stand, a metal plate for a lid with
+  // a tin cup on it, a bucket underneath catching the drips. Ground at (x,y).
   function zeer(x, y, t, o) {
     o = o || {}; var s = '<g transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + (o.s || 1) + ')">';
-    s += '<path d="M-58 0 L-40 -150 M58 0 L40 -150 M-46 -40 H46 M-42 -110 H42" stroke="url(#gIron)" stroke-width="7" stroke-linecap="round"/><ellipse cx="0" cy="-150" rx="58" ry="10" fill="none" stroke="#3a3f46" stroke-width="6"/>';
-    var body = 'M-36 -276 C-40 -260 -70 -240 -72 -190 C-74 -130 -40 -80 0 -62 C40 -80 74 -130 72 -190 C70 -240 40 -260 36 -276 Z';
+    s += '<ellipse cx="0" cy="2" rx="80" ry="8" fill="#000" opacity=".15"/><path d="M-50 -150 L-42 -166 H42 L50 -150" stroke="#3a3f46" stroke-width="5" fill="none"/>';
+    s += '<path d="M-26 0 L-22 -34 H22 L26 0 Z" fill="#d8352a" stroke="' + INK + '" stroke-width="2"/><ellipse cx="0" cy="-34" rx="22" ry="4" fill="#8f2618" stroke="' + INK + '" stroke-width="1.6"/>';
+    var body = 'M0 -64 C-20 -92 -50 -130 -62 -170 C-74 -210 -72 -252 -56 -282 L-52 -292 L52 -292 L56 -282 C72 -252 74 -210 62 -170 C50 -130 20 -92 0 -64 Z';
     s += '<path d="' + body + '" fill="url(#gClay)" stroke="' + INK + '" stroke-width="2.6"/>' + (o.wet ? '<path d="' + body + '" fill="url(#gClayW)" opacity="' + f(0.7 * o.wet) + '"/>' : '');
-    s += '<path d="M-66 -220 Q0 -206 66 -220 M-70 -180 Q0 -166 70 -180" stroke="#7a3a1a" stroke-width="1.6" fill="none" opacity=".7"/><path d="M-50 -230 C-60 -190 -50 -140 -30 -110" stroke="#ffd8b8" stroke-width="6" stroke-linecap="round" opacity=".3"/>';
-    s += '<ellipse cx="0" cy="-278" rx="44" ry="9" fill="#8a5a30" stroke="' + INK + '" stroke-width="2.4"/><rect x="-6" y="-292" width="12" height="12" rx="3" fill="#6a4020" stroke="' + INK + '" stroke-width="1.6"/>';
-    s += '<g transform="translate(46 -270)"><path d="M0 0 h22 l-3 26 h-16 Z" fill="#c9ced4" stroke="' + INK + '" stroke-width="1.6"/><path d="M22 6 q10 2 0 14" stroke="' + INK + '" stroke-width="1.6" fill="none"/></g>';
-    if (o.wet && o.t != null) for (var k = 0; k < 6; k++) { var u = (o.t * 0.4 + k / 6) % 1, dx = -20 + hash(k) * 40; s += '<ellipse cx="' + f(dx * (1 - u)) + '" cy="' + f(lerp(-80, -10, u)) + '" rx="2.6" ry="3.6" fill="#bfe8ff" stroke="#5a8aa8" stroke-width=".6" opacity="' + f(1 - u * 0.6) + '"/>'; }
+    s += '<path d="M-60 -276 Q0 -270 60 -276 M-70 -230 Q0 -222 70 -230" stroke="#6a3418" stroke-width="1.6" fill="none" opacity=".6"/><path d="M-50 -262 C-62 -220 -56 -180 -36 -140" stroke="#ffd8b8" stroke-width="6" stroke-linecap="round" opacity=".3"/>';
+    s += '<path d="M-70 -150 H70 M-66 0 V-150 M66 0 V-150 M-66 -60 H66" stroke="url(#gIron)" stroke-width="7" stroke-linecap="round"/>';
+    s += '<ellipse cx="0" cy="-294" rx="62" ry="9" fill="url(#gIron)" stroke="' + INK + '" stroke-width="2"/><g transform="translate(-8 -296)"><path d="M-12 0 V-26 H12 V0 Z" fill="#c9ced4" stroke="' + INK + '" stroke-width="1.6"/><ellipse cy="-26" rx="12" ry="3" fill="#eef1f4" stroke="' + INK + '" stroke-width="1.2"/><path d="M12 -20 q8 2 0 12" stroke="' + INK + '" stroke-width="1.6" fill="none"/></g>';
+    if (o.t != null) { var du = (o.t * 1.1) % 1; s += '<ellipse cx="0" cy="' + f(lerp(-62, -36, du)) + '" rx="2.6" ry="3.8" fill="#bfe8ff" stroke="#5a8aa8" stroke-width=".7" opacity="' + f(1 - du * 0.4) + '"/>'; }
+    if (o.wet && o.t != null) for (var k = 0; k < 6; k++) { var u = (o.t * 0.3 + k / 6) % 1, wy = lerp(-250, -120, u), wx = (hash(k) * 2 - 1) * 50 * (1 - u * 0.5); s += '<ellipse cx="' + f(wx) + '" cy="' + f(wy) + '" rx="2.6" ry="3.6" fill="#bfe8ff" stroke="#5a8aa8" stroke-width=".6" opacity="' + f(1 - u * 0.5) + '"/>'; }
     return s + '</g>'; }
+  // a real photo (reference photos the channel sent, in ./photos), centred on (fx, fy) with a slow push-in; contain: show the
+  // whole photo over a blurred, darkened copy of itself
+  ["photos/qolla-row.jpg", "photos/bah-abba.jpg"].forEach(function (h) { try { var im = new Image(); im.src = h; } catch (e) {} });
+  function photo(href, iw, ih, fx, fy, z, contain) {
+    var s = '<clipPath id="phc"><rect x="20" y="8" width="600" height="344" rx="10"/></clipPath><g clip-path="url(#phc)">', cs = Math.max(600 / iw, 344 / ih), sc = contain ? 344 / ih : cs, w = iw * sc, h = ih * sc;
+    if (contain) s += '<image href="' + href + '" x="' + f(320 - iw * cs / 2) + '" y="' + f(180 - ih * cs / 2) + '" width="' + f(iw * cs) + '" height="' + f(ih * cs) + '" preserveAspectRatio="none" filter="url(#soft)" opacity=".55"/><rect x="20" y="8" width="600" height="344" fill="#000" opacity=".35"/>';
+    var bx = contain ? 320 - w / 2 : Math.min(20, Math.max(620 - w, 320 - fx * w)), by = contain ? 8 : Math.min(8, Math.max(352 - h, 180 - fy * h)), px = bx + fx * w, py = by + fy * h;
+    s += '<g transform="translate(' + f(px) + ' ' + f(py) + ') scale(' + z.toFixed(4) + ') translate(' + f(-px) + ' ' + f(-py) + ')"><image href="' + href + '" x="' + f(bx) + '" y="' + f(by) + '" width="' + f(w) + '" height="' + f(h) + '" preserveAspectRatio="none"/></g>';
+    return s + '</g><rect x="20" y="8" width="600" height="344" rx="10" fill="none" stroke="#e7d4ae" stroke-width="8"/><rect x="20" y="8" width="600" height="344" rx="10" fill="none" stroke="' + INK + '" stroke-width="2"/>';
+  }
   function thermo(x, y, v, label, t, col) {   // a thermometer, v 0..1
     var h = 120, lv = clamp(v) * (h - 20), c = col || (v > 0.6 ? RED : BLUE);
     return '<g transform="translate(' + f(x) + ' ' + f(y) + ')"><rect x="-10" y="' + (-h) + '" width="20" height="' + h + '" rx="10" fill="#fff" stroke="' + INK + '" stroke-width="2.2"/><circle cx="0" cy="8" r="15" fill="' + c + '" stroke="' + INK + '" stroke-width="2.2"/><rect x="-4" y="' + f(-lv) + '" width="8" height="' + f(lv + 6) + '" fill="' + c + '"/>' +
@@ -92,7 +113,7 @@
   // 0 — in the heat you drink from the qolla and the water's cold as if from the fridge
   shot(0, function (u, d) { return [320, 170, lerp(1.0, 1.12, u / d)]; }, function (u, d, t) {
     var k = clamp(u / 2.2), s = hotDay(t) + '<rect x="-400" y="250" width="1440" height="400" fill="#c9a074"/><rect x="-400" y="250" width="1440" height="10" fill="#8a5a30"/>';
-    s += qolla(250, 256, t, { s: 1.05, wet: 1, t: t, tilt: lerp(0, -38, ease(clamp(u / 0.8))) * (1 - ease(clamp((u - 2.6) / 0.6))) });
+    s += qolla(250, 256, t, { s: 1.0, wet: 1, t: t, lid: false, tilt: lerp(0, -38, ease(clamp(u / 0.8))) * (1 - ease(clamp((u - 2.6) / 0.6))) });
     if (u > 0.6 && u < 2.8) s += pourStream(170, 66, 380, 160, t);
     s += glass(390, 250, t, k * 0.85, { cold: k > 0.5, s: 1.1 }) + thermo(540, 230, 0.85, "٤٠°", t) + thermo(470, 230, lerp(0.85, 0.3, clamp((u - 1.4) / 1.2)), "", t, lerp(0, 1, clamp((u - 1.4) / 1.2)) > 0.5 ? BLUE : RED);
     return s + tag("ساقعة!", 400, 70, u, 2.6, 3, 19);
@@ -183,7 +204,9 @@
   });
   // 15 — that's why we put the qolla in the window: the breeze carries the vapour away fast
   shot(15, function (u, d) { return [320, 175, lerp(1.0, 1.1, u / d)]; }, function (u, d, t) {
-    var s = windowFrame(t) + qolla(320, 274, t, { s: 0.95, wet: 1, t: t }) + breeze(t, 60, 260, 10, 0.9);
+    var s = windowFrame(t);
+    for (var b = 0; b < 12; b++) s += '<path d="M120 ' + (24 + b * 10) + ' L' + f(330 - b * 14) + ' ' + f(24 + b * 10 + 4 * Math.sin(t * 1.5 + b * 0.3)) + '" stroke="#c9a45a" stroke-width="7" stroke-linecap="round"/>';
+    s += qolla(330, 272, t, { s: 0.9, wet: 1, t: t, saucer: true }) + breeze(t, 60, 260, 10, 0.9);
     for (var i = 0; i < 6; i++) { var ph = (t * 0.7 + i / 6) % 1; s += '<path d="M' + f(330 + ph * 220) + ' ' + f(150 - ph * 40 + i * 8) + ' q8 -6 16 0" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity="' + f(0.8 * (1 - ph)) + '"/>'; }
     return s + tag("في الشباك", 160, 320, u, 0.5, -3, 17);
   });
@@ -209,24 +232,17 @@
     s += vapor(320, 110, t, 50, 0.8) + thermo(520, 280, lerp(0.75, 0.45, cool), "", t);
     return s + tag("العرق", 140, 100, u, 0.4, -3, 17);
   });
-  // 19 — Egyptians have cooled water in clay for thousands of years; Qena still makes qolla today (a potter at the wheel)
-  shot(19, function (u, d) { return [lerp(300, 340, u / d), 180, lerp(1.0, 1.08, u / d)]; }, function (u, d, t) {
-    var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#f2d9a8"/><path d="M-60 260 L60 120 L180 260 Z M120 260 L200 170 L280 260 Z" fill="#d9b070" stroke="#a8804a" stroke-width="2"/><rect x="-400" y="260" width="1440" height="300" fill="#c9a074"/>';
-    s += '<g transform="translate(420 250)"><ellipse cx="0" cy="0" rx="70" ry="14" fill="#6a4020" stroke="' + INK + '" stroke-width="2"/><path d="M-60 0 l-8 40 M60 0 l8 40" stroke="#6a4020" stroke-width="6"/>';
-    for (var k = 0; k < 6; k++) { var a = t * 6 + k; s += '<path d="M' + f(Math.cos(a) * 66) + ' ' + f(Math.sin(a) * 12) + ' l4 0" stroke="#3a2010" stroke-width="3"/>'; }
-    s += '</g>' + qolla(420, 248, t, { s: 0.6 }) + person(300, 160, t, "happy", { col: "#e9dcc0", s: 0.9, look: 1 });
-    for (var q = 0; q < 4; q++) s += qolla(560 + q * 40, 300, t, { s: 0.3 });
-    s += '<g transform="translate(120 50)"><rect x="-70" y="-20" width="140" height="38" rx="9" fill="' + INK + '" stroke="#c9a650" stroke-width="3"/><text y="8" text-anchor="middle" style="font:800 17px Noto Sans Arabic;fill:#ffd23a">آلاف السنين</text></g>';
-    return s + tag("قنا", 560, 60, u, 1.8, 3, 19);
+  // 19 — Egyptians have cooled water in clay for thousands of years, and qollas are still made today (the channel's photo)
+  shot(19, function (u, d) { return [320, 180, 1.0]; }, function (u, d, t) {
+    var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#1c1a17"/>' + photo("photos/qolla-row.jpg", 640, 480, 0.55, 0.55, lerp(1.0, 1.2, ease(clamp(u / d))));
+    s += '<g transform="translate(130 50)"><rect x="-74" y="-20" width="148" height="38" rx="9" fill="' + INK + '" stroke="#c9a650" stroke-width="3"/><text y="8" text-anchor="middle" style="font:800 17px Noto Sans Arabic;fill:#ffd23a">آلاف السنين</text></g>';
+    return s + tag("لحد النهارده", 500, 320, u, 1.8, 3, 18);
   });
-  // 20 — in the 1990s a Nigerian teacher, Mohammed Bah Abba, made a kind of fridge with no electricity
-  shot(20, function (u, d) { return [320, 180, lerp(1.0, 1.08, u / d)]; }, function (u, d, t) {
-    var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#e9dcc0"/><rect x="80" y="40" width="300" height="180" rx="6" fill="#2f4a3a" stroke="#6a4020" stroke-width="10"/>';
-    s += '<g transform="translate(160 160)">' + '<path d="M-30 0 C-40 -40 -20 -70 0 -70 C20 -70 40 -40 30 0 Z" fill="none" stroke="#fff" stroke-width="3"/><path d="M-18 -10 C-24 -36 -12 -52 0 -52 C12 -52 24 -36 18 -10 Z" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M-26 -30 h52" stroke="#e9c48e" stroke-width="2" stroke-dasharray="3 3"/></g>';
-    s += '<text x="300" y="120" text-anchor="middle" style="font:800 30px Noto Sans Arabic;fill:#fff;opacity:.85">+ رمل</text>';
-    s += person(470, 160, t, "happy", { col: "#2f7a4a", s: 1.0, look: -1 * Math.sin(t), extra: '<rect x="-28" y="-30" width="22" height="13" rx="6" fill="none" stroke="' + INK + '" stroke-width="2.4"/><rect x="6" y="-30" width="22" height="13" rx="6" fill="none" stroke="' + INK + '" stroke-width="2.4"/>' });
-    var y = Math.round(lerp(2026, 1995, clamp(u / 1.4))); s += '<g transform="translate(520 40)"><rect x="-60" y="-20" width="120" height="38" rx="9" fill="' + INK + '" stroke="#c9a650" stroke-width="3"/><text y="8" text-anchor="middle" style="font:800 20px Noto Serif;fill:#ffd23a">' + y + '</text></g>';
-    return s + tag("نيجيريا", 230, 320, u, 0.6, -3, 17) + tag("محمد باه أبا", 470, 330, u, 1.4, 3, 16);
+  // 20 — in the 1990s a Nigerian teacher, Mohammed Bah Abba, made a kind of fridge with no electricity (his photo)
+  shot(20, function (u, d) { return [320, 180, 1.0]; }, function (u, d, t) {
+    var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#1c1a17"/>' + photo("photos/bah-abba.jpg", 487, 629, 0.5, 0.5, lerp(1.0, 1.12, ease(clamp(u / d))), true);
+    var y = Math.round(lerp(2026, 1995, clamp(u / 1.4))); s += '<g transform="translate(530 50)"><rect x="-60" y="-20" width="120" height="38" rx="9" fill="' + INK + '" stroke="#c9a650" stroke-width="3"/><text y="8" text-anchor="middle" style="font:800 20px Noto Serif;fill:#ffd23a">' + y + '</text></g>';
+    return s + tag("نيجيريا", 110, 60, u, 0.6, -3, 17) + tag("محمد باه أبا", 520, 320, u, 1.4, 3, 16) + tag("من غير كهربا!", 120, 320, u, 2.8, -3, 15);
   });
   // 21 — a pot inside a bigger pot, wet sand between them, a cloth on top (cut open: water vapour leaving the sand)
   shot(21, function (u, d) { return [320, 180, lerp(1.0, 1.08, u / d)]; }, function (u, d, t) {
