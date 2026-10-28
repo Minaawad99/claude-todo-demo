@@ -37,26 +37,45 @@
     if (o.ripple) { var ru = o.ripple[2]; if (ru > 0 && ru < 1) s += '<circle cx="' + o.ripple[0] + '" cy="' + o.ripple[1] + '" r="' + f(6 + ru * 40) + '" fill="none" stroke="#fff" stroke-width="3" opacity="' + f(1 - ru) + '"/>'; }
     if (o.x) s += '<path d="M-30 -30 L30 30 M30 -30 L-30 30" stroke="' + RED + '" stroke-width="10" stroke-linecap="round" opacity="' + f(o.x) + '"/>';
     return s + '</g>'; }
-  // a real-looking hand pointing down, fingertip at (x,y): short index finger (nail, two joint creases) coming out of a fist
-  // with curled fingers and a thumb, then the cuff; o: {glove, thread, sausage, s}
+  // a hand pointing down, fingertip at (x,y), drawn after the channel's reference photos (back of the hand seen from above):
+  // index finger ≈ 100 long in three segments with a nail and joint creases, middle/ring/little fingers curled beside it,
+  // thumb relaxed out to the side, knuckles and tendons on the back of the hand, then the sleeve.
+  // o: {glove (light suede, fur cuff), thread (conductive tip), sausage (the gloved hand holds one), s}
   function finger(x, y, ang, o) {
     o = o || {}; var s = '<g transform="translate(' + f(x) + ' ' + f(y) + ') rotate(' + f(ang || 0) + ') scale(' + (o.s || 1) + ')">';
-    var gl = o.glove || o.sausage, fill = o.sausage ? "url(#gKnit)" : gl ? "url(#gGlove)" : "url(#gSkin)", ln = o.sausage ? "#3a4048" : gl ? "#5a1a16" : "#a8704a";
-    s += '<path d="M-4 -262 L-2 -170 L66 -170 L70 -262 Z" fill="' + (o.sausage ? "#4a525c" : gl ? "#7a2420" : "#2f4a6a") + '" stroke="' + INK + '" stroke-width="2.4"/>' +
-      '<path d="M-4 -186 L68 -186" stroke="' + (gl ? "#5a1a16" : "#1f3350") + '" stroke-width="5"/>' + (gl ? '' : '<path d="M-3 -172 L67 -172 L66 -162 L-2 -162 Z" fill="#f4f1e8" stroke="' + INK + '" stroke-width="1.6"/>');
-    if (o.sausage) s += '<path d="M-15 -150 L-15 -14 C-15 6 15 6 15 -14 L15 -150 Z" fill="url(#gSausage)" stroke="' + INK + '" stroke-width="2.4"/>' +
-      '<path d="M-6 -140 V-20" stroke="#ffd0b8" stroke-width="4" stroke-linecap="round" opacity=".7"/><path d="M-15 -60 q15 6 30 0 M-15 -100 q15 6 30 0" stroke="#7a3418" stroke-width="1.2" fill="none" opacity=".6"/>' +
-      '<path d="M-3 2 L0 10 L3 2" fill="#c9a04e" stroke="' + INK + '" stroke-width="1.2"/>';
-    else s += '<path d="M-15 -104 L-14 -14 C-14 4 14 4 14 -14 L13 -104 Z" fill="' + fill + '" stroke="' + INK + '" stroke-width="2.4"/>' +
-      '<path d="M-14 -38 q7 4 14 0 M-14 -68 q14 5 27 0 M-15 -96 q15 5 28 0" stroke="' + ln + '" stroke-width="1.4" fill="none" opacity=".8"/>' +
-      '<path d="M8 -100 L8 -20" stroke="#fff" stroke-width="3" opacity=".18"/>';
-    if (!gl) s += '<path d="M-8 -6 C-8 -1 8 -1 8 -6 L7 -24 C7 -29 -7 -29 -7 -24 Z" fill="#f7dccd" stroke="' + ln + '" stroke-width="1.2"/><path d="M-4 -22 L-4 -8" stroke="#fff" stroke-width="1.6" opacity=".6"/>';
-    if (o.thread) s += '<path d="M-14 -14 C-14 4 14 4 14 -14 L14 -30 L-14 -30 Z" fill="#c9ced4" stroke="' + INK + '" stroke-width="1.6"/><path d="M-11 -26 h22 M-11 -20 h22 M-9 -14 h18" stroke="#8a929c" stroke-width="1.2"/>';
-    s += '<path d="M-18 -92 C-28 -124 -22 -168 4 -174 L58 -174 C78 -166 82 -128 74 -104 C68 -86 52 -80 36 -82 L14 -86 C2 -84 -12 -84 -18 -92 Z" fill="' + fill + '" stroke="' + INK + '" stroke-width="2.4"/>';
-    [[27, -84, 11, 9], [48, -86, 11, 9], [65, -95, 9, 9]].forEach(function (k) { s += '<ellipse cx="' + k[0] + '" cy="' + k[1] + '" rx="' + k[2] + '" ry="' + k[3] + '" fill="' + fill + '" stroke="' + INK + '" stroke-width="2"/>'; });
-    s += '<path d="M-16 -152 C-30 -132 -26 -108 -10 -102 C2 -100 8 -112 2 -126 C-2 -138 -6 -146 -16 -152 Z" fill="' + fill + '" stroke="' + INK + '" stroke-width="2.2"/>' +
-      (gl ? '' : '<path d="M-6 -118 C-2 -112 -2 -106 -6 -104" stroke="' + ln + '" stroke-width="1.2" fill="none"/>') +
-      '<path d="M10 -160 C30 -152 50 -152 66 -160" stroke="' + ln + '" stroke-width="1.2" fill="none" opacity=".6"/>';
+    var gl = o.glove || o.sausage, F = gl ? "url(#gSuede)" : "url(#gSkin)", B = gl ? "url(#gSuedeB)" : "url(#gSkinB)", C = gl ? "url(#gSuede)" : "url(#gSkinC)",
+      ln = gl ? "#7d7366" : "#9a6444", ed = gl ? "#5e564c" : "#7a4a30", sw = 1.8;
+    if (o.sausage) {   // the sausage sticks out below the fingertip, the hand pinches it
+      s += '<path d="M-16 -96 L-16 -14 C-16 6 16 6 16 -14 L16 -96 Z" fill="url(#gSausage)" stroke="' + ed + '" stroke-width="2"/><path d="M-16 -50 q16 6 32 0" stroke="#7a3418" stroke-width="1.2" fill="none" opacity=".5"/><path d="M-6 -90 V-18" stroke="#ffd0b8" stroke-width="4" stroke-linecap="round" opacity=".7"/><path d="M-3 3 L0 10 L3 3" fill="#c9a04e" stroke="' + ed + '" stroke-width="1"/>';
+      s += '<g transform="translate(0 -90)">';
+    }
+    // sleeve / fur cuff
+    s += gl ? '<path d="M-92 -268 L-86 -196 L34 -196 L38 -268 Z" fill="#6a6258"/><path d="M-98 -214 C-100 -236 -96 -248 -92 -252 L40 -252 C46 -246 48 -232 42 -212 C20 -200 -70 -198 -98 -214 Z" fill="url(#gFur)" stroke="#b8ae9e" stroke-width="1.4"/>' +
+        '<path d="M-90 -222 l6 -14 M-70 -218 l4 -16 M-50 -216 l5 -15 M-30 -216 l4 -16 M-10 -216 l5 -15 M10 -218 l4 -14 M28 -220 l4 -13" stroke="#fff" stroke-width="2" opacity=".7"/>'
+      : '<path d="M-92 -270 L-84 -198 L32 -198 L38 -270 Z" fill="#2f4a6a" stroke="' + INK + '" stroke-width="2"/><path d="M-86 -210 L32 -210 L31 -196 L-84 -196 Z" fill="#f4f1e8" stroke="#8a8a80" stroke-width="1.2"/>';
+    // back of the hand (wrist → knuckles), wider on the little-finger side
+    s += '<path d="M-82 -200 C-92 -170 -96 -130 -86 -104 C-80 -92 -66 -90 -52 -96 L-26 -104 L-2 -108 L14 -104 C24 -120 30 -150 28 -176 C26 -190 22 -198 18 -200 Z" fill="' + B + '" stroke="' + ed + '" stroke-width="' + sw + '"/>';
+    if (!gl) s += '<path d="M-62 -110 C-58 -140 -52 -170 -44 -196 M-38 -112 C-36 -142 -32 -172 -26 -196 M-12 -112 C-10 -140 -6 -170 0 -196" stroke="' + ln + '" stroke-width="1.2" fill="none" opacity=".35"/>' +
+      '<path d="M-30 -150 C-24 -160 -14 -162 -6 -170" stroke="#8aa0c0" stroke-width="1.6" fill="none" opacity=".25"/>';
+    else s += '<path d="M-60 -112 V-196 M-36 -114 V-196 M-12 -114 V-196" stroke="#8d8376" stroke-width="1.4" stroke-dasharray="3 3" opacity=".7"/><rect x="-46" y="-170" width="22" height="12" rx="2" fill="#efe9de" stroke="#8d8376" stroke-width="1"/>';
+    // curled little, ring and middle fingers (their first segments fold down under the palm; knuckles show)
+    [[-75, -98, 23, 24], [-53, -102, 26, 30], [-29, -106, 28, 36]].forEach(function (k) {
+      var cx = k[0], top = k[1], w = k[2], h = k[3];
+      s += '<ellipse cx="' + f(cx + 2) + '" cy="' + f(top + h + 4) + '" rx="' + f(w * 0.5) + '" ry="5" fill="#000" opacity=".12"/>' + '<path d="M' + f(cx - w / 2) + ' ' + f(top) + ' L' + f(cx - w / 2 + 1) + ' ' + f(top + h - w / 2) + ' C' + f(cx - w / 2 + 1) + ' ' + f(top + h + w * 0.35) + ' ' + f(cx + w / 2 - 1) + ' ' + f(top + h + w * 0.35) + ' ' + f(cx + w / 2 - 1) + ' ' + f(top + h - w / 2) + ' L' + f(cx + w / 2) + ' ' + f(top) + ' Z" fill="' + C + '" stroke="' + ed + '" stroke-width="' + sw + '"/>' +
+        '<path d="M' + f(cx - w / 2 + 3) + ' ' + f(top + h * 0.45) + ' q' + f(w / 2 - 3) + ' 4 ' + f(w - 6) + ' 0" stroke="' + ln + '" stroke-width="1.2" fill="none" opacity=".7"/>' +
+        (gl ? '' : '<ellipse cx="' + f(cx) + '" cy="' + f(top + 4) + '" rx="' + f(w * 0.3) + '" ry="4" fill="#f6d2b4" opacity=".55"/>');
+    });
+    // the index finger, pointing
+    s += '<path d="M-14 -108 C-15 -80 -14 -40 -13 -14 C-13 5 13 5 13 -14 C14 -40 15 -80 15 -108 Z" fill="' + F + '" stroke="' + ed + '" stroke-width="' + sw + '"/>';
+    if (!gl) s += '<path d="M-11 -34 q5 3 10 1 M-10 -30 q6 2 12 0 M-12 -66 q6 4 13 1 M-12 -62 q8 3 18 0 M-11 -58 q6 2 12 0" stroke="' + ln + '" stroke-width="1.1" fill="none" opacity=".8"/>' +
+      '<path d="M-7 -5 C-8 -1 8 -1 7 -5 L7 -24 C7 -29 -7 -29 -7 -24 Z" fill="#f2d2c0" stroke="#b07a5c" stroke-width="1.1"/><path d="M-6 -24 C-3 -27 3 -27 6 -24" stroke="#fff" stroke-width="1.4" fill="none" opacity=".7"/><path d="M-3 -21 V-8" stroke="#fff" stroke-width="1.6" opacity=".5"/>' +
+      '<ellipse cx="0" cy="-106" rx="10" ry="5" fill="#f6d2b4" opacity=".6"/><path d="M6 -100 V-20" stroke="#fff" stroke-width="3" opacity=".14"/>';
+    else s += '<path d="M1 -104 V-8" stroke="#8d8376" stroke-width="1.3" stroke-dasharray="3 3" opacity=".8"/><path d="M-12 -64 q12 4 25 0" stroke="#8d8376" stroke-width="1.2" fill="none" opacity=".6"/>';
+    if (o.thread) s += '<path d="M-13 -14 C-13 5 13 5 13 -14 L13 -28 L-13 -28 Z" fill="#c9ced4" stroke="' + ed + '" stroke-width="1.4"/><path d="M-10 -24 h20 M-10 -18 h20 M-8 -12 h16" stroke="#8a929c" stroke-width="1.1"/>';
+    // thumb, relaxed and out to the side
+    s += '<path d="M12 -184 C32 -176 44 -152 50 -128 C54 -112 54 -100 46 -94 C38 -88 30 -94 26 -104 C20 -122 12 -136 4 -146 Z" fill="' + C + '" stroke="' + ed + '" stroke-width="' + sw + '"/>';
+    if (!gl) s += '<path d="M38 -104 C40 -112 50 -112 51 -102 C52 -95 46 -92 42 -95 Z" fill="#f2d2c0" stroke="#b07a5c" stroke-width="1"/><path d="M24 -130 q8 -2 14 -8" stroke="' + ln + '" stroke-width="1.1" fill="none" opacity=".7"/>';
+    if (o.sausage) s += '</g>';
     return s + '</g>'; }
   // a real photo (the channel's reference photos in ./photos), cover-fitted to the panel, slow push-in on (fx, fy)
   ["photos/johnson-1.jpg", "photos/johnson-2.jpg"].forEach(function (h) { try { var im = new Image(); im.src = h; } catch (e) {} });
@@ -91,7 +110,7 @@
   // 2 — and why did people in Korea touch their phones with sausages?
   shot(2, function (u, d) { return [320, 180, lerp(1.1, 1.0, u / d)]; }, function (u, d, t) {
     var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#c9d9e8"/>'; for (var i = 0; i < 40; i++) { var su = (t * 0.25 + hash(i)) % 1; s += '<circle cx="' + f(-100 + hash(i + 2) * 840 + Math.sin(t + i) * 10) + '" cy="' + f(lerp(-40, 400, su)) + '" r="' + f(2 + hash(i) * 2) + '" fill="#fff"/>'; }
-    s += phone(320, 200, t, { s: 0.75, ripple: [0, -10, (t * 1.4) % 1] }) + finger(330, 110 + 16 * Math.sin(t * 8), 0, { sausage: true, s: 0.8 });
+    s += phone(320, 200, t, { s: 0.75, ripple: [0, -10, (t * 1.4) % 1] }) + finger(330, 190 + 16 * Math.sin(t * 8), 0, { sausage: true, s: 0.85 });
     return s + qmark(470, 110, t, 56) + tag("سجق؟!", 170, 120, u, 0.6, -3, 20);
   });
   // 3 — brand
