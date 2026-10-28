@@ -2,9 +2,10 @@
 
 Usage: python sfx.py voice.wav cues.json out.wav [--start S --dur D]
 cues.json: {"bed": true, "cues": [{"t": 3.2, "fx": "laser", "gain": 1.0, "dur": 0.4}, ...]}
-Everything is synthesized here, so the result is free of third-party rights.
+A cue can also play a recorded sound instead of a synthesized one: {"t": 3.2, "file": "sfx/boom.wav", "gain": 1.0}
+(path relative to cues.json). Everything else is synthesized here; credit any recorded file you use.
 """
-import sys, json, wave, argparse
+import sys, os, json, wave, argparse
 import numpy as np
 
 SR = 48000
@@ -293,7 +294,7 @@ def mix(voice, cues, use_bed=True, bed_db=-18.0, fx_db=-10.0, duck_db=-8.0, tail
     if use_bed:
         b = bed(n / SR)[:n]; b *= 10 ** ((speech_rms + bed_db - rms_db(b)) / 20); out += b * gain
     for c in cues:
-        f = FX[c["fx"]](c.get("dur", None) or FX[c["fx"]].__defaults__[0]); s = int(c["t"] * SR)
+        f = read_wav(c["file"]) if "file" in c else FX[c["fx"]](c.get("dur", None) or FX[c["fx"]].__defaults__[0]); s = int(c["t"] * SR)
         f = f / (np.max(np.abs(f)) + 1e-9) * 10 ** ((speech_rms + 3 + fx_db) / 20) * c.get("gain", 1.0)
         e = min(n, s + len(f)); out[s:e] += f[: e - s] * gain[s:e]
     peak = np.max(np.abs(out))
@@ -306,7 +307,10 @@ if __name__ == "__main__":
     a = ap.parse_args()
     voice = read_wav(a.voice)
     if a.dur: voice = voice[int(a.start * SR): int((a.start + a.dur) * SR)]
-    spec = json.load(open(a.cues)); cues = [dict(c, t=c["t"] - a.start) for c in spec["cues"] if c["t"] >= a.start and (not a.dur or c["t"] < a.start + a.dur)]
+    spec = json.load(open(a.cues)); base = os.path.dirname(os.path.abspath(a.cues))
+    for c in spec["cues"]:
+        if "file" in c: c["file"] = os.path.join(base, c["file"])
+    cues = [dict(c, t=c["t"] - a.start) for c in spec["cues"] if c["t"] >= a.start and (not a.dur or c["t"] < a.start + a.dur)]
     out, v, srms = mix(voice, cues, spec.get("bed", True))
     write_wav(a.out, out)
     # report: how far below the voice the rest of the mix sits while the narrator speaks

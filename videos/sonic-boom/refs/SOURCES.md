@@ -17,3 +17,7 @@ Facts checked:
 - Yeager, 14 Oct 1947, X-1 dropped from a B-29, Mach 1.06; two ribs broken in a riding fall two days before, a sawed-off broom handle to latch the hatch (migflug.com; single source).
 - The boom lasts as long as the aircraft is supersonic (a "boom carpet"); the N-wave gives two booms, nose and tail (NASA TM, ntrs.nasa.gov 20070029226).
 - A whip crack is a small sonic boom (Science News; Scientific American / McMillen & Goriely: a travelling loop breaks the sound barrier).
+
+Sound:
+- `sfx/f14-boom-short.wav`, `sfx/f14-boom-long.wav` — the real boom used in every boom cue: cut from "F-14 Tomcat sonic boom.ogv"
+  (US Navy, low supersonic pass filmed from a carrier deck; public domain, Wikimedia Commons). Its two hits 0.15 s apart are the nose and tail shocks.

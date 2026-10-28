@@ -117,6 +117,12 @@ pulsing circles, dashes running, the camera creeping.
   listed in `audio/sfx.py` (`fx_*`): pop, chime, ping, beep, notify, tick, whoosh, wipe, thud, clank, idle, hum,
   waves, splash, zap, spark, servo, motor, gear and more.
 - `node cues.js && python3 ../audio/sfx.py voice.wav cues.json <scratchpad>/<slug>-mix.wav`
+- When the topic has a signature real sound (a sonic boom, a train horn…), use a real recording instead of the synthesized one:
+  put the clip in `videos/<slug>/sfx/` and cue it with `{"t": …, "file": "sfx/clip.wav", "gain": …}`. Sources: public-domain
+  US government video/audio on Wikimedia Commons or NASA (images-api.nasa.gov), or Pixabay sound effects
+  (`pixabay.com`, `cdn.pixabay.com` must be in Allowed domains). Credit the clip in `refs/SOURCES.md`.
+- If only the sound changed, skip the 20-minute render: remux the new mix onto the rendered mp4 with the same audio chain
+  as `render.js` (apad, fade, loudnorm, limiter) and run qa.py again.
 
 ## 8. Render and QA (from `videos/`; run it in the background, it takes about 20 minutes)
 
