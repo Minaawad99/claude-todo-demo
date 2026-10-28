@@ -23,6 +23,10 @@ def read_wav(p):
         x = np.interp(t, np.arange(len(x)), x).astype(np.float32)
     return x
 
+def rms_lin(x):   # RMS of the loud part, so a clip with a long quiet fade isn't over-boosted
+    a = np.abs(x); k = a > np.max(a) * 0.05
+    return float(np.sqrt(np.mean(x[k] ** 2))) if k.any() else 1e-9
+
 _clips = {}
 def clip(c):   # a slice of a recorded file, decoded once with ffmpeg, faded in/out so loops and cuts don't click
     p = c["file"]
@@ -288,7 +292,7 @@ def bed(total):
 
 def rms_db(x): return 20 * np.log10(np.sqrt(np.mean(x ** 2)) + 1e-9)
 
-def mix(voice, cues, use_bed=True, bed_db=-18.0, fx_db=-10.0, duck_db=-8.0, tail=2.5):
+def mix(voice, cues, use_bed=True, bed_db=-18.0, fx_db=-10.0, duck_db=-8.0, tail=2.5, rec_db=6.0):
     n = len(voice) + int(tail * SR)
     v = np.zeros(n, np.float32); v[:len(voice)] = voice
     v_peak = np.max(np.abs(v)) + 1e-9; v *= 0.89 / v_peak          # voice peaks ~ -1 dBFS
@@ -308,10 +312,13 @@ def mix(voice, cues, use_bed=True, bed_db=-18.0, fx_db=-10.0, duck_db=-8.0, tail
         b = bed(n / SR)[:n]; b *= 10 ** ((speech_rms + bed_db - rms_db(b)) / 20); out += b * gain
     for c in cues:
         f = clip(c) if "file" in c else FX[c["fx"]](c.get("dur", None) or FX[c["fx"]].__defaults__[0]); s = int(c["t"] * SR)
-        f = f / (np.max(np.abs(f)) + 1e-9) * 10 ** ((speech_rms + 3 + fx_db) / 20) * c.get("gain", 1.0)
-        e = min(n, s + len(f)); out[s:e] += f[: e - s] * gain[s:e]
+        # recorded clips are levelled by loudness (RMS) against the voice, rec_db above it at gain 1, so a jet roar can stand up
+        # to the narrator; synthesized fx are levelled by peak, well under it. "duck": false keeps a hit (a boom) at full force.
+        if "file" in c: f = f / (rms_lin(f) + 1e-9) * 10 ** ((speech_rms + rec_db) / 20) * c.get("gain", 1.0)
+        else: f = f / (np.max(np.abs(f)) + 1e-9) * 10 ** ((speech_rms + 3 + fx_db) / 20) * c.get("gain", 1.0)
+        e = min(n, s + len(f)); out[s:e] += f[: e - s] * (1.0 if c.get("duck") is False else gain[s:e])
     peak = np.max(np.abs(out))
-    if peak > 0.97: out *= 0.97 / peak
+    if peak > 0.97: out = np.tanh(out / 0.97) * 0.97 if peak < 3 else out * (0.97 / peak)   # soft-clip loud hits instead of turning everything down
     return out, v, speech_rms
 
 if __name__ == "__main__":

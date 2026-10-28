@@ -124,15 +124,17 @@
   {
    "t": 0.18,
    "file": "sfx/px-jet-flyby.mp3",
-   "gain": 0.45,
+   "gain": 0.9,
    "from": 1.5,
    "dur": 6
   },
   {
    "t": 2.86,
    "file": "sfx/f14-boom-long.wav",
-   "gain": 0.85,
-   "from": 0
+   "gain": 1.275,
+   "from": 0,
+   "dur": 2,
+   "duck": false
   },
   {
    "t": 4.38,
@@ -142,7 +144,7 @@
   {
    "t": 6.67,
    "file": "sfx/px-jet-flyby.mp3",
-   "gain": 0.55,
+   "gain": 1.1,
    "from": 4,
    "dur": 1.7
   },
@@ -154,8 +156,10 @@
   {
    "t": 8.54,
    "file": "sfx/f14-boom-long.wav",
-   "gain": 0.9,
-   "from": 0
+   "gain": 1.35,
+   "from": 0,
+   "dur": 2,
+   "duck": false
   },
   {
    "t": 10.04,
@@ -231,7 +235,7 @@
   {
    "t": 18.27,
    "file": "sfx/px-fighter-jets-overhead.mp3",
-   "gain": 0.3,
+   "gain": 0.6,
    "from": 2,
    "dur": 3.5
   },
@@ -243,7 +247,7 @@
   {
    "t": 22.55,
    "file": "sfx/px-fighter-jets-overhead.mp3",
-   "gain": 0.35,
+   "gain": 0.7,
    "from": 6.3,
    "dur": 4.9
   },
@@ -260,7 +264,7 @@
   {
    "t": 27.77,
    "file": "sfx/px-fighter-jets-overhead.mp3",
-   "gain": 0.4,
+   "gain": 0.8,
    "from": 10.6,
    "dur": 3.1
   },
@@ -272,7 +276,7 @@
   {
    "t": 31,
    "file": "sfx/px-prop-plane.mp3",
-   "gain": 0.45,
+   "gain": 0.72,
    "from": 10,
    "dur": 5.9
   },
@@ -294,19 +298,19 @@
   {
    "t": 31.6,
    "file": "sfx/px-beep-warning.mp3",
-   "gain": 0.35,
+   "gain": 0.42,
    "from": 0
   },
   {
    "t": 33.4,
    "file": "sfx/px-beep-warning.mp3",
-   "gain": 0.35,
+   "gain": 0.42,
    "from": 0
   },
   {
    "t": 35.2,
    "file": "sfx/px-beep-warning.mp3",
-   "gain": 0.35,
+   "gain": 0.42,
    "from": 0
   },
   {
@@ -392,7 +396,7 @@
   {
    "t": 49.07,
    "file": "sfx/px-prop-plane.mp3",
-   "gain": 0.45,
+   "gain": 0.72,
    "from": 30,
    "dur": 2.1
   },
@@ -409,7 +413,7 @@
   {
    "t": 50.67,
    "file": "sfx/px-rocket.mp3",
-   "gain": 0.6,
+   "gain": 0.96,
    "from": 0,
    "dur": 3
   },
@@ -421,13 +425,14 @@
   {
    "t": 52.05,
    "file": "sfx/f14-boom-short.wav",
-   "gain": 0.7,
-   "from": 0
+   "gain": 1.0499999999999998,
+   "from": 0,
+   "duck": false
   },
   {
    "t": 54.19,
    "file": "sfx/px-fighter-jets-overhead.mp3",
-   "gain": 0.3,
+   "gain": 0.6,
    "from": 14.899999999999999,
    "dur": 4.7
   },
@@ -444,7 +449,7 @@
   {
    "t": 59.18,
    "file": "sfx/px-afterburner.mp3",
-   "gain": 0.3,
+   "gain": 0.66,
    "from": 1,
    "dur": 3.6
   },
@@ -467,7 +472,7 @@
   {
    "t": 63.07,
    "file": "sfx/px-engine.mp3",
-   "gain": 0.4,
+   "gain": 0.64,
    "from": 2,
    "dur": 6
   },
@@ -504,7 +509,7 @@
   {
    "t": 69.89,
    "file": "sfx/px-afterburner-ramp.mp3",
-   "gain": 0.6,
+   "gain": 0.96,
    "from": 5.8,
    "dur": 5
   },
@@ -516,7 +521,7 @@
   {
    "t": 75.22,
    "file": "sfx/px-afterburner.mp3",
-   "gain": 0.35,
+   "gain": 0.77,
    "from": 0,
    "dur": 4.2
   },
@@ -563,15 +568,16 @@
   {
    "t": 79.71,
    "file": "sfx/px-fighter-jets-overhead.mp3",
-   "gain": 0.35,
+   "gain": 0.7,
    "from": 19.2,
    "dur": 5.2
   },
   {
    "t": 80.59,
    "file": "sfx/f14-boom-short.wav",
-   "gain": 0.7,
-   "from": 0
+   "gain": 1.0499999999999998,
+   "from": 0,
+   "duck": false
   },
   {
    "t": 80.91,
@@ -586,14 +592,14 @@
   {
    "t": 85,
    "file": "sfx/px-waves.mp3",
-   "gain": 0.45,
+   "gain": 0.63,
    "from": 3.5,
    "dur": 3.9
   },
   {
    "t": 85,
    "file": "sfx/px-fighter-jets-overhead.mp3",
-   "gain": 0.2,
+   "gain": 0.4,
    "from": 23.5,
    "dur": 3.8
   },
@@ -605,20 +611,22 @@
   {
    "t": 89.14,
    "file": "sfx/px-fighter-jets-overhead.mp3",
-   "gain": 0.3,
+   "gain": 0.6,
    "from": 5.799999999999997,
    "dur": 4.57
   },
   {
    "t": 92.77,
    "file": "sfx/f14-boom-long.wav",
-   "gain": 0.9,
-   "from": 0
+   "gain": 1.35,
+   "from": 0,
+   "dur": 2,
+   "duck": false
   },
   {
    "t": 93.71,
    "file": "sfx/px-fighter-jets-overhead.mp3",
-   "gain": 0.25,
+   "gain": 0.5,
    "from": 10.099999999999998,
    "dur": 3.8
   },
@@ -635,19 +643,21 @@
   {
    "t": 94.67,
    "file": "sfx/f14-boom-short.wav",
-   "gain": 0.75,
-   "from": 0
+   "gain": 1.125,
+   "from": 0,
+   "duck": false
   },
   {
    "t": 95.71,
    "file": "sfx/f14-boom-short.wav",
-   "gain": 0.75,
-   "from": 0
+   "gain": 1.125,
+   "from": 0,
+   "duck": false
   },
   {
    "t": 97.87,
    "file": "sfx/px-fighter-jets-overhead.mp3",
-   "gain": 0.35,
+   "gain": 0.7,
    "from": 14.399999999999999,
    "dur": 3.9
   },
@@ -695,20 +705,23 @@
   {
    "t": 102.85,
    "file": "sfx/px-whip.mp3",
-   "gain": 0.75,
-   "from": 0
+   "gain": 0.98,
+   "from": 0,
+   "duck": false
   },
   {
    "t": 104.28,
    "file": "sfx/px-whip.mp3",
-   "gain": 0.75,
-   "from": 0
+   "gain": 0.98,
+   "from": 0,
+   "duck": false
   },
   {
    "t": 105.71,
    "file": "sfx/px-whip.mp3",
-   "gain": 0.75,
-   "from": 0
+   "gain": 0.98,
+   "from": 0,
+   "duck": false
   },
   {
    "t": 103.55,
@@ -718,21 +731,23 @@
   {
    "t": 106.36,
    "file": "sfx/px-fighter-jets-overhead.mp3",
-   "gain": 0.25,
+   "gain": 0.5,
    "from": 18.699999999999996,
    "dur": 3.1
   },
   {
    "t": 106.26,
    "file": "sfx/f14-boom-short.wav",
-   "gain": 0.45,
-   "from": 0
+   "gain": 0.675,
+   "from": 0,
+   "duck": false
   },
   {
    "t": 107.76,
    "file": "sfx/f14-boom-short.wav",
-   "gain": 0.45,
-   "from": 0
+   "gain": 0.675,
+   "from": 0,
+   "duck": false
   },
   {
    "t": 106.96,
