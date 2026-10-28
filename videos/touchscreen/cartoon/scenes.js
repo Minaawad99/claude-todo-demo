@@ -180,10 +180,12 @@
   // with curled fingers and a thumb, then the cuff; o: {glove, thread, sausage, s}
   function finger(x, y, ang, o) {
     o = o || {}; var s = '<g transform="translate(' + f(x) + ' ' + f(y) + ') rotate(' + f(ang || 0) + ') scale(' + (o.s || 1) + ')">';
-    var gl = o.glove || o.sausage, fill = gl ? "url(#gGlove)" : "url(#gSkin)", ln = gl ? "#5a1a16" : "#a8704a";
-    s += '<path d="M-4 -262 L-2 -170 L66 -170 L70 -262 Z" fill="' + (gl ? "#7a2420" : "#2f4a6a") + '" stroke="' + INK + '" stroke-width="2.4"/>' +
+    var gl = o.glove || o.sausage, fill = o.sausage ? "url(#gKnit)" : gl ? "url(#gGlove)" : "url(#gSkin)", ln = o.sausage ? "#3a4048" : gl ? "#5a1a16" : "#a8704a";
+    s += '<path d="M-4 -262 L-2 -170 L66 -170 L70 -262 Z" fill="' + (o.sausage ? "#4a525c" : gl ? "#7a2420" : "#2f4a6a") + '" stroke="' + INK + '" stroke-width="2.4"/>' +
       '<path d="M-4 -186 L68 -186" stroke="' + (gl ? "#5a1a16" : "#1f3350") + '" stroke-width="5"/>' + (gl ? '' : '<path d="M-3 -172 L67 -172 L66 -162 L-2 -162 Z" fill="#f4f1e8" stroke="' + INK + '" stroke-width="1.6"/>');
-    if (o.sausage) s += '<path d="M-13 -104 L-13 -10 C-13 5 13 5 13 -10 L13 -104 Z" fill="url(#gSausage)" stroke="' + INK + '" stroke-width="2.4"/><path d="M-5 -96 V-18" stroke="#f2a08a" stroke-width="3" opacity=".6"/><path d="M-13 -60 q13 5 26 0" stroke="#7a2a1a" stroke-width="1.2" fill="none"/>';
+    if (o.sausage) s += '<path d="M-15 -150 L-15 -14 C-15 6 15 6 15 -14 L15 -150 Z" fill="url(#gSausage)" stroke="' + INK + '" stroke-width="2.4"/>' +
+      '<path d="M-6 -140 V-20" stroke="#ffd0b8" stroke-width="4" stroke-linecap="round" opacity=".7"/><path d="M-15 -60 q15 6 30 0 M-15 -100 q15 6 30 0" stroke="#7a3418" stroke-width="1.2" fill="none" opacity=".6"/>' +
+      '<path d="M-3 2 L0 10 L3 2" fill="#c9a04e" stroke="' + INK + '" stroke-width="1.2"/>';
     else s += '<path d="M-15 -104 L-14 -14 C-14 4 14 4 14 -14 L13 -104 Z" fill="' + fill + '" stroke="' + INK + '" stroke-width="2.4"/>' +
       '<path d="M-14 -38 q7 4 14 0 M-14 -68 q14 5 27 0 M-15 -96 q15 5 28 0" stroke="' + ln + '" stroke-width="1.4" fill="none" opacity=".8"/>' +
       '<path d="M8 -100 L8 -20" stroke="#fff" stroke-width="3" opacity=".18"/>';
