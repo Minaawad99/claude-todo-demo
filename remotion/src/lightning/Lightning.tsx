@@ -76,7 +76,7 @@ const shotAt = (t: number) => {
   return { i, u: t - s0, d: s1 - s0 };
 };
 
-const Cam: React.FC<{ p: V3; l: V3; fov: number }> = ({ p, l, fov }) => {
+export const Cam: React.FC<{ p: V3; l: V3; fov: number }> = ({ p, l, fov }) => {
   const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera;
   camera.position.set(p[0], p[1], p[2]);
   camera.fov = fov;
