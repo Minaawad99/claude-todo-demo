@@ -474,7 +474,7 @@
     return s + qmark(420, 170, t, 56) + qmark(470, 210, t + 1, 36) + tag("حكاية إيه المرة الجاية؟", 320, 312, u, 0.2, -2, 19);
   });
 
-  window.__parts = { airliner: airliner, windowView: windowView, engineFront: engineFront, forces: forces, streams: streams, airfoil: airfoil, flyer: flyer, jumboTop: jumboTop, tag: tag, head: head, graphPaper: graphPaper, SKYUP: SKYUP };
+  window.__parts = { arrow: arrow, lab: lab, airliner: airliner, windowView: windowView, engineFront: engineFront, forces: forces, streams: streams, airfoil: airfoil, flyer: flyer, jumboTop: jumboTop, tag: tag, head: head, graphPaper: graphPaper, SKYUP: SKYUP };
   window.__panel = function (svg, t) {
     CLIPN = 0; var i = at(t), sh = SH[i], next = i + 1 < SH.length ? SH[i + 1].a : L(LN.length), u = t - sh.a, d = Math.max(0.5, next - sh.a);
     var c = sh.cam(u, d), cx = c[0] + 16 * Math.sin(t * 1.2), cy = c[1] + 12 * Math.cos(t * 1.2), z = c[2] * (1 + 0.03 * Math.sin(t * 1.1));   // a slow circle: the drift never comes to rest
