@@ -85,17 +85,24 @@
 
   // ── radar episode pieces ───────────────────────────────
   var BLU = "#3b8fe0", YEL = "#f2c230", RAD = "#e8503a";
-  // a roadside speed camera on a pole (grey housing, radar panel and lens facing left, IR flash on top); y = top of the pole
+  // an Egyptian roadside speed camera (from the user's photos). Default: the tall grey tower with a black glass face
+  // and two round lenses. o.pole: the pole type with a box, two lenses and a flash lamp on an arm. y = waist of the pole
   function radarBox(x, y, s, t, o) {
-    o = o || {}; var g = '<g transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + (s || 1) + ')">';
-    g += '<rect x="-8" y="0" width="16" height="260" fill="url(#steel)" stroke="' + INK + '" stroke-width="2.4"/>';
-    g += '<rect x="-56" y="-118" width="112" height="118" rx="10" fill="url(#gHousing)" stroke="' + INK + '" stroke-width="3"/><path d="M-62 -118 H62 L52 -132 H-52 Z" fill="#4b5056" stroke="' + INK + '" stroke-width="2.4"/>';
-    g += '<rect x="-56" y="-26" width="112" height="12" fill="' + YEL + '"/><path d="M-50 -26 l10 12 M-30 -26 l10 12 M-10 -26 l10 12 M10 -26 l10 12 M30 -26 l10 12" stroke="' + INK + '" stroke-width="3"/>';
-    g += '<rect x="-66" y="-104" width="16" height="52" rx="4" fill="#2b2f34" stroke="' + INK + '" stroke-width="2.4"/>'; for (var i = 0; i < 4; i++) g += '<path d="M-62 ' + (-96 + i * 12) + ' h8" stroke="#8a929c" stroke-width="2"/>';
-    g += '<circle cx="-58" cy="-38" r="13" fill="#1c1e22" stroke="' + INK + '" stroke-width="3"/><circle cx="-60" cy="-40" r="6" fill="#3b6fa0"/><circle cx="-62" cy="-42" r="2" fill="#fff"/>';
-    g += '<rect x="-40" y="-150" width="40" height="18" rx="4" fill="#d9dee4" stroke="' + INK + '" stroke-width="2.4"/>';
-    g += '<circle cx="34" cy="-100" r="4" fill="' + (Math.sin(t * 6) > 0 ? "#ff3b2f" : "#5a1a14") + '"/>';
-    if (o.flash > 0) g += '<circle cx="-20" cy="-141" r="' + f(80 * o.flash) + '" fill="url(#gGlowW)" opacity="' + f(o.flash) + '"/><circle cx="-20" cy="-141" r="' + f(22 * o.flash) + '" fill="#fff"/>';
+    o = o || {}; var g = '<g transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + (s || 1) + ')">', fx, fy;
+    var lens = function (cx, cy) { return '<circle cx="' + cx + '" cy="' + cy + '" r="12" fill="#e8ecf0" stroke="' + INK + '" stroke-width="2.4"/><circle cx="' + cx + '" cy="' + cy + '" r="7" fill="#1c1e22"/><circle cx="' + (cx - 3) + '" cy="' + (cy - 3) + '" r="2.4" fill="#fff"/>'; };
+    if (o.pole) {
+      g += '<rect x="-6" y="-160" width="12" height="420" fill="url(#steel)" stroke="' + INK + '" stroke-width="2.4"/><path d="M0 -150 L-64 -176" stroke="#b9c0c8" stroke-width="8" stroke-linecap="round"/><path d="M0 -150 L-64 -176" stroke="' + INK + '" stroke-width="2" fill="none" opacity=".5"/>';
+      g += '<rect x="-92" y="-192" width="40" height="22" rx="4" fill="#1c1e22" stroke="' + INK + '" stroke-width="2.4"/><rect x="-88" y="-176" width="32" height="5" fill="#3a3f45"/>';
+      g += '<rect x="-40" y="-110" width="34" height="40" rx="4" fill="#e6e8e4" stroke="' + INK + '" stroke-width="2.4"/><rect x="-36" y="-104" width="26" height="6" fill="#c8ccc6"/>' + lens(-22, -54) + lens(-22, -28);
+      fx = -72; fy = -181;
+    } else {
+      g += '<rect x="-34" y="-150" width="68" height="410" rx="6" fill="url(#steel)" stroke="' + INK + '" stroke-width="3"/><rect x="-34" y="-150" width="68" height="12" rx="4" fill="#5a6068"/>';
+      g += '<rect x="-24" y="-134" width="48" height="104" rx="5" fill="#16181b" stroke="' + INK + '" stroke-width="2.4"/><path d="M-20 -130 H-6 L-20 -104 Z" fill="#fff" opacity=".12"/>' + lens(0, -100) + lens(0, -68);
+      g += '<rect x="-14" y="-44" width="28" height="7" rx="2" fill="#3a3f45"/><rect x="-40" y="248" width="80" height="12" fill="#8a9098" stroke="' + INK + '" stroke-width="2"/>';
+      fx = 0; fy = -100;
+    }
+    g += '<circle cx="' + (o.pole ? -4 : 16) + '" cy="' + (o.pole ? -100 : -126) + '" r="3.5" fill="' + (Math.sin(t * 6) > 0 ? "#ff3b2f" : "#5a1a14") + '"/>';
+    if (o.flash > 0) g += '<circle cx="' + fx + '" cy="' + fy + '" r="' + f(80 * o.flash) + '" fill="url(#gGlowW)" opacity="' + f(o.flash) + '"/><circle cx="' + fx + '" cy="' + fy + '" r="' + f(22 * o.flash) + '" fill="#fff"/>';
     return g + '</g>';
   }
   // the radar beam: arcs travelling out from (x, y) in direction ang
@@ -117,15 +124,16 @@
     for (var k = 0; k < n; k++) { var te = base - k * step, r = (t - te) * 120, o = 1 - k / n; if (r <= 0) continue; s += '<circle cx="' + f(pos(te)) + '" cy="' + f(y) + '" r="' + f(r) + '" fill="none" stroke="' + (col || "#3a3d42") + '" stroke-width="3" opacity="' + f(0.8 * o) + '"/>'; }
     return s;
   }
-  // an Egyptian ambulance van, side view, siren lights flashing
+  // an Egyptian ambulance: orange high-roof VW van, green stripes, blue light bar, «إسعاف» and the ministry badge
   function ambulance(x, y, t, s, flip) {
     var a = t * 420, g = '<g transform="translate(' + f(x) + ' ' + f(y + Math.abs(Math.sin(t * 10)) * 1.2) + ') scale(' + ((flip ? -1 : 1) * (s || 1)) + ' ' + (s || 1) + ')">';
-    g += '<path d="M-110 -10 V-86 H40 L70 -54 H96 C104 -54 110 -48 110 -40 V-10 Z" fill="#f7f7f2" stroke="' + INK + '" stroke-width="3"/>';
-    g += '<rect x="-110" y="-46" width="220" height="12" fill="#d8352a"/><rect x="-60" y="-80" width="16" height="44" fill="#d8352a"/><rect x="-74" y="-66" width="44" height="16" fill="#d8352a"/>';
-    g += '<path d="M46 -78 L66 -56 H46 Z" fill="url(#gGlass)" stroke="' + INK + '" stroke-width="2"/><rect x="-6" y="-78" width="34" height="22" fill="url(#gGlass)" stroke="' + INK + '" stroke-width="2"/>';
-    var on = Math.sin(t * 14) > 0; g += '<rect x="-20" y="-98" width="20" height="12" rx="3" fill="' + (on ? "#ff3b2f" : "#5a1a14") + '" stroke="' + INK + '" stroke-width="2"/><rect x="0" y="-98" width="20" height="12" rx="3" fill="' + (on ? "#1a3a8a" : "#4fa3ff") + '" stroke="' + INK + '" stroke-width="2"/>';
-    g += '<circle cx="-10" cy="-92" r="' + (on ? 14 : 4) + '" fill="#ff3b2f" opacity=".35" filter="url(#glow)"/><circle cx="10" cy="-92" r="' + (on ? 4 : 14) + '" fill="#4fa3ff" opacity=".35" filter="url(#glow)"/>';
-    g += '<text x="-30" y="-16" text-anchor="middle" transform="scale(' + (flip ? -1 : 1) + ' 1)" style="font:800 13px Noto Sans Arabic;fill:#d8352a">إسعاف</text>';
+    g += '<path d="M-112 -12 V-106 Q-112 -114 -104 -114 H34 Q44 -114 48 -104 L66 -60 H96 C106 -58 112 -50 112 -40 V-12 Z" fill="#f2872a" stroke="' + INK + '" stroke-width="3"/>';
+    g += '<path d="M-110 -58 H112 V-50 H-110 Z M-110 -42 H112 V-37 H-110 Z" fill="#1f9a5a"/><rect x="-112" y="-22" width="226" height="10" fill="#3a3d42"/>';
+    g += '<path d="M50 -100 L64 -62 H44 V-100 Z" fill="url(#gGlass)" stroke="' + INK + '" stroke-width="2"/><rect x="6" y="-100" width="32" height="34" rx="3" fill="url(#gGlass)" stroke="' + INK + '" stroke-width="2"/><path d="M4 -100 V-14" stroke="' + INK + '" stroke-width="1.6" opacity=".5"/>';
+    g += '<circle cx="-36" cy="-84" r="13" fill="#fff" stroke="#d8352a" stroke-width="3"/><path d="M-36 -92 V-76 M-43 -84 H-29" stroke="#2f6fbf" stroke-width="3.4"/><rect x="104" y="-50" width="8" height="8" rx="2" fill="#fff6c0"/>';
+    var on = Math.sin(t * 14) > 0; g += '<rect x="0" y="-125" width="46" height="11" rx="4" fill="' + (on ? "#4f8bff" : "#1a2a6a") + '" stroke="' + INK + '" stroke-width="2"/><rect x="-108" y="-124" width="12" height="10" rx="3" fill="' + (on ? "#1a2a6a" : "#4f8bff") + '" stroke="' + INK + '" stroke-width="2"/>';
+    g += '<circle cx="23" cy="-120" r="' + (on ? 18 : 5) + '" fill="#4f8bff" opacity=".4" filter="url(#glow)"/><circle cx="-102" cy="-119" r="' + (on ? 5 : 14) + '" fill="#4f8bff" opacity=".4" filter="url(#glow)"/>';
+    g += '<text x="-72" y="-70" text-anchor="middle" transform="scale(' + (flip ? -1 : 1) + ' 1)" style="font:800 15px Noto Sans Arabic;fill:#1d4fa8">إسعاف</text>';
     [-70, 70].forEach(function (wx) { g += '<g transform="translate(' + wx + ' -6) rotate(' + f(a) + ')"><circle r="17" fill="#2a2a2a" stroke="' + INK + '" stroke-width="2"/><circle r="8" fill="#c9ced4"/><path d="M-8 0 H8 M0 -8 V8" stroke="#5a6068" stroke-width="2.4"/></g>'; });
     return g + '</g>';
   }
@@ -140,10 +148,13 @@
     s += '<path d="M30 70 L90 ' + f(60 + (aim || 0)) + '" stroke="#f4f2ec" stroke-width="16" stroke-linecap="round"/><path d="M30 70 L90 ' + f(60 + (aim || 0)) + '" stroke="' + INK + '" stroke-width="2" fill="none" opacity=".4"/>';
     s += head(0, 0, 38, mood || "n", t, 1);
     s += '<path d="M-40 -22 C-40 -50 40 -50 40 -22 Z" fill="#f4f2ec" stroke="' + INK + '" stroke-width="3"/><rect x="-44" y="-26" width="88" height="10" rx="4" fill="#1c1c1c"/><circle cx="0" cy="-36" r="6" fill="' + YEL + '" stroke="' + INK + '" stroke-width="1.6"/>';
-    s += '<g transform="translate(96 ' + f(54 + (aim || 0)) + ')"><rect x="-10" y="-14" width="58" height="26" rx="6" fill="#2b2f34" stroke="' + INK + '" stroke-width="2.6"/><rect x="-4" y="10" width="16" height="30" rx="4" fill="#2b2f34" stroke="' + INK + '" stroke-width="2.6"/><circle cx="48" cy="-1" r="7" fill="#d8352a" stroke="' + INK + '" stroke-width="2"/><rect x="2" y="-10" width="24" height="12" fill="#7cf29a" opacity=".85"/></g>';
+    s += '<g transform="translate(96 ' + f(54 + (aim || 0)) + ')"><path d="M4 12 L-6 44 H8 L18 12 Z" fill="#1c1e22" stroke="' + INK + '" stroke-width="2.4"/><rect x="-14" y="-16" width="62" height="30" rx="6" fill="#2b2f34" stroke="' + INK + '" stroke-width="2.6"/><rect x="4" y="-30" width="26" height="12" rx="4" fill="#1c1e22" stroke="' + INK + '" stroke-width="2"/><circle cx="30" cy="-24" r="5" fill="#3b6fa0" stroke="' + INK + '" stroke-width="1.6"/><rect x="-8" y="-10" width="30" height="17" rx="2" fill="#0e2a3a" stroke="#6a7480" stroke-width="1.4"/><text x="7" y="3" text-anchor="middle" style="font:800 10px Noto Sans;fill:#7cf29a">' + ar(120) + '</text><circle cx="50" cy="-1" r="11" fill="#1c1e22" stroke="' + INK + '" stroke-width="2.4"/><circle cx="50" cy="-1" r="6" fill="#3b6fa0"/><circle cx="50" cy="-1" r="' + (Math.sin(t * 9) > 0 ? 3 : 1.5) + '" fill="#ff3b2f"/></g>';
     return s + '</g>';
   }
-  function gantry(x, y, s, t, flash) { return '<g transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + (s || 1) + ')"><rect x="-6" y="0" width="12" height="180" fill="url(#steel)" stroke="' + INK + '" stroke-width="2"/><rect x="-6" y="-6" width="90" height="12" fill="url(#steel)" stroke="' + INK + '" stroke-width="2"/><rect x="50" y="6" width="34" height="22" rx="4" fill="url(#gHousing)" stroke="' + INK + '" stroke-width="2.4"/><circle cx="54" cy="20" r="5" fill="#1c1e22"/>' + (flash > 0 ? '<circle cx="54" cy="20" r="' + f(36 * flash) + '" fill="url(#gGlowW)"/>' : '') + '</g>'; }
+  // a roadside camera gantry (from the user's photo): pole, an arm over the road, a camera box and dome cameras
+  function gantry(x, y, s, t, flash) { var g = '<g transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + (s || 1) + ')"><rect x="-7" y="-24" width="14" height="210" fill="url(#steel)" stroke="' + INK + '" stroke-width="2"/><rect x="-7" y="-24" width="130" height="8" fill="url(#steel)" stroke="' + INK + '" stroke-width="2"/><rect x="-7" y="-6" width="110" height="5" fill="url(#steel)" stroke="' + INK + '" stroke-width="1.6"/><path d="M7 -16 L30 -6 M40 -16 L60 -6 M74 -16 L94 -6" stroke="' + INK + '" stroke-width="2"/>';
+    g += '<circle cx="60" cy="-30" r="7" fill="#3a3f45" stroke="' + INK + '" stroke-width="2"/><circle cx="118" cy="-30" r="7" fill="#3a3f45" stroke="' + INK + '" stroke-width="2"/><rect x="88" y="0" width="30" height="18" rx="4" fill="url(#gHousing)" stroke="' + INK + '" stroke-width="2.4"/><circle cx="92" cy="10" r="5" fill="#1c1e22"/>';
+    return g + (flash > 0 ? '<circle cx="92" cy="10" r="' + f(36 * flash) + '" fill="url(#gGlowW)"/>' : '') + '</g>'; }
   // a big number card
   function counter(x, y, text, col, s) { return '<g transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + (s || 1) + ')"><rect x="-120" y="-30" width="240" height="56" rx="12" fill="' + INK + '" stroke="#c9a650" stroke-width="3"/><text y="10" text-anchor="middle" style="font:800 26px Noto Sans Arabic;fill:' + (col || "#7cf29a") + '">' + text + '</text></g>'; }
   function ar(n) { return String(n).replace(/[0-9]/g, function (d) { return "٠١٢٣٤٥٦٧٨٩"[d]; }); }
@@ -163,7 +174,7 @@
   // 0 — on the road, a small flash, and days later the ticket arrives
   shot(0, function (u, d) { var k = clamp(u / d); return [lerp(300, 380, k), 190, lerp(1.0, 1.12, k)]; }, function (u, d, t) {
     var cx = lerp(-160, 760, clamp(u / 2.6)), fl = clamp(1 - Math.abs(u - 1.55) / 0.3);
-    var s = road(t, { sky: "night", v: 200 }) + radarBox(470, 140, 0.7, t, { flash: fl }) + carSide(cx, 262, t, 0.9, "#c23a26");
+    var s = road(t, { sky: "night", v: 200 }) + radarBox(470, 140, 0.7, t, { flash: fl, pole: 1 }) + carSide(cx, 262, t, 0.9, "#c23a26");
     if (fl > 0) s += '<rect x="-400" y="-300" width="1440" height="960" fill="#fff" opacity="' + f(0.55 * fl) + '"/>';
     var k = pop((u - 2.7) / 0.9);
     if (k > 0) s += '<g transform="translate(320 170) scale(' + f(k) + ')"><rect x="-130" y="-70" width="260" height="140" rx="16" fill="#fbfaf6" stroke="' + INK + '" stroke-width="4"/><rect x="-130" y="-70" width="260" height="36" rx="16" fill="#d8352a"/><text y="-44" text-anchor="middle" style="font:800 20px Noto Sans Arabic;fill:#fff">مخالفة سرعة</text>' + '<text y="8" text-anchor="middle" style="font:800 30px Noto Serif;fill:' + INK + '">' + ar(120) + ' كم/س</text><text y="48" text-anchor="middle" style="font:700 16px Noto Sans Arabic;fill:#5a6068">الحد ' + ar(80) + '</text></g>';
@@ -183,12 +194,12 @@
   });
   // 3 — "إيه الحكاية؟"
   shot(3, function (u, d) { return [320, 180, lerp(1.0, 1.15, u / d)]; }, function (u, d, t) {
-    var s = graphPaper(t) + '<g transform="translate(400 240) scale(' + f(0.75 * pop(u / 0.6)) + ')">' + radarBox(0, 0, 1, t) + '</g>' + beam(352, 160, t, Math.PI, 260, BLU);
+    var s = graphPaper(t) + '<g transform="translate(400 240) scale(' + f(0.75 * pop(u / 0.6)) + ')">' + radarBox(0, 0, 1, t) + '</g>' + beam(391, 165, t, Math.PI, 260, BLU);
     return s + qmark(520, 120, t, 50) + tag("إيه الحكاية؟", 300, 62, u, 0.2, -3, 28);
   });
   // 4 — it throws radio waves at you, like a phone, but focused one way
   shot(4, function (u, d) { var k = clamp(u / d); return [lerp(330, 300, k), 190, lerp(1.05, 1.0, k)]; }, function (u, d, t) {
-    var s = road(t, { v: 90 }) + radarBox(540, 120, 0.7, t) + beam(495, 60, t, Math.PI + 0.25, 360, BLU, 0.2) + carSide(lerp(60, 140, clamp(u / d)), 262, t, 0.8, "#c23a26");
+    var s = road(t, { v: 90 }) + radarBox(540, 120, 0.7, t) + beam(532, 50, t, Math.PI + 0.25, 360, BLU, 0.2) + carSide(lerp(60, 140, clamp(u / d)), 262, t, 0.8, "#c23a26");
     var k = pop((u - 1.2) / 0.8);
     if (k > 0) { s += '<g transform="translate(150 90) scale(' + f(0.6 * k) + ')"><rect x="-26" y="-48" width="52" height="96" rx="10" fill="#1c1e22" stroke="' + INK + '" stroke-width="3"/><rect x="-20" y="-40" width="40" height="76" rx="4" fill="#3b6fa0"/></g>';
       for (var i = 0; i < 4; i++) { var r = ((t * 50 + i * 18) % 72) + 30; s += '<circle cx="150" cy="90" r="' + f(r) + '" fill="none" stroke="' + BLU + '" stroke-width="3" opacity="' + f(1 - r / 102) + '"/>'; } }
@@ -259,7 +270,7 @@
   });
   // 13 — the radar does the same, with waves we can't hear
   shot(13, function (u, d) { return [320, 180, lerp(1.05, 1.12, u / d)]; }, function (u, d, t) {
-    var s = road(t, { v: 140 }) + radarBox(540, 120, 0.7, t) + beam(495, 60, t, Math.PI + 0.25, 360, BLU, 0.2);
+    var s = road(t, { v: 140 }) + radarBox(540, 120, 0.7, t) + beam(532, 50, t, Math.PI + 0.25, 360, BLU, 0.2);
     var k = pop((u - 0.9) / 0.8); if (k > 0) s += '<g transform="translate(200 120) scale(' + f(k) + ')"><path d="M-10 -40 C30 -40 40 0 20 20 C10 30 10 44 -6 44 C-20 44 -24 30 -16 20" stroke="' + INK + '" stroke-width="6" fill="#f0c8a0"/><circle r="56" fill="none" stroke="#d8352a" stroke-width="9"/><path d="M-40 -40 L40 40" stroke="#d8352a" stroke-width="9"/></g>';
     return s + tag("مابنسمعهاش", 200, 312, u, 1.2, -2, 21);
   });
@@ -300,7 +311,7 @@
   });
   // 19 — it photographs the car and the plate; at night a flash makes the numbers readable
   shot(19, function (u, d) { return [320, 185, lerp(1.0, 1.1, u / d)]; }, function (u, d, t) {
-    var fl = clamp(1 - Math.abs(u - 0.9) / 0.3), s = road(t, { sky: "night", v: 220 }) + radarBox(520, 120, 0.7, t, { flash: fl }) + carSide(lerp(40, 330, clamp(u / 1.4)), 262, t, 0.9, "#c23a26");
+    var fl = clamp(1 - Math.abs(u - 0.9) / 0.3), s = road(t, { sky: "night", v: 220 }) + radarBox(520, 120, 0.7, t, { flash: fl, pole: 1 }) + carSide(lerp(40, 330, clamp(u / 1.4)), 262, t, 0.9, "#c23a26");
     if (fl > 0) s += '<rect x="-400" y="-300" width="1440" height="960" fill="#fff" opacity="' + f(0.5 * fl) + '"/>';
     var k = pop((u - 1.5) / 0.8); if (k > 0) s += '<g transform="translate(260 150) rotate(-4) scale(' + f(k) + ')"><rect x="-150" y="-100" width="300" height="200" fill="#fbfaf6" stroke="' + INK + '" stroke-width="4"/><rect x="-136" y="-86" width="272" height="150" fill="#3a3f46"/>' + carSide(0, 10, 0, 0.9, "#c23a26") + plate(0, 30, 0.6) + '<text x="0" y="88" text-anchor="middle" style="font:800 16px Noto Sans Arabic;fill:' + INK + '">' + ar(120) + ' كم/س — ' + ar(23) + ':' + ar(14) + '</text></g>';
     return s + tag("اللوحة باينة", 520, 312, u, 2.0, 2, 20);
@@ -322,7 +333,7 @@
   // 22 — the first road radar was tried in America in 1947 (sepia)
   shot(22, function (u, d) { return [lerp(280, 360, u / d), 185, lerp(1.0, 1.18, u / d)]; }, function (u, d, t) {
     var s = sky("dusk") + clouds(t, 6, 40, 3, 0.7) + grass(t, 230, "grass-dusk", "#5a5030") + '<rect x="-400" y="246" width="1440" height="70" fill="#7a7060"/>';
-    var cx = lerp(20, 330, clamp(u / d)); s += birds(t, 70, 60) + '<g transform="translate(' + f(cx) + ' ' + f(282 + Math.abs(Math.sin(t * 8)) * 2) + ')"><path d="M-80 -6 C-80 -30 -60 -36 -30 -36 C-20 -58 30 -58 40 -36 C70 -34 84 -24 84 -6 Z" fill="#2b2f34" stroke="' + INK + '" stroke-width="3"/><circle cx="-46" cy="0" r="14" fill="#1c1c1c"/><circle cx="50" cy="0" r="14" fill="#1c1c1c"/></g>';
+    var cx = lerp(20, 330, clamp(u / d)); s += birds(t, 70, 60) + '<g transform="translate(130 236) scale(.8)"><rect x="-50" y="-14" width="100" height="14" fill="#9a8f7a" stroke="' + INK + '" stroke-width="2"/><path d="M-8 -14 V-60 H8 V-14" fill="#5a5246" stroke="' + INK + '" stroke-width="2"/><g transform="translate(0 -70) rotate(' + f(-20 + Math.sin(t * 0.8) * 12) + ')"><ellipse rx="16" ry="52" fill="#4a463e" stroke="' + INK + '" stroke-width="3"/><path d="M0 0 H-34" stroke="' + INK + '" stroke-width="3"/><circle cx="-34" r="4" fill="' + INK + '"/></g></g>' + '<g transform="translate(' + f(cx) + ' ' + f(282 + Math.abs(Math.sin(t * 8)) * 2) + ')"><path d="M-80 -6 C-80 -30 -60 -36 -30 -36 C-20 -58 30 -58 40 -36 C70 -34 84 -24 84 -6 Z" fill="#2b2f34" stroke="' + INK + '" stroke-width="3"/><circle cx="-46" cy="0" r="14" fill="#1c1c1c"/><circle cx="50" cy="0" r="14" fill="#1c1c1c"/></g>';
     s += '<g transform="translate(470 230)"><path d="M-30 60 L0 0 L30 60 M0 0 V60" stroke="' + INK + '" stroke-width="5"/><rect x="-34" y="-36" width="68" height="40" rx="6" fill="#8a7a5a" stroke="' + INK + '" stroke-width="3"/><circle cx="-34" cy="-16" r="10" fill="#3a3d42" stroke="' + INK + '" stroke-width="2"/></g>' + beam(436, 214, t * 1.6, Math.PI, 220, "#fff4c8");
     s += '<g transform="translate(560 170)">' + head(0, 0, 30, "curious", t, -1) + '<path d="M-34 -14 H34 L24 -34 H-24 Z" fill="#5a4a34" stroke="' + INK + '" stroke-width="3"/></g>';
     s += '<rect x="-400" y="-300" width="1440" height="960" fill="#a0784a" opacity=".22"/>';
@@ -337,7 +348,7 @@
   });
   // 24 — outro
   shot(24, function (u, d) { return [320, lerp(190, 170, u / d), lerp(1.0, 1.15, u / d)]; }, function (u, d, t) {
-    var s = graphPaper(t) + '<g transform="translate(230 250) scale(.7)">' + radarBox(0, 0, 1, t) + '</g>' + beam(196, 152, t, Math.PI, 160, BLU) + '<g transform="translate(430 200) scale(.9)">' + head(0, 0, 56, "happy", t, -1) + '</g>';
+    var s = graphPaper(t) + '<g transform="translate(230 250) scale(.7)">' + radarBox(0, 0, 1, t) + '</g>' + beam(222, 180, t, Math.PI, 160, BLU) + '<g transform="translate(430 200) scale(.9)">' + head(0, 0, 56, "happy", t, -1) + '</g>';
     return s + qmark(480, 100, t, 56) + qmark(530, 140, t + 1, 36) + tag("حكاية إيه المرة الجاية؟", 320, 312, u, 0.2, -2, 19);
   });
 
