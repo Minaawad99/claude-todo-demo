@@ -256,10 +256,10 @@
     return s + tag("أمريكا", 400, 100, u, 0.4, -3, 15) + tag("مصر", 560, 170, u, 0.9, 3, 15) + tag("أقل من ثانية!", 170, 330, u, 1.8, -2, 16);
   });
   // 1 — how did it cross the ocean? by satellite?
-  shot(1, function (u, d) { return [320, 180, lerp(1.06, 1.0, u / d)]; }, function (u, d, t) {
+  shot(1, function (u, d) { return [320, lerp(170, 200, u / d), lerp(1.0, 1.15, u / d)]; }, function (u, d, t) {
     var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#0b1730"/>'; for (var i = 0; i < 60; i++) s += '<circle cx="' + f(-100 + hash(i) * 840) + '" cy="' + f(-40 + hash(i + 3) * 420) + '" r="' + f(0.8 + hash(i + 1) * 1.6) + '" fill="#fff" opacity="' + f(0.4 + 0.5 * Math.abs(Math.sin(t * 2 + i))) + '"/>';
     s += globe(320, 380, 220, t);
-    s += '<g transform="translate(' + f(320 + 120 * Math.cos(t * 0.6)) + ' ' + f(80 + 20 * Math.sin(t * 0.6)) + ') rotate(' + f(10 * Math.sin(t)) + ')"><rect x="-14" y="-12" width="28" height="24" fill="#c9a04e" stroke="' + INK + '" stroke-width="2"/><rect x="-74" y="-8" width="56" height="16" fill="#2a4a8a" stroke="' + INK + '" stroke-width="1.6"/><rect x="18" y="-8" width="56" height="16" fill="#2a4a8a" stroke="' + INK + '" stroke-width="1.6"/></g>';
+    s += (function () { var sx = 60 + (u * 110) % 520, g2 = ''; for (var r = 1; r <= 3; r++) { var ph = (t * 1.2 + r / 3) % 1; g2 += '<path d="M' + f(sx - 30 - ph * 40) + ' ' + f(110 + ph * 50) + ' Q' + f(sx) + ' ' + f(130 + ph * 70) + ' ' + f(sx + 30 + ph * 40) + ' ' + f(110 + ph * 50) + '" stroke="' + YEL + '" stroke-width="3" fill="none" opacity="' + f(1 - ph) + '"/>'; } return g2; })() + '<g transform="translate(' + f(60 + (u * 110) % 520) + ' 90) rotate(' + f(20 * Math.sin(t * 2)) + ')"><rect x="-14" y="-12" width="28" height="24" fill="#c9a04e" stroke="' + INK + '" stroke-width="2"/><rect x="-74" y="-8" width="56" height="16" fill="#2a4a8a" stroke="' + INK + '" stroke-width="1.6"/><rect x="18" y="-8" width="56" height="16" fill="#2a4a8a" stroke="' + INK + '" stroke-width="1.6"/></g>';
     return s + qmark(320, 50, t, 50) + tag("قمر صناعي؟", 140, 150, u, 0.5, -3, 16);
   });
   // 2 — and if the road it came by were cut, what would happen?
