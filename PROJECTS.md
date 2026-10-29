@@ -139,3 +139,24 @@ ffmpeg -framerate 30 -i frames/%05d.jpg -c:v libx264 -pix_fmt yuv420p -crf 20 ou
 1. افتح المستودع على الفرع ده، أو على main بعد ما الفرع يندمج فيه.
 2. اقرا الملف ده، وبعده دليل الأسلوب اللي هتشتغل بيه (الجدول في القسم 3).
 3. لو هتحتاج صور أو أصوات من برّه، ضيف المواقع في إعدادات البيئة تحت Network access ثم Allowed domains. أمثلة: `upload.wikimedia.org` و`commons.wikimedia.org` و`images-api.nasa.gov` و`cdn.pixabay.com`.
+
+## 10. خريطة المعرفة (Graphify)
+
+فولدر `videos/` كله ليه خريطة معرفة في `graphify-out/`، معمولة بأداة [Graphify](https://github.com/Graphify-Labs/graphify):
+
+- `graph.html`: الخريطة التفاعلية. افتحها في أي متصفح، ودوس على أي عنصر أو دوّر عليه.
+- `GRAPH_REPORT.md`: ملخص المجموعات وأهم الروابط والأسئلة اللي الخريطة تقدر تجاوبها.
+- `graph.json`: الخريطة كاملة، وأي جلسة تقدر تسألها.
+
+الخريطة فيها الكود كله (حوالي 230 ملف) والسكريبتات والأدلة وصفحات الحلقات (128 ملف). الصور والأصوات ومكتبة Three.js المضغوطة متشالين منها.
+
+**الاستخدام في أي جلسة فيها Graphify متسطب:**
+
+```
+graphify query "أنهي حلقة فيها قطع للأرض؟"
+graphify explain "renderAt"
+graphify path "tighten.py" "qa.py"
+graphify update videos            # بعد أي حلقة جديدة: بيحدّث الكود من غير تكلفة
+```
+
+**التسطيب الدايم:** ضيف `pip install graphifyy` و`graphify install` في Setup script بتاع البيئة.
