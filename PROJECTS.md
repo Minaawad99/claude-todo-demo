@@ -106,6 +106,7 @@
 | `lcd-tv`، `offshore-oil`، `phone-call`، `submarine`، `atm`، `microwave`، `elevator` | الشاشة، والبترول من البحر، والمكالمة، والغواصة، والـ ATM، والمايكروويف، والأسانسير | كارتون + إيزو |
 | `bridge-water`، `car-egypt`، `qolla`، `sonic-boom`، `touchscreen`، `tbm-tunnel`، `sea-cables`، `high-dam` | الكوبري والمية، والعربية، والقلة، والانفجار الصوتي، والتاتش، وحفارة الأنفاق، والكابلات البحرية، والسد العالي | كارتون |
 | `elevator-waqei` | الأسانسير | الواقعي 3D |
+| `speed-radar` | الرادار بيلقطك إزاي (دوبلر) | كارتون |
 
 كل فولدر فيه `script.txt` و`voice.wav` و`timing.js`، وأغلبهم فيه `cues.json` و`refs/SOURCES.md`.
 
