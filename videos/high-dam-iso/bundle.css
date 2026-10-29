@@ -1,0 +1,339 @@
+
+/* ─────────────────────────────────────────────────────────────
+   طب إزاي؟ — components + motion
+   Colours, type, spacing, radius and stroke come from tokens.css.
+   Motion values live here (tokens.json has no motion family).
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  --tz-dur-fast: 200ms;   /* chip fade, hover */
+  --tz-dur: 400ms;        /* ink-in, pop, crossfade */
+  --tz-dur-slow: 800ms;   /* x-ray, scene enter */
+  --tz-word: 110ms;       /* stagger between words when a line types on */
+  --tz-gap: 120ms;        /* pause between two beats of a sequence */
+  --tz-count: 1400ms;     /* number count-up */
+  --tz-ring: 1300ms;      /* timer ring draw */
+  --tz-ease: cubic-bezier(.2, .7, .2, 1);      /* default: fast start, soft landing */
+  --tz-ease-io: cubic-bezier(.45, 0, .25, 1);  /* things that travel: spray arm, water level */
+}
+
+/* ── Graph paper ─────────────────────────────────────────── */
+.tz-paper {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(to right, var(--paper-grid) var(--stroke-hair), transparent var(--stroke-hair)),
+    linear-gradient(to bottom, var(--paper-grid) var(--stroke-hair), transparent var(--stroke-hair));
+  background-size: var(--grid-cell) var(--grid-cell);
+}
+
+/* ── Scene frame ─────────────────────────────────────────── */
+.tz-frame {
+  direction: rtl;
+  position: relative;
+  aspect-ratio: 9 / 16;
+  max-width: 100%;
+  display: grid;
+  grid-template-rows: 64% auto 1fr;
+  background: var(--paper);
+  border: var(--stroke-frame) solid var(--ink);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  overflow: hidden;
+}
+.tz-frame__stage { position: relative; overflow: hidden; }
+.tz-frame__stage > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.tz-frame__rule { height: 0; border-top: var(--stroke-hair) solid var(--line-soft); margin-inline: 4%; }
+.tz-frame__caption {
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-1);
+  padding: 6% 8% 0; text-align: center;
+}
+
+/* Sheet variant: intro and outro. Double rule plus corner brackets outside it. */
+.tz-frame--sheet {
+  grid-template-rows: auto;
+  align-content: start;
+  border: var(--stroke-frame) solid var(--ink);
+  outline: var(--stroke-hair) solid var(--ink);
+  outline-offset: -6px;
+  margin: 14px;
+  overflow: visible;
+}
+.tz-frame--sheet::before {
+  content: ""; position: absolute; inset: -14px; pointer-events: none;
+  --c: var(--ink); --l: 12px; --w: var(--stroke-hair);
+  background:
+    linear-gradient(var(--c), var(--c)) top right / var(--l) var(--w),
+    linear-gradient(var(--c), var(--c)) top right / var(--w) var(--l),
+    linear-gradient(var(--c), var(--c)) top left / var(--l) var(--w),
+    linear-gradient(var(--c), var(--c)) top left / var(--w) var(--l),
+    linear-gradient(var(--c), var(--c)) bottom right / var(--l) var(--w),
+    linear-gradient(var(--c), var(--c)) bottom right / var(--w) var(--l),
+    linear-gradient(var(--c), var(--c)) bottom left / var(--l) var(--w),
+    linear-gradient(var(--c), var(--c)) bottom left / var(--w) var(--l);
+  background-repeat: no-repeat;
+}
+
+/* ── Caption + keywords ──────────────────────────────────── */
+.tz-caption { margin: 0; font: 500 var(--tz-caption-size, 24px) / 1.6 var(--font-sans); color: var(--ink); text-wrap: balance; }
+.tz-k { transition: color var(--tz-dur) var(--tz-ease); }
+.tz-k--heat  { color: var(--heat-text); }
+.tz-k--water { color: var(--water); }
+.tz-k--part  { color: var(--olive-text); }
+.tz-em {
+  background: linear-gradient(currentColor, currentColor) no-repeat right bottom / 100% var(--stroke-line);
+  padding-bottom: 2px;
+  transition: background-size var(--tz-dur) var(--tz-ease);
+}
+
+/* ── Callout: dot, leader line, chip ─────────────────────── */
+.tz-callout {
+  position: absolute; left: var(--x, 50%); top: var(--y, 50%);
+  width: 0; height: 0; direction: ltr;
+}
+.tz-callout__dot {
+  position: absolute; width: 8px; height: 8px; margin: -4px; border-radius: var(--radius-round);
+  background: var(--ink); transition: transform var(--tz-dur-fast) var(--tz-ease);
+}
+.tz-callout__line {
+  position: absolute; height: var(--stroke-hair); width: var(--len, 80px);
+  background: var(--ink); transform-origin: 0 50%; left: 0; top: 0;
+  transform: rotate(var(--angle, 120deg)); transition: width var(--tz-dur) var(--tz-ease);
+}
+.tz-callout__chip {
+  position: absolute; white-space: nowrap; direction: rtl;
+  left: calc(cos(var(--angle, 120deg)) * var(--len, 80px));
+  top: calc(sin(var(--angle, 120deg)) * var(--len, 80px));
+  translate: var(--chip-shift, -100%) -50%;
+  padding: 0 var(--space-2); border-radius: var(--radius-chip);
+  background: var(--paper-raised); color: var(--ink);
+  font: 500 14px / 24px var(--font-sans);
+  transition: opacity var(--tz-dur-fast) var(--tz-ease);
+}
+.tz-callout--heat  .tz-callout__chip { color: var(--heat-text); }
+.tz-callout--water .tz-callout__chip { color: var(--water); }
+.tz-callout--part  .tz-callout__chip { color: var(--olive-text); }
+
+/* ── Inset (magnifier circle) ────────────────────────────── */
+.tz-inset {
+  position: absolute; left: var(--x, 6%); top: var(--y, 6%);
+  width: var(--size, 38%); aspect-ratio: 1; border-radius: var(--radius-round);
+  border: var(--stroke-frame) solid var(--ink); background: var(--paper-raised);
+  overflow: hidden; transition: transform var(--tz-dur) var(--tz-ease), opacity var(--tz-dur) var(--tz-ease);
+}
+.tz-inset > svg { width: 100%; height: 100%; display: block; }
+
+/* ── Counter / numeral ───────────────────────────────────── */
+.tz-counter { display: inline-flex; align-items: center; gap: var(--space-3); direction: rtl; font-family: var(--font-sans); color: var(--ink); }
+.tz-counter__num {
+  font: 700 var(--num-size, 96px) / 1 var(--font-numeral);
+  font-variant-numeric: tabular-nums; color: var(--heat); direction: ltr;
+}
+.tz-counter--water .tz-counter__num { color: var(--water); }
+.tz-counter__unit { font: 600 16px / 1.5 var(--font-sans); max-width: 18ch; }
+
+/* ── Brand mark: stopwatch ring + name ───────────────────── */
+.tz-brand { display: inline-flex; align-items: center; gap: var(--space-2); direction: rtl; color: var(--ink); font-family: var(--font-sans); }
+.tz-brand__name { font: 500 var(--brand-size, 14px) / 1 var(--font-sans); color: var(--ink-muted); }
+.tz-watch { width: var(--watch-size, 32px); height: auto; overflow: visible; }
+.tz-watch .crown { fill: var(--ink); }
+.tz-watch .track { fill: none; stroke: var(--line-soft); stroke-width: 2; opacity: .35; }
+.tz-watch .arc   { fill: none; stroke: var(--heat); stroke-width: 2; transition: stroke-dashoffset var(--tz-ring) linear; }
+.tz-watch .core  { fill: var(--heat); }
+
+/* ── Category tag ────────────────────────────────────────── */
+.tz-tag {
+  display: inline-flex; flex-direction: column; align-items: center; gap: 6px;
+  font: 500 12px / 16px var(--font-sans); color: var(--heat-text); text-decoration: none;
+}
+.tz-tag::after { content: ""; width: 3.5em; height: var(--stroke-hair); background: currentColor; }
+
+/* ── Legend (numbered parts) ─────────────────────────────── */
+.tz-legend {
+  direction: rtl; list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); gap: var(--space-2) var(--space-6);
+  font: 500 14px / 24px var(--font-sans); color: var(--ink);
+}
+.tz-legend li { display: flex; align-items: center; gap: var(--space-2); }
+.tz-num {
+  flex: none; display: inline-grid; place-items: center; width: 24px; height: 24px;
+  border: var(--stroke-line) solid var(--ink); border-radius: var(--radius-round);
+  font: 600 12px / 1 var(--font-sans); background: var(--paper-raised); color: var(--ink);
+}
+
+/* ── Ask box (outro CTA) ─────────────────────────────────── */
+.tz-ask {
+  position: relative; direction: rtl; text-align: center;
+  border: var(--stroke-line) solid var(--ink); padding: var(--space-6) var(--space-4);
+  display: grid; gap: var(--space-2); font-family: var(--font-sans); color: var(--ink);
+}
+.tz-ask::before {
+  content: ""; position: absolute; inset: -8px; pointer-events: none;
+  --c: var(--ink); --l: 10px; --w: var(--stroke-hair);
+  background:
+    linear-gradient(var(--c), var(--c)) top right / var(--l) var(--w),
+    linear-gradient(var(--c), var(--c)) top right / var(--w) var(--l),
+    linear-gradient(var(--c), var(--c)) top left / var(--l) var(--w),
+    linear-gradient(var(--c), var(--c)) top left / var(--w) var(--l),
+    linear-gradient(var(--c), var(--c)) bottom right / var(--l) var(--w),
+    linear-gradient(var(--c), var(--c)) bottom right / var(--w) var(--l),
+    linear-gradient(var(--c), var(--c)) bottom left / var(--l) var(--w),
+    linear-gradient(var(--c), var(--c)) bottom left / var(--w) var(--l);
+  background-repeat: no-repeat;
+}
+.tz-ask__lead { font: 500 20px / 1.5 var(--font-sans); }
+.tz-ask__line { font: 600 24px / 1.5 var(--font-sans); color: var(--heat); }
+.tz-ask__blank {
+  display: inline-block; min-width: 4.5em; border-bottom: var(--stroke-line) solid currentColor;
+  margin-inline: .25em; position: relative; vertical-align: baseline; height: 1em;
+}
+.tz-ask__blank::after {
+  content: ""; position: absolute; inset-inline-start: 1.2em; bottom: 2px; width: 2px; height: 1.1em;
+  background: var(--ink); animation: tz-caret 1s steps(1) infinite;
+}
+.tz-ask input.tz-ask__blank {
+  font: inherit; color: var(--ink); background: transparent; border-width: 0 0 var(--stroke-line) 0;
+  border-color: var(--heat); width: 6.5em; height: auto; text-align: center; padding: 0; font-size: .8em;
+}
+.tz-ask input.tz-ask__blank::placeholder { color: var(--ink-muted); }
+label.tz-ask__line { white-space: nowrap; }
+.tz-ask input.tz-ask__blank:focus { outline: 2px solid var(--focus); outline-offset: 4px; }
+
+/* ── Video card (content page) ───────────────────────────── */
+.tz-card {
+  direction: rtl; display: grid; gap: var(--space-3); color: var(--ink);
+  text-decoration: none; font-family: var(--font-sans);
+}
+.tz-card__thumb {
+  position: relative; aspect-ratio: 9 / 16; max-width: 100%;
+  border: var(--stroke-frame) solid var(--ink); background-color: var(--paper); overflow: hidden;
+}
+.tz-card__thumb svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.tz-card__shell { transition: opacity var(--tz-dur-slow) var(--tz-ease); }
+.tz-card__inner { opacity: 0; transition: opacity var(--tz-dur-slow) var(--tz-ease); }
+.tz-card__dur {
+  position: absolute; inset-block-end: var(--space-2); inset-inline-start: var(--space-2);
+  padding: 0 var(--space-2); background: var(--paper-raised); border: var(--stroke-hair) solid var(--ink);
+  font: 500 12px / 22px var(--font-sans); font-variant-numeric: tabular-nums; direction: ltr;
+}
+.tz-card__play {
+  position: absolute; inset-block-start: var(--space-2); inset-inline-end: var(--space-2);
+  width: 36px; height: 36px; display: grid; place-items: center;
+  background: var(--heat); border-radius: var(--radius-round);
+  opacity: 0; transform: scale(.85); transition: opacity var(--tz-dur-fast) var(--tz-ease), transform var(--tz-dur-fast) var(--tz-ease);
+}
+.tz-card__play svg { position: static; width: 14px; height: 14px; fill: var(--on-heat); }
+.tz-card__meta { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-2); }
+.tz-card__title { margin: 0; font: 600 20px / 30px var(--font-sans); text-wrap: balance; }
+.tz-card__title span {
+  background: linear-gradient(currentColor, currentColor) no-repeat right bottom / 0 var(--stroke-line);
+  transition: background-size var(--tz-dur) var(--tz-ease);
+}
+.tz-card__time { font: 500 12px / 16px var(--font-sans); color: var(--ink-muted); }
+.tz-card:hover .tz-card__shell, .tz-card:focus-visible .tz-card__shell { opacity: .22; }
+.tz-card:hover .tz-card__inner, .tz-card:focus-visible .tz-card__inner { opacity: 1; }
+.tz-card:hover .tz-card__play, .tz-card:focus-visible .tz-card__play { opacity: 1; transform: none; }
+.tz-card:hover .tz-card__title span, .tz-card:focus-visible .tz-card__title span { background-size: 100% var(--stroke-line); }
+.tz-card:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
+
+/* ── Drawing classes for inline SVG illustrations ────────── */
+.tz-ink   { fill: none; stroke: var(--ink); stroke-width: var(--stroke-line); stroke-linejoin: round; stroke-linecap: round; }
+.tz-ink-h { fill: none; stroke: var(--ink); stroke-width: var(--stroke-heavy); stroke-linejoin: round; }
+.tz-f-paper  { fill: var(--paper-raised); }
+.tz-f-khaki  { fill: var(--khaki); }
+.tz-f-deep   { fill: var(--khaki-deep); }
+.tz-f-panel  { fill: var(--panel); }
+.tz-f-heat   { fill: var(--heat); }
+.tz-f-hot    { fill: var(--heat-soft); }
+.tz-f-water  { fill: var(--water-body); }
+.tz-f-part   { fill: var(--olive); }
+.tz-s-heat   { fill: none; stroke: var(--heat); stroke-width: 6; stroke-linecap: round; }
+.tz-s-water  { fill: none; stroke: var(--water); stroke-width: var(--stroke-line); }
+.tz-pat-hatch { fill: url(#tz-hatch); }
+.tz-pat-dots  { fill: url(#tz-dots); }
+.tz-pat-lines { fill: url(#tz-lines); }
+.tz-pat-stroke { stroke: var(--khaki-deep); stroke-width: 1; }
+.tz-pat-dot   { fill: var(--ink); }
+
+/* ── Ambient loops (run while the scene holds) ───────────── */
+.tz-bubble { fill: none; stroke: var(--water); stroke-width: var(--stroke-line); animation: tz-rise var(--rise, 3.2s) var(--tz-ease-io) infinite; animation-delay: var(--d, 0s); transform-box: fill-box; }
+.tz-steam  { fill: none; stroke: var(--heat); stroke-width: 1.5; stroke-linecap: round; animation: tz-waver 1.6s ease-in-out infinite alternate; animation-delay: var(--d, 0s); transform-box: fill-box; transform-origin: 50% 100%; }
+.tz-spin   { animation: tz-spin 2.4s linear infinite; transform-box: fill-box; transform-origin: 50% 50%; }
+.tz-wave   { animation: tz-wave 2.8s var(--tz-ease-io) infinite alternate; }
+
+@keyframes tz-rise  { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { transform: translateY(-60px); opacity: 0; } }
+@keyframes tz-waver { from { transform: translateX(-1.5px) scaleY(.92); opacity: .55; } to { transform: translateX(1.5px) scaleY(1.06); opacity: 1; } }
+@keyframes tz-spin  { to { transform: rotate(360deg); } }
+@keyframes tz-wave  { from { transform: translateX(0); } to { transform: translateX(-12px); } }
+@keyframes tz-caret { 50% { opacity: 0; } }
+
+/* ── Sequenced motion (TebEzay.play) ─────────────────────────
+   Resting state is the final frame. play() adds .tz-armed to the
+   root, which sets each verb's start state; each element gets
+   .tz-on at its beat and transitions to rest.                  */
+.tz-armed [data-tz] { transition-property: opacity, transform, color, background-size, width, stroke-dashoffset; transition-duration: var(--tz-dur); transition-timing-function: var(--tz-ease); }
+.tz-armed [data-tz="fade"]:not(.tz-on),
+.tz-armed [data-tz="pop"]:not(.tz-on) { opacity: 0; }
+.tz-armed [data-tz="pop"]:not(.tz-on) { transform: scale(.85); }
+.tz-armed [data-tz="rise"]:not(.tz-on) { opacity: 0; transform: translateY(12px); }
+.tz-armed [data-tz="ink"]:not(.tz-on) { color: var(--ink-ghost); }
+.tz-armed [data-tz="ink"]:not(.tz-on) .tz-k { color: var(--ink-ghost); }
+.tz-armed [data-tz="type"] .tz-w { transition: opacity var(--tz-dur-fast) var(--tz-ease), color var(--tz-dur) var(--tz-ease); }
+.tz-armed [data-tz="type"] .tz-w:not(.tz-on) { opacity: 0; }
+.tz-armed [data-tz="type"] .tz-w.tz-fresh { color: var(--ink-ghost); }
+.tz-armed [data-tz="key"]:not(.tz-on) { color: var(--ink); }
+.tz-armed [data-tz="underline"]:not(.tz-on) { background-size: 0 var(--stroke-line); }
+.tz-armed [data-tz="draw"] :is(path, line, polyline, circle, rect, ellipse) { transition: stroke-dashoffset var(--tz-dur-slow) var(--tz-ease-io); stroke-dasharray: 100; }
+.tz-armed [data-tz="draw"]:not(.tz-on) :is(path, line, polyline, circle, rect, ellipse) { stroke-dashoffset: 100; }
+.tz-armed [data-tz="ring"] .arc { stroke-dasharray: 100; }
+.tz-armed [data-tz="ring"]:not(.tz-on) .arc { stroke-dashoffset: 100; }
+.tz-armed [data-tz="xray"] { transition-duration: var(--tz-dur-slow); }
+.tz-armed [data-tz="xray"].tz-on { opacity: .25; }
+.tz-armed [data-tz="callout"]:not(.tz-on) .tz-callout__dot { transform: scale(0); }
+.tz-armed [data-tz="callout"]:not(.tz-on) .tz-callout__line { width: 0; }
+.tz-armed [data-tz="callout"]:not(.tz-on) .tz-callout__chip { opacity: 0; }
+.tz-armed [data-tz="callout"].tz-on .tz-callout__line { transition-delay: var(--tz-dur-fast); }
+.tz-armed [data-tz="callout"].tz-on .tz-callout__chip { transition-delay: calc(var(--tz-dur-fast) + var(--tz-dur)); }
+
+/* ── Replay control used in previews and the content page ── */
+.tz-replay {
+  font: 500 12px / 1 var(--font-sans); color: var(--ink); background: var(--paper-raised);
+  border: var(--stroke-hair) solid var(--ink); border-radius: var(--radius-0);
+  padding: 6px 10px; cursor: pointer;
+}
+.tz-replay:hover { background: var(--panel); }
+.tz-replay:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tz-bubble, .tz-steam, .tz-spin, .tz-wave, .tz-ask__blank::after { animation: none; }
+  .tz-card__shell, .tz-card__inner, .tz-card__play, .tz-card__title span { transition: none; }
+}
+
+/* ── Iso3D: faces of the 3D isometric cutaway. Light comes from the top-left:
+   top = lightest, +y (left) = khaki, +x (right) = khaki-deep + hatch. ───────── */
+.iso-top   { fill: var(--paper-raised); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.iso-y     { fill: var(--khaki); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.iso-x     { fill: var(--khaki-deep); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.iso-wall  { fill: color-mix(in srgb, var(--khaki) 55%, var(--paper)); stroke: var(--ink); stroke-width: 1.6; }
+.iso-wall2 { fill: color-mix(in srgb, var(--khaki) 80%, var(--paper)); stroke: var(--ink); stroke-width: 1.6; }
+.iso-floor { fill: color-mix(in srgb, var(--paper-raised) 60%, var(--paper)); stroke: var(--ink); stroke-width: 1.6; }
+.iso-steel { fill: color-mix(in srgb, var(--khaki) 35%, var(--paper-raised)); stroke: var(--ink); stroke-width: 1.4; }
+.iso-glass { fill: color-mix(in srgb, var(--water-body) 45%, var(--paper-raised)); stroke: var(--ink); stroke-width: 1.3; }
+.iso-water { fill: var(--water-body); stroke: var(--water); stroke-width: 1.2; }
+.iso-water-side { fill: var(--water); stroke: var(--ink); stroke-width: 1.2; }
+.iso-part     { fill: var(--olive); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.iso-part-x   { fill: color-mix(in srgb, var(--olive) 70%, var(--ink)); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.iso-part-top { fill: color-mix(in srgb, var(--olive) 55%, var(--paper)); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.iso-hot      { fill: var(--heat); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.iso-hot-top  { fill: var(--heat-soft); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.iso-ink   { fill: var(--ink); }
+.iso-wire  { fill: none; stroke: var(--ink); stroke-width: .8; opacity: .55; }
+.iso-wire-h { fill: none; stroke: var(--ink); stroke-width: 1.6; }
+.iso-mesh  { fill: none; stroke: var(--ink); stroke-width: 1.2; stroke-dasharray: 2 2; }
+.iso-pipe-o { fill: none; stroke: var(--ink); stroke-width: 8; stroke-linejoin: round; stroke-linecap: round; }
+.iso-pipe-i { fill: none; stroke: color-mix(in srgb, var(--water-body) 40%, var(--paper-raised)); stroke-width: 5; stroke-linejoin: round; stroke-linecap: round; }
+.iso-pipe-dirty { fill: none; stroke: color-mix(in srgb, var(--khaki-deep) 70%, var(--paper)); stroke-width: 5; stroke-linejoin: round; stroke-linecap: round; }
+.iso-heat  { fill: none; stroke: var(--heat); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+.iso-heat-glow { fill: none; stroke: var(--heat-soft); stroke-width: 13; stroke-linecap: round; stroke-linejoin: round; opacity: .85; }
+.iso-jet   { fill: none; stroke: var(--water); stroke-width: 1.8; stroke-dasharray: 6 6; stroke-linecap: round; }
+.iso-halo  { fill: none; stroke: #e2a92c; stroke-width: 2.5; }
+.iso-label { font: 700 12px var(--font-sans); fill: var(--c, var(--ink)); paint-order: stroke; stroke: var(--paper); stroke-width: 4px; stroke-linejoin: round; }

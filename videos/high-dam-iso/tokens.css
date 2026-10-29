@@ -1,0 +1,71 @@
+/* طب إزاي؟ — generated from tokens.json */
+:root, [data-theme="light"] {
+  --paper: #ebe3cd;
+  --paper-raised: #f2e9d6;
+  --paper-grid: #d7ceb7;
+  --panel: #dbcdb1;
+  --khaki: #cbbfa7;
+  --khaki-deep: #a2967e;
+  --ink: #1e1712;
+  --ink-muted: #5f554a;
+  --ink-ghost: #9c9282;
+  --line-soft: #7e7266;
+  --heat: #c15636;
+  --heat-text: #9e4129;
+  --heat-soft: #ddad92;
+  --on-heat: #fbf4e4;
+  --water: #3c6484;
+  --water-body: #bec3bd;
+  --olive: #929f7a;
+  --olive-text: #55633a;
+  --focus: #1e1712;
+}
+[data-theme="dark"] {
+  --paper: #1b1915;
+  --paper-raised: #25221c;
+  --paper-grid: #2f2b24;
+  --panel: #2b271f;
+  --khaki: #4a4335;
+  --khaki-deep: #3a3429;
+  --ink: #ece3cc;
+  --ink-muted: #b3a894;
+  --ink-ghost: #6b6353;
+  --line-soft: #8a8070;
+  --heat: #e0795a;
+  --heat-text: #ec8d6f;
+  --heat-soft: #6e3c2c;
+  --on-heat: #1b1915;
+  --water: #7fa6c6;
+  --water-body: #2f3a3d;
+  --olive: #7d8a62;
+  --olive-text: #b2c08e;
+  --focus: #ece3cc;
+}
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --grid-cell: 40px;
+  --radius-0: 0;
+  --radius-chip: 2px;
+  --radius-round: 50%;
+  --stroke-hair: 1px;
+  --stroke-line: 1.5px;
+  --stroke-frame: 2px;
+  --stroke-heavy: 3px;
+  --font-sans: "Noto Sans Arabic", "Segoe UI", Tahoma, system-ui, sans-serif;
+  --font-numeral: "Noto Serif", Georgia, "Times New Roman", serif;
+}
+.display { font-family: var(--font-sans); font-size: 44px; line-height: 60px; font-weight: 600; }
+.title { font-family: var(--font-sans); font-size: 30px; line-height: 42px; font-weight: 600; }
+.card-title { font-family: var(--font-sans); font-size: 20px; line-height: 30px; font-weight: 600; }
+.caption { font-family: var(--font-sans); font-size: 24px; line-height: 38px; font-weight: 500; }
+.body { font-family: var(--font-sans); font-size: 18px; line-height: 32px; font-weight: 400; }
+.label { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 500; }
+.micro { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 500; }
+.numeral { font-family: var(--font-numeral); font-size: 96px; line-height: 96px; font-weight: 700; }
+.numeral-sm { font-family: var(--font-numeral); font-size: 40px; line-height: 44px; font-weight: 700; }

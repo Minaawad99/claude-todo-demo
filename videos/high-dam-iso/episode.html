@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="bundle.css">
+<style>
+  * { box-sizing: border-box; transition: none !important; animation: none !important; }
+  html, body { margin: 0; width: 720px; height: 1280px; overflow: hidden; background: var(--paper); }
+  .layer { position: absolute; inset: 0; opacity: 0; }
+
+  /* sheets (intro + summary) */
+  .sheet { position: absolute; inset: 28px; margin: 0; display: flex; flex-direction: column; align-items: center; gap: 22px; padding: 56px 40px 40px; text-align: center; }
+  .sheet .tz-tag { font-size: 22px; line-height: 30px; gap: 10px; }
+  .q { margin: 0; font: 600 50px / 72px var(--font-sans); color: var(--ink); text-wrap: balance; }
+  .sheet-art { position: relative; width: 600px; height: 520px; border: var(--stroke-frame) solid var(--ink); }
+  .sheet-art svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .tz-counter__unit { font-size: 26px; max-width: 12ch; text-align: right; }
+  .big .tz-counter__num { --num-size: 150px; }
+
+  /* brand */
+  #brand { display: grid; place-items: center; align-content: center; gap: 28px; text-align: center; }
+  #brand svg { width: 220px; height: 240px; overflow: visible; }
+  #brand .title { font-size: 64px; line-height: 80px; margin: 0; color: var(--ink); }
+  #brand .tz-caption { font-size: 38px; }
+
+  /* scene frame */
+  #scene .tz-frame { position: absolute; inset: 0; border-width: 0; aspect-ratio: auto; grid-template-rows: 880px auto 1fr; }
+  #stage svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .tz-frame__caption { padding: 40px 40px 0; gap: 6px; }
+  .tz-caption { font-size: 36px; line-height: 1.55; }
+  .tz-w { display: inline-block; }
+  .corner { position: absolute; bottom: 26px; left: 30px; display: flex; gap: 10px; align-items: center; direction: rtl; font: 500 20px var(--font-sans); color: var(--ink-muted); }
+  .corner svg { width: 34px; height: 36px; }
+  .reading { position: absolute; top: 40px; left: 40px; background: var(--paper-raised); border: var(--stroke-frame) solid var(--ink); padding: 10px 22px 14px; }
+  .reading .tz-counter__num { --num-size: 64px; }
+  .reading .tz-counter__unit { font-size: 22px; }
+
+  /* inset magnifier */
+  .tz-inset { --x: auto; left: auto; right: 34px; top: 34px; width: 300px; }
+
+  /* summary */
+  .tz-legend { --cols: 2; font-size: 24px; line-height: 36px; width: 600px; gap: 6px 30px; }
+  .tz-legend .tz-num, .pin { width: 36px; height: 36px; font-size: 18px; }
+  .pin { position: absolute; translate: -50% -50%; }
+  .tz-ask { width: 600px; }
+  .tz-ask__lead { font-size: 26px; }
+  .tz-ask__line { font-size: 34px; }
+
+  /* drawings: keep outlines crisp at every zoom */
+  svg .iso-top, svg .iso-x, svg .iso-y, svg .iso-wall, svg .iso-wall2, svg .iso-floor, svg .iso-steel, svg .iso-glass,
+  svg .iso-water, svg .iso-water-side, svg .iso-part, svg .iso-part-x, svg .iso-part-top, svg .iso-hot, svg .iso-hot-top { vector-effect: non-scaling-stroke; stroke-width: 2px; }
+  svg .iso-wire-h, svg .tower { vector-effect: non-scaling-stroke; fill: none; stroke: var(--ink); stroke-width: 2px; stroke-linecap: round; }
+  svg .wire { vector-effect: non-scaling-stroke; fill: none; stroke: var(--ink); stroke-width: 1.6px; }
+  svg .iso-halo { vector-effect: non-scaling-stroke; stroke-width: 4px; }
+  svg .glow { fill: var(--heat-soft); }
+  svg .lbl { font: 700 var(--fs, 10px) var(--font-sans); fill: var(--c, var(--ink)); paint-order: stroke; stroke: var(--paper); stroke-width: calc(var(--fs, 10px) * .35); stroke-linejoin: round; }
+  svg .dot-w { fill: var(--water); }
+  svg .dot-e { fill: var(--heat); }
+</style>
+</head>
+<body>
+
+<!-- intro sheet -->
+<div class="layer" id="intro">
+  <div class="sheet tz-frame--sheet">
+    <span class="tz-tag" id="i-tag">الكهربا</span>
+    <h1 class="q" id="i-q">إزاي مية النيل بتنوّر بيتك من على بُعد 800 كيلو؟</h1>
+    <div class="sheet-art tz-paper"><svg id="i-svg" viewBox="0 0 360 410"></svg></div>
+    <div class="tz-counter big" id="i-counter"><span class="tz-counter__num" id="i-num">800</span><span class="tz-counter__unit">كيلو من السد العالي لحد بيتك</span></div>
+  </div>
+</div>
+
+<!-- brand -->
+<div class="layer" id="brand">
+  <svg viewBox="-60 -70 120 130" aria-hidden="true">
+    <rect x="-9" y="-68" width="18" height="10" fill="var(--ink)"/>
+    <rect x="-3" y="-60" width="6" height="8" fill="var(--ink)"/>
+    <circle r="50" fill="none" stroke="var(--line-soft)" stroke-width="4" opacity=".35"/>
+    <circle id="b-arc" r="50" fill="none" stroke="var(--heat)" stroke-width="4" pathLength="100" stroke-dasharray="100" transform="rotate(-90)"/>
+    <line id="b-hand" x1="0" y1="0" x2="0" y2="-38" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
+    <circle r="7" fill="var(--heat)"/>
+  </svg>
+  <p class="title">طب إزاي؟</p>
+  <p class="tz-caption" id="b-line">هشرحهالك في <span class="tz-k tz-k--heat">دقيقة.</span></p>
+</div>
+
+<!-- scenes -->
+<div class="layer" id="scene">
+  <figure class="tz-frame" style="margin:0">
+    <div class="tz-frame__stage tz-paper" id="stage">
+      <svg id="w-svg" viewBox="0 0 360 410"></svg>
+      <div class="tz-inset" id="inset"><svg id="m-svg" viewBox="0 0 100 100"></svg></div>
+      <div class="reading tz-counter" id="reading"><span class="tz-counter__num" id="r-num">0</span><span class="tz-counter__unit" id="r-unit"></span></div>
+    </div>
+    <div class="tz-frame__rule"></div>
+    <figcaption class="tz-frame__caption">
+      <p class="tz-caption" id="c1"></p>
+      <p class="tz-caption" id="c2"></p>
+    </figcaption>
+  </figure>
+  <div class="corner"><svg viewBox="-60 -70 120 130"><rect x="-9" y="-68" width="18" height="10" fill="var(--ink)"/><circle r="50" fill="none" stroke="var(--heat)" stroke-width="8"/><circle r="12" fill="var(--heat)"/></svg>طب إزاي؟</div>
+</div>
+
+<!-- summary sheet -->
+<div class="layer" id="summary">
+  <div class="sheet tz-frame--sheet" style="gap:18px;padding-top:44px">
+    <h1 class="q" style="font-size:40px;line-height:58px">إزاي مية النيل بتنوّر بيتك من على بُعد 800 كيلو؟</h1>
+    <div class="sheet-art tz-paper" id="s-art" style="height:440px"><svg id="s-svg" viewBox="0 0 360 410"></svg></div>
+    <ol class="tz-legend" id="s-legend"></ol>
+    <div class="tz-counter" id="s-counter"><span class="tz-counter__num" style="--num-size:96px">800</span><span class="tz-counter__unit">كيلو بين المية واللمبة</span></div>
+    <div class="tz-ask" id="s-ask"><span class="tz-ask__lead">قولولنا...</span><span class="tz-ask__line">عايزين تعرفوا طب إزاي <span class="tz-ask__blank"></span>؟</span></div>
+  </div>
+</div>
+
+<script src="bundle.js"></script>
+<script>
+TebEzay.patterns();
+const NS = 'http://www.w3.org/2000/svg';
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, k) => a + (b - a) * k;
+const ease = k => { const x = clamp(k); return 1 - Math.pow(1 - x, 3); };                 // ~ --tz-ease
+const easeIO = k => { const x = clamp(k); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }; // ~ --tz-ease-io
+const $ = id => document.getElementById(id);
+
+// ── The model: one 3D cutaway of the whole journey ─────────────
+const K = 0.3, OX = 214, OY = 150;
+function world(svg) {
+  const root = document.createElementNS(NS, 'g');
+  svg.appendChild(root);
+  const iso = TebEzay.iso(root, { scale: K, x: OX, y: OY });
+  const { box, face, cyl, pipe, ring, el, group, line, P, d } = iso;
+  const g = group(root);
+  const h = {};
+  // Lake Nasser (behind the dam)
+  box(g, -130, 130, -330, -40, -16, 70, { z: 'iso-water', x: 'iso-water-side', y: 'iso-water-side', hatch: false });
+  h.waves = group(g);
+  // the dam: rock-fill, cut open at x = 130
+  face(g, [[-130, 8, 90], [130, 8, 90], [130, 70, -16], [-130, 70, -16]], 'iso-y');
+  face(g, [[-130, 8, 90], [130, 8, 90], [130, 70, -16], [-130, 70, -16]], 'tz-pat-dots', { style: 'opacity:.35' });
+  face(g, [[-130, -8, 90], [130, -8, 90], [130, 8, 90], [-130, 8, 90]], 'iso-top');
+  face(g, [[130, -70, -16], [130, -8, 90], [130, 8, 90], [130, 70, -16]], 'iso-x');
+  face(g, [[130, -70, -16], [130, -8, 90], [130, 8, 90], [130, 70, -16]], 'tz-pat-hatch');
+  // ground and the Nile after the dam
+  box(g, -130, 70, 70, 720, -16, 0, { z: 'iso-floor' });
+  box(g, 70, 130, 70, 720, -16, -5, { z: 'iso-water', x: 'iso-water-side', y: 'iso-water-side', hatch: false });
+  // the tunnel, drawn on the cut face
+  h.tunnelPts = [[130, -78, 34], [130, -20, 28], [130, 40, 6], [130, 84, 6]];
+  pipe(g, h.tunnelPts);
+  // power station: turbines and generators inside, the hall around them
+  h.units = [];
+  for (const cx of [50, 100]) {
+    const cy = 98;
+    cyl(g, cx, cy, 15, 0, 9, 'iso-steel', 'iso-top');
+    const rot = group(g);
+    line(g, [[cx, cy, 12], [cx, cy, 18]], 'iso-wire-h');
+    cyl(g, cx, cy, 13, 18, 36, 'iso-steel', 'iso-top');
+    h.units.push({ cx, cy, rot });
+  }
+  h.hall = group(g);
+  box(h.hall, 10, 130, 70, 126, 0, 46);
+  // step-up transformer
+  box(g, -52, -16, 138, 172, 0, 24);
+  for (let i = 0; i < 4; i++) line(g, [[-50 + i * 9, 172, 4], [-50 + i * 9, 172, 20]], 'wire');
+  cyl(g, -40, 150, 3, 24, 34, 'iso-steel', 'iso-top');
+  cyl(g, -26, 160, 3, 24, 34, 'iso-steel', 'iso-top');
+  // towers
+  const tower = (x0, y0) => {
+    const tg = group(g, { class: 'tower' });
+    const b = 12, t = 3, H = 118;
+    const legs = [[-1, -1], [1, -1], [1, 1], [-1, 1]];
+    legs.forEach(([sx, sy]) => line(tg, [[x0 + sx * b, y0 + sy * b, 0], [x0 + sx * t, y0 + sy * t, H]], 'tower'));
+    for (let k = 0; k < 4; k++) {
+      const z0 = k * H / 4, z1 = (k + 1) * H / 4, w0 = b - (b - t) * k / 4, w1 = b - (b - t) * (k + 1) / 4;
+      line(tg, [[x0 + w0, y0 + w0, z0], [x0 - w1, y0 + w1, z1]], 'tower');
+      line(tg, [[x0 + w0, y0 - w0, z0], [x0 + w1, y0 + w1, z1]], 'tower');
+    }
+    line(tg, [[x0 - 30, y0, H - 8], [x0 + 30, y0, H - 8]], 'tower');
+    return [[x0 - 28, y0, H - 10], [x0 + 28, y0, H - 10]];
+  };
+  const T1 = tower(-60, 270), T2 = tower(-60, 440);
+  const sag = (a, b, s) => { const out = []; for (let i = 0; i <= 12; i++) { const k = i / 12; out.push([lerp(a[0], b[0], k), lerp(a[1], b[1], k), lerp(a[2], b[2], k) - s * Math.sin(Math.PI * k)]); } return out; };
+  // pole transformer + house (cut open)
+  line(g, [[-10, 560, 0], [-10, 560, 92]], 'iso-wire-h');
+  cyl(g, -10, 560, 7, 62, 78, 'iso-steel', 'iso-top');
+  const H0 = 600, H1 = 700, X0 = -125, X1 = -30, HZ = 66;
+  face(g, [[X0, H0, 0], [X0, H1, 0], [X0, H1, HZ], [X0, H0, HZ]], 'iso-wall');
+  face(g, [[X0, H0, 0], [X1, H0, 0], [X1, H0, HZ], [X0, H0, HZ]], 'iso-wall2');
+  box(g, X0, X1, H0, H1, -4, 0, { z: 'iso-floor' });
+  face(g, [[-105, H0, 22], [-80, H0, 22], [-80, H0, 48], [-105, H0, 48]], 'iso-glass');
+  box(g, -60, -40, H0, H0 + 3, 28, 44, { z: 'iso-top' });                  // meter
+  box(g, -110, -86, 640, 676, 0, 18);                                        // table
+  line(g, [[-78, 650, HZ], [-78, 650, 50]], 'iso-wire-h');
+  const bp = P(-78, 650, 46);
+  h.glow = el('circle', { cx: bp[0], cy: bp[1], r: 9, class: 'glow', opacity: 0 }, g);
+  h.bulb = el('circle', { cx: bp[0], cy: bp[1], r: 3.2, class: 'tz-f-paper', stroke: 'var(--ink)', 'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke' }, g);
+  // conductors
+  const W = [
+    [[40, 98, 40], [10, 118, 44], [-26, 160, 34]],
+    sag([-26, 160, 34], T1[1], 4), sag(T1[1], T2[1], 16), sag(T2[1], [-10, 560, 90], 10), sag([-10, 560, 80], [-50, H0, 40], 4)
+  ];
+  W.forEach(p => el('path', { d: d(p, false), class: 'wire' }, g));
+  sag([-40, 150, 34], T1[0], 4).length && el('path', { d: d(sag([-40, 150, 34], T1[0], 4), false), class: 'wire' }, g);
+  el('path', { d: d(sag(T1[0], T2[0], 16), false), class: 'wire' }, g);
+  h.elecPts = [].concat(...W);
+  h.waterPts = [[60, -280, 70], [110, -160, 60], ...h.tunnelPts, [100, 98, 4], [100, 132, -5], [100, 720, -5]];
+  h.halo = el('path', { class: 'iso-halo', opacity: 0 }, root);
+  h.dots = group(root);
+  h.iso = iso;
+  return h;
+}
+
+// a polyline in screen space, sampled by length
+function track(iso, pts) {
+  const s = pts.map(p => iso.P(...p));
+  const seg = [];
+  let L = 0;
+  for (let i = 1; i < s.length; i++) { const l = Math.hypot(s[i][0] - s[i - 1][0], s[i][1] - s[i - 1][1]); seg.push([L, l, s[i - 1], s[i]]); L += l; }
+  return { L, at(u) { u = ((u % L) + L) % L; for (const [a, l, p, q] of seg) if (u <= a + l) { const k = (u - a) / l; return [lerp(p[0], q[0], k), lerp(p[1], q[1], k)]; } return s[s.length - 1]; } };
+}
+
+function animateWorld(h, t, zoom, opts) {
+  const { iso } = h;
+  // turbines turn in 3D
+  for (const u of h.units) {
+    while (u.rot.firstChild) u.rot.removeChild(u.rot.firstChild);
+    for (let b = 0; b < 3; b++) iso.rotor(u.rot, { x: u.cx, y: u.cy, z: 10, length: 13, width: 2.4, thick: 2, angle: t * 4 + b * Math.PI / 3 });
+  }
+  // particles
+  while (h.dots.firstChild) h.dots.removeChild(h.dots.firstChild);
+  const r = 2.4 / zoom;
+  if (opts.water) { h.wt = h.wt || track(iso, h.waterPts); for (let i = 0; i < 26; i++) { const p = h.wt.at(t * 34 + i * h.wt.L / 26); iso.el('circle', { cx: p[0], cy: p[1], r, class: 'dot-w' }, h.dots); } }
+  if (opts.elec) { h.et = h.et || track(iso, h.elecPts); const n = 30, k = clamp(opts.elec); for (let i = 0; i < n; i++) { const u = t * 60 + i * h.et.L / n; if ((u % h.et.L) > h.et.L * k) continue; const p = h.et.at(u); iso.el('circle', { cx: p[0], cy: p[1], r: r * 1.1, class: 'dot-e' }, h.dots); } }
+  h.glow.setAttribute('opacity', (opts.lamp || 0) * .9);
+  h.bulb.setAttribute('class', opts.lamp > .5 ? 'tz-f-hot' : 'tz-f-paper');
+  h.hall.setAttribute('opacity', opts.xray == null ? 1 : lerp(1, .25, opts.xray));
+}
+
+function setCam(svg, cx, cy, z) {
+  svg.setAttribute('viewBox', `${(cx - 180 / z).toFixed(2)} ${(cy - 205 / z).toFixed(2)} ${(360 / z).toFixed(2)} ${(410 / z).toFixed(2)}`);
+  const hp = document.querySelector('#tz-hatch');
+  if (hp) hp.setAttribute('patternTransform', `rotate(45) scale(${(1 / z).toFixed(3)})`);
+  const dp = document.querySelector('#tz-dots');
+  if (dp) dp.setAttribute('patternTransform', `scale(${(1 / z).toFixed(3)})`);
+}
+
+const W1 = world($('w-svg')), WI = world($('i-svg')), WS = world($('s-svg'));
+const P = W1.iso.P;
+const camAt = (x, y, z, zoom) => { const p = P(x, y, z); return [p[0], p[1], zoom]; };
+const FULL = [168, 180, 1];
+
+// ── Episode script ────────────────────────────────────────────
+const SCENES = [
+  { cam: camAt(40, -120, 50, 1.9), meaning: 'water', halo: [40, -170, 70, 70],
+    label: { at: [0, -200, 74], text: 'بحيرة ناصر', c: 'var(--water)' },
+    l1: ['ورا', 'السد', { w: 'بحيرة', k: 'water' }, 'أعلى', 'من', 'النيل', 'بـ', '70', 'متر.'],
+    l2: ['زي', 'خزان', 'المية', 'اللي', 'فوق', 'السطح.'] },
+  { cam: camAt(130, 0, 24, 2.6), meaning: 'water',
+    label: { at: [130, -30, 52], text: 'النفق', c: 'var(--water)' },
+    l1: [{ w: 'المية', k: 'water' }, 'بتنزل', 'في', 'نفق', 'جوه', 'جسم', 'السد...'],
+    l2: ['وتجري', 'بسرعة', 'زي', 'الزحليقة.'] },
+  { cam: camAt(75, 98, 12, 3.4), meaning: 'part', xray: true, halo: [100, 98, 6, 22],
+    label: { at: [75, 98, 50], text: 'التوربينة', c: 'var(--olive-text)' },
+    l1: ['تخبط', 'في', 'ريش', { w: 'التوربينة', k: 'part' }, 'فتلفّها.'],
+    l2: ['زي', 'الهوا', 'لما', 'يلف', 'المروحة', 'الورق.'] },
+  { cam: camAt(75, 98, 28, 3.0), meaning: 'heat', xray: true, inset: true, elec: true,
+    label: { at: [75, 98, 50], text: 'المولّد', c: 'var(--heat-text)' },
+    l1: ['التوربينة', 'بتلف', 'مغناطيس', 'جوه', 'المولّد...'],
+    l2: ['فيطلع', { w: 'كهربا،', k: 'heat' }, 'زي', 'دينامو', 'العجلة.'] },
+  { cam: camAt(-34, 155, 20, 3.0), meaning: 'heat', elec: true, halo: [-34, 155, 0, 30],
+    label: { at: [-34, 155, 44], text: 'المحوّل', c: 'var(--heat-text)' },
+    reading: { to: 500, unit: 'ألف فولت' },
+    l1: ['المحوّل', 'بيعلّي', { w: 'الجهد', k: 'heat' }, 'لـ', '500', 'ألف', 'فولت...'],
+    l2: ['زي', 'ما', 'تدوس', 'على', 'الخرطوم', 'فيوصل', 'لبعيد.'] },
+  { cam: camAt(-60, 360, 70, 1.7), meaning: 'heat', elec: true,
+    label: { at: [-60, 355, 130], text: 'الأبراج', c: 'var(--heat-text)' },
+    reading: { to: 800, unit: 'كيلو' },
+    l1: ['وتمشي', 'على', 'الأبراج', 'حوالي', { w: '800', k: 'heat' }, 'كيلو...'],
+    l2: ['لحد', 'القاهرة', 'في', 'أقل', 'من', 'ثانية.'] },
+  { cam: camAt(-62, 620, 36, 2.5), meaning: 'heat', elec: true, lamp: true, halo: [-78, 650, 0, 26],
+    label: { at: [-10, 560, 100], text: 'محوّل الحي', c: 'var(--heat-text)' },
+    l1: ['ومحوّل', 'الحي', 'ينزّل', 'الجهد', 'لـ', '220', 'فولت.'],
+    l2: ['فاللمبة', { w: 'تنوّر', k: 'heat' }, 'في', 'أوضتك.'] }
+];
+const LEGEND = [['البحيرة', [0, -200, 70]], ['النفق', [130, -20, 30]], ['التوربينة', [100, 98, 46]], ['المحوّل', [-34, 155, 26]], ['الأبراج', [-60, 270, 120]], ['البيت', [-78, 650, 66]]];
+
+// timeline (seconds)
+const INTRO = 5.2, BRAND = 3.4, SCENE = 7.4, SUMMARY = 7;
+const T_SC = INTRO + BRAND, T_SUM = T_SC + SCENE * SCENES.length;
+window.DURATION = T_SUM + SUMMARY;
+
+// captions: one span per word
+const KEYC = { water: 'var(--water)', part: 'var(--olive-text)', heat: 'var(--heat-text)' };
+function fill(p, words) {
+  p.innerHTML = '';
+  return words.map((w, i) => {
+    const s = document.createElement('span');
+    s.className = 'tz-w';
+    s.textContent = typeof w === 'string' ? w : w.w;
+    if (w.k) s.dataset.k = w.k;
+    p.appendChild(s);
+    if (i < words.length - 1) p.appendChild(document.createTextNode(' '));
+    return s;
+  });
+}
+// type verb: 110ms per word, each word fades in ghost then inks; key: meaning colour after the line
+function typeOn(spans, local, start) {
+  const end = start + spans.length * .11 + .2;
+  spans.forEach((s, i) => {
+    const a = local - (start + i * .11);
+    s.style.opacity = clamp(a / .2);
+    let col = a < .4 ? `color-mix(in srgb, var(--ink-ghost) ${Math.round((1 - clamp(a / .4)) * 100)}%, var(--ink))` : 'var(--ink)';
+    if (s.dataset.k && local > end) col = `color-mix(in srgb, ${KEYC[s.dataset.k]} ${Math.round(clamp((local - end) / .4) * 100)}%, var(--ink))`;
+    s.style.color = col;
+  });
+  return end;
+}
+const iWords = (() => { const q = $('i-q'); const words = q.textContent.split(' '); return fill(q, words); })();
+let lastScene = -1, c1 = [], c2 = [];
+
+// static drawings for the sheets
+setCam($('i-svg'), ...FULL); setCam($('s-svg'), ...FULL);
+LEGEND.forEach(([name, at], i) => {
+  const li = document.createElement('li');
+  li.innerHTML = `<span class="tz-num">${i + 1}</span>${name}`;
+  $('s-legend').appendChild(li);
+  const p = WS.iso.P(...at);
+  const pin = document.createElement('span');
+  pin.className = 'tz-num pin';
+  pin.textContent = i + 1;
+  pin.dataset.x = p[0]; pin.dataset.y = p[1];
+  $('s-art').appendChild(pin);
+});
+
+function countTo(el, to, k) { el.textContent = Math.round(to * (1 - Math.pow(1 - clamp(k), 3))); }
+
+window.render = t => {
+  const show = (id, a, b) => { const o = clamp((t - a) / .4) * clamp((b - t) / .4); $(id).style.opacity = o; return o; };
+  // intro
+  show('intro', -1, INTRO);
+  if (t < INTRO + .5) {
+    $('i-tag').style.opacity = clamp((t - .1) / .4);
+    typeOn(iWords, t, .4);
+    countTo($('i-num'), 800, (t - 2.6) / 1.4);
+    $('i-counter').style.opacity = clamp((t - 2.5) / .3);
+    $('i-counter').style.transform = `scale(${lerp(.85, 1, ease((t - 2.5) / .4))})`;
+    animateWorld(WI, t, 1, { water: true, elec: 1, lamp: 1 });
+  }
+  // brand
+  show('brand', INTRO, T_SC);
+  if (t > INTRO - .5 && t < T_SC + .5) {
+    const l = t - INTRO;
+    const k = clamp((l - .2) / 1.3);
+    $('b-arc').setAttribute('stroke-dashoffset', 100 - k * 100);
+    $('b-hand').setAttribute('transform', `rotate(${k * 360})`);
+    const bl = $('b-line'), bs = bl._s || (bl._s = (() => { const words = ['هشرحهالك', 'في', { w: 'دقيقة.', k: 'heat' }]; return fill(bl, words); })());
+    typeOn(bs, l, 1.4);
+  }
+  // scenes
+  const so = show('scene', T_SC, T_SUM);
+  if (so > 0) {
+    const i = clamp(Math.floor((t - T_SC) / SCENE), 0, SCENES.length - 1), s = SCENES[i], l = t - T_SC - i * SCENE;
+    if (i !== lastScene) { c1 = fill($('c1'), s.l1); c2 = fill($('c2'), s.l2); lastScene = i; }
+    // camera: back to the full shot, then in to the part
+    const prev = i === 0 ? FULL : SCENES[i - 1].cam;
+    let cam;
+    if (l < .9) { const k = easeIO(l / .9); cam = [lerp(prev[0], FULL[0], k), lerp(prev[1], FULL[1], k), lerp(prev[2], FULL[2], k)]; }
+    else { const k = easeIO((l - .9) / 1.2); cam = [lerp(FULL[0], s.cam[0], k), lerp(FULL[1], s.cam[1], k), lerp(FULL[2], s.cam[2], k)]; }
+    // zoom interpolates in log space so it feels even
+    if (l >= .9) { const k = easeIO((l - .9) / 1.2); cam[2] = Math.exp(lerp(Math.log(FULL[2]), Math.log(s.cam[2]), k)); }
+    setCam($('w-svg'), ...cam);
+    const settled = clamp((l - 2.1) / .4);
+    animateWorld(W1, t, cam[2], {
+      water: true,
+      elec: s.elec ? (i === 3 ? clamp((l - 3) / 2.5) * .12 : i === 4 ? lerp(.12, .3, clamp((l - 2) / 2)) : i === 5 ? lerp(.3, .82, clamp((l - 2) / 3)) : lerp(.82, 1, clamp((l - 2) / 2))) : 0,
+      lamp: s.lamp ? clamp((l - 4.2) / .4) : 0,
+      xray: s.xray ? clamp((l - 2.1) / .8) * clamp((SCENE - l) / .5) : 0
+    });
+    // halo + label on the part being explained
+    const H = W1.halo;
+    if (s.halo) { const [x, y, z, r] = s.halo; H.setAttribute('d', W1.iso.d(W1.iso.ring(x, y, z, r, 32, 'z'))); H.setAttribute('opacity', settled); }
+    else H.setAttribute('opacity', 0);
+    let lab = W1._lab;
+    if (!lab) { lab = W1._lab = W1.iso.el('text', { class: 'lbl', 'text-anchor': 'middle' }, W1.dots.parentNode); }
+    const lp = W1.iso.P(...s.label.at);
+    lab.textContent = s.label.text;
+    lab.setAttribute('x', lp[0]); lab.setAttribute('y', lp[1] - 4 / cam[2]);
+    lab.style.setProperty('--fs', (11 / cam[2]).toFixed(2) + 'px');
+    lab.style.setProperty('--c', s.label.c);
+    lab.setAttribute('opacity', clamp((l - 2.3) / .4) * clamp((SCENE - l - .1) / .3));
+    W1.dots.parentNode.appendChild(lab);
+    // captions
+    const e1 = typeOn(c1, l, 1.0);
+    typeOn(c2, l, e1 + .12);
+    $('c1').parentNode.style.opacity = clamp((SCENE - l) / .3);
+    // inset: generator magnet turning in coils
+    const ins = $('inset');
+    const io = s.inset ? clamp((l - 2.4) / .4) * clamp((SCENE - l) / .3) : 0;
+    ins.style.opacity = io;
+    ins.style.transform = `scale(${lerp(.85, 1, ease((l - 2.4) / .4))})`;
+    if (io > 0) drawInset(t);
+    // reading counter
+    const rd = $('reading');
+    if (s.reading) {
+      rd.style.opacity = clamp((l - 2.4) / .4) * clamp((SCENE - l) / .3);
+      $('r-unit').textContent = s.reading.unit;
+      countTo($('r-num'), s.reading.to, (l - 2.5) / 1.4);
+    } else rd.style.opacity = 0;
+  }
+  // summary
+  show('summary', T_SUM, window.DURATION + 1);
+  if (t > T_SUM - .5) {
+    const l = t - T_SUM;
+    animateWorld(WS, t, 1, { water: true, elec: 1, lamp: 1 });
+    document.querySelectorAll('#s-art .pin').forEach((p, i) => { const a = l - .6 - i * .25; p.style.opacity = clamp(a / .3); p.style.transform = `scale(${lerp(.85, 1, ease(a / .4))})`; });
+    $('s-legend').style.opacity = clamp((l - 2.3) / .4);
+    $('s-counter').style.opacity = clamp((l - 2.8) / .3);
+    countTo(document.querySelector('#s-counter .tz-counter__num'), 800, (l - 2.9) / 1.4);
+    $('s-ask').style.opacity = clamp((l - 4.4) / .4);
+  }
+};
+
+// generator inset: a 3D stator ring with a magnet turning inside
+const MI = TebEzay.iso(Object.assign($('m-svg').appendChild(document.createElementNS(NS, 'g'))), { scale: 1, x: 50, y: 52 });
+function drawInset(t) {
+  const g = $('m-svg').firstChild;
+  while (g.firstChild) g.removeChild(g.firstChild);
+  MI.disc(g, 0, 0, -6, 40, 'z', 'iso-steel');
+  for (let i = 0; i < 10; i++) {
+    const a = i / 10 * Math.PI * 2, x = Math.cos(a) * 34, y = Math.sin(a) * 34;
+    MI.box(g, x - 4, x + 4, y - 4, y + 4, -6, 6, { z: 'iso-hot-top', x: 'iso-hot', y: 'iso-hot', hatch: false });
+  }
+  MI.rotor(g, { x: 0, y: 0, z: -2, length: 22, width: 6, thick: 6, angle: t * 4, side: 'iso-steel', sideX: 'iso-x', top: 'iso-top' });
+}
+
+function placePins() {
+  const svg = $('s-svg'), box = $('s-art').getBoundingClientRect(), m = svg.getScreenCTM();
+  document.querySelectorAll('#s-art .pin').forEach(pin => {
+    const pt = new DOMPoint(+pin.dataset.x, +pin.dataset.y).matrixTransform(m);
+    pin.style.left = (pt.x - box.left) + 'px'; pin.style.top = (pt.y - box.top) + 'px';
+  });
+}
+window.ready = document.fonts.ready.then(() => { $('summary').style.opacity = 1; placePins(); render(0); });
+</script>
+</body>
+</html>

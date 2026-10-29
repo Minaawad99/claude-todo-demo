@@ -5,3 +5,5 @@ videos/*/tight.wav
 videos/*/out.mp4
 videos/*/qa.log
 videos/*/out-sheet.jpg
+videos/*/frames/
+videos/*/preview/
