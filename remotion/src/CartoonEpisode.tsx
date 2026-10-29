@@ -74,8 +74,8 @@ export const CartoonEpisode: React.FC<CartoonProps> = ({ slug, meta }) => {
     Promise.all([fontsReady, loadEpisode(slug)]).then(() => { setReady(true); continueRender(handle); }).catch((e) => cancelRender(e));
   }, [slug, handle]);
   useLayoutEffect(() => {
-    if (ready && panel.current) (window as any).__panel(panel.current, Math.min(t, meta!.duration));
-  }, [ready, t, meta]);
+    if (ready && panel.current) (window as any).__panel(panel.current, t);
+  }, [ready, t]);
 
   if (!meta) return null;
   const caps: Caption[] | undefined = ready ? (window as any).CAPS : undefined;
