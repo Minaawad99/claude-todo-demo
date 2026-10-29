@@ -12,3 +12,9 @@ layout (NCR / Diebold-Nixdorf style):
 
 Facts: Barclays archive (first cashpoint, Enfield, 27 June 1967, carbon-14 cheques); Finextra / Al Jazeera
 (Shepherd-Barron's account of the four-digit PIN); Google Patents US10049525, EP0582473B1 (cassettes, picking).
+
+## 3D paper version (iso/) — redrawn from the channel's photos
+- NBE lobby ATMs (green cabinet, grey fascia, lit header with «سحب / مدفوعات», screen in a deep bezel, long cash slot under it,
+  card reader and receipt slot on the right, keypad shelf with a privacy hood, NBE logo on the safe), opened machines (safe door
+  with dial and handle swung aside, a vertical stack of black cassettes with green handles, the dispenser beside them with belts
+  up to the presenter) and a cut-away infographic. Photos were visual reference only, not committed.
