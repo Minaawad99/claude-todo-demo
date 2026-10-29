@@ -84,6 +84,9 @@ export const Valley: React.FC<{ t: number; rain: number; warm: number; gloom: nu
       </group>
       {rain > 0 && [...Array(160)].map((_, i) => { const x = (rnd(i) - 0.5) * 220, z = -60 - rnd(i + 5) * 80, y = 60 - ((t * 25 + rnd(i + 9) * 60) % 60);
         return <mesh key={"r" + i} position={[x, y, z]}><boxGeometry args={[0.08, 2.6, 0.08]} /><meshBasicMaterial color="#c8d4e4" transparent opacity={0.35 * rain} /></mesh>; })}
+      {/* a light drizzle close to the camera, sunlit */}
+      {[...Array(240)].map((_, i) => { const x = (rnd(i + 300) - 0.5) * 40, z = 4 - rnd(i + 305) * 40, y = 22 - ((t * 11 + rnd(i + 309) * 22) % 22);
+        return <mesh key={"d" + i} position={[x, y, z]} rotation={[0, 0, 0.08]}><boxGeometry args={[0.025, 0.7, 0.025]} /><meshBasicMaterial color="#eef4ff" transparent opacity={0.55 * Math.max(0.5, rain)} /></mesh>; })}
     </group>
   );
 };

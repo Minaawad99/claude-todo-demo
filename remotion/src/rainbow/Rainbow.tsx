@@ -144,11 +144,17 @@ const Spectrum: React.FC<{ t: number; p: number }> = ({ t, p }) => (
   </group>
 );
 
+// falling drops behind the close-ups, lit from the side, so the dark background is never still
+const Falling: React.FC<{ t: number }> = ({ t }) => (
+  <group>{[...Array(110)].map((_, i) => { const z = -3 - rnd(i + 4) * 14, sp = 2.2 + rnd(i + 7) * 2;
+    return <mesh key={i} position={[(rnd(i) - 0.5) * 34, 13 - ((t * sp + rnd(i + 2) * 26) % 26), z]} scale={[1, 1.6, 1]}><sphereGeometry args={[0.09 + rnd(i + 9) * 0.1, 8, 6]} /><meshBasicMaterial color={COLORS[i % 7]} transparent opacity={0.35 + 0.35 * rnd(i + 11)} toneMapped={false} /></mesh>; })}</group>
+);
+
 const Scene3D: React.FC<{ s: St; t: number }> = ({ s, t }) => {
   if (s.scene === "drop") return (<group><ambientLight intensity={0.6} /><directionalLight position={[-6, 6, 8]} intensity={1.2} /><Drop t={t} /><DropRays t={t} mode={s.rays} p={s.ray} angle={s.angle} />
-    {[...Array(30)].map((_, i) => <mesh key={i} position={[(rnd(i) - 0.5) * 30, 12 - ((t * 3 + rnd(i + 2) * 24) % 24), -8 - rnd(i + 4) * 10]}><sphereGeometry args={[0.12, 8, 6]} /><meshBasicMaterial color="#9fc4e8" transparent opacity={0.5} /></mesh>)}</group>);
-  if (s.scene === "prism") return (<group><ambientLight intensity={0.6} /><directionalLight position={[-6, 6, 8]} intensity={1.2} /><Prism t={t} p={s.ray} /></group>);
-  if (s.scene === "spectrum") return (<group><ambientLight intensity={0.6} /><Spectrum t={t} p={s.ray} /></group>);
+    <Falling t={t} /></group>);
+  if (s.scene === "prism") return (<group><ambientLight intensity={0.6} /><directionalLight position={[-6, 6, 8]} intensity={1.2} /><Prism t={t} p={s.ray} /><Falling t={t} /></group>);
+  if (s.scene === "spectrum") return (<group><ambientLight intensity={0.6} /><Spectrum t={t} p={s.ray} /><Falling t={t} /></group>);
   if (s.scene === "plane") {
     const head: V3 = [0, 0, 0];
     return (<group><ambientLight intensity={0.8} /><directionalLight position={[0, 10, 20]} intensity={1.4} /><CloudDeck t={t} /><Plane t={t} /><Bow head={head} e={s.e} op={1} R={36} over /></group>);
@@ -245,7 +251,10 @@ export const Rainbow: React.FC = () => {
   const S = SH[i], k = clamp(u / d);
   const st: St = { ...BASE, ...S.st(u, d) };
   const p = lv(S.p[0], S.p[1], k), l = lv(S.l[0], S.l[1], k);
-  const pos: V3 = [p[0] + Math.sin(t * 0.7) * 0.15, p[1] + Math.cos(t * 0.53) * 0.1, p[2]];
+  // the camera creeps along its path with a slow hand-held sway, scaled to how far it looks
+  const far = Math.min(3, Math.hypot(l[0] - p[0], l[1] - p[1], l[2] - p[2]) / 20);
+  const pos: V3 = [p[0] + Math.sin(t * 0.9) * 0.3, p[1] + Math.cos(t * 0.7) * 0.18, p[2] + Math.sin(t * 0.5) * 0.3];
+  l[0] += Math.sin(t * 0.8) * 0.9 * far; l[1] += Math.cos(t * 0.6) * 0.5 * far;
   const sky = skyOf(st);
   const fade = Math.min(1, (DURATION + TAIL - t) / 0.6);
   return (
