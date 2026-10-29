@@ -254,6 +254,8 @@ def fx_chime(d=1.0):          # docked / charging: rising three-note chime
     for k, f in enumerate([784, 988, 1319]):
         t0 = k * 0.13; m = t >= t0; x[m] += (np.sin(2 * np.pi * f * (t[m] - t0)) * np.exp(-(t[m] - t0) * 6)).astype(np.float32)
     return x
+def fx_bell(d=0.9, f=880):    # a soft bell note at pitch f (a scale: pass "f" in the cue)
+    t = t_(d); return (np.sin(2 * np.pi * f * t) + 0.3 * np.sin(2 * np.pi * 2 * f * t) * np.exp(-t * 4)) * np.exp(-t * 5) * env(len(t), .004, .05)
 def fx_notify(d=0.6):         # phone notification: two soft bubbles
     t = t_(d); x = np.zeros(len(t), np.float32)
     for t0, f in [(0, 880), (0.14, 1175)]:
@@ -314,7 +316,7 @@ def mix(voice, cues, use_bed=True, bed_db=-18.0, fx_db=-10.0, duck_db=-8.0, tail
     if use_bed:
         b = bed(n / SR)[:n]; b *= 10 ** ((speech_rms + bed_db - rms_db(b)) / 20); out += b * gain
     for c in cues:
-        f = clip(c) if "file" in c else FX[c["fx"]](c.get("dur", None) or FX[c["fx"]].__defaults__[0]); s = int(c["t"] * SR)
+        f = clip(c) if "file" in c else FX[c["fx"]](c.get("dur", None) or FX[c["fx"]].__defaults__[0], **({"f": c["f"]} if "f" in c else {})); s = int(c["t"] * SR)
         # recorded clips are levelled by loudness (RMS) against the voice, rec_db above it at gain 1, so a jet roar can stand up
         # to the narrator; synthesized fx are levelled by peak, well under it. "duck": 0..1 scales how much the clip is ducked (false = not at all).
         if "file" in c: f = f / (rms_lin(f) + 1e-9) * 10 ** ((speech_rms + rec_db) / 20) * c.get("gain", 1.0)
