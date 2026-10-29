@@ -1,0 +1,358 @@
+<title>رحلة الكهربا من السويس</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Reem+Kufi:wght@500;700&display=swap">
+<style>
+/* Layout: one wide animated cross-section (right = power plant, left = homes), a step rail and an explainer card under it. */
+:root {
+  --bg: #eef3f6; --card: #ffffff; --ink: #14222e; --muted: #5a6b78; --line: #cfdbe3;
+  --sky-top: #bcd6ea; --sky-bot: #eef3f6; --sun: #ffd37a;
+  --sand: #dcc79c; --sand-2: #c8ae7e; --water: #2f7fb0; --water-2: #5aa2cf;
+  --steel: #4a5966; --wall: #f6f1e6; --roof: #9a5b3c; --win: #ffcf5a; --win-off: #8fa3b3;
+  --lv: #f08a24; --hv: #e8a500; --mv: #f0b93a; --accent: #c77700;
+  --display: "Reem Kufi", "IBM Plex Sans Arabic", Tahoma, sans-serif;
+  --body: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0c141c; --card: #131f2a; --ink: #e5edf3; --muted: #95a6b4; --line: #243646;
+  --sky-top: #07101a; --sky-bot: #142536; --sun: #e9eef5;
+  --sand: #3b3426; --sand-2: #2d271b; --water: #1c4c70; --water-2: #2c6a96;
+  --steel: #a4b3c0; --wall: #26323d; --roof: #6b3f2c; --win: #ffc94a; --win-off: #3a4b5a;
+  --lv: #ff9a3a; --hv: #ffc23d; --mv: #ffd166; --accent: #ffb547; color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --bg: #0c141c; --card: #131f2a; --ink: #e5edf3; --muted: #95a6b4; --line: #243646;
+  --sky-top: #07101a; --sky-bot: #142536; --sun: #e9eef5;
+  --sand: #3b3426; --sand-2: #2d271b; --water: #1c4c70; --water-2: #2c6a96;
+  --steel: #a4b3c0; --wall: #26323d; --roof: #6b3f2c; --win: #ffc94a; --win-off: #3a4b5a;
+  --lv: #ff9a3a; --hv: #ffc23d; --mv: #ffd166; --accent: #ffb547; color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.75; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 28px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 20px; }
+h1 { font-family: var(--display); font-weight: 700; font-size: clamp(1.7rem, 4vw, 2.5rem); line-height: 1.3; margin: 0; text-wrap: balance; }
+.lede { margin: 6px 0 0; color: var(--muted); max-width: 65ch; }
+.note { border: 1px solid var(--line); background: var(--card); border-radius: 10px; padding: 14px 16px; max-width: 80ch; }
+.note b { color: var(--accent); }
+.stage-box { overflow-x: auto; border-radius: 12px; border: 1px solid var(--line); background: var(--sky-bot); }
+#scene { display: block; width: 100%; min-width: 720px; height: auto; }
+#scene text { font-family: var(--body); fill: var(--ink); font-size: 15px; }
+#scene .lbl { font-weight: 600; }
+#scene .sub { fill: var(--muted); font-size: 12.5px; }
+#scene [data-stage] { transition: opacity .4s ease; }
+#scene.focus [data-stage]:not(.on) { opacity: .28; }
+.tower path { stroke: var(--steel); stroke-width: 1.6; fill: none; }
+.wire { fill: none; stroke: var(--steel); stroke-width: 1.4; opacity: .7; }
+.dot-lv { fill: var(--lv); } .dot-hv { fill: var(--hv); } .dot-mv { fill: var(--mv); }
+.rotor { animation: spin 5s linear infinite; }
+.rotor.slow { animation-duration: 6.5s; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.smoke { fill: var(--muted); opacity: 0; animation: smoke 4s ease-out infinite; }
+@keyframes smoke { 0% { transform: translate(0,0) scale(.5); opacity: .45; } 100% { transform: translate(-28px,-70px) scale(1.8); opacity: 0; } }
+.ship { animation: bob 3.2s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(2px); } }
+.win { fill: var(--win); transition: fill .4s; }
+#scene.dark-homes .win { fill: var(--win-off); }
+.glow { filter: drop-shadow(0 0 4px var(--win)); }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.step { font: inherit; font-size: 14.5px; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink);
+  border-radius: 999px; padding: 6px 14px; display: inline-flex; gap: 8px; align-items: center; }
+.step .n { font-family: var(--display); color: var(--accent); }
+.step[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.step[aria-pressed="true"] .n { color: var(--hv); }
+.step:focus-visible, .play:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.play { font: inherit; font-size: 14.5px; cursor: pointer; margin-inline-start: auto; border: 0; background: var(--accent); color: #fff;
+  border-radius: 999px; padding: 6px 18px; font-weight: 600; }
+.panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 18rem); gap: 20px; background: var(--card);
+  border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; }
+.panel h2 { font-family: var(--display); font-weight: 500; font-size: 1.5rem; margin: 0 0 4px; }
+.panel p { margin: 0; max-width: 65ch; }
+.chip { display: inline-block; font-weight: 600; font-variant-numeric: tabular-nums; background: color-mix(in srgb, var(--hv) 22%, transparent);
+  border: 1px solid color-mix(in srgb, var(--hv) 55%, transparent); border-radius: 6px; padding: 2px 10px; margin-bottom: 10px; }
+.fact { border-inline-start: 3px solid var(--hv); padding-inline-start: 14px; color: var(--muted); font-size: 14.5px; align-self: start; }
+.fact strong { display: block; color: var(--ink); font-family: var(--display); font-weight: 500; letter-spacing: .02em; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); font-size: 13.5px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-inline-end: 6px; vertical-align: middle; }
+@media (max-width: 640px) { .panel { grid-template-columns: 1fr; } .play { margin-inline-start: 0; } }
+@media (prefers-reduced-motion: reduce) { .rotor, .smoke, .ship { animation: none; } }
+</style>
+
+<div class="wrap" dir="rtl" lang="ar">
+  <header>
+    <h1>الكهربا بتوصل بيتك إزاي من منطقة السويس؟</h1>
+    <p class="lede">اتبع النقط المنورة: كل نقطة بتمثل الطاقة وهي ماشية من المحطة لحد البريزة اللي في بيتك.</p>
+  </header>
+
+  <div class="note">
+    <b>معلومة مهمة الأول:</b> قناة السويس نفسها مش بتولّد كهربا. ميّة البحر الأحمر والمتوسط على نفس المستوى تقريبًا، فمفيش شلال ولا سد يلفّ توربينة.
+    الكهربا في المنطقة بتيجي من <b>محطات غازية</b> (زي محطة عتاقة في السويس) ومن <b>مزارع الرياح</b> على خليج السويس (الزعفرانة وجبل الزيت).
+    القناة بتظهر في الرحلة لأن خطوط الضغط العالي بتعدّي من فوقها على أبراج عالية جدًا. ولو قصدك الكهربا اللي بتتولد من الميّة، فدي بتتولد في السد العالي في أسوان.
+  </div>
+
+  <div class="stage-box">
+    <svg id="scene" viewBox="0 0 1200 520" role="img" aria-label="رسم متحرك لرحلة الكهربا من محطات التوليد في السويس، عبر أبراج الضغط العالي فوق قناة السويس، لحد البيوت">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" style="stop-color: var(--sky-top)"/>
+          <stop offset="1" style="stop-color: var(--sky-bot)"/>
+        </linearGradient>
+      </defs>
+      <rect width="1200" height="400" fill="url(#sky)"/>
+      <circle cx="1040" cy="80" r="26" style="fill: var(--sun)" opacity=".9"/>
+      <rect y="400" width="1200" height="120" style="fill: var(--sand)"/>
+      <rect y="400" width="1200" height="4" style="fill: var(--sand-2)"/>
+
+      <!-- Canal -->
+      <g id="canal">
+        <polygon points="572,400 600,468 680,468 708,400" style="fill: var(--water)"/>
+        <rect x="574" y="402" width="132" height="6" style="fill: var(--water-2)" opacity=".7"/>
+        <g class="ship">
+          <polygon points="606,404 694,404 686,392 612,392" style="fill: var(--steel)"/>
+          <rect x="620" y="378" width="12" height="14" style="fill: #c0392b"/>
+          <rect x="633" y="380" width="12" height="12" style="fill: #2e86c1"/>
+          <rect x="646" y="378" width="12" height="14" style="fill: #27ae60"/>
+          <rect x="659" y="380" width="12" height="12" style="fill: #c0392b"/>
+          <rect x="674" y="372" width="8" height="20" style="fill: var(--wall)"/>
+        </g>
+        <text x="640" y="492" text-anchor="middle" class="lbl">قناة السويس</text>
+        <text x="640" y="510" text-anchor="middle" class="sub">ممر للسفن، مش محطة كهربا</text>
+      </g>
+
+      <!-- 1: generation -->
+      <g data-stage="1">
+        <rect x="950" y="330" width="90" height="70" rx="2" style="fill: var(--wall); stroke: var(--steel)"/>
+        <rect x="965" y="345" width="60" height="22" style="fill: var(--steel)" opacity=".25"/>
+        <rect x="1015" y="252" width="14" height="78" style="fill: var(--steel)"/>
+        <rect x="1015" y="262" width="14" height="5" style="fill: #c0392b"/>
+        <circle class="smoke" cx="1022" cy="248" r="8"/>
+        <circle class="smoke" cx="1022" cy="248" r="8" style="animation-delay: -1.3s"/>
+        <circle class="smoke" cx="1022" cy="248" r="8" style="animation-delay: -2.6s"/>
+        <text x="995" y="386" text-anchor="middle" class="sub">محطة غازية</text>
+        <polygon points="1148,230 1152,230 1155,400 1145,400" style="fill: var(--steel)"/>
+        <g transform="translate(1150 230)"><g class="rotor" id="rotorA"></g><circle r="5" style="fill: var(--steel)"/></g>
+        <polygon points="1068,275 1072,275 1074,400 1066,400" style="fill: var(--steel)"/>
+        <g transform="translate(1070 275) scale(.8)"><g class="rotor slow" id="rotorB"></g><circle r="5" style="fill: var(--steel)"/></g>
+        <text x="1080" y="440" text-anchor="middle" class="lbl">١  التوليد</text>
+        <text x="1080" y="458" text-anchor="middle" class="sub">غاز ورياح خليج السويس</text>
+      </g>
+
+      <!-- 2: step-up transformer -->
+      <g data-stage="2">
+        <rect x="866" y="356" width="40" height="44" rx="3" style="fill: var(--steel)"/>
+        <g style="stroke: var(--bg)" stroke-width="2">
+          <line x1="872" y1="362" x2="872" y2="396"/><line x1="880" y1="362" x2="880" y2="396"/>
+          <line x1="888" y1="362" x2="888" y2="396"/><line x1="896" y1="362" x2="896" y2="396"/>
+        </g>
+        <rect x="874" y="344" width="6" height="12" style="fill: var(--steel)"/>
+        <rect x="892" y="344" width="6" height="12" style="fill: var(--steel)"/>
+        <text x="886" y="440" text-anchor="middle" class="lbl">٢  رفع الجهد</text>
+        <text x="886" y="458" text-anchor="middle" class="sub">محوّل رافع</text>
+      </g>
+
+      <!-- 3: transmission -->
+      <g data-stage="3" id="towers">
+        <text x="640" y="62" text-anchor="middle" class="lbl">٣  خطوط الضغط العالي</text>
+        <text x="640" y="80" text-anchor="middle" class="sub">أبراج أطول من ٢٠٠ متر بتعدّي فوق القناة</text>
+      </g>
+
+      <!-- 4: substation -->
+      <g data-stage="4">
+        <rect x="332" y="346" width="86" height="54" fill="none" style="stroke: var(--steel)" stroke-dasharray="3 3"/>
+        <path d="M342 346 V318 H408 V346" fill="none" style="stroke: var(--steel)" stroke-width="2"/>
+        <rect x="346" y="368" width="26" height="32" rx="2" style="fill: var(--steel)"/>
+        <rect x="380" y="368" width="26" height="32" rx="2" style="fill: var(--steel)"/>
+        <text x="375" y="440" text-anchor="middle" class="lbl">٤  محطة محولات</text>
+        <text x="375" y="458" text-anchor="middle" class="sub">تخفيض الجهد</text>
+      </g>
+
+      <!-- 5: distribution -->
+      <g data-stage="5">
+        <rect x="259" y="298" width="6" height="102" style="fill: var(--steel)"/>
+        <rect x="248" y="292" width="28" height="4" style="fill: var(--steel)"/>
+        <rect x="266" y="318" width="16" height="24" rx="5" style="fill: var(--steel)"/>
+        <text x="262" y="440" text-anchor="middle" class="lbl">٥  التوزيع</text>
+        <text x="262" y="458" text-anchor="middle" class="sub">محوّل الحي</text>
+      </g>
+
+      <!-- 6: homes -->
+      <g data-stage="6">
+        <rect x="150" y="345" width="66" height="55" style="fill: var(--wall); stroke: var(--steel)"/>
+        <polygon points="144,345 183,318 222,345" style="fill: var(--roof)"/>
+        <rect class="win" x="160" y="358" width="14" height="14"/><rect class="win" x="192" y="358" width="14" height="14"/>
+        <rect x="177" y="378" width="12" height="22" style="fill: var(--steel)"/>
+        <rect x="80" y="292" width="60" height="108" style="fill: var(--wall); stroke: var(--steel)"/>
+        <rect class="win" x="90" y="304" width="12" height="14"/><rect class="win" x="118" y="304" width="12" height="14"/>
+        <rect class="win" x="90" y="330" width="12" height="14"/><rect class="win" x="118" y="330" width="12" height="14"/>
+        <rect class="win" x="90" y="356" width="12" height="14"/><rect class="win" x="118" y="356" width="12" height="14"/>
+        <rect x="104" y="380" width="12" height="20" style="fill: var(--steel)"/>
+        <rect x="16" y="352" width="54" height="48" style="fill: var(--wall); stroke: var(--steel)"/>
+        <rect x="12" y="346" width="62" height="6" style="fill: var(--roof)"/>
+        <rect class="win" x="26" y="364" width="12" height="12"/><rect class="win" x="48" y="364" width="12" height="12"/>
+        <text x="110" y="440" text-anchor="middle" class="lbl">٦  البيت</text>
+        <text x="110" y="458" text-anchor="middle" class="sub">العداد والبريزة</text>
+      </g>
+
+      <g id="wires"></g>
+      <g id="dots"></g>
+    </svg>
+  </div>
+
+  <div class="legend" aria-hidden="true">
+    <span><i style="background: var(--lv)"></i>جهد التوليد والجهد المنخفض</span>
+    <span><i style="background: var(--hv)"></i>ضغط عالي (نقط أكبر وأسرع)</span>
+    <span><i style="background: var(--mv)"></i>جهد متوسط</span>
+  </div>
+
+  <div class="controls" id="steps" role="group" aria-label="مراحل الرحلة">
+    <button class="play" id="play" type="button">إيقاف</button>
+  </div>
+
+  <section class="panel" aria-live="polite">
+    <div>
+      <h2 id="p-title"></h2>
+      <span class="chip" id="p-volt"></span>
+      <p id="p-body"></p>
+    </div>
+    <div class="fact"><strong>تعرف إن…</strong><span id="p-fact"></span></div>
+  </section>
+</div>
+
+<script>
+const NS = 'http://www.w3.org/2000/svg';
+const svg = document.getElementById('scene');
+
+const STAGES = [
+  { name: 'التوليد', volt: 'حوالي ١١ – ٢٢ كيلو فولت',
+    body: 'في المحطة الغازية الغاز الطبيعي بيتحرق، والغازات السخنة والبخار بيلفّوا توربينة. التوربينة متوصلة بمولّد فيه مغناطيس بيلف جوه ملفات نحاس، والحركة دي بتتحول لكهربا. في مزارع الرياح على خليج السويس، الهوا هو اللي بيلف الريش ونفس الفكرة بتحصل.',
+    fact: 'منطقة خليج السويس من أقوى مناطق الرياح في العالم، وعشان كده اتبنت فيها مزارع رياح كبيرة زي الزعفرانة وجبل الزيت.' },
+  { name: 'رفع الجهد', volt: 'من ~٢٢ إلى ٢٢٠ أو ٥٠٠ كيلو فولت',
+    body: 'جنب المحطة فيه محوّل رافع بيعلّي الجهد جدًا. لما الجهد يعلى، التيار اللي في السلك بيقل، وكده السلك بيسخن أقل وبيضيع طاقة أقل في الطريق.',
+    fact: 'الفقد في السلك بيزيد مع مربع التيار. يعني لو قللت التيار للنص، الفقد بيقل للربع.' },
+  { name: 'النقل', volt: '٢٢٠ / ٥٠٠ كيلو فولت',
+    body: 'الكهربا بتمشي مئات الكيلومترات على أسلاك الشبكة القومية المتعلقة على أبراج حديد. عند قناة السويس الأبراج بتبقى عالية جدًا، عشان السلك يفضل فوق أعلى سفينة معدّية تحته.',
+    fact: 'أبراج عبور قناة السويس من أطول أبراج الكهربا في العالم، وارتفاعها أكتر من ٢٠٠ متر.' },
+  { name: 'محطة المحولات', volt: 'من ٢٢٠ إلى ٦٦ أو ٢٢ كيلو فولت',
+    body: 'قبل ما الخط يدخل المدينة بيوصل لمحطة محولات. هنا محوّلات خافضة بتنزّل الجهد، وفيه قواطع بتفصل أي جزء فيه عطل عشان باقي الشبكة يفضل شغال.',
+    fact: 'نفس المحطة ممكن تغذي أحياء كتير، وكل حي بيطلعله خط جهد متوسط لوحده.' },
+  { name: 'التوزيع', volt: 'من ٢٢ أو ١١ كيلو فولت إلى ٣٨٠ فولت',
+    body: 'كابلات وأسلاك الجهد المتوسط بتمشي في الشوارع لحد محوّل الحي، سواء كان كشك على الأرض أو محوّل على عمود. ده آخر محوّل، وبينزّل الجهد للمستوى اللي البيوت بتستخدمه.',
+    fact: 'محوّل الحي بيطلّع ٣ فازات، بين كل فازتين ٣٨٠ فولت، وبين أي فازة والأرضي ٢٢٠ فولت.' },
+  { name: 'البيت', volt: '٢٢٠ فولت · ٥٠ هرتز',
+    body: 'السلك بيدخل البيت على العداد اللي بيحسب استهلاكك، وبعدين على لوحة الكهربا والقواطع، ومنها للبرايز واللمبات. كل ده بيحصل في جزء من الثانية.',
+    fact: 'الكهربا في مصر تيار متردد ٥٠ هرتز، يعني اتجاهه بيتعكس ١٠٠ مرة في الثانية.' }
+];
+
+// Wind turbine blades
+for (const id of ['rotorA', 'rotorB']) {
+  const g = document.getElementById(id);
+  for (const a of [0, 120, 240]) {
+    const p = document.createElementNS(NS, 'path');
+    p.setAttribute('d', 'M0 0 C 7 -14, 6 -34, 0 -46 C -3 -34, -4 -14, 0 0 Z');
+    p.setAttribute('transform', `rotate(${a})`);
+    p.style.fill = 'var(--wall)'; p.style.stroke = 'var(--steel)';
+    g.appendChild(p);
+  }
+}
+
+// Lattice towers
+function tower(x, top, base, w) {
+  const g = document.createElementNS(NS, 'g');
+  g.setAttribute('class', 'tower');
+  const t = top + 8, hw = y => 3 + (w / 2 - 3) * (y - t) / (base - t);
+  let d = `M${x - w / 2} ${base} L${x - 3} ${t} L${x + 3} ${t} L${x + w / 2} ${base}`;
+  const n = Math.max(4, Math.round((base - t) / 22));
+  for (let i = 0; i < n; i++) {
+    const y1 = base - (base - t) * i / n, y2 = base - (base - t) * (i + 1) / n;
+    d += ` M${x - hw(y1)} ${y1} L${x + hw(y2)} ${y2} M${x + hw(y1)} ${y1} L${x - hw(y2)} ${y2}`;
+  }
+  d += ` M${x - 20} ${top + 4} H${x + 20} M${x - 12} ${top + 18} H${x + 12}`;
+  const p = document.createElementNS(NS, 'path');
+  p.setAttribute('d', d);
+  g.appendChild(p);
+  return g;
+}
+const towersG = document.getElementById('towers');
+[[800, 222, 400, 34], [725, 102, 400, 44], [555, 102, 400, 44], [470, 222, 400, 34]]
+  .forEach(a => towersG.appendChild(tower(...a)));
+
+// Power routes: stage, voltage class, speed (px/s), dot spacing
+const ROUTES = [
+  { stage: 1, kind: 'lv', speed: 60, gap: 34, d: 'M1150 397 L905 397' },
+  { stage: 1, kind: 'lv', speed: 60, gap: 34, d: 'M950 375 L906 375' },
+  { stage: 3, kind: 'hv', speed: 150, gap: 46, d: 'M886 350 L800 230 Q762 196 725 112 Q640 168 555 112 Q512 196 470 230 L405 330' },
+  { stage: 5, kind: 'mv', speed: 80, gap: 30, d: 'M342 330 Q300 300 262 296' },
+  { stage: 6, kind: 'lv', speed: 50, gap: 26, d: 'M274 330 Q246 330 216 350' },
+  { stage: 6, kind: 'lv', speed: 50, gap: 26, d: 'M274 330 Q210 300 140 310' },
+  { stage: 6, kind: 'lv', speed: 50, gap: 26, d: 'M80 330 Q72 340 70 356' }
+];
+const wiresG = document.getElementById('wires'), dotsG = document.getElementById('dots');
+const routes = ROUTES.map(r => {
+  const wire = document.createElementNS(NS, 'path');
+  wire.setAttribute('d', r.d);
+  wire.setAttribute('class', 'wire');
+  wire.setAttribute('data-stage', r.stage);
+  wiresG.appendChild(wire);
+  const len = wire.getTotalLength();
+  const g = document.createElementNS(NS, 'g');
+  g.setAttribute('data-stage', r.stage);
+  dotsG.appendChild(g);
+  const dots = [];
+  for (let i = 0; i < Math.max(2, Math.floor(len / r.gap)); i++) {
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('r', r.kind === 'hv' ? 4.2 : 3.2);
+    c.setAttribute('class', 'dot-' + r.kind);
+    g.appendChild(c);
+    dots.push(c);
+  }
+  return { ...r, wire, len, dots };
+});
+
+function drawDots(t) {
+  for (const r of routes) {
+    const step = r.len / r.dots.length;
+    r.dots.forEach((c, i) => {
+      const pt = r.wire.getPointAtLength((t * r.speed / 1000 + i * step) % r.len);
+      c.setAttribute('cx', pt.x.toFixed(1));
+      c.setAttribute('cy', pt.y.toFixed(1));
+    });
+  }
+}
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (reduce) drawDots(0);
+else (function loop(t) { drawDots(t); requestAnimationFrame(loop); })(0);
+
+// Stage stepping
+const stepsEl = document.getElementById('steps'), playBtn = document.getElementById('play');
+const buttons = STAGES.map((s, i) => {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'step'; b.id = 'step-' + (i + 1);
+  b.innerHTML = `<span class="n">${(i + 1).toLocaleString('ar-EG')}</span>${s.name}`;
+  b.addEventListener('click', () => { setPlaying(false); show(i); });
+  stepsEl.insertBefore(b, playBtn);
+  return b;
+});
+
+let current = 0, timer = null;
+function show(i) {
+  current = i;
+  const s = STAGES[i];
+  svg.classList.add('focus');
+  svg.querySelectorAll('[data-stage]').forEach(el => el.classList.toggle('on', +el.dataset.stage === i + 1));
+  // stage 2 also lights its outgoing line; stage 4 its incoming one
+  if (i === 1 || i === 3) routes.filter(r => r.stage === 3).forEach(r => { r.wire.classList.add('on'); r.dots[0].parentNode.classList.add('on'); });
+  svg.querySelectorAll('.win').forEach(w => w.classList.toggle('glow', i === 5));
+  buttons.forEach((b, j) => b.setAttribute('aria-pressed', j === i));
+  document.getElementById('p-title').textContent = `${(i + 1).toLocaleString('ar-EG')}. ${s.name}`;
+  document.getElementById('p-volt').textContent = s.volt;
+  document.getElementById('p-body').textContent = s.body;
+  document.getElementById('p-fact').textContent = s.fact;
+}
+function setPlaying(on) {
+  clearInterval(timer); timer = null;
+  if (on) timer = setInterval(() => show((current + 1) % STAGES.length), 7000);
+  playBtn.textContent = on ? 'إيقاف' : 'تشغيل تلقائي';
+}
+playBtn.addEventListener('click', () => setPlaying(!timer));
+show(0);
+setPlaying(!reduce);
+</script>

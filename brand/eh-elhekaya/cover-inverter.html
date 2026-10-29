@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light"><head><meta charset="utf-8"><title>Reel cover — inverter AC</title>
+<link rel="stylesheet" href="../../design-system/tokens.css"><link rel="stylesheet" href="../../design-system/components/bundle.css">
+<style>
+  /* 540×960 at 2x. Key content in y 120–760. */
+  body { margin: 0; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; font-family: var(--font-sans); color: var(--ink); background: var(--paper); }
+  .bg { position: absolute; left: 30px; right: 30px; top: 290px; height: 400px; background: url(ac-bg.png) center 40% / cover; border: 2px solid var(--ink); }
+  .t { position: absolute; left: 0; right: 0; text-align: center; margin: 0; }
+</style></head><body>
+<div class="cover">
+  <svg width="0" height="0" style="position:absolute"><defs><g id="mark"><rect x="84" y="4" width="32" height="10" style="fill:var(--ink)"/><rect x="94" y="14" width="12" height="14" style="fill:var(--ink)"/>
+    <path style="fill:var(--ink)" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)"/><path style="fill:var(--paper-raised);stroke:var(--ink);stroke-width:7;stroke-linejoin:round" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z"/>
+    <text x="106" y="140" text-anchor="middle" style="font:800 120px var(--font-sans);fill:var(--heat)">؟</text></g></defs></svg>
+  <div class="t" style="top:128px;display:flex;justify-content:center;align-items:center;gap:8px;font:700 17px var(--font-sans)"><svg width="26" height="26" viewBox="0 0 200 200"><use href="#mark"/></svg>إيه الحكاية؟</div>
+  <p class="t" style="top:164px;font:800 38px/1.3 var(--font-sans)">نفس البرد… <span style="color:var(--water)">بكهربا أقل؟</span></p>
+  <p class="t" style="top:224px;font:700 20px/1.4 var(--font-sans);color:var(--ink-muted)">سر التكييف <span style="color:var(--heat-text)">الإنفرتر</span></p>
+  <div class="bg"></div>
+  <p class="t" style="top:706px;font:800 30px/1.3 var(--font-sans)">بيوفر لحد <span style="color:var(--water)">⅓</span> الكهربا!</p>
+</div></body></html>

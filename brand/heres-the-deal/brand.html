@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>Here's the Deal — brand</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../../design-system/components/bundle.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@500;600;700;800;900&display=swap">
+<style>
+  /* Here's the Deal: the same square speech bubble + stopwatch crown as «إيه الحكاية؟», holding a red "!" (the answer). */
+  :root { --font-sans: "Noto Sans", "Inter", system-ui, sans-serif; --fuel: #d99a1e; --fuel-text: #a8700a; --fuel-soft: #f1d58e; --exhaust: #8d877c; }
+  body { margin: 0; background: var(--paper); font-family: var(--font-sans); display: grid; gap: 30px; padding: 20px; justify-content: start; }
+  .grid { background-color: var(--paper); background-image: linear-gradient(to right, var(--paper-grid) 1px, transparent 1px), linear-gradient(to bottom, var(--paper-grid) 1px, transparent 1px); }
+  .ink-f { fill: var(--ink); } .lit { fill: var(--paper-raised); }
+  #profile, #profile-name { position: relative; width: 540px; height: 540px; background-size: 45px 45px; background-position: 22px 22px; }
+  #cover { position: relative; width: 820px; height: 428px; overflow: hidden; background-size: 30px 30px; background-position: 10px 4px; }
+  #thumb { position: relative; width: 540px; height: 960px; overflow: hidden; background-size: 36px 36px; background-position: 18px 12px; }
+  .name { margin: 0; font: 900 58px/1 var(--font-sans); color: var(--ink); white-space: nowrap; letter-spacing: -.01em; }
+  .name b { color: var(--heat); }
+  .tag { margin: 0; font: 600 19px/1.5 var(--font-sans); color: var(--ink); }
+  .tag span { color: var(--heat-text); }
+  .cats { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+  .cats span { font: 800 12px/1 var(--font-sans); letter-spacing: .05em; padding: 6px 10px; border: 1.5px solid var(--ink); background: var(--paper-raised); }
+  .cats span:first-child { background: var(--heat-text); border-color: var(--heat-text); color: var(--on-heat); }
+  /* 3D parts (same classes as the video) */
+  .iso-tire { fill: #3b352e; stroke: var(--ink); stroke-width: 1.4; } .iso-spoke { fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; }
+  .iso-ghost { fill: none; stroke: var(--ink); stroke-width: 1.3; stroke-linejoin: round; opacity: .55; } .iso-ghost--far { stroke-dasharray: 4 4; opacity: .35; }
+  .iso-ghost--win { fill: color-mix(in srgb, var(--water-body) 30%, transparent); }
+  .iso-fuel { fill: var(--fuel); stroke: var(--ink); stroke-width: 1.4; } .iso-fuel-x { fill: color-mix(in srgb, var(--fuel) 75%, var(--ink)); stroke: var(--ink); stroke-width: 1.4; }
+  .iso-fuel-top { fill: var(--fuel-soft); stroke: var(--ink); stroke-width: 1.4; }
+  .iso-pipe-fuel { fill: none; stroke: var(--fuel); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+  .iso-pipe-air { fill: none; stroke: color-mix(in srgb, var(--water-body) 70%, var(--paper-raised)); stroke-width: 5; stroke-linecap: round; }
+  .iso-pipe-shaft { fill: none; stroke: var(--olive); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+  .iso-shaft-spin { fill: none; stroke: var(--ink); stroke-width: 2; stroke-dasharray: 3 9; opacity: .6; }
+  .iso-cut-edge { fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linejoin: round; }
+  .iso-rod { fill: none; stroke: color-mix(in srgb, var(--olive) 70%, var(--ink)); stroke-width: 4; stroke-linecap: round; }
+  .iso-burn { fill: #f08a3c; stroke: var(--heat); stroke-width: 1.2; } .iso-burn-top { fill: #ffc65c; stroke: var(--heat); stroke-width: 1.2; }
+  .iso-bolt { fill: none; stroke: #f2b705; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+  .iso-spark-glow { fill: #ffe27a; opacity: .75; } .iso-hose { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
+  .iso-bore { fill: color-mix(in srgb, var(--khaki) 45%, var(--paper-raised)); stroke: var(--ink); stroke-width: 1.4; }
+  .iso-cut { fill: var(--khaki); stroke: var(--ink); stroke-width: 1.6; stroke-linejoin: round; }
+  .iso-port { fill: var(--paper-raised); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+  .iso-injector { fill: none; stroke: var(--ink); stroke-width: 7; stroke-linecap: round; }
+  .iso-ring { fill: none; stroke: var(--ink); stroke-width: 1; opacity: .7; } .iso-stem { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
+  .iso-spring { fill: none; stroke: color-mix(in srgb, var(--olive) 70%, var(--ink)); stroke-width: 1.6; stroke-linejoin: round; }
+  .iso-ceramic { fill: #f6f3ea; stroke: var(--ink); stroke-width: 1.4; }
+  .iso-spray { fill: none; stroke: var(--fuel); stroke-width: 2; stroke-dasharray: 3 4; stroke-linecap: round; }
+  .iso-gas { stroke: none; } .iso-gas-top { stroke-width: 1; }
+  .g-burn { fill: #f08a3c; stroke: var(--heat); }
+  .boom { font: 900 46px var(--font-sans); fill: var(--heat); paint-order: stroke; stroke: var(--paper); stroke-width: 10px; stroke-linejoin: round; }
+  .callout { font: 800 15px var(--font-sans); fill: var(--c); paint-order: stroke; stroke: var(--paper); stroke-width: 5px; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <g id="mark">
+      <rect x="84" y="4" width="32" height="10" class="ink-f"/><rect x="94" y="14" width="12" height="14" class="ink-f"/>
+      <path class="ink-f" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)"/>
+      <path class="lit" style="stroke:var(--ink);stroke-width:7;stroke-linejoin:round" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z"/>
+      <rect x="94" y="58" width="24" height="54" rx="4" style="fill:var(--heat)"/><rect x="94" y="120" width="24" height="20" rx="4" style="fill:var(--heat)"/>
+    </g>
+  </defs>
+</svg>
+
+<!-- Profile 1080×1080: the mark alone (reads at tiny sizes) -->
+<div id="profile" class="grid">
+  <svg viewBox="0 0 540 540" width="540" height="540"><g transform="translate(74 70) scale(1.9)"><use href="#mark"/></g></svg>
+</div>
+
+<!-- Profile 1080×1080 with the name, all inside the circle crop -->
+<div id="profile-name" class="grid">
+  <svg viewBox="0 0 540 540" width="540" height="540" style="position:absolute;inset:0"><g transform="translate(168 62) scale(1.04)"><use href="#mark"/></g></svg>
+  <p style="position:absolute;left:0;right:0;top:296px;margin:0;text-align:center;font:900 66px/1 var(--font-sans);color:var(--ink);letter-spacing:-.01em">Here's the</p>
+  <p style="position:absolute;left:0;right:0;top:368px;margin:0;text-align:center;font:900 66px/1 var(--font-sans);color:var(--heat)">Deal</p>
+</div>
+
+<!-- Facebook cover 1640×856. Key content stays in the middle 640×312 that mobile + desktop both show. -->
+<div id="cover" class="grid">
+  <svg viewBox="0 0 820 428" width="820" height="428" style="position:absolute;inset:0"><g id="covercar"></g></svg>
+  <div style="position:absolute;left:418px;top:104px;width:330px;display:grid;gap:10px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <svg viewBox="0 0 200 200" width="70" height="70"><use href="#mark"/></svg>
+      <h1 class="name" style="font-size:46px;line-height:1.02">Here's<br>the <b>Deal</b></h1>
+    </div>
+    <p class="tag">How stuff actually works.<br>Drawn in 3D, <span>explained in a minute.</span></p>
+    <div class="cats"><span>CARS</span><span>HOME</span><span>PLANES</span><span>TECH</span></div>
+  </div>
+</div>
+
+<!-- Video thumbnail 1080×1920: car engine. Everything that matters sits in y 120–760 (3:4 grid, above the caption). -->
+<div id="thumb" class="grid">
+  <div style="position:absolute;left:0;right:0;top:128px;display:flex;justify-content:center;align-items:center;gap:8px;font:800 17px var(--font-sans)"><svg width="26" height="26" viewBox="0 0 200 200"><use href="#mark"/></svg>Here's the Deal</div>
+  <p style="position:absolute;left:24px;right:24px;top:166px;margin:0;text-align:center;font:900 46px/1.08 var(--font-sans);letter-spacing:-.01em">
+    <span style="color:var(--heat)">100 explosions</span><br>a second?!</p>
+  <p style="position:absolute;left:0;right:0;top:282px;margin:0;text-align:center;font:700 21px var(--font-sans);color:var(--ink-muted)">That's what's under your hood.</p>
+  <svg viewBox="0 0 540 960" width="540" height="960" style="position:absolute;inset:0"><g id="thumbcyl"></g><g id="thumbfx"></g></svg>
+  <p style="position:absolute;left:0;right:0;top:728px;margin:0;text-align:center;font:900 27px/1.2 var(--font-sans)">How a car engine <span style="color:var(--heat)">actually</span> works</p>
+</div>
+
+<script src="../../design-system/components/bundle.js"></script>
+<script>TebEzay.patterns();</script>
+<script src="../../videos/car-us/iso.js"></script>
+<script>
+  var car = CarModel(document.getElementById("covercar"), { scale: 0.62, x: 240, y: 252 });
+  car.pump.style.display = "none";
+  car.update(0.21, { phi: 400, fire: true, wheel: 0.6, shaft: 2, glow: 0 });
+  var cyl = CylModel(document.getElementById("thumbcyl"), { scale: 0.9, x: 270, y: 572 });
+  cyl.update(0, { theta: 372, gas: "g-burn", gasA: 1, spark: 1, spray: 0 });
+  var I = cyl.iso, fx = document.getElementById("thumbfx"), NS = "http://www.w3.org/2000/svg";
+  function txt(x, y, s, cls, st) { var t = document.createElementNS(NS, "text"); t.setAttribute("x", x); t.setAttribute("y", y); t.setAttribute("class", cls); t.setAttribute("text-anchor", "middle"); if (st) t.setAttribute("style", st); t.textContent = s; fx.appendChild(t); }
+  var b = I.P(0, 0, 96); txt(b[0], b[1], "BOOM!", "boom", "transform:rotate(-7deg);transform-box:fill-box;transform-origin:center");
+  var p = I.P(0, 0, 214); txt(p[0] + 92, p[1] + 6, "spark plug", "callout", "--c:var(--olive-text)");
+  var c = I.P(0, 0, -70); txt(c[0] + 112, c[1] + 20, "crankshaft", "callout", "--c:var(--olive-text)");
+</script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>Style preview v2</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../../design-system/components/bundle.css">
+<style>
+  body { margin: 0; background: var(--paper); display: flex; gap: 0; font-family: var(--font-sans); }
+  .scene { position: relative; width: 360px; height: 640px; background: var(--paper); }
+  .frame { position: absolute; inset: 35px; border: 2px solid var(--ink); display: grid; grid-template-rows: 69% 0 1fr; background: var(--paper); }
+  .stage { position: relative; overflow: hidden; }
+  .stage svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .rule { border-top: 1px solid var(--line-soft); margin-inline: 10px; }
+  .cap { padding: 16px 18px 0; text-align: center; font: 500 17px/1.65 var(--font-sans); }
+  .lift { --c: var(--water); } .thrust { --c: var(--heat); } .drag { --c: var(--olive); } .weight { --c: var(--ink); }
+  .arrow { fill: var(--c); stroke: var(--ink); stroke-width: 1.5; stroke-linejoin: round; }
+  .lbl { font: 600 15px var(--font-sans); fill: var(--c); paint-order: stroke; stroke: var(--paper); stroke-width: 4px; }
+  .body-lit { fill: var(--paper-raised); }
+  .body-shade { fill: var(--khaki); }
+  .hl { fill: none; stroke: var(--paper); stroke-width: 2; opacity: .9; }
+  .wing-blue { fill: var(--water); }
+  .stream { fill: none; stroke: var(--paper-grid); stroke-width: 1.2; }
+  .stream.low { stroke: color-mix(in srgb, var(--olive) 55%, var(--paper)); }
+  .pt { fill: var(--paper-raised); stroke: var(--khaki-deep); stroke-width: 1; }
+  .pt.low { fill: var(--olive); stroke: var(--ink); }
+  .cloud { fill: var(--paper); stroke: var(--ink); stroke-width: 1.5; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <!-- 3/4 airliner, nose left, ~300 × 110 -->
+    <clipPath id="fus"><path d="M24 46 C8 47 2 54 2 60 C2 67 10 72 26 73 L250 73 C268 72 286 62 298 50 L298 43 L268 43 L240 46 Z"/></clipPath>
+    <g id="jet">
+      <!-- far wing + far stabiliser (behind the body) -->
+      <path class="tz-f-deep tz-ink" d="M150 50 L222 22 L238 22 L198 52 Z"/>
+      <path class="tz-pat-hatch" d="M150 50 L222 22 L238 22 L198 52 Z"/>
+      <path class="tz-f-deep tz-ink" d="M262 46 L290 30 L299 30 L284 48 Z"/>
+      <!-- tail fin -->
+      <path class="body-lit tz-ink" d="M244 46 L268 43 L298 2 L281 2 Z"/>
+      <path class="tz-pat-hatch" d="M268 43 L298 2 L291 2 L262 44 Z"/>
+      <!-- fuselage with volume: lit top, shaded belly, highlight -->
+      <path class="body-lit" d="M24 46 C8 47 2 54 2 60 C2 67 10 72 26 73 L250 73 C268 72 286 62 298 50 L298 43 L268 43 L240 46 Z"/>
+      <g clip-path="url(#fus)">
+        <rect class="body-shade" x="0" y="63" width="300" height="12"/>
+        <rect class="tz-pat-hatch" x="0" y="67" width="300" height="8"/>
+        <path class="hl" d="M30 50 L236 49"/>
+      </g>
+      <path class="tz-ink" style="fill:none" d="M24 46 C8 47 2 54 2 60 C2 67 10 72 26 73 L250 73 C268 72 286 62 298 50 L298 43 L268 43 L240 46 Z"/>
+      <path class="tz-f-water tz-ink" d="M8 54 Q12 50 22 50 L22 55 Z"/>
+      <g class="tz-pat-dot">
+        <circle cx="40" cy="56" r="1.4"/><circle cx="48" cy="56" r="1.4"/><circle cx="56" cy="56" r="1.4"/><circle cx="64" cy="56" r="1.4"/><circle cx="72" cy="56" r="1.4"/><circle cx="80" cy="56" r="1.4"/><circle cx="88" cy="56" r="1.4"/><circle cx="96" cy="56" r="1.4"/><circle cx="104" cy="56" r="1.4"/><circle cx="112" cy="56" r="1.4"/><circle cx="120" cy="56" r="1.4"/><circle cx="128" cy="56" r="1.4"/><circle cx="136" cy="56" r="1.4"/><circle cx="144" cy="56" r="1.4"/><circle cx="152" cy="56" r="1.4"/><circle cx="160" cy="56" r="1.4"/><circle cx="168" cy="56" r="1.4"/><circle cx="176" cy="56" r="1.4"/><circle cx="184" cy="56" r="1.4"/><circle cx="192" cy="56" r="1.4"/><circle cx="200" cy="56" r="1.4"/><circle cx="208" cy="56" r="1.4"/><circle cx="216" cy="56" r="1.4"/><circle cx="224" cy="56" r="1.4"/>
+      </g>
+      <rect class="tz-ink" style="fill:none;stroke-width:1" x="32" y="52" width="4" height="9"/><rect class="tz-ink" style="fill:none;stroke-width:1" x="230" y="52" width="4" height="9"/>
+      <!-- near wing, swept, in front of the body -->
+      <path class="body-shade tz-ink" d="M118 64 L178 66 L240 100 L220 102 L132 74 Z"/>
+      <path class="tz-pat-hatch" d="M178 66 L240 100 L232 101 L170 68 Z"/>
+      <!-- engines: cylinders with a dark intake face -->
+      <path class="body-shade tz-ink" d="M150 78 L184 78 Q190 84 184 90 L150 90 Z"/>
+      <ellipse class="tz-f-deep tz-ink" cx="150" cy="84" rx="4.5" ry="6"/>
+      <path class="body-shade tz-ink" d="M188 90 L218 90 Q223 95 218 100 L188 100 Z"/>
+      <ellipse class="tz-f-deep tz-ink" cx="188" cy="95" rx="4" ry="5"/>
+      <!-- near stabiliser -->
+      <path class="body-shade tz-ink" d="M258 62 L300 76 L290 78 L254 68 Z"/>
+    </g>
+    <g id="cloud">
+      <path class="tz-pat-hatch" d="M-4 34 H86 V40 H-4 Z"/>
+      <path class="cloud" d="M0 34 C0 24 8 19 16 21 C18 10 34 6 42 14 C48 6 64 9 66 20 C76 19 84 26 82 34 Z"/>
+    </g>
+  </defs>
+</svg>
+
+<!-- Scene A: four forces -->
+<div class="scene">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <use href="#cloud" transform="translate(40 70)"/>
+        <use href="#cloud" transform="translate(250 330) scale(.8)"/>
+        <use href="#cloud" transform="translate(60 400) scale(.7)"/>
+        <g transform="translate(8 196) scale(1.15)"><use href="#jet"/></g>
+        <!-- lift -->
+        <path class="arrow lift" d="M175 250 V118 H165 L182 92 L199 118 H189 V250 Z"/>
+        <text class="lbl lift" x="182" y="82" text-anchor="middle">الرفع</text>
+        <!-- weight -->
+        <path class="arrow weight" d="M175 262 V380 H165 L182 406 L199 380 H189 V262 Z"/>
+        <text class="lbl weight" x="182" y="428" text-anchor="middle">الوزن</text>
+        <!-- thrust -->
+        <path class="arrow thrust" d="M160 257 H62 V247 L36 264 L62 281 V271 H160 Z"/>
+        <text class="lbl thrust" x="70" y="238" text-anchor="middle">الدفع</text>
+        <!-- drag -->
+        <path class="arrow drag" d="M204 257 H286 V247 L312 264 L286 281 V271 H204 Z"/>
+        <text class="lbl drag" x="290" y="304" text-anchor="middle">مقاومة الهوا</text>
+        <circle cx="182" cy="264" r="5" class="tz-pat-dot" style="stroke:var(--paper);stroke-width:2"/>
+      </svg>
+    </div>
+    <div class="rule"></div>
+    <div class="cap">أي طيارة...<br>عليها أربع قوى.</div>
+  </div>
+</div>
+
+<!-- Scene B: the wing throws air down -->
+<div class="scene">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <g id="streams"></g>
+        <g transform="translate(0 40) rotate(8 185 214)">
+          <path class="wing-blue" d="M70 214 C78 184 150 170 210 177 C252 182 282 198 300 212 C252 216 150 224 92 222 C78 221 70 219 70 214 Z"/>
+          <path class="tz-pat-hatch" d="M80 216 C150 220 250 214 300 212 C252 216 150 224 92 222 C78 221 72 219 80 216 Z"/>
+          <path class="hl" style="stroke-width:3;opacity:.45" d="M96 196 C130 184 170 180 210 182"/>
+          <path class="tz-ink-h" d="M70 214 C78 184 150 170 210 177 C252 182 282 198 300 212 C252 216 150 224 92 222 C78 221 70 219 70 214 Z"/>
+        </g>
+        <path class="arrow drag" d="M290 300 L318 372 L327 368 L322 400 L298 380 L307 376 L279 304 Z"/>
+        <path class="arrow lift" d="M178 236 V190 H170 L183 170 L196 190 H188 V236 Z"/>
+      </svg>
+    </div>
+    <div class="rule"></div>
+    <div class="cap">يعني الجناح بيرمي الهوا <span style="color:var(--olive-text)">لتحت</span>...<br>فالهوا يزقه <span style="color:var(--water)">لفوق</span>.</div>
+  </div>
+</div>
+
+<script src="../../design-system/components/bundle.js"></script>
+<script>
+  TebEzay.patterns();
+  // streamlines with particles riding on them
+  var g = document.getElementById("streams"), NS = "http://www.w3.org/2000/svg";
+  var lines = [];
+  for (var i = 0; i < 12; i++) {
+    var y = 60 + i * 32, low = y > 250, bend = low ? 20 + (y - 250) * .1 : (y < 250 ? -14 + (250 - y) * .05 : 0);
+    var d = "M-10 " + y + " C80 " + (y - (low ? 0 : 10)) + " 170 " + (y - bend * .6) + " 230 " + (y + bend * .4) + " S330 " + (y + bend * 1.6) + " 380 " + (y + bend * 2.2);
+    var p = document.createElementNS(NS, "path"); p.setAttribute("d", d); p.setAttribute("class", "stream" + (low ? " low" : "")); g.appendChild(p);
+    var L = p.getTotalLength();
+    for (var k = 0; k < 9; k++) {
+      var c = document.createElementNS(NS, "circle"), pt = p.getPointAtLength(((k / 9) + (i % 3) * .04) * L);
+      c.setAttribute("cx", pt.x); c.setAttribute("cy", pt.y); c.setAttribute("r", low ? 3.2 : 2.6); c.setAttribute("class", "pt" + (low ? " low" : "")); g.appendChild(c);
+    }
+  }
+</script>
+</body>
+</html>

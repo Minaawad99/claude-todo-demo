@@ -1,0 +1,43 @@
+<!-- @dsCard group="Scene" height=460 subtitle="3D isometric cutaway: every machine is drawn this way" -->
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Iso3D — preview</title>
+<style>
+  body { margin: 0; padding: 16px; background: var(--paper); color: var(--ink); font-family: var(--font-sans); }
+  .stage { position: relative; height: 420px; max-width: 360px; border: var(--stroke-frame) solid var(--ink); }
+  .stage > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<div class="stage tz-paper">
+  <svg viewBox="0 0 360 420" aria-label="مقطع 3D لجهاز: خزان مية، ومضخة تحت الأرضية، ومروحة بتلف"><g id="model"></g></svg>
+</div>
+<script>
+  TebEzay.patterns();
+  var iso = TebEzay.iso(document.getElementById("model"), { scale: 0.7, x: 180, y: 250 });
+  var g = iso.group(), W = 260, D = 220;
+  // the room: back walls + floor, and the part under the floor seen through the cut
+  var under = iso.cutaway(g, W, D, 240, 12, -70, "pv-under");
+  iso.pipe(under, [[60, -D / 2 + 12, -40], [82, 60, -40]]);
+  iso.box(under, 60, 104, 40, 80, -66, -22, { z: "iso-part-top", x: "iso-part-x", y: "iso-part" });
+  // a tank with water and a pipe up the back wall
+  iso.cyl(g, -60, -40, 34, 0, 120, "iso-glass", "iso-top");
+  iso.cyl(g, -60, -40, 30, 0, 70, "iso-water-side", "iso-water");
+  iso.pipe(g, [[60, -D / 2 + 12, 0], [60, -D / 2 + 12, 180], [20, -D / 2 + 12, 180], [20, -40, 180]]);
+  // a rotor that turns in true 3D
+  var spin = iso.group(g);
+  // a halo and label on the part being explained
+  iso.face(g, iso.ring(82, 60, -70, 40, 32, "z"), "iso-halo");
+  var p = iso.P(82, 60, -70), t = iso.el("text", { "class": "iso-label c-part", x: p[0].toFixed(1), y: (p[1] + 40).toFixed(1), "text-anchor": "middle", style: "--c:var(--olive-text)" }, g);
+  t.textContent = "المضخة";
+  function frame(ms) {
+    while (spin.firstChild) spin.removeChild(spin.firstChild);
+    iso.rotor(spin, { x: 50, y: 20, z: 60, length: 70, width: 9, thick: 7, angle: ms / 600 });
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) requestAnimationFrame(frame);
+  }
+  frame(900);
+</script>
+</body>
+</html>

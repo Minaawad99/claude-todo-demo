@@ -1,0 +1,22 @@
+// Sound cues from the line timings (shared by both versions): node cues.js → cues.json
+global.window = {}; eval(require('fs').readFileSync(__dirname + '/timing.js', 'utf8'));
+const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration : T[i].start, c = [];
+const a = (t, fx, gain, dur) => c.push(Object.assign({ t: +t.toFixed(2), fx, gain }, dur ? { dur } : {}));
+a(0.3, 'pop', 0.7); a(L(0) + 1.0, 'whoosh', 0.4); a(L(0) + 3.0, 'bump', 0.6);
+a(L(1) - 0.1, 'whoosh', 0.5); [0, 1, 2].forEach(k => a(L(1) + k * (L(2) - L(1)) / 3 + 0.1, 'pop', 0.7)); a(L(1) + 0.4, 'tick', 0.4);
+a(L(2) - 0.1, 'whoosh', 0.5); for (let k = 0; k < 8; k++) a(L(2) + 0.2 + k * 0.32, 'tick', 0.5); a(L(2) + 0.9, 'pop', 0.6);
+a(L(3) - 0.1, 'whoosh', 0.7); a(L(3) + 0.1, 'pop', 0.9); a(L(3) + 0.3, 'ping', 0.4);
+for (const i of [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26]) a(L(i) - 0.08, 'whoosh', 0.35);
+a(L(4) + 0.5, 'pop', 0.6); a(L(5) + 1.2, 'pop', 0.6); a(L(5) + 1.0, 'hum', 0.3, 2.0); a(L(6) + 0.1, 'charge', 0.4); a(L(6) + 1.4, 'pop', 0.6);
+for (let k = 0; k < 10; k++) a(L(7) + 0.1 + k * 0.24, 'tick', 0.45); a(L(7) + 0.9, 'pop', 0.6);
+a(L(8) + 0.6, 'squeeze', 0.5); a(L(8) + 1.6, 'pop', 0.6); a(L(9) + 0.2, 'pop', 0.7);
+a(L(10) + 0.8, 'laser', 0.5); a(L(10) + 1.6, 'laser', 0.4); a(L(10) + 1.0, 'pop', 0.6); a(L(11) + 1.6, 'pop', 0.6); a(L(11) + 1.8, 'pop', 0.5);
+a(L(12) + 0.1, 'spool', 0.5, 1.6); a(L(12) + 1.8, 'pop', 0.6); a(L(13) + 0.8, 'pop', 0.6); a(L(13) + 1.2, 'ping', 0.5);
+a(L(14) + 1.0, 'bump', 0.7); a(L(14) + 1.2, 'pop', 0.6); a(L(15) + 0.4, 'pop', 0.6); a(L(15) + 2.2, 'whoosh', 0.5); a(L(15) + 2.5, 'pop', 0.6);
+a(L(16) + 0.1, 'zap', 0.4); for (let k = 0; k < 12; k++) a(L(16) + 0.3 + k * 0.3, 'tick', 0.3); a(L(16) + 0.8, 'pop', 0.6);
+a(L(17) + 0.4, 'pop', 0.6); for (let k = 0; k < 3; k++) a(L(17) + 0.3 + k * 1.25, 'ping', 0.5); a(L(17) + 2.4, 'pop', 0.7);
+for (let k = 0; k < 2; k++) a(L(18) + 0.2 + k * 1.67, 'notify', 0.6); a(L(19) + 1.0, 'pop', 0.6); a(L(19) + 0.6, 'ping', 0.4);
+a(L(20) + 0.2, 'charge', 0.4); a(L(20) + 1.2, 'pop', 0.6); a(L(21) + 0.1, 'hum', 0.4, 2.2); a(L(21) + 0.6, 'pop', 0.6); a(L(22) + 1.0, 'pop', 0.6);
+a(L(23) + 0.1, 'idle', 0.35, L(25) - L(23)); a(L(23) + 0.8, 'beep', 0.5); a(L(24) + 1.3, 'ping', 0.5); a(L(24) + 1.6, 'chime', 0.5);
+[0, 1, 2, 3, 4].forEach(k => a(L(25) + k * (L(26) - L(25) - 1) / 5 + 0.1, 'pop', 0.7)); a(L(26) + 0.3, 'pop', 0.8);
+require('fs').writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: true, cues: c }, null, 1)); console.log(c.length, 'cues');

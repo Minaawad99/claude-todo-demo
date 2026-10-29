@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../high-dam-photo/fonts.css">
+<style>
+:root {
+  --bg: #eef3f6; --ink: #14222e; --muted: #5a6b78;
+  --sky-top: #9cc6e6; --sky-bot: #eaf3f8; --sun: #ffd37a;
+  --sand: #dcc79c; --sand-2: #c8ae7e; --rock: #a89a86; --rock-2: #8c7f6c;
+  --water: #2f7fb0; --water-2: #5aa2cf; --foam: #e6f5ff; --tunnel: #3b4a57;
+  --steel: #4a5966; --wall: #f6f1e6; --roof: #9a5b3c; --win: #ffcf5a;
+  --lv: #f08a24; --hv: #e8a500; --mv: #f0b93a;
+  --display: "Reem Kufi", "IBM Plex Sans Arabic", sans-serif;
+  --body: "IBM Plex Sans Arabic", sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 1280px; height: 720px; overflow: hidden; background: #0e1a24; font-family: var(--body); }
+#scene { position: absolute; top: 0; left: 0; width: 1280px; height: 590px; display: block; }
+#scene text { font-family: var(--body); fill: var(--ink); font-size: 15px; }
+#scene .lbl { font-weight: 700; }
+#scene .sub { fill: var(--muted); font-size: 12.5px; }
+.tower path { stroke: var(--steel); stroke-width: 1.6; fill: none; }
+.wire { fill: none; stroke: var(--steel); stroke-width: 1.4; opacity: .7; }
+.dot-lv { fill: var(--lv); } .dot-hv { fill: var(--hv); } .dot-mv { fill: var(--mv); } .dot-water { fill: var(--foam); }
+.ripple { fill: none; stroke: var(--water-2); stroke-width: 2; stroke-linecap: round; }
+.win { fill: #b9c6d0; }
+.lit .win { fill: var(--win); filter: drop-shadow(0 0 5px var(--win)); }
+#bar { position: absolute; left: 0; right: 0; bottom: 0; height: 130px; background: #0e1a24; color: #fff;
+  display: flex; align-items: center; gap: 28px; padding: 0 44px; }
+#badge { flex: none; font-family: var(--display); font-weight: 700; color: #ffc23d; font-size: 26px; line-height: 1.2; text-align: center; min-width: 170px; }
+#badge small { display: block; font-family: var(--body); font-weight: 500; color: #9fb2c2; font-size: 17px; }
+#sub { font-size: 29px; line-height: 1.55; font-weight: 500; }
+#card { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  background: rgba(14, 26, 36, .82); color: #fff; text-align: center; }
+#card h1 { font-family: var(--display); font-weight: 700; font-size: 74px; margin: 0; }
+#card p { font-size: 30px; margin: 0; color: #ffd37a; }
+</style>
+</head>
+<body>
+<!--SCENE-->
+<div id="bar"><div id="badge"></div><div id="sub"></div></div>
+<div id="card"><h1 id="c-title"></h1><p id="c-sub"></p></div>
+<script>
+const NS = 'http://www.w3.org/2000/svg';
+const svg = document.getElementById('scene');
+svg.removeAttribute('class');
+svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+
+// Extend sky, ground and lake past the original frame so the camera never sees an edge
+const q = s => svg.querySelector(s);
+q('rect[fill="url(#sky)"]').setAttribute('x', -400);
+q('rect[fill="url(#sky)"]').setAttribute('y', -400);
+q('rect[fill="url(#sky)"]').setAttribute('width', 2000);
+q('rect[fill="url(#sky)"]').setAttribute('height', 800);
+svg.querySelectorAll('rect[y="400"]').forEach(r => { r.setAttribute('x', -400); r.setAttribute('width', 2000); });
+svg.querySelector('rect[y="400"]').setAttribute('height', 400);
+q('polygon[points="1024,222 1200,222 1200,400 1120,400"]').setAttribute('points', '1024,222 1600,222 1600,400 1120,400');
+q('rect[x="1024"][y="222"]').setAttribute('width', 576);
+
+// Turbine runner
+const runner = document.getElementById('runner');
+runner.removeAttribute('class');
+for (let a = 0; a < 360; a += 60) {
+  const p = document.createElementNS(NS, 'path');
+  p.setAttribute('d', 'M0 0 Q 7 -4 11 -2');
+  p.setAttribute('transform', `rotate(${a})`);
+  p.setAttribute('fill', 'none');
+  p.style.stroke = 'var(--foam)';
+  p.setAttribute('stroke-width', '2.4');
+  runner.appendChild(p);
+}
+
+function tower(x, top, base, w) {
+  const g = document.createElementNS(NS, 'g');
+  g.setAttribute('class', 'tower');
+  const t = top + 8, hw = y => 3 + (w / 2 - 3) * (y - t) / (base - t);
+  let d = `M${x - w / 2} ${base} L${x - 3} ${t} L${x + 3} ${t} L${x + w / 2} ${base}`;
+  const n = Math.max(4, Math.round((base - t) / 22));
+  for (let i = 0; i < n; i++) {
+    const y1 = base - (base - t) * i / n, y2 = base - (base - t) * (i + 1) / n;
+    d += ` M${x - hw(y1)} ${y1} L${x + hw(y2)} ${y2} M${x + hw(y1)} ${y1} L${x - hw(y2)} ${y2}`;
+  }
+  d += ` M${x - 20} ${top + 4} H${x + 20} M${x - 12} ${top + 18} H${x + 12}`;
+  const p = document.createElementNS(NS, 'path');
+  p.setAttribute('d', d);
+  g.appendChild(p);
+  return g;
+}
+[[650, 200, 400, 36], [545, 200, 400, 36], [440, 200, 400, 36]]
+  .forEach(a => document.getElementById('towers').appendChild(tower(...a)));
+
+const ROUTES = [
+  { kind: 'water', speed: 45, gap: 30, wire: false, d: 'M1185 300 Q1150 340 1100 362' },
+  { kind: 'water', speed: 110, gap: 26, wire: false, d: 'M1100 362 Q1060 366 1010 370 L880 380 L850 382' },
+  { kind: 'water', speed: 70, gap: 30, wire: false, d: 'M840 390 L812 412 L475 412' },
+  { kind: 'lv', speed: 55, gap: 22, d: 'M830 349 L800 349 L800 362 L754 362' },
+  { kind: 'hv', speed: 150, gap: 46, d: 'M745 344 L650 212 Q597 250 545 212 Q492 250 440 212 L404 330' },
+  { kind: 'mv', speed: 80, gap: 30, d: 'M338 330 Q300 300 262 296' },
+  { kind: 'lv', speed: 50, gap: 26, d: 'M274 330 Q246 330 216 350' },
+  { kind: 'lv', speed: 50, gap: 26, d: 'M274 330 Q210 300 140 310' },
+  { kind: 'lv', speed: 50, gap: 26, d: 'M80 330 Q72 340 70 356' }
+];
+const routes = ROUTES.map(r => {
+  const wire = document.createElementNS(NS, 'path');
+  wire.setAttribute('d', r.d);
+  wire.setAttribute('class', 'wire');
+  if (r.wire === false) wire.style.stroke = 'none';
+  document.getElementById('wires').appendChild(wire);
+  const len = wire.getTotalLength();
+  const dots = [];
+  for (let i = 0; i < Math.max(2, Math.floor(len / r.gap)); i++) {
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('r', r.kind === 'hv' ? 4.2 : 3.2);
+    c.setAttribute('class', 'dot-' + r.kind);
+    document.getElementById('dots').appendChild(c);
+    dots.push(c);
+  }
+  return { ...r, wire, len, dots };
+});
+
+// Timeline: intro, 7 stages, outro (seconds)
+const INTRO = 4, STAGE = 7.5, OUTRO = 5;
+const R = 1280 / 590;
+const cam = (cx, cy, w) => [cx - w / 2, cy - w / R / 2, w, w / R];
+const OVERVIEW = cam(600, 300, 1200);
+const SHOTS = [
+  { cam: cam(1080, 285, 520), title: 'بحيرة ناصر',
+    text: 'ورا السد العالي فيه بحيرة ناصر، وميّتها أعلى من النيل اللي بعد السد بحوالي ٧٠ متر. الميّة العالية دي فيها طاقة مخزّنة.' },
+  { cam: cam(890, 380, 420), title: 'التوربينة والمولد',
+    text: 'الميّة بتنزل بسرعة في أنفاق تحت السد فتلف التوربينة، والتوربينة بتلف المولّد فيطلّع كهربا. وبعدها الميّة بتكمّل في النيل.' },
+  { cam: cam(760, 385, 340), title: 'رفع الجهد',
+    text: 'المحوّل الرافع بيعلّي جهد الكهربا لـ ٥٠٠ ألف فولت، عشان الطاقة اللي بتضيع في الأسلاك تقل.' },
+  { cam: cam(555, 285, 700), title: 'النقل',
+    text: 'أبراج الضغط العالي بتشيل الكهربا حوالي ٨٠٠ كيلومتر على طول النيل، لحد القاهرة وباقي المحافظات.' },
+  { cam: cam(370, 385, 330), title: 'محطة المحولات',
+    text: 'في محطة المحولات الجهد بيقل خطوة بخطوة، قبل ما الكهربا تدخل المدينة.' },
+  { cam: cam(270, 400, 440), title: 'التوزيع',
+    text: 'محوّل الحي بينزّل الجهد لـ ٣٨٠ فولت، ويوزّع الكهربا على البيوت اللي حواليه.' },
+  { cam: cam(115, 375, 380), title: 'البيت',
+    text: 'الكهربا بتعدّي على العداد، وبعدها لوحة الكهربا، ومنها للبريزة على ٢٢٠ فولت… والبيت نوّر!' }
+];
+const num = n => n.toLocaleString('ar-EG');
+const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const mix = (a, b, k) => a.map((v, i) => v + (b[i] - v) * k);
+window.DURATION = INTRO + STAGE * SHOTS.length + OUTRO;
+
+const $ = id => document.getElementById(id);
+const homes = document.querySelector('[data-stage="7"]');
+const ripple = document.querySelector('.ripple');
+let lastText = null;
+
+window.render = t => {
+  // flows
+  for (const r of routes) {
+    const step = r.len / r.dots.length;
+    r.dots.forEach((c, i) => {
+      const pt = r.wire.getPointAtLength((t * r.speed + i * step) % r.len);
+      c.setAttribute('cx', pt.x.toFixed(1));
+      c.setAttribute('cy', pt.y.toFixed(1));
+    });
+  }
+  runner.setAttribute('transform', `rotate(${(t * 240) % 360})`);
+  ripple.setAttribute('transform', `translate(${(-5 - 5 * Math.cos(t * 1.25)).toFixed(2)} 0)`);
+
+  // camera, captions, cards
+  let view = OVERVIEW, badge = '', text = '', subOp = 0, card = null, cardOp = 0;
+  const s = t - INTRO, end = INTRO + STAGE * SHOTS.length;
+  if (t < INTRO) {
+    card = ['رحلة الكهربا من السد العالي', 'من ميّة النيل… لحد نور بيتك'];
+    cardOp = t < INTRO - .8 ? 1 : (INTRO - t) / .8;
+  } else if (t < end) {
+    const i = Math.floor(s / STAGE), local = s - i * STAGE;
+    const from = i === 0 ? OVERVIEW : SHOTS[i - 1].cam;
+    view = mix(from, SHOTS[i].cam, ease(Math.min(1, local / 1.6)));
+    badge = `${SHOTS[i].title}<small>المرحلة ${num(i + 1)} من ${num(SHOTS.length)}</small>`;
+    text = SHOTS[i].text;
+    subOp = Math.min(1, Math.max(0, (local - .5) / .4)) * Math.min(1, (STAGE - local) / .3);
+    homes.classList.toggle('lit', i === 6 && local > 3);
+  } else {
+    const k = ease(Math.min(1, (t - end) / 1.8));
+    view = mix(SHOTS[SHOTS.length - 1].cam, OVERVIEW, k);
+    homes.classList.add('lit');
+    text = 'وكده كهربا السد العالي وصلت بيتك!';
+    subOp = Math.min(1, Math.max(0, (t - end - 1.8) / .5));
+    if (t > window.DURATION - 1.6) { card = ['رحلة الكهربا من السد العالي', 'السد العالي · أسوان']; cardOp = Math.min(1, (t - (window.DURATION - 1.6)) / .6); }
+  }
+  svg.setAttribute('viewBox', view.map(v => v.toFixed(2)).join(' '));
+  if (text !== lastText) { $('badge').innerHTML = badge; $('sub').textContent = text; lastText = text; }
+  $('bar').style.opacity = 1;
+  $('sub').style.opacity = subOp; $('badge').style.opacity = subOp;
+  $('card').style.opacity = cardOp;
+  if (card) { $('c-title').textContent = card[0]; $('c-sub').textContent = card[1]; }
+};
+render(0);
+</script>
+</body>
+</html>

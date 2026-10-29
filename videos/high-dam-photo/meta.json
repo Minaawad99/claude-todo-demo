@@ -1,0 +1,65 @@
+{
+ "dam1": {
+  "title": "File:Aswan Dam 21-2-08.jpg",
+  "w": 3028,
+  "h": 2002,
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6c/Aswan_Dam_21-2-08.jpg/1920px-Aswan_Dam_21-2-08.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:Aswan_Dam_21-2-08.jpg",
+  "lic": "CC BY-SA 2.0",
+  "artist": "Sigurd Gartmann"
+ },
+ "lake": {
+  "title": "File:Lake Nasser, Abu Simbel, AG, EGY (48016628768).jpg",
+  "w": 4032,
+  "h": 3024,
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/79/Lake_Nasser%2C_Abu_Simbel%2C_AG%2C_EGY_%2848016628768%29.jpg/1920px-Lake_Nasser%2C_Abu_Simbel%2C_AG%2C_EGY_%2848016628768%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:Lake_Nasser,_Abu_Simbel,_AG,_EGY_(48016628768).jpg",
+  "lic": "CC0",
+  "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/59081381@N03\">Warren LeMay</a> from Cullowhee, NC, United States"
+ },
+ "lake2": {
+  "title": "File:Lake Nasser in southern Egypt (iss069e004011).jpg",
+  "w": 5568,
+  "h": 3712,
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b6/Lake_Nasser_in_southern_Egypt_%28iss069e004011%29.jpg/1920px-Lake_Nasser_in_southern_Egypt_%28iss069e004011%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:Lake_Nasser_in_southern_Egypt_(iss069e004011).jpg",
+  "lic": "Public domain",
+  "artist": "<a rel=\"nofollow\" class=\"external text\" data-mw-original-href=\"http://www.nasa.gov/centers/johnson/\" href=\"https://www.nasa.gov/centers/johnson/\">NASA Johnson Space Center</a>"
+ },
+ "dam2": {
+  "title": "File:Assuan-Hochdamm Eg2010 1674BEWI.jpg",
+  "w": 3848,
+  "h": 2552,
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/00/Assuan-Hochdamm_Eg2010_1674BEWI.jpg/1920px-Assuan-Hochdamm_Eg2010_1674BEWI.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:Assuan-Hochdamm_Eg2010_1674BEWI.jpg",
+  "lic": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Kora27\" title=\"User:Kora27\">Kora27</a>"
+ },
+ "plant1": {
+  "title": "File:Power plant, Aswan High Dam, Aswan, Egypt.jpg",
+  "w": 3072,
+  "h": 2048,
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/13/Power_plant%2C_Aswan_High_Dam%2C_Aswan%2C_Egypt.jpg/1920px-Power_plant%2C_Aswan_High_Dam%2C_Aswan%2C_Egypt.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:Power_plant,_Aswan_High_Dam,_Aswan,_Egypt.jpg",
+  "lic": "CC BY 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Argenberg\" title=\"User:Argenberg\">Vyacheslav Argenberg</a>"
+ },
+ "plant2": {
+  "title": "File:Kraftwerksanlage des Assuan-Hochdamms..Eg2010 1674BEWI.jpg",
+  "w": 3852,
+  "h": 2570,
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fe/Kraftwerksanlage_des_Assuan-Hochdamms..Eg2010_1674BEWI.jpg/1920px-Kraftwerksanlage_des_Assuan-Hochdamms..Eg2010_1674BEWI.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:Kraftwerksanlage_des_Assuan-Hochdamms..Eg2010_1674BEWI.jpg",
+  "lic": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Kora27\" title=\"User:Kora27\">Kora27</a>"
+ },
+ "runner": {
+  "title": "File:Turbine Runner, Francis Type.JPG",
+  "w": 3814,
+  "h": 2543,
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/Turbine_Runner%2C_Francis_Type.JPG/1920px-Turbine_Runner%2C_Francis_Type.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:Turbine_Runner,_Francis_Type.JPG",
+  "lic": "CC BY-SA 3.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Wasrts\" title=\"User:Wasrts\">Wasrts</a>"
+ }
+}

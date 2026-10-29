@@ -1,0 +1,2168 @@
+{
+  "videos/airplane-us/build.py": {
+    "mtime": 1793262945.8726203,
+    "seen": 1793264894.8589733,
+    "ast_hash": "1e7a00de2870e99244a3bc9967485e19",
+    "semantic_hash": "1e7a00de2870e99244a3bc9967485e19"
+  },
+  "videos/airplane-us/cues.json": {
+    "mtime": 1793262945.8726873,
+    "seen": 1793264894.8589835,
+    "ast_hash": "9d53ff022a36fffb2efae80559c81e3b",
+    "semantic_hash": "9d53ff022a36fffb2efae80559c81e3b"
+  },
+  "videos/airplane-us/raw-timing.json": {
+    "mtime": 1793262945.8726873,
+    "seen": 1793264894.8589876,
+    "ast_hash": "04e253c05a9947cae9060138428d22ee",
+    "semantic_hash": "04e253c05a9947cae9060138428d22ee"
+  },
+  "videos/airplane-us/timing.js": {
+    "mtime": 1793262945.8726873,
+    "seen": 1793264894.8589902,
+    "ast_hash": "cb238046860d499f947b8e61c013f208",
+    "semantic_hash": "cb238046860d499f947b8e61c013f208"
+  },
+  "videos/airplane-us/world.js": {
+    "mtime": 1793262945.9844596,
+    "seen": 1793264894.858992,
+    "ast_hash": "1066f1097e820394527507e6b4f27cc5",
+    "semantic_hash": "1066f1097e820394527507e6b4f27cc5"
+  },
+  "videos/airplane-v2/timing.js": {
+    "mtime": 1793262945.9861655,
+    "seen": 1793264894.858994,
+    "ast_hash": "6c7f0e45b6700c2725a581a8bf620abe",
+    "semantic_hash": "6c7f0e45b6700c2725a581a8bf620abe"
+  },
+  "videos/airplane/timing.js": {
+    "mtime": 1793262946.018132,
+    "seen": 1793264894.8589962,
+    "ast_hash": "a653618f044a00fdab4af89b56fac3fc",
+    "semantic_hash": "a653618f044a00fdab4af89b56fac3fc"
+  },
+  "videos/align.py": {
+    "mtime": 1793262946.0524595,
+    "seen": 1793264894.858998,
+    "ast_hash": "37c6d082e0d292179d8598933b5e8612",
+    "semantic_hash": "37c6d082e0d292179d8598933b5e8612"
+  },
+  "videos/align_asr.py": {
+    "mtime": 1793262946.0524595,
+    "seen": 1793264894.8589997,
+    "ast_hash": "6e8fa79a89c881760cba4216626c14ba",
+    "semantic_hash": "6e8fa79a89c881760cba4216626c14ba"
+  },
+  "videos/atm/cartoon/_helpers.js": {
+    "mtime": 1793262946.0553243,
+    "seen": 1793264894.8590019,
+    "ast_hash": "b0e657829981d33c7df9caecd9d6076f",
+    "semantic_hash": "b0e657829981d33c7df9caecd9d6076f"
+  },
+  "videos/atm/cartoon/build.py": {
+    "mtime": 1793262946.055544,
+    "seen": 1793264894.8590035,
+    "ast_hash": "9b48ce25a7d50fb5536500533d3fabd0",
+    "semantic_hash": "9b48ce25a7d50fb5536500533d3fabd0"
+  },
+  "videos/atm/cartoon/scenes.js": {
+    "mtime": 1793262946.055544,
+    "seen": 1793264894.8590057,
+    "ast_hash": "f73c38b1a8c1274903c077a76a64343d",
+    "semantic_hash": "f73c38b1a8c1274903c077a76a64343d"
+  },
+  "videos/atm/cartoon/shots.js": {
+    "mtime": 1793262946.0561368,
+    "seen": 1793264894.8590076,
+    "ast_hash": "01de616d61f5c3daa20397cbe0f4c9d8",
+    "semantic_hash": "01de616d61f5c3daa20397cbe0f4c9d8"
+  },
+  "videos/atm/cues.js": {
+    "mtime": 1793262946.0561368,
+    "seen": 1793264894.8590095,
+    "ast_hash": "857163a602423ead96b55e85bdeeebe4",
+    "semantic_hash": "857163a602423ead96b55e85bdeeebe4"
+  },
+  "videos/atm/cues.json": {
+    "mtime": 1793262946.0561368,
+    "seen": 1793264894.8590112,
+    "ast_hash": "17bba4cbc8477f9fe13224a03eb5a40f",
+    "semantic_hash": "17bba4cbc8477f9fe13224a03eb5a40f"
+  },
+  "videos/atm/iso/build.py": {
+    "mtime": 1793262946.0561368,
+    "seen": 1793264894.8590128,
+    "ast_hash": "0815ca6cb9a6d9a291c41e5cb1817a9e",
+    "semantic_hash": "0815ca6cb9a6d9a291c41e5cb1817a9e"
+  },
+  "videos/atm/iso/panels.js": {
+    "mtime": 1793262946.0568438,
+    "seen": 1793264894.8590147,
+    "ast_hash": "1bcf15a3886d4bc7ab96d62857892b3a",
+    "semantic_hash": "1bcf15a3886d4bc7ab96d62857892b3a"
+  },
+  "videos/atm/iso/world.js": {
+    "mtime": 1793262946.0573034,
+    "seen": 1793264894.8590164,
+    "ast_hash": "4cd4438b4ce39060bb7e5bf4731d7cb8",
+    "semantic_hash": "4cd4438b4ce39060bb7e5bf4731d7cb8"
+  },
+  "videos/atm/raw-timing.json": {
+    "mtime": 1793262946.0573034,
+    "seen": 1793264894.8590186,
+    "ast_hash": "bc6cab851ddaca1dbaf70b989a499c1a",
+    "semantic_hash": "bc6cab851ddaca1dbaf70b989a499c1a"
+  },
+  "videos/atm/timing.js": {
+    "mtime": 1793262946.0573034,
+    "seen": 1793264894.8590202,
+    "ast_hash": "f4c402a2cc4823421a80cc9816b464a7",
+    "semantic_hash": "f4c402a2cc4823421a80cc9816b464a7"
+  },
+  "videos/audio/sfx.py": {
+    "mtime": 1793262949.3564599,
+    "seen": 1793264894.859022,
+    "ast_hash": "c4a2442b71b558ee8e0dd3a26f2d5f73",
+    "semantic_hash": "c4a2442b71b558ee8e0dd3a26f2d5f73"
+  },
+  "videos/audio/tighten.py": {
+    "mtime": 1793262946.131412,
+    "seen": 1793264894.8590236,
+    "ast_hash": "02f00c35b961c559fa006c26d824445a",
+    "semantic_hash": "02f00c35b961c559fa006c26d824445a"
+  },
+  "videos/bridge-water/cartoon/_helpers.js": {
+    "mtime": 1793262946.1315625,
+    "seen": 1793264894.8590257,
+    "ast_hash": "b0e657829981d33c7df9caecd9d6076f",
+    "semantic_hash": "b0e657829981d33c7df9caecd9d6076f"
+  },
+  "videos/bridge-water/cartoon/build.py": {
+    "mtime": 1793262946.1317582,
+    "seen": 1793264894.8590274,
+    "ast_hash": "71e8a36c4ea14ce49a1c451fd2df7c64",
+    "semantic_hash": "71e8a36c4ea14ce49a1c451fd2df7c64"
+  },
+  "videos/bridge-water/cartoon/scenes.js": {
+    "mtime": 1793262946.1317582,
+    "seen": 1793264894.8590293,
+    "ast_hash": "46b9593f4076936aa8be12d565b5a778",
+    "semantic_hash": "46b9593f4076936aa8be12d565b5a778"
+  },
+  "videos/bridge-water/cartoon/shots.js": {
+    "mtime": 1793262946.1323261,
+    "seen": 1793264894.859031,
+    "ast_hash": "c466e93efa7942e8c84ff0796f9ce53e",
+    "semantic_hash": "c466e93efa7942e8c84ff0796f9ce53e"
+  },
+  "videos/bridge-water/cues.js": {
+    "mtime": 1793262946.1323261,
+    "seen": 1793264894.8590329,
+    "ast_hash": "458c868dbaf17c5bc447034b40d0c1b1",
+    "semantic_hash": "458c868dbaf17c5bc447034b40d0c1b1"
+  },
+  "videos/bridge-water/cues.json": {
+    "mtime": 1793262946.1323261,
+    "seen": 1793264894.8590345,
+    "ast_hash": "b2f1716d909e15c82916ebf569efad8a",
+    "semantic_hash": "b2f1716d909e15c82916ebf569efad8a"
+  },
+  "videos/bridge-water/raw-timing.json": {
+    "mtime": 1793262946.1323261,
+    "seen": 1793264894.8590367,
+    "ast_hash": "aa0519cb9d432bcefc06cb3d0129c3cc",
+    "semantic_hash": "aa0519cb9d432bcefc06cb3d0129c3cc"
+  },
+  "videos/bridge-water/timing.js": {
+    "mtime": 1793262946.1337848,
+    "seen": 1793264894.8590384,
+    "ast_hash": "3fdc6c5dd8eec11047c4d91952c46c9f",
+    "semantic_hash": "3fdc6c5dd8eec11047c4d91952c46c9f"
+  },
+  "videos/car-egypt/cartoon/_helpers.js": {
+    "mtime": 1793262946.2169394,
+    "seen": 1793264894.8590403,
+    "ast_hash": "b0e657829981d33c7df9caecd9d6076f",
+    "semantic_hash": "b0e657829981d33c7df9caecd9d6076f"
+  },
+  "videos/car-egypt/cartoon/build.py": {
+    "mtime": 1793262946.2171605,
+    "seen": 1793264894.859042,
+    "ast_hash": "ef3d7a579eebbab31ba732622590a6ba",
+    "semantic_hash": "ef3d7a579eebbab31ba732622590a6ba"
+  },
+  "videos/car-egypt/cartoon/scenes.js": {
+    "mtime": 1793262946.2171605,
+    "seen": 1793264894.8590438,
+    "ast_hash": "1a03fa82230bb6b2a5032c4124e0f189",
+    "semantic_hash": "1a03fa82230bb6b2a5032c4124e0f189"
+  },
+  "videos/car-egypt/cartoon/shots.js": {
+    "mtime": 1793262946.217748,
+    "seen": 1793264894.8590457,
+    "ast_hash": "f524b8bc67dd9ba3c65f88e53bc9d9b2",
+    "semantic_hash": "f524b8bc67dd9ba3c65f88e53bc9d9b2"
+  },
+  "videos/car-egypt/cues.js": {
+    "mtime": 1793262946.2178183,
+    "seen": 1793264894.8590474,
+    "ast_hash": "e0b000efe9d7d936659a924f2b2c74e9",
+    "semantic_hash": "e0b000efe9d7d936659a924f2b2c74e9"
+  },
+  "videos/car-egypt/cues.json": {
+    "mtime": 1793262946.2178183,
+    "seen": 1793264894.8590493,
+    "ast_hash": "1f32a252fd86eff5881e3f1b444d5c92",
+    "semantic_hash": "1f32a252fd86eff5881e3f1b444d5c92"
+  },
+  "videos/car-egypt/raw-timing.json": {
+    "mtime": 1793262946.218122,
+    "seen": 1793264894.859051,
+    "ast_hash": "db231b68c91bbddc93655012009303f5",
+    "semantic_hash": "db231b68c91bbddc93655012009303f5"
+  },
+  "videos/car-egypt/timing.js": {
+    "mtime": 1793262946.218269,
+    "seen": 1793264894.859053,
+    "ast_hash": "0954e6d8fa31f7995db7c6a896f9dd18",
+    "semantic_hash": "0954e6d8fa31f7995db7c6a896f9dd18"
+  },
+  "videos/car-us/build.py": {
+    "mtime": 1793262946.2964597,
+    "seen": 1793264894.8590543,
+    "ast_hash": "3061a448fb9cb9c907ac8708c0fc6071",
+    "semantic_hash": "3061a448fb9cb9c907ac8708c0fc6071"
+  },
+  "videos/car-us/cues.json": {
+    "mtime": 1793262946.2994564,
+    "seen": 1793264894.8590562,
+    "ast_hash": "6d9d1f65f71d6d93289e20f19be39a4f",
+    "semantic_hash": "6d9d1f65f71d6d93289e20f19be39a4f"
+  },
+  "videos/car-us/iso-scene.js": {
+    "mtime": 1793262946.2995322,
+    "seen": 1793264894.859058,
+    "ast_hash": "66931ab4d6023b2880680e29d3675e18",
+    "semantic_hash": "66931ab4d6023b2880680e29d3675e18"
+  },
+  "videos/car-us/iso.js": {
+    "mtime": 1793262946.2998252,
+    "seen": 1793264894.8590598,
+    "ast_hash": "50cc02954f83ce08b4f48252f3201910",
+    "semantic_hash": "50cc02954f83ce08b4f48252f3201910"
+  },
+  "videos/car-us/raw-timing.json": {
+    "mtime": 1793262946.2998252,
+    "seen": 1793264894.8590615,
+    "ast_hash": "4f380bf6960c31e069510dda2e5f08f6",
+    "semantic_hash": "4f380bf6960c31e069510dda2e5f08f6"
+  },
+  "videos/car-us/timing.js": {
+    "mtime": 1793262946.300235,
+    "seen": 1793264894.859065,
+    "ast_hash": "2123b0b2ca00b80fc180e56e99178764",
+    "semantic_hash": "2123b0b2ca00b80fc180e56e99178764"
+  },
+  "videos/dishwasher/cues.json": {
+    "mtime": 1793262946.4164596,
+    "seen": 1793264894.859067,
+    "ast_hash": "c22c4541310f65340c6871d6e6d44c4a",
+    "semantic_hash": "c22c4541310f65340c6871d6e6d44c4a"
+  },
+  "videos/dishwasher/iso-scene.js": {
+    "mtime": 1793262946.41761,
+    "seen": 1793264894.8590686,
+    "ast_hash": "9c31b7c7a02fef225e382a23615190ce",
+    "semantic_hash": "9c31b7c7a02fef225e382a23615190ce"
+  },
+  "videos/dishwasher/iso.js": {
+    "mtime": 1793262946.41761,
+    "seen": 1793264894.8590705,
+    "ast_hash": "389375b278bbbfc6bf434efd9bc5d5e3",
+    "semantic_hash": "389375b278bbbfc6bf434efd9bc5d5e3"
+  },
+  "videos/dishwasher/timing.js": {
+    "mtime": 1793262946.41761,
+    "seen": 1793264894.8590722,
+    "ast_hash": "f06a803da1390cfe91645c12b4da40b1",
+    "semantic_hash": "f06a803da1390cfe91645c12b4da40b1"
+  },
+  "videos/elevator-waqei/cues.json": {
+    "mtime": 1793262949.3564599,
+    "seen": 1793264894.859074,
+    "ast_hash": "d9894aeaf42f41c59354008c31c78e90",
+    "semantic_hash": "d9894aeaf42f41c59354008c31c78e90"
+  },
+  "videos/elevator-waqei/raw-timing.json": {
+    "mtime": 1793262949.3597803,
+    "seen": 1793264894.8590755,
+    "ast_hash": "445a0b5e802e205caa86a34d3d0f6b38",
+    "semantic_hash": "445a0b5e802e205caa86a34d3d0f6b38"
+  },
+  "videos/elevator-waqei/timing.js": {
+    "mtime": 1793262949.3597803,
+    "seen": 1793264894.8590775,
+    "ast_hash": "e5b13e5906952c5fde392518edd90c72",
+    "semantic_hash": "e5b13e5906952c5fde392518edd90c72"
+  },
+  "videos/elevator-waqei/world.js": {
+    "mtime": 1793262949.4164598,
+    "seen": 1793264894.8590791,
+    "ast_hash": "8c033329e7ce29e6d7a40e0d1e1c6f21",
+    "semantic_hash": "8c033329e7ce29e6d7a40e0d1e1c6f21"
+  },
+  "videos/elevator/cartoon/_helpers.js": {
+    "mtime": 1793262946.4941254,
+    "seen": 1793264894.859081,
+    "ast_hash": "87d86d4432d053689456dd999fe068d6",
+    "semantic_hash": "87d86d4432d053689456dd999fe068d6"
+  },
+  "videos/elevator/cartoon/build.py": {
+    "mtime": 1793262946.4943683,
+    "seen": 1793264894.8590827,
+    "ast_hash": "ad2af54ea3cbb245134eb93adb2fee5d",
+    "semantic_hash": "ad2af54ea3cbb245134eb93adb2fee5d"
+  },
+  "videos/elevator/cartoon/scenes.js": {
+    "mtime": 1793262946.4943683,
+    "seen": 1793264894.8590846,
+    "ast_hash": "c64947163dff48dbe846ab562e4a0148",
+    "semantic_hash": "c64947163dff48dbe846ab562e4a0148"
+  },
+  "videos/elevator/cartoon/shots.js": {
+    "mtime": 1793262946.4948616,
+    "seen": 1793264894.8590863,
+    "ast_hash": "dfc7542defccf5d993d88ebd2f896334",
+    "semantic_hash": "dfc7542defccf5d993d88ebd2f896334"
+  },
+  "videos/elevator/cues.js": {
+    "mtime": 1793262946.4948616,
+    "seen": 1793264894.8590882,
+    "ast_hash": "6f0dbfdf7083689592bf92a761c82129",
+    "semantic_hash": "6f0dbfdf7083689592bf92a761c82129"
+  },
+  "videos/elevator/cues.json": {
+    "mtime": 1793262949.4164598,
+    "seen": 1793264894.8590899,
+    "ast_hash": "c019e3ebbd9ffd6eb6c9cccbe4db2032",
+    "semantic_hash": "c019e3ebbd9ffd6eb6c9cccbe4db2032"
+  },
+  "videos/elevator/iso/build.py": {
+    "mtime": 1793262946.4948616,
+    "seen": 1793264894.8590918,
+    "ast_hash": "ccba3747213f92eda907d90355386483",
+    "semantic_hash": "ccba3747213f92eda907d90355386483"
+  },
+  "videos/elevator/iso/panels.js": {
+    "mtime": 1793262946.4956608,
+    "seen": 1793264894.8590934,
+    "ast_hash": "4b2337016699bdeaa1c18407a38f7af5",
+    "semantic_hash": "4b2337016699bdeaa1c18407a38f7af5"
+  },
+  "videos/elevator/iso/world.js": {
+    "mtime": 1793262946.496054,
+    "seen": 1793264894.8590953,
+    "ast_hash": "6a0f00e8ae91a2f2b9381ee826606970",
+    "semantic_hash": "6a0f00e8ae91a2f2b9381ee826606970"
+  },
+  "videos/elevator/raw-timing.json": {
+    "mtime": 1793262949.4164598,
+    "seen": 1793264894.859097,
+    "ast_hash": "b9b6c538f004cbcf6196a0f32ac51968",
+    "semantic_hash": "b9b6c538f004cbcf6196a0f32ac51968"
+  },
+  "videos/elevator/timing.js": {
+    "mtime": 1793262949.4164598,
+    "seen": 1793264894.859099,
+    "ast_hash": "3776164c6a632fb651bbba762a70cc9d",
+    "semantic_hash": "3776164c6a632fb651bbba762a70cc9d"
+  },
+  "videos/engine.js": {
+    "mtime": 1793262946.5564597,
+    "seen": 1793264894.8591006,
+    "ast_hash": "d907d50912d8ecbcd0d836793b390d4e",
+    "semantic_hash": "d907d50912d8ecbcd0d836793b390d4e"
+  },
+  "videos/fridge-3d/build.py": {
+    "mtime": 1793262946.5564597,
+    "seen": 1793264894.8591027,
+    "ast_hash": "0fd4ea40b05ecd9175778b8e4213bc39",
+    "semantic_hash": "0fd4ea40b05ecd9175778b8e4213bc39"
+  },
+  "videos/fridge-3d/cues.json": {
+    "mtime": 1793262946.560533,
+    "seen": 1793264894.8591044,
+    "ast_hash": "b4fe8ddfc64d6574e0c569b9d9233ce1",
+    "semantic_hash": "b4fe8ddfc64d6574e0c569b9d9233ce1"
+  },
+  "videos/fridge-3d/timing.js": {
+    "mtime": 1793262946.560533,
+    "seen": 1793264894.859106,
+    "ast_hash": "48e0fa6be0e0977265521b1ac01be3cb",
+    "semantic_hash": "48e0fa6be0e0977265521b1ac01be3cb"
+  },
+  "videos/fridge-3d/world.js": {
+    "mtime": 1793262946.561376,
+    "seen": 1793264894.8591075,
+    "ast_hash": "d2ac3c116501771b70194a1dc7f70c6a",
+    "semantic_hash": "d2ac3c116501771b70194a1dc7f70c6a"
+  },
+  "videos/fridge/build.py": {
+    "mtime": 1793262946.561376,
+    "seen": 1793264894.8591092,
+    "ast_hash": "7aa8ea8400838e6239aba2da77d91991",
+    "semantic_hash": "7aa8ea8400838e6239aba2da77d91991"
+  },
+  "videos/fridge/cues.json": {
+    "mtime": 1793262946.561631,
+    "seen": 1793264894.8591108,
+    "ast_hash": "b4fe8ddfc64d6574e0c569b9d9233ce1",
+    "semantic_hash": "b4fe8ddfc64d6574e0c569b9d9233ce1"
+  },
+  "videos/fridge/iso-scene.js": {
+    "mtime": 1793262946.5619438,
+    "seen": 1793264894.8591127,
+    "ast_hash": "42b93e74d6fc0e42ec91c7e01a3449f6",
+    "semantic_hash": "42b93e74d6fc0e42ec91c7e01a3449f6"
+  },
+  "videos/fridge/iso.js": {
+    "mtime": 1793262946.5620897,
+    "seen": 1793264894.8591142,
+    "ast_hash": "5f44b22366b70b6886ba0884bf684a2e",
+    "semantic_hash": "5f44b22366b70b6886ba0884bf684a2e"
+  },
+  "videos/fridge/raw-timing.json": {
+    "mtime": 1793262946.5620897,
+    "seen": 1793264894.8591163,
+    "ast_hash": "70f08898a50b50cd045f74ead99b53ed",
+    "semantic_hash": "70f08898a50b50cd045f74ead99b53ed"
+  },
+  "videos/fridge/timing.js": {
+    "mtime": 1793262946.5620897,
+    "seen": 1793264894.8591177,
+    "ast_hash": "48e0fa6be0e0977265521b1ac01be3cb",
+    "semantic_hash": "48e0fa6be0e0977265521b1ac01be3cb"
+  },
+  "videos/gps-traffic/cartoon/_helpers.js": {
+    "mtime": 1793262946.6813495,
+    "seen": 1793264894.8591197,
+    "ast_hash": "b0e657829981d33c7df9caecd9d6076f",
+    "semantic_hash": "b0e657829981d33c7df9caecd9d6076f"
+  },
+  "videos/gps-traffic/cartoon/build.py": {
+    "mtime": 1793262946.6815012,
+    "seen": 1793264894.859121,
+    "ast_hash": "30751d81fafa92dfdd217c93fb91e2db",
+    "semantic_hash": "30751d81fafa92dfdd217c93fb91e2db"
+  },
+  "videos/gps-traffic/cartoon/scenes.js": {
+    "mtime": 1793262946.6815012,
+    "seen": 1793264894.859128,
+    "ast_hash": "9ee1d594f298197794b9340949df1591",
+    "semantic_hash": "9ee1d594f298197794b9340949df1591"
+  },
+  "videos/gps-traffic/cartoon/shots.js": {
+    "mtime": 1793262946.6820257,
+    "seen": 1793264894.85913,
+    "ast_hash": "a4bbd533e1b7574836325cd08442894b",
+    "semantic_hash": "a4bbd533e1b7574836325cd08442894b"
+  },
+  "videos/gps-traffic/cues.js": {
+    "mtime": 1793262946.6820257,
+    "seen": 1793264894.8591316,
+    "ast_hash": "683fdc555cbdfa4ef1bf96e795eda2d7",
+    "semantic_hash": "683fdc555cbdfa4ef1bf96e795eda2d7"
+  },
+  "videos/gps-traffic/cues.json": {
+    "mtime": 1793262946.6820257,
+    "seen": 1793264894.8591335,
+    "ast_hash": "8adc9f642ab06f1e89583f740af5c49d",
+    "semantic_hash": "8adc9f642ab06f1e89583f740af5c49d"
+  },
+  "videos/gps-traffic/iso/build.py": {
+    "mtime": 1793262946.6820257,
+    "seen": 1793264894.8591352,
+    "ast_hash": "e2973d74a6aee92e56559698157d43d3",
+    "semantic_hash": "e2973d74a6aee92e56559698157d43d3"
+  },
+  "videos/gps-traffic/iso/panels.js": {
+    "mtime": 1793262946.6828349,
+    "seen": 1793264894.859137,
+    "ast_hash": "460a8d374c7cae8d431e30b87f1835ea",
+    "semantic_hash": "460a8d374c7cae8d431e30b87f1835ea"
+  },
+  "videos/gps-traffic/iso/world.js": {
+    "mtime": 1793262946.6831894,
+    "seen": 1793264894.8591387,
+    "ast_hash": "5b4fd76f7a7281f11421b3a78f7d248b",
+    "semantic_hash": "5b4fd76f7a7281f11421b3a78f7d248b"
+  },
+  "videos/gps-traffic/raw-timing.json": {
+    "mtime": 1793262946.6831894,
+    "seen": 1793264894.8591406,
+    "ast_hash": "a973819229c9722c938505ec4eaa2b46",
+    "semantic_hash": "a973819229c9722c938505ec4eaa2b46"
+  },
+  "videos/gps-traffic/timing.js": {
+    "mtime": 1793262946.6831894,
+    "seen": 1793264894.8591423,
+    "ast_hash": "11f6fa6f35301caa76f632ea42f973bb",
+    "semantic_hash": "11f6fa6f35301caa76f632ea42f973bb"
+  },
+  "videos/helicopter/build.py": {
+    "mtime": 1793262946.7524595,
+    "seen": 1793264894.8591442,
+    "ast_hash": "98952e96ab1329156b82b4803e3b608a",
+    "semantic_hash": "98952e96ab1329156b82b4803e3b608a"
+  },
+  "videos/helicopter/cues.js": {
+    "mtime": 1793262946.7544262,
+    "seen": 1793264894.859147,
+    "ast_hash": "69e34e999d226a056af883e45fc1a84b",
+    "semantic_hash": "69e34e999d226a056af883e45fc1a84b"
+  },
+  "videos/helicopter/cues.json": {
+    "mtime": 1793262946.7544262,
+    "seen": 1793264894.8591487,
+    "ast_hash": "4986e892b7eb3c58753bf40b056e13c9",
+    "semantic_hash": "4986e892b7eb3c58753bf40b056e13c9"
+  },
+  "videos/helicopter/raw-timing.json": {
+    "mtime": 1793262946.7544262,
+    "seen": 1793264894.8591506,
+    "ast_hash": "a1b3e2d4401c5e36d4c2f7752287f79c",
+    "semantic_hash": "a1b3e2d4401c5e36d4c2f7752287f79c"
+  },
+  "videos/helicopter/scenes.js": {
+    "mtime": 1793262946.7550168,
+    "seen": 1793264894.8591523,
+    "ast_hash": "52f1d146fbc63504ddded29a5ea7d4c3",
+    "semantic_hash": "52f1d146fbc63504ddded29a5ea7d4c3"
+  },
+  "videos/helicopter/timing.js": {
+    "mtime": 1793262946.7564597,
+    "seen": 1793264894.8591542,
+    "ast_hash": "7f7cddd2f9371de18754946d30118f14",
+    "semantic_hash": "7f7cddd2f9371de18754946d30118f14"
+  },
+  "videos/high-dam-iso/bundle.js": {
+    "mtime": 1793262994.7419493,
+    "seen": 1793264894.859156,
+    "ast_hash": "02458b132a06b50443911529fcfc4ea8",
+    "semantic_hash": "02458b132a06b50443911529fcfc4ea8"
+  },
+  "videos/high-dam-iso/render.js": {
+    "mtime": 1793262994.4981682,
+    "seen": 1793264894.8591578,
+    "ast_hash": "79c47fbd52d3a6b215ff8586904337e2",
+    "semantic_hash": "79c47fbd52d3a6b215ff8586904337e2"
+  },
+  "videos/high-dam-page/video-render.js": {
+    "mtime": 1793262995.8838174,
+    "seen": 1793264894.8591595,
+    "ast_hash": "a2dd9ac87cdacae16ae2b79fe74f1997",
+    "semantic_hash": "a2dd9ac87cdacae16ae2b79fe74f1997"
+  },
+  "videos/high-dam-photo/fetch.py": {
+    "mtime": 1793262995.5864196,
+    "seen": 1793264894.8591614,
+    "ast_hash": "a9e2b681fb039c3e5bfa4b2a17c4c4cb",
+    "semantic_hash": "a9e2b681fb039c3e5bfa4b2a17c4c4cb"
+  },
+  "videos/high-dam-photo/meta.json": {
+    "mtime": 1793262995.4244626,
+    "seen": 1793264894.8591628,
+    "ast_hash": "215fd8ba8c7c2efa1bf1356f7536a7e9",
+    "semantic_hash": "215fd8ba8c7c2efa1bf1356f7536a7e9"
+  },
+  "videos/high-dam-photo/render.js": {
+    "mtime": 1793262995.1707027,
+    "seen": 1793264894.8591647,
+    "ast_hash": "285e5debd28900f705946114544fcd89",
+    "semantic_hash": "285e5debd28900f705946114544fcd89"
+  },
+  "videos/high-dam-photo/scenes.js": {
+    "mtime": 1793262995.1704557,
+    "seen": 1793264894.8591664,
+    "ast_hash": "43854f566943a6fe7f342e9573ced164",
+    "semantic_hash": "43854f566943a6fe7f342e9573ced164"
+  },
+  "videos/high-dam-photo/search.py": {
+    "mtime": 1793262995.5844624,
+    "seen": 1793264894.8591683,
+    "ast_hash": "8dccaedbe6f8b9a02f593101f8bf9e4e",
+    "semantic_hash": "8dccaedbe6f8b9a02f593101f8bf9e4e"
+  },
+  "videos/high-dam/cartoon/_helpers.js": {
+    "mtime": 1793262946.8406177,
+    "seen": 1793264894.85917,
+    "ast_hash": "b0e657829981d33c7df9caecd9d6076f",
+    "semantic_hash": "b0e657829981d33c7df9caecd9d6076f"
+  },
+  "videos/high-dam/cartoon/build.py": {
+    "mtime": 1793262946.8407238,
+    "seen": 1793264894.859172,
+    "ast_hash": "76ea3b243007287479a74fbebc2b5805",
+    "semantic_hash": "76ea3b243007287479a74fbebc2b5805"
+  },
+  "videos/high-dam/cartoon/scenes.js": {
+    "mtime": 1793262946.8407238,
+    "seen": 1793264894.8591735,
+    "ast_hash": "5a7184dfbab9e8aede5cd4a891fb8fce",
+    "semantic_hash": "5a7184dfbab9e8aede5cd4a891fb8fce"
+  },
+  "videos/high-dam/cartoon/shots.js": {
+    "mtime": 1793262946.8412282,
+    "seen": 1793264894.8591757,
+    "ast_hash": "bc4d5cd3dc79461335f1dda3d16585eb",
+    "semantic_hash": "bc4d5cd3dc79461335f1dda3d16585eb"
+  },
+  "videos/high-dam/cues.js": {
+    "mtime": 1793262946.8412282,
+    "seen": 1793264894.859177,
+    "ast_hash": "d0a99d7dbb0f8664d3192ecdffefd1c0",
+    "semantic_hash": "d0a99d7dbb0f8664d3192ecdffefd1c0"
+  },
+  "videos/high-dam/cues.json": {
+    "mtime": 1793262946.8412282,
+    "seen": 1793264894.859179,
+    "ast_hash": "065c5b529831aa928c84d05f9d02e126",
+    "semantic_hash": "065c5b529831aa928c84d05f9d02e126"
+  },
+  "videos/high-dam/raw-timing.json": {
+    "mtime": 1793262946.8412282,
+    "seen": 1793264894.8591807,
+    "ast_hash": "6f5a3e40d2dae3a284fd1bd4c5a6918c",
+    "semantic_hash": "6f5a3e40d2dae3a284fd1bd4c5a6918c"
+  },
+  "videos/high-dam/timing.js": {
+    "mtime": 1793262946.8416693,
+    "seen": 1793264894.8591826,
+    "ast_hash": "92b2fd41213ffda0e987b6a7746b4cc4",
+    "semantic_hash": "92b2fd41213ffda0e987b6a7746b4cc4"
+  },
+  "videos/inverter-ac/build.py": {
+    "mtime": 1793262946.9564595,
+    "seen": 1793264894.859184,
+    "ast_hash": "5b106df44ae5f6b6275e1e49c8125932",
+    "semantic_hash": "5b106df44ae5f6b6275e1e49c8125932"
+  },
+  "videos/inverter-ac/cues.json": {
+    "mtime": 1793262946.9579165,
+    "seen": 1793264894.859188,
+    "ast_hash": "a7deb111752062c36369a1a634b47eb6",
+    "semantic_hash": "a7deb111752062c36369a1a634b47eb6"
+  },
+  "videos/inverter-ac/panels.js": {
+    "mtime": 1793262946.958158,
+    "seen": 1793264894.8592088,
+    "ast_hash": "d28e65c27e87dbe0628a9eb2b4f6afba",
+    "semantic_hash": "d28e65c27e87dbe0628a9eb2b4f6afba"
+  },
+  "videos/inverter-ac/raw-timing.json": {
+    "mtime": 1793262946.958568,
+    "seen": 1793264894.8592114,
+    "ast_hash": "01557cc3c50c8c01cb7c381a48b9a7e3",
+    "semantic_hash": "01557cc3c50c8c01cb7c381a48b9a7e3"
+  },
+  "videos/inverter-ac/timing.js": {
+    "mtime": 1793262946.958957,
+    "seen": 1793264894.8592136,
+    "ast_hash": "3bb0e63f7fdae4d6684c2be7985530ae",
+    "semantic_hash": "3bb0e63f7fdae4d6684c2be7985530ae"
+  },
+  "videos/inverter-ac/world.js": {
+    "mtime": 1793262947.0804596,
+    "seen": 1793264894.859215,
+    "ast_hash": "d4c1507edf038c7f00289c5620b1ed91",
+    "semantic_hash": "d4c1507edf038c7f00289c5620b1ed91"
+  },
+  "videos/lcd-tv/cartoon/_helpers.js": {
+    "mtime": 1793262947.0819998,
+    "seen": 1793264894.859217,
+    "ast_hash": "b0e657829981d33c7df9caecd9d6076f",
+    "semantic_hash": "b0e657829981d33c7df9caecd9d6076f"
+  },
+  "videos/lcd-tv/cartoon/build.py": {
+    "mtime": 1793262947.0821729,
+    "seen": 1793264894.8592184,
+    "ast_hash": "c5b92d54af1bf8fa056616ccbc731ab7",
+    "semantic_hash": "c5b92d54af1bf8fa056616ccbc731ab7"
+  },
+  "videos/lcd-tv/cartoon/scenes.js": {
+    "mtime": 1793262947.0821729,
+    "seen": 1793264894.8592203,
+    "ast_hash": "549ca3d60064956d0261573f9255a8a0",
+    "semantic_hash": "549ca3d60064956d0261573f9255a8a0"
+  },
+  "videos/lcd-tv/cartoon/shots.js": {
+    "mtime": 1793262947.0828052,
+    "seen": 1793264894.8592217,
+    "ast_hash": "c1beff8e89eba49fa7bc1557c4f76f08",
+    "semantic_hash": "c1beff8e89eba49fa7bc1557c4f76f08"
+  },
+  "videos/lcd-tv/cues.js": {
+    "mtime": 1793262947.0828052,
+    "seen": 1793264894.8592236,
+    "ast_hash": "f4ef2ab6c69533f0d51df7a66e15505f",
+    "semantic_hash": "f4ef2ab6c69533f0d51df7a66e15505f"
+  },
+  "videos/lcd-tv/cues.json": {
+    "mtime": 1793262947.0828052,
+    "seen": 1793264894.859225,
+    "ast_hash": "ac017e21a49d2d93489e444409c1a4f1",
+    "semantic_hash": "ac017e21a49d2d93489e444409c1a4f1"
+  },
+  "videos/lcd-tv/iso/build.py": {
+    "mtime": 1793262947.0828052,
+    "seen": 1793264894.859227,
+    "ast_hash": "d32fe28c4171e916e42e2acbb8cb0a1c",
+    "semantic_hash": "d32fe28c4171e916e42e2acbb8cb0a1c"
+  },
+  "videos/lcd-tv/iso/panels.js": {
+    "mtime": 1793262947.0834155,
+    "seen": 1793264894.8592293,
+    "ast_hash": "1a0600c4f8ba944785594432d51d773d",
+    "semantic_hash": "1a0600c4f8ba944785594432d51d773d"
+  },
+  "videos/lcd-tv/iso/world.js": {
+    "mtime": 1793262947.083811,
+    "seen": 1793264894.8592312,
+    "ast_hash": "e0a1b95f87afc953a11230dee0f8a34f",
+    "semantic_hash": "e0a1b95f87afc953a11230dee0f8a34f"
+  },
+  "videos/lcd-tv/raw-timing.json": {
+    "mtime": 1793262947.083811,
+    "seen": 1793264894.8592331,
+    "ast_hash": "1cd57aee4f644cf02900398428a0ba3b",
+    "semantic_hash": "1cd57aee4f644cf02900398428a0ba3b"
+  },
+  "videos/lcd-tv/timing.js": {
+    "mtime": 1793262947.084393,
+    "seen": 1793264894.8592348,
+    "ast_hash": "33441c87fa18b9b84a10520b241f8357",
+    "semantic_hash": "33441c87fa18b9b84a10520b241f8357"
+  },
+  "videos/lib/three.min.js": {
+    "mtime": 1793262947.1566367,
+    "seen": 1793264894.859237,
+    "ast_hash": "f76d110bdfafaa99cdabf2df3968369c",
+    "semantic_hash": "f76d110bdfafaa99cdabf2df3968369c"
+  },
+  "videos/map_timing.py": {
+    "mtime": 1793262947.1566367,
+    "seen": 1793264894.8592386,
+    "ast_hash": "eaf4c4163870ad8b04a7dbe60a37bb3c",
+    "semantic_hash": "eaf4c4163870ad8b04a7dbe60a37bb3c"
+  },
+  "videos/microwave/cartoon/_helpers.js": {
+    "mtime": 1793262947.1594274,
+    "seen": 1793264894.8592405,
+    "ast_hash": "b0e657829981d33c7df9caecd9d6076f",
+    "semantic_hash": "b0e657829981d33c7df9caecd9d6076f"
+  },
+  "videos/microwave/cartoon/build.py": {
+    "mtime": 1793262947.159532,
+    "seen": 1793264894.8592422,
+    "ast_hash": "1ecd4c6e4ca9417d370428a1060a22fc",
+    "semantic_hash": "1ecd4c6e4ca9417d370428a1060a22fc"
+  },
+  "videos/microwave/cartoon/scenes.js": {
+    "mtime": 1793262947.159532,
+    "seen": 1793264894.8592443,
+    "ast_hash": "e91819ba9d9cb41e182d16f5c4c253bf",
+    "semantic_hash": "e91819ba9d9cb41e182d16f5c4c253bf"
+  },
+  "videos/microwave/cartoon/shots.js": {
+    "mtime": 1793262947.1600006,
+    "seen": 1793264894.859246,
+    "ast_hash": "f74d9db7f0c5e83807a9b759bd85981c",
+    "semantic_hash": "f74d9db7f0c5e83807a9b759bd85981c"
+  },
+  "videos/microwave/cues.js": {
+    "mtime": 1793262947.1600006,
+    "seen": 1793264894.8592482,
+    "ast_hash": "119c22678ca8a7a7af94d8f1a6675ca5",
+    "semantic_hash": "119c22678ca8a7a7af94d8f1a6675ca5"
+  },
+  "videos/microwave/cues.json": {
+    "mtime": 1793262947.1600006,
+    "seen": 1793264894.8592498,
+    "ast_hash": "9ce27f9221e90306c08074521809b505",
+    "semantic_hash": "9ce27f9221e90306c08074521809b505"
+  },
+  "videos/microwave/iso/build.py": {
+    "mtime": 1793262947.1600006,
+    "seen": 1793264894.8592517,
+    "ast_hash": "c726b847f28a7677091f87402bb4edbf",
+    "semantic_hash": "c726b847f28a7677091f87402bb4edbf"
+  },
+  "videos/microwave/iso/panels.js": {
+    "mtime": 1793262947.1606429,
+    "seen": 1793264894.8592534,
+    "ast_hash": "7b5ae5250c391ca55382f80416b79c7e",
+    "semantic_hash": "7b5ae5250c391ca55382f80416b79c7e"
+  },
+  "videos/microwave/iso/world.js": {
+    "mtime": 1793262947.1608715,
+    "seen": 1793264894.8592556,
+    "ast_hash": "f32dd75b66ac4857b3fe43046eec948b",
+    "semantic_hash": "f32dd75b66ac4857b3fe43046eec948b"
+  },
+  "videos/microwave/raw-timing.json": {
+    "mtime": 1793262947.1608715,
+    "seen": 1793264894.8592575,
+    "ast_hash": "4fd0a4727a7bdc9ae3ac04b454697d4b",
+    "semantic_hash": "4fd0a4727a7bdc9ae3ac04b454697d4b"
+  },
+  "videos/microwave/timing.js": {
+    "mtime": 1793262947.1608715,
+    "seen": 1793264894.8592594,
+    "ast_hash": "7bb4be19635856b5d4fd2beb1c4f4c36",
+    "semantic_hash": "7bb4be19635856b5d4fd2beb1c4f4c36"
+  },
+  "videos/offshore-oil/cartoon/_helpers.js": {
+    "mtime": 1793262947.2541776,
+    "seen": 1793264894.8592613,
+    "ast_hash": "b0e657829981d33c7df9caecd9d6076f",
+    "semantic_hash": "b0e657829981d33c7df9caecd9d6076f"
+  },
+  "videos/offshore-oil/cartoon/build.py": {
+    "mtime": 1793262947.2542963,
+    "seen": 1793264894.859263,
+    "ast_hash": "9cf91f0992f30a9da7dc35e44a31ae2b",
+    "semantic_hash": "9cf91f0992f30a9da7dc35e44a31ae2b"
+  },
+  "videos/offshore-oil/cartoon/scenes.js": {
+    "mtime": 1793262947.2542963,
+    "seen": 1793264894.8592649,
+    "ast_hash": "910ad23e6660f3766eafb71b3b65a72d",
+    "semantic_hash": "910ad23e6660f3766eafb71b3b65a72d"
+  },
+  "videos/offshore-oil/cartoon/shots.js": {
+    "mtime": 1793262947.2550812,
+    "seen": 1793264894.8592668,
+    "ast_hash": "f658540d57849636c56e67afdbf1ccb7",
+    "semantic_hash": "f658540d57849636c56e67afdbf1ccb7"
+  },
+  "videos/offshore-oil/cues.js": {
+    "mtime": 1793262947.256748,
+    "seen": 1793264894.8592687,
+    "ast_hash": "8054744fbaad879d2ea311a4a8d971a9",
+    "semantic_hash": "8054744fbaad879d2ea311a4a8d971a9"
+  },
+  "videos/offshore-oil/cues.json": {
+    "mtime": 1793262947.2571917,
+    "seen": 1793264894.85927,
+    "ast_hash": "5ef3de1a3a95ab2453134b18781d32df",
+    "semantic_hash": "5ef3de1a3a95ab2453134b18781d32df"
+  },
+  "videos/offshore-oil/iso/build.py": {
+    "mtime": 1793262947.2571917,
+    "seen": 1793264894.859272,
+    "ast_hash": "8d10f34ba2dda97c505f5096ad00068d",
+    "semantic_hash": "8d10f34ba2dda97c505f5096ad00068d"
+  },
+  "videos/offshore-oil/iso/panels.js": {
+    "mtime": 1793262947.2575402,
+    "seen": 1793264894.8592737,
+    "ast_hash": "09665ac26a8059c0508f51a6a77bac7e",
+    "semantic_hash": "09665ac26a8059c0508f51a6a77bac7e"
+  },
+  "videos/offshore-oil/iso/world.js": {
+    "mtime": 1793262947.2579412,
+    "seen": 1793264894.8592756,
+    "ast_hash": "04d5958b3172dc49b7875db50ccba952",
+    "semantic_hash": "04d5958b3172dc49b7875db50ccba952"
+  },
+  "videos/offshore-oil/raw-timing.json": {
+    "mtime": 1793262947.2579412,
+    "seen": 1793264894.8592772,
+    "ast_hash": "e699bf53bf2883b63480aae1b04cad73",
+    "semantic_hash": "e699bf53bf2883b63480aae1b04cad73"
+  },
+  "videos/offshore-oil/timing.js": {
+    "mtime": 1793262947.2604597,
+    "seen": 1793264894.8592792,
+    "ast_hash": "fb25154f0531f8a87cabac5b54d45d1f",
+    "semantic_hash": "fb25154f0531f8a87cabac5b54d45d1f"
+  },
+  "videos/phone-call/cartoon/_helpers.js": {
+    "mtime": 1793262947.3381817,
+    "seen": 1793264894.8592808,
+    "ast_hash": "1430e8049fe93ae1ca4ef006acbd0e61",
+    "semantic_hash": "1430e8049fe93ae1ca4ef006acbd0e61"
+  },
+  "videos/phone-call/cartoon/build.py": {
+    "mtime": 1793262947.3383555,
+    "seen": 1793264894.8592825,
+    "ast_hash": "582730961cc826edcd44e8ebcba17481",
+    "semantic_hash": "582730961cc826edcd44e8ebcba17481"
+  },
+  "videos/phone-call/cartoon/scenes.js": {
+    "mtime": 1793262947.3383555,
+    "seen": 1793264894.8592842,
+    "ast_hash": "518914e49e9954afa61b1f1aadcdb4e8",
+    "semantic_hash": "518914e49e9954afa61b1f1aadcdb4e8"
+  },
+  "videos/phone-call/cartoon/shots.js": {
+    "mtime": 1793262947.3391166,
+    "seen": 1793264894.859286,
+    "ast_hash": "f6a3430a6844e599842c8b9ad864b8e5",
+    "semantic_hash": "f6a3430a6844e599842c8b9ad864b8e5"
+  },
+  "videos/phone-call/cues.js": {
+    "mtime": 1793262947.3391166,
+    "seen": 1793264894.8592877,
+    "ast_hash": "e799b44a4c898f311611ade62f2b75a3",
+    "semantic_hash": "e799b44a4c898f311611ade62f2b75a3"
+  },
+  "videos/phone-call/cues.json": {
+    "mtime": 1793262947.3391166,
+    "seen": 1793264894.8592896,
+    "ast_hash": "73e156fa83e771b8ba457657009f19d3",
+    "semantic_hash": "73e156fa83e771b8ba457657009f19d3"
+  },
+  "videos/phone-call/iso/build.py": {
+    "mtime": 1793262947.3391166,
+    "seen": 1793264894.8592913,
+    "ast_hash": "bb8a863ce44ee115ba35ad1823fa04da",
+    "semantic_hash": "bb8a863ce44ee115ba35ad1823fa04da"
+  },
+  "videos/phone-call/iso/panels.js": {
+    "mtime": 1793262947.339778,
+    "seen": 1793264894.8592932,
+    "ast_hash": "83ccf13c608cc83b99f35e46b0e27323",
+    "semantic_hash": "83ccf13c608cc83b99f35e46b0e27323"
+  },
+  "videos/phone-call/iso/world.js": {
+    "mtime": 1793262947.3402836,
+    "seen": 1793264894.859295,
+    "ast_hash": "e30f7ac469069753d592fc6953d5199a",
+    "semantic_hash": "e30f7ac469069753d592fc6953d5199a"
+  },
+  "videos/phone-call/raw-timing.json": {
+    "mtime": 1793262947.3402836,
+    "seen": 1793264894.8592966,
+    "ast_hash": "efc64eb7860113bba27d02c19cfc0d2a",
+    "semantic_hash": "efc64eb7860113bba27d02c19cfc0d2a"
+  },
+  "videos/phone-call/timing.js": {
+    "mtime": 1793262947.3402836,
+    "seen": 1793264894.8592982,
+    "ast_hash": "738a61f39fe60ac145a87d51d0d62976",
+    "semantic_hash": "738a61f39fe60ac145a87d51d0d62976"
+  },
+  "videos/printer/cues.json": {
+    "mtime": 1793262947.4164596,
+    "seen": 1793264894.8593001,
+    "ast_hash": "1bc7aa008eee71a29cf8955cfbb98f56",
+    "semantic_hash": "1bc7aa008eee71a29cf8955cfbb98f56"
+  },
+  "videos/printer/timing.js": {
+    "mtime": 1793262947.4199867,
+    "seen": 1793264894.8593018,
+    "ast_hash": "b37557f8eb609fa5dfa038c9795ecc93",
+    "semantic_hash": "b37557f8eb609fa5dfa038c9795ecc93"
+  },
+  "videos/qa.py": {
+    "mtime": 1793262947.5004597,
+    "seen": 1793264894.8593035,
+    "ast_hash": "f208fb1b6e234f15695296596443b10f",
+    "semantic_hash": "f208fb1b6e234f15695296596443b10f"
+  },
+  "videos/qolla/cartoon/_helpers.js": {
+    "mtime": 1793262947.5020905,
+    "seen": 1793264894.8593051,
+    "ast_hash": "b0e657829981d33c7df9caecd9d6076f",
+    "semantic_hash": "b0e657829981d33c7df9caecd9d6076f"
+  },
+  "videos/qolla/cartoon/build.py": {
+    "mtime": 1793262947.5021832,
+    "seen": 1793264894.859307,
+    "ast_hash": "f3bfc7029e0f433d6b91bdbb297147aa",
+    "semantic_hash": "f3bfc7029e0f433d6b91bdbb297147aa"
+  },
+  "videos/qolla/cartoon/scenes.js": {
+    "mtime": 1793262947.5021832,
+    "seen": 1793264894.8593087,
+    "ast_hash": "319579b85ba23060a98623e14fd1ae0b",
+    "semantic_hash": "319579b85ba23060a98623e14fd1ae0b"
+  },
+  "videos/qolla/cartoon/shots.js": {
+    "mtime": 1793262947.5029106,
+    "seen": 1793264894.8593106,
+    "ast_hash": "7d12885fd67ae01c5c38c0ff8b68312b",
+    "semantic_hash": "7d12885fd67ae01c5c38c0ff8b68312b"
+  },
+  "videos/qolla/cues.js": {
+    "mtime": 1793262947.5029106,
+    "seen": 1793264894.8593123,
+    "ast_hash": "d8c4d7700154e33ce0bc75cfb0068ecf",
+    "semantic_hash": "d8c4d7700154e33ce0bc75cfb0068ecf"
+  },
+  "videos/qolla/cues.json": {
+    "mtime": 1793262947.5033162,
+    "seen": 1793264894.8593142,
+    "ast_hash": "7dd09ba030d73efff566c9b3fa59fd96",
+    "semantic_hash": "7dd09ba030d73efff566c9b3fa59fd96"
+  },
+  "videos/qolla/raw-timing.json": {
+    "mtime": 1793262947.5033162,
+    "seen": 1793264894.8593159,
+    "ast_hash": "87188674324f8e5e7fd2d29359b3f97b",
+    "semantic_hash": "87188674324f8e5e7fd2d29359b3f97b"
+  },
+  "videos/qolla/timing.js": {
+    "mtime": 1793262947.5033162,
+    "seen": 1793264894.8593178,
+    "ast_hash": "0fcc596dc8b333dfb937a288313c2aa4",
+    "semantic_hash": "0fcc596dc8b333dfb937a288313c2aa4"
+  },
+  "videos/render.js": {
+    "mtime": 1793262947.6324596,
+    "seen": 1793264894.8593194,
+    "ast_hash": "15b7d2b1a9aed243e504193aceae3d50",
+    "semantic_hash": "15b7d2b1a9aed243e504193aceae3d50"
+  },
+  "videos/robot-vacuum/build.py": {
+    "mtime": 1793262947.6324596,
+    "seen": 1793264894.8593228,
+    "ast_hash": "211047f3155e139ab5238ddc2163489f",
+    "semantic_hash": "211047f3155e139ab5238ddc2163489f"
+  },
+  "videos/robot-vacuum/cues.js": {
+    "mtime": 1793262947.635103,
+    "seen": 1793264894.8593247,
+    "ast_hash": "467553fa3a79c52743faeb317244d337",
+    "semantic_hash": "467553fa3a79c52743faeb317244d337"
+  },
+  "videos/robot-vacuum/cues.json": {
+    "mtime": 1793262947.635103,
+    "seen": 1793264894.8593264,
+    "ast_hash": "c982c672cbb1a23298ad4cf1a01db0fb",
+    "semantic_hash": "c982c672cbb1a23298ad4cf1a01db0fb"
+  },
+  "videos/robot-vacuum/panels.js": {
+    "mtime": 1793262947.635682,
+    "seen": 1793264894.8593283,
+    "ast_hash": "3f5cc020a882032dbc2a832bcfe1d316",
+    "semantic_hash": "3f5cc020a882032dbc2a832bcfe1d316"
+  },
+  "videos/robot-vacuum/raw-timing.json": {
+    "mtime": 1793262947.6360552,
+    "seen": 1793264894.85933,
+    "ast_hash": "764a151cec231d5b3495c9fd463b8bd6",
+    "semantic_hash": "764a151cec231d5b3495c9fd463b8bd6"
+  },
+  "videos/robot-vacuum/timing.js": {
+    "mtime": 1793262947.7684596,
+    "seen": 1793264894.8593318,
+    "ast_hash": "cf12988d562e971bd97263f8a505c718",
+    "semantic_hash": "cf12988d562e971bd97263f8a505c718"
+  },
+  "videos/robot-vacuum/world.js": {
+    "mtime": 1793262947.8325977,
+    "seen": 1793264894.8593335,
+    "ast_hash": "3682816191aa7c6cbd56082dada7c4f9",
+    "semantic_hash": "3682816191aa7c6cbd56082dada7c4f9"
+  },
+  "videos/sea-cables/cartoon/_helpers.js": {
+    "mtime": 1793262947.8329353,
+    "seen": 1793264894.8593354,
+    "ast_hash": "b0e657829981d33c7df9caecd9d6076f",
+    "semantic_hash": "b0e657829981d33c7df9caecd9d6076f"
+  },
+  "videos/sea-cables/cartoon/build.py": {
+    "mtime": 1793262947.8331647,
+    "seen": 1793264894.8593373,
+    "ast_hash": "a505f720987bcb80a43a4d70d7ad2008",
+    "semantic_hash": "a505f720987bcb80a43a4d70d7ad2008"
+  },
+  "videos/sea-cables/cartoon/scenes.js": {
+    "mtime": 1793262947.8335025,
+    "seen": 1793264894.859339,
+    "ast_hash": "0c1cc4d523d7be410bce2b41758cac67",
+    "semantic_hash": "0c1cc4d523d7be410bce2b41758cac67"
+  },
+  "videos/sea-cables/cartoon/shots.js": {
+    "mtime": 1793262947.8344667,
+    "seen": 1793264894.859341,
+    "ast_hash": "ccd536d22d37c8c4a2a5afdb2ddb194b",
+    "semantic_hash": "ccd536d22d37c8c4a2a5afdb2ddb194b"
+  },
+  "videos/sea-cables/cues.js": {
+    "mtime": 1793262947.8347802,
+    "seen": 1793264894.8593426,
+    "ast_hash": "51a662f6d8bb28815ea57165f001f040",
+    "semantic_hash": "51a662f6d8bb28815ea57165f001f040"
+  },
+  "videos/sea-cables/cues.json": {
+    "mtime": 1793262947.8347802,
+    "seen": 1793264894.8593442,
+    "ast_hash": "41c801063bb770780d6d3500a269f9e3",
+    "semantic_hash": "41c801063bb770780d6d3500a269f9e3"
+  },
+  "videos/sea-cables/raw-timing.json": {
+    "mtime": 1793262947.8347802,
+    "seen": 1793264894.859346,
+    "ast_hash": "1b1bcdb8ea65ffa3ff5087bd85795428",
+    "semantic_hash": "1b1bcdb8ea65ffa3ff5087bd85795428"
+  },
+  "videos/sea-cables/timing.js": {
+    "mtime": 1793262947.8353677,
+    "seen": 1793264894.8593478,
+    "ast_hash": "ee67929e1e8e80867aaae52ab8d799f0",
+    "semantic_hash": "ee67929e1e8e80867aaae52ab8d799f0"
+  },
+  "videos/ship/cues.json": {
+    "mtime": 1793262947.9844596,
+    "seen": 1793264894.8593493,
+    "ast_hash": "b88429d3b954cf916c4fab4b63c92670",
+    "semantic_hash": "b88429d3b954cf916c4fab4b63c92670"
+  },
+  "videos/ship/timing.js": {
+    "mtime": 1793262947.9860022,
+    "seen": 1793264894.8593512,
+    "ast_hash": "d5d04646208b7039e413387ca8ba67b6",
+    "semantic_hash": "d5d04646208b7039e413387ca8ba67b6"
+  },
+  "videos/sonic-boom/cartoon/_helpers.js": {
+    "mtime": 1793262948.044464,
+    "seen": 1793264894.8593528,
+    "ast_hash": "b0e657829981d33c7df9caecd9d6076f",
+    "semantic_hash": "b0e657829981d33c7df9caecd9d6076f"
+  },
+  "videos/sonic-boom/cartoon/build.py": {
+    "mtime": 1793262948.044775,
+    "seen": 1793264894.8593547,
+    "ast_hash": "0cb16be50aa0cca243df3b8418f4534f",
+    "semantic_hash": "0cb16be50aa0cca243df3b8418f4534f"
+  },
+  "videos/sonic-boom/cartoon/scenes.js": {
+    "mtime": 1793262948.044775,
+    "seen": 1793264894.8593562,
+    "ast_hash": "51a3b319da8a107536c73ac6bea422a9",
+    "semantic_hash": "51a3b319da8a107536c73ac6bea422a9"
+  },
+  "videos/sonic-boom/cartoon/shots.js": {
+    "mtime": 1793262948.0460858,
+    "seen": 1793264894.8593578,
+    "ast_hash": "9e248a93b79e3f0ff086a0d01ea09d9c",
+    "semantic_hash": "9e248a93b79e3f0ff086a0d01ea09d9c"
+  },
+  "videos/sonic-boom/cues.js": {
+    "mtime": 1793262948.0466857,
+    "seen": 1793264894.8593597,
+    "ast_hash": "90a6709fde5abfbdb67b4663bfc9d27e",
+    "semantic_hash": "90a6709fde5abfbdb67b4663bfc9d27e"
+  },
+  "videos/sonic-boom/cues.json": {
+    "mtime": 1793262948.0466857,
+    "seen": 1793264894.8593616,
+    "ast_hash": "02743f1016cd70b4ee3f63095e52f12a",
+    "semantic_hash": "02743f1016cd70b4ee3f63095e52f12a"
+  },
+  "videos/sonic-boom/raw-timing.json": {
+    "mtime": 1793262948.0470412,
+    "seen": 1793264894.8593633,
+    "ast_hash": "c5a45311c3be1af68bea12e83f587299",
+    "semantic_hash": "c5a45311c3be1af68bea12e83f587299"
+  },
+  "videos/sonic-boom/timing.js": {
+    "mtime": 1793262948.0556536,
+    "seen": 1793264894.8593652,
+    "ast_hash": "739cc17be76b2325a4abc3756368c4a9",
+    "semantic_hash": "739cc17be76b2325a4abc3756368c4a9"
+  },
+  "videos/submarine/cartoon/_helpers.js": {
+    "mtime": 1793262948.2333596,
+    "seen": 1793264894.859367,
+    "ast_hash": "b0e657829981d33c7df9caecd9d6076f",
+    "semantic_hash": "b0e657829981d33c7df9caecd9d6076f"
+  },
+  "videos/submarine/cartoon/build.py": {
+    "mtime": 1793262948.2336247,
+    "seen": 1793264894.8593688,
+    "ast_hash": "1167a9218f16f8b7f9d3fec236744b35",
+    "semantic_hash": "1167a9218f16f8b7f9d3fec236744b35"
+  },
+  "videos/submarine/cartoon/scenes.js": {
+    "mtime": 1793262948.2339697,
+    "seen": 1793264894.8593705,
+    "ast_hash": "9b17c7aa9d29c1751bd2d2adc4436c05",
+    "semantic_hash": "9b17c7aa9d29c1751bd2d2adc4436c05"
+  },
+  "videos/submarine/cartoon/shots.js": {
+    "mtime": 1793262948.2348223,
+    "seen": 1793264894.8593724,
+    "ast_hash": "3630b7eafdeeb78858f9d04b676bf4a6",
+    "semantic_hash": "3630b7eafdeeb78858f9d04b676bf4a6"
+  },
+  "videos/submarine/cues.js": {
+    "mtime": 1793262948.2350342,
+    "seen": 1793264894.859374,
+    "ast_hash": "9146680460aca0cf61e1fbdcaa2b7a0e",
+    "semantic_hash": "9146680460aca0cf61e1fbdcaa2b7a0e"
+  },
+  "videos/submarine/cues.json": {
+    "mtime": 1793262948.2350342,
+    "seen": 1793264894.859376,
+    "ast_hash": "3387a0f133df477afd2c0bb8c5151ef6",
+    "semantic_hash": "3387a0f133df477afd2c0bb8c5151ef6"
+  },
+  "videos/submarine/iso/build.py": {
+    "mtime": 1793262948.2350342,
+    "seen": 1793264894.8593776,
+    "ast_hash": "f24b67e6bcee22849ee8327e40564da1",
+    "semantic_hash": "f24b67e6bcee22849ee8327e40564da1"
+  },
+  "videos/submarine/iso/panels.js": {
+    "mtime": 1793262948.2356195,
+    "seen": 1793264894.8593795,
+    "ast_hash": "621e67b2bf67875851291424bc394927",
+    "semantic_hash": "621e67b2bf67875851291424bc394927"
+  },
+  "videos/submarine/iso/world.js": {
+    "mtime": 1793262948.2363598,
+    "seen": 1793264894.859381,
+    "ast_hash": "839f8028d74465c29b9c73f66790fc77",
+    "semantic_hash": "839f8028d74465c29b9c73f66790fc77"
+  },
+  "videos/submarine/raw-timing.json": {
+    "mtime": 1793262948.2363598,
+    "seen": 1793264894.8593829,
+    "ast_hash": "6499c9a3cd30e3b9fb5f3abc699b9287",
+    "semantic_hash": "6499c9a3cd30e3b9fb5f3abc699b9287"
+  },
+  "videos/submarine/timing.js": {
+    "mtime": 1793262948.2369125,
+    "seen": 1793264894.8593845,
+    "ast_hash": "f6bdc0f31cdeaed148e172699ef298bd",
+    "semantic_hash": "f6bdc0f31cdeaed148e172699ef298bd"
+  },
+  "videos/tbm-tunnel/cartoon/_helpers.js": {
+    "mtime": 1793262948.4003932,
+    "seen": 1793264894.8593867,
+    "ast_hash": "b0e657829981d33c7df9caecd9d6076f",
+    "semantic_hash": "b0e657829981d33c7df9caecd9d6076f"
+  },
+  "videos/tbm-tunnel/cartoon/build.py": {
+    "mtime": 1793262948.4006603,
+    "seen": 1793264894.859388,
+    "ast_hash": "2fc3ca943829c9ee4d527ed731c0364f",
+    "semantic_hash": "2fc3ca943829c9ee4d527ed731c0364f"
+  },
+  "videos/tbm-tunnel/cartoon/scenes.js": {
+    "mtime": 1793262948.401057,
+    "seen": 1793264894.85939,
+    "ast_hash": "7dcbdc0118280d3e1f90c667a4b1b2ab",
+    "semantic_hash": "7dcbdc0118280d3e1f90c667a4b1b2ab"
+  },
+  "videos/tbm-tunnel/cartoon/shots.js": {
+    "mtime": 1793262948.401057,
+    "seen": 1793264894.8593917,
+    "ast_hash": "dec0fd4ce30b3c81bff5989bf04d9cc9",
+    "semantic_hash": "dec0fd4ce30b3c81bff5989bf04d9cc9"
+  },
+  "videos/tbm-tunnel/cues.js": {
+    "mtime": 1793262948.401057,
+    "seen": 1793264894.8593936,
+    "ast_hash": "3be8344c807b0441b1ccdf8f3450043e",
+    "semantic_hash": "3be8344c807b0441b1ccdf8f3450043e"
+  },
+  "videos/tbm-tunnel/cues.json": {
+    "mtime": 1793262948.401057,
+    "seen": 1793264894.8593953,
+    "ast_hash": "a6dcae906db32605ef3351fb9a24f4a6",
+    "semantic_hash": "a6dcae906db32605ef3351fb9a24f4a6"
+  },
+  "videos/tbm-tunnel/raw-timing.json": {
+    "mtime": 1793262948.401057,
+    "seen": 1793264894.8593972,
+    "ast_hash": "b7f86a45e68bcf63c2dd2a94332a52e7",
+    "semantic_hash": "b7f86a45e68bcf63c2dd2a94332a52e7"
+  },
+  "videos/tbm-tunnel/timing.js": {
+    "mtime": 1793262948.401057,
+    "seen": 1793264894.8593988,
+    "ast_hash": "f9b8074d9785c54c1879ed62df2ae9e5",
+    "semantic_hash": "f9b8074d9785c54c1879ed62df2ae9e5"
+  },
+  "videos/tools/cover.js": {
+    "mtime": 1793262948.5764596,
+    "seen": 1793264894.8594007,
+    "ast_hash": "596a6568232858dc49ef0a68459e93e5",
+    "semantic_hash": "596a6568232858dc49ef0a68459e93e5"
+  },
+  "videos/tools/frame.js": {
+    "mtime": 1793262948.5800724,
+    "seen": 1793264894.8594022,
+    "ast_hash": "644b38cc74cccf8b5982d66f8b7f83fd",
+    "semantic_hash": "644b38cc74cccf8b5982d66f8b7f83fd"
+  },
+  "videos/tools/motion.js": {
+    "mtime": 1793262948.5800724,
+    "seen": 1793264894.859404,
+    "ast_hash": "ba894624fa60edc29e8b4da4686f3811",
+    "semantic_hash": "ba894624fa60edc29e8b4da4686f3811"
+  },
+  "videos/tools/sheet.js": {
+    "mtime": 1793262948.5800724,
+    "seen": 1793264894.8594058,
+    "ast_hash": "5e96fdfa9c796494c101aa8ef6bc9489",
+    "semantic_hash": "5e96fdfa9c796494c101aa8ef6bc9489"
+  },
+  "videos/touchscreen/cartoon/_helpers.js": {
+    "mtime": 1793262948.5804265,
+    "seen": 1793264894.8594077,
+    "ast_hash": "b0e657829981d33c7df9caecd9d6076f",
+    "semantic_hash": "b0e657829981d33c7df9caecd9d6076f"
+  },
+  "videos/touchscreen/cartoon/build.py": {
+    "mtime": 1793262948.580661,
+    "seen": 1793264894.8594093,
+    "ast_hash": "8a8f92c1a963a16b9049f3a638cf7282",
+    "semantic_hash": "8a8f92c1a963a16b9049f3a638cf7282"
+  },
+  "videos/touchscreen/cartoon/scenes.js": {
+    "mtime": 1793262948.5817776,
+    "seen": 1793264894.8594112,
+    "ast_hash": "e35d40f5276d3b58d0e5f4da234194cf",
+    "semantic_hash": "e35d40f5276d3b58d0e5f4da234194cf"
+  },
+  "videos/touchscreen/cartoon/shots.js": {
+    "mtime": 1793262948.5817776,
+    "seen": 1793264894.859413,
+    "ast_hash": "cae7c8f83d2b45ac7aa38d741b37c595",
+    "semantic_hash": "cae7c8f83d2b45ac7aa38d741b37c595"
+  },
+  "videos/touchscreen/cues.js": {
+    "mtime": 1793262948.5817776,
+    "seen": 1793264894.8594148,
+    "ast_hash": "ac45b5cd6ba6233d440c5482ac099e78",
+    "semantic_hash": "ac45b5cd6ba6233d440c5482ac099e78"
+  },
+  "videos/touchscreen/cues.json": {
+    "mtime": 1793262948.5817776,
+    "seen": 1793264894.8594162,
+    "ast_hash": "a8f23158e858a82b4dab61569fbcba38",
+    "semantic_hash": "a8f23158e858a82b4dab61569fbcba38"
+  },
+  "videos/touchscreen/raw-timing.json": {
+    "mtime": 1793262948.5817776,
+    "seen": 1793264894.8594182,
+    "ast_hash": "71bb2a1dfdca768b9eb8cafea1bb5293",
+    "semantic_hash": "71bb2a1dfdca768b9eb8cafea1bb5293"
+  },
+  "videos/touchscreen/timing.js": {
+    "mtime": 1793262948.5817776,
+    "seen": 1793264894.8594198,
+    "ast_hash": "02236a1d78a5912b8d24f8e67b093a12",
+    "semantic_hash": "02236a1d78a5912b8d24f8e67b093a12"
+  },
+  "videos/washer/cues.json": {
+    "mtime": 1793262948.6764598,
+    "seen": 1793264894.8594217,
+    "ast_hash": "ba8ef26a6f57f2542722a46994c0affd",
+    "semantic_hash": "ba8ef26a6f57f2542722a46994c0affd"
+  },
+  "videos/washer/raw-timing.json": {
+    "mtime": 1793262948.6812036,
+    "seen": 1793264894.8594234,
+    "ast_hash": "a720eafdb43ac322478de0bbd219ecf6",
+    "semantic_hash": "a720eafdb43ac322478de0bbd219ecf6"
+  },
+  "videos/washer/scene.js": {
+    "mtime": 1793262948.68159,
+    "seen": 1793264894.859425,
+    "ast_hash": "37715c5d768431fd3e3b8261eeddf9cb",
+    "semantic_hash": "37715c5d768431fd3e3b8261eeddf9cb"
+  },
+  "videos/washer/timing.js": {
+    "mtime": 1793262948.681782,
+    "seen": 1793264894.8594267,
+    "ast_hash": "bd6d62338b996fdf3b394cc15d11415d",
+    "semantic_hash": "bd6d62338b996fdf3b394cc15d11415d"
+  },
+  "videos/water-pump/render.js": {
+    "mtime": 1793262995.8874252,
+    "seen": 1793264894.8594284,
+    "ast_hash": "c08573a9d6f418f8e3af1412eb6f2564",
+    "semantic_hash": "c08573a9d6f418f8e3af1412eb6f2564"
+  },
+  "videos/water-pump/three-r128.min.js": {
+    "mtime": 1793263006.920463,
+    "seen": 1793264894.85943,
+    "ast_hash": "eb8549863a97355411c3259a3f93b8e1",
+    "semantic_hash": "eb8549863a97355411c3259a3f93b8e1"
+  },
+  "videos/PLAYBOOK.md": {
+    "mtime": 1793262945.8724303,
+    "seen": 1793264894.859432,
+    "ast_hash": "0b763a206bcebd753828923998a12186",
+    "semantic_hash": "0b763a206bcebd753828923998a12186"
+  },
+  "videos/README.md": {
+    "mtime": 1793262945.8726203,
+    "seen": 1793264894.8594337,
+    "ast_hash": "5bfa5dd9735a4b93549034f29b7ce58c",
+    "semantic_hash": "5bfa5dd9735a4b93549034f29b7ce58c"
+  },
+  "videos/airplane-us/index.html": {
+    "mtime": 1793262945.8726873,
+    "seen": 1793264894.8594356,
+    "ast_hash": "f8c6b9b8cc483aa02d37f7a5353473d4",
+    "semantic_hash": "f8c6b9b8cc483aa02d37f7a5353473d4"
+  },
+  "videos/airplane-us/script.txt": {
+    "mtime": 1793262945.8726873,
+    "seen": 1793264894.8594372,
+    "ast_hash": "629d28aa6d00d77590df05b950afba09",
+    "semantic_hash": "629d28aa6d00d77590df05b950afba09"
+  },
+  "videos/airplane-us/template.html": {
+    "mtime": 1793262945.8726873,
+    "seen": 1793264894.859439,
+    "ast_hash": "80059fbfd3d4156e89c8ededa59b7ea8",
+    "semantic_hash": "80059fbfd3d4156e89c8ededa59b7ea8"
+  },
+  "videos/airplane-us/voice-style.txt": {
+    "mtime": 1793262945.9124596,
+    "seen": 1793264894.8594406,
+    "ast_hash": "60a4e6fd2ac981186ccea2af88f9d81c",
+    "semantic_hash": "60a4e6fd2ac981186ccea2af88f9d81c"
+  },
+  "videos/airplane-v2/index.html": {
+    "mtime": 1793262945.9844596,
+    "seen": 1793264894.8594425,
+    "ast_hash": "0332107c2678fb564235eedefdd872bd",
+    "semantic_hash": "0332107c2678fb564235eedefdd872bd"
+  },
+  "videos/airplane-v2/script.txt": {
+    "mtime": 1793262945.985957,
+    "seen": 1793264894.8594441,
+    "ast_hash": "dfd1f17c57f92072207f73d7bf6fa952",
+    "semantic_hash": "dfd1f17c57f92072207f73d7bf6fa952"
+  },
+  "videos/airplane-v2/style-preview.html": {
+    "mtime": 1793262945.9861655,
+    "seen": 1793264894.859446,
+    "ast_hash": "8fab24a089a2f3b216148bcea2c0a6eb",
+    "semantic_hash": "8fab24a089a2f3b216148bcea2c0a6eb"
+  },
+  "videos/airplane/index.html": {
+    "mtime": 1793262946.0164595,
+    "seen": 1793264894.8594477,
+    "ast_hash": "6f27f3e1579e8393083a446d1844fb8f",
+    "semantic_hash": "6f27f3e1579e8393083a446d1844fb8f"
+  },
+  "videos/airplane/script.txt": {
+    "mtime": 1793262946.018132,
+    "seen": 1793264894.8594494,
+    "ast_hash": "7ebb5ad43368b063c67fb4b0ea336336",
+    "semantic_hash": "7ebb5ad43368b063c67fb4b0ea336336"
+  },
+  "videos/atm/cartoon/index.html": {
+    "mtime": 1793262946.055544,
+    "seen": 1793264894.859451,
+    "ast_hash": "ad64df6fc260c7454d43c533c7df8d77",
+    "semantic_hash": "ad64df6fc260c7454d43c533c7df8d77"
+  },
+  "videos/atm/cartoon/template.html": {
+    "mtime": 1793262946.0561368,
+    "seen": 1793264894.859453,
+    "ast_hash": "4fe5cf4581f6bbc61fedac25540acb39",
+    "semantic_hash": "4fe5cf4581f6bbc61fedac25540acb39"
+  },
+  "videos/atm/iso/index.html": {
+    "mtime": 1793262946.056744,
+    "seen": 1793264894.8594546,
+    "ast_hash": "8785430c2878e1ac3e87f71993d9a8a0",
+    "semantic_hash": "8785430c2878e1ac3e87f71993d9a8a0"
+  },
+  "videos/atm/iso/template.html": {
+    "mtime": 1793262946.0568438,
+    "seen": 1793264894.8594568,
+    "ast_hash": "5a73a96b764be023428c4eba98b0acf6",
+    "semantic_hash": "5a73a96b764be023428c4eba98b0acf6"
+  },
+  "videos/atm/refs/SOURCES.md": {
+    "mtime": 1793262946.0573034,
+    "seen": 1793264894.8594582,
+    "ast_hash": "431a4274862745feb84bd6e20052bfdf",
+    "semantic_hash": "431a4274862745feb84bd6e20052bfdf"
+  },
+  "videos/atm/script.txt": {
+    "mtime": 1793262946.0573034,
+    "seen": 1793264894.85946,
+    "ast_hash": "c92c1ee94c19248bd7a66a1ca272ba77",
+    "semantic_hash": "c92c1ee94c19248bd7a66a1ca272ba77"
+  },
+  "videos/bridge-water/cartoon/index.html": {
+    "mtime": 1793262946.1317582,
+    "seen": 1793264894.8594618,
+    "ast_hash": "0ae8785ef22e77cf9a72818211df309e",
+    "semantic_hash": "0ae8785ef22e77cf9a72818211df309e"
+  },
+  "videos/bridge-water/cartoon/template.html": {
+    "mtime": 1793262946.1323261,
+    "seen": 1793264894.8594637,
+    "ast_hash": "64e51b7e13ae708836a7689660700c2d",
+    "semantic_hash": "64e51b7e13ae708836a7689660700c2d"
+  },
+  "videos/bridge-water/refs/SOURCES.md": {
+    "mtime": 1793262946.1323261,
+    "seen": 1793264894.8594654,
+    "ast_hash": "2edb1303838362080748712635eb9f2a",
+    "semantic_hash": "2edb1303838362080748712635eb9f2a"
+  },
+  "videos/bridge-water/script.txt": {
+    "mtime": 1793262946.1337848,
+    "seen": 1793264894.8594673,
+    "ast_hash": "2165bdfee0078b25899980178ec1f045",
+    "semantic_hash": "2165bdfee0078b25899980178ec1f045"
+  },
+  "videos/car-egypt/cartoon/index.html": {
+    "mtime": 1793262946.2171605,
+    "seen": 1793264894.8594687,
+    "ast_hash": "19f2689a37959b8054db8715476ab66a",
+    "semantic_hash": "19f2689a37959b8054db8715476ab66a"
+  },
+  "videos/car-egypt/cartoon/template.html": {
+    "mtime": 1793262946.2178183,
+    "seen": 1793264894.8594706,
+    "ast_hash": "1d4169f0aea1edfadc065b08776e38a6",
+    "semantic_hash": "1d4169f0aea1edfadc065b08776e38a6"
+  },
+  "videos/car-egypt/refs/SOURCES.md": {
+    "mtime": 1793262946.218216,
+    "seen": 1793264894.859472,
+    "ast_hash": "3edecd48f6eeb155c7ced383af00c326",
+    "semantic_hash": "3edecd48f6eeb155c7ced383af00c326"
+  },
+  "videos/car-egypt/script.txt": {
+    "mtime": 1793262946.218269,
+    "seen": 1793264894.859474,
+    "ast_hash": "8597fa156ffc68d586cf21184757f9e3",
+    "semantic_hash": "8597fa156ffc68d586cf21184757f9e3"
+  },
+  "videos/car-us/index.html": {
+    "mtime": 1793262946.2995322,
+    "seen": 1793264894.8594756,
+    "ast_hash": "443d1677a046686b4e573f05b04948a9",
+    "semantic_hash": "443d1677a046686b4e573f05b04948a9"
+  },
+  "videos/car-us/script.txt": {
+    "mtime": 1793262946.2998252,
+    "seen": 1793264894.8594775,
+    "ast_hash": "fc3276d37b63b5b316a4c232c8337b1b",
+    "semantic_hash": "fc3276d37b63b5b316a4c232c8337b1b"
+  },
+  "videos/car-us/template.html": {
+    "mtime": 1793262946.2998252,
+    "seen": 1793264894.8594792,
+    "ast_hash": "3046a7e2dc3a19c6b73d910481418e9f",
+    "semantic_hash": "3046a7e2dc3a19c6b73d910481418e9f"
+  },
+  "videos/car-us/voice-style.txt": {
+    "mtime": 1793262946.3364596,
+    "seen": 1793264894.859481,
+    "ast_hash": "d353219c1077b2729e44e153e7e08c0f",
+    "semantic_hash": "d353219c1077b2729e44e153e7e08c0f"
+  },
+  "videos/dishwasher/index.html": {
+    "mtime": 1793262946.417512,
+    "seen": 1793264894.8594828,
+    "ast_hash": "ef0cf011ebc6fbfef369725bf52b10cb",
+    "semantic_hash": "ef0cf011ebc6fbfef369725bf52b10cb"
+  },
+  "videos/dishwasher/iso-test.html": {
+    "mtime": 1793262946.41761,
+    "seen": 1793264894.8594847,
+    "ast_hash": "03b9a3aeed56d4a081fc35d205bd9310",
+    "semantic_hash": "03b9a3aeed56d4a081fc35d205bd9310"
+  },
+  "videos/dishwasher/script.txt": {
+    "mtime": 1793262946.41761,
+    "seen": 1793264894.8594866,
+    "ast_hash": "133c55e551cf331bc62a8d9c290caab6",
+    "semantic_hash": "133c55e551cf331bc62a8d9c290caab6"
+  },
+  "videos/elevator-waqei/index.html": {
+    "mtime": 1793262949.3597803,
+    "seen": 1793264894.8594882,
+    "ast_hash": "59c9b54509fd40b2f7cb655bf0b7cf02",
+    "semantic_hash": "59c9b54509fd40b2f7cb655bf0b7cf02"
+  },
+  "videos/elevator-waqei/script.txt": {
+    "mtime": 1793262949.3597803,
+    "seen": 1793264894.8594902,
+    "ast_hash": "50a49c7cb04da923aea0d25fe8fd3ffa",
+    "semantic_hash": "50a49c7cb04da923aea0d25fe8fd3ffa"
+  },
+  "videos/elevator/cartoon/index.html": {
+    "mtime": 1793262946.4943683,
+    "seen": 1793264894.8594916,
+    "ast_hash": "2736541aeb20f8170f2d35651a475f6d",
+    "semantic_hash": "2736541aeb20f8170f2d35651a475f6d"
+  },
+  "videos/elevator/cartoon/template.html": {
+    "mtime": 1793262946.4948616,
+    "seen": 1793264894.8594935,
+    "ast_hash": "7400c525d4e0e83582669e25114da076",
+    "semantic_hash": "7400c525d4e0e83582669e25114da076"
+  },
+  "videos/elevator/iso/index.html": {
+    "mtime": 1793262946.495263,
+    "seen": 1793264894.8594952,
+    "ast_hash": "aab290b4da248c64479cad8aaab89ada",
+    "semantic_hash": "aab290b4da248c64479cad8aaab89ada"
+  },
+  "videos/elevator/iso/template.html": {
+    "mtime": 1793262946.4958951,
+    "seen": 1793264894.859497,
+    "ast_hash": "3c002de8dd4fcc472ea9cbf429e9f271",
+    "semantic_hash": "3c002de8dd4fcc472ea9cbf429e9f271"
+  },
+  "videos/elevator/script.txt": {
+    "mtime": 1793262949.4164598,
+    "seen": 1793264894.8594987,
+    "ast_hash": "f9bc55eadd42331e993ca943f56d09b1",
+    "semantic_hash": "f9bc55eadd42331e993ca943f56d09b1"
+  },
+  "videos/fridge-3d/index.html": {
+    "mtime": 1793262946.560533,
+    "seen": 1793264894.8595006,
+    "ast_hash": "6fb9b38c055fc9348d1da84357fb6890",
+    "semantic_hash": "6fb9b38c055fc9348d1da84357fb6890"
+  },
+  "videos/fridge-3d/script.txt": {
+    "mtime": 1793262946.560533,
+    "seen": 1793264894.8595023,
+    "ast_hash": "cb094f83a178a0dc82494f20e71fbebb",
+    "semantic_hash": "cb094f83a178a0dc82494f20e71fbebb"
+  },
+  "videos/fridge-3d/template.html": {
+    "mtime": 1793262946.560533,
+    "seen": 1793264894.8595042,
+    "ast_hash": "fbcd8cbba6a2da91fcc4d6a472e469c7",
+    "semantic_hash": "fbcd8cbba6a2da91fcc4d6a472e469c7"
+  },
+  "videos/fridge/index.html": {
+    "mtime": 1793262946.561631,
+    "seen": 1793264894.859506,
+    "ast_hash": "d5ae1cd0937a7da7a7f838362c1fe57e",
+    "semantic_hash": "d5ae1cd0937a7da7a7f838362c1fe57e"
+  },
+  "videos/fridge/script.txt": {
+    "mtime": 1793262946.5620897,
+    "seen": 1793264894.8595078,
+    "ast_hash": "cb094f83a178a0dc82494f20e71fbebb",
+    "semantic_hash": "cb094f83a178a0dc82494f20e71fbebb"
+  },
+  "videos/fridge/template.html": {
+    "mtime": 1793262946.5620897,
+    "seen": 1793264894.8595092,
+    "ast_hash": "4f514ad266a64b067657c9953a9da66e",
+    "semantic_hash": "4f514ad266a64b067657c9953a9da66e"
+  },
+  "videos/gps-traffic/cartoon/index.html": {
+    "mtime": 1793262946.6815012,
+    "seen": 1793264894.8595111,
+    "ast_hash": "c31942b228e5e0b6a5cc6d7420264cfd",
+    "semantic_hash": "c31942b228e5e0b6a5cc6d7420264cfd"
+  },
+  "videos/gps-traffic/cartoon/template.html": {
+    "mtime": 1793262946.6820257,
+    "seen": 1793264894.8595128,
+    "ast_hash": "4efa4750d02be73230b873139f94e5d3",
+    "semantic_hash": "4efa4750d02be73230b873139f94e5d3"
+  },
+  "videos/gps-traffic/iso/index.html": {
+    "mtime": 1793262946.6825678,
+    "seen": 1793264894.8595145,
+    "ast_hash": "b7a03db65c31176f93696706682ee357",
+    "semantic_hash": "b7a03db65c31176f93696706682ee357"
+  },
+  "videos/gps-traffic/iso/template.html": {
+    "mtime": 1793262946.682985,
+    "seen": 1793264894.8595161,
+    "ast_hash": "893f244526d7f0e9ff3412d656e842b2",
+    "semantic_hash": "893f244526d7f0e9ff3412d656e842b2"
+  },
+  "videos/gps-traffic/script.txt": {
+    "mtime": 1793262946.6831894,
+    "seen": 1793264894.859518,
+    "ast_hash": "82b27f962682d4c72489b8dfdd0801e8",
+    "semantic_hash": "82b27f962682d4c72489b8dfdd0801e8"
+  },
+  "videos/helicopter/index.html": {
+    "mtime": 1793262946.7544262,
+    "seen": 1793264894.8595197,
+    "ast_hash": "f424782f9328da892859c00bc6b8ce05",
+    "semantic_hash": "f424782f9328da892859c00bc6b8ce05"
+  },
+  "videos/helicopter/script.txt": {
+    "mtime": 1793262946.7550168,
+    "seen": 1793264894.8595216,
+    "ast_hash": "d55e4b3938a2a10e7d76ce24149bfedf",
+    "semantic_hash": "d55e4b3938a2a10e7d76ce24149bfedf"
+  },
+  "videos/helicopter/storyboard.md": {
+    "mtime": 1793262946.7550168,
+    "seen": 1793264894.8595233,
+    "ast_hash": "423ec32b3b1c0e29e587167e6aaf0f89",
+    "semantic_hash": "423ec32b3b1c0e29e587167e6aaf0f89"
+  },
+  "videos/helicopter/style-test.html": {
+    "mtime": 1793262946.7554464,
+    "seen": 1793264894.8595252,
+    "ast_hash": "78e8f87087eaa01c40bbf6955610c0d1",
+    "semantic_hash": "78e8f87087eaa01c40bbf6955610c0d1"
+  },
+  "videos/helicopter/template.html": {
+    "mtime": 1793262946.7564597,
+    "seen": 1793264894.8595269,
+    "ast_hash": "79e770fe543a9d2bae9170f4509b27b9",
+    "semantic_hash": "79e770fe543a9d2bae9170f4509b27b9"
+  },
+  "videos/high-dam-iso/episode.html": {
+    "mtime": 1793262994.4978304,
+    "seen": 1793264894.8595288,
+    "ast_hash": "871fcd7a8354c74d756e2b7d4f46e0f1",
+    "semantic_hash": "871fcd7a8354c74d756e2b7d4f46e0f1"
+  },
+  "videos/high-dam-page/high-dam-power.html": {
+    "mtime": 1793262995.878586,
+    "seen": 1793264894.8595304,
+    "ast_hash": "8a0e78f57817bdd9c1a70eed1731eb14",
+    "semantic_hash": "8a0e78f57817bdd9c1a70eed1731eb14"
+  },
+  "videos/high-dam-page/suez-power.html": {
+    "mtime": 1793262995.878926,
+    "seen": 1793264894.8595324,
+    "ast_hash": "a2d64b92d5d42df3d0c362911d1d34d4",
+    "semantic_hash": "a2d64b92d5d42df3d0c362911d1d34d4"
+  },
+  "videos/high-dam-page/video-template.html": {
+    "mtime": 1793262995.885567,
+    "seen": 1793264894.859534,
+    "ast_hash": "46b357cbd971263ce56e949f104fd9b8",
+    "semantic_hash": "46b357cbd971263ce56e949f104fd9b8"
+  },
+  "videos/high-dam-photo/film.html": {
+    "mtime": 1793262995.86811,
+    "seen": 1793264894.859536,
+    "ast_hash": "ad66888a605c188142bd0b5466b6f671",
+    "semantic_hash": "ad66888a605c188142bd0b5466b6f671"
+  },
+  "videos/high-dam/cartoon/index.html": {
+    "mtime": 1793262946.8407238,
+    "seen": 1793264894.8595376,
+    "ast_hash": "71f8472a64b891c59a8dbd79091b21bb",
+    "semantic_hash": "71f8472a64b891c59a8dbd79091b21bb"
+  },
+  "videos/high-dam/cartoon/template.html": {
+    "mtime": 1793262946.8412282,
+    "seen": 1793264894.8595395,
+    "ast_hash": "1f9306120739000e6666919a466fb826",
+    "semantic_hash": "1f9306120739000e6666919a466fb826"
+  },
+  "videos/high-dam/refs/SOURCES.md": {
+    "mtime": 1793262946.8412282,
+    "seen": 1793264894.8595412,
+    "ast_hash": "6d4d9b3731e95ba42783ef5ba47d59d0",
+    "semantic_hash": "6d4d9b3731e95ba42783ef5ba47d59d0"
+  },
+  "videos/high-dam/script.txt": {
+    "mtime": 1793262946.8416693,
+    "seen": 1793264894.859543,
+    "ast_hash": "07bbd9439046bf1fa5a7be58c71951e3",
+    "semantic_hash": "07bbd9439046bf1fa5a7be58c71951e3"
+  },
+  "videos/inverter-ac/index.html": {
+    "mtime": 1793262946.958158,
+    "seen": 1793264894.8595448,
+    "ast_hash": "ec4182c19ad48d5ec5cade0d2488d50d",
+    "semantic_hash": "ec4182c19ad48d5ec5cade0d2488d50d"
+  },
+  "videos/inverter-ac/script.txt": {
+    "mtime": 1793262946.958568,
+    "seen": 1793264894.8595467,
+    "ast_hash": "9bb420d3a54c91163c488e0d4ea00364",
+    "semantic_hash": "9bb420d3a54c91163c488e0d4ea00364"
+  },
+  "videos/inverter-ac/template.html": {
+    "mtime": 1793262946.9588602,
+    "seen": 1793264894.8595483,
+    "ast_hash": "f3f9bc1f1adbf1c8f2e6efe940621825",
+    "semantic_hash": "f3f9bc1f1adbf1c8f2e6efe940621825"
+  },
+  "videos/lcd-tv/cartoon/index.html": {
+    "mtime": 1793262947.0821729,
+    "seen": 1793264894.85955,
+    "ast_hash": "b963871e5afe1d35fdfe8799f41ecb2c",
+    "semantic_hash": "b963871e5afe1d35fdfe8799f41ecb2c"
+  },
+  "videos/lcd-tv/cartoon/template.html": {
+    "mtime": 1793262947.0828052,
+    "seen": 1793264894.8595517,
+    "ast_hash": "8e4e7bd18fd42dc46be777c178cb8792",
+    "semantic_hash": "8e4e7bd18fd42dc46be777c178cb8792"
+  },
+  "videos/lcd-tv/iso/index.html": {
+    "mtime": 1793262947.0834155,
+    "seen": 1793264894.8595536,
+    "ast_hash": "d9ce79384e8615bc0654574a8dd34027",
+    "semantic_hash": "d9ce79384e8615bc0654574a8dd34027"
+  },
+  "videos/lcd-tv/iso/template.html": {
+    "mtime": 1793262947.083811,
+    "seen": 1793264894.8595552,
+    "ast_hash": "d5655bc88f6e67774fc7f66e04e1976a",
+    "semantic_hash": "d5655bc88f6e67774fc7f66e04e1976a"
+  },
+  "videos/lcd-tv/script.txt": {
+    "mtime": 1793262947.083811,
+    "seen": 1793264894.8595572,
+    "ast_hash": "60c30a342f4af5b0f1188bcc29d8a1eb",
+    "semantic_hash": "60c30a342f4af5b0f1188bcc29d8a1eb"
+  },
+  "videos/microwave/cartoon/index.html": {
+    "mtime": 1793262947.159532,
+    "seen": 1793264894.8595588,
+    "ast_hash": "be349baced3c121a4da1c6672b53b410",
+    "semantic_hash": "be349baced3c121a4da1c6672b53b410"
+  },
+  "videos/microwave/cartoon/template.html": {
+    "mtime": 1793262947.1600006,
+    "seen": 1793264894.8595607,
+    "ast_hash": "b28af361e28f73afe2e5ca91774ba336",
+    "semantic_hash": "b28af361e28f73afe2e5ca91774ba336"
+  },
+  "videos/microwave/iso/index.html": {
+    "mtime": 1793262947.1606429,
+    "seen": 1793264894.8595622,
+    "ast_hash": "3f2b7c8220c7db924cb2545145bdce3d",
+    "semantic_hash": "3f2b7c8220c7db924cb2545145bdce3d"
+  },
+  "videos/microwave/iso/template.html": {
+    "mtime": 1793262947.1608715,
+    "seen": 1793264894.859564,
+    "ast_hash": "21df394f1effaf0f39241ffe53694ceb",
+    "semantic_hash": "21df394f1effaf0f39241ffe53694ceb"
+  },
+  "videos/microwave/script.txt": {
+    "mtime": 1793262947.1608715,
+    "seen": 1793264894.8595657,
+    "ast_hash": "40db0dde165c71dcc9a4947279612ef1",
+    "semantic_hash": "40db0dde165c71dcc9a4947279612ef1"
+  },
+  "videos/offshore-oil/cartoon/index.html": {
+    "mtime": 1793262947.2542963,
+    "seen": 1793264894.8595676,
+    "ast_hash": "5bb7a7e56d69a19e1d0ca0c80da32890",
+    "semantic_hash": "5bb7a7e56d69a19e1d0ca0c80da32890"
+  },
+  "videos/offshore-oil/cartoon/template.html": {
+    "mtime": 1793262947.2550812,
+    "seen": 1793264894.8595695,
+    "ast_hash": "b2d3e4ff01bd26540331f83a304efaeb",
+    "semantic_hash": "b2d3e4ff01bd26540331f83a304efaeb"
+  },
+  "videos/offshore-oil/iso/index.html": {
+    "mtime": 1793262947.2575402,
+    "seen": 1793264894.8595715,
+    "ast_hash": "5ce8e653fc578680e826fa0df8a019cd",
+    "semantic_hash": "5ce8e653fc578680e826fa0df8a019cd"
+  },
+  "videos/offshore-oil/iso/template.html": {
+    "mtime": 1793262947.2575402,
+    "seen": 1793264894.8595734,
+    "ast_hash": "d7c05eb4a83e5ded2b46825b76c86137",
+    "semantic_hash": "d7c05eb4a83e5ded2b46825b76c86137"
+  },
+  "videos/offshore-oil/refs/SOURCES.md": {
+    "mtime": 1793262947.2579412,
+    "seen": 1793264894.859575,
+    "ast_hash": "3c0fbce91a3f9ea550125d940f68c797",
+    "semantic_hash": "3c0fbce91a3f9ea550125d940f68c797"
+  },
+  "videos/offshore-oil/script.txt": {
+    "mtime": 1793262947.2581751,
+    "seen": 1793264894.859577,
+    "ast_hash": "0417fbe65925d7830e09ec5c0f8a21ff",
+    "semantic_hash": "0417fbe65925d7830e09ec5c0f8a21ff"
+  },
+  "videos/offshore-oil/storyboard.md": {
+    "mtime": 1793262947.2581751,
+    "seen": 1793264894.8595786,
+    "ast_hash": "e244b68cf64bef29989e49321070b568",
+    "semantic_hash": "e244b68cf64bef29989e49321070b568"
+  },
+  "videos/offshore-oil/style-test.html": {
+    "mtime": 1793262947.2581751,
+    "seen": 1793264894.8595805,
+    "ast_hash": "b671610a35e1ef8175ba6758411ec21b",
+    "semantic_hash": "b671610a35e1ef8175ba6758411ec21b"
+  },
+  "videos/phone-call/cartoon/index.html": {
+    "mtime": 1793262947.3383555,
+    "seen": 1793264894.8595822,
+    "ast_hash": "02f24e21a1c65b1943cb83af76ff27fb",
+    "semantic_hash": "02f24e21a1c65b1943cb83af76ff27fb"
+  },
+  "videos/phone-call/cartoon/template.html": {
+    "mtime": 1793262947.3391166,
+    "seen": 1793264894.859584,
+    "ast_hash": "dd94be6b5595f85867617485f2d39a52",
+    "semantic_hash": "dd94be6b5595f85867617485f2d39a52"
+  },
+  "videos/phone-call/iso/index.html": {
+    "mtime": 1793262947.339778,
+    "seen": 1793264894.8595858,
+    "ast_hash": "0ea1dba53e23c70af1386528531af8ec",
+    "semantic_hash": "0ea1dba53e23c70af1386528531af8ec"
+  },
+  "videos/phone-call/iso/template.html": {
+    "mtime": 1793262947.339778,
+    "seen": 1793264894.8595877,
+    "ast_hash": "1954f06c13bd8c7b4e822eb97314b98d",
+    "semantic_hash": "1954f06c13bd8c7b4e822eb97314b98d"
+  },
+  "videos/phone-call/script.txt": {
+    "mtime": 1793262947.3402836,
+    "seen": 1793264894.8595893,
+    "ast_hash": "c38a8188a12f73b1f95818ae30acd341",
+    "semantic_hash": "c38a8188a12f73b1f95818ae30acd341"
+  },
+  "videos/phone-call/storyboard.md": {
+    "mtime": 1793262947.3402836,
+    "seen": 1793264894.8595912,
+    "ast_hash": "596491a958961ab32f6a470632f1fa49",
+    "semantic_hash": "596491a958961ab32f6a470632f1fa49"
+  },
+  "videos/printer/index.html": {
+    "mtime": 1793262947.4197128,
+    "seen": 1793264894.859593,
+    "ast_hash": "0a8f221bf96bc662f1684ef32f83f45f",
+    "semantic_hash": "0a8f221bf96bc662f1684ef32f83f45f"
+  },
+  "videos/printer/script.txt": {
+    "mtime": 1793262947.4199867,
+    "seen": 1793264894.8595948,
+    "ast_hash": "d7fb7407c93163df64aa5c8d9b7caf52",
+    "semantic_hash": "d7fb7407c93163df64aa5c8d9b7caf52"
+  },
+  "videos/qolla/cartoon/index.html": {
+    "mtime": 1793262947.5021832,
+    "seen": 1793264894.8595963,
+    "ast_hash": "f1192e4ee833b71fc7e86fa2fb589bed",
+    "semantic_hash": "f1192e4ee833b71fc7e86fa2fb589bed"
+  },
+  "videos/qolla/cartoon/template.html": {
+    "mtime": 1793262947.5029106,
+    "seen": 1793264894.859598,
+    "ast_hash": "21fe742a2c2d739f200391ab89c95770",
+    "semantic_hash": "21fe742a2c2d739f200391ab89c95770"
+  },
+  "videos/qolla/refs/SOURCES.md": {
+    "mtime": 1793262947.5033162,
+    "seen": 1793264894.8595996,
+    "ast_hash": "70d618126a9776b1b3ff33c236174ecd",
+    "semantic_hash": "70d618126a9776b1b3ff33c236174ecd"
+  },
+  "videos/qolla/script.txt": {
+    "mtime": 1793262947.5033162,
+    "seen": 1793264894.8596017,
+    "ast_hash": "41e6b4ae8ed63392554ab6f8f073d5b4",
+    "semantic_hash": "41e6b4ae8ed63392554ab6f8f073d5b4"
+  },
+  "videos/robot-vacuum/index.html": {
+    "mtime": 1793262947.635682,
+    "seen": 1793264894.8596034,
+    "ast_hash": "28a89ff0428586f9435b6953e3e1d287",
+    "semantic_hash": "28a89ff0428586f9435b6953e3e1d287"
+  },
+  "videos/robot-vacuum/script.txt": {
+    "mtime": 1793262947.636195,
+    "seen": 1793264894.8596096,
+    "ast_hash": "0ad22e6a51b0098444d710881aa39714",
+    "semantic_hash": "0ad22e6a51b0098444d710881aa39714"
+  },
+  "videos/robot-vacuum/storyboard.md": {
+    "mtime": 1793262947.6363294,
+    "seen": 1793264894.8596122,
+    "ast_hash": "d96b4430580c27f67e18b9b71f902681",
+    "semantic_hash": "d96b4430580c27f67e18b9b71f902681"
+  },
+  "videos/robot-vacuum/template.html": {
+    "mtime": 1793262947.6365285,
+    "seen": 1793264894.859614,
+    "ast_hash": "6ce8ec7e2a45e2ff62fcf1d9aec26c7d",
+    "semantic_hash": "6ce8ec7e2a45e2ff62fcf1d9aec26c7d"
+  },
+  "videos/sea-cables/cartoon/index.html": {
+    "mtime": 1793262947.8331647,
+    "seen": 1793264894.8596156,
+    "ast_hash": "bac89d7eeec5370598e4e80a42a7dbbb",
+    "semantic_hash": "bac89d7eeec5370598e4e80a42a7dbbb"
+  },
+  "videos/sea-cables/cartoon/template.html": {
+    "mtime": 1793262947.8347802,
+    "seen": 1793264894.8596175,
+    "ast_hash": "83c2cb902386475577c462729f6d1edf",
+    "semantic_hash": "83c2cb902386475577c462729f6d1edf"
+  },
+  "videos/sea-cables/refs/SOURCES.md": {
+    "mtime": 1793262947.8353677,
+    "seen": 1793264894.8596194,
+    "ast_hash": "588bbbe361158edab06871c46518c8a3",
+    "semantic_hash": "588bbbe361158edab06871c46518c8a3"
+  },
+  "videos/sea-cables/script.txt": {
+    "mtime": 1793262947.8353677,
+    "seen": 1793264894.859621,
+    "ast_hash": "58dc8964bbcf0d06d256aa9f3a461b94",
+    "semantic_hash": "58dc8964bbcf0d06d256aa9f3a461b94"
+  },
+  "videos/ship/index.html": {
+    "mtime": 1793262947.9860022,
+    "seen": 1793264894.859623,
+    "ast_hash": "64b66606692945204994b74bfedbdd12",
+    "semantic_hash": "64b66606692945204994b74bfedbdd12"
+  },
+  "videos/ship/script.txt": {
+    "mtime": 1793262947.9860022,
+    "seen": 1793264894.8596246,
+    "ast_hash": "278238014d0c4004b9521128d2d7f1f2",
+    "semantic_hash": "278238014d0c4004b9521128d2d7f1f2"
+  },
+  "videos/sonic-boom/cartoon/index.html": {
+    "mtime": 1793262948.044775,
+    "seen": 1793264894.8596265,
+    "ast_hash": "76b073f4f704715afb082c70d487b6f2",
+    "semantic_hash": "76b073f4f704715afb082c70d487b6f2"
+  },
+  "videos/sonic-boom/cartoon/template.html": {
+    "mtime": 1793262948.0460858,
+    "seen": 1793264894.8596282,
+    "ast_hash": "c5fe650ca3551c44b99c9fbae9913bf2",
+    "semantic_hash": "c5fe650ca3551c44b99c9fbae9913bf2"
+  },
+  "videos/sonic-boom/refs/SOURCES.md": {
+    "mtime": 1793262948.047233,
+    "seen": 1793264894.8596334,
+    "ast_hash": "642af808895cab57129be42816cac49b",
+    "semantic_hash": "642af808895cab57129be42816cac49b"
+  },
+  "videos/sonic-boom/script.txt": {
+    "mtime": 1793262948.049397,
+    "seen": 1793264894.859635,
+    "ast_hash": "f6593c074ae77ebbc2e9f6d41172321d",
+    "semantic_hash": "f6593c074ae77ebbc2e9f6d41172321d"
+  },
+  "videos/submarine/cartoon/index.html": {
+    "mtime": 1793262948.2336247,
+    "seen": 1793264894.859637,
+    "ast_hash": "5543f0330b57f72cfd02aa661160dc03",
+    "semantic_hash": "5543f0330b57f72cfd02aa661160dc03"
+  },
+  "videos/submarine/cartoon/template.html": {
+    "mtime": 1793262948.2350342,
+    "seen": 1793264894.8596387,
+    "ast_hash": "78d3eded78ad0939c17bdaceb6c1e960",
+    "semantic_hash": "78d3eded78ad0939c17bdaceb6c1e960"
+  },
+  "videos/submarine/iso/index.html": {
+    "mtime": 1793262948.2356195,
+    "seen": 1793264894.8596404,
+    "ast_hash": "a74a337376241f0e447c202e62aaef45",
+    "semantic_hash": "a74a337376241f0e447c202e62aaef45"
+  },
+  "videos/submarine/iso/template.html": {
+    "mtime": 1793262948.2356195,
+    "seen": 1793264894.8596423,
+    "ast_hash": "915288ca4f5393360de3f96d89ce6af0",
+    "semantic_hash": "915288ca4f5393360de3f96d89ce6af0"
+  },
+  "videos/submarine/script.txt": {
+    "mtime": 1793262948.2363598,
+    "seen": 1793264894.8596442,
+    "ast_hash": "d528ff552bb488c6ca7d4684ebaa86ae",
+    "semantic_hash": "d528ff552bb488c6ca7d4684ebaa86ae"
+  },
+  "videos/tbm-tunnel/cartoon/index.html": {
+    "mtime": 1793262948.4006603,
+    "seen": 1793264894.8596458,
+    "ast_hash": "bcb911529438ac0a74b59a564fcdc443",
+    "semantic_hash": "bcb911529438ac0a74b59a564fcdc443"
+  },
+  "videos/tbm-tunnel/cartoon/template.html": {
+    "mtime": 1793262948.401057,
+    "seen": 1793264894.8596478,
+    "ast_hash": "8f21527ba35481d77f7a9973b7c05676",
+    "semantic_hash": "8f21527ba35481d77f7a9973b7c05676"
+  },
+  "videos/tbm-tunnel/refs/SOURCES.md": {
+    "mtime": 1793262948.401057,
+    "seen": 1793264894.8596494,
+    "ast_hash": "59f846bbcc86ad80e0db910cad0dfab0",
+    "semantic_hash": "59f846bbcc86ad80e0db910cad0dfab0"
+  },
+  "videos/tbm-tunnel/script.txt": {
+    "mtime": 1793262948.401057,
+    "seen": 1793264894.8596513,
+    "ast_hash": "1dee09dffbbed91057d723bd6ba3b6ee",
+    "semantic_hash": "1dee09dffbbed91057d723bd6ba3b6ee"
+  },
+  "videos/touchscreen/cartoon/index.html": {
+    "mtime": 1793262948.5807517,
+    "seen": 1793264894.8596532,
+    "ast_hash": "a6385c51e465c9380ebe85a1f73b4488",
+    "semantic_hash": "a6385c51e465c9380ebe85a1f73b4488"
+  },
+  "videos/touchscreen/cartoon/template.html": {
+    "mtime": 1793262948.5817776,
+    "seen": 1793264894.859655,
+    "ast_hash": "cc5ce17458e01932817d9cd6ac21ccfb",
+    "semantic_hash": "cc5ce17458e01932817d9cd6ac21ccfb"
+  },
+  "videos/touchscreen/refs/SOURCES.md": {
+    "mtime": 1793262948.5817776,
+    "seen": 1793264894.8596568,
+    "ast_hash": "566cba74e3e655e33447e1c44d3b8a67",
+    "semantic_hash": "566cba74e3e655e33447e1c44d3b8a67"
+  },
+  "videos/touchscreen/script.txt": {
+    "mtime": 1793262948.5817776,
+    "seen": 1793264894.8596585,
+    "ast_hash": "47704498947edafe20ff234797b71846",
+    "semantic_hash": "47704498947edafe20ff234797b71846"
+  },
+  "videos/washer/index.html": {
+    "mtime": 1793262948.6808436,
+    "seen": 1793264894.8596604,
+    "ast_hash": "af6e35ff42404ea0fe0780f586912ba8",
+    "semantic_hash": "af6e35ff42404ea0fe0780f586912ba8"
+  },
+  "videos/washer/script.txt": {
+    "mtime": 1793262948.68159,
+    "seen": 1793264894.8596618,
+    "ast_hash": "44f6a037301c6303bfd65c7c1d89cf4b",
+    "semantic_hash": "44f6a037301c6303bfd65c7c1d89cf4b"
+  },
+  "videos/water-pump/pump.html": {
+    "mtime": 1793263006.9266891,
+    "seen": 1793264894.859664,
+    "ast_hash": "4c0320c19553519bec81164d4bfb8940",
+    "semantic_hash": "4c0320c19553519bec81164d4bfb8940"
+  },
+  "videos/water-pump/script.txt": {
+    "mtime": 1793263035.7444649,
+    "seen": 1793264894.8596656,
+    "ast_hash": "cd5a8b287cf93e8cdef6125fa6160a0b",
+    "semantic_hash": "cd5a8b287cf93e8cdef6125fa6160a0b"
+  }
+}

@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>إزاي الطيارة بتطير؟ v2 — طب إزاي؟</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../../design-system/components/bundle.css">
+<style>
+  /* 360×640 canvas rendered at 2x. Force colours follow the reference: lift blue, thrust red, drag green, weight ink. */
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  html, body { margin: 0; width: 360px; height: 640px; overflow: hidden; background: var(--paper); }
+  body { font-family: var(--font-sans); color: var(--ink); }
+  .canvas { position: relative; width: 360px; height: 640px; background: var(--paper); }
+  .scene { position: absolute; inset: 35px; opacity: 0; }
+  .frame { position: absolute; inset: 0; border: 2px solid var(--ink); background: var(--paper); display: grid; grid-template-rows: 69% 0 1fr; }
+  .stage { position: relative; overflow: hidden; }
+  .stage > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .rule { border-top: 1px solid var(--line-soft); margin-inline: 10px; }
+  .caps { position: relative; }
+  .cap { position: absolute; inset: 0; padding: 18px 18px 0; text-align: center; opacity: 0; font: 500 18px / 1.65 var(--font-sans); text-wrap: balance; }
+  .cap p { margin: 0; }
+  .sheet { position: absolute; inset: 0; border: 2px solid var(--ink); outline: 1px solid var(--ink); outline-offset: -6px; background: var(--paper); }
+  .corners { position: absolute; inset: -12px; pointer-events: none; --c: var(--ink); --l: 10px; --w: 1px;
+    background:
+      linear-gradient(var(--c), var(--c)) top right / var(--l) var(--w), linear-gradient(var(--c), var(--c)) top right / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) top left / var(--l) var(--w), linear-gradient(var(--c), var(--c)) top left / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) bottom right / var(--l) var(--w), linear-gradient(var(--c), var(--c)) bottom right / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) bottom left / var(--l) var(--w), linear-gradient(var(--c), var(--c)) bottom left / var(--w) var(--l);
+    background-repeat: no-repeat; }
+  .w { --wc: var(--ink); color: color-mix(in srgb, var(--wc) var(--mix, 100%), var(--ink-ghost)); }
+  .w.tz-k--heat { --wc: var(--heat-text); } .w.tz-k--water { --wc: var(--water); } .w.tz-k--part { --wc: var(--olive-text); }
+  .em { background: linear-gradient(currentColor, currentColor) no-repeat right bottom / var(--ul, 100%) 1.5px; padding-bottom: 2px; }
+
+  [data-v="pop"], [data-v="grow"], [data-loop="spin"] { transform-box: fill-box; transform-origin: center; }
+  .o-b { transform-origin: 50% 100% !important; } .o-t { transform-origin: 50% 0% !important; }
+  .o-r { transform-origin: 100% 50% !important; } .o-l { transform-origin: 0% 50% !important; }
+
+  .lift { --c: var(--water); } .thrust { --c: var(--heat); } .drag { --c: var(--olive); } .weight { --c: var(--ink); }
+  .arrow { fill: var(--c); stroke: var(--ink); stroke-width: 1.5; stroke-linejoin: round; }
+  .lbl { font: 600 16px var(--font-sans); fill: var(--c); paint-order: stroke; stroke: var(--paper); stroke-width: 5px; stroke-linejoin: round; }
+  .lbl.sm { font-size: 13px; }
+  .body-lit { fill: var(--paper-raised); } .body-shade { fill: var(--khaki); }
+  .hl { fill: none; stroke: var(--paper); stroke-width: 2; opacity: .9; }
+  .wing-blue { fill: var(--water); }
+  .eng { fill: var(--heat); } .eng-soft { fill: var(--heat-soft); }
+  .stream { fill: none; stroke: var(--paper-grid); stroke-width: 1.2; }
+  .stream.low { stroke: color-mix(in srgb, var(--olive) 50%, var(--paper)); }
+  .stream.hot { stroke: color-mix(in srgb, var(--heat) 40%, var(--paper)); }
+  .pt { fill: var(--paper-raised); stroke: var(--khaki-deep); stroke-width: 1; }
+  .pt-low { fill: var(--olive); stroke: var(--ink); stroke-width: 1; }
+  .pt-hot { fill: var(--heat); stroke: var(--ink); stroke-width: 1; }
+  .cloud { fill: var(--paper); stroke: var(--ink); stroke-width: 1.5; }
+  .x { fill: none; stroke: var(--heat); stroke-width: 6; stroke-linecap: round; }
+  .ok { fill: none; stroke: var(--olive-text); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+  .dash { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 5 4; }
+  .t-lbl { font: 500 12px var(--font-sans); fill: var(--ink); }
+  .num { font: 700 64px / 1 var(--font-numeral); color: var(--heat); direction: ltr; font-variant-numeric: tabular-nums; }
+  .unit { font: 600 13px / 1.4 var(--font-sans); }
+  .badge { position: absolute; left: 50%; translate: -50% 0; top: 12px; padding: 4px 14px; background: var(--paper-raised); border: 1.5px solid var(--ink); font: 600 17px/1.4 var(--font-sans); white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="canvas">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Airliner with volume, nose left, ~300 × 102. Body centre ≈ (150, 60). -->
+    <clipPath id="fus"><path d="M24 46 C8 47 2 54 2 60 C2 67 10 72 26 73 L250 73 C268 72 286 62 298 50 L298 43 L268 43 L240 46 Z"/></clipPath>
+    <g id="jet">
+      <path class="tz-f-deep tz-ink" d="M150 50 L222 22 L238 22 L198 52 Z"/><path class="tz-pat-hatch" d="M150 50 L222 22 L238 22 L198 52 Z"/>
+      <path class="tz-f-deep tz-ink" d="M262 46 L290 30 L299 30 L284 48 Z"/>
+      <path class="body-lit tz-ink" d="M244 46 L268 43 L298 2 L281 2 Z"/><path class="tz-pat-hatch" d="M268 43 L298 2 L291 2 L262 44 Z"/>
+      <path class="body-lit" d="M24 46 C8 47 2 54 2 60 C2 67 10 72 26 73 L250 73 C268 72 286 62 298 50 L298 43 L268 43 L240 46 Z"/>
+      <g clip-path="url(#fus)"><rect class="body-shade" x="0" y="63" width="300" height="12"/><rect class="tz-pat-hatch" x="0" y="67" width="300" height="8"/><path class="hl" d="M30 50 L236 49"/></g>
+      <path class="tz-ink" style="fill:none" d="M24 46 C8 47 2 54 2 60 C2 67 10 72 26 73 L250 73 C268 72 286 62 298 50 L298 43 L268 43 L240 46 Z"/>
+      <path class="tz-f-water tz-ink" d="M8 54 Q12 50 22 50 L22 55 Z"/>
+      <path class="tz-ink" style="fill:none;stroke-width:2.6;stroke-dasharray:1.2 6.8;stroke-linecap:round" d="M40 56 H228"/>
+      <rect class="tz-ink" style="fill:none;stroke-width:1" x="32" y="52" width="4" height="9"/><rect class="tz-ink" style="fill:none;stroke-width:1" x="230" y="52" width="4" height="9"/>
+      <path class="body-shade tz-ink" d="M118 64 L178 66 L240 100 L220 102 L132 74 Z"/><path class="tz-pat-hatch" d="M178 66 L240 100 L232 101 L170 68 Z"/>
+      <path class="body-shade tz-ink" d="M150 78 L184 78 Q190 84 184 90 L150 90 Z"/><ellipse class="tz-f-deep tz-ink" cx="150" cy="84" rx="4.5" ry="6"/>
+      <path class="body-shade tz-ink" d="M188 90 L218 90 Q223 95 218 100 L188 100 Z"/><ellipse class="tz-f-deep tz-ink" cx="188" cy="95" rx="4" ry="5"/>
+      <path class="body-shade tz-ink" d="M258 62 L300 76 L290 78 L254 68 Z"/>
+    </g>
+    <!-- the two wings alone, for highlighting -->
+    <g id="jetwings">
+      <path d="M150 50 L222 22 L238 22 L198 52 Z"/><path d="M118 64 L178 66 L240 100 L220 102 L132 74 Z"/>
+    </g>
+    <g id="gear" class="tz-ink"><path d="M60 73 V86 M176 73 V88 M190 73 V88" style="fill:none"/><circle class="tz-f-deep" cx="60" cy="90" r="5"/><circle class="tz-f-deep" cx="176" cy="92" r="5"/><circle class="tz-f-deep" cx="190" cy="92" r="5"/></g>
+    <g id="cloud"><path class="tz-pat-hatch" d="M-4 34 H86 V40 H-4 Z"/><path class="cloud" d="M0 34 C0 24 8 19 16 21 C18 10 34 6 42 14 C48 6 64 9 66 20 C76 19 84 26 82 34 Z"/></g>
+    <path id="foil" d="M70 214 C78 184 150 170 210 177 C252 182 282 198 300 212 C252 216 150 224 92 222 C78 221 70 219 70 214 Z"/>
+    <g id="foilblue">
+      <use href="#foil" class="wing-blue"/>
+      <path class="tz-pat-hatch" d="M80 216 C150 220 250 214 300 212 C252 216 150 224 92 222 C78 221 72 219 80 216 Z"/>
+      <path class="hl" style="stroke-width:3;opacity:.45" d="M96 196 C130 184 170 180 210 182"/>
+      <use href="#foil" class="tz-ink-h"/>
+    </g>
+    <g id="eleph">
+      <path class="body-shade tz-ink" d="M2 20 Q2 6 14 6 L24 6 Q30 6 31 12 L31 24 L27 24 L27 19 L21 19 L21 24 L17 24 L17 19 L9 19 L9 24 L5 24 L5 20 Z"/>
+      <circle class="body-shade tz-ink" cx="31" cy="11" r="6"/>
+      <path class="tz-ink" style="fill:none" d="M36 12 Q40 18 37 24"/>
+      <ellipse class="tz-f-deep tz-ink" cx="28" cy="11" rx="3" ry="4.5"/>
+    </g>
+    <!-- engine with volume, intake facing left, ~165 × 110 -->
+    <clipPath id="nac"><path d="M20 20 L130 26 Q150 55 130 84 L20 90 Z"/></clipPath>
+    <g id="engine">
+      <path class="body-shade tz-ink" d="M58 0 L122 0 L112 26 L70 22 Z"/><path class="tz-pat-hatch" d="M58 0 L122 0 L112 26 L70 22 Z"/>
+      <path class="tz-f-deep tz-ink" d="M130 38 L164 55 L130 72 Z"/>
+      <path class="eng" d="M20 20 L130 26 Q150 55 130 84 L20 90 Z"/>
+      <g clip-path="url(#nac)"><rect class="tz-pat-hatch" x="0" y="70" width="160" height="30"/><path class="hl" style="opacity:.5;stroke-width:3" d="M28 30 L124 34"/></g>
+      <path class="tz-ink-h" style="fill:none" d="M20 20 L130 26 Q150 55 130 84 L20 90"/>
+      <ellipse class="body-lit tz-ink-h" cx="20" cy="55" rx="16" ry="35"/>
+      <ellipse class="tz-f-deep tz-ink" cx="20" cy="55" rx="12" ry="29"/>
+    </g>
+    <g id="blades" class="tz-ink" style="stroke-width:1.6">
+      <path d="M0 -27 V27 M-27 0 H27 M-19 -19 L19 19 M-19 19 L19 -19 M-10 -25 L10 25 M-25 -10 L25 10 M-25 10 L25 -10 M-10 25 L10 -25" style="stroke:var(--paper-raised)"/>
+    </g>
+    <path id="kettle" d="M10 18 L50 18 L58 60 L2 60 Z"/>
+  </defs>
+</svg>
+
+<!-- ═══ S0 · Intro sheet (0–2) ═══ -->
+<section class="scene" data-scene="0-2">
+  <div class="corners"></div>
+  <div class="sheet">
+    <span class="tz-brand" style="position:absolute;right:16px;top:14px"><svg class="tz-watch" style="--watch-size:18px" viewBox="0 0 48 54"><rect class="crown" x="20" y="0" width="8" height="3"/><rect class="crown" x="23" y="3" width="2" height="4"/><circle class="arc" cx="24" cy="30" r="20"/><circle class="core" cx="24" cy="30" r="6"/></svg><span class="tz-brand__name" style="font-size:10px">طب إزاي؟</span></span>
+    <span class="tz-tag" style="position:absolute;left:50%;translate:-50% 0;top:56px">طيران</span>
+    <div style="position:absolute;left:24px;right:24px;top:100px;height:120px;border-block:1px solid var(--line-soft)">
+      <div class="cap" data-cap="0" style="font:600 25px/1.55 var(--font-sans);padding:14px 4px;text-align:right"><p data-words="0">الطيارة دي وزنها حوالي <span class="tz-k tz-k--heat" data-v="count" data-l="0" data-o="0.9" data-d="1.4" data-from="0" data-to="400">400</span> <span class="tz-k tz-k--heat">طن</span>...</p></div>
+      <div class="cap" data-cap="1" style="font:600 25px/1.55 var(--font-sans);padding:14px 4px;text-align:right"><p data-words="1">يعني قد <span class="tz-k tz-k--heat">60 فيل!</span></p></div>
+      <div class="cap" data-cap="2" style="font:600 25px/1.55 var(--font-sans);padding:14px 4px;text-align:right"><p data-words="2">ومع ذلك... <span class="tz-k tz-k--water">بتطير في الهوا</span> ساعات.</p></div>
+    </div>
+    <svg viewBox="0 0 290 330" style="position:absolute;left:0;right:0;bottom:0;width:100%;height:330px;overflow:hidden">
+      <g data-loop="drift" data-speed="14" data-x0="40" data-y0="40" data-s=".8" data-w="420"><use href="#cloud"/></g>
+      <g data-loop="drift" data-speed="22" data-x0="300" data-y0="230" data-s="1" data-w="420"><use href="#cloud"/></g>
+      <g data-loop="drift" data-speed="18" data-x0="160" data-y0="270" data-s=".7" data-w="420"><use href="#cloud"/></g>
+      <!-- elephants for line 1 -->
+      <g data-v="fade" data-l="1" data-o="0" data-d="0.2"><g data-v="out" data-l="2" data-o="-0.1" data-d="0.3">
+        <g transform="translate(18 220)">
+          <g data-v="pop" data-l="1" data-o="0.05" data-d="0.3"><use href="#eleph" x="0"/></g>
+          <g data-v="pop" data-l="1" data-o="0.12" data-d="0.3"><use href="#eleph" x="42"/></g>
+          <g data-v="pop" data-l="1" data-o="0.19" data-d="0.3"><use href="#eleph" x="84"/></g>
+          <g data-v="pop" data-l="1" data-o="0.26" data-d="0.3"><use href="#eleph" x="126"/></g>
+          <g data-v="pop" data-l="1" data-o="0.33" data-d="0.3"><use href="#eleph" x="168"/></g>
+          <g data-v="pop" data-l="1" data-o="0.40" data-d="0.3"><use href="#eleph" x="210"/></g>
+          <g data-v="pop" data-l="1" data-o="0.15" data-d="0.3"><use href="#eleph" x="21" y="32"/></g>
+          <g data-v="pop" data-l="1" data-o="0.22" data-d="0.3"><use href="#eleph" x="63" y="32"/></g>
+          <g data-v="pop" data-l="1" data-o="0.29" data-d="0.3"><use href="#eleph" x="105" y="32"/></g>
+          <g data-v="pop" data-l="1" data-o="0.36" data-d="0.3"><use href="#eleph" x="147" y="32"/></g>
+          <g data-v="pop" data-l="1" data-o="0.43" data-d="0.3"><use href="#eleph" x="189" y="32"/></g>
+          <g data-v="pop" data-l="1" data-o="0.5" data-d="0.3"><text class="lbl thrust" x="248" y="56" style="font-size:18px">×6</text></g>
+        </g>
+      </g></g>
+      <g data-v="rise" data-l="0" data-o="0.2" data-d="0.7">
+        <g data-loop="bob" data-a="3" data-f="1.6">
+          <g transform="translate(6 84) rotate(-7 150 60) scale(.9)"><use href="#jet"/></g>
+        </g>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<!-- ═══ S1 · Teaser: the engine doesn't lift it (3) ═══ -->
+<section class="scene" data-scene="3-3">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <path class="body-shade tz-ink" d="M-20 60 L380 120 L380 176 L-20 128 Z"/>
+        <path class="tz-pat-hatch" d="M-20 116 L380 166 L380 176 L-20 128 Z"/>
+        <g transform="translate(60 150) scale(1.45)"><use href="#engine"/><g data-loop="fanface" data-speed="420" data-cx="20" data-cy="55" data-sx=".42"><use href="#blades"/></g><ellipse class="tz-f-deep tz-ink" cx="20" cy="55" rx="4" ry="8"/></g>
+        <circle class="dash" data-v="draw" data-l="3" data-o="0.7" data-d="0.7" cx="175" cy="232" r="112"/>
+        <g data-v="grow" class="o-b" data-l="3" data-o="1.4" data-d="0.5">
+          <path class="arrow lift" d="M303 330 V240 H293 L310 214 L327 240 H317 V330 Z"/>
+        </g>
+        <g data-v="pop" data-l="3" data-o="2.1" data-d="0.4"><path class="x" d="M286 232 L334 280 M334 232 L286 280"/></g>
+      </svg>
+    </div>
+    <div class="rule"></div>
+    <div class="caps"><div class="cap" data-cap="3"><p data-words="3">والغريبة... إن <span class="tz-k tz-k--heat">المحرك</span> مش هو اللي بيرفعها لفوق.</p></div></div>
+  </div>
+</section>
+
+<!-- ═══ S2 · Brand (4) ═══ -->
+<section class="scene" data-scene="4-4">
+  <div class="frame" style="grid-template-rows:1fr">
+    <div style="display:grid;place-items:center;align-content:center;gap:14px;text-align:center">
+      <svg viewBox="0 0 220 220" style="width:200px;height:200px;overflow:visible">
+        <rect class="crown" x="100" y="0" width="20" height="7" style="fill:var(--ink)"/><rect class="crown" x="106" y="7" width="8" height="10" style="fill:var(--ink)"/>
+        <circle cx="110" cy="118" r="94" style="fill:none;stroke:var(--line-soft);stroke-width:2;opacity:.35"/>
+        <circle data-v="ring" data-l="4" data-o="-0.3" data-d="1.8" cx="110" cy="118" r="94" pathLength="100" transform="rotate(-90 110 118)" style="fill:none;stroke:var(--heat);stroke-width:3;stroke-dasharray:100"/>
+        <g data-loop="bob" data-a="2" data-f="2"><g transform="translate(18 92) rotate(-7 150 60) scale(.62)"><use href="#jet"/></g></g>
+      </svg>
+      <span style="font:600 28px/1.3 var(--font-sans)">طب إزاي؟</span>
+      <span class="cap" data-cap="4" style="position:static;opacity:1;padding:0;font-size:16px"><span data-words="4">هشرحهالك في <span class="tz-k tz-k--heat">دقيقتين.</span></span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S3 · Four forces (5–9) ═══ -->
+<section class="scene" data-scene="5-9">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <g data-loop="drift" data-speed="16" data-x0="40" data-y0="60" data-s=".9" data-w="560"><use href="#cloud"/></g>
+        <g data-loop="drift" data-speed="24" data-x0="330" data-y0="340" data-s=".8" data-w="560"><use href="#cloud"/></g>
+        <g data-loop="drift" data-speed="20" data-x0="120" data-y0="410" data-s=".7" data-w="560"><use href="#cloud"/></g>
+        <g data-loop="bob" data-a="2.5" data-f="1.3">
+          <g transform="translate(8 196) scale(1.15)"><use href="#jet"/></g>
+          <g data-v="grow" class="o-t" data-l="6" data-o="0.3" data-d="0.6"><path class="arrow weight" d="M175 262 V380 H165 L182 406 L199 380 H189 V262 Z"/></g>
+          <g data-v="grow" class="o-b" data-l="7" data-o="0.3" data-d="0.6"><path class="arrow lift" d="M175 250 V118 H165 L182 92 L199 118 H189 V250 Z"/></g>
+          <g data-v="grow" class="o-r" data-l="8" data-o="0.3" data-d="0.6"><path class="arrow thrust" d="M160 257 H62 V247 L36 264 L62 281 V271 H160 Z"/></g>
+          <g data-v="grow" class="o-l" data-l="9" data-o="0.3" data-d="0.6"><path class="arrow drag" d="M204 257 H286 V247 L312 264 L286 281 V271 H204 Z"/></g>
+          <circle cx="182" cy="264" r="5" class="tz-pat-dot" style="stroke:var(--paper);stroke-width:2"/>
+          <g data-v="pop" data-l="6" data-o="0.6" data-d="0.35"><text class="lbl weight" x="182" y="430" text-anchor="middle">الوزن</text></g>
+          <g data-v="pop" data-l="7" data-o="0.6" data-d="0.35"><text class="lbl lift" x="182" y="80" text-anchor="middle">الرفع</text></g>
+          <g data-v="pop" data-l="8" data-o="0.6" data-d="0.35"><text class="lbl thrust" x="70" y="238" text-anchor="middle">الدفع</text></g>
+          <g data-v="pop" data-l="9" data-o="0.6" data-d="0.35"><text class="lbl drag" x="286" y="306" text-anchor="middle">مقاومة الهوا</text></g>
+        </g>
+      </svg>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="5"><p data-words="5">أي طيارة...<br>عليها أربع قوى.</p></div>
+      <div class="cap" data-cap="6"><p data-words="6">الوزن...<br>بيشدها لتحت.</p></div>
+      <div class="cap" data-cap="7"><p data-words="7"><span class="tz-k tz-k--water">والرفع</span>...<br>بيزقها لفوق.</p></div>
+      <div class="cap" data-cap="8"><p data-words="8"><span class="tz-k tz-k--heat">والمحرك</span>...<br>بيزقها لقدام.</p></div>
+      <div class="cap" data-cap="9"><p data-words="9"><span class="tz-k tz-k--part">ومقاومة الهوا</span>...<br>بتشدها لورا.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S4 · Engine = giant fan (10–12) ═══ -->
+<section class="scene" data-scene="10-12">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <g data-v="out" data-l="12" data-o="0" data-d="0.4">
+          <g data-v="fade" data-l="11" data-o="0.2" data-d="0.4">
+            <g data-particles data-n="7" data-speed="90" data-dot="pt-low" data-r="3">
+              <path class="stream low" d="M-10 170 C40 170 70 200 92 218"/><path class="stream low" d="M-10 230 C40 230 70 234 92 238"/>
+              <path class="stream low" d="M-10 290 C40 290 70 270 92 258"/><path class="stream low" d="M-10 350 C40 350 76 300 94 276"/>
+            </g>
+            <g data-particles data-n="6" data-speed="220" data-dot="pt-hot" data-r="3">
+              <path class="stream hot" d="M300 228 C330 226 350 222 380 218"/><path class="stream hot" d="M300 240 C330 240 350 240 380 240"/><path class="stream hot" d="M300 252 C330 254 350 258 380 262"/>
+            </g>
+          </g>
+          <g transform="translate(64 156) scale(1.45)"><use href="#engine"/><g data-loop="fanface" data-speed="480" data-cx="20" data-cy="55" data-sx=".42"><use href="#blades"/></g><ellipse class="tz-f-deep tz-ink" cx="20" cy="55" rx="4" ry="8"/></g>
+          <!-- fan icon inset -->
+          <g data-v="pop" data-l="10" data-o="0.6" data-d="0.4">
+            <rect class="body-lit tz-ink" x="266" y="20" width="72" height="72"/>
+            <circle class="tz-ink" style="fill:none" cx="302" cy="56" r="26"/>
+            <g data-loop="spin" data-speed="300"><path class="tz-f-heat tz-ink" d="M302 56 L298 34 Q302 30 306 34 Z M302 56 L324 52 Q328 56 324 60 Z M302 56 L306 78 Q302 82 298 78 Z M302 56 L280 60 Q276 56 280 52 Z"/></g>
+            <circle class="tz-pat-dot" cx="302" cy="56" r="3"/>
+          </g>
+        </g>
+        <!-- line 12: forward yes, up no -->
+        <g data-v="fade" data-l="12" data-o="0.1" data-d="0.4">
+          <g transform="translate(30 210) scale(1)"><use href="#jet"/></g>
+          <g data-v="grow" class="o-r" data-l="12" data-o="0.3" data-d="0.6"><path class="arrow thrust" d="M150 266 H70 V254 L40 274 L70 294 V282 H150 Z"/></g>
+          <g data-v="pop" data-l="12" data-o="0.9" data-d="0.35"><path class="ok" d="M60 330 L76 346 L104 314"/></g>
+          <path class="arrow lift" style="opacity:.35" d="M172 236 V160 H162 L180 134 L198 160 H188 V236 Z"/>
+          <g data-v="pop" data-l="12" data-o="1.3" data-d="0.35"><path class="x" d="M158 150 L202 194 M202 150 L158 194"/></g>
+        </g>
+      </svg>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="10"><p data-words="10">المحرك ده زي <span class="tz-k tz-k--heat">مروحة عملاقة</span>...</p></div>
+      <div class="cap" data-cap="11"><p data-words="11">بيشفط الهوا من قدام،<br>ويرميه <span class="tz-k tz-k--heat">لورا بقوة</span>.</p></div>
+      <div class="cap" data-cap="12"><p data-words="12">فالطيارة تجري <span class="tz-k tz-k--heat">لقدام</span>...<br><span class="em" data-ul="12">بس كده.</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S5 · The wing (13–15) ═══ -->
+<section class="scene" data-scene="13-15">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <g data-v="out" data-l="14" data-o="0" data-d="0.4">
+          <g data-loop="drift" data-speed="18" data-x0="60" data-y0="80" data-s=".8" data-w="560"><use href="#cloud"/></g>
+          <g transform="translate(8 190) scale(1.15)">
+            <use href="#jet"/>
+            <g data-v="fade" data-l="13" data-o="1.2" data-d="0.4"><use href="#jetwings" class="wing-blue" style="stroke:var(--ink);stroke-width:1.3"/></g>
+          </g>
+          <g data-v="pop" data-l="13" data-o="1.4" data-d="0.35"><text class="lbl lift" x="250" y="170" text-anchor="middle">الجناح</text></g>
+        </g>
+        <g data-v="fade" data-l="14" data-o="0.2" data-d="0.4">
+          <path class="dash" d="M30 260 H330"/>
+          <g data-v="rot" data-l="15" data-o="0.2" data-d="1" data-from="0" data-to="9" data-cx="185" data-cy="254">
+            <g transform="translate(0 40)"><use href="#foilblue"/></g>
+          </g>
+          <path class="tz-ink" style="fill:none;stroke-width:1.5" data-v="draw" data-l="15" data-o="1" data-d="0.5" d="M80 260 A105 105 0 0 1 82 244"/>
+        </g>
+      </svg>
+      <span class="chip" style="position:absolute;left:24%;top:42%;translate:-50% -50%;padding:0 7px;background:var(--paper-raised);font:500 13px/22px var(--font-sans);color:var(--water)" data-v="pop" data-l="15" data-o="1.2" data-d="0.35">مايل لفوق</span>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="13"><p data-words="13">طب مين اللي بيرفعها؟<br><span class="tz-k tz-k--water">الجناح.</span></p></div>
+      <div class="cap" data-cap="14"><p data-words="14">بص على الجناح<br>من الجنب...</p></div>
+      <div class="cap" data-cap="15"><p data-words="15">هتلاقيه <span class="tz-k tz-k--water">مايل لفوق</span><br>شوية من قدام.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S6 · Air goes down, wing goes up (16–19) ═══ -->
+<section class="scene" data-scene="16-19">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <g data-v="fade" data-l="17" data-o="0" data-d="0.5">
+          <g data-particles data-n="8" data-speed="55" data-dot="pt" data-r="2.6">
+            <path class="stream" d="M-10 70 C90 66 170 60 230 66 S330 84 380 94"/>
+            <path class="stream" d="M-10 104 C90 100 170 92 230 100 S330 124 380 138"/>
+            <path class="stream" d="M-10 138 C90 134 160 122 230 132 S330 166 380 184"/>
+            <path class="stream" d="M-10 172 C80 168 150 150 230 162 S330 206 380 230"/>
+            <path class="stream" d="M-10 206 C60 204 110 182 190 182 S310 228 380 270"/>
+          </g>
+        </g>
+        <g data-v="fade" data-l="16" data-o="0" data-d="0.5">
+          <g data-particles data-n="8" data-speed="55" data-dot="pt-low" data-r="3">
+            <path class="stream low" d="M-10 262 C70 262 120 264 170 270 S300 306 380 332"/>
+            <path class="stream low" d="M-10 296 C90 296 160 300 230 314 S330 356 380 372"/>
+            <path class="stream low" d="M-10 330 C90 330 180 334 250 350 S340 392 380 404"/>
+            <path class="stream low" d="M-10 364 C100 364 200 368 270 384 S350 420 380 432"/>
+            <path class="stream low" d="M-10 398 C110 398 220 400 290 414 S360 444 380 452"/>
+          </g>
+        </g>
+        <g transform="rotate(9 185 254) translate(0 40)"><use href="#foilblue"/></g>
+        <g data-v="grow" class="o-t" data-l="18" data-o="0.4" data-d="0.7"><path class="arrow drag" d="M276 296 L304 368 L314 364 L310 398 L284 376 L294 372 L266 300 Z"/></g>
+        <g data-v="grow" class="o-b" data-l="19" data-o="0.2" data-d="0.7"><path class="arrow lift" d="M175 232 V150 H164 L182 122 L200 150 H189 V232 Z"/></g>
+        <g data-v="pop" data-l="19" data-o="1.4" data-d="0.35"><text class="lbl lift" x="182" y="110" text-anchor="middle">الرفع</text></g>
+      </svg>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="16"><p data-words="16">فالهوا اللي <span class="tz-k tz-k--part">تحت</span> بيخبط في الميلة دي...<br>وينزل لتحت.</p></div>
+      <div class="cap" data-cap="17"><p data-words="17">والهوا اللي فوق بيمشي على ضهر الجناح...<br>وينزل لتحت هو كمان.</p></div>
+      <div class="cap" data-cap="18"><p data-words="18">يعني الجناح بيرمي الهوا <span class="tz-k tz-k--part">لتحت</span>...</p></div>
+      <div class="cap" data-cap="19"><p data-words="19">فالهوا يزقه <span class="tz-k tz-k--water">لفوق</span>.<br>وده اسمه <span class="tz-k tz-k--water em" data-ul="19">الرفع</span>.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S7 · Hand out of the car window (20–21) ═══ -->
+<section class="scene" data-scene="20-21">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <!-- car door with open window, seen from the side -->
+        <path class="body-shade tz-ink" d="M-10 200 L150 200 L170 260 L170 488 L-10 488 Z"/>
+        <path class="tz-pat-hatch" d="M150 200 L170 260 L170 488 L156 488 L156 262 L140 210 Z"/>
+        <path class="tz-f-water tz-ink" d="M-10 214 L134 214 L150 256 L-10 256 Z" style="opacity:.6"/>
+        <path class="tz-ink" style="fill:none" d="M-10 300 H170 M120 330 h30"/>
+        <g data-particles data-n="7" data-speed="120" data-dot="pt-low" data-r="2.8">
+          <path class="stream low" d="M380 150 C300 150 260 160 230 178"/><path class="stream low" d="M380 300 C310 300 280 290 250 262 S220 220 200 230"/>
+          <path class="stream" d="M380 110 C300 110 250 120 180 128"/>
+        </g>
+        <!-- arm + flat hand like a little wing; hinge at the window -->
+        <g data-v="rot" data-l="20" data-o="1.2" data-d="1.1" data-from="0" data-to="-14" data-cx="150" data-cy="240">
+          <path class="eng-soft tz-ink" d="M140 228 L250 222 L252 246 L140 254 Z"/>
+          <path class="eng-soft tz-ink-h" d="M246 220 C262 214 296 214 312 222 C322 228 318 238 304 242 C284 246 262 248 248 246 Z"/>
+          <path class="tz-ink" style="fill:none" d="M270 222 Q272 216 280 216 M284 222 Q288 216 296 218"/>
+        </g>
+        <g data-v="grow" class="o-b" data-l="21" data-o="0.2" data-d="0.6"><path class="arrow lift" d="M270 198 V140 H260 L278 114 L296 140 H286 V198 Z"/></g>
+        <g data-v="pop" data-l="21" data-o="1.6" data-d="0.35"><text class="lbl lift" x="278" y="100" text-anchor="middle">نفس الرفع</text></g>
+      </svg>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="20"><p data-words="20">جرّب كده تطلّع إيدك من شباك العربية <span class="tz-k tz-k--part">وتميّلها</span>...</p></div>
+      <div class="cap" data-cap="21"><p data-words="21">هتحس إنها بتطير لوحدها.<br>هو ده <span class="tz-k tz-k--water">نفس الإحساس</span>.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S8 · Speed ×2 → lift ×4 (22–23) ═══ -->
+<section class="scene" data-scene="22-23">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <g transform="translate(150 220) scale(.62)"><use href="#jet"/></g>
+        <!-- speed arrow (red) and lift arrow (blue); both grow on line 23 -->
+        <g data-v="grow" class="o-r" data-l="23" data-o="0.3" data-d="0.8" data-from="1" data-to="2" data-axis="x" data-ease="io">
+          <path class="arrow thrust" d="M150 262 H100 V252 L76 268 L100 284 V274 H150 Z" style="vector-effect:non-scaling-stroke"/>
+        </g>
+        <g data-v="grow" class="o-b" data-l="23" data-o="1.6" data-d="1" data-from="1" data-to="4" data-axis="y" data-ease="io">
+          <path class="arrow lift" d="M235 236 V208 H226 L242 196 L258 208 H249 V236 Z" style="vector-effect:non-scaling-stroke"/>
+        </g>
+        <text class="lbl thrust sm" x="96" y="306" text-anchor="middle">السرعة</text>
+        <text class="lbl lift sm" x="300" y="222" text-anchor="middle">الرفع</text>
+        <g data-v="pop" data-l="23" data-o="0.8" data-d="0.35"><text class="lbl thrust" x="40" y="240" text-anchor="middle" style="font:700 26px var(--font-numeral)">×2</text></g>
+        <g data-v="pop" data-l="23" data-o="2.4" data-d="0.4"><text class="lbl lift" x="300" y="120" text-anchor="middle" style="font:700 34px var(--font-numeral)">×4</text></g>
+      </svg>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="22"><p data-words="22">بس الرفع ده محتاج <span class="tz-k tz-k--heat">سرعة</span>...</p></div>
+      <div class="cap" data-cap="23"><p data-words="23">لو السرعة <span class="tz-k tz-k--heat">اتضاعفت</span>...<br>الرفع بيزيد <span class="tz-k tz-k--water">أربع مرات!</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S9 · Runway and takeoff (24–26) ═══ -->
+<section class="scene" data-scene="24-26">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <!-- ground in section: asphalt, then soil layers -->
+        <rect class="tz-f-deep" x="0" y="300" width="360" height="26"/>
+        <rect class="tz-f-part" x="0" y="326" width="360" height="162" style="opacity:.55"/>
+        <rect class="tz-pat-lines" x="0" y="326" width="360" height="162"/>
+        <path class="tz-ink" style="fill:none" d="M0 300 H360 M0 326 H360"/>
+        <g data-loop="scroll" data-speed="300" data-period="60" data-until="26" data-uo="1.5">
+          <path class="tz-f-paper" d="M-60 311 h30 v4 h-30 z M0 311 h30 v4 h-30 z M60 311 h30 v4 h-30 z M120 311 h30 v4 h-30 z M180 311 h30 v4 h-30 z M240 311 h30 v4 h-30 z M300 311 h30 v4 h-30 z M360 311 h30 v4 h-30 z"/>
+          <g class="tz-ink"><path d="M-40 300 V292 M20 300 V292 M80 300 V292 M140 300 V292 M200 300 V292 M260 300 V292 M320 300 V292 M380 300 V292" style="fill:none"/></g>
+          <g class="tz-f-heat tz-ink" style="stroke-width:1"><circle cx="-40" cy="290" r="3"/><circle cx="20" cy="290" r="3"/><circle cx="80" cy="290" r="3"/><circle cx="140" cy="290" r="3"/><circle cx="200" cy="290" r="3"/><circle cx="260" cy="290" r="3"/><circle cx="320" cy="290" r="3"/><circle cx="380" cy="290" r="3"/></g>
+        </g>
+        <g data-v="move" data-l="26" data-o="0.6" data-d="1.6" data-dx="-20" data-dy="-95">
+          <g data-v="rot" data-l="26" data-o="0.2" data-d="0.7" data-from="0" data-to="9" data-cx="180" data-cy="290">
+            <g transform="translate(30 192)"><use href="#jet"/><use href="#gear"/></g>
+            <g data-v="grow" class="o-b" data-l="24" data-o="0.4" data-d="3.6" data-from="0.15" data-to="1.15" data-ease="io">
+              <path class="arrow lift" d="M173 248 V168 H163 L180 142 L197 168 H187 V248 Z"/>
+            </g>
+            <path class="arrow weight" d="M173 266 V350 H163 L180 376 L197 350 H187 V266 Z"/>
+            <text class="lbl lift sm" x="214" y="170">الرفع</text>
+            <text class="lbl weight sm" x="214" y="372">الوزن</text>
+          </g>
+        </g>
+      </svg>
+      <div class="tz-counter" style="position:absolute;left:12px;top:12px;gap:6px" data-v="fade" data-l="25" data-o="0" data-d="0.3">
+        <span class="num" style="font-size:46px" data-v="count" data-l="24" data-o="0.2" data-d="5" data-from="0" data-to="300">300</span>
+        <span class="unit">كيلو<br>في الساعة</span>
+      </div>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="24"><p data-words="24">عشان كده الطيارة<br>بتجري على <span class="em" data-ul="24">الممر</span>...</p></div>
+      <div class="cap" data-cap="25"><p data-words="25">ولما توصل حوالي <span class="tz-k tz-k--heat">300 كيلو</span><br>في الساعة...</p></div>
+      <div class="cap" data-cap="26"><p data-words="26"><span class="tz-k tz-k--water">الرفع</span> يغلب الوزن...<br><span class="tz-k tz-k--water">وتطير.</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S10 · Cruise: lift = weight (27–28) ═══ -->
+<section class="scene" data-scene="27-28">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <g data-loop="drift" data-speed="30" data-x0="10" data-y0="380" data-s="1" data-w="560"><use href="#cloud"/></g>
+        <g data-loop="drift" data-speed="40" data-x0="240" data-y0="420" data-s=".9" data-w="560"><use href="#cloud"/></g>
+        <g data-loop="drift" data-speed="22" data-x0="380" data-y0="110" data-s=".7" data-w="560"><use href="#cloud"/></g>
+        <g data-loop="bob" data-a="2" data-f="1.2">
+          <g transform="translate(30 190) scale(1)"><use href="#jet"/></g>
+          <g data-v="grow" class="o-b" data-l="27" data-o="0.6" data-d="0.6"><path class="arrow lift" d="M173 238 V150 H163 L180 124 L197 150 H187 V238 Z"/></g>
+          <g data-v="grow" class="o-t" data-l="27" data-o="0.9" data-d="0.6"><path class="arrow weight" d="M173 262 V350 H163 L180 376 L197 350 H187 V262 Z"/></g>
+          <g data-v="grow" class="o-r" data-l="28" data-o="0" data-d="0.5"><path class="arrow thrust" style="opacity:.7" d="M150 250 H92 V242 L72 254 L92 266 V258 H150 Z"/></g>
+          <g data-v="grow" class="o-l" data-l="28" data-o="0" data-d="0.5"><path class="arrow drag" style="opacity:.7" d="M212 250 H270 V242 L290 254 L270 266 V258 H212 Z"/></g>
+        </g>
+      </svg>
+      <div class="badge" data-v="pop" data-l="27" data-o="1.6" data-d="0.4"><span style="color:var(--water)">الرفع</span> = الوزن</div>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="27"><p data-words="27">وفوق، الطيار بيخلي <span class="tz-k tz-k--water">الرفع</span><br>قد <span class="em" data-ul="27">الوزن بالظبط</span>...</p></div>
+      <div class="cap" data-cap="28"><p data-words="28">فمبتطلعش<br>ولا بتنزل.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S11 · 700 kg on every square metre (29–30) ═══ -->
+<section class="scene" data-scene="29-30">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <!-- a wing panel in perspective, gridded in metres -->
+        <path class="wing-blue tz-ink-h" d="M30 300 L250 250 L340 330 L110 400 Z"/>
+        <path class="tz-pat-hatch" d="M110 400 L340 330 L340 342 L110 412 Z"/>
+        <path class="body-shade tz-ink" d="M110 400 L340 330 L340 342 L110 412 Z" style="opacity:.6"/>
+        <path class="tz-ink" style="fill:none;stroke:var(--paper);stroke-width:1.2;opacity:.8" d="M74 290 L156 391 M118 280 L202 377 M162 270 L248 363 M206 260 L294 349 M46 320 L268 266 M62 340 L286 282 M78 360 L304 298 M94 380 L322 314"/>
+        <path class="eng-soft tz-ink" data-v="fade" data-l="29" data-o="0.6" data-d="0.4" d="M162 270 L206 260 L224 280 L180 291 Z" style="stroke-width:2"/>
+        <g data-v="pop" data-l="29" data-o="0.8" data-d="0.35"><text class="lbl heat thrust sm" x="194" y="246" text-anchor="middle">متر</text></g>
+        <!-- the load drops onto that one metre -->
+        <g data-v="move" data-l="30" data-o="0.2" data-d="0.7" data-dx="0" data-dy="170">
+          <g data-v="fade" data-l="30" data-o="0.1" data-d="0.2">
+            <g transform="translate(163 58)">
+              <path class="tz-ink" style="fill:none;stroke-width:5" d="M20 18 Q30 -2 40 18"/>
+              <use href="#kettle" class="tz-f-deep tz-ink-h"/>
+              <text x="30" y="46" text-anchor="middle" style="font:700 13px var(--font-numeral);fill:var(--paper)">700</text>
+            </g>
+          </g>
+        </g>
+      </svg>
+      <div class="tz-counter" style="position:absolute;left:12px;top:12px;gap:6px" data-v="fade" data-l="30" data-o="0.8" data-d="0.3">
+        <span class="num" style="font-size:48px" data-v="count" data-l="30" data-o="0.8" data-d="1.4" data-from="0" data-to="700">700</span>
+        <span class="unit">كيلو<br>على كل متر</span>
+      </div>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="29"><p data-words="29">والرفع ده <span class="tz-k tz-k--water">قوي جدًا</span>...</p></div>
+      <div class="cap" data-cap="30"><p data-words="30">كل متر في الجناح شايل حوالي<br><span class="tz-k tz-k--heat">700 كيلو!</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S12 · Outro sheet (31) ═══ -->
+<section class="scene" data-scene="31-31">
+  <div class="corners"></div>
+  <div class="sheet" style="padding:20px 18px;display:grid;align-content:start;gap:10px">
+    <span class="tz-brand"><svg class="tz-watch" style="--watch-size:18px" viewBox="0 0 48 54"><rect class="crown" x="20" y="0" width="8" height="3"/><rect class="crown" x="23" y="3" width="2" height="4"/><circle class="arc" cx="24" cy="30" r="20"/><circle class="core" cx="24" cy="30" r="6"/></svg><span class="tz-brand__name" style="font-size:10px">طب إزاي؟</span></span>
+    <h2 style="margin:0;font:600 20px/1.5 var(--font-sans);text-align:right">إزاي الطيارة اللي وزنها 400 طن بتطير؟</h2>
+    <div style="background:var(--panel)">
+      <svg viewBox="0 0 300 150" style="display:block;width:100%;height:auto">
+        <g transform="translate(20 30) scale(.85)"><use href="#jet"/></g>
+        <path class="arrow lift" d="M144 72 V30 H138 L148 16 L158 30 H152 V72 Z"/>
+        <path class="arrow weight" d="M144 86 V120 H138 L148 134 L158 120 H152 V86 Z"/>
+        <path class="arrow thrust" d="M130 79 H80 V73 L66 82 L80 91 V85 H130 Z"/>
+        <path class="arrow drag" d="M168 79 H222 V73 L236 82 L222 91 V85 H168 Z"/>
+        <g style="font:600 11px var(--font-sans)"><circle cx="168" cy="22" r="9" class="body-lit tz-ink"/><text x="168" y="26" text-anchor="middle">1</text>
+        <circle cx="168" cy="130" r="9" class="body-lit tz-ink"/><text x="168" y="134" text-anchor="middle">2</text>
+        <circle cx="58" cy="82" r="9" class="body-lit tz-ink"/><text x="58" y="86" text-anchor="middle">3</text>
+        <circle cx="248" cy="82" r="9" class="body-lit tz-ink"/><text x="248" y="86" text-anchor="middle">4</text></g>
+      </svg>
+    </div>
+    <ol class="tz-legend" style="font-size:12px;line-height:20px">
+      <li><span class="tz-num">1</span>الرفع: من الجناح</li>
+      <li><span class="tz-num">2</span>الوزن</li>
+      <li><span class="tz-num">3</span>الدفع: من المحرك</li>
+      <li><span class="tz-num">4</span>مقاومة الهوا</li>
+    </ol>
+    <div class="tz-counter" style="justify-self:end">
+      <span class="num" style="font-size:50px">700</span>
+      <span class="unit">كيلو شايلهم كل متر<br>في جناح الطيارة</span>
+    </div>
+    <div class="tz-ask" style="margin:6px;padding:12px 10px;gap:2px" data-v="pop" data-l="31" data-o="0" data-d="0.5">
+      <span class="tz-ask__lead" style="font-size:15px" data-words="31">قولولنا... عايزين تعرفوا</span>
+      <span class="tz-ask__line" style="font-size:19px">طب إزاي <span class="tz-ask__blank" style="min-width:3.5em"></span>؟</span>
+    </div>
+  </div>
+</section>
+
+</div>
+<script src="timing.js"></script>
+<script src="../../design-system/components/bundle.js"></script>
+<script>TebEzay.patterns();</script>
+<script src="../engine.js"></script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>Helicopter — style test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Noto+Sans+Arabic:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  /* the reference layout: black frame, hand-lettered title, a 16:9 cartoon panel, captions under it */
+  body { margin: 0; background: #000; }
+  .frame { position: relative; width: 360px; height: 640px; background: #000; overflow: hidden; }
+  .title { position: absolute; left: 0; right: 0; top: 92px; text-align: center; font: 700 30px/1.2 "Aref Ruqaa", serif; color: #fff; }
+  .sub { position: absolute; left: 0; right: 0; top: 136px; text-align: center; font: 700 19px/1.2 "Aref Ruqaa", serif; color: #f2c230; }
+  .panel { position: absolute; left: 0; right: 0; top: 196px; height: 203px; overflow: hidden; box-shadow: 0 0 0 1px #222; }
+  .panel svg { display: block; width: 100%; height: 100%; }
+  .cap { position: absolute; left: 18px; right: 18px; top: 432px; text-align: center; font: 800 20px/1.6 "Noto Sans Arabic", sans-serif; color: #fff; }
+  .cap b { color: #f2c230; }
+  .tag { font: 800 23px "Noto Sans Arabic", sans-serif; fill: #2b2016; }
+</style></head>
+<body>
+<div id="frames"></div>
+<svg width="0" height="0" style="position:absolute"><defs>
+  <!-- shared looks -->
+  <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6"/></filter>
+  <filter id="soft2"><feGaussianBlur stdDeviation="1.6"/></filter>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter>
+  <!-- paper-ish grain over every panel, like the painted reference -->
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .45  0 0 0 0 .4  0 0 0 .09 0"/></filter>
+  <!-- brush swash behind labels -->
+  <path id="swash" d="M6 14 C40 4 120 2 196 8 C214 10 222 20 214 30 C206 44 140 46 70 44 C30 44 4 40 2 30 C0 24 2 18 6 14 Z"/>
+  <linearGradient id="gHeliBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2523a"/><stop offset=".55" stop-color="#c23a26"/><stop offset="1" stop-color="#8f2618"/></linearGradient>
+  <linearGradient id="gGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9eef7"/><stop offset=".6" stop-color="#8fc2da"/><stop offset="1" stop-color="#5d93ad"/></linearGradient>
+  <linearGradient id="gMetal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a8f96"/><stop offset="1" stop-color="#4b5056"/></linearGradient>
+  <!-- the pilot: white ball head, two dash eyes -->
+  <g id="pilot"><path d="M-14 34 C-16 18 -8 12 0 12 C8 12 16 18 14 34 Z" fill="#3f6f8f" stroke="#1c1c1c" stroke-width="1.4"/>
+    <circle cx="0" cy="0" r="13" fill="#fbfbf7" stroke="#1c1c1c" stroke-width="1.6"/><path d="M-4 -3 v5 M4 -3 v5" stroke="#1c1c1c" stroke-width="1.8" stroke-linecap="round"/></g>
+  <!-- the helicopter, side view (pilot sits in the cockpit glass) -->
+  <g id="heli">
+    <path d="M40 -6 L150 -2 L152 6 L42 10 Z" fill="url(#gHeliBody)" stroke="#1c1c1c" stroke-width="1.6"/>
+    <path d="M146 -14 L162 -26 L168 -24 L158 4 L148 4 Z" fill="url(#gHeliBody)" stroke="#1c1c1c" stroke-width="1.6"/>
+    <circle cx="160" cy="-10" r="11" fill="none" stroke="#1c1c1c" stroke-width="1" opacity=".5"/><ellipse cx="160" cy="-10" rx="3" ry="12" fill="#2a2a2a" opacity=".55"/>
+    <path d="M-70 10 C-72 -30 -40 -44 0 -44 C40 -44 58 -26 60 0 C62 22 40 34 0 34 C-40 34 -68 30 -70 10 Z" fill="url(#gHeliBody)" stroke="#1c1c1c" stroke-width="1.8"/>
+    <path d="M-66 6 C-66 -26 -40 -38 -14 -38 L-10 6 Z" fill="url(#gGlass)" stroke="#1c1c1c" stroke-width="1.5"/>
+    <use href="#pilot" transform="translate(-36 -14) scale(.62)"/>
+    <path d="M-60 -18 C-50 -30 -34 -34 -22 -34" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7" fill="none"/>
+    <path d="M-30 -44 L20 -44 L14 -56 L-24 -56 Z" fill="url(#gMetal)" stroke="#1c1c1c" stroke-width="1.4"/>
+    <rect x="-6" y="-66" width="12" height="11" fill="#3a3d42" stroke="#1c1c1c" stroke-width="1.2"/>
+    <path d="M-40 34 L-46 50 M30 34 L36 50" stroke="#2a2a2a" stroke-width="3.4" stroke-linecap="round"/><path d="M-72 52 L60 52" stroke="#2a2a2a" stroke-width="4" stroke-linecap="round"/>
+    <path d="M10 -20 C26 -20 40 -10 44 4" stroke="#fff" stroke-width="2" opacity=".35" fill="none"/>
+  </g>
+  <!-- rotor: a motion-blurred disc plus two visible blades -->
+  <g id="rotor"><ellipse cx="0" cy="0" rx="150" ry="9" fill="#2a2a2a" opacity=".16"/><path d="M-150 0 L150 0" stroke="#1c1c1c" stroke-width="3.6" stroke-linecap="round" opacity=".85"/><path d="M-60 -6 L60 6" stroke="#1c1c1c" stroke-width="2.6" stroke-linecap="round" opacity=".35"/></g>
+</defs></svg>
+
+<script>
+// three test panels in the reference look; each is a full painted place, not a flat backdrop
+var P = [];
+// 1) day runway: an airliner has to run a long way
+P.push({ title: "إزاي الهليكوبتر بتطير؟", sub: "ومن غير ما تجري على الأرض!", cap: "الطيارة العادية، لازم تجري <b>كيلو على الأرض</b> عشان تطير.", svg: `
+  <defs><linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fb7e0"/><stop offset=".7" stop-color="#cfe3ef"/><stop offset="1" stop-color="#f3dfc2"/></linearGradient>
+  <linearGradient id="grass1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9dbb6e"/><stop offset="1" stop-color="#6f9548"/></linearGradient>
+  <linearGradient id="road1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6d6a66"/><stop offset="1" stop-color="#3f3d3a"/></linearGradient>
+  <linearGradient id="plane1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#e4e8ec"/><stop offset="1" stop-color="#b9c1c9"/></linearGradient></defs>
+  <rect width="640" height="360" fill="url(#sky1)"/>
+  <g filter="url(#soft)" fill="#fff" opacity=".9"><ellipse cx="120" cy="70" rx="70" ry="18"/><ellipse cx="160" cy="60" rx="40" ry="20"/><ellipse cx="470" cy="50" rx="90" ry="16"/><ellipse cx="520" cy="42" rx="40" ry="18"/></g>
+  <g fill="#a9c4d6" opacity=".8"><path d="M0 200 V170 h30 v-22 h18 v22 h24 v-40 h26 v40 h20 v-18 h30 v18 h40 v-30 h22 v30 h60 v-14 h30 v14 h70 v-36 h20 v36 h40 v-20 h40 v20 h60 v-28 h30 v28 h60 v30 Z"/></g>
+  <path d="M0 196 H640 V220 H0 Z" fill="#c9b892"/><rect x="380" y="170" width="170" height="30" fill="#e9e4d8" stroke="#6b6458" stroke-width="1"/><path d="M380 170 L400 160 H560 L550 170 Z" fill="#cfc7b6"/>
+  <g fill="#8fb7d4">${Array.from({length:12},(_,i)=>`<rect x="${386+i*13}" y="178" width="9" height="12"/>`).join("")}</g>
+  <rect x="300" y="132" width="14" height="66" fill="#ddd6c6" stroke="#6b6458"/><path d="M290 132 h34 l-6 -14 h-22 Z" fill="#8fb7d4" stroke="#6b6458"/>
+  <rect y="210" width="640" height="150" fill="url(#grass1)"/>
+  <path d="M-40 360 L230 222 L410 222 L680 360 Z" fill="url(#road1)"/>
+  <g fill="#f4f1e8">${[0,1,2,3,4,5].map(i=>{const y=226+i*i*5+i*8, w=4+i*3, h=3+i*2.2;return `<rect x="${320-w/2}" y="${y}" width="${w}" height="${h}"/>`}).join("")}</g>
+  <path d="M230 222 L-40 360 M410 222 L680 360" stroke="#f4f1e8" stroke-width="2"/>
+  <g transform="translate(330 268) scale(1.05)">
+    <ellipse cx="0" cy="40" rx="150" ry="8" fill="#1c1c1c" opacity=".25" filter="url(#soft2)"/>
+    <path d="M-150 8 C-150 -10 -130 -18 -100 -18 H110 C140 -18 160 -6 166 6 C150 18 120 20 100 20 H-120 C-140 20 -150 16 -150 8 Z" fill="url(#plane1)" stroke="#1c1c1c" stroke-width="1.6"/>
+    <path d="M110 -18 L150 -62 L166 -62 L150 -14 Z" fill="#2f6f9f" stroke="#1c1c1c" stroke-width="1.4"/><path d="M-20 4 L60 4 L90 34 L64 34 Z" fill="#c9d0d6" stroke="#1c1c1c" stroke-width="1.4"/>
+    <ellipse cx="30" cy="26" rx="22" ry="9" fill="#f0a35e" stroke="#1c1c1c" stroke-width="1.4"/><ellipse cx="10" cy="26" rx="5" ry="8" fill="#3a3d42"/>
+    <g fill="#5d93ad">${Array.from({length:11},(_,i)=>`<circle cx="${-100+i*18}" cy="-4" r="3.4"/>`).join("")}</g><path d="M-150 6 C-146 -6 -136 -10 -124 -10 L-128 4 Z" fill="#5d93ad"/>
+    <path d="M-120 22 v14 M40 22 v14 M70 22 v14" stroke="#2a2a2a" stroke-width="3"/><g fill="#1c1c1c"><circle cx="-120" cy="38" r="4"/><circle cx="40" cy="38" r="4"/><circle cx="70" cy="38" r="4"/></g>
+  </g>
+  <g stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".85"><path d="M500 250 h70"/><path d="M520 268 h90"/><path d="M505 286 h60"/></g>
+  <g transform="translate(36 60) rotate(-4)"><use href="#swash" fill="#e8c48e" transform="scale(1.1 1.3)"/><text class="tag" x="118" y="40" text-anchor="middle">كيلو على الأرض!</text></g>` });
+
+// 2) rooftop in the city: the helicopter just lifts off and hangs there
+P.push({ title: "إزاي الهليكوبتر بتطير؟", sub: "ومن غير ما تجري على الأرض!", cap: "أما الهليكوبتر، فبتطلع <b>من مكانها</b> على طول، وتقف في الهوا كمان!", svg: `
+  <defs><linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f2b880"/><stop offset=".55" stop-color="#f7d7aa"/><stop offset="1" stop-color="#fbe9cc"/></linearGradient>
+  <linearGradient id="bldA" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c79a7b"/><stop offset="1" stop-color="#a77a5c"/></linearGradient>
+  <linearGradient id="roof" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a958c"/><stop offset="1" stop-color="#6f6a62"/></linearGradient></defs>
+  <rect width="640" height="360" fill="url(#sky2)"/>
+  <circle cx="520" cy="96" r="40" fill="#fff3d6" filter="url(#soft)"/><circle cx="520" cy="96" r="24" fill="#fff6e2"/>
+  <g filter="url(#soft)" fill="#fff" opacity=".6"><ellipse cx="160" cy="80" rx="90" ry="14"/><ellipse cx="400" cy="60" rx="60" ry="10"/></g>
+  <g fill="#d9b394" opacity=".7"><path d="M0 250 V170 h40 v-30 h30 v30 h20 v-60 h36 v60 h30 v-20 h40 v20 h24 v-46 h30 v46 h40 v-24 h50 v24 h30 v-70 h34 v70 h40 v-30 h40 v30 h50 v-40 h30 v40 h56 v80 Z"/></g>
+  <g fill="#b48565"><path d="M0 300 V200 h60 v-40 h50 v40 h40 v-20 h60 v20 h0 V300 Z"/><path d="M440 300 V190 h50 v-30 h40 v30 h40 v-50 h46 v50 h24 V300 Z"/></g>
+  <g fill="#f6dfa8" opacity=".85">${Array.from({length:40},(_,i)=>{const x=(i*53)%640, y=170+((i*37)%110); return (x>200&&x<440)?"":`<rect x="${x}" y="${y}" width="7" height="9"/>`}).join("")}</g>
+  <path d="M180 360 V262 H470 V360 Z" fill="url(#bldA)" stroke="#5b4636" stroke-width="1.4"/>
+  <path d="M170 262 H480 L470 248 H180 Z" fill="url(#roof)" stroke="#3d3a35" stroke-width="1.4"/>
+  <ellipse cx="325" cy="255" rx="86" ry="9" fill="#e4dfd4" stroke="#3d3a35" stroke-width="1.2"/><ellipse cx="325" cy="255" rx="70" ry="6.5" fill="none" stroke="#f2c230" stroke-width="2"/>
+  <text x="325" y="259" text-anchor="middle" style="font:900 10px sans-serif;fill:#3d3a35" transform="scale(1 1)">H</text>
+  <g fill="#7a6a55" opacity=".5" filter="url(#soft2)"><ellipse cx="250" cy="246" rx="30" ry="5"/><ellipse cx="400" cy="246" rx="30" ry="5"/></g>
+  <g stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7" fill="none"><path d="M250 210 C246 226 236 236 222 244"/><path d="M400 210 C404 226 414 236 428 244"/><path d="M290 214 C288 230 280 238 270 246"/><path d="M360 214 C362 230 370 238 380 246"/></g>
+  <g transform="translate(325 150)"><ellipse cx="0" cy="58" rx="80" ry="5" fill="#1c1c1c" opacity=".15"/><use href="#heli"/><use href="#rotor" transform="translate(0 -66)"/></g>
+  <g transform="translate(294 140)"><path d="M-6 12 L-18 -4" stroke="#1c1c1c" stroke-width="2.4" stroke-linecap="round"/><circle cx="-19" cy="-6" r="3" fill="#fbfbf7" stroke="#1c1c1c" stroke-width="1.2"/></g>
+  <g transform="translate(450 186) rotate(3)"><use href="#swash" fill="#e8c48e" transform="scale(.82 1.2)"/><text class="tag" x="88" y="37" text-anchor="middle">واقفة في الهوا!</text></g>` });
+
+// 3) night: the engine quits — smoke, warning light, a worried pilot
+P.push({ title: "إزاي الهليكوبتر بتطير؟", sub: "ومن غير ما تجري على الأرض!", cap: "طب ولو <b>الموتور وقف</b> فجأة؟", svg: `
+  <defs><linearGradient id="sky3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d1a33"/><stop offset=".7" stop-color="#1e3458"/><stop offset="1" stop-color="#2f4a72"/></linearGradient></defs>
+  <rect width="640" height="360" fill="url(#sky3)"/>
+  <g fill="#fff">${Array.from({length:50},(_,i)=>`<circle cx="${(i*131)%640}" cy="${(i*71)%180}" r="${(i%3)*0.5+0.6}" opacity="${0.4+(i%4)*0.15}"/>`).join("")}</g>
+  <circle cx="110" cy="70" r="34" fill="#f2efe0" opacity=".25" filter="url(#soft)"/><circle cx="110" cy="70" r="20" fill="#f4f1e4"/><circle cx="118" cy="64" r="18" fill="#1a2c4c"/>
+  <g fill="#162641"><path d="M0 360 V240 h40 v-50 h30 v50 h30 v-80 h40 v80 h20 v-30 h40 v30 h40 v-60 h30 v60 h50 v-40 h40 v40 h30 v-90 h36 v90 h40 v-50 h40 v50 h40 v-30 h40 v30 h34 V360 Z"/></g>
+  <g fill="#f2c96a">${Array.from({length:70},(_,i)=>{const x=(i*47)%640, y=200+((i*29)%150); return `<rect x="${x}" y="${y}" width="5" height="6" opacity="${0.35+(i%3)*0.25}"/>`}).join("")}</g>
+  <g transform="translate(330 150) rotate(-4)">
+    <g opacity=".75" filter="url(#soft)" fill="#6b6f78"><circle cx="20" cy="-70" r="18"/><circle cx="44" cy="-94" r="24"/><circle cx="80" cy="-120" r="30"/></g>
+    <use href="#heli"/><g transform="translate(0 -66)"><path d="M-150 -4 L150 4" stroke="#0e0e0e" stroke-width="3.6" stroke-linecap="round"/></g>
+    <circle cx="-2" cy="-60" r="5" fill="#ff3b2f" filter="url(#glow)"/><circle cx="-2" cy="-60" r="2.5" fill="#ff6a5e"/>
+  </g>
+  <rect width="640" height="360" fill="#0d1a33" opacity=".22"/>
+  <g transform="translate(300 128)"><path d="M-5 -10 c-2 -6 2 -10 4 -12 M5 -10 c2 -6 -2 -10 -4 -12" stroke="#fff" stroke-width="1.6" fill="none"/></g>
+  <g transform="translate(408 196) rotate(-3)"><use href="#swash" fill="#e8c48e" transform="scale(.9 1.25)"/><text class="tag" x="96" y="38" text-anchor="middle">الموتور وقف!</text></g>` });
+
+var host = document.getElementById("frames");
+P.forEach(function (p) {
+  host.insertAdjacentHTML("beforeend", `<div class="frame"><div class="title">${p.title}</div><div class="sub">${p.sub}</div>
+    <div class="panel"><svg viewBox="0 0 640 360">${p.svg}<rect width="640" height="360" filter="url(#grain)"/></svg></div><div class="cap">${p.cap}</div></div>`);
+});
+</script>
+</body></html>

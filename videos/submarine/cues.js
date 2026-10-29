@@ -1,0 +1,28 @@
+// Sound cues from the line timings (shared by both versions): node cues.js → cues.json
+global.window = {}; eval(require('fs').readFileSync(__dirname + '/timing.js', 'utf8'));
+const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration : T[i].start, c = [];
+const a = (t, fx, gain, dur) => c.push(Object.assign({ t: +t.toFixed(2), fx, gain }, dur ? { dur } : {}));
+a(0.1, 'waves', 0.45, L(1) - 0.2); a(0.6, 'pop', 0.6); a(0.3, 'creak', 0.25);
+a(L(1) - 0.1, 'whoosh', 0.5); a(L(1) + 0.9, 'plunk', 0.5); a(L(1) + 1.2, 'fill', 0.4, 2.0); a(L(1) + 3.4, 'splash', 0.5); a(L(1) + 0.8, 'pop', 0.6);
+a(L(2) - 0.1, 'whoosh', 0.5); a(L(2) + 0.4, 'drop', 0.7); a(L(2) + 1.7, 'pop', 0.7);
+a(L(3) - 0.1, 'whoosh', 0.7); a(L(3) + 0.1, 'pop', 0.9); a(L(3) + 0.2, 'ping', 0.5);
+for (const i of [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]) a(L(i) - 0.08, 'whoosh', 0.35);
+a(L(4), 'waves', 0.3, L(5) - L(4)); a(L(4) + 0.9, 'splash', 0.4); a(L(4) + 1.0, 'pop', 0.6);
+a(L(5) + 0.9, 'plunk', 0.6); a(L(5) + 1.2, 'slosh', 0.5); a(L(5) + 2.0, 'pop', 0.5); a(L(5) + 2.6, 'pop', 0.6);
+a(L(6) + 0.6, 'drop', 0.6); a(L(6) + 0.4, 'pop', 0.5); a(L(6) + 1.4, 'pop', 0.6);
+a(L(7) + 0.3, 'hum', 0.3, 3.0); a(L(7) + 1.2, 'pop', 0.7); a(L(8), 'waves', 0.35, L(9) - L(8)); a(L(8) + 0.8, 'pop', 0.6);
+a(L(9) + 0.3, 'clank', 0.5); a(L(9) + 0.5, 'steam', 0.6, 2.4); a(L(9) + 0.6, 'pop', 0.6);
+a(L(10) + 0.2, 'fill', 0.6, 2.6); a(L(10) + 0.7, 'pop', 0.6);
+a(L(11), 'fill', 0.35, 2.0); a(L(11) + 0.3, 'creak', 0.35); a(L(11) + 0.5, 'pop', 0.6);
+a(L(12) + 0.5, 'servo', 0.6); a(L(12) + 0.2, 'motor', 0.3, 4.0); a(L(12) + 0.6, 'pop', 0.6);
+a(L(13) + 0.2, 'pop', 0.7); a(L(13) + 0.6, 'ping', 0.4); a(L(14) + 0.3, 'slosh', 0.4); a(L(14) + 1.8, 'slosh', 0.35); a(L(14) + 0.8, 'pop', 0.6);
+a(L(15) + 0.6, 'pop', 0.6); a(L(15) + 1.2, 'pop', 0.6); a(L(15) + 1.0, 'ping', 0.45); a(L(15) + 3.2, 'ping', 0.35);
+a(L(16) + 0.2, 'pop', 0.7); a(L(16) + 0.3, 'beep', 0.5); for (let k = 0; k < 3; k++) a(L(17) + 0.4 + k * 0.7, 'pop', 0.6);
+a(L(18) + 0.4, 'creak', 0.6); a(L(18) + 1.6, 'clank', 0.5); a(L(18) + 2.6, 'creak', 0.6); a(L(18) + 3.0, 'pop', 0.7);
+a(L(19) + 0.3, 'creak', 0.4); a(L(19) + 0.8, 'pop', 0.6); a(L(20) + 0.3, 'clank', 0.6); a(L(20) + 0.1, 'pop', 0.7);
+a(L(21) + 0.3, 'hum', 0.35, 3.0); a(L(21) + 0.6, 'pop', 0.6);
+a(L(22) + 0.1, 'steam', 0.8, 3.2); a(L(22) + 0.4, 'spray', 0.4, 3.0); a(L(22) + 0.8, 'pop', 0.6);
+a(L(23), 'fill', 0.4, 2.0); a(L(23) + 2.8, 'splash', 0.9); a(L(23) + 3.0, 'waves', 0.4, L(25) - L(23) - 3.0); a(L(23) + 2.6, 'pop', 0.7);
+a(L(24) + 0.5, 'drop', 0.5); a(L(24) + 0.6, 'pop', 0.6); a(L(24) + 3.4, 'splash', 0.4); a(L(24) + 3.5, 'pop', 0.6);
+a(L(25), 'waves', 0.4, 3.5); a(L(25) + 0.3, 'pop', 0.8);
+require('fs').writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: true, cues: c }, null, 1)); console.log(c.length, 'cues');

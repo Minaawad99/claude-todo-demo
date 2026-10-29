@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>إزاي طابعة الليزر بتطبع؟ — طب إزاي؟</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../../design-system/components/bundle.css">
+<style>
+  /* 360×640 canvas. Meaning: electric charge blue, laser + heat red, the drum green, toner ink. */
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  html, body { margin: 0; width: 360px; height: 640px; overflow: hidden; background: var(--paper); }
+  body { font-family: var(--font-sans); color: var(--ink); }
+  .canvas { position: relative; width: 360px; height: 640px; background: var(--paper); }
+  .scene { position: absolute; inset: 35px; opacity: 0; }
+  .frame { position: absolute; inset: 0; border: 2px solid var(--ink); background: var(--paper); display: grid; grid-template-rows: 69% 0 1fr; }
+  .stage { position: relative; overflow: hidden; }
+  .stage > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .rule { border-top: 1px solid var(--line-soft); margin-inline: 10px; }
+  .caps { position: relative; }
+  .cap { position: absolute; inset: 0; padding: 18px 16px 0; text-align: center; opacity: 0; font: 500 18px / 1.65 var(--font-sans); text-wrap: balance; }
+  .cap p { margin: 0; }
+  .sheet { position: absolute; inset: 0; border: 2px solid var(--ink); outline: 1px solid var(--ink); outline-offset: -6px; background: var(--paper); }
+  .corners { position: absolute; inset: -12px; pointer-events: none; --c: var(--ink); --l: 10px; --w: 1px;
+    background:
+      linear-gradient(var(--c), var(--c)) top right / var(--l) var(--w), linear-gradient(var(--c), var(--c)) top right / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) top left / var(--l) var(--w), linear-gradient(var(--c), var(--c)) top left / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) bottom right / var(--l) var(--w), linear-gradient(var(--c), var(--c)) bottom right / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) bottom left / var(--l) var(--w), linear-gradient(var(--c), var(--c)) bottom left / var(--w) var(--l);
+    background-repeat: no-repeat; }
+  .w { --wc: var(--ink); color: color-mix(in srgb, var(--wc) var(--mix, 100%), var(--ink-ghost)); }
+  .w.tz-k--heat { --wc: var(--heat-text); } .w.tz-k--water { --wc: var(--water); } .w.tz-k--part { --wc: var(--olive-text); }
+  .em { background: linear-gradient(currentColor, currentColor) no-repeat right bottom / var(--ul, 100%) 1.5px; padding-bottom: 2px; }
+  [data-v="pop"], [data-v="grow"], [data-loop="spin"], [data-loop="pulse"] { transform-box: fill-box; transform-origin: center; }
+  .mark { fill: none; stroke: var(--paper); stroke-width: 2; stroke-linecap: round; }
+  .halo { fill: none; stroke: #e2a92c; stroke-width: 4; }
+  .callout { font: 700 13px var(--font-sans); fill: var(--c, var(--ink)); paint-order: stroke; stroke: var(--paper); stroke-width: 4px; stroke-linejoin: round; }
+  .panel { position: absolute; inset: 0; opacity: 0; }
+  .panel > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .o-b { transform-origin: 50% 100% !important; } .o-l { transform-origin: 0% 50% !important; } .o-r { transform-origin: 100% 50% !important; }
+
+  .lit { fill: var(--paper-raised); } .shade { fill: var(--khaki); } .deep { fill: var(--khaki-deep); }
+  .drum { fill: var(--olive); } .ink-f { fill: var(--ink); } .hot { fill: var(--heat); } .hot-soft { fill: var(--heat-soft); }
+  .beam { fill: none; stroke: var(--heat); stroke-width: 2.5; stroke-linecap: round; }
+  .beam-glow { fill: none; stroke: var(--heat-soft); stroke-width: 7; stroke-linecap: round; opacity: .6; }
+  .paper { fill: #fbf7ec; stroke: var(--ink); stroke-width: 1.2; }
+  .minus { stroke: var(--water); stroke-width: 2.6; stroke-linecap: round; fill: none; }
+  .plus { stroke: var(--heat); stroke-width: 2.6; stroke-linecap: round; fill: none; }
+  .dim { fill: var(--paper); opacity: .62; }
+  .lbl { font: 600 14px var(--font-sans); fill: var(--c, var(--ink)); paint-order: stroke; stroke: var(--paper); stroke-width: 5px; stroke-linejoin: round; }
+  .lbl.big { font-size: 18px; }
+  .c-drum { --c: var(--olive-text); } .c-heat { --c: var(--heat-text); } .c-elec { --c: var(--water); }
+  .dash { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 5 4; }
+  .x { fill: none; stroke: var(--heat); stroke-width: 6; stroke-linecap: round; }
+  .ok { fill: none; stroke: var(--olive-text); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+  .num { font: 700 56px / 1 var(--font-numeral); color: var(--heat); direction: ltr; font-variant-numeric: tabular-nums; }
+  .unit { font: 600 13px / 1.4 var(--font-sans); }
+  .pt-toner { fill: var(--ink); }
+  .stream { fill: none; stroke: none; }
+  .steam { fill: none; stroke: var(--heat); stroke-width: 2; stroke-linecap: round; opacity: .7; }
+  .ray { stroke: #e7c45a; stroke-width: 3; stroke-linecap: round; }
+  .lamp { fill: #f3d77a; stroke: var(--ink); stroke-width: 1.5; }
+</style>
+</head>
+<body>
+<div class="canvas">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Printer outside, ~260 × 190 -->
+    <g id="printer">
+      <path class="lit tz-ink" d="M20 60 L60 30 L260 30 L220 60 Z"/>
+      <path class="shade tz-ink" d="M220 60 L260 30 L260 160 L220 190 Z"/><path class="tz-pat-hatch" d="M220 60 L260 30 L260 160 L220 190 Z"/>
+      <rect class="lit tz-ink" x="20" y="60" width="200" height="130"/>
+      <rect class="deep tz-ink" x="40" y="74" width="120" height="10"/>
+      <path class="paper" d="M52 70 L148 70 L144 84 L56 84 Z"/>
+      <rect class="shade tz-ink" x="30" y="150" width="180" height="30"/><path class="tz-ink" style="fill:none" d="M100 165 h40"/>
+      <rect class="tz-f-water tz-ink" x="176" y="96" width="32" height="18"/>
+      <circle class="hot tz-ink" cx="186" cy="128" r="5"/><circle class="shade tz-ink" cx="202" cy="128" r="5"/>
+    </g>
+    <!-- Cross-section of the engine. Drum centre (180,220) r62, spins clockwise. -->
+    <g id="sec-frame"><rect class="lit" x="6" y="16" width="348" height="352" style="opacity:.5"/><rect class="tz-ink" style="fill:none;stroke-width:2" x="6" y="16" width="348" height="352"/></g>
+    <g id="sec-laser">
+      <rect class="shade tz-ink" x="226" y="28" width="118" height="50"/><path class="tz-pat-hatch" d="M226 66 H344 V78 H226 Z"/>
+      <rect class="tz-f-deep tz-ink" x="236" y="44" width="22" height="16"/>
+      <g data-loop="spin" data-speed="720"><path class="tz-f-water tz-ink" d="M300 100 l14 8 v16 l-14 8 l-14 -8 v-16 z"/></g>
+    </g>
+    <g id="sec-charge"><circle class="tz-f-deep tz-ink" cx="126" cy="166" r="16"/><g data-loop="rot" data-speed="-170" data-cx="126" data-cy="166"><path class="mark" d="M126 152 V158 M126 174 V180 M112 166 H118 M134 166 H140"/></g><circle class="ink-f" cx="126" cy="166" r="3"/></g>
+    <g id="sec-drum">
+      <circle class="drum tz-ink-h" cx="180" cy="220" r="62"/>
+      <path class="tz-pat-hatch" d="M224 176 A62 62 0 0 1 180 282 A50 50 0 0 0 224 176 Z"/>
+      <path style="fill:none;stroke:var(--paper);stroke-width:3;opacity:.5;stroke-linecap:round" d="M140 186 A50 50 0 0 1 168 166"/>
+      <g data-loop="rot" data-speed="55" data-cx="180" data-cy="220"><path class="tz-ink" style="fill:none;stroke-width:2.2" d="M180 162 V174 M238 220 H226 M180 278 V266 M122 220 H134 M221 179 L213 187 M139 261 L147 253 M221 261 L213 253 M139 179 L147 187"/></g>
+      <circle class="tz-f-deep tz-ink" cx="180" cy="220" r="9"/>
+    </g>
+    <g id="sec-toner">
+      <path class="lit tz-ink" d="M270 176 H346 V300 H270 Q262 300 262 292 V184 Q262 176 270 176 Z"/>
+      <path class="ink-f" d="M266 250 Q300 238 344 248 V298 H270 Q264 298 264 292 Z" style="opacity:.85"/>
+      <path class="tz-pat-dots" d="M266 250 Q300 238 344 248 V298 H270 Q264 298 264 292 Z" style="opacity:.6"/>
+      <circle class="tz-f-deep tz-ink" cx="260" cy="226" r="18"/><g data-loop="rot" data-speed="-150" data-cx="260" data-cy="226"><path class="mark" d="M260 210 V216 M260 236 V242 M244 226 H250 M270 226 H276"/></g><circle class="ink-f" cx="260" cy="226" r="3"/>
+    </g>
+    <g id="sec-paper">
+      <path class="dash" d="M0 284 H360" style="opacity:.5"/>
+      <circle class="tz-f-deep tz-ink" cx="180" cy="300" r="14"/><g data-loop="rot" data-speed="-200" data-cx="180" data-cy="300"><path class="mark" d="M180 288 V293 M180 307 V312 M168 300 H173 M187 300 H192"/></g><circle class="ink-f" cx="180" cy="300" r="3"/>
+      <circle class="shade tz-ink" cx="330" cy="300" r="10"/><g data-loop="rot" data-speed="-260" data-cx="330" data-cy="300"><path class="mark" style="stroke:var(--ink)" d="M330 292 V296 M330 304 V308"/></g><path class="paper" d="M290 330 H352 V346 H290 Z"/><path class="tz-ink" style="fill:none" d="M290 336 H352 M290 341 H352"/>
+    </g>
+    <g id="sec-fuser">
+      <circle class="hot tz-ink-h" cx="56" cy="262" r="20"/><circle class="shade tz-ink-h" cx="56" cy="306" r="20"/>
+      <g data-loop="rot" data-speed="120" data-cx="56" data-cy="262"><path class="mark" d="M56 245 V251 M56 273 V279 M39 262 H45 M67 262 H73"/></g><g data-loop="rot" data-speed="-120" data-cx="56" data-cy="306"><path class="mark" style="stroke:var(--ink)" d="M56 289 V295 M56 317 V323 M39 306 H45 M67 306 H73"/></g><circle class="ink-f" cx="56" cy="262" r="3"/><circle class="ink-f" cx="56" cy="306" r="3"/>
+    </g>
+    <g id="sec-clean">
+      <path class="lit tz-ink" d="M66 196 H104 V238 H66 Z"/><path class="ink-f" d="M68 224 H102 V236 H68 Z" style="opacity:.7"/>
+      <path class="tz-ink-h" style="stroke-width:4" d="M104 212 L124 232"/>
+      <rect class="lamp" x="112" y="192" width="14" height="9"/>
+    </g>
+    <g id="section">
+      <use href="#sec-frame"/><use href="#sec-paper"/><use href="#sec-fuser"/><use href="#sec-clean"/><use href="#sec-toner"/><use href="#sec-drum"/><use href="#sec-charge"/><use href="#sec-laser"/>
+      <path class="beam" style="opacity:.35" d="M258 52 L300 116 L182 158"/>
+    </g>
+    <g id="balloon"><path class="hot tz-ink-h" d="M0 -40 C24 -40 30 -14 22 4 C16 18 6 26 0 28 C-6 26 -16 18 -22 4 C-30 -14 -24 -40 0 -40 Z"/><path class="tz-ink" style="fill:none" d="M0 28 l-4 6 h8 z M0 34 Q6 50 -2 66"/><path style="fill:none;stroke:var(--paper);stroke-width:3;opacity:.6;stroke-linecap:round" d="M-12 -26 Q-14 -14 -10 -4"/></g>
+    <g id="finger"><path class="hot-soft tz-ink-h" d="M0 0 C0 -10 8 -14 16 -14 L90 -14 L90 14 L16 14 C8 14 0 10 0 0 Z"/><path class="tz-ink" style="fill:none" d="M6 -6 Q12 -9 18 -6 M30 -14 V14"/></g>
+  </defs>
+</svg>
+
+<!-- ═══ S0 · Intro (0–2) ═══ -->
+<section class="scene" data-scene="0-2">
+  <div class="corners"></div>
+  <div class="sheet">
+    <span class="tz-brand" style="position:absolute;right:16px;top:14px"><svg class="tz-watch" style="--watch-size:18px" viewBox="0 0 48 54"><rect class="crown" x="20" y="0" width="8" height="3"/><rect class="crown" x="23" y="3" width="2" height="4"/><circle class="arc" cx="24" cy="30" r="20"/><circle class="core" cx="24" cy="30" r="6"/></svg><span class="tz-brand__name" style="font-size:10px">طب إزاي؟</span></span>
+    <span class="tz-tag" style="position:absolute;left:50%;translate:-50% 0;top:56px">أجهزة المكتب</span>
+    <div style="position:absolute;left:22px;right:22px;top:98px;height:128px;border-block:1px solid var(--line-soft)">
+      <div class="cap" data-cap="0" style="font:600 24px/1.55 var(--font-sans);padding:14px 4px;text-align:right"><p data-words="0">طابعة الليزر دي، مفيهاش ولا <span class="tz-k tz-k--heat">نقطة حبر!</span></p></div>
+      <div class="cap" data-cap="1" style="font:600 24px/1.55 var(--font-sans);padding:14px 4px;text-align:right"><p data-words="1">هي بتطبع <span class="tz-k tz-k--water">بكهربا</span>، و<span class="tz-k">بودرة</span>، و<span class="tz-k tz-k--heat">نار.</span></p></div>
+      <div class="cap" data-cap="2" style="font:600 22px/1.55 var(--font-sans);padding:12px 4px;text-align:right"><p data-words="2">والأغرب، إن الورقة بتعدي على حاجة سخنة <span class="tz-k tz-k--heat">200 درجة</span>، ومبتولعش!</p></div>
+    </div>
+    <svg viewBox="0 0 290 330" style="position:absolute;left:0;bottom:0;width:100%;height:330px">
+      <g data-v="rise" data-l="0" data-o="0.1" data-d="0.6"><g transform="translate(14 60)"><use href="#printer"/></g></g>
+      <!-- line 0: ink drop, crossed out -->
+      <g data-v="out" data-l="1" data-o="-0.1" data-d="0.3">
+        <g data-v="pop" data-l="0" data-o="1.2" data-d="0.4"><path class="tz-f-water tz-ink-h" d="M232 20 C232 20 210 48 210 62 A22 22 0 0 0 254 62 C254 48 232 20 232 20 Z"/></g>
+        <g data-v="pop" data-l="0" data-o="1.8" data-d="0.35"><path class="x" d="M206 30 L258 82 M258 30 L206 82"/></g>
+      </g>
+      <!-- line 1: electricity, powder, fire -->
+      <g data-v="out" data-l="2" data-o="-0.1" data-d="0.3">
+        <g data-v="pop" data-l="1" data-o="0.5" data-d="0.35"><path class="tz-f-water tz-ink-h" d="M60 6 L40 44 H56 L46 76 L76 32 H60 L70 6 Z"/></g>
+        <g data-v="pop" data-l="1" data-o="1.0" data-d="0.35"><path class="ink-f tz-ink" d="M118 72 Q144 36 170 72 Z"/><g class="ink-f"><circle cx="150" cy="40" r="2"/><circle cx="136" cy="32" r="1.6"/><circle cx="160" cy="28" r="1.6"/></g></g>
+        <g data-v="pop" data-l="1" data-o="1.5" data-d="0.35"><path class="hot tz-ink-h" d="M232 76 C214 76 206 60 214 46 C218 54 222 54 222 54 C220 36 232 22 242 14 C240 30 256 38 256 56 C256 68 248 76 232 76 Z"/><path class="hot-soft" d="M232 72 C224 72 220 64 224 56 C228 62 232 60 232 60 C232 52 236 46 240 42 C240 52 246 56 244 64 C242 70 238 72 232 72 Z"/></g>
+      </g>
+      <!-- line 2: paper through hot rollers, unharmed -->
+      <g data-v="fade" data-l="2" data-o="0" data-d="0.3">
+        <circle class="hot tz-ink-h" cx="232" cy="30" r="18"/><circle class="shade tz-ink-h" cx="232" cy="70" r="18"/>
+        <g data-v="move" data-l="2" data-o="0.6" data-d="2.4" data-dx="-150" data-dy="0"><rect class="paper" x="250" y="47" width="90" height="5"/></g>
+        <path class="steam" d="M200 14 q-4 -6 0 -12 M214 10 q-4 -6 0 -12"/>
+        <g data-v="pop" data-l="2" data-o="3.6" data-d="0.35"><path class="ok" d="M60 40 L78 58 L110 22"/></g>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<!-- ═══ S1 · Brand (3) ═══ -->
+<section class="scene" data-scene="3-3">
+  <div class="frame" style="grid-template-rows:1fr">
+    <div style="display:grid;place-items:center;align-content:center;gap:14px;text-align:center">
+      <svg viewBox="0 0 220 220" style="width:200px;height:200px;overflow:visible">
+        <rect x="100" y="0" width="20" height="7" style="fill:var(--ink)"/><rect x="106" y="7" width="8" height="10" style="fill:var(--ink)"/>
+        <circle cx="110" cy="118" r="94" style="fill:none;stroke:var(--line-soft);stroke-width:2;opacity:.35"/>
+        <circle data-v="ring" data-l="3" data-o="-0.3" data-d="1.6" cx="110" cy="118" r="94" pathLength="100" transform="rotate(-90 110 118)" style="fill:none;stroke:var(--heat);stroke-width:3;stroke-dasharray:100"/>
+        <g transform="translate(36 56) scale(.56)"><use href="#printer"/></g>
+      </svg>
+      <span style="font:600 28px/1.3 var(--font-sans)">طب إزاي؟</span>
+      <span class="cap" data-cap="3" style="position:static;opacity:1;padding:0;font-size:16px"><span data-words="3">هشرحهالك في <span class="tz-k tz-k--heat">دقيقة.</span></span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ MAIN · One printer, a moving camera (4–36) ═══ -->
+<section class="scene" data-scene="4-36">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <defs><clipPath id="secclip"><rect x="6" y="16" width="348" height="352"/></clipPath></defs>
+        <g data-cam="4:0:180:192:0.92|4:1.4:180:192:1|5:0.2:180:220:1.75|7:0:150:200:1.9|9:0:240:130:1.3|10:0.2:290:84:2.1|11:0:300:116:3.2|12:0:222:160:1.55|17:0:262:236:1.9|19:0:228:236:1.75|22:0:220:292:1.15|24:0:180:288:2.4|28:0:74:284:2.0|30:0:58:284:2.7|34:0:114:226:2.6|36:0.4:180:192:1">
+          <use href="#section"/>
+          <g clip-path="url(#secclip)">
+            <!-- paper keeps flowing right → left -->
+            <g data-loop="scroll" data-speed="-60" data-period="260">
+              <rect class="paper" x="110" y="281" width="150" height="5"/><rect class="paper" x="370" y="281" width="150" height="5"/>
+              <path style="fill:none;stroke:var(--ink);stroke-width:3;stroke-dasharray:2 3" d="M118 279 H170 M378 279 H430"/>
+            </g>
+            <!-- toner always moving: hopper → developer roller → drum -->
+            <g data-particles data-n="6" data-speed="26" data-dot="pt-toner" data-r="1.8">
+              <path class="stream" d="M310 262 C296 250 282 244 270 238"/><path class="stream" d="M298 272 C286 260 276 250 268 244"/><path class="stream" d="M248 216 C244 212 240 212 236 214"/>
+            </g>
+            <!-- toner picture riding the drum between developer and transfer -->
+            <g data-loop="rot" data-speed="55" data-cx="180" data-cy="220"><path style="fill:none;stroke:var(--ink);stroke-width:5;stroke-dasharray:3 3" d="M236 246 A62 62 0 0 1 200 279"/></g>
+            <!-- fuser heat shimmer -->
+            <g data-loop="bob" data-a="2" data-f="5"><path class="steam" d="M40 238 q-3 -6 0 -12 q3 -6 0 -12 M56 236 q-3 -6 0 -12 q3 -6 0 -12 M72 238 q-3 -6 0 -12 q3 -6 0 -12"/></g>
+          </g>
+          <!-- laser on from line 9: blinking, the reflected beam sweeping -->
+          <g data-v="fade" data-l="9" data-o="0.3" data-d="0.3">
+            <g data-loop="blink" data-f="7">
+              <path class="beam-glow" d="M258 52 L300 116"/><path class="beam" d="M258 52 L300 116"/>
+              <g data-loop="sweep" data-speed="2.2"><path class="beam-glow" d="M300 116 L182 158"/><path class="beam" d="M300 116 L182 158"/></g>
+            </g>
+          </g>
+          <!-- scanned lines on the drum (line 12) -->
+          <g data-v="out" data-l="14" data-o="0" data-d="0.3">
+            <path class="beam" style="stroke-width:1.5;opacity:.8" data-v="draw" data-l="12" data-o="0.4" data-d="0.5" d="M140 172 A62 62 0 0 1 220 172"/>
+            <path class="beam" style="stroke-width:1.5;opacity:.6" data-v="draw" data-l="12" data-o="1.0" data-d="0.5" d="M134 180 A62 62 0 0 1 226 180"/>
+            <path class="beam" style="stroke-width:1.5;opacity:.4" data-v="draw" data-l="12" data-o="1.6" data-d="0.5" d="M128 190 A62 62 0 0 1 232 190"/>
+          </g>
+          <!-- charge marks around the drum (line 7, gone by line 22) -->
+          <g data-v="out" data-l="22" data-o="0" data-d="0.4"><g id="ring7"></g></g>
+          <!-- opposite charge under the paper (line 24) -->
+          <g data-v="out" data-l="26" data-o="0" data-d="0.3"><g data-v="fade" data-l="24" data-o="0.6" data-d="0.4"><path class="plus" style="stroke-width:2" d="M170 318 v7 M166.5 321.5 h7 M190 318 v7 M186.5 321.5 h7"/></g></g>
+          <g data-v="out" data-l="26" data-o="0" data-d="0.3"><g data-v="fade" data-l="25" data-o="1" data-d="0.3">
+            <g data-particles data-n="4" data-speed="18" data-dot="pt-toner" data-r="1.6"><path class="stream" d="M174 268 L174 280"/><path class="stream" d="M184 270 L184 281"/><path class="stream" d="M194 268 L194 280"/></g>
+          </g></g>
+          <!-- what's active right now: a pulsing halo + a callout -->
+          <g id="halos"></g>
+        </g>
+      </svg>
+
+      <!-- line 4: the closed printer opens up -->
+      <div class="panel tz-paper" data-v="out" data-l="4" data-o="1.0" data-d="0.6" style="opacity:1">
+        <svg viewBox="0 0 360 488"><g transform="translate(50 150)"><use href="#printer"/></g></svg>
+      </div>
+      <!-- line 6: light lets charge through -->
+      <div class="panel" data-v="fade" data-l="6" data-o="0.6" data-d="0.4"><div class="panel" data-v="out" data-l="7" data-o="-0.2" data-d="0.3" style="opacity:1">
+        <svg viewBox="0 0 360 488">
+          <circle cx="262" cy="96" r="76" class="lit tz-ink-h"/>
+          <clipPath id="photo"><circle cx="262" cy="96" r="74"/></clipPath>
+          <g clip-path="url(#photo)">
+            <rect class="drum" x="180" y="110" width="170" height="70"/>
+            <g data-loop="blink" data-f="2"><path class="beam-glow" d="M262 20 V110"/><path class="beam" d="M262 20 V110"/></g>
+            <path class="minus" d="M214 134 h12 M300 134 h12 M214 156 h12 M300 156 h12"/>
+            <g data-v="out" data-l="6" data-o="1.8" data-d="0.4"><path class="minus" d="M256 134 h12 M256 156 h12"/></g>
+            <g data-v="fade" data-l="6" data-o="2" data-d="0.4"><path class="tz-ink" style="fill:none;stroke:var(--water);stroke-width:2;stroke-dasharray:3 3" d="M262 126 V170"/></g>
+          </g>
+          <text class="lbl c-heat" x="262" y="194" text-anchor="middle" style="font-size:13px">نور ← الكهربا تعدي</text>
+        </svg>
+      </div></div>
+      <!-- line 8: balloon -->
+      <div class="panel" data-v="fade" data-l="8" data-o="-0.1" data-d="0.3"><div class="panel tz-paper" data-v="out" data-l="9" data-o="-0.2" data-d="0.3" style="opacity:1">
+        <svg viewBox="0 0 360 488">
+          <rect class="shade tz-ink" x="300" y="30" width="60" height="420"/><path class="tz-pat-lines" d="M300 30 H360 V450 H300 Z"/>
+          <g data-v="move" data-l="8" data-o="1.0" data-d="1.1" data-dx="150" data-dy="-40">
+            <g data-loop="bob" data-a="3" data-f="2.4"><g transform="translate(110 260)"><use href="#balloon"/></g></g>
+            <g data-v="pop" data-l="8" data-o="0.5" data-d="0.3"><path class="minus" d="M96 236 h8 M112 226 h8 M120 248 h8 M100 256 h8"/></g>
+          </g>
+          <g data-v="move" data-l="8" data-o="0.1" data-d="0.4" data-dx="0" data-dy="-14"><g data-v="move" data-l="8" data-o="0.5" data-d="0.4" data-dx="0" data-dy="14">
+            <path class="ink-f" d="M40 380 C40 330 120 320 150 350 C170 370 150 420 120 430 L60 430 C40 420 40 400 40 380 Z" style="opacity:.85"/>
+            <path class="tz-ink" style="fill:none" d="M60 350 q10 -20 30 -18 M80 340 q14 -18 34 -12"/>
+          </g></g>
+        </svg>
+      </div></div>
+      <!-- line 11: speed counter -->
+      <div class="tz-counter" style="position:absolute;left:10px;top:10px;opacity:0" data-v="fade" data-l="11" data-o="0.4" data-d="0.3"><div data-v="out" data-l="12" data-o="0" data-d="0.3" style="display:flex;gap:6px;align-items:center;background:var(--paper-raised);padding:2px 8px">
+        <span class="num" style="font-size:36px" data-v="count" data-l="11" data-o="0.4" data-d="1.8" data-from="0" data-to="20000">20000</span>
+        <span class="unit">لفة في<br>الدقيقة</span>
+      </div></div>
+      <!-- lines 14–16: the invisible picture, unrolled -->
+      <div class="panel" data-v="fade" data-l="14" data-o="-0.1" data-d="0.35"><div class="panel tz-paper" data-v="out" data-l="17" data-o="-0.2" data-d="0.35" style="opacity:1">
+        <svg viewBox="0 0 360 488">
+          <rect class="drum tz-ink-h" x="40" y="80" width="280" height="250"/>
+          <path class="tz-pat-hatch" d="M40 300 H320 V330 H40 Z"/>
+          <text class="lbl c-drum" x="180" y="66" text-anchor="middle">سطح الدرام مفرود</text>
+          <g id="grid14"></g>
+          <g data-v="move" data-l="14" data-o="0.2" data-d="2.6" data-dx="0" data-dy="208">
+            <g data-v="out" data-l="14" data-o="2.8" data-d="0.3"><path class="beam-glow" d="M40 96 H320"/><path class="beam" d="M40 96 H320"/></g>
+          </g>
+          <g data-v="fade" data-l="15" data-o="1.4" data-d="0.4"><text class="lbl big c-elec" x="180" y="372" text-anchor="middle">رسمة كهربا</text></g>
+        </svg>
+        <div class="tz-counter" style="position:absolute;left:10px;bottom:10px;gap:6px;background:var(--paper-raised);padding:2px 8px;opacity:0" data-v="fade" data-l="16" data-o="0.2" data-d="0.3">
+          <span class="num" style="font-size:40px" data-v="count" data-l="16" data-o="0.3" data-d="1.6" data-from="0" data-to="30">30</span>
+          <span class="unit">مليون نقطة<br>في الصفحة</span>
+        </div>
+      </div></div>
+      <!-- line 18: a hair next to toner grains -->
+      <div class="panel" data-v="fade" data-l="18" data-o="1.2" data-d="0.4"><div class="panel" data-v="out" data-l="19" data-o="-0.2" data-d="0.3" style="opacity:1">
+        <svg viewBox="0 0 360 488">
+          <circle cx="104" cy="104" r="84" class="lit tz-ink-h"/>
+          <clipPath id="mag"><circle cx="104" cy="104" r="82"/></clipPath>
+          <g clip-path="url(#mag)">
+            <path class="tz-f-deep tz-ink" d="M10 40 L200 120 L200 168 L10 88 Z"/>
+            <g data-loop="bob" data-a="1.5" data-f="3" class="ink-f"><circle cx="70" cy="150" r="4"/><circle cx="86" cy="142" r="3.4"/><circle cx="100" cy="158" r="4"/><circle cx="116" cy="148" r="3"/><circle cx="62" cy="136" r="3"/></g>
+          </g>
+          <text class="lbl" x="104" y="204" text-anchor="middle" style="font-size:13px">شعرة واحدة ↔ حبايات تونر</text>
+        </svg>
+      </div></div>
+      <!-- lines 20–21: toner lands on the picture only -->
+      <div class="panel" data-v="fade" data-l="20" data-o="-0.1" data-d="0.35"><div class="panel tz-paper" data-v="out" data-l="22" data-o="-0.2" data-d="0.35" style="opacity:1">
+        <svg viewBox="0 0 360 488">
+          <rect class="drum tz-ink-h" x="40" y="80" width="280" height="250"/>
+          <g id="grid20"></g>
+          <g data-particles data-n="10" data-speed="80" data-dot="pt-toner" data-r="2.4"><path class="stream" d="M180 440 C170 400 150 360 140 330"/><path class="stream" d="M220 440 C230 400 240 360 230 330"/></g>
+          <text class="lbl" x="180" y="66" text-anchor="middle">التونر بيلزق في الرسمة بس</text>
+        </svg>
+      </div></div>
+      <!-- lines 26–27: the smudge -->
+      <div class="panel" data-v="fade" data-l="26" data-o="-0.1" data-d="0.35"><div class="panel tz-paper" data-v="out" data-l="28" data-o="-0.2" data-d="0.35" style="opacity:1">
+        <svg viewBox="0 0 360 488">
+          <path class="paper" style="stroke-width:2" d="M70 50 H290 V440 H70 Z"/>
+          <g id="paperheart" transform="translate(38 70) scale(.78)"></g>
+          <g data-v="fade" data-l="27" data-o="1.2" data-d="0.6"><path style="fill:var(--ink);opacity:.35" d="M110 250 C160 240 230 246 290 260 L290 280 C230 270 160 268 110 276 Z"/></g>
+          <g data-v="move" data-l="27" data-o="0.6" data-d="1.4" data-dx="-170" data-dy="10"><g transform="translate(300 258)"><use href="#finger"/></g></g>
+        </svg>
+      </div></div>
+      <!-- lines 29–33: fuser numbers -->
+      <div class="tz-counter" style="position:absolute;left:10px;top:10px;opacity:0" data-v="fade" data-l="29" data-o="0.2" data-d="0.3"><div data-v="out" data-l="34" data-o="0" data-d="0.3" style="display:flex;gap:6px;align-items:center;background:var(--paper-raised);padding:2px 8px">
+        <span class="num" style="font-size:40px" data-v="count" data-l="29" data-o="0.2" data-d="1.6" data-from="20" data-to="200">200</span><span class="unit">درجة</span>
+      </div></div>
+      <div class="panel" data-v="fade" data-l="31" data-o="0" data-d="0.4"><div class="panel" data-v="out" data-l="34" data-o="-0.2" data-d="0.3" style="opacity:1">
+        <svg viewBox="0 0 360 488">
+          <rect class="lit tz-ink-h" x="236" y="250" width="110" height="160"/>
+          <path class="tz-ink" style="fill:none;stroke-width:2" d="M290 270 V380"/><circle class="hot tz-ink" cx="290" cy="388" r="12"/>
+          <g data-v="grow" class="o-b" data-l="31" data-o="0.4" data-d="0.8"><rect class="hot" x="287" y="306" width="6" height="76"/></g>
+          <path class="tz-ink" style="fill:none" d="M294 286 H308 M294 306 H304"/>
+          <text x="312" y="290" style="font:700 12px var(--font-numeral);fill:var(--heat-text)">230°</text>
+          <text x="308" y="302" style="font:600 9px var(--font-sans);fill:var(--heat-text)">بيولّع</text>
+          <text x="306" y="320" style="font:700 12px var(--font-numeral);fill:var(--ink)">200°</text>
+          <g data-v="pop" data-l="32" data-o="1.2" data-d="0.4"><rect class="lit tz-ink-h" x="236" y="420" width="110" height="40"/><text x="291" y="447" text-anchor="middle" style="font:700 18px var(--font-numeral);fill:var(--ink)">0.1 ث</text></g>
+          <g data-v="pop" data-l="33" data-o="0.6" data-d="0.35"><text class="lbl big c-heat" x="291" y="236" text-anchor="middle">ورقة دافية</text></g>
+        </svg>
+      </div></div>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="4"><p data-words="4">لو فتحت الطابعة، هتلاقي جواها<br>أسطوانة اسمها <span class="tz-k tz-k--part">الدرام</span>.</p></div>
+      <div class="cap" data-cap="5"><p data-words="5">الدرام ده هو <span class="tz-k tz-k--part">قلب الطابعة</span>،<br>وعليه بتترسم الصفحة الأول.</p></div>
+      <div class="cap" data-cap="6"><p data-words="6">وهو معمول من مادة غريبة، بتوصّل الكهربا<br>بس لما <span class="tz-k tz-k--heat">النور</span> يخبط فيها.</p></div>
+      <div class="cap" data-cap="7"><p data-words="7">أول خطوة، الطابعة بتشحن الدرام كله<br><span class="tz-k tz-k--water">كهربا ساكنة</span>.</p></div>
+      <div class="cap" data-cap="8"><p data-words="8">زي <span class="tz-k tz-k--heat">البالونة</span> لما تحكها في شعرك،<br>وتلزق في الحيطة لوحدها.</p></div>
+      <div class="cap" data-cap="9"><p data-words="9">بعدين ييجي دور <span class="tz-k tz-k--heat">الليزر</span>.</p></div>
+      <div class="cap" data-cap="10"><p data-words="10">الليزر بيطلّع شعاع رفيع جدًا،<br>ويخبط في <span class="tz-k tz-k--water">مراية بتلف</span>.</p></div>
+      <div class="cap" data-cap="11"><p data-words="11">المراية دي بتلف بسرعة رهيبة، أكتر من<br><span class="tz-k tz-k--heat">20 ألف لفة</span> في الدقيقة!</p></div>
+      <div class="cap" data-cap="12"><p data-words="12">ومع كل لفة، بتمسح بالليزر<br><span class="em" data-ul="12">سطر كامل</span> على الدرام.</p></div>
+      <div class="cap" data-cap="13"><p data-words="13">والليزر بيقفل ويفتح <span class="tz-k tz-k--heat">ملايين المرات</span>،<br>على حسب الكلام اللي في الصفحة.</p></div>
+      <div class="cap" data-cap="14"><p data-words="14">وكل نقطة الليزر يلمسها،<br>الكهربا اللي فيها <span class="tz-k tz-k--water">تروح</span>.</p></div>
+      <div class="cap" data-cap="15"><p data-words="15">يعني الليزر رسم الصفحة على الدرام،<br>بس رسمة مش باينة، <span class="tz-k tz-k--water">رسمة كهربا</span>.</p></div>
+      <div class="cap" data-cap="16"><p data-words="16">والصفحة الواحدة فيها أكتر من<br><span class="tz-k tz-k--heat">30 مليون نقطة!</span></p></div>
+      <div class="cap" data-cap="17"><p data-words="17">وبعدين ييجي دور <span class="tz-k">التونر</span>.</p></div>
+      <div class="cap" data-cap="18"><p data-words="18">التونر ده بودرة بلاستيك ناعمة جدًا،<br>الحباية فيها <span class="em" data-ul="18">أرفع من الشعرة</span> بكتير.</p></div>
+      <div class="cap" data-cap="19"><p data-words="19">والبودرة دي <span class="tz-k tz-k--water">مشحونة</span> هي كمان،<br>بنفس شحنة الدرام.</p></div>
+      <div class="cap" data-cap="20"><p data-words="20">فبتبعد عن الحتت المشحونة، وبتلزق بس<br>في الحتت اللي <span class="tz-k tz-k--heat">الليزر رسمها</span>.</p></div>
+      <div class="cap" data-cap="21"><p data-words="21">دلوقتي الدرام عليه الصفحة،<br><span class="em" data-ul="21">مرسومة بالبودرة</span>.</p></div>
+      <div class="cap" data-cap="22"><p data-words="22">هنا ييجي دور <span class="tz-k">الورقة</span>.</p></div>
+      <div class="cap" data-cap="23"><p data-words="23">بكرات صغيرة بتسحب الورقة،<br>وتعدّيها تحت الدرام بالظبط.</p></div>
+      <div class="cap" data-cap="24"><p data-words="24">وتحت الورقة أسطوانة تانية، بتشحنها<br><span class="tz-k tz-k--heat">شحنة عكس</span> البودرة.</p></div>
+      <div class="cap" data-cap="25"><p data-words="25">والشحنات العكس بتشد بعض، فالبودرة تتشد<br>من الدرام، و<span class="tz-k">تنط على الورقة</span>.</p></div>
+      <div class="cap" data-cap="26"><p data-words="26">بس الكلام <span class="tz-k tz-k--heat">لسه مش ثابت</span>.</p></div>
+      <div class="cap" data-cap="27"><p data-words="27">لو لمست الورقة دلوقتي،<br>البودرة <span class="tz-k tz-k--heat">هتتمسح</span> في صباعك.</p></div>
+      <div class="cap" data-cap="28"><p data-words="28">عشان كده آخر محطة،<br><span class="tz-k tz-k--heat">الفيوزر</span>.</p></div>
+      <div class="cap" data-cap="29"><p data-words="29">أسطوانتين سخنين جدًا،<br>حوالي <span class="tz-k tz-k--heat">200 درجة!</span></p></div>
+      <div class="cap" data-cap="30"><p data-words="30">بيدوّبوا البلاستيك،<br>ويكبسوه <span class="em" data-ul="30">جوة الورقة</span>.</p></div>
+      <div class="cap" data-cap="31"><p data-words="31">طب ليه الورقة <span class="tz-k tz-k--heat">مبتولعش</span>؟</p></div>
+      <div class="cap" data-cap="32"><p data-words="32">لأنها بتعدي بسرعة جدًا، في <span class="tz-k tz-k--heat">جزء من الثانية</span>،<br>فمبتلحقش تسخن لدرجة إنها تولّع.</p></div>
+      <div class="cap" data-cap="33"><p data-words="33">عشان كده الورقة بتطلع من الطابعة<br><span class="tz-k tz-k--heat">دافية!</span></p></div>
+      <div class="cap" data-cap="34"><p data-words="34">وفي الآخر، <span class="tz-k">شفرة صغيرة</span> بتمسح<br>البودرة اللي فضلت على الدرام.</p></div>
+      <div class="cap" data-cap="35"><p data-words="35">و<span class="tz-k tz-k--heat">لمبة</span> بتمسح الكهربا<br>اللي فضلت عليه.</p></div>
+      <div class="cap" data-cap="36"><p data-words="36">عشان يبقى <span class="tz-k tz-k--part">جاهز</span><br>للصفحة اللي بعدها.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S11 · Speed (37) ═══ -->
+<section class="scene" data-scene="37-37">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <g transform="translate(60 230)"><use href="#printer"/></g>
+        <g id="flypages"></g>
+      </svg>
+      <div class="tz-counter" style="position:absolute;left:10px;top:10px;gap:6px;background:var(--paper-raised);padding:2px 8px" data-v="fade" data-l="37" data-o="0.2" data-d="0.3">
+        <span class="num" style="font-size:44px" data-v="count" data-l="37" data-o="0.2" data-d="2.4" data-from="0" data-to="20">20</span>
+        <span class="unit">ورقة<br>في الدقيقة</span>
+      </div>
+    </div>
+    <div class="rule"></div>
+    <div class="caps"><div class="cap" data-cap="37"><p data-words="37">والطابعات السريعة بتعمل كل ده لأكتر من<br><span class="tz-k tz-k--heat">20 ورقة</span> في الدقيقة!</p></div></div>
+  </div>
+</section>
+
+<!-- ═══ S12 · The old photocopier (38–39) ═══ -->
+<section class="scene" data-scene="38-39">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <rect class="lit tz-ink-h" x="30" y="120" width="300" height="300"/>
+        <path class="tz-pat-hatch" d="M30 400 H330 V420 H30 Z"/>
+        <rect class="tz-f-water tz-ink" x="40" y="110" width="280" height="10" style="opacity:.7"/>
+        <rect class="paper" x="70" y="104" width="200" height="6"/>
+        <text class="lbl" x="170" y="92" text-anchor="middle">الورقة الأصلية</text>
+        <!-- lamp scanning under the glass -->
+        <g data-v="fade" data-l="39" data-o="0" data-d="0.3">
+          <path class="beam-glow" style="stroke:#f3d77a" d="M80 200 H300 L172 262"/><path class="beam" style="stroke:#c9a227" d="M80 200 H300 L172 262"/>
+          <rect class="tz-f-water tz-ink" x="294" y="188" width="10" height="24" transform="rotate(-30 299 200)"/>
+          <g data-v="move" data-l="39" data-o="0.2" data-d="2.4" data-dx="180" data-dy="0">
+            <rect class="lamp" x="72" y="128" width="20" height="10"/>
+            <path class="beam-glow" style="stroke:#f3d77a" d="M82 120 V200"/><path class="beam" style="stroke:#c9a227" d="M82 120 V200"/>
+          </g>
+        </g>
+        <g transform="translate(130 230) scale(.6)"><use href="#sec-drum" transform="translate(-130 -170)"/></g>
+        <text class="lbl c-drum" x="180" y="380" text-anchor="middle">نفس الدرام</text>
+      </svg>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="38"><p data-words="38">وماكينة التصوير القديمة،<br>بتشتغل <span class="em" data-ul="38">بنفس الفكرة</span> بالظبط.</p></div>
+      <div class="cap" data-cap="39"><p data-words="39">بس بدل الليزر، بتستخدم <span class="tz-k tz-k--heat">نور</span><br>بيتعكس من الورقة الأصلية.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S13 · Outro (40) ═══ -->
+<section class="scene" data-scene="40-40">
+  <div class="corners"></div>
+  <div class="sheet" style="padding:20px 18px;display:grid;align-content:start;gap:10px">
+    <span class="tz-brand"><svg class="tz-watch" style="--watch-size:18px" viewBox="0 0 48 54"><rect class="crown" x="20" y="0" width="8" height="3"/><rect class="crown" x="23" y="3" width="2" height="4"/><circle class="arc" cx="24" cy="30" r="20"/><circle class="core" cx="24" cy="30" r="6"/></svg><span class="tz-brand__name" style="font-size:10px">طب إزاي؟</span></span>
+    <h2 style="margin:0;font:600 20px/1.5 var(--font-sans);text-align:right">إزاي طابعة الليزر بتطبع من غير حبر؟</h2>
+    <div style="background:var(--panel)">
+      <svg viewBox="0 0 360 380" style="display:block;height:170px;width:auto;margin-inline:auto"><use href="#section"/>
+        <g style="font:600 15px var(--font-sans)">
+          <circle cx="104" cy="150" r="12" class="lit tz-ink"/><text x="104" y="155" text-anchor="middle">1</text>
+          <circle cx="210" cy="96" r="12" class="lit tz-ink"/><text x="210" y="101" text-anchor="middle">2</text>
+          <circle cx="306" cy="210" r="12" class="lit tz-ink"/><text x="306" y="215" text-anchor="middle">3</text>
+          <circle cx="210" cy="330" r="12" class="lit tz-ink"/><text x="210" y="335" text-anchor="middle">4</text>
+          <circle cx="56" cy="340" r="12" class="lit tz-ink"/><text x="56" y="345" text-anchor="middle">5</text>
+        </g>
+      </svg>
+    </div>
+    <ol class="tz-legend" style="font-size:11px;line-height:18px">
+      <li><span class="tz-num">1</span>الشحن بالكهربا</li>
+      <li><span class="tz-num">2</span>الليزر بيرسم</li>
+      <li><span class="tz-num">3</span>التونر بيلزق</li>
+      <li><span class="tz-num">4</span>الورقة بتشده</li>
+      <li><span class="tz-num">5</span>الفيوزر بيثبّته</li>
+    </ol>
+    <div class="tz-counter" style="justify-self:end"><span class="num" style="font-size:44px">30</span><span class="unit">مليون نقطة<br>في كل صفحة</span></div>
+    <div class="tz-ask" style="margin:6px;padding:10px;gap:2px" data-v="pop" data-l="40" data-o="0" data-d="0.5">
+      <span class="tz-ask__lead" style="font-size:15px" data-words="40">قولولنا، عايزين تعرفوا</span>
+      <span class="tz-ask__line" style="font-size:19px">طب إزاي <span class="tz-ask__blank" style="min-width:3.5em"></span>؟</span>
+    </div>
+  </div>
+</section>
+
+</div>
+<script src="timing.js"></script>
+<script src="../../design-system/components/bundle.js"></script>
+<script>
+  TebEzay.patterns();
+  // Build repeated marks before the engine reads the page.
+  (function () {
+    var NS = "http://www.w3.org/2000/svg";
+    function el(tag, attrs, parent) { var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; }
+    // minus signs around the drum on line 7
+    var ring = document.getElementById("minusring");
+    for (var i = 0; ring && i < 16; i++) {
+      var a = i / 16 * Math.PI * 2, cx = 183 + Math.cos(a) * 100, cy = 327 + Math.sin(a) * 100;
+      var g = el("g", { "data-v": "pop", "data-l": "7", "data-o": (0.6 + i * 0.07).toFixed(2), "data-d": "0.25" }, ring);
+      el("path", { "class": "minus", d: "M" + (cx - 6) + " " + cy + " h12" }, g);
+    }
+    // heart on a 9×8 grid: laser erases its cells (line 14), toner fills them (line 20)
+    var heart = [".........", ".XX...XX.", "XXXX.XXXX", "XXXXXXXXX", ".XXXXXXX.", "..XXXXX..", "...XXX...", "....X...."];
+    function grid(id, mode) {
+      var g = document.getElementById(id), x0 = 58, y0 = 96, c = 30, w = 26;
+      heart.forEach(function (row, r) {
+        row.split("").forEach(function (ch, k) {
+          var x = x0 + k * c, y = y0 + r * w, inH = ch === "X";
+          if (mode === "erase") {
+            var m = el("g", inH ? { "data-v": "out", "data-l": "14", "data-o": (0.2 + r * 0.33).toFixed(2), "data-d": "0.25" } : {}, g);
+            el("path", { "class": "minus", d: "M" + (x - 6) + " " + y + " h12" }, m);
+            if (inH) { var gh = el("g", { "data-v": "fade", "data-l": "14", "data-o": (0.25 + r * 0.33).toFixed(2), "data-d": "0.3" }, g); el("rect", { x: x - 15, y: y - 13, width: 30, height: 26, style: "fill:var(--paper);opacity:.28" }, gh); }
+          } else if (mode === "toner") {
+            if (inH) { var t = el("g", { "data-v": "pop", "data-l": "20", "data-o": (0.6 + (r + k) * 0.06).toFixed(2), "data-d": "0.25" }, g); el("circle", { "class": "pt-toner", cx: x, cy: y, r: 7 }, t); }
+            else el("path", { "class": "minus", d: "M" + (x - 6) + " " + y + " h12" }, g);
+          } else if (mode === "paper" && inH) {
+            el("circle", { "class": "pt-toner", cx: x + 12, cy: y + 10, r: 7 }, g);
+          }
+        });
+      });
+    }
+    grid("grid14", "erase"); grid("grid20", "toner"); grid("paperheart", "paper");
+    // charge ring on the drum (line 7) in drawing coordinates
+    var r7 = document.getElementById("ring7");
+    for (var j = 0; j < 18; j++) {
+      var an = j / 18 * Math.PI * 2, hx = 180 + Math.cos(an) * 72, hy = 220 + Math.sin(an) * 72;
+      var gg = el("g", { "data-v": "pop", "data-l": "7", "data-o": (0.5 + j * 0.06).toFixed(2), "data-d": "0.25" }, r7);
+      el("path", { "class": "minus", style: "stroke-width:2", d: "M" + (hx - 4) + " " + hy + " h8" }, gg);
+    }
+    // halos: [from line, to line, shape, label, x, y, colour]
+    var H = [[4, 7, ["circle", { cx: 180, cy: 220, r: 70 }], "الدرام", 180, 304, "c-drum"],
+             [7, 9, ["circle", { cx: 126, cy: 166, r: 22 }], "بكرة الشحن", 112, 136, "c-elec"],
+             [9, 11, ["rect", { x: 220, y: 22, width: 130, height: 62 }], "الليزر", 286, 100, "c-heat"],
+             [11, 12, ["circle", { cx: 300, cy: 116, r: 22 }], "المراية", 300, 150, "c-elec"],
+             [12, 14, ["path", { d: "M124 196 A62 62 0 0 1 236 196" }], "سطر سطر", 180, 146, "c-heat"],
+             [17, 20, ["rect", { x: 236, y: 170, width: 116, height: 136 }], "التونر", 300, 166, ""],
+             [22, 24, ["rect", { x: 10, y: 274, width: 340, height: 18 }], "الورقة", 300, 268, ""],
+             [24, 26, ["circle", { cx: 180, cy: 300, r: 19 }], "بكرة الشحن العكس", 180, 336, "c-heat"],
+             [28, 34, ["path", { d: "M56 238 A24 24 0 1 1 55.9 238 M56 282 A24 24 0 1 1 55.9 282" }], "الفيوزر", 104, 246, "c-heat"],
+             [34, 35, ["path", { d: "M100 208 L128 236" }], "الشفرة", 96, 250, ""],
+             [35, 36, ["rect", { x: 108, y: 188, width: 22, height: 17 }], "اللمبة", 118, 182, ""]];
+    var hz = document.getElementById("halos");
+    H.forEach(function (h) {
+      var o = el("g", { "data-v": "out", "data-l": String(h[1]), "data-o": "-0.1", "data-d": "0.3" }, hz);
+      var f = el("g", { "data-v": "fade", "data-l": String(h[0]), "data-o": "0.5", "data-d": "0.4" }, o);
+      var pl = el("g", { "data-loop": "pulse", "data-f": "5", "data-a": "0.03" }, f);
+      var at = h[2][1]; at["class"] = "halo"; el(h[2][0], at, pl);
+      var tx = el("text", { "class": "callout " + h[6], x: h[4], y: h[5], "text-anchor": "middle" }, f); tx.textContent = h[3];
+    });
+
+    // pages flying out on line 37
+    var fp = document.getElementById("flypages");
+    for (var p = 0; p < 6; p++) {
+      var mv = el("g", { "data-v": "move", "data-l": "37", "data-o": (0.3 + p * 0.45).toFixed(2), "data-d": "0.9", "data-dx": (-90 - p * 8).toString(), "data-dy": (-150 + p * 22).toString() }, fp);
+      var fd = el("g", { "data-v": "fade", "data-l": "37", "data-o": (0.3 + p * 0.45).toFixed(2), "data-d": "0.15" }, mv);
+      el("path", { "class": "paper", d: "M110 300 L190 300 L186 312 L114 312 Z" }, fd);
+    }
+  })();
+</script>
+<script>
+  // two extra loops this video needs: a blinking beam and a sweeping reflected beam
+  (function () {
+    var blink = document.querySelectorAll('[data-loop="blink"]'), sweep = document.querySelectorAll('[data-loop="sweep"]');
+    var base = window.renderAt;
+    window.__extra = function (t) {
+      blink.forEach(function (e) { e.style.opacity = Math.sin(t * +e.dataset.f * 6.283) > -0.3 ? 1 : 0.15; });
+      sweep.forEach(function (e) { var a = ((t * +e.dataset.speed) % 1) * 24 - 12; e.setAttribute("transform", "rotate(" + a.toFixed(2) + " 300 116)"); });
+    };
+  })();
+</script>
+<script src="../engine.js"></script>
+<script>
+  // chain the extra loops onto the engine's renderAt
+  (function () { var r = window.renderAt; window.renderAt = function (t) { r(t); window.__extra(t); }; renderAt(window.VIDEO_END); })();
+</script>
+</body>
+</html>

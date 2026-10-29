@@ -308,3 +308,36 @@ label.tz-ask__line { white-space: nowrap; }
   .tz-bubble, .tz-steam, .tz-spin, .tz-wave, .tz-ask__blank::after { animation: none; }
   .tz-card__shell, .tz-card__inner, .tz-card__play, .tz-card__title span { transition: none; }
 }
+
+/* ── Iso3D: faces of the 3D isometric cutaway. Light comes from the top-left:
+   top = lightest, +y (left) = khaki, +x (right) = khaki-deep + hatch. ───────── */
+.iso-top   { fill: var(--paper-raised); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.iso-y     { fill: var(--khaki); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.iso-x     { fill: var(--khaki-deep); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.iso-wall  { fill: color-mix(in srgb, var(--khaki) 55%, var(--paper)); stroke: var(--ink); stroke-width: 1.6; }
+.iso-wall2 { fill: color-mix(in srgb, var(--khaki) 80%, var(--paper)); stroke: var(--ink); stroke-width: 1.6; }
+.iso-floor { fill: color-mix(in srgb, var(--paper-raised) 60%, var(--paper)); stroke: var(--ink); stroke-width: 1.6; }
+.iso-steel { fill: color-mix(in srgb, var(--khaki) 35%, var(--paper-raised)); stroke: var(--ink); stroke-width: 1.4; }
+.iso-glass { fill: color-mix(in srgb, var(--water-body) 45%, var(--paper-raised)); stroke: var(--ink); stroke-width: 1.3; }
+.iso-water { fill: var(--water-body); stroke: var(--water); stroke-width: 1.2; }
+.iso-water-side { fill: var(--water); stroke: var(--ink); stroke-width: 1.2; }
+.iso-part     { fill: var(--olive); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.iso-part-x   { fill: color-mix(in srgb, var(--olive) 70%, var(--ink)); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.iso-part-top { fill: color-mix(in srgb, var(--olive) 55%, var(--paper)); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.iso-hot      { fill: var(--heat); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.iso-hot-top  { fill: var(--heat-soft); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.iso-ink   { fill: var(--ink); }
+.iso-wire  { fill: none; stroke: var(--ink); stroke-width: .8; opacity: .55; }
+.iso-wire-h { fill: none; stroke: var(--ink); stroke-width: 1.6; }
+.iso-mesh  { fill: none; stroke: var(--ink); stroke-width: 1.2; stroke-dasharray: 2 2; }
+.iso-pipe-o { fill: none; stroke: var(--ink); stroke-width: 8; stroke-linejoin: round; stroke-linecap: round; }
+.iso-pipe-i { fill: none; stroke: color-mix(in srgb, var(--water-body) 40%, var(--paper-raised)); stroke-width: 5; stroke-linejoin: round; stroke-linecap: round; }
+.iso-pipe-dirty { fill: none; stroke: color-mix(in srgb, var(--khaki-deep) 70%, var(--paper)); stroke-width: 5; stroke-linejoin: round; stroke-linecap: round; }
+.iso-heat  { fill: none; stroke: var(--heat); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+.iso-heat-glow { fill: none; stroke: var(--heat-soft); stroke-width: 13; stroke-linecap: round; stroke-linejoin: round; opacity: .85; }
+.iso-jet   { fill: none; stroke: var(--water); stroke-width: 1.8; stroke-dasharray: 6 6; stroke-linecap: round; }
+.iso-halo  { fill: none; stroke: #e2a92c; stroke-width: 2.5; }
+.iso-label { font: 700 12px var(--font-sans); fill: var(--c, var(--ink)); paint-order: stroke; stroke: var(--paper); stroke-width: 4px; stroke-linejoin: round; }
+
+/* ── English pages (Here's the Deal): <html dir="ltr"> flips every component to left-to-right ── */
+[dir="ltr"] :is(.tz-frame, .tz-callout__chip, .tz-counter, .tz-brand, .tz-legend, .tz-ask, .tz-card) { direction: ltr; }

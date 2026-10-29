@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="fonts.css">
+<style>
+  html, body { margin: 0; width: 720px; height: 1280px; overflow: hidden; background: #8fb6dc; }
+  canvas { position: absolute; inset: 0; }
+  .ov { position: absolute; left: 0; right: 0; text-align: center; font-family: "Lalezar", sans-serif; color: #fff; pointer-events: none;
+        -webkit-text-stroke: 10px #111; paint-order: stroke fill; }
+  #word { top: 300px; font-size: 76px; line-height: 1; }
+  #num { top: 400px; font-size: 92px; line-height: 1; direction: rtl; }
+  .lbl { position: absolute; font-family: "Lalezar", sans-serif; font-size: 34px; color: #fff; -webkit-text-stroke: 7px #111; paint-order: stroke fill; white-space: nowrap; translate: -50% -100%; }
+</style>
+</head>
+<body>
+<div class="ov" id="word" hidden></div>
+<div class="ov" id="num" hidden></div>
+<div id="labels" hidden></div>
+<script src="three-r128.min.js"></script>
+<script>
+const W = 720, H = 1280;
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, k) => a + (b - a) * k;
+const smooth = k => { k = clamp(k); return k * k * (3 - 2 * k); };
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+
+const renderer = new THREE.WebGLRenderer({ antialias: !/noaa/.test(location.search), preserveDrawingBuffer: true });
+renderer.setSize(W, H);
+renderer.setPixelRatio(/half/.test(location.search) ? .5 : 1);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.localClippingEnabled = true;
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+document.body.prepend(renderer.domElement);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(42, W / H, 0.05, 400);
+
+// ── textures drawn on canvas ───────────────────────────────────
+function canvasTex(w, h, draw, rep) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  draw(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c);
+  t.encoding = THREE.sRGBEncoding;
+  if (rep) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep[0], rep[1]); }
+  t.anisotropy = 4;
+  return t;
+}
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const skyTex = canvasTex(4, 512, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#4f86c6'); gr.addColorStop(.55, '#9cc2e4'); gr.addColorStop(1, '#dfeaf2'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
+scene.background = skyTex;
+const dirtTex = canvasTex(256, 256, (g, w, h) => { g.fillStyle = '#6b4226'; g.fillRect(0, 0, w, h); for (let i = 0; i < 2600; i++) { const v = rnd(); g.fillStyle = v < .5 ? 'rgba(40,22,10,.45)' : 'rgba(150,100,60,.35)'; g.fillRect(rnd() * w, rnd() * h, 1 + rnd() * 4, 1 + rnd() * 3); } }, [3, 1]);
+const grassTex = canvasTex(256, 256, (g, w, h) => { for (let i = 0; i < 8; i++) { g.fillStyle = i % 2 ? '#6cc35c' : '#5bb34d'; g.fillRect(0, i * h / 8, w, h / 8); } for (let i = 0; i < 1500; i++) { g.fillStyle = 'rgba(30,90,30,.12)'; g.fillRect(rnd() * w, rnd() * h, 1, 2); } }, [6, 6]);
+const asphaltTex = canvasTex(256, 256, (g, w, h) => { g.fillStyle = '#8d8f93'; g.fillRect(0, 0, w, h); for (let i = 0; i < 3000; i++) { g.fillStyle = rnd() < .5 ? 'rgba(60,60,60,.25)' : 'rgba(200,200,200,.18)'; g.fillRect(rnd() * w, rnd() * h, 1, 1); } }, [8, 2]);
+const facadeTex = canvasTex(256, 256, (g, w, h) => { g.fillStyle = '#e6d2a8'; g.fillRect(0, 0, w, h); for (let i = 0; i < 1800; i++) { g.fillStyle = 'rgba(120,90,50,.06)'; g.fillRect(rnd() * w, rnd() * h, 2, 2); } }, [3, 5]);
+
+const FAST = /fast/.test(location.search), PHONG = /phong/.test(location.search);
+const M = (color, o = {}) => {
+  if (FAST || PHONG) {
+    const p = Object.assign({ color }, o); const metal = p.metalness || 0, rough = p.roughness == null ? .85 : p.roughness;
+    delete p.metalness; delete p.roughness;
+    if (PHONG) return new THREE.MeshPhongMaterial(Object.assign(p, { shininess: metal > .3 ? 60 : 8, specular: metal > .3 ? 0x777777 : 0x111111 }));
+    return new THREE.MeshLambertMaterial(p);
+  }
+  return new THREE.MeshStandardMaterial(Object.assign({ color, roughness: .85, metalness: 0 }, o));
+};
+const mat = {
+  dirt: M(0xffffff, { map: dirtTex }), grass: M(0xffffff, { map: grassTex }), asphalt: M(0xffffff, { map: asphaltTex }),
+  side: M(0xbdbab2), facade: M(0xffffff, { map: facadeTex }), inner: M(0xf3ecdc), slab: M(0xd9d5cc),
+  win: M(0x1f3f6e, { roughness: .3, metalness: .2 }), frame: M(0xf5f1e8), shutter: M(0x7a4b2a), roof: M(0xc0532d),
+  white: M(0xffffff), line: M(0xf4f4f4), trunk: M(0x6b4a2b), leaf: M(0x4f9a3f),
+  motor: M(0x2f6fb5, { roughness: .45, metalness: .3, side: THREE.DoubleSide }), iron: M(0x55595e, { roughness: .5, metalness: .5, side: THREE.DoubleSide }),
+  brass: M(0xc19a55, { roughness: .35, metalness: .7, side: THREE.DoubleSide }), steel: M(0xb9bec4, { roughness: .35, metalness: .7 }),
+  copper: M(0xc56a2d, { roughness: .35, metalness: .7, emissive: 0x000000 }), pvc: M(0xf0f0f0, { roughness: .4, transparent: true, opacity: .32, depthWrite: false }),
+  water: M(0x3fa7e8, { roughness: .15, metalness: 0, transparent: true, opacity: .85, emissive: 0x0b3a5a }), main: M(0x3a4b5c, { roughness: .6 }),
+  gauge: M(0xffffff, { roughness: .4 }), black: M(0x222222), counter: M(0xdad4c8), sink: M(0xdfe3e6, { metalness: .6, roughness: .3 })
+};
+// cutaway plane for the pump casing: keeps z < cut
+const cutPlane = new THREE.Plane(V(0, 0, -1), 100);
+for (const k of ['motor', 'iron', 'brass']) mat[k].clippingPlanes = [cutPlane];
+
+function box(w, h, d, m, x, y, z, parent = scene, shadow = true) {
+  const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m);
+  o.position.set(x, y, z); o.castShadow = shadow; o.receiveShadow = true; parent.add(o); return o;
+}
+function cyl(r, len, m, parent, axis = 'y', seg = 32, r2) {
+  const o = new THREE.Mesh(new THREE.CylinderGeometry(r2 == null ? r : r2, r, len, seg, 1, false), m);
+  if (axis === 'x') o.rotation.z = Math.PI / 2; if (axis === 'z') o.rotation.x = Math.PI / 2;
+  o.castShadow = true; o.receiveShadow = true; parent.add(o); return o;
+}
+
+// ── lights ─────────────────────────────────────────────────────
+scene.add(new THREE.HemisphereLight(0xdfefff, 0x8a7a5a, .75));
+const sun = new THREE.DirectionalLight(0xfff3df, 1.35);
+sun.position.set(-14, 26, 18); sun.castShadow = true;
+sun.shadow.mapSize.set(/sm1/.test(location.search) ? 1024 : 2048, /sm1/.test(location.search) ? 1024 : 2048); if (/noshadow/.test(location.search)) renderer.shadowMap.enabled = false;
+Object.assign(sun.shadow.camera, { left: -22, right: 22, top: 22, bottom: -12, near: 1, far: 80 });
+sun.shadow.bias = -0.0006;
+scene.add(sun);
+const fill = new THREE.PointLight(0xfff0d8, .5, 12); fill.position.set(3.5, 2.4, -1); scene.add(fill);
+
+// ── ground block with a pit cut into the street ────────────────
+const GX0 = -26, GX1 = 28, GZ0 = -30, GZ1 = 12, GD = 3.2;
+const PIT = { x0: 1.6, x1: 6.6, z0: 0.6, z1: 7.0, y0: -2.3 };
+function dirtBox(x0, x1, z0, z1, y0 = -GD, y1 = 0) { const b = box(x1 - x0, y1 - y0, z1 - z0, mat.dirt, (x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2, scene, false); b.material = [mat.dirt, mat.dirt, mat.dirt, mat.dirt, mat.dirt, mat.dirt]; return b; }
+dirtBox(GX0, PIT.x0, GZ0, GZ1); dirtBox(PIT.x1, GX1, GZ0, GZ1);
+dirtBox(PIT.x0, PIT.x1, GZ0, PIT.z0); dirtBox(PIT.x0, PIT.x1, PIT.z1, GZ1); dirtBox(PIT.x0, PIT.x1, PIT.z0, PIT.z1, -GD, PIT.y0);
+// surface bands (grass lot, sidewalk, street, sidewalk, grass) laid over the dirt, skipping the pit
+const bands = [[GZ0, 0, mat.grass, .02], [0, 2, mat.side, .16], [2, 8, mat.asphalt, .02], [8, 9.6, mat.side, .16], [9.6, GZ1, mat.grass, .02]];
+function surface(x0, x1, z0, z1) {
+  for (const [b0, b1, m, h] of bands) { const a = Math.max(z0, b0), b = Math.min(z1, b1); if (b <= a) continue; box(x1 - x0, h, b - a, m, (x0 + x1) / 2, h / 2, (a + b) / 2, scene, false); }
+}
+surface(GX0, PIT.x0, GZ0, GZ1); surface(PIT.x1, GX1, GZ0, GZ1); surface(PIT.x0, PIT.x1, GZ0, PIT.z0); surface(PIT.x0, PIT.x1, PIT.z1, GZ1);
+for (let x = GX0 + 1; x < GX1; x += 4) if (x + 2 < PIT.x0 || x > PIT.x1) box(2, .03, .18, mat.line, x + 1, .03, 5, scene, false);
+
+// street main pipe crossing the pit
+const mainPipe = cyl(.32, GX1 - GX0, mat.main, scene, 'x'); mainPipe.position.set((GX0 + GX1) / 2, -1.3, 4.6);
+const mainWater = cyl(.24, PIT.x1 - PIT.x0 + .02, mat.water, scene, 'x'); mainWater.position.set((PIT.x0 + PIT.x1) / 2, -1.3, 4.6); mainWater.visible = false;
+
+// ── apartment block, front wall cut open on the right ──────────
+const B = { x0: -4, x1: 5.6, z0: -7, z1: 0, floors: 5, fh: 3 };
+const BH = B.floors * B.fh;
+box(B.x1 - B.x0, BH, .3, mat.inner, (B.x0 + B.x1) / 2, BH / 2, B.z0 + .15);                       // back wall
+box(.3, BH + .6, B.z1 - B.z0, mat.facade, B.x1 - .15, (BH + .6) / 2, (B.z0 + B.z1) / 2);           // right wall
+box(.3, BH + .6, B.z1 - B.z0, mat.facade, B.x0 + .15, (BH + .6) / 2, (B.z0 + B.z1) / 2);           // left wall
+for (let f = 0; f <= B.floors; f++) box(B.x1 - B.x0, .28, B.z1 - B.z0, mat.slab, (B.x0 + B.x1) / 2, f * B.fh + .14, (B.z0 + B.z1) / 2);
+box(B.x1 - B.x0 + .3, .6, .3, mat.facade, (B.x0 + B.x1) / 2, BH + .55, B.z1 - .15);                // parapet
+const CUT_X = 1.0;                                                                                   // front wall stops here
+box(CUT_X - B.x0, BH, .3, mat.facade, (B.x0 + CUT_X) / 2, BH / 2, B.z1 - .15);
+for (let f = 0; f < B.floors; f++) {
+  const y = f * B.fh;
+  if (f === 0) { box(1.3, 2.3, .1, mat.win, -2.4, 1.15 + .14, B.z1 + .02); box(1.5, .14, .2, mat.frame, -2.4, 2.45, B.z1 + .05); }
+  else for (const x of [-2.6, -.6]) {
+    box(1.1, 1.4, .08, mat.win, x, y + 1.6, B.z1 + .02);
+    box(1.3, .12, .2, mat.frame, x, y + .86, B.z1 + .06); box(1.3, .12, .2, mat.frame, x, y + 2.34, B.z1 + .06);
+    box(.38, 1.5, .06, mat.shutter, x - .78, y + 1.6, B.z1 + .05); box(.38, 1.5, .06, mat.shutter, x + .78, y + 1.6, B.z1 + .05);
+  }
+  for (const z of [-5.2, -2.2]) { box(.08, 1.4, 1.1, mat.win, B.x1 + .02, y + 1.6, z); box(.2, .12, 1.3, mat.frame, B.x1 + .06, y + .86, z); }
+}
+// interior: a partition and a kitchen counter with a tap on every floor (only the top one matters)
+for (let f = 0; f < B.floors; f++) box(.12, B.fh - .3, 3.2, mat.inner, -.2, f * B.fh + B.fh / 2, -5.3, scene);
+const TOP = (B.floors - 1) * B.fh;
+box(1.8, .9, 1.0, mat.counter, 3.0, TOP + .28 + .45, -5.9);
+box(.7, .06, .5, mat.sink, 3.0, TOP + .28 + .93, -5.8);
+const tapSpout = V(3.0, TOP + 1.75, -5.75);
+
+// neighbours: low houses with red roofs, a few trees
+function house(x, z, w, d, h, rot = 0, col = 0xe9dcc0) {
+  const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = rot; scene.add(g);
+  box(w, h, d, M(col), 0, h / 2, 0, g);
+  const roof = new THREE.Mesh(new THREE.CylinderGeometry(.01, w * .78, 1.6, 4, 1), mat.roof);
+  roof.rotation.y = Math.PI / 4; roof.scale.set(1, 1, d / w); roof.position.y = h + .8; roof.castShadow = true; g.add(roof);
+  for (let i = 0; i < 3; i++) for (let j = 0; j < 2; j++) box(.8, .9, .05, mat.win, -w / 3 + i * w / 3, 1.2 + j * 2.2, d / 2 + .03, g, false);
+}
+house(-11, -6, 6, 5, 5); house(-16, -18, 7, 6, 5.5, .1, 0xdfd3bb); house(12, -6, 6, 6, 5, 0, 0xe2d6c4); house(13, -19, 7, 5, 5.5, -.1); house(-2, -22, 7, 5, 5, 0, 0xd8cbb1);
+for (const [x, z] of [[-7, 10.5], [13, 10.6], [17, 11], [-15, 10.8], [9, -2], [-8, -13]]) { const t = cyl(.15, 1.6, mat.trunk, scene); t.position.set(x, .8, z); const l = new THREE.Mesh(new THREE.SphereGeometry(1.1, 16, 12), mat.leaf); l.position.set(x, 2.3, z); l.castShadow = true; scene.add(l); }
+
+// ── the pump: motor (left) + volute (right), axis along x ──────
+const PZ = -3.2, PY = .78;
+const pump = new THREE.Group(); pump.position.set(2.75, PY, PZ); scene.add(pump);
+box(1.9, .1, .7, mat.iron, .05, -.43, 0, pump);                                        // base plate
+const shell = cyl(.33, .9, mat.motor, pump, 'x', 40); shell.position.x = -.4;
+for (let i = 0; i < 9; i++) { const f = new THREE.Mesh(new THREE.TorusGeometry(.335, .022, 8, 40), mat.motor); f.rotation.y = Math.PI / 2; f.position.x = -.78 + i * .095; pump.add(f); }
+const fanCover = cyl(.3, .22, mat.iron, pump, 'x', 32); fanCover.position.x = -.96;
+box(.18, .5, .5, mat.motor, -.4, -.25, 0, pump);                                       // motor feet
+const termBox = box(.26, .14, .22, mat.motor, -.3, .4, 0, pump);
+// inside the motor
+const coils = new THREE.Group(); pump.add(coils); coils.position.x = -.4;
+for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; const c = new THREE.Mesh(new THREE.BoxGeometry(.62, .07, .06), mat.copper); c.position.set(0, Math.cos(a) * .25, Math.sin(a) * .25); c.rotation.x = -a; coils.add(c); }
+const rotor = new THREE.Group(); pump.add(rotor);
+const rotorCore = cyl(.17, .58, mat.steel, rotor, 'x', 24); rotorCore.position.x = -.4;
+for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; const s = box(.6, .02, .03, mat.copper, -.4, Math.cos(a) * .172, Math.sin(a) * .172, rotor, false); s.rotation.x = -a; }
+const shaft = cyl(.04, 1.45, mat.steel, rotor, 'x', 16); shaft.position.x = -.12;
+// volute + impeller
+const volute = cyl(.4, .32, mat.brass, pump, 'x', 48); volute.position.x = .42;
+const voluteCap = cyl(.17, .16, mat.brass, pump, 'x', 32); voluteCap.position.x = .64;
+const inletStub = cyl(.1, .3, mat.brass, pump, 'x', 24); inletStub.position.x = .82;
+const outletStub = cyl(.1, .32, mat.brass, pump, 'y', 24); outletStub.position.set(.42, .5, 0);
+const impeller = new THREE.Group(); impeller.position.x = .42; pump.add(impeller);
+const hub = cyl(.08, .14, mat.steel, impeller, 'x', 20);
+const disc = cyl(.33, .02, mat.steel, impeller, 'x', 40); disc.position.x = -.07;
+for (let v = 0; v < 6; v++) for (let s = 0; s < 4; s++) {
+  const a = v / 6 * Math.PI * 2 + s * .28, r = .1 + s * .065;
+  const b = box(.12, .025, .08, mat.steel, 0, Math.cos(a) * r, Math.sin(a) * r, impeller, false);
+  b.rotation.x = -a - .9;
+}
+// check valve on the riser and the pressure switch with its gauge
+const CV = V(3.17, 1.75, PZ);
+const valveBody = cyl(.17, .36, mat.brass, scene, 'y', 32); valveBody.position.copy(CV);
+const flap = new THREE.Group(); flap.position.set(CV.x, CV.y - .02, CV.z); scene.add(flap);
+const flapPlate = new THREE.Mesh(new THREE.CylinderGeometry(.12, .12, .02, 24), mat.steel); flapPlate.position.set(0, 0, 0); flap.add(flapPlate);
+const gaugeAt = V(3.17, 2.35, PZ);
+const gauge = cyl(.12, .05, mat.gauge, scene, 'z', 32); gauge.position.copy(gaugeAt);
+const gaugeRim = new THREE.Mesh(new THREE.TorusGeometry(.12, .015, 8, 32), mat.steel); gaugeRim.position.copy(gaugeAt); gaugeRim.position.z += .026; scene.add(gaugeRim);
+const needle = box(.09, .012, .01, mat.black, 0, 0, 0, scene, false); needle.geometry.translate(.04, 0, 0); needle.position.set(gaugeAt.x, gaugeAt.y, gaugeAt.z + .03);
+const pswitch = box(.18, .16, .14, M(0x8c8f94, { roughness: .5 }), 3.42, 2.3, PZ);
+// wiring from the switch to the motor
+const wireCurve = new THREE.CatmullRomCurve3([V(3.42, 2.22, PZ), V(3.3, 1.2, PZ + .25), V(2.6, 1.3, PZ + .2), V(2.45, PY + .47, PZ)]);
+scene.add(new THREE.Mesh(new THREE.TubeGeometry(wireCurve, 40, .015, 6), mat.black));
+
+// ── water route: main → service pipe → pump → riser → top-floor tap ─
+const RX = 5.0;
+const route = [
+  V(3.9, -1.3, 4.6), V(3.9, -1.3, 1.0), V(3.9, PY, 1.0), V(3.9, PY, PZ), V(3.6, PY, PZ),          // in
+  V(3.17, PY, PZ), V(3.17, PY + .5, PZ), V(3.17, 2.6, PZ),                                         // through the pump, up past the valve
+  V(RX, 2.6, PZ), V(RX, TOP + 2.1, PZ), V(RX, TOP + 2.1, -5.75), V(3.0, TOP + 2.1, -5.75), V(3.0, TOP + 1.8, -5.75)
+];
+const path = new THREE.CurvePath(); for (let i = 1; i < route.length; i++) path.add(new THREE.LineCurve3(route[i - 1], route[i]));
+const SEG = 900;
+const pipeMesh = new THREE.Mesh(new THREE.TubeGeometry(path, SEG, .095, 10), mat.pvc); scene.add(pipeMesh);
+const waterGeo = new THREE.TubeGeometry(path, SEG, .07, 10);
+const waterMesh = new THREE.Mesh(waterGeo, mat.water); scene.add(waterMesh);
+for (const p of route.slice(1, -1)) { const e = new THREE.Mesh(new THREE.SphereGeometry(.1, 12, 10), mat.pvc); e.position.copy(p); scene.add(e); }
+const LEN = path.getLength();
+const lens = path.getCurveLengths();
+const uAtPoint = i => lens[i - 1] / LEN;              // route index → path fraction
+const U_PUMP_IN = uAtPoint(4), U_PUMP_OUT = uAtPoint(7), U_FLOOR2 = (lens[8] + (B.fh + 1.2 - 2.6)) / LEN, U_TOP = 1;
+function setFill(u) { waterGeo.setDrawRange(0, Math.floor(clamp(u) * SEG) * 10 * 6); }
+
+// tap water stream and a drip
+const stream = cyl(.035, 1, mat.water, scene, 'y', 12); stream.geometry.translate(0, -.5, 0); stream.position.copy(tapSpout); stream.position.y -= .05;
+const drip = new THREE.Mesh(new THREE.SphereGeometry(.035, 10, 8), mat.water); scene.add(drip);
+
+// moving water particles
+const PN = 160;
+const parts = new THREE.InstancedMesh(new THREE.SphereGeometry(.035, 8, 6), M(0xd8f1ff, { emissive: 0x2a6f9c, roughness: .2 }), PN); scene.add(parts);
+const swirlN = 40;
+const swirl = new THREE.InstancedMesh(new THREE.SphereGeometry(.018, 8, 6), M(0x7fd0ff, { emissive: 0x1f6fa8, roughness: .2 }), swirlN); scene.add(swirl);
+const dummy = new THREE.Object3D();
+
+// ── script ─────────────────────────────────────────────────────
+// beats: [start, end, sentence, camera shot]
+const BEATS = [
+  [0, 6, 'ليه المية مش بتطلع للدور الخامس؟'],
+  [6, 14, 'مية الحكومة جاية في ماسورة تحت الشارع، بس ضغطها ضعيف ويدوب بيوصل لتاني دور.'],
+  [14, 19.5, 'عشان كده بنركّب موتور مية تحت في العمارة.'],
+  [19.5, 27, 'جوه الموتور ملفات نحاس، الكهربا بتعمل فيها مغناطيس يلف العمود.'],
+  [27, 34, 'والعمود بيلف الريشة بسرعة 2900 لفة في الدقيقة.'],
+  [34, 41, 'الريشة بترمي المية لبرّه بقوة، زي لما تلف الجردل بسرعة.'],
+  [41, 48, 'فالمية تتزق لفوق لحد 30 متر.'],
+  [48, 54.5, 'ولما الموتور يقف، محبس عدم الرجوع يقفل عشان المية متنزلش تاني.'],
+  [54.5, 61, 'ولما تفتح الحنفية، الأوتوماتيك يحس إن الضغط قل ويشغّل الموتور لوحده.'],
+  [61, 65.5, 'وكده المية وصلت للدور الخامس!']
+];
+window.DURATION = 65.5;
+const words = [];
+for (const [a, b, s] of BEATS) { const ws = s.split(' '); const step = (b - a - .5) / ws.length; ws.forEach((w, i) => words.push([a + .2 + i * step, w])); }
+const NUMS = [[28.4, 41, '2900 لفة/دقيقة', '#ff4a3d'], [42.2, 48.2, '30 متر', '#3fb6ff']];
+
+// camera shots: [time, position, target]
+const shots = [
+  [0, V(13, 8.5, 36), V(1.5, 7.2, -3)],
+  [5.2, V(4.6, TOP + 2.6, 1.8), V(3, TOP + 1.3, -5.6)],
+  [7.4, V(4.6, TOP + 2.6, 1.8), V(3, TOP + 1.3, -5.6)],
+  [10, V(8.5, 5.2, 12.5), V(4, -1.2, 4.2)],
+  [13, V(4.2, 6, 11), V(4.6, 3.6, -3)],
+  [15.8, V(5.2, 2.4, 1.8), V(2.85, .9, PZ)],
+  [19.2, V(4.8, 2.1, 1.2), V(2.75, .85, PZ)],
+  [21.8, V(2.9, 1.5, -1.1), V(2.4, .78, PZ)],
+  [26.4, V(2.4, 1.4, -1.15), V(2.45, .78, PZ)],
+  [28.6, V(3.8, 1.25, -1.6), V(3.15, .82, PZ)],
+  [33.5, V(4.0, 1.4, -1.65), V(3.15, .8, PZ)],
+  [40.5, V(3.4, 1.6, -1.4), V(3.15, .95, PZ)],
+  [43.5, V(3.4, 6.5, 9), V(4.8, 6.5, -3)],
+  [47.4, V(3.6, 13.5, 8), V(4.6, TOP + 1.8, -4.2)],
+  [49.6, V(4.3, 2.3, -.9), V(3.17, 1.75, PZ)],
+  [53.8, V(4.2, 2.4, -.95), V(3.17, 1.9, PZ)],
+  [56.2, V(4.1, 2.75, -1.1), V(3.3, 2.3, PZ)],
+  [58.6, V(4.2, TOP + 2.4, -1.9), V(3.0, TOP + 1.3, -5.7)],
+  [61.2, V(4.4, TOP + 2.5, -1.6), V(3.0, TOP + 1.2, -5.7)],
+  [65.5, V(13, 8.5, 36), V(1.5, 7.2, -3)]
+];
+// hold each shot with a slow push-in, then travel to the next one in the last 1.3s
+const KF = [];
+shots.forEach(([t, p, q], i) => {
+  KF.push([t, p, q]);
+  const nx = shots[i + 1]; if (!nx) return;
+  const hold = Math.max(t + .1, nx[0] - 1.3);
+  KF.push([hold, p.clone().lerp(q, .1), q]);
+});
+function cameraAt(t) {
+  let i = 0; while (i < KF.length - 2 && KF[i + 1][0] <= t) i++;
+  const [t0, p0, q0] = KF[i], [t1, p1, q1] = KF[i + 1];
+  const k = smooth((t - t0) / (t1 - t0));
+  camera.position.lerpVectors(p0, p1, k);
+  const tgt = new THREE.Vector3().lerpVectors(q0, q1, k);
+  // slow drift so the camera never sits still
+  camera.position.x += Math.sin(t * .35) * .06 * camera.position.distanceTo(tgt);
+  camera.lookAt(tgt);
+}
+
+const LABELS = [
+  [7.8, 13.5, 'ماسورة الحكومة', V(3.2, -.85, 4.6)], [11, 13.8, 'ضغط ضعيف', V(RX, 4.6, PZ)],
+  [16, 21, 'الموتور', V(2.35, 1.3, PZ)], [16.6, 21, 'الطلمبة', V(3.17, 1.35, PZ)],
+  [22.2, 27, 'ملفات نحاس', V(2.35, 1.12, PZ)], [24.6, 27, 'العمود', V(1.95, .82, PZ)],
+  [29, 40.5, 'الريشة', V(3.17, 1.2, PZ)],
+  [50, 54.5, 'محبس عدم الرجوع', V(3.17, 2.03, PZ)], [56.4, 58.6, 'الأوتوماتيك', V(3.42, 2.48, PZ)]
+];
+const labelEls = LABELS.map(([, , text]) => { const d = document.createElement('div'); d.className = 'lbl'; d.textContent = text; document.getElementById('labels').appendChild(d); return d; });
+
+// pump running state (0..1) and where the water front has reached
+function running(t) {
+  const on = (a, b) => clamp((t - a) / 1.2) * (1 - clamp((t - b) / 1.2));
+  return Math.max(on(16.5, 50.3), clamp((t - 57.4) / 1.2));
+}
+function waterFront(t) {
+  if (t < 7.5) return 0;
+  if (t < 12.5) return lerp(0, U_FLOOR2, smooth((t - 7.5) / 5));
+  if (t < 41.8) return U_FLOOR2;
+  return lerp(U_FLOOR2, 1, smooth((t - 41.8) / 5));
+}
+
+// integrate rotor angle and water travel ahead of time, so any frame can be rendered on its own
+const STEP = 1 / 120, ACC = [[0, 0]];
+for (let i = 1; i <= Math.ceil(68 / STEP); i++) { const r = running(i * STEP); const [a0, f0] = ACC[i - 1]; ACC.push([a0 + STEP * r * 9, f0 + STEP * (.35 + 2.4 * r)]); }
+const acc = t => { const x = clamp(t / STEP, 0, ACC.length - 1), i = Math.floor(x), k = x - i, a = ACC[i], b = ACC[Math.min(i + 1, ACC.length - 1)]; return [lerp(a[0], b[0], k), lerp(a[1], b[1], k)]; };
+window.render = t => {
+  const run = running(t);
+  const [angle, flowPos] = acc(t);
+  cameraAt(t);
+  // cutaway of the pump casing between 20s and 41s
+  const cut = smooth((t - 20.4) / 1.2) * (1 - smooth((t - 42.6) / 1.2)) + smooth((t - 49.2) / 1) * (1 - smooth((t - 56) / 1));
+  cutPlane.constant = lerp(-2.6, PZ, cut) * -1 * -1;   // plane keeps z < constant
+  cutPlane.constant = cut > .001 ? lerp(-2.6, PZ, cut) : 100;
+  // coils glow with current
+  mat.copper.emissive.setRGB(.55 * run * (t > 21 && t < 28 ? 1 : .25), .18 * run * (t > 21 && t < 28 ? 1 : .25), 0);
+  // rotation: ~2900 rpm drawn slowed so the eye can follow
+  rotor.userData.a = angle; impeller.rotation.x = rotor.rotation.x = angle;
+  // check valve: open while running
+  flap.rotation.z = lerp(0, -1.25, run);
+  // gauge: pressure high while running, drops when the tap opens
+  const tapOpen = t > 55.6;
+  const pressure = t < 16.5 ? .15 : t < 55.6 ? lerp(.15, .82, clamp(run + (t > 50.3 ? 1 : 0))) : lerp(.82, .35, smooth((t - 55.6) / 1)) + .45 * clamp((t - 57.6) / 1.5);
+  needle.rotation.z = Math.PI * .85 - pressure * Math.PI * 1.4;
+  // water
+  const front = waterFront(t);
+  mainWater.visible = t > 7;
+  setFill(front);
+  const stopAt = front * LEN;
+  for (let i = 0; i < PN; i++) {
+    const d = ((flowPos + i * LEN / PN) % LEN);
+    const visible = d < stopAt - .05 && (run > .05 || t < 13);
+    const p = path.getPointAt(clamp(d / LEN));
+    dummy.position.copy(p); dummy.scale.setScalar(visible ? 1 : 0); dummy.updateMatrix(); parts.setMatrixAt(i, dummy.matrix);
+  }
+  parts.instanceMatrix.needsUpdate = true;
+  // swirl inside the volute: water thrown outward along a spiral
+  for (let i = 0; i < swirlN; i++) {
+    const k = ((rotor.userData.a || 0) * .08 + i / swirlN) % 1, a = (rotor.userData.a || 0) + k * 9 + i, r = .06 + k * .3;
+    dummy.position.set(pump.position.x + .42, PY + Math.cos(a) * r, PZ + Math.sin(a) * r);
+    dummy.scale.setScalar(cut > .5 && run > .1 ? 1 : 0); dummy.updateMatrix(); swirl.setMatrixAt(i, dummy.matrix);
+  }
+  swirl.instanceMatrix.needsUpdate = true;
+  const flowing = front > .999 && tapOpen && run > .3;
+  stream.scale.y = flowing ? lerp(.01, .78, smooth((t - 57.8) / .6)) : .001;
+  // a lonely drip at the dry tap
+  const dk = (t % 1.6) / 1.6; drip.visible = t < 7 || (t > 58 && !flowing);
+  drip.position.set(tapSpout.x, tapSpout.y - .05 - dk * dk * .75, tapSpout.z); drip.scale.setScalar(dk < .95 ? 1 : .001);
+  // captions: one word at a time
+  let cur = ''; let wt = 0; for (const [ts, w] of words) if (t >= ts) { cur = w; wt = ts; }
+  const wEl = document.getElementById('word');
+  wEl.textContent = cur; const pk = clamp((t - wt) / .12); wEl.style.transform = `scale(${lerp(.82, 1, pk) + Math.sin(pk * Math.PI) * .08})`;
+  const nEl = document.getElementById('num'); nEl.textContent = '';
+  for (const [a, b, s, c] of NUMS) if (t >= a && t < b) { nEl.textContent = s; nEl.style.color = c; const k = clamp((t - a) / .25); nEl.style.transform = `scale(${lerp(.7, 1, k) + Math.sin(k * Math.PI) * .1})`; }
+  // labels pinned to parts
+  LABELS.forEach(([a, b, , at], i) => {
+    const el = labelEls[i], v = at.clone().project(camera);
+    const on = t >= a && t < b && v.z < 1;
+    el.style.opacity = on ? clamp((t - a) / .2) * clamp((b - t) / .2) : 0;
+    el.style.left = clamp((v.x + 1) / 2 * W, 130, W - 130) + 'px'; el.style.top = ((1 - v.y) / 2 * H) + 'px';
+  });
+  renderer.render(scene, camera);
+  composite();
+};
+// draw the frame and its captions into one 2D canvas, so frames are exported without the page compositor
+const out = document.createElement('canvas'); out.width = W; out.height = H;
+const cx2 = out.getContext('2d');
+function strokeText(text, x, y, size, color, stroke, sc = 1) {
+  if (!text) return;
+  cx2.save(); cx2.translate(x, y); cx2.scale(sc, sc);
+  cx2.font = `${size}px Lalezar`; cx2.direction = 'rtl'; cx2.textAlign = 'center'; cx2.textBaseline = 'middle';
+  cx2.lineJoin = 'round'; cx2.lineWidth = stroke; cx2.strokeStyle = '#111'; cx2.strokeText(text, 0, 0);
+  cx2.fillStyle = color; cx2.fillText(text, 0, 0); cx2.restore();
+}
+function composite() {
+  cx2.drawImage(renderer.domElement, 0, 0, W, H);
+  document.querySelectorAll('.lbl').forEach(el => { const o = +el.style.opacity; if (o > .01) { cx2.globalAlpha = o; strokeText(el.textContent, parseFloat(el.style.left), parseFloat(el.style.top) - 26, 46, '#fff', 11); cx2.globalAlpha = 1; } });
+  const w = document.getElementById('word'), n = document.getElementById('num');
+  const sc = el => { const m = /scale\(([\d.]+)\)/.exec(el.style.transform); return m ? +m[1] : 1; };
+  strokeText(w.textContent, W / 2, 340, 80, '#fff', 14, sc(w));
+  strokeText(n.textContent, W / 2, 448, 96, n.style.color || '#fff', 16, sc(n));
+}
+window.frameData = () => out.toDataURL('image/jpeg', .9);
+window.ready = document.fonts.ready.then(() => render(0));
+</script>
+</body>
+</html>
