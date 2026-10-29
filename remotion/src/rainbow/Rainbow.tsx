@@ -34,7 +34,7 @@ const DROPCAM = (a: number, b: number): { p: [V3, V3]; l: [V3, V3]; fov: number 
 
 type Shot = { p: [V3, V3]; l: [V3, V3]; fov: number; st: (u: number, d: number) => Partial<St> };
 const SH: Shot[] = [
-  /* 0 hook */ { p: [[2.6, 2.0, 9.5], [0.4, 2.7, 4.2]], l: [[-2, 13, -60], [1, 16, -60]], fov: 80, st: (u) => ({ bow: clamp((u - 0.3) / 1.6), rain: 0.4 }) },
+  /* 0 hook */ { p: [[2.6, 2.0, 9.5], [0.4, 2.7, 4.2]], l: [[-2, 13, -60], [1, 16, -60]], fov: 80, st: (u) => ({ bow: clamp((u - 0.3) / 1.6), rain: 1 }) },
   /* 1 a clear drop */ { ...DROPCAM(-2, 2), st: () => ({ scene: "drop" }) },
   /* 2 rain, no sun, no bow */ { p: [[-2, 2.4, 7], [1, 2.6, 6.5]], l: [[0, 12, -60], [4, 12, -60]], fov: 72, st: () => ({ bow: 0, rain: 1, gloom: 1 }) },
   /* 3 brand */ { p: [[-1.5, 2, 10], [1, 4.2, 6]], l: [[-3, 13, -60], [2, 17, -60]], fov: 80, st: () => ({ rain: 0.3 }) },
@@ -223,16 +223,18 @@ const Overlay: React.FC<{ i: number; u: number; d: number; t: number; e: number 
   }
 };
 
-const Captions: React.FC<{ t: number }> = ({ t }) => {
+// captions: words appear one by one across the line's spoken time, keywords in yellow; long lines get a smaller size so
+// they stay on two lines above the brand
+const Captions: React.FC<{ t: number; top?: number }> = ({ t, top = PANEL.top + PANEL.h + 40 }) => {
   let li = -1;
   for (let j = 0; j < LINES.length; j++) if (t >= LINES[j].start - 0.05) li = j;
   if (li < 0) return null;
-  const L = LINES[li], n = L.words.length, lens = L.words.map((w) => w.w.length + 2), tot = lens.reduce((a, b) => a + b, 0);
+  const L = LINES[li], chars = L.words.reduce((a, w) => a + w.w.length + 1, 0), lens = L.words.map((w) => w.w.length + 2), tot = lens.reduce((a, b) => a + b, 0);
   let acc = 0;
   return (
-    <div style={{ position: "absolute", top: PANEL.top + PANEL.h + 40, left: 60, right: 60, textAlign: "center", direction: "rtl", fontFamily: NOTO, fontWeight: 800, fontSize: n > 13 ? 50 : 60, lineHeight: 1.5, color: "#fff" }}>
+    <div style={{ position: "absolute", top, left: 60, right: 60, textAlign: "center", direction: "rtl", fontFamily: NOTO, fontWeight: 800, fontSize: chars > 68 ? 42 : chars > 52 ? 50 : 60, lineHeight: 1.5, color: "#fff" }}>
       {L.words.map((w, j) => { const at = L.start + ((L.end - L.start) * acc) / tot; acc += lens[j]; const k = clamp((t - at) / 0.12);
-        return <span key={j} style={{ color: w.k ? YEL : "#fff", opacity: 0.15 + 0.85 * k, display: "inline-block", transform: `translateY(${(1 - k) * 10}px)`, margin: "0 8px" }}>{w.w}</span>; })}
+        return <span key={j} style={{ color: w.k ? YEL : "#fff", opacity: 0.15 + 0.85 * k, display: "inline-block", transform: `translateY(${(1 - k) * 10}px)`, margin: "0 6px" }}>{w.w}</span>; })}
     </div>
   );
 };
@@ -281,3 +283,18 @@ export const Rainbow: React.FC = () => {
 };
 
 export { DROP_R };
+
+// the bottom strip alone (captions and brand on black), for re-laying the captions over a rendered video at y = STRIP_Y
+export const STRIP_Y = PANEL.top + PANEL.h + 4;
+export const RainbowStrip: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const t = frame / fps;
+  return (
+    <AbsoluteFill style={{ background: "#000" }}>
+      <Captions t={t} top={40 - 4} />
+      <div style={{ position: "absolute", bottom: 70, width: "100%", textAlign: "center", fontFamily: RUQAA, fontSize: 64, color: YEL, opacity: 0.9 }}>إيه الحكاية؟</div>
+      <div style={{ position: "absolute", inset: 0, background: "#000", opacity: 1 - Math.min(1, (DURATION + TAIL - t) / 0.6) }} />
+    </AbsoluteFill>
+  );
+};
