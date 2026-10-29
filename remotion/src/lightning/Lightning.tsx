@@ -215,7 +215,7 @@ export const Lightning: React.FC = () => {
   const p = lv(S.p[0], S.p[1], k), l = lv(S.l[0], S.l[1], k);
   const pos: V3 = [p[0] + Math.sin(t * 0.7) * 0.25 + Math.sin(t * 37) * shake, p[1] + Math.cos(t * 0.53) * 0.15 + Math.cos(t * 41) * shake, p[2]];
   const sky = new THREE.Color("#070c1a").lerp(new THREE.Color("#3a4a78"), clamp(st.flash) * 0.7);
-  const fade = Math.min(1, t / 0.4, (DURATION + TAIL - t) / 0.6);
+  const fade = Math.min(1, (DURATION + TAIL - t) / 0.6);
   return (
     <AbsoluteFill style={{ background: "#000" }}>
       <div style={{ position: "absolute", top: 70, width: "100%", textAlign: "center", direction: "rtl" }}>
