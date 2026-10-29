@@ -124,6 +124,12 @@ pulsing circles, dashes running, the camera creeping.
   put the clip in `videos/<slug>/sfx/` and cue it with `{"t": …, "file": "sfx/clip.wav", "gain": …}`. Sources: public-domain
   US government video/audio on Wikimedia Commons or NASA (images-api.nasa.gov), or Pixabay sound effects
   (`pixabay.com`, `cdn.pixabay.com` must be in Allowed domains). Credit the clip in `refs/SOURCES.md`.
+- **Before asking the user for sounds, always check the library first.** The user has already sent many Pixabay clips for
+  earlier episodes; they sit in `videos/*/sfx/px-*.mp3` (gitignored, so only in this container). List them with
+  `ls videos/*/sfx/px-*.mp3`, copy what fits into the new episode's `sfx/`, and check each clip's length and silences
+  (`ffprobe` + `silencedetect`) to pick `from`/`dur`. Only then send the user a short table of what is still missing, with
+  Pixabay search terms and where each sound goes, and say which existing clips you reused.
+- Pixabay blocks automated downloads with a bot check; never try to get around it. The user downloads and sends the files.
 - If only the sound changed, skip the 20-minute render: remux the new mix onto the rendered mp4 with the same audio chain
   as `render.js` (apad, fade, loudnorm, limiter) and run qa.py again.
 
