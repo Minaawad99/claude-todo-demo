@@ -44,6 +44,13 @@
 
 الخطوط محفوظة في `remotion/public/fonts/`، عشان متصفح الرندر مش بيوصل لـ fonts.gstatic.com.
 
+### مكتبة الأصوات
+
+كل أصوات Pixabay اللي القناة نزّلتها موجودة في فولدر على Google Drive:
+https://drive.google.com/drive/folders/1GttvrISb-SiRxQG32t14gY2Y4G0I43G4
+
+أي جلسة تقدر تنزّل منه بموصّل Google Drive، وتحفظ الملف في `videos/<الحلقة>/sfx/px-*.mp3`. الملفات دي مش بتترفع على git، فاسم الملف الأصلي بيتكتب في `refs/SOURCES.md`.
+
 ## 4. خط الإنتاج (نفس الخطوات لكل أسلوب)
 
 التفاصيل الكاملة في `videos/PLAYBOOK.md` وفي مهارة animation. دي الخطوات باختصار:

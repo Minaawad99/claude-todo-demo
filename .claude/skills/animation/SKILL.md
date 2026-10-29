@@ -124,6 +124,11 @@ pulsing circles, dashes running, the camera creeping.
   put the clip in `videos/<slug>/sfx/` and cue it with `{"t": …, "file": "sfx/clip.wav", "gain": …}`. Sources: public-domain
   US government video/audio on Wikimedia Commons or NASA (images-api.nasa.gov), or Pixabay sound effects
   (`pixabay.com`, `cdn.pixabay.com` must be in Allowed domains). Credit the clip in `refs/SOURCES.md`.
+- **The sound library lives on Google Drive:** folder `1GttvrISb-SiRxQG32t14gY2Y4G0I43G4`
+  (https://drive.google.com/drive/folders/1GttvrISb-SiRxQG32t14gY2Y4G0I43G4). List it with the Google Drive connector
+  (`search_files` with `parentId = '<folder id>'`, plus `title contains` filters, since big pages overflow), download with
+  `download_file_content` (large results land in a tool-results JSON; base64-decode `content`) and save as
+  `videos/<slug>/sfx/px-<short-name>.mp3`. Record the original Drive file name in `refs/SOURCES.md`.
 - **Before asking the user for sounds, always check the library first.** The user has already sent many Pixabay clips for
   earlier episodes; they sit in `videos/*/sfx/px-*.mp3` (gitignored, so only in this container). List them with
   `ls videos/*/sfx/px-*.mp3`, copy what fits into the new episode's `sfx/`, and check each clip's length and silences

@@ -11,3 +11,16 @@
 | ممر ممكن يوصل تلاتة كيلو | مسافة إقلاع 747 بأقصى وزن حوالي 3 كم | Boeing airport planning (747) |
 | اتناشر ثانية، سنة 1903 | 17 ديسمبر 1903، أورفيل رايت، حوالي 120 قدم (36.6 م) في 12 ثانية | [Wright State University Libraries](https://blogs.libraries.wright.edu/news/outofthebox/2011/12/17/a-flight-very-modest-compared-with-that-of-birds/)، [aerocorner](https://aerocorner.com/blog/wright-brothers-first-flight/) |
 | أقصر من جناحات الجامبو من الطرف للطرف | جناح 747-400 حوالي 64.4 م، والطيرة الأولى 36.6 م | [Wikipedia: Boeing 747-400](https://en.wikipedia.org/wiki/Boeing_747-400)، [Reagan Library 1985](https://www.reaganlibrary.gov/research/speeches/121785a) |
+
+## الأصوات
+
+`sfx/px-*.mp3` مؤثرات من Pixabay (Pixabay Content License)، نزّلتها القناة، ومحفوظة في فولدر الأصوات على Google Drive. مش في git.
+
+| الملف | الأصل في Drive |
+|---|---|
+| `px-jet-flyby.mp3` | freesound_community-jet-plane-flybyflac-14641.mp3 |
+| `px-engine.mp3` | freesound_community-engine-32028.mp3 |
+| `px-afterburner-ramp.mp3` | freesound_community-afterburner-sound-78165.mp3 |
+| `px-wind.mp3` | dragon-studio-bitter-cold-wind-482876.mp3 |
+| `px-car-pass.mp3` | tanweraman-car-pass-by-337871.mp3 |
+| `px-prop-plane.mp3` | freesound_community-prop-plane-14513.mp3 |
