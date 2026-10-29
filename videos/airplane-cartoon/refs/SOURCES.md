@@ -24,3 +24,10 @@
 | `px-wind.mp3` | dragon-studio-bitter-cold-wind-482876.mp3 |
 | `px-car-pass.mp3` | tanweraman-car-pass-by-337871.mp3 |
 | `px-prop-plane.mp3` | freesound_community-prop-plane-14513.mp3 |
+| `px-takeoff.mp3` | pwlpl-plane-takeoff-sound-effect-521112.mp3 (رفعه المستخدم) |
+| `px-cabin-1.mp3` | freesound_community-aeroplane-ambience-01-74213.mp3 (رفعه المستخدم) |
+| `px-cabin-2.mp3` | freesound_community-aeroplane-ambience-02-32806.mp3 (رفعه المستخدم) |
+
+## الرسومات
+
+الرسومات اترسمت من أشكال معروفة، من غير صور مرجعية للحلقة دي: طيارة ركاب بمحركين (زي 737/777) من الجنب، وجامبو 747 من فوق (أربع محركات، جناح مسحوب لورا)، ومروحة محرك توربوفان من قدام، وطيارة الأخوين رايت 1903 (جناحين فوق بعض، الرافعة اللي قدام، والدفة اللي ورا، والطيار نايم على بطنه).

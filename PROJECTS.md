@@ -126,6 +126,7 @@ https://drive.google.com/drive/folders/1GttvrISb-SiRxQG32t14gY2Y4G0I43G4
 | `bridge-water`، `car-egypt`، `qolla`، `sonic-boom`، `touchscreen`، `tbm-tunnel`، `sea-cables`، `high-dam` | الكوبري والمية، والعربية، والقلة، والانفجار الصوتي، والتاتش، وحفارة الأنفاق، والكابلات البحرية، والسد العالي | كارتون |
 | `elevator-waqei` | الأسانسير | الواقعي 3D |
 | `speed-radar` | الرادار بيلقطك إزاي (دوبلر) | كارتون، ونسخة Remotion |
+| `airplane-cartoon` | إزاي الطيارة بتطير (الجناح والرفع) | كارتون |
 
 كل فولدر فيه `script.txt` و`voice.wav` و`timing.js`، وأغلبهم فيه `cues.json` و`refs/SOURCES.md`.
 
