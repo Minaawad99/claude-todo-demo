@@ -229,7 +229,7 @@
     s += '<path d="M380 96 L392 180 L440 180 Z" fill="#cfe1ec"/>';
     s += '<path d="M180 110 C200 150 210 220 230 300" stroke="#4f8fc9" stroke-width="5" fill="none" opacity=".6"/>';
     var lines = 7, kk = clamp(k); for (var c = 0; c < lines; c++) { var off = (c - 3) * 5, d = "M" + (600 + off) + " 520 L" + (520 + off) + " 345 L" + (466 + off) + " 255 L" + (436 + off) + " 180 L" + (384 + off * 0.5) + " 120 L" + (330 + off * 0.3) + " 90 L" + (180 + off) + " 70 L" + (-300) + " " + (40 + off * 2); s += '<path d="' + d + '" stroke="' + FIB[c % 7] + '" stroke-width="3" fill="none" stroke-dasharray="2000" stroke-dashoffset="' + f(2000 * (1 - kk)) + '"/>'; }
-    for (var p = 0; p < 6; p++) { var u = (t * 0.25 + p / 6) % 1, pts = [[600, 520], [520, 345], [466, 255], [436, 180], [384, 120], [330, 90], [180, 70], [-300, 40]], seg = u * 7, i = Math.floor(seg), fr = seg - i, a = pts[i], b = pts[i + 1]; s += '<circle cx="' + f(lerp(a[0], b[0], fr)) + '" cy="' + f(lerp(a[1], b[1], fr)) + '" r="7" fill="url(#gPulse)"/>'; }
+    for (var p = 0; p < 9; p++) { var u = (t * 0.4 + p / 9) % 1, pts = [[600, 520], [520, 345], [466, 255], [436, 180], [384, 120], [330, 90], [180, 70], [-300, 40]], seg = u * 7, i = Math.floor(seg), fr = seg - i, a = pts[i], b = pts[i + 1]; s += '<circle cx="' + f(lerp(a[0], b[0], fr)) + '" cy="' + f(lerp(a[1], b[1], fr)) + '" r="14" fill="url(#gPulse)"/>'; }
     [[330, 92, "السويس"], [180, 72, "إسكندرية"], [520, 345, "البحر الأحمر"]].forEach(function (c) { s += '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="5" fill="#fff" stroke="' + INK + '" stroke-width="2"/><text x="' + c[0] + '" y="' + (c[1] - 10) + '" text-anchor="middle" style="font:800 13px Noto Sans Arabic;fill:#1c3a5a">' + c[2] + '</text>'; });
     return s + '<text x="120" y="250" text-anchor="middle" style="font:900 34px Noto Sans Arabic;fill:#b9a47a;opacity:.8">مصر</text><text x="-60" y="20" text-anchor="middle" style="font:800 16px Noto Sans Arabic;fill:#3a5a7a">أوروبا</text><text x="620" y="20" text-anchor="middle" style="font:800 16px Noto Sans Arabic;fill:#3a5a7a">آسيا</text>'; }
   function shark(x, y, t, s, bite) {
@@ -304,9 +304,10 @@
     return s + tag("نبضات نور", 470, 280, u, 0.6, 3, 18, "#bfe0ff");
   });
   // 9 — the light keeps bouncing off the walls of the strand, so it never leaks out
-  shot(9, function (u, d) { return [320, 180, lerp(1.0, 1.08, u / d)]; }, function (u, d, t) {
+  shot(9, function (u, d) { return [lerp(280, 360, u / d), 180, lerp(1.0, 1.2, u / d)]; }, function (u, d, t) {
     var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#06121e"/><rect x="-60" y="120" width="760" height="120" fill="#bfe8ff" opacity=".12" stroke="#7fd3ff" stroke-width="3"/><rect x="-60" y="150" width="760" height="60" fill="#bfe8ff" opacity=".1"/>';
-    var dp = "M-60 180"; for (var x = -60, up = 1, i = 0; x < 700; x += 90, up = -up, i++) dp += " L" + (x + 90) + " " + (up > 0 ? 126 : 234); s += '<path d="' + dp + '" stroke="' + YEL + '" stroke-width="3" fill="none" opacity=".6"/>';
+    var dp = "M-60 180"; for (var x = -60, up = 1, i = 0; x < 700; x += 90, up = -up, i++) dp += " L" + (x + 90) + " " + (up > 0 ? 126 : 234); s += '<path d="' + dp + '" stroke="' + YEL + '" stroke-width="3" fill="none" opacity=".6" stroke-dasharray="14 10" stroke-dashoffset="' + f(-t * 120) + '"/>';
+    for (var q2 = 1; q2 < 3; q2++) { var ph2 = (t * 0.25 + q2 / 3) % 1, px2 = -60 + ph2 * 760, sg2 = Math.floor((px2 + 60) / 90), fr2 = ((px2 + 60) % 90) / 90, ya = sg2 === 0 ? 180 : (sg2 % 2 ? 126 : 234), yb = sg2 === 0 ? 126 : (sg2 % 2 ? 234 : 126); s += '<circle cx="' + f(px2) + '" cy="' + f(lerp(ya, yb, fr2)) + '" r="16" fill="url(#gPulse)"/>'; }
     var ph = (t * 0.25) % 1, px = -60 + ph * 760, seg = Math.floor((px + 60) / 90), fr = ((px + 60) % 90) / 90, y0 = seg === 0 ? 180 : (seg % 2 ? 126 : 234), y1 = seg % 2 ? 234 : 126; if (seg === 0) y1 = 126;
     s += '<circle cx="' + f(px) + '" cy="' + f(lerp(y0, y1, fr)) + '" r="16" fill="url(#gPulse)"/>';
     for (var k = 0; k < 8; k++) { var bx = 30 + k * 90; s += '<circle cx="' + bx + '" cy="' + (k % 2 ? 234 : 126) + '" r="' + f(6 + 4 * Math.sin(t * 6 + k)) + '" fill="#fff" opacity=".35"/>'; }
@@ -327,8 +328,8 @@
     return s + tag("كهربا من الشط", 10, 30, u, 0.5, -3, 15) + tag("نفس الكابل", 450, 230, u, 1.6, 3, 15);
   });
   // 12 — around the fibres, layers: copper for power, plastic, and near the shore steel wire armour
-  shot(12, function (u, d) { return [320, 180, lerp(1.0, 1.08, u / d)]; }, function (u, d, t) {
-    var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#0f2a3a"/>' + section(220, 180, 130, t, { spin: true });
+  shot(12, function (u, d) { return [lerp(320, 280, u / d), 180, lerp(1.0, 1.18, u / d)]; }, function (u, d, t) {
+    var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#0f2a3a"/>' + '<circle cx="220" cy="180" r="' + f(150 + 10 * Math.sin(t * 3)) + '" fill="url(#gPulse)" opacity=".18"/>' + section(220, 180, 130 + 4 * Math.sin(t * 2.4), t * 3, { spin: true });
     var L2 = [["بلاستيك", 122, "#9aa2ac"], ["سلك حديد", 96, "#c9ced4"], ["نحاس", 72, "#e09a5a"], ["عازل", 58, "#e9eef2"], ["ألياف", 22, "#bfe8ff"]];
     L2.forEach(function (l, i) { var k = clamp((u - 0.3 - i * 0.5) / 0.4); if (k <= 0) return; var a = -0.9 + i * 0.42, x = 220 + Math.cos(a) * l[1], y = 180 + Math.sin(a) * l[1]; s += '<path d="M' + f(x) + ' ' + f(y) + ' L470 ' + (60 + i * 58) + ' H500" stroke="' + l[2] + '" stroke-width="2" fill="none" opacity="' + f(k) + '"/><circle cx="' + f(x) + '" cy="' + f(y) + '" r="4" fill="' + l[2] + '"/><text x="510" y="' + (66 + i * 58) + '" style="font:800 17px Noto Sans Arabic;fill:' + l[2] + ';opacity:' + f(k) + '">' + l[0] + '</text>'; });
     return s;
@@ -365,7 +366,7 @@
     return s + tag("برج الموبايل", 320, 70, u, 1.0, -2, 15) + tag("الراوتر", 540, 70, u, 1.8, 3, 15);
   });
   // 17 — Egypt is one of the most important places in this story, right between Europe and Asia
-  shot(17, function (u, d) { return [320, 190, lerp(1.0, 1.1, u / d)]; }, function (u, d, t) {
+  shot(17, function (u, d) { return [lerp(260, 400, u / d), lerp(200, 170, u / d), lerp(1.0, 1.25, u / d)]; }, function (u, d, t) {
     return egypt(t, u / 2.2);
   });
   // 18 — about 17% of the whole world's internet passes through us!
