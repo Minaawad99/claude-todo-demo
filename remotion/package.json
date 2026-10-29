@@ -5,7 +5,9 @@
   "scripts": {
     "studio": "remotion studio",
     "render": "remotion render src/index.ts Hello out/hello.mp4",
-    "still": "remotion still src/index.ts Hello out/hello.png --frame=60"
+    "still": "remotion still src/index.ts Hello out/hello.png --frame=60",
+    "sync": "node scripts/sync-cartoon.mjs",
+    "render:speed-radar": "remotion render src/index.ts SpeedRadar out/speed-radar.mp4 --concurrency=4 --crf=15 --x264-preset=slow --timeout=120000"
   },
   "dependencies": {
     "@remotion/cli": "4.0.539",

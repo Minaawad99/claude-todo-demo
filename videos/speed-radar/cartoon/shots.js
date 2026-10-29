@@ -178,7 +178,7 @@
     if (fl > 0) s += '<rect x="-400" y="-300" width="1440" height="960" fill="#fff" opacity="' + f(0.55 * fl) + '"/>';
     var k = pop((u - 2.7) / 0.9);
     if (k > 0) s += '<g transform="translate(320 170) scale(' + f(k) + ')"><rect x="-130" y="-70" width="260" height="140" rx="16" fill="#fbfaf6" stroke="' + INK + '" stroke-width="4"/><rect x="-130" y="-70" width="260" height="36" rx="16" fill="#d8352a"/><text y="-44" text-anchor="middle" style="font:800 20px Noto Sans Arabic;fill:#fff">مخالفة سرعة</text>' + '<text y="8" text-anchor="middle" style="font:800 30px Noto Serif;fill:' + INK + '">' + ar(120) + ' كم/س</text><text y="48" text-anchor="middle" style="font:700 16px Noto Sans Arabic;fill:#5a6068">الحد ' + ar(80) + '</text></g>';
-    return s + tag("فلاش!", 470, 62, u, 1.5, 3, 22, "#fff3b0");
+    return s + tag("فلاش!", 350, 70, u, 1.5, 3, 22, "#fff3b0");
   });
   // 1 — how did it know you were doing 120?
   shot(1, function (u, d) { return [lerp(300, 330, u / d), 180, lerp(1.0, 1.1, u / d)]; }, function (u, d, t) {

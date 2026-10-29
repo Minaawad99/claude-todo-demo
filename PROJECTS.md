@@ -30,7 +30,19 @@
 | **صور حقيقية متحركة** | لما تحب تشوف المكان الحقيقي | قسم 7 تحت | `videos/high-dam-photo/` |
 | **صفحة تفاعلية** | شرح يتفتح في المتصفح بدل الفيديو | قسم 7 تحت | `videos/high-dam-page/` |
 | **إطلاق منتج** | فيديو دعاية لمنتج أو ميزة جديدة | `.claude/skills/product-launch-motion/SKILL.md` | أمثلة جوه المهارة |
-| **Remotion** | مكان جاهز لو حبينا نبني بـ React | `remotion/` | `remotion/src/Hello.tsx` |
+| **Remotion** | نفس حلقة الكارتون بس بتترندر بـ Remotion (React)، والكابشن بيدخل بحركة spring | `remotion/` (الخطوات تحت) | `SpeedRadar` في `remotion/src/Root.tsx` |
+
+### حلقة كارتون بـ Remotion
+
+الرسومات واللقطات هي هي (`videos/<الحلقة>/cartoon/shots.js`)، وRemotion هو اللي بيرندر الفيديو بدل `render.js`:
+
+1. ابني الحلقة عادي: `python3 videos/<الحلقة>/cartoon/build.py`.
+2. من جوه `remotion/`، انسخها لـ Remotion: `npm run sync -- <الحلقة> <mix.wav>`. ده بيحط ملفاتها في `public/<الحلقة>/`، والفولدر ده مش في git.
+3. ضيف `<Composition>` للحلقة في `src/Root.tsx`، زي `SpeedRadar` بالظبط.
+4. رندر: `npx remotion render src/index.ts <Id> out.mp4 --concurrency=4 --crf=15 --x264-preset=slow`.
+5. ظبط الصوت بنفس سلسلة `render.js` (loudnorm لحد −14، وlimiter 0.6) من الـ mix، وبعدها `qa.py` لازم يقول PASS.
+
+الخطوط محفوظة في `remotion/public/fonts/`، عشان متصفح الرندر مش بيوصل لـ fonts.gstatic.com.
 
 ## 4. خط الإنتاج (نفس الخطوات لكل أسلوب)
 
@@ -106,7 +118,7 @@
 | `lcd-tv`، `offshore-oil`، `phone-call`، `submarine`، `atm`، `microwave`، `elevator` | الشاشة، والبترول من البحر، والمكالمة، والغواصة، والـ ATM، والمايكروويف، والأسانسير | كارتون + إيزو |
 | `bridge-water`، `car-egypt`، `qolla`، `sonic-boom`، `touchscreen`، `tbm-tunnel`، `sea-cables`، `high-dam` | الكوبري والمية، والعربية، والقلة، والانفجار الصوتي، والتاتش، وحفارة الأنفاق، والكابلات البحرية، والسد العالي | كارتون |
 | `elevator-waqei` | الأسانسير | الواقعي 3D |
-| `speed-radar` | الرادار بيلقطك إزاي (دوبلر) | كارتون |
+| `speed-radar` | الرادار بيلقطك إزاي (دوبلر) | كارتون، ونسخة Remotion |
 
 كل فولدر فيه `script.txt` و`voice.wav` و`timing.js`، وأغلبهم فيه `cues.json` و`refs/SOURCES.md`.
 
