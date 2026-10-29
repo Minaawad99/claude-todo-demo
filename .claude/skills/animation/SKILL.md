@@ -2,22 +2,27 @@
 name: animation
 description: |
   Make an «إيه الحكاية؟» explainer video in the "animation" (cartoon-panel) style, end to end: script, voice
-  settings, reference research, 25 animated shots, sound effects, 1080×1920 60fps render, QA, reel cover and
-  TikTok/Facebook titles. Use when the user says "بطريقة الانيميشن", "بالانيميشن", "الأسلوب الكارتون",
+  settings, reference research, 25–29 animated shots, sound effects, 1080×1920 60fps render, QA, full-bleed reel cover and
+  TikTok/Facebook/YouTube Shorts titles. This is the default for every new video (built like the Suez Canal tunnel video). Use when the user says "بطريقة الانيميشن", "بالانيميشن", "الأسلوب الكارتون",
   "animation style", or asks for a new «إيه الحكاية؟» video without naming another style.
 ---
 
 # «إيه الحكاية؟» — the animation (cartoon-panel) style
 
-The reference build is `videos/gps-traffic/cartoon/` (GPS and traffic, 25 shots). Start every new video from a copy
-of it. Older builds in the same style: `videos/lcd-tv/cartoon/`, `videos/offshore-oil/cartoon/`,
-`videos/elevator/cartoon/`, `videos/submarine/cartoon/`, `videos/helicopter/`.
+**This is the channel's fixed way of making every new video** (the user's decision): the cartoon panel, built like the
+Suez Canal tunnel video. The reference build is `videos/tbm-tunnel/cartoon/` («مين حفر نفق القناة؟», 29 shots, 1:56) and
+its cover `brand/eh-elhekaya/cover-tbm-tunnel-tiktok.html`. Start every new video from a copy of them. Older builds in the
+same style: `videos/gps-traffic/cartoon/`, `videos/lcd-tv/cartoon/`, `videos/offshore-oil/cartoon/`, `videos/elevator/cartoon/`,
+`videos/submarine/cartoon/`.
+
+Use another style only when the user names it. Remotion 3D (`remotion/src/lightning/`, `remotion/src/rainbow/`) renders on
+the CPU here (no GPU) and takes about 40 minutes a video against about 15 for the cartoon panel, so never pick it on your own.
 
 Talk to the user in Egyptian Arabic. Work in this order and stop where the user has to act (record the voice).
 
 ## 1. Script → `videos/<slug>/script.txt`
 
-- 25 lines, one sentence per line, about 230–250 words (≈1100–1200 characters without spaces) → 1:30–1:45 of voice.
+- 25–29 lines, one sentence per line, about 230–280 words → 1:40–2:00 of voice (the tunnel video: 29 lines, 274 words, 1:56).
 - Casual Cairo Egyptian Arabic, warm and curious. Check spelling carefully (e.g. «آلاف الأطنان», «أسطوانات», «المية»).
 - Fixed shape:
   - line 0: a hook about something the viewer sees or uses every day;
@@ -29,7 +34,9 @@ Talk to the user in Egyptian Arabic. Work in this order and stop where the user 
 - Write numbers as words when the voice must say them («تسعة وتسعين», «ألفين وعشرين»); English terms stay
   Latin (GPS, LCD, 4K).
 - Verify every fact. Tell the user which facts are surprising and that they were checked.
-- Commit the script, then give the user the voice settings below.
+- Run the script through the `humanizer` skill before showing it (the user asks for this every time), keeping lines 3 and 24
+  word for word. Give the script in one copy-ready code block.
+- Commit the script, then give the user the voice settings below (the Style text in its own code block).
 
 ## 2. Voice (the user records it in Google AI Studio → Generate speech)
 
@@ -93,7 +100,7 @@ Drawing language (`_helpers.js`):
 - **Realistic objects:** each is a function drawn from the real shape in the reference photos (layout, colours, parts).
 - **Openings:** open on the real thing the viewer knows (e.g. the actual app on a phone in a hand, the TV in a living room), then pull back into the explanation.
 
-## 6. Build (copy `videos/gps-traffic/cartoon/` → `videos/<slug>/cartoon/`)
+## 6. Build (copy `videos/tbm-tunnel/cartoon/` → `videos/<slug>/cartoon/`)
 
 - `template.html`: set the `<title>`, `.title` and `.sub`; add any gradients the new objects need.
 - `shots.js`: new drawing pieces at the top, then exactly one `shot(line, cam(u, d), draw(u, d, t))` per script line.
@@ -154,11 +161,19 @@ code. Keep mix.wav and the mp4 in the scratchpad, not in the repo.
 
 ## 9. Cover and titles (when the user asks)
 
-- **Cover:** `brand/eh-elhekaya/cover-<slug>.html`, 540×960, in the video's own look:
-  - a black frame with a Ruqaa hook title and a yellow sub-title;
-  - a tall panel (viewBox 640×510) composed from `window.__parts`;
-  - a punchy line underneath with the key number in yellow.
-  Shoot it with `node videos/tools/cover.js $PWD/<html> $PWD/reel-cover-<slug>-1080x1920.png`, look at it, fix, commit, send.
-- **Titles:** TikTok gets 3 hook titles to choose from, plus a short description with hashtags
-  (#إيه_الحكاية first). Facebook gets one title, plus a longer description with 3–4 emoji bullet points of what
-  the video covers and the closing question.
+- **Cover:** copy `brand/eh-elhekaya/cover-tbm-tunnel-tiktok.html` to `cover-<slug>-tiktok.html`. It is **full bleed**, 540×960
+  (1080×1920 at 2x):
+  - the picture fills the whole frame (`<svg id="art" viewBox="0 0 540 960">`), composed from the video's `window.__parts`
+    (load `timing.js` and `cartoon/scenes.js`), with the main object big in the middle, a hard-hat character for scale and
+    one or two brush tags with the key numbers, plus film grain;
+  - dark fades top (`fadeT`, 0–300) and bottom (`fadeB`, 680–960) so the text reads;
+  - text: «إيه الحكاية؟» small (Noto 15px, #d9d4c8, top 132), the hook in Aref Ruqaa 44px white (top 156), a yellow Ruqaa
+    26px sub-title (top 222), and the punch line at top 722 in Noto 34px with the number in yellow and a smaller grey second line;
+  - everything that matters stays inside the 3:4 profile-grid crop (y 120–840) and away from TikTok's right-hand buttons
+    (text box `left: 24px; right: 64px`).
+  Shoot it with `node videos/tools/cover.js $PWD/<html> $PWD/brand/eh-elhekaya/tiktok-cover-<slug>-1080x1920.png`, look at
+  it, fix, commit, send.
+- **Titles** (run them through the `humanizer` skill too, each in its own code block): TikTok gets 3 hook titles to choose
+  from, plus a short description with hashtags (#إيه_الحكاية first). Facebook gets one title, plus a longer description
+  with 3–4 emoji bullet points of what the video covers and the closing question. YouTube Shorts gets one title ending in
+  #shorts and a two-line description.
