@@ -1,1 +1,7 @@
 __pycache__/
+videos/*/render.log
+videos/*/mix.wav
+videos/*/tight.wav
+videos/*/out.mp4
+videos/*/qa.log
+videos/*/out-sheet.jpg
