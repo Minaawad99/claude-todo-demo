@@ -55,4 +55,26 @@ declare const TebEzay: {
   patterns(doc?: Document): void;
   splitWords(el: Element): NodeListOf<Element>;
   countUp(el: Element, ms: number): void;
+  /** 3D isometric cutaway helpers drawing into an SVG group. x right-down, y left-down, z up. */
+  iso(root: SVGGElement, opts?: { scale?: number; x?: number; y?: number }): TebEzayIso;
 };
+
+type Pt3 = [number, number, number];
+interface TebEzayIso {
+  scale: number;
+  P(x: number, y: number, z: number): [number, number];
+  d(points: Pt3[], close?: boolean): string;
+  el(tag: string, attrs: Record<string, string>, parent?: Element): SVGElement;
+  group(parent?: Element, attrs?: Record<string, string>): SVGGElement;
+  face(g: Element, points: Pt3[], cls: string, attrs?: Record<string, string>): SVGPathElement;
+  line(g: Element, points: Pt3[], cls: string): SVGPathElement;
+  box(g: Element, x0: number, x1: number, y0: number, y1: number, z0: number, z1: number, faces?: { z?: string; x?: string; y?: string; hatch?: boolean }): SVGPathElement;
+  ring(cx: number, cy: number, cz: number, r: number, n?: number, plane?: "x" | "y" | "z", a0?: number, a1?: number): Pt3[];
+  disc(g: Element, cx: number, cy: number, cz: number, r: number, plane: "x" | "y" | "z", cls: string): SVGPathElement;
+  cyl(g: Element, cx: number, cy: number, r: number, z0: number, z1: number, side?: string, top?: string): SVGPathElement;
+  pipe(g: Element, points: Pt3[], inner?: string): SVGPathElement;
+  /** Back walls + floor slab; returns a group clipped to show only what sits under the floor's cut edge. */
+  cutaway(g: Element, W: number, D: number, H: number, T: number, B: number, clipId?: string): SVGGElement;
+  /** A bar turning about z in true 3D (spray arm, fan blade). Redraw each frame. */
+  rotor(g: Element, o: { x: number; y: number; z: number; length: number; width: number; thick?: number; angle: number; side?: string; sideX?: string; top?: string }): void;
+}

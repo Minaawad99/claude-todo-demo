@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>إزاي السفينة الحديد مبتغرقش؟ — طب إزاي؟</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../../design-system/components/bundle.css">
+<style>
+  /* 360×640 canvas at 2x. Meaning: water + buoyancy blue, weight ink, air inside green, danger red. */
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  html, body { margin: 0; width: 360px; height: 640px; overflow: hidden; background: var(--paper); }
+  body { font-family: var(--font-sans); color: var(--ink); }
+  .canvas { position: relative; width: 360px; height: 640px; background: var(--paper); }
+  .scene { position: absolute; inset: 35px; opacity: 0; }
+  .frame { position: absolute; inset: 0; border: 2px solid var(--ink); background: var(--paper); display: grid; grid-template-rows: 69% 0 1fr; }
+  .stage { position: relative; overflow: hidden; }
+  .stage > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .rule { border-top: 1px solid var(--line-soft); margin-inline: 10px; }
+  .caps { position: relative; }
+  .cap { position: absolute; inset: 0; padding: 18px 18px 0; text-align: center; opacity: 0; font: 500 18px / 1.65 var(--font-sans); text-wrap: balance; }
+  .cap p { margin: 0; }
+  .sheet { position: absolute; inset: 0; border: 2px solid var(--ink); outline: 1px solid var(--ink); outline-offset: -6px; background: var(--paper); }
+  .corners { position: absolute; inset: -12px; pointer-events: none; --c: var(--ink); --l: 10px; --w: 1px;
+    background:
+      linear-gradient(var(--c), var(--c)) top right / var(--l) var(--w), linear-gradient(var(--c), var(--c)) top right / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) top left / var(--l) var(--w), linear-gradient(var(--c), var(--c)) top left / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) bottom right / var(--l) var(--w), linear-gradient(var(--c), var(--c)) bottom right / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) bottom left / var(--l) var(--w), linear-gradient(var(--c), var(--c)) bottom left / var(--w) var(--l);
+    background-repeat: no-repeat; }
+  .w { --wc: var(--ink); color: color-mix(in srgb, var(--wc) var(--mix, 100%), var(--ink-ghost)); }
+  .w.tz-k--heat { --wc: var(--heat-text); } .w.tz-k--water { --wc: var(--water); } .w.tz-k--part { --wc: var(--olive-text); }
+  .em { background: linear-gradient(currentColor, currentColor) no-repeat right bottom / var(--ul, 100%) 1.5px; padding-bottom: 2px; }
+  [data-v="pop"], [data-v="grow"], [data-loop="spin"] { transform-box: fill-box; transform-origin: center; }
+  .o-b { transform-origin: 50% 100% !important; } .o-t { transform-origin: 50% 0% !important; }
+
+  .buoy { --c: var(--water); } .weight { --c: var(--ink); } .air { --c: var(--olive-text); } .danger { --c: var(--heat); }
+  .arrow { fill: var(--c); stroke: var(--ink); stroke-width: 1.5; stroke-linejoin: round; }
+  .lbl { font: 600 15px var(--font-sans); fill: var(--c); paint-order: stroke; stroke: var(--paper); stroke-width: 5px; stroke-linejoin: round; }
+  .lbl.on-water { stroke: var(--water-body); }
+  .lit { fill: var(--paper-raised); } .shade { fill: var(--khaki); } .deep { fill: var(--khaki-deep); }
+  .steel { fill: #5f5a52; } .steel-top { fill: #8a847a; } .steel-side { fill: #46423c; }
+  .water { fill: var(--water-body); } .water-line { fill: none; stroke: var(--water); stroke-width: 2; }
+  .water-deep { fill: color-mix(in srgb, var(--water) 35%, var(--water-body)); }
+  .air-fill { fill: color-mix(in srgb, var(--olive) 45%, var(--paper)); }
+  .glass { fill: none; stroke: var(--ink); stroke-width: 2.5; }
+  .clay { fill: var(--heat-soft); }
+  .dash { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 5 4; }
+  .dash-w { fill: none; stroke: var(--water); stroke-width: 2; stroke-dasharray: 6 4; }
+  .x { fill: none; stroke: var(--heat); stroke-width: 6; stroke-linecap: round; }
+  .ok { fill: none; stroke: var(--olive-text); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+  .num { font: 700 64px / 1 var(--font-numeral); color: var(--heat); direction: ltr; font-variant-numeric: tabular-nums; }
+  .unit { font: 600 13px / 1.4 var(--font-sans); }
+  .box1 { fill: var(--heat); } .box2 { fill: var(--water); } .box3 { fill: var(--olive); } .box4 { fill: var(--khaki); }
+  .cloud { fill: var(--paper); stroke: var(--ink); stroke-width: 1.5; }
+  .chip { position: absolute; translate: -50% -50%; white-space: nowrap; padding: 0 8px; background: var(--paper-raised); border: 1.5px solid var(--ink); font: 600 13px/24px var(--font-sans); }
+</style>
+</head>
+<body>
+<div class="canvas">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Steel cube with volume, 70 units -->
+    <g id="cube">
+      <path class="steel-top" d="M0 14 L18 0 L88 0 L70 14 Z"/><path class="steel-side" d="M70 14 L88 0 L88 70 L70 84 Z"/><rect class="steel" x="0" y="14" width="70" height="70"/>
+      <path class="tz-ink" style="fill:none" d="M0 14 L18 0 L88 0 L88 70 L70 84 L0 84 Z M0 14 H70 V84 M70 14 L88 0"/>
+      <path style="fill:none;stroke:#fff;stroke-width:2;opacity:.25" d="M6 20 H62"/>
+    </g>
+    <!-- Container ship, side view, ~340 × 122, waterline ≈ y 108 -->
+    <g id="ship">
+      <path class="tz-f-deep tz-ink" d="M10 86 L330 86 L316 122 L36 122 Z"/>
+      <path class="tz-f-heat" d="M22 110 L324 110 L316 122 L36 122 Z"/>
+      <path class="tz-pat-hatch" d="M10 86 L330 86 L326 96 L14 96 Z"/>
+      <path class="tz-ink" style="fill:none" d="M10 86 L330 86 L316 122 L36 122 Z M22 110 H324"/>
+      <path class="body-lit tz-ink lit" d="M260 26 L300 26 L300 86 L260 86 Z"/>
+      <path class="tz-f-water tz-ink" d="M264 34 H296 V42 H264 Z"/><path class="tz-ink" style="fill:none" d="M264 54 H296 M264 66 H296"/>
+      <path class="tz-f-deep tz-ink" d="M276 6 L288 6 L290 26 L274 26 Z"/>
+    </g>
+    <g id="boxes" class="tz-ink" style="stroke-width:1.2">
+      <rect class="box1" x="40" y="66" width="34" height="20"/><rect class="box2" x="74" y="66" width="34" height="20"/><rect class="box3" x="108" y="66" width="34" height="20"/><rect class="box4" x="142" y="66" width="34" height="20"/><rect class="box2" x="176" y="66" width="34" height="20"/><rect class="box1" x="210" y="66" width="34" height="20"/>
+    </g>
+    <!-- Ship in section: steel shell, air inside -->
+    <g id="hull">
+      <path class="air-fill" d="M34 10 L306 10 L294 88 L46 88 Z"/>
+      <path class="steel" style="fill-rule:evenodd" d="M20 0 L320 0 L304 100 L36 100 Z M34 10 L306 10 L294 88 L46 88 Z"/>
+      <path class="tz-ink" style="fill:none;stroke-width:2" d="M20 0 L320 0 L304 100 L36 100 Z M34 10 L306 10 L294 88 L46 88 Z"/>
+    </g>
+    <g id="pool"><rect class="water tz-ink" style="stroke-width:1" x="0" y="0" width="26" height="14"/><path style="fill:none;stroke:var(--paper);stroke-width:1" d="M2 4.5 H24 M2 9.5 H24"/></g>
+    <g id="cloud"><path class="tz-pat-hatch" d="M-4 34 H86 V40 H-4 Z"/><path class="cloud" d="M0 34 C0 24 8 19 16 21 C18 10 34 6 42 14 C48 6 64 9 66 20 C76 19 84 26 82 34 Z"/></g>
+    <path id="wave" d="M-20 0 Q0 -6 20 0 T60 0 T100 0 T140 0 T180 0 T220 0 T260 0 T300 0 T340 0 T380 0 T420 0"/>
+  </defs>
+</svg>
+
+<!-- ═══ S0 · Intro sheet (0–2) ═══ -->
+<section class="scene" data-scene="0-2">
+  <div class="corners"></div>
+  <div class="sheet">
+    <span class="tz-brand" style="position:absolute;right:16px;top:14px"><svg class="tz-watch" style="--watch-size:18px" viewBox="0 0 48 54"><rect class="crown" x="20" y="0" width="8" height="3"/><rect class="crown" x="23" y="3" width="2" height="4"/><circle class="arc" cx="24" cy="30" r="20"/><circle class="core" cx="24" cy="30" r="6"/></svg><span class="tz-brand__name" style="font-size:10px">طب إزاي؟</span></span>
+    <span class="tz-tag" style="position:absolute;left:50%;translate:-50% 0;top:56px">بحر وسفن</span>
+    <div style="position:absolute;left:22px;right:22px;top:100px;height:124px;border-block:1px solid var(--line-soft)">
+      <div class="cap" data-cap="0" style="font:600 23px/1.55 var(--font-sans);padding:12px 4px;text-align:right"><p data-words="0"><span class="tz-k tz-k--heat">مسمار حديد</span> صغير... لو رميته في المية، يغرق على طول.</p></div>
+      <div class="cap" data-cap="1" style="font:600 23px/1.55 var(--font-sans);padding:12px 4px;text-align:right"><p data-words="1">بس سفينة حديد وزنها <span class="tz-k tz-k--heat" data-v="count" data-l="1" data-o="0.9" data-d="1.6" data-from="0" data-to="200">200</span> <span class="tz-k tz-k--heat">ألف طن</span>... <span class="tz-k tz-k--water">بتعوم!</span></p></div>
+      <div class="cap" data-cap="2" style="font:600 23px/1.55 var(--font-sans);padding:12px 4px;text-align:right"><p data-words="2">والسر مش في الحديد... السر في <span class="tz-k tz-k--part">الهوا</span> اللي جواها.</p></div>
+    </div>
+    <svg viewBox="0 0 290 330" style="position:absolute;left:0;bottom:0;width:100%;height:330px;overflow:hidden">
+      <!-- line 0: glass and a sinking nail -->
+      <g data-v="out" data-l="1" data-o="-0.2" data-d="0.4">
+        <rect class="water" x="96" y="140" width="98" height="140"/>
+        <use href="#wave" class="water-line" transform="translate(96 140) scale(.25 .6)" style="stroke-width:6"/>
+        <path class="glass" d="M90 70 L96 286 Q96 296 106 296 L184 296 Q194 296 194 286 L200 70"/>
+        <g data-v="move" data-l="0" data-o="0.4" data-d="2.2" data-dx="0" data-dy="190">
+          <g transform="translate(140 20) rotate(12)"><rect class="steel tz-ink" x="-2" y="0" width="5" height="50"/><rect class="steel tz-ink" x="-9" y="-4" width="19" height="5"/><path class="steel tz-ink" d="M-2 50 L0.5 58 L3 50 Z"/></g>
+        </g>
+        <g class="tz-ink" style="fill:none;stroke:var(--water);stroke-width:1.5">
+          <circle data-v="pop" data-l="0" data-o="1.2" data-d="0.3" cx="134" cy="200" r="3"/><circle data-v="pop" data-l="0" data-o="1.5" data-d="0.3" cx="148" cy="180" r="2.5"/><circle data-v="pop" data-l="0" data-o="1.8" data-d="0.3" cx="138" cy="160" r="2"/>
+        </g>
+      </g>
+      <!-- lines 1–2: the ship -->
+      <g data-v="fade" data-l="1" data-o="-0.1" data-d="0.4">
+        <g data-loop="drift" data-speed="12" data-x0="40" data-y0="30" data-s=".8" data-w="400"><use href="#cloud"/></g>
+        <g data-loop="bob" data-a="2.2" data-f="1.4">
+          <g transform="translate(-10 118) scale(.92)">
+            <g data-v="out" data-l="2" data-o="0.8" data-d="0.6"><use href="#boxes"/><use href="#boxes" transform="translate(0 -20)"/></g>
+            <use href="#ship"/>
+            <!-- line 2: x-ray shows air inside -->
+            <g data-v="fade" data-l="2" data-o="0.8" data-d="0.6"><path class="air-fill tz-ink" d="M22 92 L322 92 L313 116 L38 116 Z"/></g>
+          </g>
+        </g>
+        <rect class="water" x="0" y="218" width="290" height="112" style="opacity:.92"/>
+        <use href="#wave" class="water-line" transform="translate(0 218)"/>
+        <g data-v="pop" data-l="2" data-o="1.6" data-d="0.4"><text class="lbl air" x="145" y="176" text-anchor="middle">هوا</text></g>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<!-- ═══ S1 · Brand (3) ═══ -->
+<section class="scene" data-scene="3-3">
+  <div class="frame" style="grid-template-rows:1fr">
+    <div style="display:grid;place-items:center;align-content:center;gap:14px;text-align:center">
+      <svg viewBox="0 0 220 220" style="width:200px;height:200px;overflow:visible">
+        <clipPath id="ringclip"><circle cx="110" cy="118" r="92"/></clipPath>
+        <rect x="100" y="0" width="20" height="7" style="fill:var(--ink)"/><rect x="106" y="7" width="8" height="10" style="fill:var(--ink)"/>
+        <g clip-path="url(#ringclip)">
+          <rect class="water" x="0" y="140" width="220" height="100"/>
+          <g data-loop="bob" data-a="2" data-f="1.8"><g transform="translate(36 82) scale(.44)"><use href="#boxes"/><use href="#ship"/></g></g>
+          <use href="#wave" class="water-line" transform="translate(0 140) scale(.6)"/>
+        </g>
+        <circle cx="110" cy="118" r="94" style="fill:none;stroke:var(--line-soft);stroke-width:2;opacity:.35"/>
+        <circle data-v="ring" data-l="3" data-o="-0.3" data-d="1.8" cx="110" cy="118" r="94" pathLength="100" transform="rotate(-90 110 118)" style="fill:none;stroke:var(--heat);stroke-width:3;stroke-dasharray:100"/>
+      </svg>
+      <span style="font:600 28px/1.3 var(--font-sans)">طب إزاي؟</span>
+      <span class="cap" data-cap="3" style="position:static;opacity:1;padding:0;font-size:16px"><span data-words="3">هشرحهالك في <span class="tz-k tz-k--heat">دقيقة.</span></span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S2 · Things push water aside (4–6) ═══ -->
+<section class="scene" data-scene="4-6">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <defs><clipPath id="tub"><path d="M34 200 L326 200 L308 400 Q304 418 286 418 L74 418 Q56 418 52 400 Z"/></clipPath></defs>
+        <path class="lit tz-ink" d="M24 190 L336 190 L316 404 Q312 428 288 428 L72 428 Q48 428 44 404 Z" style="stroke-width:2.5"/>
+        <path class="tz-pat-hatch" d="M24 190 L336 190 L334 200 L26 200 Z"/>
+        <path class="tz-ink" d="M90 428 L80 452 M270 428 L280 452" style="stroke-width:6"/>
+        <g clip-path="url(#tub)">
+          <g data-v="move" data-l="4" data-o="0.8" data-d="1.4" data-dx="0" data-dy="-34">
+            <rect class="water" x="0" y="300" width="360" height="200"/>
+            <use href="#wave" class="water-line" transform="translate(0 300)"/>
+          </g>
+        </g>
+        <path class="dash" d="M10 300 H40 M320 300 H350"/>
+        <g data-v="fade" data-l="5" data-o="0.8" data-d="0.4"><path class="dash-w" d="M10 266 H40 M320 266 H350"/><path class="arrow buoy" d="M342 296 V282 H337 L345 268 L353 282 H348 V296 Z"/></g>
+        <!-- the cube going in -->
+        <g data-v="move" data-l="4" data-o="0.5" data-d="1.5" data-dx="0" data-dy="170">
+          <g transform="translate(136 60)"><use href="#cube"/></g>
+        </g>
+        <!-- water pushes back up (line 6) -->
+        <g data-v="grow" class="o-b" data-l="6" data-o="1.2" data-d="0.6"><path class="arrow buoy" d="M162 400 V340 H152 L170 316 L188 340 H178 V400 Z"/></g>
+        <g data-v="grow" class="o-b" data-l="6" data-o="1.4" data-d="0.6"><path class="arrow buoy" d="M110 410 V370 H102 L116 352 L130 370 H122 V410 Z" style="opacity:.8"/></g>
+        <g data-v="grow" class="o-b" data-l="6" data-o="1.4" data-d="0.6"><path class="arrow buoy" d="M214 410 V370 H206 L220 352 L234 370 H226 V410 Z" style="opacity:.8"/></g>
+      </svg>
+      <span class="chip" style="left:80%;top:47%;color:var(--water)" data-v="pop" data-l="5" data-o="1.4" data-d="0.35">المية طلعت</span>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="4"><p data-words="4">أي حاجة بتنزل في المية...<br>بتزق <span class="tz-k tz-k--water">المية</span> من مكانها.</p></div>
+      <div class="cap" data-cap="5"><p data-words="5">جرّب تنزل في بانيو مليان...<br>هتلاقي المية <span class="tz-k tz-k--water">طلعت لفوق</span>.</p></div>
+      <div class="cap" data-cap="6"><p data-words="6">والمية دي مبتسكتش...<br>بتزق الحاجة <span class="tz-k tz-k--water">لفوق</span>.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S3 · Buoyancy = weight of the water pushed aside (7–8) ═══ -->
+<section class="scene" data-scene="7-8">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <rect class="water" x="0" y="250" width="360" height="238"/>
+        <use href="#wave" class="water-line" transform="translate(0 250)"/>
+        <g data-v="move" data-l="8" data-o="0.2" data-d="0.8" data-dx="-60" data-dy="0">
+          <g transform="translate(140 210)"><use href="#cube"/></g>
+          <g data-v="grow" class="o-b" data-l="7" data-o="0.2" data-d="0.7"><path class="arrow buoy" d="M166 420 V340 H154 L175 308 L196 340 H184 V420 Z"/></g>
+          <g data-v="pop" data-l="7" data-o="0.9" data-d="0.35"><text class="lbl buoy on-water" x="175" y="446" text-anchor="middle" style="font-size:20px">قوة الطفو</text></g>
+        </g>
+        <!-- line 8: the same volume of water, lifted out, equals the push -->
+        <g data-v="fade" data-l="8" data-o="1" data-d="0.5">
+          <g transform="translate(220 120)">
+            <path class="water tz-ink" d="M0 14 L18 0 L88 0 L70 14 Z" style="fill:color-mix(in srgb,var(--water) 30%,var(--water-body))"/>
+            <path class="tz-ink" style="fill:color-mix(in srgb,var(--water) 55%,var(--water-body))" d="M70 14 L88 0 L88 70 L70 84 Z"/>
+            <rect class="water-deep tz-ink" x="0" y="14" width="70" height="70"/>
+          </g>
+          <text class="lbl buoy" x="266" y="104" text-anchor="middle" style="font-size:13px">المية اللي اتزقت</text>
+          <text x="196" y="186" text-anchor="middle" style="font:700 30px var(--font-sans);fill:var(--ink)">=</text>
+        </g>
+      </svg>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="7"><p data-words="7">القوة دي اسمها<br><span class="tz-k tz-k--water em" data-ul="7">قوة الطفو</span>.</p></div>
+      <div class="cap" data-cap="8"><p data-words="8">وقد إيه قوية؟ قد <span class="tz-k tz-k--water">وزن المية</span><br>اللي اتزقت بالظبط.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S4 · Float or sink (9–10) ═══ -->
+<section class="scene" data-scene="9-10">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <rect class="water" x="0" y="230" width="360" height="258"/>
+        <use href="#wave" class="water-line" transform="translate(0 230)"/>
+        <path class="dash" d="M180 40 V480"/>
+        <!-- right half (line 9): light block floats -->
+        <g data-v="fade" data-l="9" data-o="0" data-d="0.4">
+          <g data-loop="bob" data-a="2" data-f="1.6"><g transform="translate(236 196)"><path class="lit" d="M0 14 L18 0 L88 0 L70 14 Z"/><path class="deep" d="M70 14 L88 0 L88 50 L70 64 Z"/><rect class="shade" x="0" y="14" width="70" height="50"/><path class="tz-pat-lines" d="M0 14 H70 V64 H0 Z"/><path class="tz-ink" style="fill:none" d="M0 14 L18 0 L88 0 L88 50 L70 64 L0 64 Z M0 14 H70 V64 M70 14 L88 0"/></g></g>
+          <g data-v="grow" class="o-b" data-l="9" data-o="0.6" data-d="0.6"><path class="arrow buoy" d="M264 360 V290 H254 L271 264 L288 290 H278 V360 Z"/></g>
+          <g data-v="grow" class="o-t" data-l="9" data-o="0.9" data-d="0.5"><path class="arrow weight" d="M300 150 V174 H292 L306 192 L320 174 H312 V150 Z"/></g>
+          <g data-v="pop" data-l="9" data-o="2" data-d="0.35"><path class="ok" d="M250 92 L266 108 L294 76"/></g>
+          <text class="lbl buoy" x="271" y="60" text-anchor="middle">تعوم</text>
+        </g>
+        <!-- left half (line 10): heavy stone sinks -->
+        <g data-v="fade" data-l="10" data-o="0" data-d="0.4">
+          <g data-v="move" data-l="10" data-o="0.2" data-d="1.8" data-dx="0" data-dy="200">
+            <g transform="translate(46 170)">
+              <path class="steel tz-ink" d="M6 30 Q0 10 20 4 Q44 -4 64 6 Q84 16 78 40 Q74 62 46 64 Q14 66 6 30 Z"/>
+              <path style="fill:none;stroke:#fff;opacity:.25;stroke-width:2" d="M18 14 Q34 6 54 10"/>
+              <path class="arrow weight" d="M36 72 V116 H26 L43 142 L60 116 H50 V72 Z"/>
+              <path class="arrow buoy" d="M8 72 V54 H3 L11 42 L19 54 H14 V72 Z" style="opacity:.9"/>
+            </g>
+          </g>
+          <g data-v="pop" data-l="10" data-o="1.6" data-d="0.35"><path class="x" d="M70 76 L110 116 M110 76 L70 116"/></g>
+          <text class="lbl danger" x="90" y="60" text-anchor="middle">تغرق</text>
+        </g>
+      </svg>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="9"><p data-words="9">يعني لو الحاجة زقت مية <span class="tz-k tz-k--water">أتقل منها</span>...<br>تعوم.</p></div>
+      <div class="cap" data-cap="10"><p data-words="10">ولو زقت مية <span class="tz-k tz-k--heat">أخف منها</span>...<br>تغرق.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S5 · The nail (11–12) ═══ -->
+<section class="scene" data-scene="11-12">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <g data-v="out" data-l="12" data-o="0" data-d="0.4">
+          <rect class="water" x="0" y="140" width="360" height="348"/>
+          <use href="#wave" class="water-line" transform="translate(0 140)"/>
+          <g data-v="move" data-l="11" data-o="0" data-d="3" data-dx="0" data-dy="190">
+            <g transform="translate(180 170) rotate(14) scale(2.2)"><rect class="steel tz-ink" x="-2" y="0" width="5" height="50"/><rect class="steel tz-ink" x="-9" y="-4" width="19" height="5"/><path class="steel tz-ink" d="M-2 50 L0.5 58 L3 50 Z"/></g>
+            <g data-v="fade" data-l="11" data-o="1.4" data-d="0.4"><rect class="dash-w" x="230" y="164" width="24" height="120"/><text class="lbl buoy on-water" x="242" y="152" text-anchor="middle" style="font-size:12px">مية قليلة</text></g>
+          </g>
+        </g>
+        <!-- line 12: one steel cube weighs as much as 8 of water -->
+        <g data-v="fade" data-l="12" data-o="0.2" data-d="0.4">
+          <path class="tz-ink-h" d="M40 300 H320" style="stroke-width:5"/><path class="deep tz-ink" d="M168 300 L180 280 L192 300 Z"/>
+          <path class="tz-ink" style="fill:none" d="M180 280 V430 M140 430 H220"/>
+          <g transform="translate(56 214)"><use href="#cube"/></g>
+          <g class="tz-ink" style="stroke-width:1">
+            <g data-v="pop" data-l="12" data-o="0.6" data-d="0.25"><rect class="water-deep" x="214" y="270" width="28" height="28"/></g>
+            <g data-v="pop" data-l="12" data-o="0.7" data-d="0.25"><rect class="water-deep" x="244" y="270" width="28" height="28"/></g>
+            <g data-v="pop" data-l="12" data-o="0.8" data-d="0.25"><rect class="water-deep" x="274" y="270" width="28" height="28"/></g>
+            <g data-v="pop" data-l="12" data-o="0.9" data-d="0.25"><rect class="water-deep" x="214" y="240" width="28" height="28"/></g>
+            <g data-v="pop" data-l="12" data-o="1.0" data-d="0.25"><rect class="water-deep" x="244" y="240" width="28" height="28"/></g>
+            <g data-v="pop" data-l="12" data-o="1.1" data-d="0.25"><rect class="water-deep" x="274" y="240" width="28" height="28"/></g>
+            <g data-v="pop" data-l="12" data-o="1.2" data-d="0.25"><rect class="water-deep" x="229" y="210" width="28" height="28"/></g>
+            <g data-v="pop" data-l="12" data-o="1.3" data-d="0.25"><rect class="water-deep" x="259" y="210" width="28" height="28"/></g>
+          </g>
+          <text class="lbl" style="--c:var(--ink)" x="92" y="190" text-anchor="middle">حديد</text>
+          <text class="lbl buoy" x="258" y="190" text-anchor="middle">مية</text>
+          <g data-v="pop" data-l="12" data-o="1.6" data-d="0.4"><text class="lbl danger" x="180" y="120" text-anchor="middle" style="font:700 40px var(--font-numeral)">×8</text></g>
+        </g>
+      </svg>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="11"><p data-words="11">المسمار صغير ومصمت...<br>بيزق حتة مية <span class="tz-k tz-k--water">صغيرة جدًا</span>.</p></div>
+      <div class="cap" data-cap="12"><p data-words="12">والحديد أتقل من المية بحوالي <span class="tz-k tz-k--heat">تمن مرات</span>...<br>فيغرق.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S6 · Same steel, shaped into a tub (13–16) ═══ -->
+<section class="scene" data-scene="13-16">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <!-- water comes in on line 15 -->
+        <g data-v="grow" class="o-b" data-l="15" data-o="0" data-d="1.2" data-axis="y" data-ease="io">
+          <rect class="water" x="0" y="260" width="360" height="228"/>
+        </g>
+        <g data-v="fade" data-l="15" data-o="1" data-d="0.3"><use href="#wave" class="water-line" transform="translate(0 260)"/></g>
+        <!-- line 13: the cube flattens -->
+        <g data-v="out" data-l="13" data-o="1.6" data-d="0.5"><g transform="translate(136 150)"><use href="#cube"/></g></g>
+        <g>
+          <g data-loop="bob" data-a="2.4" data-f="1.6" data-until="16" data-uo="2">
+            <g data-v="fade" data-l="13" data-o="1.6" data-d="0.5">
+              <!-- the tub, in section: thin steel walls -->
+              <path class="steel" style="fill-rule:evenodd" d="M50 150 L310 150 L290 280 L70 280 Z M60 150 L300 150 L282 270 L78 270 Z"/>
+              <g data-v="fade" data-l="14" data-o="0.8" data-d="0.5"><path class="air-fill" d="M60 150 L300 150 L282 270 L78 270 Z"/></g>
+              <path class="tz-ink" style="fill:none;stroke-width:2" d="M50 150 L310 150 L290 280 L70 280 Z M60 150 L300 150 L282 270 L78 270"/>
+              <path class="steel-top tz-ink" d="M44 146 H316 V154 H44 Z"/>
+            </g>
+            <g data-v="pop" data-l="14" data-o="1.2" data-d="0.35"><text class="lbl air" x="180" y="220" text-anchor="middle" style="font-size:22px">هوا</text></g>
+            <!-- line 15: lots of water pushed aside -->
+            <g data-v="fade" data-l="15" data-o="1.4" data-d="0.4"><path class="dash-w" d="M66 260 L290 260 L290 280 L70 280 Z" style="stroke-width:2.5"/></g>
+            <g data-v="grow" class="o-b" data-l="15" data-o="1.8" data-d="0.7"><path class="arrow buoy" d="M166 440 V340 H152 L180 300 L208 340 H194 V440 Z"/></g>
+            <g data-v="grow" class="o-t" data-l="15" data-o="2.2" data-d="0.5"><path class="arrow weight" d="M174 60 V94 H166 L180 112 L194 94 H186 V60 Z"/></g>
+          </g>
+        </g>
+        <g data-v="pop" data-l="16" data-o="0" data-d="0.4"><path class="ok" d="M280 70 L300 90 L334 52"/></g>
+      </svg>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="13"><p data-words="13">طب لو خدنا نفس الحديد ده...<br>وفردناه على شكل <span class="tz-k tz-k--part">حوض</span>؟</p></div>
+      <div class="cap" data-cap="14"><p data-words="14">الحوض بقى كبير...<br>وجواه <span class="tz-k tz-k--part">هوا</span>.</p></div>
+      <div class="cap" data-cap="15"><p data-words="15">فبيزق مية <span class="tz-k tz-k--water">كتير أوي</span>...<br>أتقل من الحديد نفسه.</p></div>
+      <div class="cap" data-cap="16"><p data-words="16" style="font-size:26px"><span class="tz-k tz-k--water">فيعوم!</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S7 · Try it with clay (17–18) ═══ -->
+<section class="scene" data-scene="17-18">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <rect class="water" x="0" y="230" width="360" height="258"/>
+        <use href="#wave" class="water-line" transform="translate(0 230)"/>
+        <path class="dash" d="M180 40 V480"/>
+        <!-- right (line 17): ball sinks -->
+        <g data-v="move" data-l="17" data-o="1.4" data-d="1.8" data-dx="0" data-dy="210">
+          <circle class="clay tz-ink-h" cx="270" cy="180" r="34"/>
+          <path style="fill:none;stroke:var(--paper);opacity:.6;stroke-width:3" d="M250 166 Q258 154 272 152"/>
+        </g>
+        <g data-v="pop" data-l="17" data-o="2.8" data-d="0.35"><path class="x" d="M250 70 L290 110 M290 70 L250 110"/></g>
+        <!-- left (line 18): same clay as a boat floats -->
+        <g data-v="fade" data-l="18" data-o="0" data-d="0.4">
+          <g data-loop="bob" data-a="2" data-f="1.7">
+            <path class="clay tz-ink-h" d="M24 200 L156 200 L138 246 Q134 254 124 254 L56 254 Q46 254 42 246 Z"/>
+            <path class="air-fill" d="M34 206 L146 206 L132 240 L48 240 Z"/>
+            <path class="tz-ink" style="fill:none" d="M34 206 L146 206 L132 240 L48 240 Z"/>
+          </g>
+          <g data-v="pop" data-l="18" data-o="1.4" data-d="0.35"><path class="ok" d="M70 92 L86 108 L114 76"/></g>
+        </g>
+      </svg>
+      <span class="chip" style="left:76%;top:12%" data-v="pop" data-l="17" data-o="0.6" data-d="0.3">كورة صلصال</span>
+      <span class="chip" style="left:25%;top:12%" data-v="pop" data-l="18" data-o="0.3" data-d="0.3">نفس الصلصال</span>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="17"><p data-words="17">جرّب بنفسك: حتة صلصال مكورة...<br><span class="tz-k tz-k--heat">هتغرق.</span></p></div>
+      <div class="cap" data-cap="18"><p data-words="18">بس لو عملتها زي المركب...<br><span class="tz-k tz-k--water">هتعوم.</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S8 · The ship is exactly that (19) ═══ -->
+<section class="scene" data-scene="19-19">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <rect class="water" x="0" y="290" width="360" height="198"/>
+        <g data-loop="bob" data-a="1.8" data-f="1.3"><g transform="translate(10 220)"><use href="#hull"/></g>
+          <g transform="translate(10 120)"><use href="#boxes"/><use href="#boxes" transform="translate(0 -20)"/><path class="lit tz-ink" d="M260 26 L300 26 L300 100 L260 100 Z"/><path class="tz-f-water tz-ink" d="M264 34 H296 V42 H264 Z"/></g>
+        </g>
+        <use href="#wave" class="water-line" transform="translate(0 290)"/>
+        <g data-v="pop" data-l="19" data-o="1.2" data-d="0.35"><path class="tz-ink" style="fill:none" d="M40 230 L20 180"/><text class="lbl" style="--c:var(--ink)" x="20" y="172" text-anchor="middle">حديد</text></g>
+        <g data-v="pop" data-l="19" data-o="2.4" data-d="0.35"><text class="lbl air" x="180" y="272" text-anchor="middle" style="font-size:22px">هوا كتير</text></g>
+      </svg>
+    </div>
+    <div class="rule"></div>
+    <div class="caps"><div class="cap" data-cap="19"><p data-words="19">والسفينة كده بالظبط...<br>حديد من برة، و<span class="tz-k tz-k--part">هوا كتير</span> من جوة.</p></div></div>
+  </div>
+</section>
+
+<!-- ═══ S9 · 80 Olympic pools (20–21) ═══ -->
+<section class="scene" data-scene="20-21">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <g data-v="out" data-l="21" data-o="0" data-d="0.4">
+          <rect class="water" x="0" y="250" width="360" height="238"/>
+          <g transform="translate(10 136)"><use href="#boxes"/><use href="#boxes" transform="translate(0 -20)"/><use href="#ship"/></g>
+          <use href="#wave" class="water-line" transform="translate(0 250)"/>
+          <g data-v="fade" data-l="20" data-o="0.6" data-d="0.6"><path class="water-deep" d="M32 246 L334 246 L326 258 L46 258 Z" style="opacity:.8"/><path class="dash-w" d="M32 246 L334 246 L326 258 L46 258 Z" style="stroke:var(--ink)"/></g>
+          <g data-v="grow" class="o-b" data-l="20" data-o="1.4" data-d="0.6"><path class="arrow buoy" d="M168 420 V320 H156 L180 286 L204 320 H192 V420 Z"/></g>
+        </g>
+        <!-- line 21: 80 pools -->
+        <g data-v="fade" data-l="21" data-o="0" data-d="0.3" transform="translate(28 120)">
+          <g data-v="pop" data-l="21" data-o="0.05" data-d="0.3"><use href="#pool" x="0" y="0"/><use href="#pool" x="31" y="0"/><use href="#pool" x="62" y="0"/><use href="#pool" x="93" y="0"/><use href="#pool" x="124" y="0"/><use href="#pool" x="155" y="0"/><use href="#pool" x="186" y="0"/><use href="#pool" x="217" y="0"/><use href="#pool" x="248" y="0"/><use href="#pool" x="279" y="0"/></g>
+          <g data-v="pop" data-l="21" data-o="0.15" data-d="0.3"><use href="#pool" x="0" y="22"/><use href="#pool" x="31" y="22"/><use href="#pool" x="62" y="22"/><use href="#pool" x="93" y="22"/><use href="#pool" x="124" y="22"/><use href="#pool" x="155" y="22"/><use href="#pool" x="186" y="22"/><use href="#pool" x="217" y="22"/><use href="#pool" x="248" y="22"/><use href="#pool" x="279" y="22"/></g>
+          <g data-v="pop" data-l="21" data-o="0.25" data-d="0.3"><use href="#pool" x="0" y="44"/><use href="#pool" x="31" y="44"/><use href="#pool" x="62" y="44"/><use href="#pool" x="93" y="44"/><use href="#pool" x="124" y="44"/><use href="#pool" x="155" y="44"/><use href="#pool" x="186" y="44"/><use href="#pool" x="217" y="44"/><use href="#pool" x="248" y="44"/><use href="#pool" x="279" y="44"/></g>
+          <g data-v="pop" data-l="21" data-o="0.35" data-d="0.3"><use href="#pool" x="0" y="66"/><use href="#pool" x="31" y="66"/><use href="#pool" x="62" y="66"/><use href="#pool" x="93" y="66"/><use href="#pool" x="124" y="66"/><use href="#pool" x="155" y="66"/><use href="#pool" x="186" y="66"/><use href="#pool" x="217" y="66"/><use href="#pool" x="248" y="66"/><use href="#pool" x="279" y="66"/></g>
+          <g data-v="pop" data-l="21" data-o="0.45" data-d="0.3"><use href="#pool" x="0" y="88"/><use href="#pool" x="31" y="88"/><use href="#pool" x="62" y="88"/><use href="#pool" x="93" y="88"/><use href="#pool" x="124" y="88"/><use href="#pool" x="155" y="88"/><use href="#pool" x="186" y="88"/><use href="#pool" x="217" y="88"/><use href="#pool" x="248" y="88"/><use href="#pool" x="279" y="88"/></g>
+          <g data-v="pop" data-l="21" data-o="0.55" data-d="0.3"><use href="#pool" x="0" y="110"/><use href="#pool" x="31" y="110"/><use href="#pool" x="62" y="110"/><use href="#pool" x="93" y="110"/><use href="#pool" x="124" y="110"/><use href="#pool" x="155" y="110"/><use href="#pool" x="186" y="110"/><use href="#pool" x="217" y="110"/><use href="#pool" x="248" y="110"/><use href="#pool" x="279" y="110"/></g>
+          <g data-v="pop" data-l="21" data-o="0.65" data-d="0.3"><use href="#pool" x="0" y="132"/><use href="#pool" x="31" y="132"/><use href="#pool" x="62" y="132"/><use href="#pool" x="93" y="132"/><use href="#pool" x="124" y="132"/><use href="#pool" x="155" y="132"/><use href="#pool" x="186" y="132"/><use href="#pool" x="217" y="132"/><use href="#pool" x="248" y="132"/><use href="#pool" x="279" y="132"/></g>
+          <g data-v="pop" data-l="21" data-o="0.75" data-d="0.3"><use href="#pool" x="0" y="154"/><use href="#pool" x="31" y="154"/><use href="#pool" x="62" y="154"/><use href="#pool" x="93" y="154"/><use href="#pool" x="124" y="154"/><use href="#pool" x="155" y="154"/><use href="#pool" x="186" y="154"/><use href="#pool" x="217" y="154"/><use href="#pool" x="248" y="154"/><use href="#pool" x="279" y="154"/></g>
+        </g>
+      </svg>
+      <div class="tz-counter" style="position:absolute;left:12px;top:12px;gap:6px" data-v="fade" data-l="20" data-o="0.4" data-d="0.3">
+        <span class="num" style="font-size:40px;color:var(--water)" data-v="count" data-l="20" data-o="0.4" data-d="1.8" data-from="0" data-to="200">200</span>
+        <span class="unit">ألف طن<br>مية</span>
+      </div>
+      <div class="tz-counter" style="position:absolute;left:12px;bottom:14px;gap:6px" data-v="fade" data-l="21" data-o="0.2" data-d="0.3">
+        <span class="num" style="font-size:44px" data-v="count" data-l="21" data-o="0.1" data-d="1" data-from="0" data-to="80">80</span>
+        <span class="unit">حمام سباحة<br>أولمبي</span>
+      </div>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="20"><p data-words="20">سفينة الحاويات دي بتزق حوالي<br><span class="tz-k tz-k--water">200 ألف طن مية</span>...</p></div>
+      <div class="cap" data-cap="21"><p data-words="21">يعني قد <span class="tz-k tz-k--heat">80 حمام سباحة</span><br>أولمبي!</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S10 · Load lines (22–24) ═══ -->
+<section class="scene" data-scene="22-24">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <rect class="water" x="0" y="280" width="360" height="208"/>
+        <g data-v="move" data-l="22" data-o="0.4" data-d="2" data-dx="0" data-dy="18">
+          <g transform="translate(10 166)">
+            <use href="#ship"/>
+            <g data-v="pop" data-l="22" data-o="0.2" data-d="0.3"><use href="#boxes"/></g>
+            <g data-v="pop" data-l="22" data-o="0.6" data-d="0.3"><use href="#boxes" transform="translate(0 -20)"/></g>
+            <g data-v="pop" data-l="22" data-o="1.0" data-d="0.3"><use href="#boxes" transform="translate(0 -40)"/></g>
+            <g data-v="pop" data-l="22" data-o="1.4" data-d="0.3"><use href="#boxes" transform="translate(0 -60)"/></g>
+            <!-- load line mark (Plimsoll) -->
+            <g data-v="fade" data-l="23" data-o="0.2" data-d="0.4" style="stroke:var(--paper);fill:none;stroke-width:2.2"><circle cx="80" cy="104" r="8"/><path d="M68 104 H92 M100 96 H118 M106 96 V112 M106 104 H118 M106 112 H118"/></g>
+          </g>
+        </g>
+        <use href="#wave" class="water-line" transform="translate(0 280)"/>
+        <g data-v="fade" data-l="24" data-o="0" data-d="0.3"><path class="x" style="stroke-width:3;stroke-dasharray:8 6" d="M0 280 H360"/></g>
+        <!-- zoom on the mark -->
+        <g data-v="pop" data-l="23" data-o="0.6" data-d="0.4">
+          <circle cx="96" cy="96" r="64" class="lit tz-ink-h"/>
+          <clipPath id="zoom"><circle cx="96" cy="96" r="62"/></clipPath>
+          <g clip-path="url(#zoom)">
+            <rect class="tz-f-deep" x="30" y="30" width="140" height="80"/><rect class="tz-f-heat" x="30" y="110" width="140" height="60"/>
+            <rect class="water" x="30" y="112" width="140" height="60" style="opacity:.85"/>
+            <g style="stroke:var(--paper);fill:none;stroke-width:3"><circle cx="76" cy="96" r="20"/><path d="M48 96 H104 M118 76 H152 M126 76 V122 M126 96 H152 M126 112 H152"/></g>
+          </g>
+        </g>
+      </svg>
+      <span class="chip" style="left:72%;top:76%;color:var(--heat-text)" data-v="pop" data-l="24" data-o="0.8" data-d="0.35">لحد هنا وبس</span>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="22"><p data-words="22">وكل ما تشيل حاويات أكتر...<br>تنزل في المية <span class="tz-k tz-k--water">أكتر</span>.</p></div>
+      <div class="cap" data-cap="23"><p data-words="23">عشان كده مرسوم على جنبها<br><span class="em" data-ul="23">علامات</span>...</p></div>
+      <div class="cap" data-cap="24"><p data-words="24">بتقول للقبطان:<br><span class="tz-k tz-k--heat">لحد هنا وبس.</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S11 · Why ships sink (25–27) ═══ -->
+<section class="scene" data-scene="25-27">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <defs><clipPath id="inside"><path d="M34 10 L306 10 L294 88 L46 88 Z"/></clipPath></defs>
+        <rect class="water" x="0" y="290" width="360" height="198"/>
+        <g data-v="move" data-l="27" data-o="0.1" data-d="1.8" data-dx="0" data-dy="230">
+          <g data-v="rot" data-l="27" data-o="0" data-d="1.2" data-from="0" data-to="10" data-cx="180" data-cy="270">
+            <g transform="translate(10 220)">
+              <use href="#hull"/>
+              <g clip-path="url(#inside)">
+                <g data-v="grow" class="o-b" data-l="26" data-o="0.6" data-d="1.8" data-axis="y" data-ease="io"><rect class="water-deep" x="0" y="10" width="340" height="80"/></g>
+              </g>
+              <g data-v="pop" data-l="26" data-o="0.2" data-d="0.3"><path class="tz-f-heat tz-ink" d="M70 70 l10 -6 l4 10 l10 -4 l-4 12 l-12 2 z"/></g>
+            </g>
+          </g>
+        </g>
+        <use href="#wave" class="water-line" transform="translate(0 290)"/>
+        <g data-particles data-n="5" data-speed="40" data-dot="tz-f-water" data-r="2">
+          <path data-v="fade" data-l="26" data-o="0.3" data-d="0.3" style="fill:none;stroke:none" d="M40 330 C60 316 70 300 84 290"/>
+        </g>
+        <g data-v="out" data-l="27" data-o="0" data-d="0.3"><g data-v="pop" data-l="26" data-o="0.9" data-d="0.35"><text class="lbl danger" x="180" y="190" text-anchor="middle">المية خدت مكان الهوا</text></g></g>
+      </svg>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="25"><p data-words="25">طب ليه السفن <span class="tz-k tz-k--heat">بتغرق</span> ساعات؟</p></div>
+      <div class="cap" data-cap="26"><p data-words="26">لو المية دخلت جوة...<br>بتاخد <span class="tz-k tz-k--water">مكان الهوا</span>.</p></div>
+      <div class="cap" data-cap="27"><p data-words="27">فالسفينة تتقل...<br><span class="tz-k tz-k--heat">وتغرق.</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S12 · Watertight rooms (28–29) ═══ -->
+<section class="scene" data-scene="28-29">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488">
+        <defs><clipPath id="room2"><rect x="96" y="10" width="50" height="78"/></clipPath></defs>
+        <rect class="water" x="0" y="290" width="360" height="198"/>
+        <g data-v="rot" data-l="29" data-o="0.4" data-d="1" data-from="0" data-to="3" data-cx="180" data-cy="270">
+          <g data-v="move" data-l="29" data-o="0.4" data-d="1" data-dx="0" data-dy="6">
+            <g transform="translate(10 220)">
+              <use href="#hull"/>
+              <g clip-path="url(#room2)"><g data-v="grow" class="o-b" data-l="29" data-o="0.2" data-d="1.2" data-axis="y" data-ease="io"><rect class="water-deep" x="90" y="10" width="60" height="80"/></g></g>
+              <g data-v="draw" data-l="28" data-o="0.8" data-d="1.4" class="tz-ink-h">
+                <path d="M96 10 V88"/><path d="M146 10 V88"/><path d="M196 10 V88"/><path d="M246 10 V88"/>
+              </g>
+              <g data-v="pop" data-l="29" data-o="0" data-d="0.3"><path class="tz-f-heat tz-ink" d="M110 74 l8 -5 l3 8 l8 -3 l-3 10 l-10 1 z"/></g>
+            </g>
+          </g>
+        </g>
+        <use href="#wave" class="water-line" transform="translate(0 290)"/>
+        <g data-v="pop" data-l="28" data-o="2" data-d="0.35"><text class="lbl" style="--c:var(--ink)" x="180" y="200" text-anchor="middle">أوض مقفولة</text></g>
+        <g data-v="pop" data-l="29" data-o="1.6" data-d="0.35"><path class="ok" d="M280 120 L300 140 L334 102"/></g>
+        <g data-v="grow" class="o-b" data-l="29" data-o="1.2" data-d="0.6"><path class="arrow buoy" d="M238 440 V370 H226 L246 340 L266 370 H254 V440 Z"/></g>
+      </svg>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="28"><p data-words="28">عشان كده السفن الحديثة مقسومة من جوة<br>لـ<span class="tz-k tz-k--part">أوض مقفولة</span>...</p></div>
+      <div class="cap" data-cap="29"><p data-words="29">لو أوضة غرقت...<br>الباقي <span class="tz-k tz-k--water">يفضل شايل</span> السفينة.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S13 · Outro sheet (30) ═══ -->
+<section class="scene" data-scene="30-30">
+  <div class="corners"></div>
+  <div class="sheet" style="padding:20px 18px;display:grid;align-content:start;gap:10px">
+    <span class="tz-brand"><svg class="tz-watch" style="--watch-size:18px" viewBox="0 0 48 54"><rect class="crown" x="20" y="0" width="8" height="3"/><rect class="crown" x="23" y="3" width="2" height="4"/><circle class="arc" cx="24" cy="30" r="20"/><circle class="core" cx="24" cy="30" r="6"/></svg><span class="tz-brand__name" style="font-size:10px">طب إزاي؟</span></span>
+    <h2 style="margin:0;font:600 20px/1.5 var(--font-sans);text-align:right">إزاي السفينة الحديد مبتغرقش؟</h2>
+    <div style="background:var(--panel)">
+      <svg viewBox="0 0 300 150" style="display:block;width:100%;height:auto">
+        <rect class="water" x="0" y="96" width="300" height="54"/>
+        <g transform="translate(-8 26) scale(.9)"><use href="#hull" transform="translate(0 40) scale(1 .55)"/><use href="#boxes"/></g>
+        <use href="#wave" class="water-line" transform="translate(0 96) scale(.8)"/>
+        <path class="arrow buoy" d="M146 146 V120 H140 L150 104 L160 120 H154 V146 Z"/>
+        <g style="font:600 11px var(--font-sans)"><circle cx="40" cy="22" r="9" class="lit tz-ink"/><text x="40" y="26" text-anchor="middle">1</text>
+        <circle cx="150" cy="70" r="9" class="lit tz-ink"/><text x="150" y="74" text-anchor="middle">2</text>
+        <circle cx="176" cy="132" r="9" class="lit tz-ink"/><text x="176" y="136" text-anchor="middle">3</text></g>
+      </svg>
+    </div>
+    <ol class="tz-legend" style="font-size:12px;line-height:20px;--cols:1">
+      <li><span class="tz-num">1</span>حديد من برة، شكله حوض</li>
+      <li><span class="tz-num">2</span>هوا كتير من جوة، فالسفينة خفيفة</li>
+      <li><span class="tz-num">3</span>قوة الطفو: قد وزن المية اللي اتزقت</li>
+    </ol>
+    <div class="tz-counter" style="justify-self:end">
+      <span class="num" style="font-size:50px">80</span>
+      <span class="unit">حمام سباحة مية<br>بتزقهم سفينة واحدة</span>
+    </div>
+    <div class="tz-ask" style="margin:6px;padding:12px 10px;gap:2px" data-v="pop" data-l="30" data-o="0" data-d="0.5">
+      <span class="tz-ask__lead" style="font-size:15px" data-words="30">قولولنا... عايزين تعرفوا</span>
+      <span class="tz-ask__line" style="font-size:19px">طب إزاي <span class="tz-ask__blank" style="min-width:3.5em"></span>؟</span>
+    </div>
+  </div>
+</section>
+
+</div>
+<script src="timing.js"></script>
+<script src="../../design-system/components/bundle.js"></script>
+<script>TebEzay.patterns();</script>
+<script src="../engine.js"></script>
+</body>
+</html>

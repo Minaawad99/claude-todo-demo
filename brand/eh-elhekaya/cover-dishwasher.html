@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>Reel cover — dishwasher</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../../design-system/components/bundle.css">
+<style>
+  /* 540×960 at 2x = 1080×1920 reel cover. Instagram's grid shows the middle 3:4 (y 120–840);
+     the bottom ~200px sits under the reel's caption and buttons. Everything that matters lives in 120–740. */
+  body { margin: 0; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; font-family: var(--font-sans); color: var(--ink);
+    background-color: var(--paper);
+    background-image: linear-gradient(to right, var(--paper-grid) 1px, transparent 1px), linear-gradient(to bottom, var(--paper-grid) 1px, transparent 1px);
+    background-size: 36px 36px; background-position: 18px 12px; }
+  .cover > svg { position: absolute; inset: 0; }
+  .t { position: absolute; left: 0; right: 0; text-align: center; margin: 0; }
+  .brand { top: 136px; display: flex; justify-content: center; align-items: center; gap: 8px; font: 600 17px/1 var(--font-sans); }
+  .l1 { top: 182px; font: 800 52px/1.2 var(--font-sans); }
+  .l1 b { color: var(--heat); }
+  .l2 { top: 556px; font: 800 44px/1.25 var(--font-sans); }
+  .l2 .n { font: 700 84px/1 var(--font-numeral); color: var(--heat); vertical-align: -8px; }
+  .l2 .ok { color: var(--water); }
+  .pill { top: 728px; display: flex; justify-content: center; }
+  .pill span { font: 700 26px/1 var(--font-sans); padding: 12px 26px; background: var(--heat); color: var(--on-heat); border: 2.5px solid var(--ink); box-shadow: 5px 5px 0 var(--ink); }
+  .lit { fill: var(--paper-raised); } .steel { fill: #5f5a52; }
+  .water { fill: var(--water-body); } .water-line { fill: none; stroke: var(--water); stroke-width: 3; }
+  .air-fill { fill: color-mix(in srgb, var(--olive) 45%, var(--paper)); }
+  .glass { fill: none; stroke: var(--ink); stroke-width: 4; }
+  .x { fill: none; stroke: var(--heat); stroke-width: 9; stroke-linecap: round; }
+  .ok-s { fill: none; stroke: var(--olive-text); stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
+  .arrow { fill: var(--water); stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
+  .box1 { fill: var(--heat); } .box2 { fill: var(--water); } .box3 { fill: var(--olive); } .box4 { fill: var(--khaki); }
+  .pill { top: 744px !important; }
+</style>
+</head>
+<body>
+<div class="cover">
+  <svg viewBox="0 0 540 960" width="540" height="960" aria-hidden="true">
+    <defs>
+      <g id="mark"><rect x="84" y="4" width="32" height="10" style="fill:var(--ink)"/><rect x="94" y="14" width="12" height="14" style="fill:var(--ink)"/>
+        <path style="fill:var(--ink)" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)"/>
+        <path style="fill:var(--paper-raised);stroke:var(--ink);stroke-width:7;stroke-linejoin:round" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z"/>
+        <text x="106" y="140" text-anchor="middle" style="font:800 120px var(--font-sans);fill:var(--heat)">؟</text></g>
+      <g id="plate"><circle r="30" style="fill:var(--paper-raised);stroke:var(--ink);stroke-width:2"/><circle r="19" style="fill:none;stroke:var(--ink);stroke-width:1.5"/></g>
+    </defs>
+    <rect x="22" y="22" width="496" height="916" style="fill:none;stroke:var(--ink);stroke-width:3"/>
+    <rect x="30" y="30" width="480" height="900" style="fill:none;stroke:var(--ink);stroke-width:1.2"/>
+    <!-- open dishwasher, cut away, spraying -->
+    <g transform="translate(90 300)">
+      <rect x="0" y="0" width="250" height="240" style="fill:var(--paper-raised);stroke:var(--ink);stroke-width:3"/>
+      <rect x="14" y="14" width="222" height="200" style="fill:#ddd6c4;stroke:var(--ink);stroke-width:2"/>
+      <path d="M24 130 H226" style="stroke:var(--ink);stroke-width:2"/>
+      <g transform="translate(55 100)"><use href="#plate"/></g><g transform="translate(95 100)"><use href="#plate"/></g><g transform="translate(135 100)"><use href="#plate"/></g><g transform="translate(175 100)"><use href="#plate"/></g>
+      <rect x="40" y="166" width="170" height="10" style="fill:var(--olive);stroke:var(--ink);stroke-width:2"/><circle cx="125" cy="171" r="8" style="fill:var(--khaki-deep);stroke:var(--ink);stroke-width:2"/>
+      <path d="M60 166 L48 120 M90 166 L84 120 M160 166 L166 120 M190 166 L202 120" style="fill:none;stroke:var(--water);stroke-width:3;stroke-dasharray:6 5;stroke-linecap:round"/>
+      <path d="M30 196 H110 M140 196 H220" style="stroke:var(--heat);stroke-width:6;stroke-linecap:round"/>
+      <rect x="0" y="214" width="250" height="26" style="fill:var(--khaki);stroke:var(--ink);stroke-width:2"/>
+    </g>
+    <!-- one bucket -->
+    <g transform="translate(376 410)">
+      <path d="M0 0 L70 0 L60 110 L10 110 Z" style="fill:var(--paper-raised);stroke:var(--ink);stroke-width:3"/>
+      <path d="M5 30 L65 30 L60 108 L10 108 Z" style="fill:var(--water-body)"/>
+      <path d="M4 0 Q35 -40 66 0" style="fill:none;stroke:var(--ink);stroke-width:3"/>
+      <text x="35" y="84" text-anchor="middle" style="font:700 26px var(--font-numeral);fill:var(--water)">10L</text>
+    </g>
+  </svg>
+  <div class="t brand"><svg width="26" height="26" viewBox="0 0 200 200"><use href="#mark"/></svg>إيه الحكاية؟</div>
+  <p class="t l1">جردل مية <b>واحد</b>...</p>
+  <p class="t l2" style="top:600px">بيغسل <span style="color:var(--water)">كل الأطباق دي</span>!<br><span style="font-size:34px">ومن غير موتور للرش؟!</span></p>
+  <div class="t pill"><span>إيه الحكاية؟</span></div>
+</div>
+<script src="../../design-system/components/bundle.js"></script>
+</body>
+</html>

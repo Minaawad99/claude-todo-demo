@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>Offshore oil — style test</title>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Noto+Sans+Arabic:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  /* realistic-detail test: each piece of kit drawn from its real shape, lit like a 3D model */
+  body { margin: 0; background: #000; }
+  #frames { display: flex; }
+  .frame { position: relative; width: 360px; height: 640px; background: #000; overflow: hidden; }
+  .title { position: absolute; left: 0; right: 0; top: 92px; text-align: center; font: 700 30px/1.2 "Aref Ruqaa", serif; color: #fff; }
+  .sub { position: absolute; left: 0; right: 0; top: 136px; text-align: center; font: 700 19px/1.2 "Aref Ruqaa", serif; color: #f2c230; }
+  .panel { position: absolute; left: 0; right: 0; top: 196px; height: 203px; overflow: hidden; }
+  .panel svg { display: block; width: 100%; height: 100%; }
+  .cap { position: absolute; left: 18px; right: 18px; top: 432px; text-align: center; font: 800 20px/1.6 "Noto Sans Arabic", sans-serif; color: #fff; }
+  .cap b { color: #f2c230; }
+  .tag { font: 800 20px "Noto Sans Arabic", sans-serif; fill: #2b2016; }
+</style></head>
+<body>
+<div id="frames"></div>
+<svg width="0" height="0" style="position:absolute"><defs>
+  <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter>
+  <filter id="soft2" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="1.6"/></filter>
+  <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3"/></filter>
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .45  0 0 0 0 .4  0 0 0 .08 0"/></filter>
+  <linearGradient id="skyS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a3a6a"/><stop offset=".45" stop-color="#d46a3c"/><stop offset=".7" stop-color="#f2a85a"/><stop offset="1" stop-color="#f7c98a"/></linearGradient>
+  <linearGradient id="seaS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4f74"/><stop offset="1" stop-color="#14223a"/></linearGradient>
+  <linearGradient id="hullB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2d5c9a"/><stop offset="1" stop-color="#16325a"/></linearGradient>
+  <linearGradient id="hullW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f2ec"/><stop offset="1" stop-color="#bdb8ad"/></linearGradient>
+  <linearGradient id="steel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5a6068"/><stop offset=".45" stop-color="#c9ced4"/><stop offset=".6" stop-color="#9aa2ac"/><stop offset="1" stop-color="#4a5058"/></linearGradient>
+  <linearGradient id="bitBody" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3a3d42"/><stop offset=".4" stop-color="#8a9098"/><stop offset=".55" stop-color="#b9bfc6"/><stop offset="1" stop-color="#2b2e33"/></linearGradient>
+  <radialGradient id="cone" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#d4d9de"/><stop offset=".55" stop-color="#8a929c"/><stop offset="1" stop-color="#3a3f46"/></radialGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3dc9e"/><stop offset=".5" stop-color="#c9a04e"/><stop offset="1" stop-color="#7a5a24"/></linearGradient>
+  <linearGradient id="leg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1f524b"/><stop offset=".45" stop-color="#5fa597"/><stop offset="1" stop-color="#1d4a44"/></linearGradient>
+  <linearGradient id="steelD" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3a3f46"/><stop offset=".45" stop-color="#7a828c"/><stop offset="1" stop-color="#2b2e33"/></linearGradient>
+  <radialGradient id="pdc" cx=".35" cy=".35" r=".7"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#d9dee4"/><stop offset="1" stop-color="#6a727c"/></radialGradient>
+  <linearGradient id="bopRed" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7a1c14"/><stop offset=".45" stop-color="#d8452e"/><stop offset="1" stop-color="#6a1810"/></linearGradient>
+  <linearGradient id="bopYel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9a6a10"/><stop offset=".45" stop-color="#f2c230"/><stop offset="1" stop-color="#8a5c0c"/></linearGradient>
+  <linearGradient id="deep" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0e3a5c"/><stop offset="1" stop-color="#04121f"/></linearGradient>
+  <linearGradient id="rock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a7a5a"/><stop offset="1" stop-color="#5a4a34"/></linearGradient>
+  <path id="swash" d="M6 14 C40 4 120 2 196 8 C214 10 222 20 214 30 C206 44 140 46 70 44 C30 44 4 40 2 30 C0 24 2 18 6 14 Z"/>
+</defs></svg>
+<script>
+function tag(t, x, y, r, sz, col) { var w = t.length * (sz || 20) * 0.52 + 40; return '<g transform="translate(' + x + ' ' + y + ') rotate(' + (r || -3) + ')"><use href="#swash" fill="' + (col || "#e8c48e") + '" transform="translate(' + (-w / 2) + ' ' + (-(sz || 20) * 1.05) + ') scale(' + (w / 220) + ' ' + ((sz || 20) * 0.072) + ')"/><text x="0" y="' + ((sz || 20) * 0.35) + '" text-anchor="middle" class="tag" style="font-size:' + (sz || 20) + 'px">' + t + '</text></g>'; }
+// lattice derrick: tapered steel truss with X-bracing
+function derrick(x, y, w0, w1, h) { var s = '<path d="M' + (x - w0 / 2) + ' ' + y + ' L' + (x - w1 / 2) + ' ' + (y - h) + ' M' + (x + w0 / 2) + ' ' + y + ' L' + (x + w1 / 2) + ' ' + (y - h) + '" stroke="#2f343a" stroke-width="4"/>'; for (var k = 0; k < 9; k++) { var a = y - h * k / 9, b = y - h * (k + 1) / 9, wa = w0 + (w1 - w0) * k / 9, wb = w0 + (w1 - w0) * (k + 1) / 9; s += '<path d="M' + (x - wa / 2) + ' ' + a + ' L' + (x + wb / 2) + ' ' + b + ' M' + (x + wa / 2) + ' ' + a + ' L' + (x - wb / 2) + ' ' + b + ' M' + (x - wb / 2) + ' ' + b + ' H' + (x + wb / 2) + '" stroke="#3d434a" stroke-width="1.8"/>'; } return s + '<rect x="' + (x - w1 / 2 - 4) + '" y="' + (y - h - 8) + '" width="' + (w1 + 8) + '" height="8" fill="#c23a26" stroke="#1c1c1c"/>'; }
+var P = [];
+// 1) the drillship at sunset (real layout: helideck at the bow, derrick amidships, cranes, accommodation block)
+P.push({ cap: "بعدها ييجي دور <b>الحفر</b>، من <b>سفينة حفر</b>", svg:
+  '<rect width="640" height="360" fill="url(#skyS)"/><circle cx="590" cy="196" r="70" fill="#ffe2a8" opacity=".6" filter="url(#soft)"/><circle cx="590" cy="200" r="28" fill="#fff1c8"/>' +
+  '<g filter="url(#soft)" fill="#f7c98a" opacity=".7"><ellipse cx="420" cy="90" rx="120" ry="12"/><ellipse cx="200" cy="120" rx="90" ry="8"/></g>' +
+  '<rect y="220" width="640" height="140" fill="url(#seaS)"/>' + Array.from({ length: 14 }, (_, i) => '<path d="M' + (i * 50 - 20) + ' ' + (232 + (i % 4) * 26) + ' q12 -4 24 0" stroke="#f2a85a" stroke-width="2" fill="none" opacity=".55"/>').join("") +
+  '<path d="M570 228 L610 228 L620 250 L560 250 Z" fill="#f2a85a" opacity=".55"/>' +
+  // hull
+  '<path d="M90 222 L560 222 L540 258 L118 258 Z" fill="url(#hullB)" stroke="#0c1a2c" stroke-width="2"/><path d="M96 222 H556 V230 H98 Z" fill="#c23a26"/><path d="M118 258 L540 258" stroke="#0c1a2c" stroke-width="2"/>' +
+  // bow: accommodation + helideck
+  '<rect x="120" y="178" width="90" height="44" fill="url(#hullW)" stroke="#5a5a5a"/>' + Array.from({ length: 12 }, (_, i) => '<rect x="' + (126 + (i % 6) * 14) + '" y="' + (186 + Math.floor(i / 6) * 16) + '" width="9" height="7" fill="#ffd98a"/>').join("") +
+  '<path d="M96 172 H186 L176 180 H106 Z" fill="#e2b035" stroke="#5a4a20"/><circle cx="141" cy="175" r="6" fill="none" stroke="#fff" stroke-width="1.6"/>' +
+  // derrick amidships + drill floor + pipe rack
+  '<rect x="300" y="200" width="100" height="22" fill="url(#hullW)" stroke="#5a5a5a"/>' + derrick(350, 200, 84, 30, 156) +
+  '<rect x="420" y="208" width="90" height="14" fill="#8a929c" stroke="#3a3d42"/>' + Array.from({ length: 6 }, (_, i) => '<path d="M424 ' + (210 + i * 2) + ' H506" stroke="#5a6068" stroke-width="1.6"/>').join("") +
+  // cranes
+  '<path d="M240 222 V176 L296 150" stroke="#f2c230" stroke-width="5" fill="none"/><path d="M520 222 V184 L570 160" stroke="#f2c230" stroke-width="5" fill="none"/>' +
+  // lights
+  '<circle cx="350" cy="44" r="5" fill="#ff3b2f" filter="url(#glow)"/>' + [260, 300, 400, 470].map(x => '<circle cx="' + x + '" cy="218" r="2.4" fill="#fff6c8"/>').join("") +
+  tag("سفينة حفر", 520, 70, 3) });
+// 2) the two real drill bits, from the Commons photos: tricone (green legs, 3 steel cones with rows of teeth) and PDC (gold body, spiral blades with round diamond cutters)
+function cone(x, y, rot, flip) {
+  var s = '<g transform="translate(' + x + ' ' + y + ') rotate(' + rot + ') scale(' + (flip ? -1 : 1) + ' 1)">';
+  s += '<path d="M-46 -40 Q-58 0 -46 40 L30 13 Q42 0 30 -13 Z" fill="url(#cone)" stroke="#1c1c1c" stroke-width="2"/>';
+  [0.12, 0.42, 0.72].forEach(function (t, r) { var cx = -46 + 76 * t, hh = 40 * (1 - t) + 13 * t, n = 5 - r;
+    s += '<path d="M' + cx + ' ' + (-hh) + ' Q' + (cx - 6) + ' 0 ' + cx + ' ' + hh + '" stroke="#2b2e33" stroke-width="1.4" fill="none"/>';
+    for (var k = 0; k < n; k++) { var yy = -hh + (2 * hh) * (k + 0.5) / n; s += '<path d="M' + (cx - 5) + ' ' + (yy - 5) + ' L' + (cx + 7) + ' ' + yy + ' L' + (cx - 5) + ' ' + (yy + 5) + ' Z" fill="#dfe3e8" stroke="#1c1c1c" stroke-width=".9"/>'; }
+    s += '<path d="M' + (cx - 3) + ' ' + (-hh - 1) + ' l5 -9 l5 9 Z M' + (cx - 3) + ' ' + (hh + 1) + ' l5 9 l5 -9 Z" fill="#dfe3e8" stroke="#1c1c1c" stroke-width=".9"/>'; });
+  return s + '</g>';
+}
+function pdc(x, y, t) {
+  var R = 78, yG = -40, D = 86, s = '<g transform="translate(' + x + ' ' + y + ')">';
+  s += '<path d="M-26 -150 H26 L22 -110 H-22 Z" fill="url(#bitBody)" stroke="#1c1c1c" stroke-width="2"/>' + Array.from({ length: 6 }, (_, i) => '<path d="M-24 ' + (-146 + i * 7) + ' L24 ' + (-142 + i * 7) + '" stroke="#2b2e33" stroke-width="1.6"/>').join("");
+  s += '<path d="M-40 -110 H40 L' + R + ' -70 V' + yG + ' H' + (-R) + ' V-70 Z" fill="url(#gold)" stroke="#1c1c1c" stroke-width="2"/>';
+  s += '<path d="M' + (-R) + ' ' + yG + ' A' + R + ' ' + D + ' 0 0 0 ' + R + ' ' + yG + ' Z" fill="#6e5426" stroke="#1c1c1c" stroke-width="2"/>';
+  var blades = [], cut = [];
+  for (var j = 0; j < 7; j++) { var ph0 = j * 2 * Math.PI / 7 + (t || 0), pts = [];
+    for (var k = 0; k <= 12; k++) { var u = k / 12, ph = ph0 + 0.9 * u, r = R * Math.cos(u * 1.45), px = r * Math.sin(ph), py = yG + D * Math.sin(u * 1.45) - 6 * Math.cos(ph) * (1 - u), vis = Math.cos(ph);
+      pts.push([px, py, vis, u]); }
+    var front = pts.filter(p => p[2] > -0.05); if (front.length < 2) continue;
+    blades.push([front.reduce((m, p) => m + p[2], 0) / front.length, front]); }
+  blades.sort((a, b) => a[0] - b[0]).forEach(function (bl) { var p = bl[1], d = "M" + p.map(q => q[0].toFixed(1) + " " + q[1].toFixed(1)).join(" L");
+    s += '<path d="' + d + '" stroke="#1c1c1c" stroke-width="23" stroke-linecap="round" fill="none"/><path d="' + d + '" stroke="url(#gold)" stroke-width="19" stroke-linecap="round" fill="none"/>';
+    p.forEach(function (q, i) { if (i % 2 || q[3] > 0.85) return; var rr = 3 + 3.2 * Math.max(0.2, q[2]); s += '<ellipse cx="' + q[0].toFixed(1) + '" cy="' + (q[1] - 3).toFixed(1) + '" rx="' + (rr * (0.45 + 0.55 * Math.max(0, q[2]))).toFixed(1) + '" ry="' + rr.toFixed(1) + '" fill="url(#pdc)" stroke="#1c1c1c" stroke-width="1.1"/>'; }); });
+  return s + '</g>';
+}
+P.push({ cap: "وفي آخرها <b>بريمة</b>، فيها <b>تروس مسننة</b> أو <b>ألماظ صناعي</b>", svg:
+  '<rect width="640" height="360" fill="#e9e1cf"/>' + Array.from({ length: 17 }, (_, i) => '<path d="M' + (i * 40) + ' 0 V360" stroke="#d9cdb3" stroke-width="2"/>').join("") + Array.from({ length: 10 }, (_, i) => '<path d="M0 ' + (i * 40) + ' H640" stroke="#d9cdb3" stroke-width="2"/>').join("") +
+  // tricone: threaded pin, shank, three painted legs, three cones meeting at the centre
+  '<g transform="translate(180 175)"><ellipse cx="0" cy="118" rx="96" ry="14" fill="#2b2620" opacity=".25" filter="url(#soft2)"/>' +
+  '<path d="M-26 -150 H26 L22 -104 H-22 Z" fill="url(#bitBody)" stroke="#1c1c1c" stroke-width="2"/>' + Array.from({ length: 7 }, (_, i) => '<path d="M-24 ' + (-146 + i * 7) + ' L24 ' + (-142 + i * 7) + '" stroke="#2b2e33" stroke-width="1.6"/>').join("") +
+  '<path d="M-44 -104 H44 L60 -70 V-20 L36 10 H-36 L-60 -20 V-70 Z" fill="url(#leg)" stroke="#1c1c1c" stroke-width="2"/><path d="M-20 -100 L-24 6 M20 -100 L24 6" stroke="#1d4a44" stroke-width="3"/>' +
+  '<circle cx="-40" cy="-44" r="6" fill="#1c1c1c"/><circle cx="40" cy="-44" r="6" fill="#1c1c1c"/>' +
+  cone(-46, 40, 48, false) + cone(46, 40, -48, true) + cone(0, 62, 90, false) + '</g>' +
+  // PDC
+  '<g><ellipse cx="460" cy="292" rx="92" ry="13" fill="#2b2620" opacity=".25" filter="url(#soft2)"/>' + pdc(460, 175, 0.3) + '</g>' +
+  tag("Tricone: تروس بتلف", 180, 340, -2, 16) + tag("PDC: ألماظ صناعي", 460, 340, 2, 16) });
+// 3) on the seabed: the BOP stack as in the photo — a tall yellow frame holding annulars + ram blocks, red hydraulic hoses, riser above, wellhead below
+P.push({ cap: "وعلى القاع، فيه جهاز ضخم اسمه <b>مانع الانفجار</b>", svg:
+  '<rect width="640" height="360" fill="url(#deep)"/>' + Array.from({ length: 40 }, (_, i) => '<circle cx="' + ((i * 97) % 640) + '" cy="' + ((i * 53) % 300) + '" r="1.4" fill="#fff" opacity=".35"/>').join("") +
+  '<path d="M0 300 Q160 288 320 300 T640 296 V360 H0 Z" fill="url(#rock)"/>' +
+  '<rect x="308" y="0" width="24" height="110" fill="url(#steel)" stroke="#1c1c1c"/>' + [0, 46].map(y => '<rect x="292" y="' + y + '" width="56" height="34" rx="6" fill="#f2c230" stroke="#1c1c1c"/><path d="M292 ' + (y + 17) + ' H348" stroke="#b8901c" stroke-width="2"/>').join("") +
+  '<path d="M332 100 C380 96 400 120 396 150" stroke="#c23a26" stroke-width="4" fill="none"/><path d="M308 100 C262 96 242 124 246 160" stroke="#c23a26" stroke-width="4" fill="none"/>' +
+  // inner stack: LMRP connector, two annulars (dark domes), four rams, wellhead connector
+  '<rect x="296" y="106" width="48" height="16" fill="url(#steel)" stroke="#1c1c1c"/>' +
+  [124, 158].map(y => '<path d="M276 ' + (y + 30) + ' V' + (y + 12) + ' Q276 ' + y + ' 296 ' + y + ' H344 Q364 ' + y + ' 364 ' + (y + 12) + ' V' + (y + 30) + ' Z" fill="url(#steelD)" stroke="#1c1c1c" stroke-width="2"/>').join("") +
+  [192, 216, 240, 264].map((y, i) => '<rect x="266" y="' + y + '" width="108" height="20" rx="3" fill="' + (i % 2 ? "url(#steelD)" : "url(#bopRed)") + '" stroke="#1c1c1c" stroke-width="2"/><rect x="232" y="' + (y + 4) + '" width="34" height="12" rx="3" fill="url(#steel)" stroke="#1c1c1c"/><rect x="374" y="' + (y + 4) + '" width="34" height="12" rx="3" fill="url(#steel)" stroke="#1c1c1c"/>').join("") +
+  // yellow frame (front posts + braces) drawn over the stack, like the real one
+  '<g stroke="#1c1c1c" stroke-width="1.5" fill="url(#bopYel)"><rect x="222" y="112" width="12" height="180"/><rect x="406" y="112" width="12" height="180"/><rect x="216" y="104" width="208" height="10"/><rect x="216" y="186" width="208" height="7"/><rect x="210" y="288" width="220" height="10"/></g>' +
+  '<path d="M234 120 L272 184 M406 120 L368 184" stroke="#e2b035" stroke-width="5"/>' +
+  '<rect x="300" y="298" width="40" height="12" fill="url(#steel)" stroke="#1c1c1c"/><rect x="310" y="310" width="20" height="50" fill="#3a3d42" stroke="#1c1c1c"/>' +
+  '<circle cx="428" cy="150" r="5" fill="#5bbf6a" filter="url(#glow)"/>' +
+  '<g transform="translate(540 220)"><rect x="-40" y="-24" width="80" height="48" rx="8" fill="#f2c230" stroke="#1c1c1c" stroke-width="2"/><rect x="-36" y="-30" width="72" height="8" fill="#e9e4d8" stroke="#1c1c1c"/><circle cx="-40" cy="0" r="7" fill="#fff6c8" filter="url(#glow)"/><path d="M-40 0 L-140 -30 L-140 30 Z" fill="#fff6c8" opacity=".12"/><path d="M-30 24 l-14 14 M-20 24 l-6 16" stroke="#3a3d42" stroke-width="3"/></g>' +
+  tag("مانع الانفجار", 120, 70, -3) });
+var host = document.getElementById("frames");
+P.forEach(function (p) { host.insertAdjacentHTML("beforeend", '<div class="frame"><div class="title">إزاي بيطلّعوا النفط؟</div><div class="sub">من تحت قاع المحيط!</div><div class="panel"><svg viewBox="0 0 640 360">' + p.svg + '<rect width="640" height="360" filter="url(#grain)"/></svg></div><div class="cap">' + p.cap + '</div></div>'); });
+</script>
+</body></html>

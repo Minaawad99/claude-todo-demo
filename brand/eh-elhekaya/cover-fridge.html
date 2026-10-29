@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head><meta charset="utf-8"><title>Reel cover — fridge</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../../design-system/components/bundle.css">
+<style>
+  /* 540×960 at 2x. Paradox hook: open the fridge door → the kitchen gets HOTTER. Key content in y 120–760. */
+  body { margin: 0; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; font-family: var(--font-sans); color: var(--ink); background-color: var(--paper);
+    background-image: linear-gradient(to right, var(--paper-grid) 1px, transparent 1px), linear-gradient(to bottom, var(--paper-grid) 1px, transparent 1px); background-size: 36px 36px; background-position: 18px 12px; }
+  .cover > svg { position: absolute; inset: 0; }
+  .t { position: absolute; left: 0; right: 0; text-align: center; margin: 0; }
+  .iso-gasket { fill: none; stroke: #3b352e; stroke-width: 3.4; } .iso-glass { fill: color-mix(in srgb, var(--water-body) 35%, var(--paper-raised)); stroke: var(--ink); stroke-width: 1.2; }
+  .iso-bottle { fill: color-mix(in srgb, var(--olive) 45%, var(--paper-raised)); stroke: var(--ink); stroke-width: 1.2; } .iso-bottle-top { fill: var(--paper-raised); stroke: var(--ink); stroke-width: 1.2; }
+  .iso-jar { fill: #e8c64a; stroke: var(--ink); stroke-width: 1.2; } .iso-jar-top { fill: #f2dc85; stroke: var(--ink); stroke-width: 1.2; }
+  .iso-frost { fill: color-mix(in srgb, var(--water-body) 40%, #fff); stroke: var(--water); } .iso-ice { fill: color-mix(in srgb, var(--water-body) 60%, #fff); stroke: var(--ink); } .iso-ice-top { fill: #eef6fa; stroke: var(--ink); }
+  .iso-shelf { fill: color-mix(in srgb, var(--water-body) 18%, transparent); stroke: var(--ink); stroke-width: 1.4; }
+  .iso-veg { fill: color-mix(in srgb, var(--olive) 55%, var(--paper-raised)); stroke: var(--ink); } .iso-veg-top { fill: color-mix(in srgb, var(--olive) 35%, var(--paper-raised)); stroke: var(--ink); }
+  .iso-cake { fill: #e9b6a0; stroke: var(--ink); } .iso-cake-top { fill: #f6dccf; stroke: var(--ink); } .iso-ceramic { fill: #f6f3ea; stroke: var(--ink); }
+  .iso-comp { fill: #3b352e; stroke: var(--ink); stroke-width: 1.4; } .iso-comp-top { fill: #5d574d; stroke: var(--ink); stroke-width: 1.4; }
+  .iso-hum { fill: none; stroke: var(--olive-text); stroke-width: 1.6; } .iso-dial { fill: var(--paper-raised); stroke: var(--ink); } .iso-needle { stroke: var(--heat); stroke-width: 2.4; }
+  .iso-pipe-hot { fill: none; stroke: color-mix(in srgb, var(--heat) 55%, var(--paper-raised)); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+  .iso-pipe-cold { fill: none; stroke: color-mix(in srgb, var(--water) 45%, var(--paper-raised)); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+  .iso-capillary { fill: none; stroke: var(--olive-text); stroke-width: 2; } .iso-cut { fill: var(--khaki); stroke: var(--ink); stroke-width: 1.4; }
+  .wave { fill: none; stroke: var(--heat); stroke-width: 4; stroke-linecap: round; }
+  .cold { fill: none; stroke: var(--water); stroke-width: 4; stroke-linecap: round; }
+</style></head>
+<body>
+<div class="cover">
+  <svg viewBox="0 0 540 960" width="540" height="960">
+    <defs><g id="mark"><rect x="84" y="4" width="32" height="10" style="fill:var(--ink)"/><rect x="94" y="14" width="12" height="14" style="fill:var(--ink)"/>
+      <path style="fill:var(--ink)" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)"/>
+      <path style="fill:var(--paper-raised);stroke:var(--ink);stroke-width:7;stroke-linejoin:round" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z"/>
+      <text x="106" y="140" text-anchor="middle" style="font:800 120px var(--font-sans);fill:var(--heat)">؟</text></g></defs>
+    <rect x="22" y="22" width="496" height="916" style="fill:none;stroke:var(--ink);stroke-width:3"/>
+    <rect x="30" y="30" width="480" height="900" style="fill:none;stroke:var(--ink);stroke-width:1.2"/>
+    <g id="fr"></g>
+    <!-- heat pouring out the back -->
+    <g transform="translate(372 330)"><path class="wave" d="M0 0 q-10 -16 0 -32 q10 -16 0 -32"/><path class="wave" d="M34 20 q-10 -16 0 -32 q10 -16 0 -32"/><path class="wave" d="M68 40 q-10 -16 0 -32 q10 -16 0 -32"/></g>
+    <g transform="translate(160 430)"><path class="cold" d="M0 0 q-8 -12 0 -24 q8 -12 0 -24"/><path class="cold" d="M24 14 q-8 -12 0 -24 q8 -12 0 -24"/></g>
+  </svg>
+  <div class="t" style="top:130px;display:flex;justify-content:center;align-items:center;gap:8px;font:700 17px var(--font-sans)"><svg width="26" height="26" viewBox="0 0 200 200"><use href="#mark"/></svg>إيه الحكاية؟</div>
+  <p class="t" style="top:166px;font:800 38px/1.3 var(--font-sans)">التلاجة <span style="color:var(--heat)">مبتعملش برد!</span></p>
+  <p class="t" style="top:224px;font:700 21px/1.4 var(--font-sans);color:var(--ink-muted)">ولو فتحت بابها، المطبخ <span style="color:var(--heat-text)">هيسخن</span></p>
+  <p class="t" style="top:706px;font:800 28px/1.3 var(--font-sans)">طب بتبرّد <span style="color:var(--water)">إزاي؟</span></p>
+</div>
+<script src="../../design-system/components/bundle.js"></script>
+<script>TebEzay.patterns();</script>
+<script src="../../videos/fridge/iso.js"></script>
+<script>var f = FridgeModel(document.getElementById("fr"), { scale: 0.68, x: 258, y: 642 }); f.update(0.3, { fan: 0.6, run: true, dial: 0 });</script>
+</body></html>

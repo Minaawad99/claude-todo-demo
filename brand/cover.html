@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>Cover — طب إزاي؟</title>
+<link rel="stylesheet" href="../design-system/tokens.css">
+<link rel="stylesheet" href="../design-system/components/bundle.css">
+<style>
+  /* 820×428 CSS px at 2x = 1640×856 (Facebook cover). Desktop shows the middle 624px band,
+     phones trim ~58px off each side, the profile picture sits bottom-left: keep all of it clear. */
+  body { margin: 0; background: var(--paper); }
+  .cover { position: relative; width: 820px; height: 428px; overflow: hidden; font-family: var(--font-sans); color: var(--ink);
+    background-color: var(--paper);
+    background-image: linear-gradient(to right, var(--paper-grid) 1px, transparent 1px), linear-gradient(to bottom, var(--paper-grid) 1px, transparent 1px);
+    background-size: 30px 30px; background-position: 10px 4px; }
+  .cover > svg { position: absolute; inset: 0; width: 820px; height: 428px; }
+  .words { position: absolute; right: 64px; top: 92px; width: 330px; text-align: right; display: grid; gap: 10px; }
+  .name { margin: 0; font: 700 70px/1.15 var(--font-sans); white-space: nowrap; }
+  .name b { color: var(--heat); font-weight: 700; }
+  .tag { margin: 0; font: 500 19px/1.6 var(--font-sans); text-wrap: balance; }
+  .tag span { color: var(--water); }
+  .cats { display: flex; gap: 8px; justify-content: flex-start; flex-wrap: wrap; margin-top: 6px; }
+  .cats span { font: 600 12px/1 var(--font-sans); padding: 6px 10px; border: 1.5px solid var(--ink); background: var(--paper-raised); }
+  .cats span:first-child { background: var(--heat-text); border-color: var(--heat-text); color: var(--on-heat); }
+
+  .body-lit { fill: var(--paper-raised); } .body-shade { fill: var(--khaki); }
+  .hl { fill: none; stroke: var(--paper); stroke-width: 2; opacity: .9; }
+  .cloud { fill: var(--paper); stroke: var(--ink); stroke-width: 1.5; }
+  .arrow { fill: var(--c); stroke: var(--ink); stroke-width: 1.5; stroke-linejoin: round; }
+  .lift { --c: var(--water); } .buoy { --c: var(--water); } .weight { --c: var(--ink); }
+  .lbl { font: 600 14px var(--font-sans); fill: var(--c); paint-order: stroke; stroke: var(--paper); stroke-width: 4px; stroke-linejoin: round; }
+  .wave { fill: none; stroke: var(--water); stroke-width: 2; }
+  .box1 { fill: var(--heat); } .box2 { fill: var(--water); } .box3 { fill: var(--olive); } .box4 { fill: var(--khaki); }
+</style>
+</head>
+<body>
+<div class="cover">
+  <svg viewBox="0 0 820 428" aria-hidden="true">
+    <defs>
+      <clipPath id="fus"><path d="M24 46 C8 47 2 54 2 60 C2 67 10 72 26 73 L250 73 C268 72 286 62 298 50 L298 43 L268 43 L240 46 Z"/></clipPath>
+      <g id="jet">
+        <path class="tz-f-deep tz-ink" d="M150 50 L222 22 L238 22 L198 52 Z"/><path class="tz-pat-hatch" d="M150 50 L222 22 L238 22 L198 52 Z"/>
+        <path class="tz-f-deep tz-ink" d="M262 46 L290 30 L299 30 L284 48 Z"/>
+        <path class="body-lit tz-ink" d="M244 46 L268 43 L298 2 L281 2 Z"/><path class="tz-pat-hatch" d="M268 43 L298 2 L291 2 L262 44 Z"/>
+        <path class="body-lit" d="M24 46 C8 47 2 54 2 60 C2 67 10 72 26 73 L250 73 C268 72 286 62 298 50 L298 43 L268 43 L240 46 Z"/>
+        <g clip-path="url(#fus)"><rect class="body-shade" x="0" y="63" width="300" height="12"/><rect class="tz-pat-hatch" x="0" y="67" width="300" height="8"/><path class="hl" d="M30 50 L236 49"/></g>
+        <path class="tz-ink" style="fill:none" d="M24 46 C8 47 2 54 2 60 C2 67 10 72 26 73 L250 73 C268 72 286 62 298 50 L298 43 L268 43 L240 46 Z"/>
+        <path class="tz-f-water tz-ink" d="M8 54 Q12 50 22 50 L22 55 Z"/>
+        <path class="tz-ink" style="fill:none;stroke-width:2.6;stroke-dasharray:1.2 6.8;stroke-linecap:round" d="M40 56 H228"/>
+        <path class="body-shade tz-ink" d="M118 64 L178 66 L240 100 L220 102 L132 74 Z"/><path class="tz-pat-hatch" d="M178 66 L240 100 L232 101 L170 68 Z"/>
+        <path class="body-shade tz-ink" d="M150 78 L184 78 Q190 84 184 90 L150 90 Z"/><ellipse class="tz-f-deep tz-ink" cx="150" cy="84" rx="4.5" ry="6"/>
+        <path class="body-shade tz-ink" d="M188 90 L218 90 Q223 95 218 100 L188 100 Z"/><ellipse class="tz-f-deep tz-ink" cx="188" cy="95" rx="4" ry="5"/>
+        <path class="body-shade tz-ink" d="M258 62 L300 76 L290 78 L254 68 Z"/>
+      </g>
+      <g id="cloud"><path class="tz-pat-hatch" d="M-4 34 H86 V40 H-4 Z"/><path class="cloud" d="M0 34 C0 24 8 19 16 21 C18 10 34 6 42 14 C48 6 64 9 66 20 C76 19 84 26 82 34 Z"/></g>
+    </defs>
+
+    <!-- sky -->
+    <use href="#cloud" transform="translate(80 96) scale(.9)"/>
+    <use href="#cloud" transform="translate(392 196) scale(.7)"/>
+    <use href="#cloud" transform="translate(30 214) scale(.6)"/>
+
+    <!-- airliner climbing, with its lift arrow -->
+    <g transform="translate(130 80) rotate(-8 150 60) scale(.9)"><use href="#jet"/></g>
+    <path class="arrow lift" d="M261 124 V80 H253 L268 58 L283 80 H275 V124 Z"/>
+    <text class="lbl lift" x="292" y="104">الرفع</text>
+
+    <!-- sea in section -->
+    <path class="tz-f-water" d="M0 306 Q40 300 80 306 T160 306 T240 306 T320 306 T400 306 T480 306 T560 306 L560 428 L0 428 Z"/>
+    <path class="wave" d="M0 306 Q40 300 80 306 T160 306 T240 306 T320 306 T400 306 T480 306 T560 306"/>
+
+    <!-- container ship -->
+    <g transform="translate(150 -12)">
+      <!-- hull: dark top, red underwater -->
+      <path class="tz-f-deep tz-ink" d="M10 286 L330 286 L316 322 L36 322 Z"/>
+      <path class="tz-f-heat" d="M20 310 L324 310 L316 322 L36 322 Z"/>
+      <path class="tz-pat-hatch" d="M10 286 L330 286 L326 296 L14 296 Z"/>
+      <path class="tz-ink" style="fill:none" d="M10 286 L330 286 L316 322 L36 322 Z M20 310 H324"/>
+      <!-- load line -->
+      <path class="tz-ink" style="fill:none;stroke:var(--paper);stroke-width:2" d="M60 304 h18 M69 298 v12"/>
+      <!-- containers -->
+      <g class="tz-ink" style="stroke-width:1.2">
+        <rect class="box1" x="40" y="266" width="34" height="20"/><rect class="box2" x="74" y="266" width="34" height="20"/><rect class="box3" x="108" y="266" width="34" height="20"/><rect class="box4" x="142" y="266" width="34" height="20"/><rect class="box2" x="176" y="266" width="34" height="20"/><rect class="box1" x="210" y="266" width="34" height="20"/>
+        <rect class="box3" x="40" y="246" width="34" height="20"/><rect class="box4" x="74" y="246" width="34" height="20"/><rect class="box1" x="108" y="246" width="34" height="20"/><rect class="box2" x="142" y="246" width="34" height="20"/><rect class="box3" x="176" y="246" width="34" height="20"/>
+        <rect class="box2" x="74" y="226" width="34" height="20"/><rect class="box1" x="108" y="226" width="34" height="20"/><rect class="box4" x="142" y="226" width="34" height="20"/>
+      </g>
+      <!-- bridge -->
+      <path class="body-lit tz-ink" d="M260 226 L300 226 L300 286 L260 286 Z"/>
+      <path class="tz-f-water tz-ink" d="M264 234 H296 V242 H264 Z"/>
+      <path class="tz-ink" style="fill:none" d="M264 254 H296 M264 266 H296"/>
+      <path class="tz-f-deep tz-ink" d="M276 206 L288 206 L290 226 L274 226 Z"/>
+    </g>
+
+    <!-- buoyancy arrow under the ship -->
+    <path class="arrow buoy" d="M313 380 V336 H303 L320 314 L337 336 H327 V380 Z"/>
+    <text class="lbl buoy" x="344" y="360" style="stroke:var(--water-body);fill:var(--ink)">الطفو</text>
+  </svg>
+
+  <div class="words">
+    <h1 class="name">طب إزاي<b>؟</b></h1>
+    <p class="tag">الحاجات المعقدة حوالينا...<br>مرسومة ومشروحة <span>في دقيقة.</span></p>
+    <div class="cats"><span>أجهزة البيت</span><span>طيران</span><span>جسم الإنسان</span><span>تكنولوجيا</span></div>
+  </div>
+</div>
+<script src="../design-system/components/bundle.js"></script>
+<script>TebEzay.patterns();</script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>Reel cover — helicopter</title>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Noto+Sans+Arabic:wght@600;800&family=Noto+Serif:wght@700&display=swap" rel="stylesheet">
+<style>
+  /* 540×960 at 2x, the video's own look: black frame, hand-lettered title, the night panel big. Key content in y 120–760. */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; background: #000; overflow: hidden; }
+  .t { position: absolute; left: 0; right: 0; text-align: center; margin: 0; }
+  .panel { position: absolute; left: 0; right: 0; top: 300px; height: 304px; }
+  .panel svg { display: block; width: 100%; height: 100%; }
+  .tag { font-family: "Noto Sans Arabic", sans-serif; font-weight: 800; fill: #2b2016; }
+</style></head><body>
+<div class="cover">
+  <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#9a958c">إيه الحكاية؟</p>
+  <p class="t" style="top:160px;font:700 50px/1.2 'Aref Ruqaa',serif;color:#fff">إزاي الهليكوبتر بتطير؟</p>
+  <p class="t" style="top:232px;font:700 28px/1.2 'Aref Ruqaa',serif;color:#f2c230">ومن غير ما تجري على الأرض!</p>
+  <div class="panel"><svg id="panel" viewBox="0 0 640 360"></svg></div>
+  <p class="t" style="top:640px;font:800 34px/1.4 'Noto Sans Arabic';color:#fff">ولو <span style="color:#f2c230">الموتور وقف</span>؟!</p>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter>
+  <filter id="soft2" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="1.8"/></filter>
+  <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3"/></filter>
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .45  0 0 0 0 .4  0 0 0 .08 0"/></filter>
+  <linearGradient id="sky-day" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fb7e0"/><stop offset=".55" stop-color="#b9d8ec"/><stop offset="1" stop-color="#f3dfc2"/></linearGradient>
+  <linearGradient id="sky-dusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9a06e"/><stop offset=".5" stop-color="#f7d0a0"/><stop offset="1" stop-color="#fbe9cc"/></linearGradient>
+  <linearGradient id="sky-night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1730"/><stop offset=".6" stop-color="#1e3458"/><stop offset="1" stop-color="#2f4a72"/></linearGradient>
+  <linearGradient id="sky-dawn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4a7a"/><stop offset=".55" stop-color="#c98aa0"/><stop offset="1" stop-color="#f6c99a"/></linearGradient>
+  <linearGradient id="grass-day" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9dbb6e"/><stop offset="1" stop-color="#6f9548"/></linearGradient>
+  <linearGradient id="grass-dusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b3a66a"/><stop offset="1" stop-color="#857a44"/></linearGradient>
+  <linearGradient id="grass-night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b4a35"/><stop offset="1" stop-color="#16281c"/></linearGradient>
+  <linearGradient id="grass-dawn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a9a5a"/><stop offset="1" stop-color="#5a6a3a"/></linearGradient>
+  <linearGradient id="road" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6d6a66"/><stop offset="1" stop-color="#3f3d3a"/></linearGradient>
+  <linearGradient id="bld" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c79a7b"/><stop offset="1" stop-color="#a77a5c"/></linearGradient>
+  <linearGradient id="roof" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a958c"/><stop offset="1" stop-color="#6f6a62"/></linearGradient>
+  <linearGradient id="gHeliBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2523a"/><stop offset=".55" stop-color="#c23a26"/><stop offset="1" stop-color="#8f2618"/></linearGradient>
+  <linearGradient id="gGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9eef7"/><stop offset=".6" stop-color="#8fc2da"/><stop offset="1" stop-color="#5d93ad"/></linearGradient>
+  <linearGradient id="gMetal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a8f96"/><stop offset="1" stop-color="#4b5056"/></linearGradient>
+  <linearGradient id="gPlane" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#e4e8ec"/><stop offset="1" stop-color="#b9c1c9"/></linearGradient>
+  <path id="swash" d="M6 14 C40 4 120 2 196 8 C214 10 222 20 214 30 C206 44 140 46 70 44 C30 44 4 40 2 30 C0 24 2 18 6 14 Z"/>
+  <g id="heliBody">
+    <path d="M40 -6 L150 -2 L152 6 L42 10 Z" fill="url(#gHeliBody)" stroke="#1c1c1c" stroke-width="1.6"/>
+    <path d="M146 -14 L162 -26 L168 -24 L158 4 L148 4 Z" fill="url(#gHeliBody)" stroke="#1c1c1c" stroke-width="1.6"/>
+    <path d="M-70 10 C-72 -30 -40 -44 0 -44 C40 -44 58 -26 60 0 C62 22 40 34 0 34 C-40 34 -68 30 -70 10 Z" fill="url(#gHeliBody)" stroke="#1c1c1c" stroke-width="1.8"/>
+    <path d="M-66 6 C-66 -26 -40 -38 -14 -38 L-10 6 Z" fill="url(#gGlass)" stroke="#1c1c1c" stroke-width="1.5"/>
+    <path d="M-30 -44 L20 -44 L14 -56 L-24 -56 Z" fill="url(#gMetal)" stroke="#1c1c1c" stroke-width="1.4"/>
+    <rect x="-6" y="-66" width="12" height="11" fill="#3a3d42" stroke="#1c1c1c" stroke-width="1.2"/>
+    <path d="M-40 34 L-46 50 M30 34 L36 50" stroke="#2a2a2a" stroke-width="3.4" stroke-linecap="round"/><path d="M-72 52 L60 52" stroke="#2a2a2a" stroke-width="4" stroke-linecap="round"/>
+    <path d="M10 -20 C26 -20 40 -10 44 4" stroke="#fff" stroke-width="2" opacity=".35" fill="none"/>
+  </g>
+  <g id="heliGlass"><path d="M-60 -18 C-50 -30 -34 -34 -22 -34" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7" fill="none"/><path d="M-66 6 C-66 -26 -40 -38 -14 -38 L-10 6 Z" fill="#cfe7f2" opacity=".18"/></g>
+  <g id="plane">
+    <ellipse cx="0" cy="40" rx="150" ry="8" fill="#1c1c1c" opacity=".25" filter="url(#soft2)"/>
+    <path d="M-150 8 C-150 -10 -130 -18 -100 -18 H110 C140 -18 160 -6 166 6 C150 18 120 20 100 20 H-120 C-140 20 -150 16 -150 8 Z" fill="url(#gPlane)" stroke="#1c1c1c" stroke-width="1.6" transform="scale(-1 1)"/>
+    <path d="M-110 -18 L-150 -62 L-166 -62 L-150 -14 Z" fill="#2f6f9f" stroke="#1c1c1c" stroke-width="1.4"/><path d="M20 4 L-60 4 L-90 34 L-64 34 Z" fill="#c9d0d6" stroke="#1c1c1c" stroke-width="1.4"/>
+    <ellipse cx="-30" cy="26" rx="22" ry="9" fill="#f0a35e" stroke="#1c1c1c" stroke-width="1.4"/><ellipse cx="-10" cy="26" rx="5" ry="8" fill="#3a3d42"/>
+    <g fill="#5d93ad"><circle cx="100" cy="-4" r="3.4"/><circle cx="82" cy="-4" r="3.4"/><circle cx="64" cy="-4" r="3.4"/><circle cx="46" cy="-4" r="3.4"/><circle cx="28" cy="-4" r="3.4"/><circle cx="10" cy="-4" r="3.4"/><circle cx="-8" cy="-4" r="3.4"/><circle cx="-26" cy="-4" r="3.4"/><circle cx="-44" cy="-4" r="3.4"/><circle cx="-62" cy="-4" r="3.4"/><circle cx="-80" cy="-4" r="3.4"/></g>
+    <path d="M150 6 C146 -6 136 -10 124 -10 L128 4 Z" fill="#5d93ad"/>
+    <path d="M120 22 v14 M-40 22 v14 M-70 22 v14" stroke="#2a2a2a" stroke-width="3"/><g fill="#1c1c1c"><circle cx="120" cy="38" r="4"/><circle cx="-40" cy="38" r="4"/><circle cx="-70" cy="38" r="4"/></g>
+  </g>
+</defs></svg>
+<script src="../../videos/helicopter/timing.js"></script>
+<script src="../../videos/helicopter/scenes.js"></script>
+<script>window.__panel(document.getElementById("panel"), TIMING.lines[21].start + 1.2);</script>
+</body></html>
