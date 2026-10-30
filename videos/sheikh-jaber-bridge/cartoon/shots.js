@@ -393,7 +393,7 @@
     o = o || {}; var s = '<rect x="-400" y="-300" width="1500" height="960" fill="' + LAND + '"/>';
     for (var i = 0; i < 40; i++) s += '<circle cx="' + f(-300 + hash(i) * 1200) + '" cy="' + f(-200 + hash(i + 4) * 700) + '" r="' + f(8 + hash(i + 1) * 20) + '" fill="#d4bf8a" opacity=".5"/>';
     s += '<path d="' + BAY + '" fill="#4fb3d9" stroke="#2b6f9f" stroke-width="3"/><rect x="560" y="-300" width="600" height="960" fill="#3a9bc9"/><path d="M560 -300 V90 C620 120 600 300 560 330 V660" stroke="#2b6f9f" stroke-width="3" fill="none"/>';
-    for (var w = 0; w < 14; w++) { var wx = (hash(w) * 700 + t * 12) % 700 - 60, wy = 120 + hash(w + 3) * 150; s += '<path d="M' + f(wx) + ' ' + f(wy) + ' q6 -4 12 0 t12 0" stroke="#fff" stroke-width="1.6" fill="none" opacity=".6"/>'; }
+    for (var w = 0; w < 14; w++) { var wx = (hash(w) * 700 + t * 30) % 700 - 60, wy = 120 + hash(w + 3) * 150; s += '<path d="M' + f(wx) + ' ' + f(wy) + ' q6 -4 12 0 t12 0" stroke="#fff" stroke-width="1.6" fill="none" opacity=".6"/>'; }
     for (var b = 0; b < 14; b++) s += '<rect x="' + (210 + (b % 7) * 14) + '" y="' + (300 + Math.floor(b / 7) * 12 + (b % 3) * 2) + '" width="10" height="' + (10 + (b % 4) * 4) + '" fill="#c9ced4" stroke="' + INK + '" stroke-width=".8"/>';
     s += '<circle cx="268" cy="292" r="7" fill="#c23a26" stroke="' + INK + '" stroke-width="2"/><circle cx="430" cy="86" r="7" fill="#4f8f5a" stroke="' + INK + '" stroke-width="2"/>';
     if (o.route) { var d = ""; for (var r = 0; r <= 40 * clamp(o.route); r++) { var p = routeAt(r / 40); d += (r ? " L" : "M") + f(p[0]) + " " + f(p[1]); } s += '<path d="' + d + '" stroke="#8a5a2a" stroke-width="5" fill="none" stroke-dasharray="10 6" stroke-linecap="round"/>'; }
@@ -429,8 +429,8 @@
   // 3 — brand
   shot(3, function (u, d) { return [320, 180, lerp(1.0, 1.1, u / d)]; }, function (u, d, t) { return sea(t, 230, 0, { sky: "sunset" }) + sun(470, 220, 30, "#ffd27a") + viaduct(t, 250, 280, { sp: 80, th: 10, lamp: 14, traffic: 60, off: t * 10 }) + pylon(200, 250, 280, 140, 1, t) + stays(200, 250, 140, 1) + waterFront(t, 280, 0.35) + tag("ما الحكاية؟", 330, 100, u, 0.1, -2, 34, "#f2c230"); });
   // 4 — the map: across Kuwait Bay, from the capital to Subiya in the north
-  shot(4, function (u, d) { var k = clamp(u / d); return [lerp(300, 340, k), lerp(200, 180, k), lerp(1.15, 1.0, k)]; }, function (u, d, t) {
-    return bayMap(t, { bridge: clamp((u - 0.5) / 2.2) }) + tag("جون الكويت", 140, 170, u, 0.3, -3, 20, "#bfe0ff") + tag("العاصمة", 268, 330, u, 0.8, 2, 18) + tag("الصبيّة", 430, 50, u, 2.4, -2, 18, "#bfe8c0");
+  shot(4, function (u, d) { var k = clamp(u / d); return [lerp(250, 380, k), lerp(230, 160, k), lerp(1.35, 1.0, k)]; }, function (u, d, t) {
+    var bk = clamp((u - 0.4) / (d - 0.5)); return bayMap(t, { bridge: bk }) + dot(bridgeAt(bk), "#c23a26", t) + tag("جون الكويت", 140, 170, u, 0.3, -3, 20, "#bfe0ff") + tag("العاصمة", 268, 330, u, 0.8, 2, 18) + tag("الصبيّة", 430, 50, u, 2.4, -2, 18, "#bfe8c0");
   });
   // 5 — the drive round the bay took over an hour; now under half an hour
   shot(5, function (u, d) { return [300, 180, lerp(1.0, 1.06, u / d)]; }, function (u, d, t) {
