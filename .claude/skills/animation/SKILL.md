@@ -27,7 +27,7 @@ Talk to the user in Egyptian Arabic. Work in this order, end to end; the voice i
 - Fixed shape:
   - line 0: a hook about something the viewer sees or uses every day;
   - lines 1–2: the puzzle as questions;
-  - line 3: exactly «إيه الحكاية؟ هشرحهالك في دقيقة.»;
+  - line 3: exactly «إيه الحكاية؟ هشرحهالك في دقيقة.» (in a فصحى video: «ما الحكاية؟ سأشرحها لك في دقيقة.», see section 2);
   - lines 4–22: the explanation, one idea per line, with real numbers and one surprising fact or story;
   - line 23: the payoff that ties back to the hook;
   - line 24: exactly «قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟».
@@ -63,7 +63,19 @@ The settings the user uses in AI Studio (and the fallback):
 Speak in casual Egyptian Arabic (Cairo dialect), like a friendly YouTuber revealing a surprising secret about <topic>. Warm, confident and curious, with real amazement on the surprising facts and numbers. Natural, relaxed conversational speed, not rushed. Take a short natural breath between sentences, and don't stop at commas. Read "<LATIN TERMS>" as English letters. Emphasize key words like <word>, <word>, <word>. Make the opening line intriguing and the question "إيه الحكاية؟" playful. Never use Modern Standard Arabic pronunciation; pronounce ق as a glottal stop like Cairenes.
 ```
 
-- Natural speed only. Never speed the voice up with atempo (the user rejected fast narration).
+For a video in Modern Standard Arabic (فصحى, to reach the wider Arab world; first used for `videos/sheikh-jaber-bridge/`),
+use the same voice settings with this style text, line 3 «ما الحكاية؟ سأشرحها لك في دقيقة.» and the last line
+«أخبرونا، ما الحكاية التي تريدون أن تعرفوها في المرة القادمة؟» (the brand «إيه الحكاية؟» stays on screen):
+
+```
+Speak in clear, warm Modern Standard Arabic (فصحى) with correct classical pronunciation, like a friendly documentary YouTuber revealing a surprising secret about <topic>. Warm, confident and curious, with real amazement on the surprising facts and numbers. Lively, brisk conversational pace, a little faster than a documentary narrator, never stiff. Take a short natural breath between sentences, and don't stop at commas. Make the opening line a gripping hook, almost a whisper of disbelief. Emphasize key words like <word>, <word>, <word>. Make the question "ما الحكاية؟" playful. Pronounce ق as a true qaf and keep the case endings light and natural.
+```
+
+- Natural speed only. Never speed the voice up with atempo (the user rejected fast narration). If the voice is too long,
+  shorten the script and generate it again. فصحى is read slower: aim for about 260–280 words.
+- **Check every take before using it.** At temperature 1 the model sometimes adds sentences that are not in the script
+  (the bridge video got 20 s of invented text). Run `align_asr.py` on the take and compare each line's heard text with
+  the script; a line that heard far more words than it has is invented text, so throw the take away and generate again.
 - AI Studio delivers 24 kHz audio. `audio/sfx.py` resamples it to 48 kHz with soxr; never with linear interpolation, which
   mirrors the top octave into 12–24 kHz and makes the narrator sound "re-recorded" (the user heard it).
 
