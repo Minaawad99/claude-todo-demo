@@ -167,8 +167,8 @@ code. Keep mix.wav and the mp4 in the scratchpad, not in the repo.
     (load `timing.js` and `cartoon/scenes.js`), with the main object big in the middle, a hard-hat character for scale and
     one or two brush tags with the key numbers, plus film grain;
   - dark fades top (`fadeT`, 0–300) and bottom (`fadeB`, 680–960) so the text reads;
-  - text: «إيه الحكاية؟» small (Noto 15px, #d9d4c8, top 132), the hook in Aref Ruqaa 44px white (top 156), a yellow Ruqaa
-    26px sub-title (top 222), and the punch line at top 722 in Noto 34px with the number in yellow and a smaller grey second line;
+  - text: «إيه الحكاية؟» small (Noto 15px, #d9d4c8, top 132), the hook in **Noto Sans Arabic 900, 42px** white (top 154), a
+    yellow Noto 800 24px sub-title (top 214) (the user asked for Noto on the cover title, not Ruqaa; load weight 900), and the punch line at top 722 in Noto 34px with the number in yellow and a smaller grey second line;
   - everything that matters stays inside the 3:4 profile-grid crop (y 120–840) and away from TikTok's right-hand buttons
     (text box `left: 24px; right: 64px`).
   Shoot it with `node videos/tools/cover.js $PWD/<html> $PWD/brand/eh-elhekaya/tiktok-cover-<slug>-1080x1920.png`, look at
