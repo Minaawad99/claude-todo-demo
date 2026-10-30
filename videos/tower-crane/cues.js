@@ -1,0 +1,20 @@
+// sound cues for the tower crane video → cues.json (times from timing.js)
+global.window = {}; require('./timing.js'); const L = window.TIMING.lines.map(l => l.start); const fs = require('fs');
+const c = [];
+const at = (i, o, fx, gain, dur) => c.push(Object.assign({ t: +(L[i] + o).toFixed(2), fx, gain }, dur ? { dur } : {}));
+L.forEach((t, i) => { if (i) c.push({ t: +Math.max(0, t - 0.35).toFixed(2), fx: 'whoosh', gain: 0.3 }); });
+at(0, 0.9, 'pop', 0.5); at(0, 0.3, 'creak', 0.4, 1.6); at(1, 0.6, 'pop', 0.5); at(2, 0.4, 'tick', 0.4);
+at(2, 0.9, 'tick', 0.4); at(2, 1.6, 'tick', 0.4); at(3, 0, 'chime', 0.5);
+at(4, 0.3, 'thud', 0.6); at(5, 0.4, 'thud', 0.7); at(6, 0.3, 'gear', 0.6); at(7, 0.3, 'servo', 0.4);
+at(8, 0.4, 'clank', 0.6); at(9, 0.5, 'pop', 0.4); at(10, 0.4, 'pop', 0.4);
+for (let k = 0; k < 6; k++) at(11, 1.4 + k * 0.4, 'clink', 0.25);
+at(12, 0.3, 'pop', 0.5); at(13, 0.2, 'motor', 0.5, 2); at(14, 0.2, 'servo', 0.5, 1.5); at(15, 0.2, 'motor', 0.5, 2.5);
+at(16, 0.4, 'beep', 0.3); at(17, 0.6, 'zap', 0.4); at(18, 0.4, 'notify', 0.5); at(19, 0.2, 'tick', 0.5);
+at(20, 0.3, 'servo', 0.5, 2.2); at(21, 0.1, 'servo', 0.4, 1.5); at(22, 0.2, 'servo', 0.5, 2); at(23, 0.3, 'beep', 0.35);
+at(24, 0.9, 'beep', 0.6); at(24, 1.0, 'thud', 0.5);
+at(25, 0, 'wind', 0.5, 4); at(26, 0, 'wind', 0.6, 3); at(27, 0.2, 'clank', 0.5); at(28, 0, 'wind', 0.5, 3.4); at(28, 0.3, 'creak', 0.4, 2.5);
+at(29, 0.4, 'thud', 0.4); at(30, 0.3, 'motor', 0.4, 1.8); at(31, 0.2, 'squeeze', 0.5, 2); at(32, 0.1, 'servo', 0.4, 1.2);
+at(32, 1.4, 'clank', 0.6); at(33, 0.5, 'clank', 0.4); at(34, 0.5, 'motor', 0.35, 2.2); at(35, 1.2, 'motor', 0.3, 2.4);
+at(36, 0.4, 'pop', 0.4); at(37, 0, 'chime', 0.5);
+fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: true, cues: c.sort((a, b) => a.t - b.t) }, null, 0));
+console.log(c.length, 'cues');
