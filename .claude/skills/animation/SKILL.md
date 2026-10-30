@@ -185,11 +185,12 @@ code. Keep mix.wav and the mp4 in the scratchpad, not in the repo.
   Noto) to `cover-<slug>-tiktok.html`. **Every cover's title and sub-title are in Noto Sans Arabic, never Aref Ruqaa** (the user's
   fixed choice). It is **full bleed**, 540×960
   (1080×1920 at 2x):
-  - **the tunnel-cover recipe (that cover brought about 800 thousand views, so keep to it):** one hero object, **face-on,
-    huge and dead centre** (the cutterhead, a bird with its wings spread), a soft yellow glow behind it and small bits flying
-    out radially around it (soil chips, feathers); the setting as a strip at the top (sky, water surface); a number tag on
-    each side; a shocked hard-hat worker in the bottom-right corner for scale. See `cover-tbm-tunnel-tiktok.html` and
-    `cover-birds-tiktok.html`.
+  - **the tunnel-cover palette (that cover brought about 800 thousand views, so keep to it):** dark colours leaning to
+    black at the top and the bottom: a dark slate or night sky under the top fade, deep water or dark ground going almost
+    black at the bottom, and one warm yellow glow behind the main object so it pops. The main object keeps the pose that
+    tells the story best (the birds cover: the godwit from the side, in mid-flight); the user does not want it turned
+    face-on just to copy the tunnel cover. Tags with the key numbers, a shocked hard-hat worker for scale when it fits.
+    See `cover-tbm-tunnel-tiktok.html` and `cover-birds-tiktok.html`.
   - the picture fills the whole frame (`<svg id="art" viewBox="0 0 540 960">`), composed from the video's `window.__parts`
     (load `timing.js` and `cartoon/scenes.js`), with the main object big in the middle, a hard-hat character for scale and
     one or two brush tags with the key numbers, plus film grain;
