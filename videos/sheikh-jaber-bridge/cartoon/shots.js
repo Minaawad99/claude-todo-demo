@@ -440,13 +440,13 @@
     return s + tag("أكثر من ساعة", 90, 100, u, 0.6, -3, 17, "#e8c48e") + tag("أقل من نصف ساعة", 520, 290, u, 1.6, 3, 17, "#f2a0a0");
   });
   // 6 — work starts at the end of 2013, led by Hyundai: barges, cranes, the first spans going out to sea
-  shot(6, function (u, d) { var k = clamp(u / d); return [lerp(250, 380, k), 180, lerp(1.15, 1.0, k)]; }, function (u, d, t) {
-    var s = sea(t, 230, 0, { gulls: true }), reach = 90 + clamp(u / d) * 260;
+  shot(6, function (u, d) { var k = clamp(u / d); return [lerp(230, 400, k), lerp(200, 160, k), lerp(1.35, 1.0, k)]; }, function (u, d, t) {
+    var s = sea(t, 230, 0, { gulls: true }) + cargoShip(700 - u * 60, 236, t, 0.3), reach = 110 + 70 * Math.min(7, Math.floor(u / 0.6)) + 70 * ease(clamp((u % 0.6) / 0.3));
     for (var x = 110; x < reach; x += 70) s += '<rect x="' + (x - 6) + '" y="216" width="12" height="20" fill="url(#gConc)" stroke="' + INK + '" stroke-width="1.2"/>';
     s += '<rect x="-400" y="208" width="' + f(reach + 380 - 70) + '" height="9" fill="url(#gConc)" stroke="' + INK + '" stroke-width="1.6"/>';
-    s += barge(reach + 60, 228, 120, t) + '<path d="M' + f(reach + 40) + ' 228 L' + f(reach + 20) + ' 130 L' + f(reach - 30) + ' 160" stroke="#e2b035" stroke-width="5" fill="none"/><path d="M' + f(reach - 30) + ' 160 V' + f(190 + Math.sin(t * 2) * 8) + '" stroke="#2b2e33" stroke-width="1.6"/>';
-    s += barge(560, 240, 90, t, "#7a2a20") + waterFront(t, 230, 0.3) + '<path d="M-400 222 H60 L100 400 H-400 Z" fill="' + SAND + '" stroke="#8a7448" stroke-width="2"/>' + hardHat(70, 180, 0.3, t, "happy", { point: true });
-    return s + tag("2013", 330, 70, u, 0.5, -3, 30) + tag("هيونداي", 500, 120, u, 2.4, 3, 20, "#bfe0ff");
+    s += barge(reach + 60, 228, 120, t) + '<path d="M' + f(reach + 40) + ' 228 L' + f(reach + 20) + ' 130 L' + f(reach - 30) + ' 160" stroke="#e2b035" stroke-width="5" fill="none"/><path d="M' + f(reach - 30) + ' 160 L' + f(reach - 30 + Math.sin(t * 2.4) * 14) + ' ' + f(196 + Math.sin(t * 3) * 6) + '" stroke="#2b2e33" stroke-width="1.6"/>' + span(reach - 30 + Math.sin(t * 2.4) * 14, 198 + Math.sin(t * 3) * 6, 60, 8);
+    s += barge(560 - (u * 40) % 200, 240, 90, t, "#7a2a20") + waterFront(t, 230, 0.3) + birds(t, 120, 110) + '<path d="M-400 222 H60 L100 400 H-400 Z" fill="' + SAND + '" stroke="#8a7448" stroke-width="2"/>' + hardHat(70, 180, 0.3, t, "happy", { point: true });
+    return s + tag("2013", 150, 60, u, 0.5, -3, 30) + tag("هيونداي", 500, 120, u, 2.4, 3, 20, "#bfe0ff");
   });
   // 7 — first question: how do the piers stand on the seabed?
   shot(7, function (u, d) { var k = clamp(u / d); return [320, lerp(130, 250, ease(k)), lerp(1.1, 1.0, k)]; }, function (u, d, t) {
@@ -472,8 +472,8 @@
     return s + tag("حفر", 480, 200, u, 0.3, 3, 20) + tag("حديد", 480, 280, u, 1.9, -3, 20, "#e8c48e") + tag("خرسانة", 480, 350, u, 3.0, 3, 20, "#bfe0ff");
   });
   // 10 — some piles are 60 metres long, down to very dense sand
-  shot(10, function (u, d) { var k = ease(clamp(u / d)); return [320, lerp(60, 330, k), lerp(1.15, 0.9, k)]; }, function (u, d, t) {
-    var s = sea(t, 20, 0.3) + fish(t, 60, 28, 2) + soil(t, 110, { dense: 270 });
+  shot(10, function (u, d) { var k = clamp(u / d); return [320, lerp(60, 330, k), lerp(1.15, 0.9, k)]; }, function (u, d, t) {
+    var s = sea(t, 20, 0.3) + fish(t, 60, 60, 4) + soil(t, 110, { dense: 270 }) + bubbles(t, 450, 100, 8, 0.6, 30, 0);
     s += '<rect x="290" y="-60" width="60" height="150" fill="url(#gConc)" stroke="' + INK + '" stroke-width="1.8"/><rect x="250" y="80" width="140" height="30" fill="url(#gWet)" stroke="' + INK + '" stroke-width="2"/>' + pileCol(320, 110, 420, 20, true);
     s += '<path d="M200 110 V420" stroke="#f4f1e8" stroke-width="3"/>'; for (var m = 0; m <= 6; m++) s += '<path d="M192 ' + f(110 + m * 310 / 6) + ' h16" stroke="#f4f1e8" stroke-width="3"/><text x="180" y="' + f(114 + m * 310 / 6) + '" text-anchor="end" style="font:700 11px Noto Sans Arabic;fill:#fff">' + (m * 10) + '</text>';
     s += hardHat(380, 50 + Math.sin(t * 2) * 2, 0.22, t, "shock");
@@ -482,7 +482,7 @@
   // 11 — in the main part of the causeway alone, more than 1,500 piles
   shot(11, function (u, d) { var k = clamp(u / d); return [lerp(360, 330, k), lerp(190, 180, k), lerp(1.3, 1.0, k)]; }, function (u, d, t) {
     var k = clamp((u - 0.2) / (d - 0.8)), n = Math.floor(1510 * ease(k));
-    return bayMap(t, { piles: ease(k) }) + '<g transform="translate(140 60)"><rect x="-90" y="-30" width="180" height="56" rx="12" fill="#1c1c1c" opacity=".8"/><text x="0" y="12" text-anchor="middle" style="font:900 34px Noto Sans Arabic;fill:#f2c230">' + n + '</text></g>' + tag("خازوق!", 140, 120, u, d - 1.2, -3, 20);
+    return bayMap(t, { piles: ease(k) }) + dot(bridgeAt((u * 0.35) % 1), "#c23a26", t) + dot(routeAt((u * 0.2) % 1), "#e2b035", t) + '<g transform="translate(140 60)"><rect x="-90" y="-30" width="180" height="56" rx="12" fill="#1c1c1c" opacity=".8"/><text x="0" y="12" text-anchor="middle" style="font:900 34px Noto Sans Arabic;fill:#f2c230">' + n + '</text></g>' + tag("خازوق!", 140, 120, u, d - 1.2, -3, 20);
   });
   // 12 — on the piles sits a huge base, under the water: how do you pour concrete there?
   shot(12, function (u, d) { return [320, lerp(170, 200, u / d), lerp(1.05, 1.15, u / d)]; }, function (u, d, t) {
@@ -530,11 +530,11 @@
     return s + tag("على اليابسة", 330, 60, u, 0.8, -3, 24);
   });
   // 17 — in a yard on the shore, everything between two piers was cast as one piece, up to 60 m long
-  shot(17, function (u, d) { var k = clamp(u / d); return [lerp(260, 380, k), 190, lerp(1.1, 1.0, k)]; }, function (u, d, t) {
-    var fr = clamp((u - 0.4) / 3), s = '<rect x="-400" y="-300" width="1500" height="960" fill="#e9dcc0"/>' + clouds(t, 20, -40, 3, 0.6) + '<rect x="-400" y="250" width="1500" height="300" fill="' + SAND + '"/>';
+  shot(17, function (u, d) { var k = clamp(u / d); return [lerp(220, 420, k), lerp(210, 170, k), lerp(1.3, 1.0, k)]; }, function (u, d, t) {
+    var fr = clamp((u - 0.4) / (d - 0.6)), s = '<rect x="-400" y="-300" width="1500" height="960" fill="#e9dcc0"/>' + clouds(t, 20, -40, 3, 0.6) + '<rect x="-400" y="250" width="1500" height="300" fill="' + SAND + '"/>';
     s += '<rect x="80" y="190" width="480" height="60" fill="none" stroke="#7a5a3a" stroke-width="4"/>' + span(320, 196, 470, 50, { fresh: fr, lugs: fr >= 1 });
     for (var b = 0; b < 16; b++) s += '<path d="M' + (96 + b * 30) + ' 196 v-' + f(10 * (1 - fr)) + '" stroke="#c4652a" stroke-width="2"/>';
-    s += '<path d="M' + f(80 + 480 * fr) + ' 120 V190" stroke="#5a6068" stroke-width="7"/>' + hardHat(60, 220, 0.2, t, "happy", { point: true }) + hardHat(590, 220, 0.2, t, "shock", { look: -1 });
+    s += '<path d="M' + f(80 + 480 * fr) + ' 120 L' + f(80 + 480 * fr + Math.sin(t * 3) * 10) + ' 190" stroke="#5a6068" stroke-width="7"/>' + bubbles(t, 80 + 480 * fr, 190, 6, 1.2, 14, 150) + hardHat(60, 220, 0.2, t, "happy", { point: true }) + hardHat(590, 220, 0.2, t, "shock", { look: -1 });
     s += arrow(320, 290, 80, 290, "#f2c230", 4, clamp((u - 1.5) * 2)) + arrow(320, 290, 560, 290, "#f2c230", 4, clamp((u - 1.5) * 2));
     return s + tag("قطعة واحدة", 320, 90, u, 0.6, -3, 22) + tag("60 م", 320, 330, u, 2.0, 3, 24, "#e8c48e");
   });
