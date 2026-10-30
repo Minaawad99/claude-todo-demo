@@ -368,7 +368,8 @@
 
   // 0 — a bird that flies eleven days without once touching the ground
   shot(0, function (u, d) { var k = clamp(u / d); return [lerp(250, 360, k), 180, lerp(1.25, 1.0, k)]; }, function (u, d, t) {
-    var night = (Math.sin(t * 1.6) + 1) / 2, s = sea(t, 250, 0, { sky: night > 0.6 ? "night" : "day" }) + (night > 0.6 ? stars(t) + moon(520, 80) : sun(520, 80, 26, "#ffd27a"));
+    var night = (1 - Math.cos(t * 1.1)) / 2, s = sea(t, 250, 0, {}) + '<g opacity="' + f(1 - night) + '">' + sun(520, lerp(80, 160, night), 26, "#ffd27a") + '</g>';
+    s += '<rect x="-400" y="-300" width="1440" height="960" fill="#0b1730" opacity="' + f(night * 0.75) + '"/><g opacity="' + f(night) + '">' + stars(t) + moon(140, lerp(160, 70, night)) + '</g>';
     s += bird(300 + Math.sin(t * 0.6) * 20, 150, t, { k: "godwit", s: 1.5, sp: 6 });
     return s + dayCounter(110, 80, Math.min(11, 1 + Math.floor(u * 2.6)), t) + tag("ولا مرة على الأرض!", 330, 300, u, 2.6, -2, 20);
   });
@@ -424,7 +425,7 @@
     return s + bird(320, 230, t, { k: "gull", s: 2.4, ph: Math.PI / 2 + 0.5 * Math.sin(t * 2), open: 1 }) + tag("الريش بيفتح زي الشيش", 320, 40, u, 0.8, -2, 20);
   });
   // 15 — your chest muscle is much weaker, your arm heavier
-  shot(15, function (u, d) { return [320, 190, lerp(1.1, 1.2, u / d)]; }, function (u, d, t) { return '<rect x="-400" y="-300" width="1440" height="960" fill="#e8dcc4"/>' + person(320, 170, t, "worry", { flex: true, s: 1.0 }) + tag("عضلة ضعيفة", 170, 80, u, 0.6, -3, 20, "#f2a0a0") + tag("دراع تقيل", 470, 80, u, 1.6, 3, 20); });
+  shot(15, function (u, d) { var k = clamp(u / d); return [lerp(250, 390, k), lerp(200, 180, k), lerp(1.25, 1.0, k)]; }, function (u, d, t) { return sky("day") + clouds(t, 40, 30, 5, 0.85) + grass(t, 280, "grass-day", "#5a7a3a") + flock(t, 70, 4, 90, 0.4, "pigeon") + person(320, 170 + Math.sin(t * 2) * 3, t, "worry", { flex: true, s: 1.0 }) + tag("عضلة ضعيفة", 170, 80, u, 0.6, -3, 20, "#f2a0a0") + tag("دراع تقيل", 470, 80, u, 1.6, 3, 20); });
   // 16 — fourth secret: breathing
   shot(16, function (u, d) { return [320, 180, lerp(1.1, 1.2, u / d)]; }, function (u, d, t) { return sky("day") + clouds(t, 30, 30, 4, 0.8) + bird(320, 180, t, { k: "goose", s: 2.2, sp: 5, lungs: true }) + tag("السر الرابع: النفَس", 320, 50, u, 0.4, -2, 22); });
   // 17 — air moves through the lung one way, with many air sacs around it
@@ -442,7 +443,7 @@
     return s + tag("وهو بيشهق", 200, 320, u, 0.5, -3, 18) + tag("وهو بيزفر كمان!", 440, 320, u, 1.6, 3, 18, "#bfe0ff");
   });
   // 19 — so birds fly high where people feel dizzy
-  shot(19, function (u, d) { var k = clamp(u / d); return [lerp(260, 380, k), lerp(200, 170, k), 1.0]; }, function (u, d, t) { return sky("dawn") + mountains(t, 330, "#6a7a90") + flock(t, 70, 5, 50, 0.5, "goose") + person(140, 210, t, "dizzy", { s: 0.5 }) + tag("فوق الجبال", 450, 300, u, 0.6, 3, 20) + tag("الإنسان بيدوخ", 150, 330, u, 1.8, -3, 16, "#f2a0a0"); });
+  shot(19, function (u, d) { var k = clamp(u / d); return [lerp(260, 380, k), lerp(200, 170, k), 1.0]; }, function (u, d, t) { var sn = ""; for (var q = 0; q < 40; q++) { var sx = ((hash(q) * 1200 + t * 120) % 1200) - 300, sy = ((hash(q + 3) * 400 + t * 40) % 400) - 40; sn += '<circle cx="' + f(sx) + '" cy="' + f(sy) + '" r="2.4" fill="#fff" opacity=".8"/>'; } return sky("dawn") + clouds(t, 70, 40, 5, 0.7) + mountains(t, 330, "#6a7a90") + flock(t, 70, 6, 110, 0.55, "goose") + sn + person(140, 210, t, "dizzy", { s: 0.5 }) + tag("فوق الجبال", 450, 300, u, 0.6, 3, 20) + tag("الإنسان بيدوخ", 150, 330, u, 1.8, -3, 16, "#f2a0a0"); });
   // 20 — the eleven-day bird is the bar-tailed godwit: over 13,000 km
   shot(20, function (u, d) { return [320, 180, lerp(0.95, 1.05, u / d)]; }, function (u, d, t) {
     var k = clamp(u / (d * 0.7)), s = '<rect x="-400" y="-300" width="1440" height="960" fill="#1c5f8f"/><path d="M80 40 Q140 20 180 60 Q150 90 90 80 Z" fill="#7aa060" stroke="' + INK + '" stroke-width="2"/><path d="M500 290 Q530 270 545 300 Q530 330 505 320 Z M540 250 Q560 235 570 255 Q560 275 545 268 Z" fill="#7aa060" stroke="' + INK + '" stroke-width="2"/>';
