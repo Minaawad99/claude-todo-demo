@@ -503,7 +503,7 @@
 
   // 0 — the ground you stand on is moving right now
   shot(0, function (u, d) { var k = clamp(u / d); return [lerp(260, 380, k), lerp(140, 200, k), lerp(1.3, 0.92, k)]; }, function (u, d, t) {
-    var s = sky("day") + clouds(t, 60, -20, 6, 0.85) + birds(t, 20, 90) + crossSection(t, {}) + person(320, 84 + Math.sin(t * 3) * 3, t, "curious", { s: 0.55 });
+    var s = sky("day") + clouds(t, 60, -20, 6, 0.85) + birds(t, 20, 90) + crossSection(t, { slip: Math.sin(t * 1.6) * 0.9 }) + person(320, 84 + Math.sin(t * 3) * 3, t, "curious", { s: 0.55 });
     s += arrow(100 - (t * 6) % 30, 230, 230 - (t * 6) % 30, 230, "#fff", 4, 1) + arrow(560 + (t * 6) % 30, 230, 430 + (t * 6) % 30, 230, "#fff", 4, 1);
     return s + tag("بتتحرك دلوقتي!", 480, 60, u, 2.0, 3, 22);
   });
