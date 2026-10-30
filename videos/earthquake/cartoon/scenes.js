@@ -602,12 +602,45 @@
   });
   // 22 — in Egypt, the 1992 quake was about magnitude 6, and many still remember it
   shot(22, function (u, d) { var k = clamp(u / d); return [lerp(260, 380, k), 180, 1.05]; }, function (u, d, t) { return sky("day") + '<g ' + shake(t, 0.4 * Math.max(0, Math.sin(t * 1.3))) + '>' + city(t, 270, 140, "#c9b98a", true, 6, false) + '<rect x="-400" y="270" width="1440" height="200" fill="#9a8a70"/></g>' + dayCounter(500, 100, 1992, t).replace(">يوم<", ">سنة<") + tag("مصر", 160, 70, u, 0.5, -3, 24) + tag("قوته ~6", 470, 300, u, 1.6, 3, 20); });
-  // 23 — upper floors shake more: the building sways like a long stick
-  shot(23, function (u, d) { return [320, lerp(170, 140, u / d), lerp(1.0, 1.1, u / d)]; }, function (u, d, t) { return sky("day") + clouds(t, 20, 0, 4, 0.8) + '<rect x="-400" y="300" width="1440" height="200" fill="#9a8a70"/>' + tower(320, 300, t, 1.0, 14) + tag("فوق بيتهز أكتر", 470, 60, u, 0.8, 3, 20) + '<path d="M' + f(320 + Math.sin(t * 4) * 30) + ' 40 L320 300" stroke="#e2523a" stroke-width="2" stroke-dasharray="6 5"/>'; });
-  // 24 — payoff: an earthquake is the ground releasing years of stress in seconds
-  shot(24, function (u, d) { return [320, 190, lerp(1.0, 1.08, u / d)]; }, function (u, d, t) { var k = clamp((u - 0.6) / 0.5); return '<g ' + shake(t, k * (1 - clamp((u - 2.5) / 1))) + '>' + sky("day") + crossSection(t, { stress: 1 - k, slip: k, focus: k > 0, houses: k * 0.5 }) + '</g>' + tag("سنين ضغط", 170, 60, u, 0.3, -3, 20) + tag("في ثواني!", 470, 60, u, 1.2, 3, 22, "#f2a0a0"); });
-  // 25 — outro
-  shot(25, function (u, d) { var k = clamp(u / d); return [lerp(260, 380, k), lerp(190, 170, k), lerp(1.1, 0.95, k)]; }, function (u, d, t) { return sky("dusk") + clouds(t, 50, 20, 5, 0.8) + sun(500, 230, 34, "#ffd27a") + birds(t, 60, 70) + city(t, 280, 120, "#7a6a5a", true, 4, false) + '<rect x="-400" y="280" width="1440" height="200" fill="#5a4a3a"/>' + cars(t, 310, 90) + tag("قولولنا!", 470, 80, u, 0.4, 3, 26); });
+  // 23 — why does someone on the tenth floor feel it more than the people below?
+  shot(23, function (u, d) { return [320, lerp(190, 170, u / d), lerp(1.0, 1.08, u / d)]; }, function (u, d, t) {
+    var s = sky("day") + '<rect x="-400" y="300" width="1440" height="200" fill="#9a8a70"/>' + tower(320, 300, t, 0.5, 11);
+    var top = Math.sin(t * 4) * 0.5 * 30 * 0.83;
+    s += person(f(320 + top), 70, t, "shock", { s: 0.32 }) + person(320, 268, t, "happy", { s: 0.32 });
+    return s + tag("الدور العاشر", 490, 70, u, 0.5, 3, 18, "#f2a0a0") + tag("الدور الأرضي", 150, 280, u, 1.3, -3, 18, "#bfe0ff") + qmark(520, 160, t, 40);
+  });
+  // 24 — the ground pulls the building from below and the top lags behind, like a stick shaken from its end
+  shot(24, function (u, d) { var k = clamp(u / d); return [lerp(260, 380, k), 190, 1.05]; }, function (u, d, t) {
+    var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#e8dcc4"/>', bx = 200 + Math.sin(t * 6) * 18, tip = 200 + Math.sin(t * 6 - 1.2) * 70;
+    s += '<path d="M' + f(bx) + ' 300 Q' + f((bx + tip) / 2) + ' 180 ' + f(tip) + ' 60" stroke="#8a5a2a" stroke-width="14" fill="none" stroke-linecap="round"/>' + hands(f(bx - 10), 310, 1, t);
+    s += tower(470, 320, t, 1.0, 12) + '<path d="M' + f(470 + Math.sin(t * 4) * 30) + ' 90 L470 320" stroke="#e2523a" stroke-width="2" stroke-dasharray="6 5"/>';
+    return s + tag("من تحت: الأرض بتشد", 200, 340, u, 0.6, -3, 16) + tag("فوق: بيتأخر ويتمرجح", 470, 50, u, 1.8, 3, 16, "#bfe0ff");
+  });
+  // 25 — the higher you go, the bigger the swing: the chandelier swings, you feel what downstairs doesn't
+  shot(25, function (u, d) { return [320, 180, lerp(1.05, 1.15, u / d)]; }, function (u, d, t) {
+    var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#2a3442"/>';
+    [[180, 0.15, "الدور الأول"], [460, 1, "الدور العاشر"]].forEach(function (r, j) {
+      var x = r[0], k = r[1], sw = Math.sin(t * 4) * 24 * k;
+      s += '<rect x="' + (x - 110) + '" y="40" width="220" height="250" fill="#efe2c8" stroke="' + INK + '" stroke-width="3"/><rect x="' + (x - 110) + '" y="250" width="220" height="40" fill="#a8835a"/>';
+      s += '<path d="M' + x + ' 40 L' + f(x + sw) + ' 130" stroke="' + INK + '" stroke-width="2"/><path d="M' + f(x + sw - 26) + ' 130 h52 l-10 22 h-32 Z" fill="#f2c230" stroke="' + INK + '" stroke-width="2"/>';
+      s += '<g transform="translate(' + f(x + Math.sin(t * 9) * 4 * k) + ' 230)"><rect x="-14" y="-24" width="28" height="24" rx="3" fill="#fff" stroke="' + INK + '"/><path d="M-10 -24 q10 ' + f(-6 - 8 * k * Math.abs(Math.sin(t * 9))) + ' 20 0" fill="#5fb0e0"/></g>';
+      s += tag(r[2], x, 330, u, 0.5 + j * 1.0, j ? 3 : -3, 16, j ? "#f2a0a0" : "#bfe0ff");
+    });
+    return s;
+  });
+  // 26 — skyscrapers are built flexible; a tower in Taiwan has a 660-ton steel ball that swings against the sway
+  shot(26, function (u, d) { var k = clamp(u / d); return [320, lerp(200, 150, k), lerp(0.95, 1.12, k)]; }, function (u, d, t) {
+    var sw = Math.sin(t * 2.5), s = sky("day") + clouds(t, 30, 10, 4, 0.8) + '<rect x="-400" y="330" width="1440" height="200" fill="#9a8a70"/>', bx = 320 + sw * 10;
+    for (var i = 0; i < 8; i++) { var w = 90 - i * 6, y = 330 - (i + 1) * 36, dx = sw * 10 * (i / 8); s += '<path d="M' + f(bx - w / 2 + dx - 6) + ' ' + (y + 36) + ' L' + f(bx - w / 2 + dx) + ' ' + y + ' H' + f(bx + w / 2 + dx) + ' L' + f(bx + w / 2 + dx + 6) + ' ' + (y + 36) + ' Z" fill="#5d93ad" stroke="' + INK + '" stroke-width="2"/>'; }
+    s += '<rect x="' + f(bx - 10 + sw * 10) + '" y="10" width="20" height="30" fill="#5d93ad" stroke="' + INK + '" stroke-width="2"/>';
+    var cx = bx + sw * 8, cy = 70, bxx = cx - sw * 26;
+    s += '<circle cx="' + f(cx) + '" cy="' + cy + '" r="70" fill="#000" opacity=".35"/><path d="M' + f(cx - 20) + ' ' + (cy - 50) + ' L' + f(bxx) + ' ' + (cy + 10) + ' M' + f(cx + 20) + ' ' + (cy - 50) + ' L' + f(bxx) + ' ' + (cy + 10) + '" stroke="#ddd" stroke-width="2"/><circle cx="' + f(bxx) + '" cy="' + (cy + 24) + '" r="26" fill="#f2c230" stroke="' + INK + '" stroke-width="3"/>';
+    return s + tag("660 طن!", 520, 80, u, 1.6, 3, 24) + tag("بتتمرجح عكسه", 140, 120, u, 2.6, -3, 18, "#bfe0ff") + tag("مرنة", 160, 300, u, 0.6, -3, 20);
+  });
+  // 27 — payoff: an earthquake is the ground releasing years of stress in seconds
+  shot(27, function (u, d) { return [320, 190, lerp(1.0, 1.08, u / d)]; }, function (u, d, t) { var k = clamp((u - 0.6) / 0.5); return '<g ' + shake(t, k * (1 - clamp((u - 2.5) / 1))) + '>' + sky("day") + crossSection(t, { stress: 1 - k, slip: k, focus: k > 0, houses: k * 0.5 }) + '</g>' + tag("سنين ضغط", 170, 60, u, 0.3, -3, 20) + tag("في ثواني!", 470, 60, u, 1.2, 3, 22, "#f2a0a0"); });
+  // 28 — outro
+  shot(28, function (u, d) { var k = clamp(u / d); return [lerp(260, 380, k), lerp(190, 170, k), lerp(1.1, 0.95, k)]; }, function (u, d, t) { return sky("dusk") + clouds(t, 50, 20, 5, 0.8) + sun(500, 230, 34, "#ffd27a") + birds(t, 60, 70) + city(t, 280, 120, "#7a6a5a", true, 4, false) + '<rect x="-400" y="280" width="1440" height="200" fill="#5a4a3a"/>' + cars(t, 310, 90) + tag("قولولنا!", 470, 80, u, 0.4, 3, 26); });
 
   window.__parts = { crossSection: crossSection, globePlates: globePlates, quakeRings: quakeRings, house: house, tower: tower, seismo: seismo, phone: phone, tag: tag, hardHat: hardHat, person: person };
   window.__panel = function (svg, t) {
