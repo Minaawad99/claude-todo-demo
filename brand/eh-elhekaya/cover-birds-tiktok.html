@@ -13,9 +13,9 @@
 <div class="cover">
   <svg id="art" viewBox="0 0 540 960"></svg>
   <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
-  <p class="t" style="top:154px;font:900 40px/1.2 'Noto Sans Arabic';color:#fff">طير بيطير 11 يوم!</p>
-  <p class="t" style="top:210px;font:800 24px/1.3 'Noto Sans Arabic';color:#f2c230">من غير ما ينزل على الأرض ولا مرة</p>
-  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff"><span style="color:#f2c230">13 ألف كيلو</span> من غير وقفة<br><span style="font-size:24px;color:#d9d4c8">طب وإنت ليه مبتطيرش؟!</span></p>
+  <p class="t" style="top:154px;font:900 40px/1.2 'Noto Sans Arabic';color:#fff">إزاي الطيور بتطير؟!</p>
+  <p class="t" style="top:210px;font:800 24px/1.3 'Noto Sans Arabic';color:#f2c230">وإنت ليه مبتطيرش؟</p>
+  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff"><span style="color:#f2c230">11 يوم</span> طيران من غير وقفة<br><span style="font-size:24px;color:#d9d4c8">ولا مرة نزل على الأرض!</span></p>
 </div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
   <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter>
@@ -81,12 +81,29 @@
 <script>
   (function () {
     var P = window.__parts, t = 2.2, s = "";
-    // a golden-hour ocean, the godwit big in the middle mid-wingbeat, a small flock far behind, the day counter at 11
-    s += P.sea(t, 560, 0, { sky: "sunset" });
-    s += '<circle cx="400" cy="500" r="80" fill="#ffd27a" opacity=".45" filter="url(#soft)"/><circle cx="400" cy="500" r="46" fill="#ffe3a0"/>';
-    s += P.flock(t, 400, 5, 0, 0.28, "godwit").replace(/translate\((-?[0-9.]+)/g, function (m, x) { return "translate(" + (+x + 260); });
-    s += P.bird(270, 488, t, { k: "godwit", s: 2.5, ph: 0.35, open: 0 });
-    s += P.dayCounter(440, 340, 11, t) + P.tag("البقويقة", 150, 640, 9, 0, -4, 22);
+    // the tunnel cover's recipe: the scene at the top (sky and sea), one huge hero dead centre and face-on with a glow
+    // and bits flying out radially, a number tag on each side, a shocked worker in the corner for scale
+    s += P.sea(t, 600, 0, {}) + '<rect x="0" y="640" width="540" height="320" fill="#1c5f8f"/>';
+    var cx = 270, cy = 520;
+    s += '<circle cx="' + cx + '" cy="' + cy + '" r="230" fill="#ffd23a" opacity=".22" filter="url(#soft)"/>';
+    for (var k = 0; k < 22; k++) { var a = k / 22 * Math.PI * 2, r = 205 + (k % 3) * 18, fx = cx + Math.cos(a) * r, fy = cy + Math.sin(a) * r * 0.8;
+      s += '<path d="M' + fx.toFixed(1) + ' ' + fy.toFixed(1) + ' q8 -12 16 -2 q-8 4 -16 2" fill="#f4ecd8" stroke="#1c1c1c" stroke-width="1.2" transform="rotate(' + (a * 57.3).toFixed(0) + ' ' + fx.toFixed(1) + ' ' + fy.toFixed(1) + ')"/>'; }
+    // the bird, head-on: wings spread wide and up, primaries fanned, body, tail below, eyes on the viewer
+    var wing = function (dir) {
+      var g = '<g transform="translate(' + cx + ' ' + (cy - 20) + ') scale(' + (dir * 0.84) + ' 0.84)">';
+      g += '<path d="M10 0 C70 -40 150 -110 250 -120 C230 -90 210 -60 190 -40 C150 -10 80 20 10 30 Z" fill="#a8835a" stroke="#1c1c1c" stroke-width="3"/>';
+      for (var p = 0; p < 7; p++) { var k = p / 6, bx = 250 - k * 66, by = -120 + k * 84, ang = -30 + k * 55; g += '<ellipse cx="' + (bx + Math.cos(ang / 57.3) * 26).toFixed(1) + '" cy="' + (by + Math.sin(ang / 57.3) * 26).toFixed(1) + '" rx="34" ry="9" transform="rotate(' + ang + ' ' + (bx + Math.cos(ang / 57.3) * 26).toFixed(1) + ' ' + (by + Math.sin(ang / 57.3) * 26).toFixed(1) + ')" fill="#5a4632" stroke="#1c1c1c" stroke-width="2"/>'; }
+      g += '<path d="M40 -6 C90 -40 150 -80 200 -92" stroke="#c9a070" stroke-width="8" fill="none" opacity=".7"/>';
+      return g + '</g>';
+    };
+    s += wing(1) + wing(-1);
+    s += '<path d="M' + (cx - 34) + ' ' + (cy + 60) + ' L' + (cx - 50) + ' ' + (cy + 130) + ' H' + (cx + 50) + ' L' + (cx + 34) + ' ' + (cy + 60) + ' Z" fill="#8a6a48" stroke="#1c1c1c" stroke-width="3"/>';
+    s += '<ellipse cx="' + cx + '" cy="' + (cy + 20) + '" rx="60" ry="74" fill="#c9a070" stroke="#1c1c1c" stroke-width="3"/><ellipse cx="' + cx + '" cy="' + (cy + 34) + '" rx="36" ry="46" fill="#e8d4b0"/>';
+    s += '<circle cx="' + cx + '" cy="' + (cy - 60) + '" r="40" fill="#c9a070" stroke="#1c1c1c" stroke-width="3"/>';
+    [-16, 16].forEach(function (ex) { s += '<circle cx="' + (cx + ex) + '" cy="' + (cy - 66) + '" r="11" fill="#fff" stroke="#1c1c1c" stroke-width="2"/><circle cx="' + (cx + ex) + '" cy="' + (cy - 64) + '" r="5.5" fill="#1c1c1c"/><circle cx="' + (cx + ex + 2) + '" cy="' + (cy - 67) + '" r="1.8" fill="#fff"/>'; });
+    s += '<path d="M' + (cx - 9) + ' ' + (cy - 50) + ' L' + cx + ' ' + (cy - 18) + ' L' + (cx + 9) + ' ' + (cy - 50) + ' Z" fill="#d98a7a" stroke="#1c1c1c" stroke-width="2"/>';
+    s += '<path d="M410 700 Q470 660 530 700 Z" fill="#6f6a62" stroke="#1c1c1c" stroke-width="2"/>' + P.hardHat(470, 628, 0.36, t, "shock", {});
+    s += P.tag("11 يوم!", 110, 300, 9, 0, -6, 26) + P.tag("13 ألف كم", 430, 306, 9, 0, 5, 20, "#bfe0ff");
     s += '<defs><linearGradient id="fadeT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".95"/><stop offset=".75" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>' +
          '<linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset=".3" stop-color="#000" stop-opacity=".7"/><stop offset="1" stop-color="#000" stop-opacity=".95"/></linearGradient></defs>';
     s += '<rect width="540" height="300" fill="url(#fadeT)"/><rect y="680" width="540" height="280" fill="url(#fadeB)"/>';
