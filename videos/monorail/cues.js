@@ -9,9 +9,9 @@ const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration :
 const a = (t, fx, gain, dur) => c.push(Object.assign({ t: +t.toFixed(2), fx, gain }, dur ? { dur } : {}));
 const rec = (t, file, gain, from, dur, duck) => c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), file: 'sfx/px-' + file + '.mp3', gain: +(gain * 1.2).toFixed(2), from: from || 0 }, dur ? { dur: +dur.toFixed(2) } : {}, duck != null ? { duck } : {}));
 const bed = (i, file, g, from) => rec(L(i), file, g, from, D(i) + 0.2, 1.2);
-// the monorail going past: a recorded pass-by if the user sent one, else a soft whoosh over an electric hum
-const pass = (t, g, dur) => HAVE('monorail-pass') ? rec(t, 'monorail-pass', g, 0, dur, 1.0) : (a(t, 'whoosh', g * 0.8), a(t + 0.1, 'hum', g * 0.4, dur));
-const clatter = (t, g, dur) => { if (HAVE('train-clatter')) rec(t, 'train-clatter', g, 0, dur, 1.0); else for (let k = 0; k < dur / 0.25; k++) a(t + k * 0.25, k % 2 ? 'clank' : 'thud', g * 0.5); };
+// the monorail going past: the recorded pass-by (its loud part is around 82–95 s in the clip), else a soft whoosh over an electric hum
+let po = 0; const pass = (t, g, dur) => HAVE('monorail-pass') ? rec(t, 'monorail-pass', g, 82 + (po++ % 4) * 1.5, dur, 1.0) : (a(t, 'whoosh', g * 0.8), a(t + 0.1, 'hum', g * 0.4, dur));
+const clatter = (t, g, dur) => { if (HAVE('train-clatter')) rec(t, 'train-clatter', g, 6 + (t % 30), dur, 1.0); else for (let k = 0; k < dur / 0.25; k++) a(t + k * 0.25, k % 2 ? 'clank' : 'thud', g * 0.5); };
 const trumpet = (t, g) => HAVE('elephant') ? rec(t, 'elephant', g, 0, 2.2, 0.8) : a(t, 'notify', g);
 for (let i = 1; i < T.length; i++) a(L(i) - 0.08, 'whoosh', 0.3);
 // 0: New Cairo street, the train overhead
