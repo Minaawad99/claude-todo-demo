@@ -502,8 +502,8 @@
   }
 
   // 0 — the ground you stand on is moving right now
-  shot(0, function (u, d) { var k = clamp(u / d); return [320, lerp(150, 190, k), lerp(1.25, 0.95, k)]; }, function (u, d, t) {
-    var s = sky("day") + clouds(t, 14, -20, 4, 0.8) + crossSection(t, {}) + person(320, 84, t, "curious", { s: 0.55 });
+  shot(0, function (u, d) { var k = clamp(u / d); return [lerp(260, 380, k), lerp(140, 200, k), lerp(1.3, 0.92, k)]; }, function (u, d, t) {
+    var s = sky("day") + clouds(t, 60, -20, 6, 0.85) + birds(t, 20, 90) + crossSection(t, {}) + person(320, 84 + Math.sin(t * 3) * 3, t, "curious", { s: 0.55 });
     s += arrow(100 - (t * 6) % 30, 230, 230 - (t * 6) % 30, 230, "#fff", 4, 1) + arrow(560 + (t * 6) % 30, 230, 430 + (t * 6) % 30, 230, "#fff", 4, 1);
     return s + tag("بتتحرك دلوقتي!", 480, 60, u, 2.0, 3, 22);
   });
@@ -525,9 +525,9 @@
     return s + tag("قشرة الأرض", 190, 330, u, 0.6, -3, 20) + tag("قشرة التفاحة", 460, 330, u, 1.6, 3, 20, "#f2a0a0");
   });
   // 5 — it isn't one piece: it's broken into about fifteen big plates
-  shot(5, function (u, d) { return [320, 180, lerp(1.0, 1.12, u / d)]; }, function (u, d, t) { return '<rect x="-400" y="-300" width="1440" height="960" fill="#0b1730"/>' + stars(t) + globePlates(320, 180, 140, t) + tag("حوالي 15 لوح", 320, 330, u, 1.0, -2, 22); });
+  shot(5, function (u, d) { var k = clamp(u / d); return [lerp(260, 380, k), 180, lerp(1.15, 0.95, k)]; }, function (u, d, t) { return '<rect x="-400" y="-300" width="1440" height="960" fill="#0b1730"/>' + stars(t) + '<circle cx="320" cy="180" r="' + f(160 + Math.sin(t * 3) * 8) + '" fill="#5fb0e0" opacity=".18" filter="url(#soft)"/>' + globePlates(320, 180, 140, t * 3) + tag("حوالي 15 لوح", 320, 330, u, 1.0, -2, 22); });
   // 6 — the plates float on hot, heavy rock that moves very slowly
-  shot(6, function (u, d) { var k = clamp(u / d); return [320, lerp(170, 220, k), lerp(1.05, 0.95, k)]; }, function (u, d, t) { return sky("day") + crossSection(t, { arrows: true }) + tag("صخر سخن بيتحرك", 320, 300, u, 1.0, -2, 20); });
+  shot(6, function (u, d) { var k = clamp(u / d); return [lerp(250, 390, k), lerp(160, 230, k), lerp(1.15, 0.95, k)]; }, function (u, d, t) { return sky("day") + clouds(t, 60, -20, 6, 0.85) + birds(t, 20, 90) + crossSection(t * 3, { arrows: true }) + tag("صخر سخن بيتحرك", 320, 300, u, 1.0, -2, 20); });
   // 7 — a few centimetres a year, as fast as your fingernails grow
   shot(7, function (u, d) { return [320, 180, lerp(1.1, 1.2, u / d)]; }, function (u, d, t) {
     var grow = (t * 4) % 16, s = '<rect x="-400" y="-300" width="1440" height="960" fill="#e8dcc4"/>';
@@ -537,16 +537,16 @@
   });
   // 8 — where two plates meet, they grind against each other
   shot(8, function (u, d) { return [320, lerp(200, 190, u / d), lerp(1.2, 1.3, u / d)]; }, function (u, d, t) {
-    var s = sky("day") + crossSection(t, { slip: Math.sin(t * 3) * 0.25 });
-    for (var k = 0; k < 6; k++) { var q = (t * 2 + k / 6) % 1; s += '<circle cx="' + f(326 + Math.cos(k) * q * 30) + '" cy="' + f(200 + k * 14 - q * 20) + '" r="3" fill="#ffd27a" opacity="' + f(1 - q) + '"/>'; }
+    var s = '<g ' + shake(t, 0.25) + '>' + sky("day") + clouds(t, 60, -20, 5, 0.85) + crossSection(t, { slip: Math.sin(t * 5) * 0.6 }) + '</g>';
+    for (var k = 0; k < 14; k++) { var q = (t * 2 + k / 14) % 1; s += '<circle cx="' + f(326 + Math.cos(k) * q * 30) + '" cy="' + f(200 + k * 14 - q * 20) + '" r="3" fill="#ffd27a" opacity="' + f(1 - q) + '"/>'; }
     return s + tag("احتكاك", 470, 110, u, 0.8, 3, 24);
   });
   // 9 — the rock gets stuck and the stress builds up for years
   shot(9, function (u, d) { return [320, 200, lerp(1.15, 1.25, u / d)]; }, function (u, d, t) { var k = clamp(u / d); return sky("day") + crossSection(t, { stress: k }) + gauge(520, 80, 40, k) + tag("الضغط بيتجمع سنين", 200, 60, u, 0.8, -3, 20); });
   // 10 — like bending a plastic ruler: it holds, and holds, and then snaps
-  shot(10, function (u, d) { return [320, 190, lerp(1.1, 1.2, u / d)]; }, function (u, d, t) {
-    var k = clamp(u / (d * 0.8)), broken = k >= 1, s = '<rect x="-400" y="-300" width="1440" height="960" fill="#e8dcc4"/>';
-    s += ruler(320, 220, broken ? 0 : 20 + 90 * k + Math.sin(t * 20) * 3 * k, broken, t) + hands(140, 220, 1, t) + hands(500, 220, -1, t);
+  shot(10, function (u, d) { var k0 = clamp(u / d); return [lerp(260, 380, k0), lerp(210, 180, k0), lerp(1.25, 1.0, k0)]; }, function (u, d, t) {
+    var k = clamp(u / (d * 0.8)), broken = k >= 1, j = Math.sin(t * 25) * 4 * k, s = '<rect x="-400" y="-300" width="1440" height="960" fill="#e8dcc4"/>' + clouds(t, 40, 20, 4, 0.5);
+    s += ruler(320, 220 + j, broken ? 0 : 20 + 90 * k + Math.sin(t * 20) * 6 * k, broken, t) + hands(140, 220 + j, 1, t) + hands(500, 220 - j, -1, t);
     return s + (broken ? '<circle cx="320" cy="200" r="' + f(40 + (u - d * 0.8) * 200) + '" fill="none" stroke="#e2523a" stroke-width="4" opacity="' + f(Math.max(0, 1 - (u - d * 0.8) * 2)) + '"/>' + tag("طق!", 320, 100, u, d * 0.8, -4, 30, "#f2a0a0") : tag("بتستحمل…", 320, 90, u, 0.6, -3, 20));
   });
   // 11 — in one second the rock slips and all that energy comes out at once
@@ -583,9 +583,9 @@
   // 18 — because the first wave is faster, a phone can warn you seconds early
   shot(18, function (u, d) { return [320, 190, lerp(1.05, 1.15, u / d)]; }, function (u, d, t) { var al = u > 0.6; return '<rect x="-400" y="-300" width="1440" height="960" fill="#e8dcc4"/>' + phone(320, 180, 1.0, t, al) + (al ? quakeRings(t, 320, 180, 3, 1.2, 160, "#c23a26") : "") + tag("قبل الهزة بثواني", 480, 80, u, 1.4, 3, 18); });
   // 19 — each step on the magnitude scale is about 32 times more energy
-  shot(19, function (u, d) { return [320, 190, lerp(1.0, 1.1, u / d)]; }, function (u, d, t) {
+  shot(19, function (u, d) { var k = clamp(u / d); return [lerp(250, 390, k), 190, lerp(1.15, 0.95, k)]; }, function (u, d, t) {
     var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#2a3442"/>';
-    for (var m = 0; m < 5; m++) { var on = u > 0.3 + m * 0.5, h = 12 * Math.pow(1.9, m); s += '<rect x="' + (110 + m * 90) + '' + '" y="' + f(300 - (on ? h : 0)) + '" width="60" height="' + f(on ? h : 0) + '" fill="' + ["#5bbf6a", "#9bcf5a", "#f2c230", "#e8742e", "#e2523a"][m] + '" stroke="' + INK + '" stroke-width="2"/><text x="' + (140 + m * 90) + '" y="330" text-anchor="middle" style="font:800 22px Noto Sans Arabic;fill:#fff">' + (5 + m) + '</text>'; }
+    for (var m = 0; m < 5; m++) { var on = u > 0.3 + m * 0.5, h = 12 * Math.pow(1.9, m) * (1 + 0.06 * Math.sin(t * 5 + m)); s += '<rect x="' + (110 + m * 90) + '' + '" y="' + f(300 - (on ? h : 0)) + '" width="60" height="' + f(on ? h : 0) + '" fill="' + ["#5bbf6a", "#9bcf5a", "#f2c230", "#e8742e", "#e2523a"][m] + '" stroke="' + INK + '" stroke-width="2"/><text x="' + (140 + m * 90) + '" y="330" text-anchor="middle" style="font:800 22px Noto Sans Arabic;fill:#fff">' + (5 + m) + '</text>'; }
     return s + tag("كل درجة ×32", 320, 50, u, 2.4, -2, 22);
   });
   // 20 — a magnitude 7 has the energy of 32 magnitude 6s
