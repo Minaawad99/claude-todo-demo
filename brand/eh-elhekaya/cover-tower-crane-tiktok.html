@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — tower crane</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../../design-system/components/bundle.css">
+<style>
+  /* the reel cover, full bleed at 1080×1920 (540×960 at 2x), drawn from the video's own 3D crane (iso.js) at line 22:
+     the trolley out at the tip. Night sky, one warm glow behind the crane, dark fades for the text, inside the 3:4 crop. */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #000; }
+  #art { position: absolute; inset: 0; width: 540px; height: 960px; }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 10px rgba(0,0,0,.6); }
+  .tagt { font: 800 21px "Noto Sans Arabic", sans-serif; fill: #2b2016; }
+  /* night on site: the ground and soil go dark so the lit crane pops */
+  .f-ground { fill: #5d5444 !important; } .f-soil { fill: #3e3427 !important; } .f-soil-r { fill: #2f271d !important; } .f-pit { fill: #231c14 !important; }
+  /* 3D model */
+  #iso .f-top, #isodyn .f-top { fill: var(--paper-raised); stroke: var(--ink); stroke-width: 1.2; stroke-linejoin: round; }
+  .f-left { fill: var(--khaki); stroke: var(--ink); stroke-width: 1.2; stroke-linejoin: round; }
+  .f-right { fill: var(--khaki-deep); stroke: var(--ink); stroke-width: 1.2; stroke-linejoin: round; }
+  .f-ground { fill: #e6dcc4; stroke: var(--ink); stroke-width: 1.4; }
+  .f-soil { fill: #b99c76; stroke: var(--ink); stroke-width: 1.4; }
+  .f-soil-r { fill: #a58861; stroke: var(--ink); stroke-width: 1.4; }
+  .f-pit { fill: #8a7254; stroke: var(--ink); stroke-width: 1.2; }
+  .f-conc { fill: #c9c6bd; stroke: var(--ink); stroke-width: 1.1; stroke-linejoin: round; }
+  .f-conc-r { fill: #aeaaa0; stroke: var(--ink); stroke-width: 1.1; stroke-linejoin: round; }
+  .f-conc-top { fill: #dedbd2; stroke: var(--ink); stroke-width: 1.1; stroke-linejoin: round; }
+  .f-floor { fill: #e4e1d8; stroke: var(--ink); stroke-width: 1.1; stroke-linejoin: round; }
+  .f-steel { fill: #e2dccb; stroke: var(--ink); stroke-width: 1.1; }
+  .f-yel { fill: #e8b63a; stroke: var(--ink); stroke-width: 1.1; stroke-linejoin: round; }
+  .f-yel-r { fill: #c99524; stroke: var(--ink); stroke-width: 1.1; stroke-linejoin: round; }
+  .f-yel-top { fill: #f3d57e; stroke: var(--ink); stroke-width: 1.1; stroke-linejoin: round; }
+  .f-cab { fill: #e8b63a; stroke: var(--ink); stroke-width: 1.1; stroke-linejoin: round; }
+  .f-cab-r { fill: #c99524; stroke: var(--ink); stroke-width: 1.1; stroke-linejoin: round; }
+  .f-glass { fill: #bcd3df; stroke: var(--ink); stroke-width: 1.1; stroke-linejoin: round; }
+  .f-part { fill: var(--olive); stroke: var(--ink); stroke-width: 1.1; stroke-linejoin: round; }
+  .f-part-r { fill: color-mix(in srgb, var(--olive) 70%, var(--ink)); stroke: var(--ink); stroke-width: 1.1; stroke-linejoin: round; }
+  .f-part-top { fill: color-mix(in srgb, var(--olive) 55%, var(--paper)); stroke: var(--ink); stroke-width: 1.1; stroke-linejoin: round; }
+  .f-load { fill: #6f7f8c; stroke: var(--ink); stroke-width: 1; }
+  .f-load-r { fill: #56636e; stroke: var(--ink); stroke-width: 1; }
+  .f-load-top { fill: #93a3ae; stroke: var(--ink); stroke-width: 1; }
+  .f-walk { fill: #d8cfb8; stroke: var(--ink); stroke-width: .8; }
+  .f-hut { fill: #d9cfae; stroke: var(--ink); stroke-width: 1.2; } .f-hut-r { fill: #c4b893; stroke: var(--ink); stroke-width: 1.2; } .f-hut-top { fill: #9fb2a3; stroke: var(--ink); stroke-width: 1.2; }
+  .f-ink { fill: var(--ink); } .f-warn { fill: var(--heat); }
+  .lat-o { fill: none; stroke: var(--ink); stroke-linecap: round; stroke-linejoin: round; }
+  .lat-i { fill: none; stroke: #e8b63a; stroke-linecap: round; stroke-linejoin: round; }
+  .newsec .lat-i { stroke: var(--olive); }
+  .cage-o { fill: none; stroke: var(--ink); stroke-width: 4; stroke-linecap: round; }
+  .cage-i { fill: none; stroke: var(--olive); stroke-width: 2.4; stroke-linecap: round; }
+  .ram { fill: none; stroke: var(--ink); stroke-width: 6; stroke-linecap: round; }
+  .ram-rod { fill: none; stroke: var(--heat); stroke-width: 3; stroke-linecap: round; }
+  .ladder { fill: none; stroke: var(--ink); stroke-width: .8; stroke-dasharray: 1.5 2.5; opacity: .7; }
+  .pendant { fill: none; stroke: var(--ink); stroke-width: 1; }
+  .cable { fill: none; stroke: var(--ink); stroke-width: .9; }
+  .hook { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
+  .chain { fill: none; stroke: var(--ink); stroke-width: 1; stroke-dasharray: 2 1.4; }
+  .mullion { fill: none; stroke: var(--ink); stroke-width: 1; }
+  .rebar { fill: none; stroke: #8a4b2e; stroke-width: 1.1; }
+  .rebar-pile { fill: none; stroke: #8a4b2e; stroke-width: 2.2; }
+  .hat { fill: #f08a24; stroke: var(--ink); stroke-width: 1; }
+  .body { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .sight { fill: none; stroke: var(--heat); stroke-width: 1.4; stroke-dasharray: 4 4; }
+  .radio { fill: none; stroke: var(--water); stroke-width: 1.6; stroke-linecap: round; }
+  .pt-air { fill: var(--water); opacity: .8; }
+  .spark { fill: #f5b041; stroke: var(--heat); stroke-width: .5; }
+  .c-ink { --c: var(--ink); }
+  .inset { position: absolute; background: var(--paper-raised); border: 1.5px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); opacity: 0; }
+  .inset > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .chart-cap { font: 600 9.5px var(--font-sans); fill: var(--ink); }
+  .curve { fill: none; stroke: #d08a2a; stroke-width: 2.2; stroke-linejoin: round; }
+  .axis { fill: none; stroke: var(--ink); stroke-width: 1; }
+  .lmi { font: 700 12px var(--font-numeral); fill: #9fe0a0; }
+
+</style></head><body>
+<div class="cover">
+  <svg id="art" viewBox="0 0 540 960">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#05080f"/><stop offset=".45" stop-color="#1c2a40"/><stop offset=".7" stop-color="#3a3a3e"/><stop offset="1" stop-color="#0a0806"/></linearGradient>
+      <radialGradient id="glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffcf6a" stop-opacity=".75"/><stop offset=".5" stop-color="#f2a83a" stop-opacity=".25"/><stop offset="1" stop-color="#f2a83a" stop-opacity="0"/></radialGradient>
+      <linearGradient id="fadeT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".95"/><stop offset=".75" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>
+      <linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset=".3" stop-color="#000" stop-opacity=".7"/><stop offset="1" stop-color="#000" stop-opacity=".95"/></linearGradient>
+      <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .45  0 0 0 0 .4  0 0 0 .08 0"/></filter>
+      <path id="swash" d="M6 14 C40 4 120 2 196 8 C214 10 222 20 214 30 C206 44 140 46 70 44 C30 44 4 40 2 30 C0 24 2 18 6 14 Z"/>
+    </defs>
+    <rect width="540" height="960" fill="url(#sky)"/>
+    <g fill="#fff" opacity=".7"><circle cx="60" cy="330" r="1.2"/><circle cx="140" cy="290" r="1"/><circle cx="470" cy="320" r="1.3"/><circle cx="400" cy="270" r="1"/><circle cx="250" cy="300" r="1.1"/><circle cx="90" cy="420" r="1"/><circle cx="500" cy="420" r="1"/></g>
+    <circle cx="300" cy="430" r="230" fill="url(#glow)"/>
+    <g id="world"><g id="iso"></g></g>
+    <g id="tags"></g>
+    <rect width="540" height="300" fill="url(#fadeT)"/><rect y="680" width="540" height="280" fill="url(#fadeB)"/>
+    <rect width="540" height="960" filter="url(#grain)"/>
+  </svg>
+  <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
+  <p class="t" style="top:154px;font:900 42px/1.2 'Noto Sans Arabic';color:#fff">12 طن على رجل واحدة!</p>
+  <p class="t" style="top:214px;font:800 24px/1.3 'Noto Sans Arabic';color:#f2c230">إزاي الونش البرجي بيشتغل؟</p>
+  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff"><span style="color:#f2c230">12</span> طن جنب البرج<br><span style="font-size:24px;color:#d9d4c8">و3 بس في آخر الدراع!</span></p>
+</div>
+<script src="../../videos/tower-crane/timing.js"></script>
+<script src="../../videos/tower-crane/iso.js"></script>
+<script>
+  (function () {
+    var t = TIMING.lines[22].start + 2.2;
+    window.__iso(t);
+    // fit the crane into the frame: big, centred, the tip of the jib near the right edge
+    var w = document.getElementById("world"), k = 1.35, cx = 232, cy = 262, X = 270 - cx * k, Y = 470 - cy * k;
+    w.setAttribute("transform", "translate(" + X + " " + Y + ") scale(" + k + ")");
+    function at(p) { var q = ISO.P(p[0], p[1], p[2]); return [X + q[0] * k, Y + q[1] * k]; }
+    var S = window.__state, hk = at(S.hook), ms = at([0, 0, 40]), jb = at(S.jibMid);
+    function tag(txt, x, y, rot, fill) {
+      return '<g transform="translate(' + x + ' ' + y + ') rotate(' + rot + ')"><use href="#swash" transform="translate(-86 -21) scale(.86 .95)" fill="' + (fill || "#f2c230") + '"/>' +
+             '<text class="tagt" x="0" y="8" text-anchor="middle">' + txt + '</text></g>';
+    }
+    document.getElementById("tags").innerHTML = tag("12 طن", ms[0] - 112, ms[1] - 90, -5) + tag("3 طن بس!", hk[0] - 40, hk[1] + 66, 4, "#ffb19a") + tag("70 متر", jb[0] - 20, jb[1] + 40, -3, "#bfe0ff");
+  })();
+</script>
+</body></html>
