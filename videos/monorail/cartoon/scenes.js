@@ -424,25 +424,41 @@
   // the beam with skirts wrapping its sides; inside: rubber load tyres on top, guide tyres on the sides, stabilising tyres
   // lower down, power rails along the beam's side. Shapes from published drawings of straddle monorails (../refs/SOURCES.md).
   var CONCB = "#b9b4aa", CONCD = "#8f8a80", BODY = "#f4f4f0", STRIPE = "#1f5fa8", STRIPE2 = "#e8742e";
-  function pier(x, y, h) { return '<path d="M' + (x - 9) + ' ' + (y + 26) + ' L' + (x - 12) + ' ' + (y + h) + ' H' + (x + 12) + ' L' + (x + 9) + ' ' + (y + 26) + ' Z" fill="url(#gConc)" stroke="' + INK + '" stroke-width="1.6"/><path d="M' + (x - 22) + ' ' + (y + 26) + ' H' + (x + 22) + ' L' + (x + 14) + ' ' + (y + 38) + ' H' + (x - 14) + ' Z" fill="' + CONCB + '" stroke="' + INK + '" stroke-width="1.4"/>'; }
+  function pier(x, y, h, k) {
+    var g = '<rect x="' + (x - 11) + '" y="' + (y + 34) + '" width="22" height="' + (h - 34) + '" rx="10" fill="url(#gConc)" stroke="' + INK + '" stroke-width="1.6"/>';
+    if (k % 3 === 1) g += '<rect x="' + (x - 12) + '" y="' + (y + h - 70) + '" width="24" height="56" rx="10" fill="#f4f1ec" stroke="' + INK + '" stroke-width="1.2"/><rect x="' + (x - 12) + '" y="' + (y + h - 30) + '" width="24" height="12" fill="#e0457a"/><rect x="' + (x - 12) + '" y="' + (y + h - 70) + '" width="24" height="6" fill="#2f6fae"/>';
+    return g + '<path d="M' + (x - 34) + ' ' + (y + 24) + ' H' + (x + 34) + ' L' + (x + 16) + ' ' + (y + 40) + ' H' + (x - 16) + ' Z" fill="' + CONCB + '" stroke="' + INK + '" stroke-width="1.4"/>';
+  }
   function beam(x0, x1, y, groundY, gap) {
     var s = ""; gap = gap || 150;
-    for (var x = x0 + 40; x < x1; x += gap) s += pier(x, y, groundY - y);
+    for (var x = x0 + 40, k = 0; x < x1; x += gap, k++) s += pier(x, y, groundY - y, k);
     return s + '<rect x="' + x0 + '" y="' + y + '" width="' + (x1 - x0) + '" height="26" fill="' + CONCB + '" stroke="' + INK + '" stroke-width="2"/><path d="M' + x0 + ' ' + (y + 20) + ' H' + x1 + '" stroke="#6f6a62" stroke-width="2"/><path d="M' + x0 + ' ' + (y + 6) + ' H' + x1 + '" stroke="#fff" stroke-width="1.4" opacity=".4"/>';
   }
   // side view of a train of `n` cars sitting on a beam whose top is at y; front (nose) at the right
+  var TEAL = "#1fa5a0", GRN = "#3cae6a", YLW = "#f2c230";
+  function graphics(x0, w, seed) {   // the teal / green / yellow outline shapes on the lower body
+    var g = "";
+    for (var k = 0; k < 4; k++) { var cx = x0 + 18 + k * (w - 36) / 3 + hash(seed + k) * 8, cy = -12 + hash(seed + k + 9) * 6, r = 9 + hash(seed + k + 3) * 6, col = [TEAL, GRN, YLW, TEAL][k];
+      g += '<rect x="' + f(cx - r) + '" y="' + f(cy - r) + '" width="' + f(2 * r) + '" height="' + f(2 * r) + '" rx="3" fill="none" stroke="' + col + '" stroke-width="2.6" transform="rotate(' + f(20 + hash(seed + k) * 40) + ' ' + f(cx) + ' ' + f(cy) + ')"/>'; }
+    return g + '<path d="M' + (x0 + 10) + ' 0 q12 -10 24 0 t24 0 t24 0" stroke="' + TEAL + '" stroke-width="1.8" fill="none"/>';
+  }
   function train(x, y, t, o) {
     o = o || {}; var n = o.n || 3, cl = 150, s = '<g transform="translate(' + f(x) + ' ' + f(y + Math.sin(t * 7) * 0.6) + ') scale(' + (o.s || 1) + ')">';
     for (var c = 0; c < n; c++) {
-      var x0 = -c * (cl + 6), nose = c === 0, tail = c === n - 1;
-      var d = 'M' + (x0 - cl) + ' 16 V-48 Q' + (x0 - cl) + ' -60 ' + (x0 - cl + 12) + ' -60 H' + (x0 - (nose ? 40 : 0)) + (nose ? ' Q' + (x0 + 12) + ' -58 ' + (x0 + 16) + ' -20 L' + (x0 + 14) + ' 16 Z' : ' V16 Z');
-      if (tail && !nose) d = 'M' + (x0 - cl + 30) + ' 16 L' + (x0 - cl - 12) + ' -20 Q' + (x0 - cl - 6) + ' -58 ' + (x0 - cl + 30) + ' -60 H' + x0 + ' V16 Z';
+      var x0 = -c * (cl + 8), nose = c === 0, tail = c === n - 1 && n > 1;
+      var d = nose ? 'M' + (x0 - cl) + ' 18 V-50 Q' + (x0 - cl) + ' -62 ' + (x0 - cl + 12) + ' -62 H' + (x0 - 46) + ' Q' + (x0 + 6) + ' -62 ' + (x0 + 20) + ' -28 Q' + (x0 + 26) + ' -6 ' + (x0 + 16) + ' 18 Z'
+        : tail ? 'M' + (x0 - cl + 34) + ' 18 Q' + (x0 - cl - 8) + ' 14 ' + (x0 - cl - 10) + ' -20 Q' + (x0 - cl - 6) + ' -62 ' + (x0 - cl + 40) + ' -62 H' + x0 + ' V18 Z'
+        : 'M' + (x0 - cl) + ' 18 V-50 Q' + (x0 - cl) + ' -62 ' + (x0 - cl + 12) + ' -62 H' + (x0 - 12) + ' Q' + x0 + ' -62 ' + x0 + ' -50 V18 Z';
       s += '<path d="' + d + '" fill="' + BODY + '" stroke="' + INK + '" stroke-width="2.2"/>';
-      s += '<path d="M' + (x0 - cl + (tail && !nose ? 0 : 2)) + ' 2 H' + (x0 + (nose ? 14 : 0)) + '" stroke="' + STRIPE + '" stroke-width="6"/><path d="M' + (x0 - cl + (tail && !nose ? -4 : 2)) + ' -6 H' + (x0 + (nose ? 15 : 0)) + '" stroke="' + STRIPE2 + '" stroke-width="2.4"/>';
-      for (var w = 0; w < 5; w++) { var wx = x0 - cl + 18 + w * 26; if (nose && wx > x0 - 44) continue; s += '<rect x="' + wx + '" y="-48" width="18" height="22" rx="3" fill="#2b4a6a" stroke="' + INK + '" stroke-width="1"/>' + (o.people ? '<circle cx="' + (wx + 9) + '" cy="' + f(-32 + Math.sin(t * 3 + w + c) * 1) + '" r="5" fill="#c68b5f" opacity=".8"/>' : ""); }
-      s += '<rect x="' + (x0 - cl / 2 - 10) + '" y="-48" width="20" height="44" rx="2" fill="#dfe3e8" stroke="' + INK + '" stroke-width="1.2"/><path d="M' + (x0 - cl / 2) + ' -48 V-4" stroke="' + INK + '" stroke-width="1"/>';
-      if (nose) s += '<path d="M' + (x0 - 38) + ' -54 Q' + (x0 + 6) + ' -54 ' + (x0 + 11) + ' -26 H' + (x0 - 38) + ' Z" fill="#1f3550" stroke="' + INK + '" stroke-width="1.4"/><circle cx="' + (x0 + 10) + '" cy="-4" r="3" fill="#fff6c8"/><circle cx="' + (x0 + 10) + '" cy="-4" r="8" fill="#fff6c8" opacity=".3"/>';
-      if (c < n - 1) s += '<rect x="' + (x0 - cl - 7) + '" y="-44" width="8" height="40" fill="#6f7680"/>';
+      // the continuous black window band, people in the windows
+      s += '<rect x="' + (x0 - cl + (tail ? 14 : 6)) + '" y="-50" width="' + (cl - (tail ? 14 : 6) - (nose ? 40 : 8)) + '" height="22" rx="4" fill="#15181d"/>';
+      for (var w = 0; w < 5; w++) { var wx = x0 - cl + 20 + w * 25; if (nose && wx > x0 - 56) continue; s += '<rect x="' + wx + '" y="-47" width="20" height="16" rx="2" fill="#2b3a4a"/>' + (o.people ? '<circle cx="' + (wx + 10) + '" cy="' + f(-36 + Math.sin(t * 3 + w + c) * 1) + '" r="5" fill="#c68b5f" opacity=".85"/>' : ""); }
+      s += '<path d="M' + (x0 - cl / 2 - 10) + ' -26 V12 M' + (x0 - cl / 2 + 10) + ' -26 V12" stroke="#c9ccd1" stroke-width="1.4"/>' + graphics(x0 - cl, cl - (nose ? 30 : 0), c * 13 + 5);
+      // the black mask over the windscreen, a headlight, the skirt line
+      if (nose) s += '<path d="M' + (x0 - 52) + ' -50 Q' + (x0 - 50) + ' -60 ' + (x0 - 36) + ' -60 Q' + (x0 + 6) + ' -58 ' + (x0 + 18) + ' -30 L' + (x0 + 14) + ' -22 H' + (x0 - 52) + ' Z" fill="#15181d" stroke="' + INK + '" stroke-width="1.4"/><path d="M' + (x0 - 30) + ' -56 Q' + (x0 + 2) + ' -54 ' + (x0 + 10) + ' -34" stroke="#5a6a7a" stroke-width="2" fill="none"/><circle cx="' + (x0 + 16) + '" cy="-6" r="3" fill="#fff6c8"/><circle cx="' + (x0 + 16) + '" cy="-6" r="9" fill="#fff6c8" opacity=".3"/>';
+      if (tail) s += '<path d="M' + (x0 - cl + 30) + ' -50 Q' + (x0 - cl - 4) + ' -48 ' + (x0 - cl - 6) + ' -24 H' + (x0 - cl + 30) + ' Z" fill="#15181d"/>';
+      s += '<path d="M' + (x0 - cl + 4) + ' 8 H' + (x0 + (nose ? 12 : -4)) + '" stroke="#c9ccd1" stroke-width="1.6"/>';
+      if (c < n - 1) s += '<rect x="' + (x0 - cl - 9) + '" y="-56" width="10" height="70" rx="2" fill="#8a8f96" stroke="' + INK + '" stroke-width="1"/><path d="M' + (x0 - cl - 7) + ' -50 V8 M' + (x0 - cl - 2) + ' -50 V8" stroke="#6f7680" stroke-width="1"/>';
     }
     return s + '</g>';
   }
@@ -452,7 +468,7 @@
     var glow = function (k) { return hl === k || hl === "all"; };
     // the car body: a shell over the beam, skirts down both sides
     s += '<path d="M-110 30 V-150 Q-110 -186 -70 -190 H70 Q110 -186 110 -150 V30 H62 V-20 H-62 V30 Z" fill="' + BODY + '" stroke="' + INK + '" stroke-width="3"/>';
-    s += '<rect x="-92" y="-160" width="184" height="60" rx="8" fill="#2b4a6a" stroke="' + INK + '" stroke-width="2"/><path d="M-110 -60 H110" stroke="' + STRIPE + '" stroke-width="10"/><path d="M-110 -48 H110" stroke="' + STRIPE2 + '" stroke-width="3"/>';
+    s += '<rect x="-100" y="-164" width="200" height="68" rx="10" fill="#15181d"/><rect x="-90" y="-158" width="180" height="56" rx="6" fill="#2b3a4a"/><rect x="-80" y="-80" width="26" height="26" rx="4" fill="none" stroke="' + TEAL + '" stroke-width="4" transform="rotate(25 -67 -67)"/><rect x="50" y="-84" width="28" height="28" rx="4" fill="none" stroke="' + YLW + '" stroke-width="4" transform="rotate(-20 64 -70)"/><path d="M-40 -66 q14 -12 28 0 t28 0" stroke="' + GRN + '" stroke-width="3" fill="none"/>';
     for (var p = 0; p < 3; p++) s += '<circle cx="' + (-50 + p * 50) + '" cy="' + f(-128 + Math.sin(t * 2 + p) * 2) + '" r="13" fill="#c68b5f"/><path d="M' + (-62 + p * 50) + ' -100 Q' + (-50 + p * 50) + ' -116 ' + (-38 + p * 50) + ' -100" fill="#3f6f8f"/>';
     // the beam
     s += '<rect x="-36" y="-36" width="72" height="190" fill="' + CONCB + '" stroke="' + INK + '" stroke-width="3"/><path d="M-36 -36 H36" stroke="#fff" stroke-width="2" opacity=".5"/>';
@@ -512,7 +528,12 @@
     if (o.elephant) s += elephant(-30, 70, t, 0.5, o.mood);
     return s + '</g></g>';
   }
-  function station(x, y, t, open) { var s = '<rect x="' + (x - 220) + '" y="' + (y - 80) + '" width="440" height="80" fill="#e8e4da" stroke="' + INK + '" stroke-width="2"/><path d="M' + (x - 240) + ' ' + (y - 80) + ' H' + (x + 240) + ' L' + (x + 220) + ' ' + (y - 100) + ' H' + (x - 220) + ' Z" fill="' + STRIPE + '" stroke="' + INK + '" stroke-width="2"/>'; for (var p = 0; p < 5; p++) s += '<circle cx="' + (x - 160 + p * 80) + '" cy="' + f(y - 46 + Math.sin(t * 3 + p) * 2) + '" r="9" fill="#c68b5f"/><path d="M' + (x - 170 + p * 80) + ' ' + (y - 20) + ' Q' + (x - 160 + p * 80) + ' ' + (y - 40) + ' ' + (x - 150 + p * 80) + ' ' + (y - 20) + '" fill="' + BOX[p % BOX.length] + '"/>'; return s; }
+  function station(x, y, t, open) {
+    var s = '<path d="M' + (x - 250) + ' ' + (y - 92) + ' Q' + x + ' ' + (y - 150) + ' ' + (x + 250) + ' ' + (y - 92) + ' V' + (y - 80) + ' H' + (x - 250) + ' Z" fill="#c9ced4" stroke="' + INK + '" stroke-width="2"/>';
+    s += '<rect x="' + (x - 230) + '" y="' + (y - 80) + '" width="460" height="80" fill="#e8ecef" stroke="' + INK + '" stroke-width="1.6"/>';
+    for (var p = 0; p < 9; p++) { var px = x - 220 + p * 50; s += '<rect x="' + px + '" y="' + (y - 70) + '" width="40" height="62" fill="#bfe0ef" fill-opacity=".55" stroke="#8a9aa8" stroke-width="1.4"/>'; if (p % 2) s += '<circle cx="' + (px + 20) + '" cy="' + f(y - 42 + Math.sin(t * 3 + p) * 2) + '" r="8" fill="#c68b5f"/><path d="M' + (px + 10) + ' ' + (y - 10) + ' Q' + (px + 20) + ' ' + (y - 34) + ' ' + (px + 30) + ' ' + (y - 10) + '" fill="' + BOX[p % BOX.length] + '"/>'; }
+    return s;
+  }
   var BOX = ["#b8432e", "#2f6f9f", "#3f7a52", "#e8742e", "#5a3f8a"];
   function bg(t) { return sky("day") + clouds(t, 14, 20, 4, 0.8) + city(t, 250, 110, "#b9a98a", true, 3, false); }
 
