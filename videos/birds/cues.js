@@ -9,9 +9,10 @@ const a = (t, fx, gain, dur) => c.push(Object.assign({ t: +t.toFixed(2), fx, gai
 const rec = (t, file, gain, from, dur, duck) => c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), file: 'sfx/px-' + file + '.mp3', gain: +(gain * 1.2).toFixed(2), from: from || 0 }, dur ? { dur: +dur.toFixed(2) } : {}, duck != null ? { duck } : {}));
 const bed = (i, file, g, from) => rec(L(i), file, g, from, D(i) + 0.2, 1.2);
 let fo = 0, go = 0, ko = 0;
-const flaps = (t, g, dur) => HAVE('wing-flaps') ? rec(t, 'wing-flaps', g, (fo++ * 2.3) % 6, dur, 1.0) : (() => { for (let k = 0; k < dur / 0.3; k++) a(t + k * 0.3, 'whoosh', g * 0.35); })();
-const gulls = (t, g, dur) => HAVE('gulls') ? rec(t, 'gulls', g, (go++ * 3.1) % 10, dur, 1.0) : a(t, 'ping', g * 0.3);
-const geese = (t, g, dur) => HAVE('geese') ? rec(t, 'geese', g, (ko++ * 2.7) % 8, dur, 1.0) : a(t, 'beep', g * 0.2);
+// the wing-flap clip has 2.8 s of flapping (0.46–3.24 s); longer stretches repeat it
+const flaps = (t, g, dur) => HAVE('wing-flaps') ? (() => { for (let x = 0; x < dur - 0.3; x += 2.6) rec(t + x, 'wing-flaps', g, 0.46 + (fo++ % 3) * 0.1, Math.min(2.6, dur - x), 1.0); })() : (() => { for (let k = 0; k < dur / 0.3; k++) a(t + k * 0.3, 'whoosh', g * 0.35); })();
+const gulls = (t, g, dur) => HAVE('gulls') ? rec(t, 'gulls', g, (go++ * 3.1) % 12, dur, 1.0) : a(t, 'ping', g * 0.3);
+const geese = (t, g, dur) => HAVE('geese') ? rec(t, 'geese', g, (ko++ * 3.3) % 9, Math.min(dur, 6), 1.0) : a(t, 'beep', g * 0.2);
 for (let i = 1; i < T.length; i++) a(L(i) - 0.08, 'whoosh', 0.3);
 // 0: eleven days over the sea
 bed(0, 'waves', 0.35, 2); flaps(L(0) + 0.3, 0.45, D(0) - 0.3); for (let k = 0; k < 6; k++) a(L(0) + 0.5 + k * 0.45, 'tick', 0.25);
