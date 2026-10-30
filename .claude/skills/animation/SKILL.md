@@ -103,7 +103,8 @@ which second to listen to.
 The page is 360×640 CSS px, rendered at 1080×1920:
 
 - a black frame;
-- the title in Aref Ruqaa (white, 30px), a yellow sub-title under it (19px);
+- the title in **Noto Sans Arabic 900** (white, 28px), a yellow sub-title under it in Noto 800 (18px). Never Aref Ruqaa:
+  the user asked for Noto in the video title and on every cover;
 - **one 16:9 animated panel** (SVG viewBox 640×360) at top 196px;
 - under the panel, captions in Noto Sans Arabic 20px that reveal word by word with the voice; keywords are yellow (`K` in `build.py`);
 - the «إيه الحكاية؟» brand at the bottom.
@@ -116,7 +117,10 @@ Drawing language (`_helpers.js`):
 - **Realistic objects:** each is a function drawn from the real shape in the reference photos (layout, colours, parts).
 - **Openings:** open on the real thing the viewer knows (e.g. the actual app on a phone in a hand, the TV in a living room), then pull back into the explanation.
 
-## 6. Build (copy `videos/tbm-tunnel/cartoon/` → `videos/<slug>/cartoon/`)
+## 6. Build (copy `videos/monorail/cartoon/` → `videos/<slug>/cartoon/`)
+
+`videos/monorail/cartoon/` is the tunnel build with the Noto title and the long-caption rule already in `template.html`
+(captions over 72 characters drop to 17px); start from it.
 
 - `template.html`: set the `<title>`, `.title` and `.sub`; add any gradients the new objects need.
 - `shots.js`: new drawing pieces at the top, then exactly one `shot(line, cam(u, d), draw(u, d, t))` per script line.
