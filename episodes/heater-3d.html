@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>سخان الـ 10 لتر</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&family=Noto+Serif:wght@700&display=swap">
+<style>
+  /* Layout: a drawing sheet. Header strip, then the 3D cutaway on graph paper beside the episode panel (question, step caption, controls, readouts). */
+  :root {
+    --paper: #ebe3cd; --paper-raised: #f2e9d6; --paper-grid: #d7ceb7; --panel: #dbcdb1;
+    --khaki: #cbbfa7; --khaki-deep: #a2967e;
+    --ink: #1e1712; --ink-muted: #5f554a; --ink-ghost: #9c9282; --line-soft: #7e7266;
+    --heat: #c15636; --heat-text: #9e4129; --heat-soft: #ddad92; --on-heat: #fbf4e4;
+    --water: #3c6484; --water-body: #bec3bd; --olive: #929f7a; --olive-text: #55633a;
+    --focus: #1e1712;
+    --font-sans: "Noto Sans Arabic", "Segoe UI", Tahoma, system-ui, sans-serif;
+    --font-numeral: "Noto Serif", Georgia, "Times New Roman", serif;
+    --ease: cubic-bezier(.2, .7, .2, 1);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #1b1915; --paper-raised: #25221c; --paper-grid: #2f2b24; --panel: #2b271f;
+      --khaki: #4a4335; --khaki-deep: #3a3429;
+      --ink: #ece3cc; --ink-muted: #b3a894; --ink-ghost: #6b6353; --line-soft: #8a8070;
+      --heat: #e0795a; --heat-text: #ec8d6f; --heat-soft: #6e3c2c; --on-heat: #1b1915;
+      --water: #7fa6c6; --water-body: #2f3a3d; --olive: #7d8a62; --olive-text: #b2c08e;
+      --focus: #ece3cc; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #1b1915; --paper-raised: #25221c; --paper-grid: #2f2b24; --panel: #2b271f;
+    --khaki: #4a4335; --khaki-deep: #3a3429;
+    --ink: #ece3cc; --ink-muted: #b3a894; --ink-ghost: #6b6353; --line-soft: #8a8070;
+    --heat: #e0795a; --heat-text: #ec8d6f; --heat-soft: #6e3c2c; --on-heat: #1b1915;
+    --water: #7fa6c6; --water-body: #2f3a3d; --olive: #7d8a62; --olive-text: #b2c08e;
+    --focus: #ece3cc; color-scheme: dark;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--font-sans); direction: rtl; }
+  .wrap {
+    max-width: 1180px; margin-inline: auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  header.site { border-bottom: 1px solid var(--ink); }
+  header.site .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 600; }
+  .brand svg { width: 26px; height: 26px; }
+  .tag { font-size: 12px; font-weight: 500; line-height: 16px; padding: 3px 10px; border: 1px solid var(--ink); border-radius: 2px; }
+
+  main .wrap { display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 32px; padding-block: 32px 48px; align-items: start; }
+
+  /* Stage: graph paper drawing area with the WebGL canvas and the callout overlay */
+  .stage {
+    position: relative; order: 2; min-width: 0;
+    border: 2px solid var(--ink); outline: 1px solid var(--ink); outline-offset: -6px;
+    background-color: var(--paper);
+    background-image:
+      linear-gradient(to right, var(--paper-grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--paper-grid) 1px, transparent 1px);
+    background-size: 40px 40px;
+    aspect-ratio: 4 / 5; max-height: 82vh; width: 100%; overflow: hidden; touch-action: none;
+  }
+  .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; }
+  .stage canvas:active { cursor: grabbing; }
+  .overlay { position: absolute; inset: 0; pointer-events: none; }
+  .overlay svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .overlay line { stroke: var(--ink); stroke-width: 1; }
+  .overlay circle { fill: var(--ink); }
+  .chip {
+    position: absolute; transform: translate(-50%, -50%); white-space: nowrap;
+    font-size: 13px; font-weight: 500; line-height: 18px; padding: 3px 8px;
+    background: var(--paper-raised); border: 1px solid var(--ink); border-radius: 2px; color: var(--ink);
+    transition: border-color .4s var(--ease), color .4s var(--ease);
+  }
+  .chip.is-key { border-width: 3px; padding: 1px 6px; font-weight: 600; }
+  .chip.is-key.heat { border-color: var(--heat-text); color: var(--heat-text); }
+  .chip.is-key.water { border-color: var(--water); color: var(--water); }
+  .chip.is-key.olive { border-color: var(--olive-text); color: var(--olive-text); }
+  .stage__hint { position: absolute; bottom: 14px; inset-inline-start: 16px; font-size: 12px; color: var(--ink-muted); background: var(--paper); padding: 2px 6px; }
+  .stage__big {
+    position: absolute; top: 18px; inset-inline-end: 20px; text-align: left; direction: ltr;
+    font-family: var(--font-numeral); font-weight: 700; line-height: 1; color: var(--ink);
+    font-variant-numeric: tabular-nums; pointer-events: none;
+  }
+  .stage__big b { display: block; font-size: 56px; }
+  .stage__big span { font-family: var(--font-sans); font-size: 13px; font-weight: 500; color: var(--ink-muted); direction: rtl; display: block; margin-top: 6px; }
+
+  /* Panel */
+  .panel { order: 1; display: grid; gap: 24px; min-width: 0; }
+  .panel h1 { margin: 0; font-size: clamp(26px, 3.4vw, 34px); line-height: 1.45; font-weight: 600; text-wrap: balance; }
+  .panel h1 em { font-style: normal; font-family: var(--font-numeral); color: var(--heat-text); }
+  .lede { margin: 0; font-size: 17px; line-height: 30px; max-width: 46ch; }
+
+  .steps { border-top: 1px solid var(--ink); padding-top: 18px; display: grid; gap: 14px; }
+  .steps__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .steps__count { font-size: 12px; font-weight: 500; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+  .dots { display: flex; gap: 6px; }
+  .dots button { width: 22px; height: 12px; padding: 0; border: 0; background: transparent; cursor: pointer; position: relative; }
+  .dots button::after { content: ""; position: absolute; inset: 4px 0; background: var(--paper-grid); }
+  .dots button[aria-current="step"]::after { background: var(--ink); }
+  .caption { min-height: 96px; display: grid; gap: 4px; align-content: start; }
+  .caption p { margin: 0; font-size: 20px; line-height: 34px; font-weight: 500; animation: inkin .4s var(--ease); }
+  .caption p + p { color: var(--ink-muted); font-size: 17px; line-height: 30px; font-weight: 400; }
+  @keyframes inkin { from { color: var(--ink-ghost); } }
+  .nav { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+    font: 600 15px / 1 var(--font-sans); padding: 11px 16px;
+    border: 2px solid var(--ink); background: var(--paper-raised); color: var(--ink); border-radius: 0;
+  }
+  .btn:disabled { opacity: .4; cursor: default; }
+  .btn--primary { background: var(--heat-text); border-color: var(--heat-text); color: var(--on-heat); }
+
+  .controls { border-top: 1px solid var(--ink); padding-top: 18px; display: grid; gap: 12px; }
+  .controls h2, .danger h2 { margin: 0; font-size: 18px; line-height: 28px; font-weight: 600; }
+  .switches { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .switch {
+    display: grid; gap: 6px; justify-items: start; text-align: right; cursor: pointer;
+    padding: 10px 12px; border: 1px solid var(--ink); background: transparent; color: var(--ink);
+    font: 500 14px / 20px var(--font-sans); border-radius: 0; min-width: 0;
+  }
+  .switch small { font-size: 12px; color: var(--ink-muted); }
+  .switch[aria-pressed="true"] { border-width: 3px; padding: 8px 10px; }
+  .switch[data-k="valve"][aria-pressed="true"] { border-color: var(--water); }
+  .switch[data-k="power"][aria-pressed="true"] { border-color: var(--heat-text); }
+  .switch[data-k="tap"][aria-pressed="true"] { border-color: var(--olive-text); }
+  .switch[aria-pressed="true"] small { color: var(--ink); font-weight: 600; }
+
+  .readouts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .readout { border-top: 1px solid var(--line-soft); padding-top: 8px; min-width: 0; }
+  .readout span { display: block; font-size: 12px; color: var(--ink-muted); }
+  .readout b { font-family: var(--font-numeral); font-size: 24px; line-height: 32px; font-variant-numeric: tabular-nums; direction: ltr; display: inline-block; }
+  .readout b.sm { font-family: var(--font-sans); font-size: 15px; font-weight: 600; }
+
+  .status { margin: 0; font-size: 15px; line-height: 26px; min-height: 52px; padding: 8px 12px; border: 1px solid var(--line-soft); background: var(--paper-raised); }
+  .status.is-warn { border: 3px solid var(--heat-text); padding: 6px 10px; color: var(--heat-text); font-weight: 600; }
+  .status.is-ok { border-color: var(--olive-text); }
+
+  .danger { border-top: 1px solid var(--ink); padding-top: 18px; display: grid; gap: 10px; }
+  .danger p { margin: 0; font-size: 15px; line-height: 26px; color: var(--ink-muted); max-width: 48ch; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .note { font-size: 12px; color: var(--ink-muted); }
+
+  footer { border-top: 1px solid var(--ink); }
+  footer .wrap { padding-block: 16px; font-size: 12px; color: var(--ink-muted); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+  @media (max-width: 860px) {
+    main .wrap { grid-template-columns: minmax(0, 1fr); }
+    .stage { order: 1; aspect-ratio: 4 / 5; max-height: 70vh; }
+    .panel { order: 2; }
+  }
+  @media (max-width: 420px) {
+    .switches, .readouts { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .chip { font-size: 11px; padding: 2px 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .caption p { animation: none; } }
+</style>
+
+<header class="site">
+  <div class="wrap">
+    <div class="brand">
+      <svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="14" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M13 14V8M10 2h6" stroke="currentColor" stroke-width="2" fill="none"/><path d="M13 4a10 10 0 0 1 10 10H13z" fill="var(--heat)"/></svg>
+      <span>طب إزاي؟</span>
+    </div>
+    <span class="tag">البيت · مقطع 3D</span>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section class="stage" id="stage" aria-label="رسمة 3D لسخان مية 10 لتر متقطّع من قدام">
+      <canvas id="gl"></canvas>
+      <div class="overlay" id="overlay"><svg id="leaders"></svg></div>
+      <div class="stage__big" aria-live="polite"><b id="bigLevel">0.0</b><span>لتر جوّه، من 10</span></div>
+      <div class="stage__hint">اسحب عشان تلف السخان، وقرّب بالعجلة</div>
+    </section>
+
+    <div class="panel">
+      <h1>إزاي سخان الـ <em>10</em> لتر بيشتغل... وهو جاي فاضي؟</h1>
+      <p class="lede">الرقم المكتوب على السخان هو قد إيه يشيل، مش قد إيه جواه. السخان بيوصلك فاضي، وإنت اللي بتملاه من الحنفية قبل ما توصّل الكهربا.</p>
+
+      <div class="steps">
+        <div class="steps__top">
+          <div class="dots" id="dots" role="tablist" aria-label="الخطوات"></div>
+          <span class="steps__count" id="stepCount"></span>
+        </div>
+        <div class="caption" id="caption" aria-live="polite"></div>
+        <div class="nav">
+          <button class="btn" id="prev" type="button">السابق</button>
+          <button class="btn btn--primary" id="next" type="button">الخطوة الجاية</button>
+        </div>
+      </div>
+
+      <div class="controls">
+        <h2>جرّب بإيدك</h2>
+        <div class="switches">
+          <button class="switch" type="button" id="sw-valve" data-k="valve" aria-pressed="false">محبس المية الباردة<small>مقفول</small></button>
+          <button class="switch" type="button" id="sw-power" data-k="power" aria-pressed="false">الكهربا<small>مفصولة</small></button>
+          <button class="switch" type="button" id="sw-tap" data-k="tap" aria-pressed="false">الحنفية السخنة<small>مقفولة</small></button>
+        </div>
+        <div class="readouts">
+          <div class="readout"><span>المية جوّه</span><b id="rLevel">0.0 L</b></div>
+          <div class="readout"><span>حرارة المية</span><b id="rTemp">25°</b></div>
+          <div class="readout"><span>المقاومة</span><b class="sm" id="rElem">باردة</b></div>
+        </div>
+        <p class="status" id="status" role="status"></p>
+      </div>
+
+      <div class="danger">
+        <h2>ليه ممنوع تشغّله وهو فاضي؟</h2>
+        <p>المقاومة معمولة عشان تدّي حرارتها للمية. لو مفيش مية، الحرارة بتفضل فيها، وتحمرّ وتتحرق في دقايق. والترموستات بيقيس حرارة المية، فمش هيلحق يفصل.</p>
+        <div class="row">
+          <button class="btn" id="dry" type="button">شغّله فاضي وشوف</button>
+          <button class="btn" id="reset" type="button">ابدأ من الأول</button>
+        </div>
+        <span class="note">الوقت هنا متسرّع: التسخين الحقيقي لـ 10 لتر بـ 1500 وات بياخد حوالي 15 دقيقة.</span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer><div class="wrap"><span>طب إزاي؟ · هشرحهالك في دقيقة.</span><span>سخان كهربا 10 لتر · 1500W · 220V · ترموستات 60°</span></div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function () {
+  "use strict";
+  var stage = document.getElementById("stage");
+  var canvas = document.getElementById("gl");
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (!window.THREE) {
+    stage.insertAdjacentHTML("beforeend", '<p style="position:absolute;inset:auto 16px 48px;margin:0">الرسمة الـ 3D ماحمّلتش. جرّب تفتح الصفحة تاني.</p>');
+    return;
+  }
+
+  /* ---------- tokens -> THREE colors ---------- */
+  var C = {};
+  var TOKENS = ["paper", "paper-raised", "panel", "khaki", "khaki-deep", "ink", "ink-ghost", "line-soft", "heat", "heat-soft", "water", "water-body", "olive"];
+  function readTokens() {
+    var cs = getComputedStyle(document.documentElement);
+    TOKENS.forEach(function (t) { C[t] = new THREE.Color(cs.getPropertyValue("--" + t).trim() || "#888"); });
+  }
+  readTokens();
+
+  /* ---------- renderer / scene / camera ---------- */
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+  camera.position.set(4.6, 1.6, 7.4);
+  var controls = new THREE.OrbitControls(camera, canvas);
+  controls.target.set(0, -0.55, 0);
+  controls.enableDamping = true;
+  controls.enablePan = false;
+  controls.minDistance = 5;
+  controls.maxDistance = 14;
+  controls.minPolarAngle = 0.35;
+  controls.maxPolarAngle = 2.0;
+  controls.update();
+
+  var mats = [];      // [material, tokenName] pairs recoloured on theme change
+  function mat(token, opts) {
+    var m = new THREE.MeshBasicMaterial(Object.assign({ side: THREE.DoubleSide }, opts || {}));
+    m.color.copy(C[token]); mats.push([m, token]); return m;
+  }
+  function lineMat(token) {
+    var m = new THREE.LineBasicMaterial({}); m.color.copy(C[token]); mats.push([m, token]); return m;
+  }
+  var inkLine = lineMat("ink");
+  function withEdges(mesh, lm, angle) {
+    var e = new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry, angle || 25), lm || inkLine);
+    mesh.add(e); return mesh;
+  }
+
+  /* ---------- hatch texture (cutaway shading with diagonal lines) ---------- */
+  var hatchCanvas = document.createElement("canvas"); hatchCanvas.width = hatchCanvas.height = 64;
+  var hatchTex = new THREE.CanvasTexture(hatchCanvas);
+  hatchTex.wrapS = hatchTex.wrapT = THREE.RepeatWrapping; hatchTex.repeat.set(14, 5);
+  function drawHatch() {
+    var g = hatchCanvas.getContext("2d");
+    g.fillStyle = "#" + C.khaki.getHexString(); g.fillRect(0, 0, 64, 64);
+    g.strokeStyle = "#" + C["line-soft"].getHexString(); g.lineWidth = 2;
+    for (var i = -64; i < 128; i += 16) { g.beginPath(); g.moveTo(i, 64); g.lineTo(i + 64, 0); g.stroke(); }
+    hatchTex.needsUpdate = true;
+  }
+  drawHatch();
+
+  /* ---------- rating plate texture ("10 L") ---------- */
+  var plateCanvas = document.createElement("canvas"); plateCanvas.width = 512; plateCanvas.height = 320;
+  var plateTex = new THREE.CanvasTexture(plateCanvas);
+  plateTex.anisotropy = 4;
+  function drawPlate() {
+    var g = plateCanvas.getContext("2d"), ink = "#" + C.ink.getHexString();
+    g.fillStyle = "#" + C["paper-raised"].getHexString(); g.fillRect(0, 0, 512, 320);
+    g.strokeStyle = ink; g.lineWidth = 8; g.strokeRect(10, 10, 492, 300);
+    g.lineWidth = 2; g.strokeRect(26, 26, 460, 268);
+    g.fillStyle = ink; g.textAlign = "center"; g.textBaseline = "alphabetic";
+    g.font = '700 150px "Noto Serif", Georgia, serif'; g.fillText("10 L", 256, 190);
+    g.font = '600 36px "Noto Sans Arabic", Tahoma, sans-serif'; g.fillText("1500W · 220V · 60°C", 256, 262);
+    plateTex.needsUpdate = true;
+  }
+  drawPlate();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawPlate);
+
+  /* ---------- the heater ---------- */
+  var R = 1.0, RI = 0.88, H = 2.6, HI = 2.44;           // outer / inner tank
+  var CUT_S = Math.PI / 4, CUT_L = Math.PI * 1.5;        // remove the front quarter (theta -45°..45°, +z faces camera)
+  var Y_BOT = -HI / 2, Y_TOP = HI / 2;
+  var heater = new THREE.Group(); scene.add(heater);
+  heater.rotation.y = 0.15;
+
+  // outer shell, hatched
+  var shellMat = new THREE.MeshBasicMaterial({ map: hatchTex, side: THREE.FrontSide });
+  var shell = withEdges(new THREE.Mesh(new THREE.CylinderGeometry(R, R, H, 64, 1, true, CUT_S, CUT_L), shellMat));
+  heater.add(shell);
+  // inner tank wall
+  var tank = withEdges(new THREE.Mesh(new THREE.CylinderGeometry(RI, RI, HI, 64, 1, true, CUT_S, CUT_L), mat("paper-raised")));
+  heater.add(tank);
+  // caps (outer + inner) with the same cut
+  [[R, H / 2, 0.05, "khaki"], [R, -H / 2, 0.05, "khaki"], [RI, HI / 2, 0.02, "panel"], [RI, -HI / 2, 0.02, "panel"]].forEach(function (c) {
+    var m = withEdges(new THREE.Mesh(new THREE.CylinderGeometry(c[0], c[0], c[2], 64, 1, false, CUT_S, CUT_L), mat(c[3])));
+    m.position.y = c[1]; heater.add(m);
+  });
+  // insulation on the two cut faces
+  [CUT_S, CUT_S + CUT_L].forEach(function (th) {
+    var w = R - RI;
+    var p = withEdges(new THREE.Mesh(new THREE.PlaneGeometry(w, H), mat("heat-soft")));
+    var rm = (R + RI) / 2;
+    p.position.set(Math.sin(th) * rm, 0, Math.cos(th) * rm);
+    p.rotation.y = th + Math.PI / 2;
+    heater.add(p);
+  });
+  // rating plate on the shell
+  var plateMat = new THREE.MeshBasicMaterial({ map: plateTex, side: THREE.FrontSide });
+  var plate = withEdges(new THREE.Mesh(new THREE.CylinderGeometry(R + 0.006, R + 0.006, 0.62, 32, 1, true, 0.84, 0.8), plateMat));
+  plate.position.y = 0.25; heater.add(plate);
+  // wall bracket hint on the back
+  var bracket = withEdges(new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.18, 0.12), mat("khaki-deep")));
+  bracket.position.set(0, 1.05, -R - 0.05); heater.add(bracket);
+
+  // water: unit-height partial cylinder, scaled to the level
+  var waterGeo = new THREE.CylinderGeometry(RI - 0.015, RI - 0.015, 1, 64, 1, false, CUT_S, CUT_L);
+  waterGeo.translate(0, 0.5, 0);
+  var waterMat = mat("water-body", { transparent: true, opacity: 0.86, depthWrite: false });
+  var water = new THREE.Mesh(waterGeo, waterMat);
+  var waterEdgeMat = lineMat("water");
+  water.add(new THREE.LineSegments(new THREE.EdgesGeometry(waterGeo, 25), waterEdgeMat));
+  water.position.y = Y_BOT; water.scale.y = 0.0001; water.visible = false;
+  heater.add(water);
+  water.renderOrder = 2;
+
+  function tube(points, radius, material) {
+    var path = new THREE.CurvePath();
+    for (var i = 0; i < points.length - 1; i++) path.add(new THREE.LineCurve3(points[i], points[i + 1]));
+    var mesh = new THREE.Mesh(new THREE.TubeGeometry(path, points.length * 16, radius, 14, false), material);
+    return mesh;
+  }
+  var V = function (x, y, z) { return new THREE.Vector3(x, y, z); };
+
+  // heating element: a U-shaped rod entering from the bottom flange
+  var elemMat = mat("khaki-deep");
+  var elemPath = new THREE.CurvePath();
+  var ez = -0.28, ex = 0.2, eTop = -0.35;
+  elemPath.add(new THREE.LineCurve3(V(-ex, -H / 2 - 0.12, ez), V(-ex, eTop, ez)));
+  elemPath.add(new THREE.QuadraticBezierCurve3(V(-ex, eTop, ez), V(0, eTop + 0.3, ez), V(ex, eTop, ez)));
+  elemPath.add(new THREE.LineCurve3(V(ex, eTop, ez), V(ex, -H / 2 - 0.12, ez)));
+  var element = withEdges(new THREE.Mesh(new THREE.TubeGeometry(elemPath, 90, 0.055, 12, false), elemMat), inkLine, 40);
+  heater.add(element);
+  var ELEM_TOP_L = (eTop + 0.22 - Y_BOT) / HI * 10;      // litres needed to cover the element
+
+  // thermostat sensing rod
+  var thermo = withEdges(new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.75, 12), mat("olive")), inkLine, 40);
+  thermo.position.set(0, Y_BOT + 0.3, 0.15); heater.add(thermo);
+  // flange + terminal box under the tank
+  var flange = withEdges(new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.14, 32), mat("khaki-deep")));
+  flange.position.set(0, -H / 2 - 0.08, -0.05); heater.add(flange);
+  var lamp = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 12), mat("ink-ghost", { side: THREE.FrontSide }));
+  lamp.position.set(0.22, -H / 2 - 0.12, 0.25); heater.add(lamp);
+  var lampRing = withEdges(new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.04, 20), mat("paper-raised")));
+  lampRing.position.set(0.22, -H / 2 - 0.08, 0.25); heater.add(lampRing);
+
+  // cold inlet: enters at the bottom, short pipe with a deflector, valve outside
+  var coldMat = mat("water");
+  var cx = -0.52;
+  heater.add(tube([V(cx, Y_BOT + 0.22, 0), V(cx, -2.05, 0), V(-1.5, -2.05, 0)], 0.05, coldMat));
+  var deflector = withEdges(new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.025, 20), mat("water")));
+  deflector.position.set(cx, Y_BOT + 0.3, 0); heater.add(deflector);
+  var valveWheel = withEdges(new THREE.Mesh(new THREE.TorusGeometry(0.17, 0.035, 8, 20), mat("olive")), inkLine, 40);
+  valveWheel.position.set(-1.05, -2.05, 0.14); heater.add(valveWheel);
+  var spoke = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.04, 0.03), mat("olive"));
+  valveWheel.add(spoke);
+  var valveBody = withEdges(new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.16, 0.16), mat("khaki-deep")));
+  valveBody.position.set(-1.05, -2.05, 0); heater.add(valveBody);
+
+  // hot outlet: long pipe that draws from the top, out at the bottom to a tap
+  var hotMat = mat("khaki-deep");
+  var hx = 0.52;
+  heater.add(tube([V(hx, Y_TOP - 0.12, 0), V(hx, -2.05, 0), V(1.45, -2.05, 0), V(1.45, -2.3, 0)], 0.05, hotMat));
+  var tapBody = withEdges(new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.16, 0.16), mat("khaki-deep")));
+  tapBody.position.set(1.05, -2.05, 0); heater.add(tapBody);
+  var tapHandle = withEdges(new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.3, 0.06), mat("olive")));
+  tapHandle.position.set(1.05, -1.85, 0); heater.add(tapHandle);
+  var streamMat = mat("water", { transparent: true, opacity: 0.85 });
+  var stream = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.03, 1, 10), streamMat);
+  stream.position.set(1.45, -2.8, 0); stream.visible = false; heater.add(stream);
+
+  // power cable
+  heater.add(tube([V(0, -H / 2 - 0.15, -0.05), V(0, -2.5, -0.05), V(-0.6, -2.75, -0.05)], 0.025, mat("ink")));
+
+  /* ---------- particles: bubbles, cold inflow, rising hot water ---------- */
+  var partGeo = new THREE.SphereGeometry(1, 8, 6);
+  var parts = [];
+  var PART_TYPES = { bubble: "paper-raised", cold: "water", hot: "heat", air: "ink-ghost" };
+  function spawn(type, pos, vel, life, size) {
+    var p = parts.find(function (q) { return !q.alive; });
+    if (!p) {
+      if (parts.length > 160) return;
+      p = { mesh: new THREE.Mesh(partGeo, mat("water")) };
+      heater.add(p.mesh); parts.push(p);
+    }
+    p.alive = true; p.type = type; p.age = 0; p.life = life; p.vel = vel;
+    p.mesh.material.color.copy(C[PART_TYPES[type]]);
+    var m = mats.find(function (x) { return x[0] === p.mesh.material; }); if (m) m[1] = PART_TYPES[type];
+    p.mesh.position.copy(pos); p.mesh.scale.setScalar(size); p.mesh.visible = true;
+  }
+
+  /* ---------- simulation state ---------- */
+  var S = { level: 0, temp: 25, elemT: 25, valve: false, power: false, tap: false, thermoClosed: true, burned: false };
+  var COLD = 25, SET = 60, RESET_AT = 52;
+
+  /* ---------- callouts ---------- */
+  var overlay = document.getElementById("overlay"), leaders = document.getElementById("leaders");
+  var CALLOUTS = [
+    { id: "tank", text: "خزان سعته 10 لتر", at: V(-0.62, 1.0, 0.62), dx: -1, color: "water" },
+    { id: "elem", text: "المقاومة (السخان)", at: V(0, eTop + 0.15, ez), dx: 1, color: "heat" },
+    { id: "thermo", text: "الترموستات", at: V(0, Y_BOT + 0.62, 0.15), dx: -1, color: "olive" },
+    { id: "cold", text: "مية باردة داخلة", at: V(-1.4, -2.05, 0), dx: -1, color: "water" },
+    { id: "hot", text: "السخنة بتتسحب من فوق", at: V(hx, Y_TOP - 0.12, 0), dx: 1, color: "heat" },
+    { id: "insul", text: "عازل بيحفظ الحرارة", at: V(Math.sin(CUT_S) * 0.94, 0.55, Math.cos(CUT_S) * 0.94), dx: 1, color: "heat" },
+    { id: "tap", text: "الحنفية السخنة", at: V(1.45, -2.3, 0), dx: 1, color: "olive" }
+  ];
+  CALLOUTS.forEach(function (c) {
+    c.el = document.createElement("span"); c.el.className = "chip " + c.color; c.el.textContent = c.text; overlay.appendChild(c.el);
+    c.line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    c.dot = document.createElementNS("http://www.w3.org/2000/svg", "circle"); c.dot.setAttribute("r", "3");
+    leaders.appendChild(c.line); leaders.appendChild(c.dot);
+  });
+  var keyIds = [];
+  var tmpV = new THREE.Vector3();
+  function placeCallouts(w, h) {
+    var narrow = w < 420;
+    CALLOUTS.forEach(function (c) {
+      tmpV.copy(c.at); heater.localToWorld(tmpV); tmpV.project(camera);
+      var x = (tmpV.x * 0.5 + 0.5) * w, y = (-tmpV.y * 0.5 + 0.5) * h;
+      var off = (narrow ? 46 : 70) * c.dx;
+      var cxp = Math.max(60, Math.min(w - 60, x + off)), cyp = y - (narrow ? 18 : 24);
+      c.el.style.left = cxp + "px"; c.el.style.top = cyp + "px";
+      c.el.classList.toggle("is-key", keyIds.indexOf(c.id) > -1);
+      c.line.setAttribute("x1", x); c.line.setAttribute("y1", y);
+      c.line.setAttribute("x2", cxp); c.line.setAttribute("y2", cyp);
+      c.dot.setAttribute("cx", x); c.dot.setAttribute("cy", y);
+    });
+  }
+
+  /* ---------- steps ---------- */
+  var STEPS = [
+    { key: ["tank"], lines: ["«10 لتر» دي سعة الخزان، مش اللي جواه.", "زي الجركن المكتوب عليه 20 لتر... وهو فاضي."],
+      apply: function () { set({ valve: false, power: false, tap: false }); S.level = 0; S.temp = COLD; } },
+    { key: ["cold", "tap"], lines: ["افتح محبس المية الباردة، وسيب الحنفية السخنة مفتوحة.", "المية بتدخل من تحت، والهوا بيطلع من الحنفية."],
+      apply: function () { set({ valve: true, power: false, tap: true }); } },
+    { key: ["tap", "tank"], lines: ["أول ما المية تنزل من الحنفية، يبقى اتملى 10 لتر.", "اقفل الحنفية... وسيب المحبس مفتوح على طول."],
+      apply: function () { set({ valve: true, power: false, tap: false }); } },
+    { key: ["elem"], lines: ["دلوقتي بس وصّل الكهربا.", "المقاومة بتسخن، والمية السخنة بتطلع لفوق زي الشاي في الكنكة."],
+      apply: function () { if (S.level < 10) S.level = 10; set({ valve: true, power: true, tap: false }); } },
+    { key: ["thermo"], lines: ["الترموستات بيفصل لما المية توصل 60°...", "ويرجع يوصّل لما تبرد شوية، زي التلاجة."],
+      apply: function () { if (S.level < 10) S.level = 10; S.temp = Math.max(S.temp, 54); set({ valve: true, power: true, tap: false }); } },
+    { key: ["hot", "cold", "insul"], lines: ["افتح الحنفية: السخنة بتتسحب من فوق.", "والباردة بتدخل من تحت مكانها، فالخزان عمره ما يفضى."],
+      apply: function () { if (S.level < 10) S.level = 10; S.temp = Math.max(S.temp, 58); set({ valve: true, power: true, tap: true }); } }
+  ];
+  var step = 0;
+  var dotsEl = document.getElementById("dots"), captionEl = document.getElementById("caption");
+  STEPS.forEach(function (s, i) {
+    var b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-label", "خطوة " + (i + 1));
+    b.addEventListener("click", function () { goStep(i); }); dotsEl.appendChild(b);
+  });
+  function goStep(i) {
+    step = Math.max(0, Math.min(STEPS.length - 1, i));
+    S.burned = false;
+    STEPS[step].apply(); keyIds = STEPS[step].key;
+    captionEl.innerHTML = STEPS[step].lines.map(function (l) { return "<p>" + l + "</p>"; }).join("");
+    Array.prototype.forEach.call(dotsEl.children, function (b, j) { if (j === step) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current"); });
+    document.getElementById("stepCount").textContent = "خطوة " + (step + 1) + " من " + STEPS.length;
+    document.getElementById("prev").disabled = step === 0;
+    var nx = document.getElementById("next");
+    nx.textContent = step === STEPS.length - 1 ? "من الأول" : "الخطوة الجاية";
+  }
+  document.getElementById("prev").addEventListener("click", function () { goStep(step - 1); });
+  document.getElementById("next").addEventListener("click", function () { goStep(step === STEPS.length - 1 ? 0 : step + 1); });
+
+  /* ---------- switches ---------- */
+  var SW_TEXT = { valve: ["مقفول", "مفتوح"], power: ["مفصولة", "موصّلة"], tap: ["مقفولة", "مفتوحة"] };
+  function set(o) {
+    Object.keys(o).forEach(function (k) {
+      S[k] = o[k];
+      var b = document.getElementById("sw-" + k);
+      b.setAttribute("aria-pressed", String(!!o[k]));
+      b.querySelector("small").textContent = SW_TEXT[k][o[k] ? 1 : 0];
+    });
+  }
+  ["valve", "power", "tap"].forEach(function (k) {
+    document.getElementById("sw-" + k).addEventListener("click", function () {
+      if (k === "power" && S.burned && !S.power) { S.burned = false; S.elemT = S.temp; }
+      var o = {}; o[k] = !S[k]; set(o);
+    });
+  });
+  document.getElementById("dry").addEventListener("click", function () {
+    S.level = 0; S.temp = COLD; S.elemT = COLD; S.burned = false; S.thermoClosed = true;
+    set({ valve: false, tap: false, power: true }); keyIds = ["elem", "thermo"];
+    captionEl.innerHTML = "<p>اتشغّل وهو فاضي: المقاومة مش لاقية مية تدّيها الحرارة.</p><p>زي الكنكة الفاضية على النار.</p>";
+  });
+  document.getElementById("reset").addEventListener("click", function () { S.elemT = COLD; S.thermoClosed = true; goStep(0); });
+
+  /* ---------- status + readouts ---------- */
+  var statusEl = document.getElementById("status"), rLevel = document.getElementById("rLevel"), rTemp = document.getElementById("rTemp"),
+      rElem = document.getElementById("rElem"), bigLevel = document.getElementById("bigLevel");
+  var lastStatus = "";
+  function statusText() {
+    var full = S.level >= 9.99, covered = S.level >= ELEM_TOP_L;
+    if (S.burned) return ["warn", "المقاومة اتحرقت. اتشغّلت والمية مش مغطياها، فالحرارة فضلت فيها لحد ما باظت."];
+    if (S.power && !covered) return ["warn", "خطر: المقاومة بتسخن في الهوا. افصل الكهربا واملا الخزان الأول!"];
+    if (S.tap && !S.valve) return ["", "المحبس مقفول: مفيش حاجة تزق المية لبرّه، فالحنفية مش هتنزل حاجة."];
+    if (S.valve && !full && S.tap) return ["", "بيتملى من تحت... والهوا بيطلع من الحنفية السخنة."];
+    if (S.valve && !full) return ["", "بيتملى من تحت. سيب الحنفية السخنة مفتوحة عشان الهوا يطلع."];
+    if (S.tap && full) return ["ok", "السخنة طالعة من فوق، والباردة داخلة من تحت مكانها."];
+    if (S.power && !S.thermoClosed) return ["ok", "الترموستات فصل عند 60°. المية هتفضل سخنة في العازل."];
+    if (S.power && covered) return ["ok", "المية مغطية المقاومة، فهي بتسخن بأمان."];
+    if (S.level < 0.05) return ["", "الخزان فاضي. الـ 10 لتر دي سعته، مش اللي جواه."];
+    if (full) return ["ok", "الخزان مليان 10 لتر. دلوقتي ينفع توصّل الكهربا."];
+    return ["", "الخزان فيه " + S.level.toFixed(1) + " لتر بس. افتح المحبس عشان يكمّل."];
+  }
+
+  /* ---------- simulation step ---------- */
+  var spawnAcc = 0;
+  function simulate(dt) {
+    var full = S.level >= 9.99, covered = S.level >= ELEM_TOP_L;
+    // fill / flow
+    if (S.valve && !full) S.level = Math.min(10, S.level + 1.3 * dt);
+    var flowing = S.tap && S.valve && S.level >= 9.99;
+    if (flowing) S.temp += (COLD - S.temp) * 0.06 * dt;
+    // heating
+    var heating = S.power && !S.burned && S.thermoClosed;
+    if (heating && covered) {
+      S.temp = Math.min(95, S.temp + (24 / Math.max(S.level, 1)) * dt);
+      S.elemT += ((S.temp + 35) - S.elemT) * 3 * dt;
+    } else if (heating && !covered) {
+      S.elemT += 55 * dt;                        // dry firing: nothing to take the heat
+      if (S.elemT > 750) { S.burned = true; set({ power: false }); }
+    } else {
+      S.elemT += (Math.max(S.temp, COLD) - S.elemT) * (S.burned ? 0.2 : 1.2) * dt;
+    }
+    // thermostat senses the water only
+    if (S.level > 0.5) {
+      if (S.thermoClosed && S.temp >= SET) S.thermoClosed = false;
+      else if (!S.thermoClosed && S.temp <= RESET_AT) S.thermoClosed = true;
+    }
+    if (S.level > 0) S.temp += (COLD - S.temp) * 0.004 * dt;   // slow loss through insulation
+    else S.temp = COLD;
+
+    // particles
+    spawnAcc += dt;
+    while (spawnAcc > 0.045) {
+      spawnAcc -= 0.045;
+      var top = Y_BOT + S.level / 10 * HI;
+      if (S.valve && (!full || flowing) && Math.random() < 0.8)
+        spawn("cold", V(cx + (Math.random() - 0.5) * 0.2, Y_BOT + 0.3, (Math.random() - 0.5) * 0.2), V((Math.random() - 0.5) * 0.5, -0.05, (Math.random() - 0.5) * 0.4), 1.1, 0.035);
+      if (heating && covered && Math.random() < 0.9) {
+        var t = Math.random();
+        var pt = elemPath.getPoint(t);
+        spawn("bubble", V(pt.x, pt.y + 0.06, pt.z + 0.05), V(0, 0.9 + Math.random() * 0.4, 0), (top - pt.y) / 1.1, 0.03);
+        if (Math.random() < 0.35) spawn("hot", V(pt.x, pt.y, pt.z + 0.08), V((Math.random() - 0.5) * 0.15, 0.55, 0.05), (top - pt.y) / 0.55, 0.045);
+      }
+      if (flowing && Math.random() < 0.7)
+        spawn("hot", V(hx + (Math.random() - 0.5) * 0.3, top - 0.25, (Math.random() - 0.5) * 0.3), V((hx - (hx)) , 0.3, 0), 0.5, 0.04);
+    }
+    var ceiling = Y_BOT + S.level / 10 * HI;
+    parts.forEach(function (p) {
+      if (!p.alive) return;
+      p.age += dt;
+      p.mesh.position.addScaledVector(p.vel, dt);
+      if (p.type === "bubble") p.mesh.position.x += Math.sin((p.age + p.life) * 12) * 0.004;
+      if (p.age > p.life || p.mesh.position.y > ceiling - 0.02) { p.alive = false; p.mesh.visible = false; }
+    });
+  }
+
+  /* ---------- visuals from state ---------- */
+  var tmpC = new THREE.Color(), shownLevel = 0;
+  function render(t) {
+    // water level eases toward state
+    shownLevel += (S.level - shownLevel) * (reduced ? 1 : 0.2);
+    var h = Math.max(0.0001, shownLevel / 10 * HI);
+    water.visible = shownLevel > 0.01;
+    water.scale.y = h;
+    // water warms from water-body toward heat-soft
+    var warm = Math.max(0, Math.min(1, (S.temp - COLD) / (SET - COLD)));
+    waterMat.color.copy(C["water-body"]).lerp(C["heat-soft"], warm * 0.85);
+    // element colour: neutral -> heat -> glowing; burnt = ink
+    var e = Math.max(0, Math.min(1, (S.elemT - 40) / 120));
+    if (S.burned) elemMat.color.copy(C.ink);
+    else {
+      elemMat.color.copy(C["khaki-deep"]).lerp(C.heat, e);
+      if (S.elemT > 300) { var glow = 0.5 + 0.5 * Math.sin(t * 14); elemMat.color.lerp(C["heat-soft"], glow * 0.6); }
+    }
+    hotMat.color.copy(C["khaki-deep"]).lerp(C.heat, S.tap && S.level >= 9.99 ? warm : 0);
+    lamp.material.color.copy(S.power && !S.burned ? (S.thermoClosed ? C.heat : C.olive) : C["ink-ghost"]);
+    // valve wheel / tap handle
+    valveWheel.rotation.z += ((S.valve ? -Math.PI * 1.5 : 0) - valveWheel.rotation.z) * 0.12;
+    tapHandle.rotation.z += ((S.tap ? -Math.PI / 2.2 : 0) - tapHandle.rotation.z) * 0.15;
+    // stream from the tap: air while filling, water once full
+    var tapOut = S.tap && S.valve;
+    stream.visible = tapOut;
+    if (tapOut) {
+      var full = S.level >= 9.99;
+      streamMat.color.copy(full ? C.water.clone().lerp(C.heat, warm) : C["ink-ghost"]);
+      streamMat.opacity = full ? 0.9 : 0.35 + 0.25 * Math.sin(t * 20);
+      stream.scale.set(full ? 1 : 1.6, 1, full ? 1 : 1.6);
+    }
+  }
+
+  function updateUI() {
+    rLevel.textContent = S.level.toFixed(1) + " L";
+    bigLevel.textContent = S.level.toFixed(1);
+    rTemp.textContent = Math.round(S.temp) + "°";
+    rElem.textContent = S.burned ? "اتحرقت" : S.elemT > 300 ? "حمرا نار" : S.elemT > 55 ? "سخنة" : "باردة";
+    rElem.style.color = S.burned || S.elemT > 300 ? "var(--heat-text)" : "";
+    var st = statusText();
+    var key = st.join("|");
+    if (key !== lastStatus) {
+      lastStatus = key;
+      statusEl.textContent = st[1];
+      statusEl.className = "status" + (st[0] === "warn" ? " is-warn" : st[0] === "ok" ? " is-ok" : "");
+    }
+  }
+
+  /* ---------- theme changes ---------- */
+  function retheme() {
+    readTokens();
+    mats.forEach(function (m) { m[0].color.copy(C[m[1]]); });
+    drawHatch(); drawPlate();
+  }
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", retheme);
+  new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "class", "style"] });
+
+  /* ---------- resize + loop ---------- */
+  var W = 0, Hh = 0;
+  function resize() {
+    var r = stage.getBoundingClientRect();
+    if (r.width === W && r.height === Hh) return;
+    W = r.width; Hh = r.height;
+    renderer.setSize(W, Hh, false);
+    camera.aspect = W / Hh;
+    camera.position.setLength(W < 500 ? 9.6 : 8.6);
+    camera.updateProjectionMatrix();
+  }
+  var last = performance.now();
+  function frame(now) {
+    var dt = Math.min(0.05, (now - last) / 1000); last = now;
+    resize();
+    simulate(dt);
+    render(now / 1000);
+    controls.update();
+    renderer.render(scene, camera);
+    placeCallouts(W, Hh);
+    updateUI();
+    requestAnimationFrame(frame);
+  }
+  goStep(0);
+  requestAnimationFrame(frame);
+})();
+</script>
+
+</html>
