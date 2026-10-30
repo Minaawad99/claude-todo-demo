@@ -161,7 +161,9 @@ code. Keep mix.wav and the mp4 in the scratchpad, not in the repo.
 
 ## 9. Cover and titles (when the user asks)
 
-- **Cover:** copy `brand/eh-elhekaya/cover-tbm-tunnel-tiktok.html` to `cover-<slug>-tiktok.html`. It is **full bleed**, 540×960
+- **Cover:** copy `brand/eh-elhekaya/cover-container-ship-tiktok.html` (the tunnel cover's layout with the title already in
+  Noto) to `cover-<slug>-tiktok.html`. **Every cover's title and sub-title are in Noto Sans Arabic, never Aref Ruqaa** (the user's
+  fixed choice). It is **full bleed**, 540×960
   (1080×1920 at 2x):
   - the picture fills the whole frame (`<svg id="art" viewBox="0 0 540 960">`), composed from the video's `window.__parts`
     (load `timing.js` and `cartoon/scenes.js`), with the main object big in the middle, a hard-hat character for scale and
