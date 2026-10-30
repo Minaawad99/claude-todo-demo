@@ -18,7 +18,7 @@ same style: `videos/gps-traffic/cartoon/`, `videos/lcd-tv/cartoon/`, `videos/off
 Use another style only when the user names it. Remotion 3D (`remotion/src/lightning/`, `remotion/src/rainbow/`) renders on
 the CPU here (no GPU) and takes about 40 minutes a video against about 15 for the cartoon panel, so never pick it on your own.
 
-Talk to the user in Egyptian Arabic. Work in this order and stop where the user has to act (record the voice).
+Talk to the user in Egyptian Arabic. Work in this order, end to end; the voice is generated here (section 2).
 
 ## 1. Script → `videos/<slug>/script.txt`
 
@@ -38,7 +38,23 @@ Talk to the user in Egyptian Arabic. Work in this order and stop where the user 
   word for word. Give the script in one copy-ready code block.
 - Commit the script, then give the user the voice settings below (the Style text in its own code block).
 
-## 2. Voice (the user records it in Google AI Studio → Generate speech)
+## 2. Voice (generated here with the Gemini TTS API: the user's choice)
+
+**Generate it yourself; don't ask the user to record it.** The Gemini API key is added by the environment's network secret
+(header `x-goog-api-key` for `generativelanguage.googleapis.com`), so never read, print or store it. Write the Style text
+below into `videos/<slug>/style.txt`, then:
+
+```
+python3 ../tools/tts.py script.txt style.txt voice-raw.wav --voice Puck --model gemini-3.8-flash-tts
+```
+
+- Voice **Puck**, model **gemini-3.8-flash-tts** (the user compared it with 2.5 Flash and chose it), **temperature 1**,
+  the full Style text sent before the script (as AI Studio does). The Pro TTS model needs billing on the user's project.
+- `--lines 0-3` makes a short sample if the user wants to hear the voice first. A 429 means the free daily quota ran out:
+  tell the user; don't retry in a loop.
+- If the API key is missing (HTTP 401/403), fall back to the user recording it in Google AI Studio with the same settings.
+
+The settings the user uses in AI Studio (and the fallback):
 
 - Single-speaker, **Temperature 1**, download **WAV**.
 - Style text (fill in the topic and 2–3 key words):
