@@ -1,0 +1,750 @@
+{
+ "bed": true,
+ "cues": [
+  {
+   "t": 6.59,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 8.56,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 11.87,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 13.74,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 18.19,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 22.47,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 27.69,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 30.92,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 37.15,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 44.05,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 48.99,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 54.11,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 59.1,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 62.99,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 69.31,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 75.14,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 79.63,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 84.92,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 89.06,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 93.63,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 97.79,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 102.07,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 106.28,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 109.66,
+   "fx": "whoosh",
+   "gain": 0.35
+  },
+  {
+   "t": 0.18,
+   "file": "sfx/px-jet-flyby.mp3",
+   "gain": 0.9,
+   "from": 1.5,
+   "dur": 6
+  },
+  {
+   "t": 2.86,
+   "file": "sfx/f14-boom-long.wav",
+   "gain": 0.935,
+   "from": 0,
+   "dur": 2,
+   "duck": 0.5
+  },
+  {
+   "t": 4.38,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 6.67,
+   "file": "sfx/px-afterburner.mp3",
+   "gain": 0.9,
+   "from": 0.5,
+   "dur": 1.7
+  },
+  {
+   "t": 8.66,
+   "fx": "boom",
+   "gain": 0.75
+  },
+  {
+   "t": 8.69,
+   "fx": "thud",
+   "gain": 0.5
+  },
+  {
+   "t": 12,
+   "fx": "pop",
+   "gain": 0.9
+  },
+  {
+   "t": 12.15,
+   "fx": "chime",
+   "gain": 0.5
+  },
+  {
+   "t": 13.92,
+   "fx": "wind",
+   "gain": 0.25,
+   "dur": 3.6
+  },
+  {
+   "t": 14.02,
+   "fx": "tick",
+   "gain": 0.25
+  },
+  {
+   "t": 14.34,
+   "fx": "tick",
+   "gain": 0.25
+  },
+  {
+   "t": 14.66,
+   "fx": "tick",
+   "gain": 0.25
+  },
+  {
+   "t": 14.98,
+   "fx": "tick",
+   "gain": 0.25
+  },
+  {
+   "t": 15.3,
+   "fx": "tick",
+   "gain": 0.25
+  },
+  {
+   "t": 15.62,
+   "fx": "tick",
+   "gain": 0.25
+  },
+  {
+   "t": 14.32,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 16.62,
+   "fx": "beep",
+   "gain": 0.4
+  },
+  {
+   "t": 18.27,
+   "file": "sfx/px-fighter-jets-overhead.mp3",
+   "gain": 0.6,
+   "from": 2,
+   "dur": 3.5
+  },
+  {
+   "t": 19.27,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 22.55,
+   "file": "sfx/px-fighter-jets-overhead.mp3",
+   "gain": 0.7,
+   "from": 6.3,
+   "dur": 4.9
+  },
+  {
+   "t": 25.15,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 27.92,
+   "fx": "thud",
+   "gain": 0.6
+  },
+  {
+   "t": 27.77,
+   "file": "sfx/px-fighter-jets-overhead.mp3",
+   "gain": 0.8,
+   "from": 10.6,
+   "dur": 3.1
+  },
+  {
+   "t": 28.37,
+   "fx": "pop",
+   "gain": 0.7
+  },
+  {
+   "t": 31,
+   "file": "sfx/px-prop-plane.mp3",
+   "gain": 0.72,
+   "from": 10,
+   "dur": 5.9
+  },
+  {
+   "t": 31.4,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 31.8,
+   "fx": "creak",
+   "gain": 0.4
+  },
+  {
+   "t": 33,
+   "fx": "creak",
+   "gain": 0.35
+  },
+  {
+   "t": 31.6,
+   "file": "sfx/px-beep-warning.mp3",
+   "gain": 0.42,
+   "from": 0
+  },
+  {
+   "t": 33.4,
+   "file": "sfx/px-beep-warning.mp3",
+   "gain": 0.42,
+   "from": 0
+  },
+  {
+   "t": 35.2,
+   "file": "sfx/px-beep-warning.mp3",
+   "gain": 0.42,
+   "from": 0
+  },
+  {
+   "t": 33.6,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 37.33,
+   "fx": "tick",
+   "gain": 0.3
+  },
+  {
+   "t": 37.5,
+   "fx": "tick",
+   "gain": 0.3
+  },
+  {
+   "t": 37.67,
+   "fx": "tick",
+   "gain": 0.3
+  },
+  {
+   "t": 37.84,
+   "fx": "tick",
+   "gain": 0.3
+  },
+  {
+   "t": 38.01,
+   "fx": "tick",
+   "gain": 0.3
+  },
+  {
+   "t": 38.18,
+   "fx": "tick",
+   "gain": 0.3
+  },
+  {
+   "t": 38.35,
+   "fx": "tick",
+   "gain": 0.3
+  },
+  {
+   "t": 38.52,
+   "fx": "tick",
+   "gain": 0.3
+  },
+  {
+   "t": 38.73,
+   "fx": "chime",
+   "gain": 0.45
+  },
+  {
+   "t": 38.83,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 40.63,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 44.53,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 45.73,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 46.03,
+   "fx": "creak",
+   "gain": 0.5
+  },
+  {
+   "t": 47.13,
+   "fx": "clank",
+   "gain": 0.6
+  },
+  {
+   "t": 49.07,
+   "file": "sfx/px-prop-plane.mp3",
+   "gain": 0.72,
+   "from": 30,
+   "dur": 2.1
+  },
+  {
+   "t": 49.37,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 50.07,
+   "fx": "clank",
+   "gain": 0.6
+  },
+  {
+   "t": 50.67,
+   "file": "sfx/px-rocket.mp3",
+   "gain": 0.96,
+   "from": 0,
+   "dur": 3
+  },
+  {
+   "t": 50.97,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 52.05,
+   "file": "sfx/f14-boom-short.wav",
+   "gain": 0.77,
+   "from": 0,
+   "duck": 0.5
+  },
+  {
+   "t": 54.19,
+   "file": "sfx/px-fighter-jets-overhead.mp3",
+   "gain": 0.6,
+   "from": 14.899999999999999,
+   "dur": 4.7
+  },
+  {
+   "t": 54.89,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 56.49,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 59.18,
+   "file": "sfx/px-afterburner.mp3",
+   "gain": 0.66,
+   "from": 1,
+   "dur": 3.6
+  },
+  {
+   "t": 59.18,
+   "fx": "wind",
+   "gain": 0.3,
+   "dur": 3.5
+  },
+  {
+   "t": 59.58,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 60.98,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 63.07,
+   "file": "sfx/px-engine.mp3",
+   "gain": 0.64,
+   "from": 2,
+   "dur": 6
+  },
+  {
+   "t": 63.12,
+   "fx": "intake",
+   "gain": 0.35
+  },
+  {
+   "t": 66.23,
+   "fx": "spark",
+   "gain": 0.3
+  },
+  {
+   "t": 63.17,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 64.75,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 66.33,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 67.91,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 69.89,
+   "file": "sfx/px-afterburner-ramp.mp3",
+   "gain": 0.96,
+   "from": 5.8,
+   "dur": 5
+  },
+  {
+   "t": 71.19,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 75.22,
+   "file": "sfx/px-afterburner.mp3",
+   "gain": 0.77,
+   "from": 0,
+   "dur": 4.2
+  },
+  {
+   "t": 75.42,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 76.62,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 76.82,
+   "fx": "drip",
+   "gain": 0.3
+  },
+  {
+   "t": 77.42,
+   "fx": "drip",
+   "gain": 0.3
+  },
+  {
+   "t": 78.02,
+   "fx": "drip",
+   "gain": 0.3
+  },
+  {
+   "t": 78.62,
+   "fx": "drip",
+   "gain": 0.3
+  },
+  {
+   "t": 79.22,
+   "fx": "drip",
+   "gain": 0.3
+  },
+  {
+   "t": 79.82,
+   "fx": "drip",
+   "gain": 0.3
+  },
+  {
+   "t": 79.71,
+   "file": "sfx/px-fighter-jets-overhead.mp3",
+   "gain": 0.7,
+   "from": 19.2,
+   "dur": 5.2
+  },
+  {
+   "t": 80.59,
+   "file": "sfx/f14-boom-short.wav",
+   "gain": 0.77,
+   "from": 0,
+   "duck": 0.5
+  },
+  {
+   "t": 80.91,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 82.11,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 85,
+   "file": "sfx/px-waves.mp3",
+   "gain": 0.63,
+   "from": 3.5,
+   "dur": 3.9
+  },
+  {
+   "t": 85,
+   "file": "sfx/px-fighter-jets-overhead.mp3",
+   "gain": 0.4,
+   "from": 23.5,
+   "dur": 3.8
+  },
+  {
+   "t": 85.6,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 89.14,
+   "file": "sfx/px-fighter-jets-overhead.mp3",
+   "gain": 0.6,
+   "from": 5.799999999999997,
+   "dur": 4.57
+  },
+  {
+   "t": 92.77,
+   "file": "sfx/f14-boom-long.wav",
+   "gain": 0.9900000000000001,
+   "from": 0,
+   "dur": 2,
+   "duck": 0.5
+  },
+  {
+   "t": 93.71,
+   "file": "sfx/px-fighter-jets-overhead.mp3",
+   "gain": 0.5,
+   "from": 10.099999999999998,
+   "dur": 3.8
+  },
+  {
+   "t": 94.11,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 94.71,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 94.67,
+   "file": "sfx/f14-boom-short.wav",
+   "gain": 0.8250000000000001,
+   "from": 0,
+   "duck": 0.5
+  },
+  {
+   "t": 95.71,
+   "file": "sfx/f14-boom-short.wav",
+   "gain": 0.8250000000000001,
+   "from": 0,
+   "duck": 0.5
+  },
+  {
+   "t": 97.87,
+   "file": "sfx/px-fighter-jets-overhead.mp3",
+   "gain": 0.7,
+   "from": 14.399999999999999,
+   "dur": 3.9
+  },
+  {
+   "t": 98.37,
+   "fx": "bump",
+   "gain": 0.35
+  },
+  {
+   "t": 98.87,
+   "fx": "bump",
+   "gain": 0.35
+  },
+  {
+   "t": 99.37,
+   "fx": "bump",
+   "gain": 0.35
+  },
+  {
+   "t": 99.87,
+   "fx": "bump",
+   "gain": 0.35
+  },
+  {
+   "t": 100.37,
+   "fx": "bump",
+   "gain": 0.35
+  },
+  {
+   "t": 100.87,
+   "fx": "bump",
+   "gain": 0.35
+  },
+  {
+   "t": 98.67,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 102.15,
+   "fx": "wind",
+   "gain": 0.2,
+   "dur": 3.8
+  },
+  {
+   "t": 102.85,
+   "file": "sfx/px-whip.mp3",
+   "gain": 0.98,
+   "from": 0,
+   "duck": 0.5
+  },
+  {
+   "t": 104.28,
+   "file": "sfx/px-whip.mp3",
+   "gain": 0.98,
+   "from": 0,
+   "duck": 0.5
+  },
+  {
+   "t": 105.71,
+   "file": "sfx/px-whip.mp3",
+   "gain": 0.98,
+   "from": 0,
+   "duck": 0.5
+  },
+  {
+   "t": 103.55,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 106.36,
+   "file": "sfx/px-fighter-jets-overhead.mp3",
+   "gain": 0.5,
+   "from": 18.699999999999996,
+   "dur": 3.1
+  },
+  {
+   "t": 106.26,
+   "file": "sfx/f14-boom-short.wav",
+   "gain": 0.49500000000000005,
+   "from": 0,
+   "duck": 0.5
+  },
+  {
+   "t": 107.76,
+   "file": "sfx/f14-boom-short.wav",
+   "gain": 0.49500000000000005,
+   "from": 0,
+   "duck": 0.5
+  },
+  {
+   "t": 106.96,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 109.94,
+   "fx": "pop",
+   "gain": 0.7
+  },
+  {
+   "t": 110.04,
+   "fx": "notify",
+   "gain": 0.5
+  }
+ ]
+}

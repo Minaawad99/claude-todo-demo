@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light"><head><meta charset="utf-8"><title>Thumbnail — airplane</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700;800;900&display=swap">
+<style>
+  /* 1080×1920 (540×960 at 2x). Key content in y 120–760: the 3:4 grid, above the reel caption. */
+  body { margin: 0; font-family: "Noto Sans", sans-serif; }
+  #thumb { position: relative; width: 540px; height: 960px; overflow: hidden; background: url(thumb-airplane-bg.png) center 62% / 118% auto no-repeat, #b9d4e6; }
+  .chip { position: absolute; left: 50%; translate: -50% 0; top: 128px; display: flex; gap: 8px; align-items: center; font: 800 17px "Noto Sans"; background: #f6f1e6; padding: 6px 14px 6px 10px; border-radius: 999px; color: #2b2620; }
+  .h { position: absolute; left: 20px; right: 20px; top: 178px; margin: 0; text-align: center; font: 900 50px/1.04 "Noto Sans"; color: #2b2620; letter-spacing: -.01em; text-shadow: 0 2px 0 #f6f1e6, 0 0 18px rgba(246,241,230,.9); }
+  .h b { color: #b9442a; } .h i { font-style: normal; color: #2f6f9f; }
+  .tag { position: absolute; top: 640px; left: 50%; translate: -50% 0; font: 900 26px "Noto Sans"; color: #fff; background: #2f6f9f; padding: 8px 18px; border-radius: 14px; white-space: nowrap; }
+  .ink-f { fill: #2b2620; } .lit { fill: #f6f1e6; }
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs><g id="mark">
+  <rect x="84" y="4" width="32" height="10" class="ink-f"/><rect x="94" y="14" width="12" height="14" class="ink-f"/>
+  <path class="ink-f" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)"/>
+  <path class="lit" style="stroke:#2b2620;stroke-width:7;stroke-linejoin:round" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z"/>
+  <rect x="94" y="58" width="24" height="54" rx="4" style="fill:#c7502f"/><rect x="94" y="120" width="24" height="20" rx="4" style="fill:#c7502f"/></g></defs></svg>
+<div id="thumb">
+  <div class="chip"><svg width="24" height="24" viewBox="0 0 200 200"><use href="#mark"/></svg>Here's the Deal</div>
+  <p class="h"><b>Almost a million<br>pounds</b> floating<br>on <i>AIR?!</i></p>
+  <div class="tag">How a plane actually flies</div>
+</div></body></html>

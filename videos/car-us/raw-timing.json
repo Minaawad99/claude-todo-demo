@@ -1,0 +1,264 @@
+{
+ "duration": 120.88,
+ "lines": [
+  {
+   "i": 0,
+   "start": 0.09,
+   "end": 3.69,
+   "text": "Right now, under your hood, there are tiny explosions going off.",
+   "heard": "right now. under your hood There are-- tiny explosions going off."
+  },
+  {
+   "i": 1,
+   "start": 4.01,
+   "end": 6.29,
+   "text": "Like, up to a hundred every single second.",
+   "heard": "Like. Up to 100 every single second."
+  },
+  {
+   "i": 2,
+   "start": 6.63,
+   "end": 9.3,
+   "text": "And that's literally what's moving your car. No joke.",
+   "heard": "And that's literally what's moving your car. No joke."
+  },
+  {
+   "i": 3,
+   "start": 9.79,
+   "end": 12.19,
+   "text": "So, here's the deal. Let me break it down in a minute.",
+   "heard": "So... Here's the deal. Let me break it down in a minute."
+  },
+  {
+   "i": 4,
+   "start": 12.97,
+   "end": 13.86,
+   "text": "It all starts at the pump.",
+   "heard": "it all starts at the pump."
+  },
+  {
+   "i": 5,
+   "start": 14.35,
+   "end": 17.07,
+   "text": "A little fuel pump sends the gas from the tank up to the engine.",
+   "heard": "a little fuel pump sends the gas from the tank up to the engine."
+  },
+  {
+   "i": 6,
+   "start": 17.49,
+   "end": 20.72,
+   "text": "Inside the engine, there are these metal tubes called cylinders.",
+   "heard": "inside the engine. There are these metal tubes called cylinders."
+  },
+  {
+   "i": 7,
+   "start": 21.09,
+   "end": 22.94,
+   "text": "Most cars have four, six, or eight of them.",
+   "heard": "Most cars have four, six, or eight of them."
+  },
+  {
+   "i": 8,
+   "start": 23.33,
+   "end": 27.48,
+   "text": "And inside each one, there's a piston, a metal plug that slides up and down.",
+   "heard": "and inside each one there's a piston. a metal plug that slides up and down."
+  },
+  {
+   "i": 9,
+   "start": 28.03,
+   "end": 31.51,
+   "text": "Every piston runs the same four-step routine, over and over.",
+   "heard": "Every piston runs the same four-step routine. over. and over."
+  },
+  {
+   "i": 10,
+   "start": 32.14,
+   "end": 33.4,
+   "text": "Step one: suck.",
+   "heard": "Step 1. suck."
+  },
+  {
+   "i": 11,
+   "start": 33.83,
+   "end": 37.52,
+   "text": "The piston slides down, a valve opens, and air rushes in.",
+   "heard": "The piston slides down. a valve. opens and air rushes in."
+  },
+  {
+   "i": 12,
+   "start": 37.96,
+   "end": 41.4,
+   "text": "Then an injector sprays in a fine mist of gas, like a perfume bottle.",
+   "heard": "Then an injector sprays in a fine mist of gas, like a perfume bottle."
+  },
+  {
+   "i": 13,
+   "start": 42.05,
+   "end": 43.71,
+   "text": "Step two: squeeze.",
+   "heard": "Step 2. Squeeze."
+  },
+  {
+   "i": 14,
+   "start": 43.91,
+   "end": 48.39,
+   "text": "The valve shuts, and the piston shoots up, crushing that mix ten times smaller.",
+   "heard": "the valve shuts? and the piston shoots up. crushing that makes 10 times smaller."
+  },
+  {
+   "i": 15,
+   "start": 48.84,
+   "end": 51.36,
+   "text": "Squeezed fuel burns way harder. That's the whole trick.",
+   "heard": "Squeezed fuel burns way harder. That's the whole trick."
+  },
+  {
+   "i": 16,
+   "start": 52.08,
+   "end": 53.4,
+   "text": "Step three: bang.",
+   "heard": "Step 3. BANG!"
+  },
+  {
+   "i": 17,
+   "start": 53.75,
+   "end": 56.33,
+   "text": "A spark plug zaps it with around twenty thousand volts.",
+   "heard": "A spark? plug zaps it with around 20,000 volts."
+  },
+  {
+   "i": 18,
+   "start": 56.79,
+   "end": 61.55,
+   "text": "Boom. The mix explodes, hits around four thousand degrees, and slams the piston down hard.",
+   "heard": "Boom! The mix explodes, hits around 4000 degrees, and slams the piston down hard."
+  },
+  {
+   "i": 19,
+   "start": 62.01,
+   "end": 64.03,
+   "text": "That's the only step that actually makes power.",
+   "heard": "That's the... only step that actually makes power."
+  },
+  {
+   "i": 20,
+   "start": 64.72,
+   "end": 65.87,
+   "text": "Step four: blow.",
+   "heard": "Step four. blow."
+  },
+  {
+   "i": 21,
+   "start": 66.33,
+   "end": 69.52,
+   "text": "The piston comes back up and pushes the burnt gas out the exhaust.",
+   "heard": "The piston comes back up. and pushes the burnt gas out the exhaust."
+  },
+  {
+   "i": 22,
+   "start": 70.11,
+   "end": 73.81,
+   "text": "Suck, squeeze, bang, blow. Mechanics seriously call it that.",
+   "heard": "Suck. squeeze bang blow. Mechanics seriously call it that."
+  },
+  {
+   "i": 23,
+   "start": 74.49,
+   "end": 77.94,
+   "text": "But wait, the piston only goes up and down. So how do the wheels spin?",
+   "heard": "But wait. the piston only goes up and down. So how do the wheels spin?"
+  },
+  {
+   "i": 24,
+   "start": 78.5,
+   "end": 79.43,
+   "text": "Here's the cool part.",
+   "heard": "Here's the cool part."
+  },
+  {
+   "i": 25,
+   "start": 79.67,
+   "end": 83.02,
+   "text": "Every piston is hooked to a crankshaft, which works like the pedals on a bike.",
+   "heard": "Every piston is hooked to a crankshaft, which works like the pedals on a bike."
+  },
+  {
+   "i": 26,
+   "start": 83.4,
+   "end": 85.78,
+   "text": "Your legs push down, and the pedals go round. Same deal.",
+   "heard": "Your legs push down and the pedals go round. Same deal."
+  },
+  {
+   "i": 27,
+   "start": 86.35,
+   "end": 89.59,
+   "text": "The pistons take turns firing, so the crankshaft never stops spinning.",
+   "heard": "the pistons take turns firing. so the crankshaft never stops spinning."
+  },
+  {
+   "i": 28,
+   "start": 90.05,
+   "end": 93.02,
+   "text": "And a camshaft up top opens every valve right on time.",
+   "heard": "and a camshaft up top. opens every valve right on time."
+  },
+  {
+   "i": 29,
+   "start": 93.49,
+   "end": 96.3,
+   "text": "From there, the spin goes through the transmission, which picks the right gear.",
+   "heard": "From there, the spin goes through the transmission, which picks the right gear."
+  },
+  {
+   "i": 30,
+   "start": 96.72,
+   "end": 99.29,
+   "text": "Then it runs through the axles, and boom, your wheels turn.",
+   "heard": "Then it runs through the axles and boom! Your wheels turn."
+  },
+  {
+   "i": 31,
+   "start": 100.11,
+   "end": 102.56,
+   "text": "All those explosions make some crazy heat, though.",
+   "heard": "All those explosions make some crazy heat. though."
+  },
+  {
+   "i": 32,
+   "start": 102.65,
+   "end": 106.2,
+   "text": "So coolant flows around the engine, and the radiator dumps that heat into the air.",
+   "heard": "So. coolant flows around the engine and the radiator dumps that heat into the air."
+  },
+  {
+   "i": 33,
+   "start": 106.78,
+   "end": 111.5,
+   "text": "And here's the wild part: less than a third of the energy in your gas actually moves the car.",
+   "heard": "And here's the wild part. less than a third of the energy in your gas. actually moves the car."
+  },
+  {
+   "i": 34,
+   "start": 111.9,
+   "end": 113.49,
+   "text": "The rest? It just turns into heat.",
+   "heard": "the rest. [static] just turns into heat."
+  },
+  {
+   "i": 35,
+   "start": 114.16,
+   "end": 117.87,
+   "text": "So next time you hit the gas, that's a hundred tiny explosions a second.",
+   "heard": "So next time you hit the gas, That's a hundred tiny explosions a second."
+  },
+  {
+   "i": 36,
+   "start": 118.3,
+   "end": 120.6,
+   "text": "So, what should we break down next? Drop it in the comments.",
+   "heard": "So what should we break down next? Drop it in the comments!"
+  }
+ ]
+}

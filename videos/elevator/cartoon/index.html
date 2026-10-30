@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>إزاي الأسانسير مابيقعش؟ — إيه الحكاية؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Noto+Sans+Arabic:wght@600;800&family=Noto+Serif:wght@700&display=swap" rel="stylesheet">
+<style>
+  /* cartoon-panel reference look: black frame, hand-lettered title, a 16:9 animated panel, captions under it */
+  html, body { margin: 0; background: #000; }
+  .canvas { position: relative; width: 360px; height: 640px; background: #000; overflow: hidden; }
+  .title { position: absolute; left: 0; right: 0; top: 92px; text-align: center; font: 700 30px/1.2 "Aref Ruqaa", serif; color: #fff; }
+  .sub { position: absolute; left: 0; right: 0; top: 136px; text-align: center; font: 700 19px/1.2 "Aref Ruqaa", serif; color: #f2c230; }
+  .panel { position: absolute; left: 0; right: 0; top: 196px; height: 203px; overflow: hidden; }
+  .panel svg { display: block; width: 100%; height: 100%; }
+  .cap { position: absolute; left: 16px; right: 16px; top: 426px; text-align: center; font: 800 20px/1.65 "Noto Sans Arabic", sans-serif; color: #fff; }
+  .cap span { opacity: .18; } .cap span.on { opacity: 1; } .cap span.k { color: #f2c230; }
+  .tag { font-family: "Noto Sans Arabic", sans-serif; font-weight: 800; fill: #2b2016; }
+  .brand { position: absolute; left: 0; right: 0; bottom: 70px; display: flex; justify-content: center; align-items: center; gap: 6px; font: 600 12px "Noto Sans Arabic", sans-serif; color: #9a958c; }
+</style></head>
+<body>
+<div class="canvas">
+  <div class="title">لو حبل الأسانسير اتقطع؟</div>
+  <div class="sub">4 حاجات بتمنعه يقع!</div>
+  <div class="panel"><svg id="panel" viewBox="0 0 640 360"></svg></div>
+  <div class="cap" id="cap"></div>
+  <div class="brand">إيه الحكاية؟</div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter>
+  <filter id="soft2" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="1.8"/></filter>
+  <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3"/></filter>
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .45  0 0 0 0 .4  0 0 0 .08 0"/></filter>
+  <linearGradient id="sky-day" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fb7e0"/><stop offset=".55" stop-color="#b9d8ec"/><stop offset="1" stop-color="#f3dfc2"/></linearGradient>
+  <linearGradient id="sky-dusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9a06e"/><stop offset=".5" stop-color="#f7d0a0"/><stop offset="1" stop-color="#fbe9cc"/></linearGradient>
+  <linearGradient id="sky-night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1730"/><stop offset=".6" stop-color="#1e3458"/><stop offset="1" stop-color="#2f4a72"/></linearGradient>
+  <linearGradient id="sky-dawn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4a7a"/><stop offset=".55" stop-color="#c98aa0"/><stop offset="1" stop-color="#f6c99a"/></linearGradient>
+  <linearGradient id="grass-day" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9dbb6e"/><stop offset="1" stop-color="#6f9548"/></linearGradient>
+  <linearGradient id="grass-dusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b3a66a"/><stop offset="1" stop-color="#857a44"/></linearGradient>
+  <linearGradient id="grass-night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b4a35"/><stop offset="1" stop-color="#16281c"/></linearGradient>
+  <linearGradient id="grass-dawn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a9a5a"/><stop offset="1" stop-color="#5a6a3a"/></linearGradient>
+  <linearGradient id="road" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6d6a66"/><stop offset="1" stop-color="#3f3d3a"/></linearGradient>
+  <linearGradient id="bld" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c79a7b"/><stop offset="1" stop-color="#a77a5c"/></linearGradient>
+  <linearGradient id="roof" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a958c"/><stop offset="1" stop-color="#6f6a62"/></linearGradient>
+  <linearGradient id="gHeliBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2523a"/><stop offset=".55" stop-color="#c23a26"/><stop offset="1" stop-color="#8f2618"/></linearGradient>
+  <linearGradient id="gGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9eef7"/><stop offset=".6" stop-color="#8fc2da"/><stop offset="1" stop-color="#5d93ad"/></linearGradient>
+  <linearGradient id="gMetal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a8f96"/><stop offset="1" stop-color="#4b5056"/></linearGradient>
+  <linearGradient id="gPlane" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#e4e8ec"/><stop offset="1" stop-color="#b9c1c9"/></linearGradient>
+  <linearGradient id="gCar" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8a929c"/><stop offset=".5" stop-color="#c9ced4"/><stop offset="1" stop-color="#7a828c"/></linearGradient>
+  <linearGradient id="gDoor" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b9bfc6"/><stop offset=".5" stop-color="#e4e7ea"/><stop offset="1" stop-color="#a7aeb6"/></linearGradient>
+  <radialGradient id="gSheave" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#c9ced4"/><stop offset="1" stop-color="#6a727c"/></radialGradient>
+  <linearGradient id="gIron" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6a6f76"/><stop offset="1" stop-color="#3a3d42"/></linearGradient>
+  <linearGradient id="gMotor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4f8f5a"/><stop offset="1" stop-color="#2f5f3a"/></linearGradient>
+  <path id="swash" d="M6 14 C40 4 120 2 196 8 C214 10 222 20 214 30 C206 44 140 46 70 44 C30 44 4 40 2 30 C0 24 2 18 6 14 Z"/>
+  <g id="heliBody">
+    <path d="M40 -6 L150 -2 L152 6 L42 10 Z" fill="url(#gHeliBody)" stroke="#1c1c1c" stroke-width="1.6"/>
+    <path d="M146 -14 L162 -26 L168 -24 L158 4 L148 4 Z" fill="url(#gHeliBody)" stroke="#1c1c1c" stroke-width="1.6"/>
+    <path d="M-70 10 C-72 -30 -40 -44 0 -44 C40 -44 58 -26 60 0 C62 22 40 34 0 34 C-40 34 -68 30 -70 10 Z" fill="url(#gHeliBody)" stroke="#1c1c1c" stroke-width="1.8"/>
+    <path d="M-66 6 C-66 -26 -40 -38 -14 -38 L-10 6 Z" fill="url(#gGlass)" stroke="#1c1c1c" stroke-width="1.5"/>
+    <path d="M-30 -44 L20 -44 L14 -56 L-24 -56 Z" fill="url(#gMetal)" stroke="#1c1c1c" stroke-width="1.4"/>
+    <rect x="-6" y="-66" width="12" height="11" fill="#3a3d42" stroke="#1c1c1c" stroke-width="1.2"/>
+    <path d="M-40 34 L-46 50 M30 34 L36 50" stroke="#2a2a2a" stroke-width="3.4" stroke-linecap="round"/><path d="M-72 52 L60 52" stroke="#2a2a2a" stroke-width="4" stroke-linecap="round"/>
+    <path d="M10 -20 C26 -20 40 -10 44 4" stroke="#fff" stroke-width="2" opacity=".35" fill="none"/>
+  </g>
+  <g id="heliGlass"><path d="M-60 -18 C-50 -30 -34 -34 -22 -34" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7" fill="none"/><path d="M-66 6 C-66 -26 -40 -38 -14 -38 L-10 6 Z" fill="#cfe7f2" opacity=".18"/></g>
+  <g id="plane">
+    <ellipse cx="0" cy="40" rx="150" ry="8" fill="#1c1c1c" opacity=".25" filter="url(#soft2)"/>
+    <path d="M-150 8 C-150 -10 -130 -18 -100 -18 H110 C140 -18 160 -6 166 6 C150 18 120 20 100 20 H-120 C-140 20 -150 16 -150 8 Z" fill="url(#gPlane)" stroke="#1c1c1c" stroke-width="1.6" transform="scale(-1 1)"/>
+    <path d="M-110 -18 L-150 -62 L-166 -62 L-150 -14 Z" fill="#2f6f9f" stroke="#1c1c1c" stroke-width="1.4"/><path d="M20 4 L-60 4 L-90 34 L-64 34 Z" fill="#c9d0d6" stroke="#1c1c1c" stroke-width="1.4"/>
+    <ellipse cx="-30" cy="26" rx="22" ry="9" fill="#f0a35e" stroke="#1c1c1c" stroke-width="1.4"/><ellipse cx="-10" cy="26" rx="5" ry="8" fill="#3a3d42"/>
+    <g fill="#5d93ad"><circle cx="100" cy="-4" r="3.4"/><circle cx="82" cy="-4" r="3.4"/><circle cx="64" cy="-4" r="3.4"/><circle cx="46" cy="-4" r="3.4"/><circle cx="28" cy="-4" r="3.4"/><circle cx="10" cy="-4" r="3.4"/><circle cx="-8" cy="-4" r="3.4"/><circle cx="-26" cy="-4" r="3.4"/><circle cx="-44" cy="-4" r="3.4"/><circle cx="-62" cy="-4" r="3.4"/><circle cx="-80" cy="-4" r="3.4"/></g>
+    <path d="M150 6 C146 -6 136 -10 124 -10 L128 4 Z" fill="#5d93ad"/>
+    <path d="M120 22 v14 M-40 22 v14 M-70 22 v14" stroke="#2a2a2a" stroke-width="3"/><g fill="#1c1c1c"><circle cx="120" cy="38" r="4"/><circle cx="-40" cy="38" r="4"/><circle cx="-70" cy="38" r="4"/></g>
+  </g>
+</defs></svg>
+<script src="../timing.js"></script>
+<script>window.CAPS = [{"w": ["الأسانسير", "ده", "صندوق", "حديد،", "متعلّق", "في", "الهوا", "على", "ارتفاع", "عشرين", "دور."], "k": [false, false, false, false, false, false, false, false, false, true, true]}, {"w": ["طب", "لو", "الحبل", "اللي", "شايله", "اتقطع؟", "هيقع؟"], "k": [false, false, false, false, false, true, true]}, {"w": ["الإجابة:", "لأ!", "وفيه", "أربع", "حاجات", "بتمنع", "ده."], "k": [false, true, false, true, true, false, false]}, {"w": ["إيه", "الحكاية؟", "هشرحهالك", "في", "دقيقة."], "k": [false, false, false, false, false]}, {"w": ["أول", "حاجة،", "الأسانسير", "مش", "متعلّق", "في", "حبل", "واحد."], "k": [false, false, false, true, false, false, true, true]}, {"w": ["ده", "متعلّق", "في", "كذا", "حبل", "حديد،", "من", "أربعة", "لتمانية."], "k": [false, false, false, false, false, false, false, true, true]}, {"w": ["وكل", "حبل", "لوحده،", "يقدر", "يشيل", "الأسانسير", "وهو", "مليان", "على", "الآخر."], "k": [false, false, true, false, false, false, false, true, false, false]}, {"w": ["فعشان", "يقع،", "لازم", "كل", "الحبال", "تتقطع", "مع", "بعض،", "ودي", "حاجة", "شبه", "مستحيلة."], "k": [false, false, false, false, false, false, true, true, false, false, false, true]}, {"w": ["التانية:", "الحبال", "ماشية", "على", "بكرة", "فوق،", "وفي", "آخرها", "تقل", "حديد", "كبير."], "k": [false, false, false, false, true, false, false, false, true, true, false]}, {"w": ["التقل", "ده", "وزنه", "قريب", "من", "وزن", "الأسانسير،", "فالموتور", "بيشيل", "الفرق", "بس."], "k": [false, false, false, false, false, false, false, false, false, true, true]}, {"w": ["والموتور", "فيه", "فرامل،", "بتقفل", "لوحدها", "أول", "ما", "الكهربا", "تقطع."], "k": [false, false, true, false, true, false, false, false, false]}, {"w": ["فلو", "النور", "قطع،", "الأسانسير", "يقف", "مكانه،", "مش", "يقع."], "k": [false, false, false, false, true, true, false, false]}, {"w": ["طب", "افرض", "إن", "كل", "ده", "باظ،", "والأسانسير", "ابتدى", "ينزل", "بسرعة؟"], "k": [false, false, false, false, false, false, false, false, false, true]}, {"w": ["هنا", "ييجي", "دور", "التالتة:", "منظّم", "السرعة."], "k": [false, false, false, false, true, true]}, {"w": ["ده", "بكرة", "فوق", "خالص،", "بتلف", "مع", "الأسانسير", "بحبل", "لوحدها."], "k": [false, true, false, false, false, false, false, true, true]}, {"w": ["جواها", "أتقال", "صغيرة،", "كل", "ما", "البكرة", "تلف", "أسرع،", "تتفتح", "لبرة", "أكتر."], "k": [false, true, false, false, false, false, false, false, true, false, false]}, {"w": ["ولو", "السرعة", "زادت", "عن", "حدها،", "الأتقال", "تمسك", "في", "قفل،", "وتوقّف", "البكرة."], "k": [false, false, false, false, false, false, false, false, true, true, false]}, {"w": ["والبكرة", "لما", "تقف،", "تشد", "ذراع", "تحت", "الأسانسير."], "k": [false, false, false, false, true, false, false]}, {"w": ["والذراع", "ده", "يزق", "فكوك", "حديد،", "تتزنق", "على", "القضبان", "اللي", "الأسانسير", "ماشي", "عليها."], "k": [false, false, false, true, true, false, false, true, false, false, false, false]}, {"w": ["فالأسانسير", "يفرمل،", "ويقف", "في", "خلال", "متر", "أو", "اتنين", "بس."], "k": [false, false, false, false, false, true, false, true, false]}, {"w": ["والفكرة", "دي", "من", "سنة", "ألف", "تمنمية", "أربعة", "وخمسين!"], "k": [false, false, false, false, true, true, true, true]}, {"w": ["واحد", "اسمه", "أوتيس،", "وقف", "على", "منصة", "عالية", "قدام", "الناس،", "وطلب", "من", "حد", "يقطع", "الحبل…", "والمنصة", "وقفت!"], "k": [false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, true]}, {"w": ["والرابعة:", "تحت", "خالص", "في", "البير،", "فيه", "سوست", "كبيرة،", "تخلي", "أي", "نزلة", "هادية."], "k": [false, false, false, false, false, false, true, true, false, false, false, false]}, {"w": ["يعني", "الأسانسير", "عليه", "أربع", "طبقات", "أمان،", "وكل", "واحدة", "فيهم", "تكفي", "لوحدها."], "k": [false, false, false, true, true, true, false, false, false, false, true]}, {"w": ["قولولنا،", "عايزين", "تعرفوا", "حكاية", "إيه", "المرة", "الجاية؟"], "k": [false, false, false, false, false, false, false]}];</script>
+<script src="scenes.js"></script>
+<script>
+  (function () {
+    var LN = TIMING.lines, cap = document.getElementById("cap"), panel = document.getElementById("panel"), cur = -1;
+    window.VIDEO_END = TIMING.duration;
+    window.renderAt = function (t) {
+      window.__panel(panel, t);
+      var i = 0; while (i < LN.length - 1 && LN[i + 1].start - 0.05 <= t) i++;
+      var c = CAPS[i], l = LN[i];
+      if (i !== cur) { cap.innerHTML = c.w.map(function (w, k) { return '<span class="' + (c.k[k] ? "k" : "") + '">' + w + '</span>'; }).join(" "); cur = i; }
+      // reveal words in step with the voice (by length)
+      var tot = c.w.join("").length, acc = 0, sp = cap.children;
+      for (var k = 0; k < sp.length; k++) { var at = l.start + (l.end - l.start) * (acc / tot) - 0.05; sp[k].classList.toggle("on", t >= at); acc += c.w[k].length; }
+    };
+    renderAt(14);
+  })();
+</script>
+</body></html>

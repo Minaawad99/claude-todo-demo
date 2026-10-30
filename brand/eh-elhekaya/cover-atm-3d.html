@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light"><head><meta charset="utf-8"><title>TikTok cover — ATM (3D paper)</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../../design-system/components/bundle.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  /* 360×640 canvas at 3x. Water blue, heat red, mechanical parts green, dirt brown. One cutaway + moving camera. */
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  html, body { margin: 0; width: 360px; height: 640px; overflow: hidden; background: var(--paper); }
+  body { font-family: var(--font-sans); color: var(--ink); }
+  .canvas { position: relative; width: 360px; height: 640px; background: var(--paper); }
+  .scene { position: absolute; inset: 35px; opacity: 0; }
+  .frame { position: absolute; inset: 0; border: 2px solid var(--ink); background: var(--paper); display: grid; grid-template-rows: 69% 0 1fr; }
+  .stage { position: relative; overflow: hidden; }
+  .stage > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .rule { border-top: 1px solid var(--line-soft); margin-inline: 10px; }
+  .caps { position: relative; }
+  .cap { position: absolute; inset: 0; padding: 16px 14px 0; text-align: center; opacity: 0; font: 500 18px / 1.62 var(--font-sans); text-wrap: balance; }
+  .cap p { margin: 0; }
+  .sheet { position: absolute; inset: 0; border: 2px solid var(--ink); outline: 1px solid var(--ink); outline-offset: -6px; background: var(--paper); }
+  .corners { position: absolute; inset: -12px; pointer-events: none; --c: var(--ink); --l: 10px; --w: 1px;
+    background:
+      linear-gradient(var(--c), var(--c)) top right / var(--l) var(--w), linear-gradient(var(--c), var(--c)) top right / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) top left / var(--l) var(--w), linear-gradient(var(--c), var(--c)) top left / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) bottom right / var(--l) var(--w), linear-gradient(var(--c), var(--c)) bottom right / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) bottom left / var(--l) var(--w), linear-gradient(var(--c), var(--c)) bottom left / var(--w) var(--l);
+    background-repeat: no-repeat; }
+  .w { --wc: var(--ink); color: color-mix(in srgb, var(--wc) var(--mix, 100%), var(--ink-ghost)); }
+  .w.tz-k--heat { --wc: var(--heat-text); } .w.tz-k--water { --wc: var(--water); } .w.tz-k--part { --wc: var(--olive-text); }
+  .em { background: linear-gradient(currentColor, currentColor) no-repeat right bottom / var(--ul, 100%) 1.5px; padding-bottom: 2px; }
+  [data-v="pop"], [data-v="grow"], [data-loop="spin"], [data-loop="pulse"] { transform-box: fill-box; transform-origin: center; }
+  .o-b { transform-origin: 50% 100% !important; } .o-t { transform-origin: 50% 0% !important; }
+  .panel { position: absolute; inset: 0; opacity: 0; } .panel > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  .lit { fill: var(--paper-raised); } .shade { fill: var(--khaki); } .deep { fill: var(--khaki-deep); } .ink-f { fill: var(--ink); }
+  .steel { fill: #ece6d6; } .steel-back { fill: #ddd6c4; }
+  .part { fill: var(--olive); } .hot { fill: var(--heat); } .hot-soft { fill: var(--heat-soft); }
+  .water { fill: var(--water-body); } .water-deep { fill: color-mix(in srgb, var(--water) 40%, var(--water-body)); }
+  .pipe-o { fill: none; stroke: var(--ink); stroke-width: 10; stroke-linejoin: round; }
+  .pipe-i { fill: none; stroke: #cfd7d8; stroke-width: 7; stroke-linejoin: round; }
+  .heater { fill: none; stroke: var(--heat); stroke-width: 6; stroke-linecap: round; }
+  .heater-glow { fill: none; stroke: var(--heat-soft); stroke-width: 14; stroke-linecap: round; opacity: .7; }
+  .jet { fill: none; stroke: var(--water); stroke-width: 1.6; stroke-dasharray: 5 5; stroke-linecap: round; }
+  .mark { fill: none; stroke: var(--paper); stroke-width: 2; stroke-linecap: round; }
+  .halo { fill: none; stroke: #e2a92c; stroke-width: 3.5; }
+  .callout { font: 700 12px var(--font-sans); fill: var(--c, var(--ink)); paint-order: stroke; stroke: var(--paper); stroke-width: 4px; stroke-linejoin: round; }
+  .c-water { --c: var(--water); } .c-heat { --c: var(--heat-text); } .c-part { --c: var(--olive-text); }
+  .lbl { font: 600 15px var(--font-sans); fill: var(--c, var(--ink)); paint-order: stroke; stroke: var(--paper); stroke-width: 5px; stroke-linejoin: round; }
+  .pt-w { fill: var(--water); } .pt-w2 { fill: #8fb0c8; } .pt-dirt { fill: #8a6a48; } .pt-steam { fill: var(--paper-raised); stroke: var(--khaki-deep); stroke-width: .8; }
+  .stream { fill: none; stroke: none; }
+  .x { fill: none; stroke: var(--heat); stroke-width: 6; stroke-linecap: round; }
+  .ok { fill: none; stroke: var(--olive-text); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+  .num { font: 700 56px / 1 var(--font-numeral); color: var(--heat); direction: ltr; font-variant-numeric: tabular-nums; }
+  .num.blue { color: var(--water); }
+  .unit { font: 600 13px / 1.4 var(--font-sans); }
+  .steam { fill: none; stroke: var(--heat); stroke-width: 2; stroke-linecap: round; opacity: .6; }
+  .counter { position: absolute; }
+  .counter > div { background: var(--paper-raised); padding: 2px 8px; }
+  /* ATM (paper version): a cash machine cut open against a bank wall: PC, card reader, printer, the safe with its cassettes */
+  #sea :is(path) { vector-effect: non-scaling-stroke; }
+  .iso-top { fill: var(--paper-raised); stroke: var(--ink); stroke-width: 1; stroke-linejoin: round; } .iso-x { fill: var(--khaki-deep); stroke: var(--ink); stroke-width: 1; } .iso-y { fill: var(--khaki); stroke: var(--ink); stroke-width: 1; }
+  .iso-wall { fill: color-mix(in srgb, var(--khaki) 50%, var(--paper)); stroke: var(--ink); stroke-width: 1; } .iso-wall2 { fill: color-mix(in srgb, var(--khaki) 75%, var(--paper)); stroke: var(--ink); stroke-width: 1; }
+  .iso-floor { fill: color-mix(in srgb, var(--paper-raised) 60%, var(--paper)); stroke: var(--ink); stroke-width: 1; } .iso-cut { fill: var(--khaki); stroke: var(--ink); stroke-width: 1; }
+  .iso-wall-out { fill: color-mix(in srgb, var(--khaki-deep) 80%, var(--paper)); stroke: var(--ink); stroke-width: 1; }
+  .iso-sky { fill: #cfe1ec; stroke: var(--ink); stroke-width: 1; } .iso-sun { fill: #e9a24a; stroke: var(--ink); stroke-width: 1; } .iso-frame { fill: none; stroke: var(--ink); stroke-width: 1.3; stroke-linecap: round; }
+  .iso-thermo { fill: none; stroke: var(--heat); stroke-width: 3; stroke-linecap: round; } .iso-hot { fill: var(--heat); stroke: var(--ink); stroke-width: 1; }
+  .iso-rug { fill: color-mix(in srgb, var(--heat) 22%, var(--paper-raised)); stroke: var(--ink); stroke-width: .8; }
+  .iso-sofa { fill: #c9a98a; stroke: var(--ink); stroke-width: 1; } .iso-sofa-x { fill: #b08e70; stroke: var(--ink); stroke-width: 1; } .iso-sofa-top { fill: #dcc2a6; stroke: var(--ink); stroke-width: 1; }
+  .iso-pot { fill: #b9442a; stroke: var(--ink); stroke-width: 1; } .iso-soil { fill: #5d4a2e; stroke: var(--ink); stroke-width: 1; } .iso-leaf { fill: var(--olive); stroke: var(--ink); stroke-width: 1; }
+  .iso-shade { fill: #f2dc85; stroke: var(--ink); stroke-width: 1; } .iso-shade-top { fill: #f8ecbf; stroke: var(--ink); stroke-width: 1; } .iso-glow { fill: #ffe9a0; mix-blend-mode: multiply; }
+  .iso-unit { fill: #f8f6f0; stroke: var(--ink); stroke-width: 1; } .iso-unit-x { fill: #e6e1d6; stroke: var(--ink); stroke-width: 1; } .iso-unit-top { fill: #fbfaf6; stroke: var(--ink); stroke-width: 1; }
+  .iso-old { fill: #d9c9a6; stroke: var(--ink); stroke-width: 1; }
+  .iso-slat { fill: none; stroke: var(--ink); stroke-width: .7; opacity: .6; } .iso-led { fill: #8d877c; } .iso-led-on { fill: #5bbf6a; }
+  .iso-pipe-o { fill: none; stroke: var(--ink); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+  .iso-pipe-cold { fill: none; stroke: #8fb3cf; stroke-width: 3.6; stroke-linecap: round; stroke-linejoin: round; } .iso-pipe-hot { fill: none; stroke: #d98a6e; stroke-width: 3.6; stroke-linecap: round; stroke-linejoin: round; }
+  .iso-coil { fill: none; stroke: #c98a5e; stroke-width: 2; } .iso-fanring { fill: color-mix(in srgb, var(--khaki) 40%, var(--paper-raised)); stroke: var(--ink); stroke-width: 1.2; }
+  .iso-blade { fill: color-mix(in srgb, var(--khaki-deep) 60%, var(--paper-raised)); stroke: var(--ink); stroke-width: 1; } .iso-hub { fill: var(--ink); }
+  .iso-comp { fill: #a5492e; stroke: var(--ink); stroke-width: 1.2; } .iso-comp-top { fill: #c46a46; stroke: var(--ink); stroke-width: 1.2; }
+  .iso-board { fill: #5d6b55; stroke: var(--ink); stroke-width: 1; } .iso-board-x { fill: #4a5643; stroke: var(--ink); stroke-width: 1; } .iso-board-top { fill: #7d8c72; stroke: var(--ink); stroke-width: 1; }
+  .iso-pcb { fill: #3f6b4a; stroke: var(--ink); stroke-width: 1; } .iso-pcb-x { fill: #335a3d; stroke: var(--ink); stroke-width: 1; } .iso-pcb-top { fill: #5f8f63; stroke: var(--ink); stroke-width: 1; }
+  .iso-chip { fill: #2b2620; stroke: var(--ink); stroke-width: 1; } .iso-chip-top { fill: #4a443b; stroke: var(--ink); stroke-width: 1; }
+  .iso-cap { fill: #2f6f9f; stroke: var(--ink); stroke-width: 1; } .iso-cap-top { fill: #c0c4c8; stroke: var(--ink); stroke-width: 1; }
+  .iso-wire-live { fill: none; stroke: #e2a92c; stroke-width: 3; stroke-dasharray: 6 5; stroke-linecap: round; } .iso-rotor { fill: none; stroke: var(--paper-raised); stroke-width: 3; stroke-linecap: round; }
+  .iso-road { fill: #8d877c; stroke: var(--ink); stroke-width: 1; } .iso-dash { fill: #f4f1ea; } .iso-car { fill: #2f6f9f; stroke: var(--ink); stroke-width: 1; } .iso-car-x { fill: #245780; stroke: var(--ink); stroke-width: 1; } .iso-car-top { fill: #5c93bd; stroke: var(--ink); stroke-width: 1; }
+  .iso-glass { fill: #cfe1ec; stroke: var(--ink); stroke-width: 1; } .iso-tire { fill: #3b352e; stroke: var(--ink); stroke-width: 1; } .iso-steel { fill: #c9c4b8; stroke: var(--ink); stroke-width: 1; }
+  .iso-halo { fill: none; stroke: #e2a92c; }
+  .iso-label { font: 700 12px var(--font-sans); fill: var(--c, var(--ink)); paint-order: stroke; stroke: var(--paper); stroke-linejoin: round; }
+  .bignum { font: 700 34px var(--font-numeral); paint-order: stroke; stroke: var(--paper); stroke-linejoin: round; direction: ltr; } .bignum.blue { fill: var(--water); } .bignum.red { fill: var(--heat-text); }
+  .pt-heat { fill: #f08a3c; } .pt-cold { fill: var(--water); } .pt-hot { fill: var(--heat); }
+  .callnum { font: 700 11px var(--font-numeral); fill: var(--paper); } .calldot { fill: var(--ink); }
+  .panel > .inset { inset: 18px 14px 18px; border: 2px solid var(--ink); box-shadow: 0 6px 0 rgba(43,38,32,.12); }
+  .chart { position: absolute; left: 14px; right: 14px; bottom: 10px; height: 86px; opacity: 0; }
+  .chart > div { position: absolute; inset: 0; background: color-mix(in srgb, var(--paper-raised) 94%, transparent); border: 1px solid var(--ink); }
+  .chart .row { position: absolute; left: 6px; right: 6px; height: 34px; } .chart .row svg { position: absolute; inset: 0 0 0 58px; width: calc(100% - 58px); height: 100%; }
+  .chart .row b { position: absolute; left: 0; top: 10px; font: 700 10px var(--font-sans); }
+  .chart h4 { position: absolute; right: 6px; top: 2px; margin: 0; font: 700 10px var(--font-sans); }
+  .ln { fill: none; stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; } .ln.blue { stroke: var(--water); } .ln.red { stroke: var(--heat); }
+  .sb-water-back { fill: #b9dcef; stroke: var(--ink); stroke-width: 1; } .sb-water-side { fill: #a5cfe6; stroke: var(--ink); stroke-width: 1; } .sb-depth { fill: #0d3a5c; }
+  .sb-tick { fill: none; stroke: var(--ink); stroke-width: 1.2; } .sb-mark { font: 700 9px var(--font-numeral); fill: var(--ink); direction: ltr; }
+  .sb-sand { fill: #d9c79a; stroke: var(--ink); stroke-width: 1; } .sb-rock { fill: #8a857d; stroke: var(--ink); stroke-width: .8; } .sb-rock-top { fill: #a7a198; stroke: var(--ink); stroke-width: .8; }
+  .sb-weed { fill: none; stroke: #4f8f5a; stroke-width: 3; stroke-linecap: round; } .sb-ray { fill: #fff; }
+  .sb-surface { fill: #8fd0ee; opacity: .35; stroke: none; } .sb-crest { fill: none; stroke: #fff; stroke-width: 2; } .sb-glass { fill: none; stroke: var(--ink); stroke-width: 1; opacity: .5; }
+  .sb-speck { fill: #fff; opacity: .5; } .sb-fish { fill: #f2a93b; stroke: var(--ink); stroke-width: .8; } .sb-bubble { fill: #fff; fill-opacity: .35; stroke: #fff; stroke-width: 1; }
+  .sb-shadow { fill: var(--ink); }
+  .gp-pave { fill: #d9d4c8; stroke: var(--ink); stroke-width: 1; } .gp-ground-x { fill: #a7a198; stroke: var(--ink); stroke-width: 1; } .gp-ground-y { fill: #b9b2a2; stroke: var(--ink); stroke-width: 1; }
+  .gp-road { fill: #6d6a66; stroke: var(--ink); stroke-width: 1; } .gp-dash { fill: #f4f1ea; } .gp-zebra { fill: #f4f1ea; }
+  .gp-t-green { fill: #3fae5a; } .gp-t-orange { fill: #e2a92c; } .gp-t-red { fill: #d8452e; } .gp-route { fill: none; stroke: #2f8fd8; stroke-width: 5; stroke-linejoin: round; stroke-dasharray: 10 6; }
+  .gp-b1 { fill: #e9d8bf; stroke: var(--ink); stroke-width: 1; } .gp-b1-x { fill: #c9a98a; stroke: var(--ink); stroke-width: 1; } .gp-b1-y { fill: #d9c3a2; stroke: var(--ink); stroke-width: 1; } .gp-b1-top { fill: #f4ead8; stroke: var(--ink); stroke-width: 1; }
+  .gp-b2 { fill: #c9d2d8; stroke: var(--ink); stroke-width: 1; } .gp-b2-x { fill: #9aa8b2; stroke: var(--ink); stroke-width: 1; } .gp-b2-y { fill: #b4c0c8; stroke: var(--ink); stroke-width: 1; } .gp-b2-top { fill: #dde4e8; stroke: var(--ink); stroke-width: 1; }
+  .gp-b3 { fill: #d9b89a; stroke: var(--ink); stroke-width: 1; } .gp-b3-x { fill: #b08a6a; stroke: var(--ink); stroke-width: 1; } .gp-b3-y { fill: #c9a07e; stroke: var(--ink); stroke-width: 1; } .gp-b3-top { fill: #e9cdb2; stroke: var(--ink); stroke-width: 1; }
+  .gp-win { fill: #8fb6cf; stroke: var(--ink); stroke-width: .5; } .gp-win-lit { fill: #ffe9a0; stroke: var(--ink); stroke-width: .5; }
+  .gp-ac { fill: #c9c4b8; stroke: var(--ink); stroke-width: .8; } .gp-ac-x { fill: #a7a198; stroke: var(--ink); stroke-width: .8; } .gp-ac-top { fill: #e9e4d8; stroke: var(--ink); stroke-width: .8; }
+  .gp-trunk { fill: #6b4a30; stroke: var(--ink); stroke-width: .6; } .gp-leaf { fill: #5f9a5a; stroke: var(--ink); stroke-width: 1; }
+  .gp-shadow { fill: var(--ink); opacity: .18; } .gp-glass { fill: #bcd8e8; stroke: var(--ink); stroke-width: .8; } .gp-tire { fill: #2b2620; }
+  .gp-head { fill: #fff6c8; } .gp-tail { fill: #d8452e; } .gp-brake { fill: #ff3b2f; filter: drop-shadow(0 0 2px #ff3b2f); }
+  .gp-leg { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; } .gp-body { stroke: var(--ink); stroke-width: .8; } .gp-headp { fill: #e9c4a0; stroke: var(--ink); stroke-width: .8; } .gp-phone { fill: #2b2f34; }
+  .gp-boom { stroke: var(--ink); stroke-width: 2; } .gp-panel { fill: #2a4a8a; stroke: var(--ink); stroke-width: 1.4; } .gp-cell { stroke: #8fb6e8; stroke-width: .7; }
+  .gp-bus { fill: #c9a04e; stroke: var(--ink); stroke-width: 1.4; } .gp-foil { stroke: #8a6a30; stroke-width: .7; fill: none; } .gp-antbase { fill: #e9e4d8; stroke: var(--ink); stroke-width: 1; } .gp-ant { fill: #d9d4c8; stroke: var(--ink); stroke-width: .6; }
+  .gp-sig { fill: none; stroke: #e2a92c; stroke-width: 1.4; stroke-dasharray: 4 4; opacity: .7; } .gp-sigdot { fill: #e2a92c; stroke: var(--ink); stroke-width: .6; }
+  .gp-cloud { fill: #fbfaf6; stroke: var(--ink); stroke-width: 1.6; } .gp-mapic { fill: #e9e4d8; stroke: var(--ink); stroke-width: 1; } .gp-mapline { fill: none; stroke: #d8452e; stroke-width: 2.4; }
+  .gp-dot { fill: #2f8fd8; stroke: #fff; stroke-width: 1; } .gp-ping { fill: #2f8fd8; }
+  .gp-speed { font: 700 9px var(--font-numeral); fill: #3fae5a; paint-order: stroke; stroke: var(--paper); stroke-width: 2.4px; } .gp-speed.slow { fill: #d8452e; }
+  .gp-pin { fill: #e2a92c; stroke: var(--ink); stroke-width: 1.4; } .gp-pintx { font: 800 12px var(--font-sans); fill: var(--ink); } .gp-me { fill: #d8452e; stroke: var(--ink); stroke-width: 1.4; }
+  .gp-awn1 { fill: #c23a26; stroke: var(--ink); stroke-width: .6; } .gp-awn2 { fill: #2f6f9f; stroke: var(--ink); stroke-width: .6; }
+  .gp-eta { fill: var(--ink); } .gp-etatx { font: 700 10px var(--font-sans); fill: #7cf29a; }
+  .gp-car-red { fill: #c23a26; stroke: var(--ink); stroke-width: .8; } .gp-car-red-x { fill: #9a2a1a; stroke: var(--ink); stroke-width: .8; } .gp-car-red-y { fill: #a8301e; stroke: var(--ink); stroke-width: .8; }
+  .gp-car-blue { fill: #2f6f9f; stroke: var(--ink); stroke-width: .8; } .gp-car-blue-x { fill: #245780; stroke: var(--ink); stroke-width: .8; } .gp-car-blue-y { fill: #285f88; stroke: var(--ink); stroke-width: .8; }
+  .gp-car-white { fill: #f4f2ec; stroke: var(--ink); stroke-width: .8; } .gp-car-white-x { fill: #c9c4b8; stroke: var(--ink); stroke-width: .8; } .gp-car-white-y { fill: #dcd7cb; stroke: var(--ink); stroke-width: .8; }
+  .gp-car-yellow { fill: #e2b035; stroke: var(--ink); stroke-width: .8; } .gp-car-yellow-x { fill: #b08a20; stroke: var(--ink); stroke-width: .8; } .gp-car-yellow-y { fill: #c99c28; stroke: var(--ink); stroke-width: .8; }
+  .gp-car-green { fill: #4f8f5a; stroke: var(--ink); stroke-width: .8; } .gp-car-green-x { fill: #3a6a44; stroke: var(--ink); stroke-width: .8; } .gp-car-green-y { fill: #447c4f; stroke: var(--ink); stroke-width: .8; }
+  .gp-car-grey { fill: #9aa2ac; stroke: var(--ink); stroke-width: .8; } .gp-car-grey-x { fill: #6a727c; stroke: var(--ink); stroke-width: .8; } .gp-car-grey-y { fill: #7f8791; stroke: var(--ink); stroke-width: .8; }
+  .gp-car-black { fill: #3a3d42; stroke: var(--ink); stroke-width: .8; } .gp-car-black-x { fill: #22252a; stroke: var(--ink); stroke-width: .8; } .gp-car-black-y { fill: #2b2e33; stroke: var(--ink); stroke-width: .8; }
+  .mw-wall { fill: #efe8da; stroke: var(--ink); stroke-width: 1; } .mw-tile { fill: none; stroke: #d6ccb8; stroke-width: .8; }
+  .mw-counter { fill: #e2d6bf; stroke: var(--ink); stroke-width: 1; } .mw-cab-x { fill: #b9a487; stroke: var(--ink); stroke-width: 1; } .mw-cab-y { fill: #cbb697; stroke: var(--ink); stroke-width: 1; }
+  .mw-cabdoor { fill: none; stroke: var(--ink); stroke-width: .8; opacity: .6; } .mw-knob { fill: var(--ink); }
+  .mw-kettle { fill: #c9c4b8; stroke: var(--ink); stroke-width: 1; } .mw-kettle-top { fill: #e6e1d6; stroke: var(--ink); stroke-width: 1; } .mw-mug { fill: #c15636; stroke: var(--ink); stroke-width: 1; } .mw-mug-top { fill: #5d3a2a; stroke: var(--ink); stroke-width: 1; }
+  .mw-shadow { fill: var(--ink); opacity: .12; } .mw-shell-x { fill: #b9b5ac; stroke: var(--ink); stroke-width: 1; } .mw-shell-y { fill: #d0ccc2; stroke: var(--ink); stroke-width: 1; }
+  .mw-floor { fill: #e9e6de; stroke: var(--ink); stroke-width: 1; } .mw-back { fill: #ddd9cf; stroke: var(--ink); stroke-width: 1; } .mw-left { fill: #cfcbc1; stroke: var(--ink); stroke-width: 1; }
+  .mw-inner { fill: #c9c4b8; stroke: var(--ink); stroke-width: 1; opacity: .55; } .mw-ceiling { fill: none; stroke: var(--ink); stroke-width: 1; stroke-dasharray: 4 3; } .mw-edge { fill: none; stroke: var(--ink); stroke-width: 1.4; }
+  .mw-panel { fill: #f4f2ec; stroke: var(--ink); stroke-width: 1; } .mw-display { fill: #1c2a24; stroke: var(--ink); stroke-width: .8; } .mw-time { font: 700 7px var(--font-numeral); fill: #7cf29a; direction: ltr; } .mw-btn { fill: #fbfaf6; stroke: var(--ink); stroke-width: .6; }
+  .mw-mag-x { fill: #8a929c; stroke: var(--ink); stroke-width: 1; } .mw-mag-y { fill: #a7aeb6; stroke: var(--ink); stroke-width: 1; } .mw-mag-top { fill: #c9ced4; stroke: var(--ink); stroke-width: 1; } .mw-fin { fill: none; stroke: #5a6068; stroke-width: 1; }
+  .mw-red { fill: #c15636; stroke: var(--ink); stroke-width: 1; } .mw-red-x { fill: #9e4129; stroke: var(--ink); stroke-width: 1; } .mw-red-top { fill: #d97a5a; stroke: var(--ink); stroke-width: 1; }
+  .mw-glow { fill: #ffd27a; opacity: .35; mix-blend-mode: multiply; } .mw-antenna { fill: none; stroke: var(--ink); stroke-width: 2.4; }
+  .mw-guide-x { fill: #a7aeb6; stroke: var(--ink); stroke-width: 1; } .mw-guide-y { fill: #bfc5cc; stroke: var(--ink); stroke-width: 1; } .mw-guide-top { fill: #d9dde2; stroke: var(--ink); stroke-width: 1; }
+  .mw-glass { fill: #cfe1ec; fill-opacity: .7; stroke: var(--ink); stroke-width: 1; } .mw-plate { fill: #fbfaf6; stroke: var(--ink); stroke-width: 1; } .mw-plate-in { fill: #f1efe8; stroke: #c9c4b8; stroke-width: .8; }
+  .mw-rice { fill: #fbfaf6; stroke: var(--ink); stroke-width: .9; } .mw-chick { fill: #d99a5a; stroke: var(--ink); stroke-width: .9; } .mw-pea { fill: #7aae5a; stroke: var(--ink); stroke-width: .6; } .mw-carrot { fill: #e2833a; stroke: var(--ink); stroke-width: .6; }
+  .mw-steam { fill: none; stroke: #fff; stroke-width: 2.4; stroke-linecap: round; }
+  .mw-wave { fill: none; stroke: #e2a92c; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; } .mw-wavedot { fill: #e2a92c; stroke: var(--ink); stroke-width: .8; }
+  .mw-hotspot { fill: var(--heat); opacity: .5; } .mw-coldspot { fill: var(--water); opacity: .35; }
+  .atm-pave { fill: #e9e6e0; stroke: var(--ink); stroke-width: 1; } .atm-pave-x { fill: #a7a198; stroke: var(--ink); stroke-width: 1; } .atm-pave-y { fill: #b9b2a2; stroke: var(--ink); stroke-width: 1; } .atm-paveline { fill: none; stroke: #c2bcae; stroke-width: .7; }
+  .atm-wall { fill: #efe6d4; stroke: var(--ink); stroke-width: 1; } .atm-brick { fill: none; stroke: #c9ad8a; stroke-width: .8; } .atm-window { fill: #bcd3e0; stroke: var(--ink); stroke-width: 1; }
+  .atm-sign { fill: #2f6f4f; stroke: var(--ink); stroke-width: 1; } .atm-sign-x { fill: #245a3e; stroke: var(--ink); stroke-width: 1; } .atm-sign-top { fill: #4f8f6a; stroke: var(--ink); stroke-width: 1; } .atm-signtx { font: 700 12px var(--font-sans); fill: #fbfaf6; }
+  .atm-shadow { fill: var(--ink); opacity: .12; } .atm-floor { fill: #8a929c; stroke: var(--ink); stroke-width: 1; } .atm-steel-x { fill: #5a6068; stroke: var(--ink); stroke-width: 1; } .atm-steel-y { fill: #6a727c; stroke: var(--ink); stroke-width: 1; }
+  .atm-back { fill: #c9ced4; stroke: var(--ink); stroke-width: 1; } .atm-left { fill: #b4bbc2; stroke: var(--ink); stroke-width: 1; }
+  .atm-safe-back { fill: #5a6068; stroke: var(--ink); stroke-width: 1; } .atm-safe-left { fill: #4a5058; stroke: var(--ink); stroke-width: 1; } .atm-shelf { fill: #8a929c; stroke: var(--ink); stroke-width: 1; }
+  .atm-cas-top { fill: #3a3d42; stroke: var(--ink); stroke-width: 1; } .atm-cas-x { fill: #22252a; stroke: var(--ink); stroke-width: 1; } .atm-cas-y { fill: #2b2e33; stroke: var(--ink); stroke-width: 1; } .atm-castx { font: 700 6px var(--font-numeral); fill: #fbfaf6; }
+  .atm-rej-top { fill: #e9b9a8; stroke: var(--ink); stroke-width: 1; } .atm-rej-x { fill: #c15636; stroke: var(--ink); stroke-width: 1; } .atm-rej-y { fill: #d97a5a; stroke: var(--ink); stroke-width: 1; } .atm-rejtx { font: 700 8px var(--font-sans); fill: #fbfaf6; }
+  .atm-roller { fill: #3b352e; stroke: var(--ink); stroke-width: .8; } .atm-dot { fill: #e2a92c; }
+  .atm-note { fill: #9fc79a; stroke: #3a6a44; stroke-width: .8; } .atm-note-in { fill: #b9d6b4; stroke: #3a6a44; stroke-width: .6; } .atm-note-bad { fill: #e9b9a8; stroke: var(--heat); stroke-width: .9; }
+  .atm-belt { fill: #3b352e; stroke: var(--ink); stroke-width: .8; } .atm-belt-x { fill: #2b2620; stroke: var(--ink); stroke-width: .8; } .atm-belt-top { fill: #5a544c; stroke: var(--ink); stroke-width: .8; }
+  .atm-sens { fill: #3c6484; stroke: var(--ink); stroke-width: 1; } .atm-sens-x { fill: #2f5070; stroke: var(--ink); stroke-width: 1; } .atm-sens-top { fill: #5c86a6; stroke: var(--ink); stroke-width: 1; }
+  .atm-led { fill: #8d877c; } .atm-led-on { fill: #5bbf6a; } .atm-led-red { fill: #ff3b2f; filter: drop-shadow(0 0 2px #ff3b2f); }
+  .atm-stacker { fill: #c9c4b8; stroke: var(--ink); stroke-width: 1; } .atm-spoke { stroke: var(--ink); stroke-width: 1.4; }
+  .atm-pc-top { fill: #5d6b55; stroke: var(--ink); stroke-width: 1; } .atm-pc-x { fill: #4a5643; stroke: var(--ink); stroke-width: 1; } .atm-pc-y { fill: #546149; stroke: var(--ink); stroke-width: 1; } .atm-vent { fill: none; stroke: #2b2620; stroke-width: .8; }
+  .atm-cr-top { fill: #c9c4b8; stroke: var(--ink); stroke-width: 1; } .atm-cr-x { fill: #a7a198; stroke: var(--ink); stroke-width: 1; } .atm-cr-y { fill: #b9b2a2; stroke: var(--ink); stroke-width: 1; }
+  .atm-pr-top { fill: #e9e4d8; stroke: var(--ink); stroke-width: 1; } .atm-pr-x { fill: #c9c4b8; stroke: var(--ink); stroke-width: 1; } .atm-pr-y { fill: #d9d4c8; stroke: var(--ink); stroke-width: 1; } .atm-roll { fill: #fbfaf6; stroke: var(--ink); stroke-width: 1; }
+  .atm-card { fill: #2f6f9f; stroke: var(--ink); stroke-width: 1; } .atm-chip { fill: #e2c25a; stroke: var(--ink); stroke-width: .6; }
+  .atm-fascia { fill: #c9ced4; stroke: var(--ink); stroke-width: 1; } .atm-edge { fill: none; stroke: var(--ink); stroke-width: 1.4; } .atm-edge-thin { fill: none; stroke: var(--ink); stroke-width: .8; stroke-dasharray: 4 3; }
+  .atm-screen { fill: #1f3a4f; stroke: var(--ink); stroke-width: 1.2; } .atm-scrtx { font: 700 7px var(--font-sans); fill: #bfe8ff; }
+  .atm-slot { fill: #2b2620; } .atm-slot-lit { fill: #5bbf6a; stroke: var(--ink); stroke-width: .6; }
+  .atm-kp { fill: #c9ced4; stroke: var(--ink); stroke-width: 1; } .atm-kp-x { fill: #9aa2ac; stroke: var(--ink); stroke-width: 1; } .atm-kp-y { fill: #aeb5bd; stroke: var(--ink); stroke-width: 1; }
+  .atm-key { fill: #fbfaf6; stroke: var(--ink); stroke-width: .5; } .atm-key-on { fill: #e2a92c; stroke: var(--ink); stroke-width: .5; } .atm-key-red { fill: #d8452e; } .atm-key-yel { fill: #e2b035; } .atm-key-grn { fill: #3fae5a; }
+  .atm-shutter-hole { fill: #2b2620; } .atm-shutter { fill: #8a929c; stroke: var(--ink); stroke-width: .8; }
+  .atm-cam { fill: #2b2620; } .atm-cam-on { fill: #ff3b2f; } .atm-camcone { fill: #ffd27a; opacity: .18; }
+  .atm-net { fill: none; stroke: var(--water); stroke-width: 1.6; stroke-dasharray: 5 4; } .atm-netdot { fill: var(--water); stroke: #fff; stroke-width: 1; } .atm-netdot-ok { fill: #3fae5a; stroke: #fff; stroke-width: 1; }
+  .atm-green-x { fill: #14603a; stroke: var(--ink); stroke-width: 1; } .atm-green-y { fill: #1a7446; stroke: var(--ink); stroke-width: 1; } .atm-green-top { fill: #2a9a5e; stroke: var(--ink); stroke-width: 1; } .atm-green-side { fill: #1f8a52; stroke: var(--ink); stroke-width: 1; }
+  .atm-hood { fill: #1f8a52; stroke: var(--ink); stroke-width: 1; } .atm-header { fill: #eef3ef; stroke: var(--ink); stroke-width: .8; } .atm-headtx { font: 700 6px var(--font-sans); fill: #c97a10; } .atm-headtx2 { font: 700 6px var(--font-sans); fill: #14603a; }
+  .atm-safe-right { fill: #4a5058; stroke: var(--ink); stroke-width: 1; } .atm-handle { fill: none; stroke: #3fae5a; stroke-width: 2.2; stroke-linejoin: round; } .atm-handle-red { fill: none; stroke: #fbfaf6; stroke-width: 2; }
+  .atm-disp-x { fill: #8a929c; stroke: var(--ink); stroke-width: 1; } .atm-disp-y { fill: #a7aeb6; stroke: var(--ink); stroke-width: 1; } .atm-disp-top { fill: #c9ced4; stroke: var(--ink); stroke-width: 1; }
+  .atm-beltline { fill: none; stroke: #2b2620; stroke-width: 2.4; stroke-dasharray: 6 3; } .atm-gear { fill: #3fae5a; stroke: var(--ink); stroke-width: .8; }
+  .atm-door { fill: #6a727c; stroke: var(--ink); stroke-width: 1; } .atm-door-edge { fill: #4a5058; stroke: var(--ink); stroke-width: 1; } .atm-dial { fill: #c9ced4; stroke: var(--ink); stroke-width: 1.2; } .atm-lever { fill: none; stroke: #c9ced4; stroke-width: 3; stroke-linecap: round; }
+  .atm-bezel { fill: #8a929c; stroke: var(--ink); stroke-width: 1; } .atm-crbezel { fill: #a7aeb6; stroke: var(--ink); stroke-width: .8; } .atm-hoodk { fill: #5a6068; stroke: var(--ink); stroke-width: .8; opacity: .85; }
+
+  /* cover: 540×960, paper, the cut-open ATM large; titles in Noto Sans Arabic; key content inside the 3:4 crop (y 120–840) */
+  html, body { width: 540px; height: 960px; margin: 0; overflow: hidden; background: var(--paper); }
+  .cover { position: relative; width: 540px; height: 960px; background: var(--paper); }
+  .cover::before { content: ""; position: absolute; inset: 18px; border: 2px solid var(--ink); pointer-events: none; }
+  #art { position: absolute; left: 0; top: 0; width: 540px; height: 960px; }
+  .t { position: absolute; left: 40px; right: 70px; margin: 0; text-align: center; font-family: "Noto Sans Arabic", var(--font-sans); color: var(--ink); }
+  .k { color: var(--heat-text); }
+</style></head><body>
+<div class="cover">
+  <svg id="art" viewBox="0 0 540 960"></svg>
+  <p class="t" style="top:104px;font-weight:600;font-size:15px;opacity:.7">إيه الحكاية؟</p>
+  <p class="t" style="top:126px;font-weight:900;font-size:38px;line-height:1.25">إزاي مكنة الـ ATM<br>بتطلّع <span class="k">الفلوس؟!</span></p>
+  <p class="t" style="top:232px;font-weight:800;font-size:21px;color:#14603a">من جوه الخزنة… لحد إيدك</p>
+  <p class="t" style="top:760px;font-weight:800;font-size:27px;line-height:1.35">الرقم السري <span class="k">٤ أرقام</span><br>بسبب مراته!</p>
+</div>
+<script src="../../videos/atm/timing.js"></script>
+<script src="../../design-system/components/bundle.js"></script>
+<script>TebEzay.patterns();</script>
+<script src="../../videos/atm/iso/world.js"></script>
+<script>
+  (function () {
+    // the whole machine, cut open, the safe door swung wide, cash sticking out of the slot; numbered call-outs on four parts
+    var svg = document.getElementById("art"), NS = "http://www.w3.org/2000/svg", M = window.__atm;
+    var I = window.__seaStatic(svg, 61.5, 1.7, 255, 640, 0.05, true);
+    var g = svg.firstChild, fade = document.createElementNS(NS, "rect"); fade.setAttribute("x", 0); fade.setAttribute("y", 0); fade.setAttribute("width", 540); fade.setAttribute("height", 280); fade.setAttribute("style", "fill:var(--paper)"); svg.appendChild(fade);
+    var fb = document.createElementNS(NS, "rect"); fb.setAttribute("x", 0); fb.setAttribute("y", 740); fb.setAttribute("width", 540); fb.setAttribute("height", 220); fb.setAttribute("style", "fill:var(--paper);opacity:.92"); svg.appendChild(fb);
+  })();
+</script>
+</body></html>

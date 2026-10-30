@@ -1,0 +1,25 @@
+{
+  "name": "eh-elhekaya-remotion",
+  "private": true,
+  "description": "Remotion workspace for «إيه الحكاية؟» videos (1080×1920, 60 fps)",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render src/index.ts Hello out/hello.mp4",
+    "still": "remotion still src/index.ts Hello out/hello.png --frame=60"
+  },
+  "dependencies": {
+    "@react-three/fiber": "9.1.2",
+    "@remotion/cli": "4.0.539",
+    "@remotion/google-fonts": "4.0.539",
+    "@remotion/three": "4.0.539",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.539",
+    "three": "0.170.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.8",
+    "@types/three": "0.170.0",
+    "typescript": "5.8.3"
+  }
+}
