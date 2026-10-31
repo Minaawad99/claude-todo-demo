@@ -15,7 +15,7 @@ its cover `brand/eh-elhekaya/cover-tbm-tunnel-tiktok.html`. Start every new vide
 same style: `videos/gps-traffic/cartoon/`, `videos/lcd-tv/cartoon/`, `videos/offshore-oil/cartoon/`, `videos/elevator/cartoon/`,
 `videos/submarine/cartoon/`.
 
-Use another style only when the user names it. Remotion 3D (`remotion/src/lightning/`, `remotion/src/rainbow/`) renders on
+Use another style only when the user names it (the other styles: `.claude/skills/diagram/` «الرسم الهندسي» and `.claude/skills/law/` «لو», the build-along style of the nuclear shelter video). Remotion 3D (`remotion/src/lightning/`, `remotion/src/rainbow/`) renders on
 the CPU here (no GPU) and takes about 40 minutes a video against about 15 for the cartoon panel, so never pick it on your own.
 
 Talk to the user in Egyptian Arabic. Work in this order, end to end; the voice is generated here (section 2).
