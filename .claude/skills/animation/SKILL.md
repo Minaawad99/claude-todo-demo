@@ -15,10 +15,17 @@ its cover `brand/eh-elhekaya/cover-tbm-tunnel-tiktok.html`. Start every new vide
 same style: `videos/gps-traffic/cartoon/`, `videos/lcd-tv/cartoon/`, `videos/offshore-oil/cartoon/`, `videos/elevator/cartoon/`,
 `videos/submarine/cartoon/`.
 
-Use another style only when the user names it. Remotion 3D (`remotion/src/lightning/`, `remotion/src/rainbow/`) renders on
+Use another style only when the user names it (the other styles: `.claude/skills/diagram/` «الرسم الهندسي» and `.claude/skills/law/` «لو», the build-along style of the nuclear shelter video). Remotion 3D (`remotion/src/lightning/`, `remotion/src/rainbow/`) renders on
 the CPU here (no GPU) and takes about 40 minutes a video against about 15 for the cartoon panel, so never pick it on your own.
 
 Talk to the user in Egyptian Arabic. Work in this order, end to end; the voice is generated here (section 2).
+
+**Ask before every new topic (the user's rule, to save usage limit):** when the user names a new video, ask in one short
+question whether to run it in quick mode or with the full checks. Quick mode is the default the user asked for:
+- no motion check (`tools/motion.js`) and no fix-and-retry loops for stills;
+- no contact sheets, frames or other screenshots looked at during the build (no image review);
+- still run the NaN/error check (text only) and `qa.py` on the final video (numbers only, don't open its sheet); if QA fails,
+  tell the user and ask before re-rendering.
 
 ## 1. Script → `videos/<slug>/script.txt`
 
