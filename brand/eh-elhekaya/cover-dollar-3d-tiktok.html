@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — dollar (3D)</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  /* the reel cover in 3D (three.js, served over http: `python3 -m http.server` from the repo root, then shoot it), full bleed
+     540×960 at 2x, built like the gas heater cover: the tunnel-cover palette (near black top and bottom, a warm glow behind the
+     subject) with a real-looking wooden market crate of tomatoes and a wad of dollars on top, a chalk price board hanging over it.
+     Text stays inside y 120–840 and away from the right-hand buttons. */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #000; }
+  canvas { position: absolute; inset: 0; width: 540px !important; height: 960px !important; }
+  .fade { position: absolute; left: 0; right: 0; pointer-events: none; }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 10px rgba(0,0,0,.6); }
+  #over { position: absolute; inset: 0; width: 540px; height: 960px; }
+  .tag { font-family: "Noto Sans Arabic", sans-serif; font-weight: 800; fill: #2b2016; }
+</style></head><body>
+<div class="cover">
+  <div id="gl"></div>
+  <div class="fade" style="top:0;height:300px;background:linear-gradient(#000e,#0008 75%,#0000)"></div>
+  <div class="fade" style="top:680px;height:280px;background:linear-gradient(#0000,#000b 30%,#000f)"></div>
+  <svg id="over" viewBox="0 0 540 960"><defs><path id="swash" d="M6 14 C40 4 120 2 196 8 C214 10 222 20 214 30 C206 44 140 46 70 44 C30 44 4 40 2 30 C0 24 2 18 6 14 Z"/></defs>
+    <g transform="translate(400 330) rotate(5)"><use href="#swash" fill="#f2a0a0" transform="translate(-100 -26) scale(.92 1.15)"/><text y="8" text-anchor="middle" class="tag" style="font-size:22px">زي الطماطم!</text></g>
+  </svg>
+  <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
+  <p class="t" style="top:154px;font:900 42px/1.2 'Noto Sans Arabic';color:#fff">ليه الدولار بيغلى؟</p>
+  <p class="t" style="top:214px;font:800 24px/1.3 'Noto Sans Arabic';color:#f2c230">الحكاية كلها في سوق الخضار!</p>
+  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff"><span style="color:#f2c230">50</span> جنيه للدولار<br><span style="font-size:24px;color:#d9d4c8">وكان 9 بس سنة 2016!</span></p>
+</div>
+<script type="importmap">{ "imports": { "three": "../../remotion/node_modules/three/build/three.module.js", "three/addons/": "../../remotion/node_modules/three/examples/jsm/" } }</script>
+<script type="module">
+  import * as THREE from "three";
+  import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+  import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+  await document.fonts.load("900 72px 'Noto Sans Arabic'").catch(() => {});
+  const W = 540, H = 960, r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+  r.setPixelRatio(2); r.setSize(W, H); r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 0.9; r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
+  document.getElementById("gl").appendChild(r.domElement);
+  const scene = new THREE.Scene(); scene.background = new THREE.Color("#0c0f14");
+  scene.environment = new THREE.PMREMGenerator(r).fromScene(new RoomEnvironment(), 0.04).texture; scene.environmentIntensity = 0.5;
+  const cam = new THREE.PerspectiveCamera(30, W / H, 0.1, 100); cam.position.set(0.4, 2.8, 10.6); cam.lookAt(0, 0.2, 0);
+  const canvasTex = (w, h, draw) => { const c = document.createElement("canvas"); c.width = w; c.height = h; draw(c.getContext("2d")); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; };
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
+  // the back wall: old dark-green painted plaster with a little texture
+  const plaster = canvasTex(512, 512, g => { g.fillStyle = "#1e2a26"; g.fillRect(0, 0, 512, 512); for (let i = 0; i < 2500; i++) { const v = 20 + rnd() * 30; g.fillStyle = `rgba(${v},${v + 14},${v + 8},.35)`; g.fillRect(rnd() * 512, rnd() * 512, 2 + rnd() * 6, 2 + rnd() * 6); } });
+  plaster.wrapS = plaster.wrapT = THREE.RepeatWrapping; plaster.repeat.set(3, 4);
+  const wall = new THREE.Mesh(new THREE.PlaneGeometry(14, 14), new THREE.MeshStandardMaterial({ map: plaster, roughness: 0.9 })); wall.position.set(0, 2, -2.2); wall.receiveShadow = true; scene.add(wall);
+  // the stall table: worn planks
+  const woodTex = (base, dark) => canvasTex(512, 256, g => { g.fillStyle = base; g.fillRect(0, 0, 512, 256); for (let i = 0; i < 60; i++) { g.strokeStyle = dark; g.globalAlpha = 0.15 + rnd() * 0.25; g.lineWidth = 1 + rnd() * 2; g.beginPath(); const y = rnd() * 256; g.moveTo(0, y); g.bezierCurveTo(170, y + (rnd() - 0.5) * 20, 340, y + (rnd() - 0.5) * 20, 512, y + (rnd() - 0.5) * 10); g.stroke(); } g.globalAlpha = 1; });
+  const table = new THREE.Mesh(new THREE.BoxGeometry(9, 0.2, 4.5), new THREE.MeshStandardMaterial({ map: woodTex("#5a3c24", "#2a1a0e"), roughness: 0.8 })); table.position.set(0, -0.9, 0); table.receiveShadow = true; scene.add(table);
+
+  // the crate: pale pine slats with gaps, corner posts
+  const pine = new THREE.MeshStandardMaterial({ map: woodTex("#c99a62", "#7a5430"), roughness: 0.75 });
+  const crate = new THREE.Group(); scene.add(crate);
+  const CW = 2.6, CH = 1.0, CD = 1.6;
+  const slat = (w, h, d, x, y, z) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), pine); m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; crate.add(m); };
+  for (let k = 0; k < 3; k++) { const y = -0.68 + k * 0.33; slat(CW, 0.24, 0.05, 0, y, CD / 2); slat(CW, 0.24, 0.05, 0, y, -CD / 2); slat(0.05, 0.24, CD, -CW / 2, y, 0); slat(0.05, 0.24, CD, CW / 2, y, 0); }
+  [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([a, b]) => slat(0.1, CH, 0.1, a * (CW / 2 - 0.02), -0.3, b * (CD / 2 - 0.02)));
+  slat(CW, 0.04, CD, 0, -0.79, 0);
+
+  // tomatoes: glossy, slightly squashed, a green star of sepals on top; a heap that crowns above the rim
+  const tomM = [new THREE.MeshPhysicalMaterial({ color: "#d2261a", roughness: 0.32, clearcoat: 0.9, clearcoatRoughness: 0.2 }), new THREE.MeshPhysicalMaterial({ color: "#e23a1e", roughness: 0.3, clearcoat: 0.9, clearcoatRoughness: 0.2 }), new THREE.MeshPhysicalMaterial({ color: "#b81c14", roughness: 0.35, clearcoat: 0.8, clearcoatRoughness: 0.25 })];
+  const leaf = new THREE.MeshStandardMaterial({ color: "#3f7a2a", roughness: 0.6 });
+  const tomGeo = new THREE.SphereGeometry(1, 40, 28);
+  function tomato(x, y, z, s) {
+    const g = new THREE.Group(); const b = new THREE.Mesh(tomGeo, tomM[Math.floor(rnd() * 3)]); b.scale.set(s, s * 0.82, s); b.castShadow = b.receiveShadow = true; g.add(b);
+    for (let i = 0; i < 5; i++) { const l = new THREE.Mesh(new THREE.ConeGeometry(s * 0.09, s * 0.5, 6), leaf); l.rotation.z = Math.PI / 2 - 0.25; l.position.set(s * 0.22, s * 0.8, 0); const p = new THREE.Group(); p.add(l); p.rotation.y = i * Math.PI * 2 / 5; g.add(p); }
+    const st = new THREE.Mesh(new THREE.CylinderGeometry(s * 0.04, s * 0.05, s * 0.18, 8), leaf); st.position.y = s * 0.88; g.add(st);
+    g.position.set(x, y, z); g.rotation.set((rnd() - 0.5) * 0.6, rnd() * 6, (rnd() - 0.5) * 0.6); crate.add(g);
+  }
+  for (let iz = 0; iz < 4; iz++) for (let ix = 0; ix < 7; ix++) { const x = -1.05 + ix * 0.35 + (rnd() - 0.5) * 0.06, z = -0.55 + iz * 0.37 + (rnd() - 0.5) * 0.06, hump = 0.16 * Math.cos(x * 1.1) * Math.cos(z * 1.6); tomato(x, -0.12 + hump, z, 0.17 + rnd() * 0.03); }
+  for (let i = 0; i < 9; i++) tomato(-0.8 + rnd() * 1.6, 0.13 + rnd() * 0.05, -0.4 + rnd() * 0.8, 0.16 + rnd() * 0.03);
+
+  // dollar notes: a stylised green note (not a copy of a real banknote)
+  const noteTex = canvasTex(640, 272, g => {
+    const gr = g.createLinearGradient(0, 0, 0, 272); gr.addColorStop(0, "#d8e6cf"); gr.addColorStop(1, "#a9c79c"); g.fillStyle = gr; g.fillRect(0, 0, 640, 272);
+    g.strokeStyle = "#2f5a34"; g.lineWidth = 8; g.strokeRect(14, 14, 612, 244); g.lineWidth = 2; g.strokeRect(28, 28, 584, 216);
+    for (let i = 0; i < 40; i++) { g.strokeStyle = "rgba(47,90,52,.18)"; g.beginPath(); g.ellipse(320, 136, 60 + i * 6, 30 + i * 3, 0, 0, Math.PI * 2); g.stroke(); }
+    g.fillStyle = "#e6f0de"; g.beginPath(); g.ellipse(320, 136, 78, 96, 0, 0, Math.PI * 2); g.fill(); g.strokeStyle = "#2f5a34"; g.lineWidth = 5; g.stroke();
+    g.fillStyle = "#1f4a26"; g.font = "900 150px sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("$", 320, 142);
+    g.font = "900 64px sans-serif"; g.fillText("100", 98, 72); g.fillText("100", 542, 206); g.font = "800 30px sans-serif"; g.fillText("DOLLARS", 520, 64);
+  });
+  noteTex.wrapS = THREE.RepeatWrapping; noteTex.wrapT = THREE.RepeatWrapping; noteTex.repeat.set(-1, -1); noteTex.offset.set(1, 1);
+  const noteM = new THREE.MeshStandardMaterial({ map: noteTex, roughness: 0.65 }), edgeM = new THREE.MeshStandardMaterial({ color: "#cfdcc4", roughness: 0.8 });
+  const noteMats = [edgeM, edgeM, noteM, edgeM, edgeM, edgeM];
+  function note(x, y, z, ry, rx, rz) { const n = new THREE.Mesh(new THREE.BoxGeometry(1.17, 0.006, 0.5), noteMats); n.position.set(x, y, z); n.rotation.set(rx || 0, ry, rz || 0); n.castShadow = n.receiveShadow = true; crate.add(n); return n; }
+  // a wad on the heap with a paper band, and a few loose notes fanned out
+  for (let k = 0; k < 14; k++) note(0.12 + (rnd() - 0.5) * 0.02, 0.36 + k * 0.009, 0.15 + (rnd() - 0.5) * 0.02, Math.PI - 0.25 + (rnd() - 0.5) * 0.04, 0.05, -0.04);
+  const band = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.14, 0.52), new THREE.MeshStandardMaterial({ color: "#f2c230", roughness: 0.5 })); band.position.set(0.12, 0.42, 0.15); band.rotation.set(0.05, Math.PI - 0.25, -0.04); crate.add(band);
+  note(-0.7, 0.3, 0.3, Math.PI + 0.45, 0.2, -0.22); note(0.9, 0.28, 0.35, Math.PI - 0.6, 0.15, 0.28);
+
+  // the chalk price board hanging over the crate on two strings
+  const chalk = canvasTex(512, 320, g => { g.fillStyle = "#1d2b24"; g.fillRect(0, 0, 512, 320); for (let i = 0; i < 300; i++) { g.fillStyle = `rgba(255,255,255,${rnd() * 0.05})`; g.fillRect(rnd() * 512, rnd() * 320, 20 + rnd() * 60, 2); }
+    g.direction = "rtl"; g.fillStyle = "#f4f1e8"; g.textAlign = "center"; g.font = "900 72px 'Noto Sans Arabic', sans-serif"; g.fillText("الدولار", 256, 110); g.fillStyle = "#ffb08a"; g.font = "900 120px 'Noto Sans Arabic', sans-serif"; g.fillText("50 ج", 256, 260);
+    g.strokeStyle = "#f4f1e8"; g.lineWidth = 5; g.beginPath(); g.moveTo(80, 288); g.lineTo(432, 288); g.stroke(); });
+  const board = new THREE.Group(); scene.add(board);
+  const frame = new THREE.Mesh(new RoundedBoxGeometry(1.5, 0.98, 0.08, 4, 0.03), new THREE.MeshStandardMaterial({ map: woodTex("#7a4e2a", "#3a2412"), roughness: 0.7 })); frame.castShadow = true; board.add(frame);
+  const face = new THREE.Mesh(new THREE.PlaneGeometry(1.34, 0.84), new THREE.MeshStandardMaterial({ map: chalk, roughness: 0.95 })); face.position.z = 0.045; board.add(face);
+  [-0.55, 0.55].forEach(x => { const s = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 2.4, 6), new THREE.MeshStandardMaterial({ color: "#c9b08a" })); s.position.set(x * 0.7, 1.6, -0.02); s.rotation.z = x * 0.18; board.add(s); });
+  board.scale.setScalar(0.8); board.position.set(-0.8, 1.12, 0.1); board.rotation.set(0, 0.15, 0.07);
+
+  // lights: a warm glow behind the crate, a warm key from the front left like a market bulb, a soft cool fill
+  const halo = new THREE.Mesh(new THREE.CircleGeometry(3.2, 64), new THREE.MeshBasicMaterial({ map: canvasTex(256, 256, g => { const gr = g.createRadialGradient(128, 128, 0, 128, 128, 128); gr.addColorStop(0, "rgba(255,190,90,.85)"); gr.addColorStop(0.45, "rgba(255,150,50,.35)"); gr.addColorStop(1, "rgba(255,140,40,0)"); g.fillStyle = gr; g.fillRect(0, 0, 256, 256); }), transparent: true, depthWrite: false }));
+  halo.position.set(0, 0.6, -2.18); scene.add(halo);
+  const glow = new THREE.PointLight("#ffb050", 18, 6, 1.6); glow.position.set(0, 0.8, -1.6); scene.add(glow);
+  const key = new THREE.SpotLight("#fff0d8", 70, 16, 0.55, 0.6, 1.2); key.position.set(-2.4, 4.2, 4.0); key.target = crate; key.castShadow = true; key.shadow.mapSize.set(2048, 2048); scene.add(key);
+  const bulb = new THREE.PointLight("#ffd28a", 6, 5, 1.5); bulb.position.set(-0.6, 2.4, 1.2); scene.add(bulb);
+  scene.add(new THREE.HemisphereLight("#9fb8d0", "#1a1410", 0.45));
+  r.render(scene, cam); window.READY = true;
+</script>
+</body></html>
