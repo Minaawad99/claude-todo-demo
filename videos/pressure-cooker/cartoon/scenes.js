@@ -381,10 +381,11 @@
     return s + tag("استنى الضغط ينزل!", 320, 330, u, 2.2, -2, 18, "#f2a0a0");
   });
   // 21 — 1679: a French scientist, Denis Papin, invents the first pressure cooker
-  shot(21, function (u, d) { var k = clamp(u / d); return [lerp(260, 360, k), 180, lerp(1.1, 1.0, k)]; }, function (u, d, t) {
+  shot(21, function (u, d) { var k = clamp(u / d); return [lerp(220, 400, ease(k)), lerp(190, 160, k), lerp(1.2, 0.95, k)]; }, function (u, d, t) {
     var s = '<rect x="-400" y="-300" width="1440" height="960" fill="url(#gOld)"/>';
     for (var i = 0; i < 4; i++) s += '<rect x="' + (-100 + i * 220) + '" y="-60" width="80" height="200" fill="#8a6a4a" opacity=".25"/>';
-    s += '<rect x="-400" y="290" width="1440" height="300" fill="#6a4a2a"/>' + papin(200, 170, 1.3, t, "curious") + digester(440, 290, 0.9, t, {});
+    s += '<rect x="-400" y="290" width="1440" height="300" fill="#6a4a2a"/>' + papin(200, 170, 1.3, t, "curious") + digester(440, 290, 0.9, t, {}) + steam(t, 440, 140, 8, 50, 160, 0.8);
+    for (var p = 0; p < 30; p++) { var q = (t * 0.15 + hash(p)) % 1; s += '<circle cx="' + f(-100 + hash(p + 2) * 840 + Math.sin(t + p) * 20) + '" cy="' + f(-80 + q * 380) + '" r="1.6" fill="#fff8e0" opacity="' + f(0.6 * Math.sin(Math.PI * q)) + '"/>'; }
     return s + tag("دوني بابان", 200, 50, u, 0.6, -3, 20) + tag("1679", 450, 50, u, 1.6, 3, 24, "#bfe0ff");
   });
   // 22 — his first pots exploded, so he invented the first safety valve
