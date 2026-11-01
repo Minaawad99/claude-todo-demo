@@ -103,8 +103,10 @@
   },
   {
    "t": 0.23,
-   "fx": "hum",
-   "gain": 0.12,
+   "file": "sfx/px-hospital.mp3",
+   "gain": 0.3,
+   "from": 2,
+   "duck": 1.2,
    "dur": 3.85
   },
   {
@@ -120,14 +122,18 @@
   },
   {
    "t": 4.08,
-   "fx": "motor",
-   "gain": 0.36000000000000004,
+   "file": "sfx/px-mri.mp3",
+   "gain": 0.54,
+   "from": 2,
+   "duck": 1.2,
    "dur": 4.54
   },
   {
    "t": 4.68,
-   "fx": "thud",
-   "gain": 0.35,
+   "file": "sfx/px-hammer.mp3",
+   "gain": 0.3,
+   "from": 0,
+   "duck": 1.2,
    "dur": 1.6
   },
   {
@@ -259,14 +265,18 @@
   },
   {
    "t": 22.61,
-   "fx": "whoosh",
-   "gain": 0.5,
+   "file": "sfx/px-magnet.mp3",
+   "gain": 0.48,
+   "from": 1.4,
+   "duck": 1.2,
    "dur": 1.4
   },
   {
    "t": 25.16,
-   "fx": "clank",
-   "gain": 0.6,
+   "file": "sfx/px-metal.mp3",
+   "gain": 0.54,
+   "from": 0,
+   "duck": 1.2,
    "dur": 1.2
   },
   {
@@ -276,14 +286,18 @@
   },
   {
    "t": 26.16,
-   "fx": "whoosh",
-   "gain": 0.4,
+   "file": "sfx/px-magnet.mp3",
+   "gain": 0.42,
+   "from": 1.4,
+   "duck": 1.2,
    "dur": 1
   },
   {
    "t": 27.85,
-   "fx": "clank",
-   "gain": 0.6,
+   "file": "sfx/px-metal.mp3",
+   "gain": 0.54,
+   "from": 0,
+   "duck": 1.2,
    "dur": 1.2
   },
   {
@@ -303,8 +317,10 @@
   },
   {
    "t": 31.38,
-   "fx": "beep",
-   "gain": 0.4,
+   "file": "sfx/px-error.mp3",
+   "gain": 0.48,
+   "from": 0,
+   "duck": 1.2,
    "dur": 1
   },
   {
@@ -391,8 +407,10 @@
   },
   {
    "t": 43.89,
-   "fx": "ping",
-   "gain": 0.35,
+   "file": "sfx/px-scan.mp3",
+   "gain": 0.36,
+   "from": 0,
+   "duck": 1.2,
    "dur": 1.82
   },
   {
@@ -402,8 +420,10 @@
   },
   {
    "t": 46.16,
-   "fx": "notify",
-   "gain": 0.3,
+   "file": "sfx/px-scan.mp3",
+   "gain": 0.36,
+   "from": 0,
+   "duck": 1.2,
    "dur": 4.45
   },
   {
@@ -453,8 +473,10 @@
   },
   {
    "t": 50.81,
-   "fx": "motor",
-   "gain": 0.16000000000000003,
+   "file": "sfx/px-mri.mp3",
+   "gain": 0.3,
+   "from": 5,
+   "duck": 1.2,
    "dur": 3.65
   },
   {
@@ -469,8 +491,10 @@
   },
   {
    "t": 54.36,
-   "fx": "motor",
-   "gain": 0.36000000000000004,
+   "file": "sfx/px-mri.mp3",
+   "gain": 0.54,
+   "from": 60,
+   "duck": 1.2,
    "dur": 4.19
   },
   {
@@ -485,8 +509,10 @@
   },
   {
    "t": 58.45,
-   "fx": "motor",
-   "gain": 0.44000000000000006,
+   "file": "sfx/px-mri.mp3",
+   "gain": 0.66,
+   "from": 8,
+   "duck": 1.2,
    "dur": 5.13
   },
   {
@@ -496,14 +522,18 @@
   },
   {
    "t": 63.48,
-   "fx": "motor",
-   "gain": 0.36000000000000004,
+   "file": "sfx/px-mri.mp3",
+   "gain": 0.54,
+   "from": 61,
+   "duck": 1.2,
    "dur": 3.66
   },
   {
    "t": 63.78,
-   "fx": "boom",
-   "gain": 0.3,
+   "file": "sfx/px-rock.mp3",
+   "gain": 0.36,
+   "from": 5,
+   "duck": 1.2,
    "dur": 1.6
   },
   {
@@ -518,8 +548,10 @@
   },
   {
    "t": 67.04,
-   "fx": "motor",
-   "gain": 0.27999999999999997,
+   "file": "sfx/px-mri.mp3",
+   "gain": 0.48,
+   "from": 3,
+   "duck": 1.2,
    "dur": 4.27
   },
   {
@@ -580,8 +612,10 @@
   },
   {
    "t": 75,
-   "fx": "hum",
-   "gain": 0.1,
+   "file": "sfx/px-hospital.mp3",
+   "gain": 0.24,
+   "from": 20,
+   "duck": 1.2,
    "dur": 3.87
   },
   {
