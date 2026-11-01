@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — bleach mix</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  /* the reel cover, full bleed at 1080×1920 (540×960 at 2x), drawn in a realistic look (the user asked for realistic, not the
+     cartoon parts): a dark tiled bathroom, a real-looking bleach jug and toilet cleaner over a bucket, a yellow-green chlorine
+     cloud rising out of it, one warm glow behind. Text stays inside the 3:4 crop (y 120–840) and away from TikTok's buttons. */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #000; }
+  #art { position: absolute; inset: 0; width: 540px; height: 960px; }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 10px rgba(0,0,0,.7); }
+</style></head><body>
+<div class="cover">
+<svg id="art" viewBox="0 0 540 960">
+  <defs>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .45  0 0 0 0 .4  0 0 0 .09 0"/></filter>
+    <filter id="blur6"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="blur2"><feGaussianBlur stdDeviation="2"/></filter>
+    <filter id="smoke" x="-30%" y="-30%" width="160%" height="160%">
+      <feTurbulence type="fractalNoise" baseFrequency=".012 .018" numOctaves="4" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="70" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="5"/>
+    </filter>
+    <filter id="wisps" x="-30%" y="-30%" width="160%" height="160%">
+      <feTurbulence type="fractalNoise" baseFrequency=".03 .05" numOctaves="3" seed="12" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="40" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="6"/>
+    </filter>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d1418"/><stop offset=".5" stop-color="#1f2d33"/><stop offset="1" stop-color="#0b1013"/></linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a3236"/><stop offset="1" stop-color="#050708"/></linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffd76a" stop-opacity=".75"/><stop offset=".45" stop-color="#e8b23a" stop-opacity=".3"/><stop offset="1" stop-color="#e8b23a" stop-opacity="0"/></radialGradient>
+    <radialGradient id="gas" cx=".5" cy=".55" r=".5"><stop offset="0" stop-color="#f1f59a" stop-opacity=".95"/><stop offset=".5" stop-color="#c8d94a" stop-opacity=".75"/><stop offset="1" stop-color="#7f9a1e" stop-opacity="0"/></radialGradient>
+    <linearGradient id="jug" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9aa3a8"/><stop offset=".22" stop-color="#f4f6f7"/><stop offset=".4" stop-color="#ffffff"/><stop offset=".75" stop-color="#cfd5d8"/><stop offset="1" stop-color="#7c858a"/></linearGradient>
+    <linearGradient id="cap" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#123a78"/><stop offset=".4" stop-color="#3a7ad0"/><stop offset="1" stop-color="#0e2d5c"/></linearGradient>
+    <linearGradient id="red" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6a120c"/><stop offset=".3" stop-color="#d8301f"/><stop offset=".45" stop-color="#ff6a4a"/><stop offset=".7" stop-color="#c0261a"/><stop offset="1" stop-color="#5a0e08"/></linearGradient>
+    <linearGradient id="bucket" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0f3c52"/><stop offset=".3" stop-color="#2f8fb8"/><stop offset=".5" stop-color="#6cc4e6"/><stop offset=".8" stop-color="#226c8e"/><stop offset="1" stop-color="#0a2c3c"/></linearGradient>
+    <radialGradient id="liquid" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#f4f8b0"/><stop offset=".7" stop-color="#c9d850"/><stop offset="1" stop-color="#6f8a18"/></radialGradient>
+    <linearGradient id="stream" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9a7a" stop-opacity=".95"/><stop offset="1" stop-color="#ff7a5a" stop-opacity=".6"/></linearGradient>
+    <linearGradient id="fadeT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".95"/><stop offset=".75" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>
+    <linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset=".3" stop-color="#000" stop-opacity=".7"/><stop offset="1" stop-color="#000" stop-opacity=".95"/></linearGradient>
+    <pattern id="tiles" width="54" height="54" patternUnits="userSpaceOnUse"><rect width="54" height="54" fill="none" stroke="#06090b" stroke-width="2.4"/><path d="M4 4 H40" stroke="#ffffff" stroke-opacity=".06" stroke-width="2"/></pattern>
+    <pattern id="ftiles" width="90" height="40" patternUnits="userSpaceOnUse" patternTransform="skewX(-35)"><rect width="90" height="40" fill="none" stroke="#000" stroke-opacity=".6" stroke-width="2"/></pattern>
+    <path id="swash" d="M6 14 C40 4 120 2 196 8 C214 10 222 20 214 30 C206 44 140 46 70 44 C30 44 4 40 2 30 C0 24 2 18 6 14 Z"/>
+  </defs>
+
+  <!-- the room -->
+  <rect width="540" height="960" fill="url(#wall)"/>
+  <rect width="540" height="640" fill="url(#tiles)"/>
+  <rect y="640" width="540" height="320" fill="url(#floor)"/>
+  <rect y="640" width="540" height="320" fill="url(#ftiles)"/>
+  <path d="M0 640 H540" stroke="#3a464c" stroke-width="3"/>
+  <!-- the warm glow behind the cloud -->
+  <ellipse cx="270" cy="420" rx="300" ry="260" fill="url(#glow)"/>
+
+  <!-- the chlorine cloud rising out of the bucket and rolling down onto the floor -->
+  <g filter="url(#smoke)" opacity=".92">
+    <ellipse cx="270" cy="430" rx="190" ry="150" fill="url(#gas)"/>
+    <ellipse cx="190" cy="360" rx="120" ry="100" fill="url(#gas)"/>
+    <ellipse cx="350" cy="340" rx="110" ry="95" fill="url(#gas)"/>
+    <ellipse cx="270" cy="300" rx="130" ry="90" fill="url(#gas)" opacity=".8"/>
+  </g>
+  <g filter="url(#smoke)" opacity=".7">
+    <ellipse cx="120" cy="690" rx="170" ry="50" fill="url(#gas)"/>
+    <ellipse cx="420" cy="700" rx="170" ry="48" fill="url(#gas)"/>
+  </g>
+  <g filter="url(#wisps)" opacity=".35" fill="none" stroke="#e9f08a" stroke-width="14" stroke-linecap="round">
+    <path d="M250 560 C230 500 290 470 260 410 C240 370 280 330 270 280"/>
+    <path d="M300 560 C330 510 280 470 320 420 C350 380 320 340 340 300"/>
+    <path d="M220 570 C180 530 200 490 170 450"/>
+  </g>
+
+  <!-- the bucket with the reacting mix -->
+  <ellipse cx="270" cy="660" rx="120" ry="18" fill="#000" opacity=".55" filter="url(#blur6)"/>
+  <path d="M168 560 L186 660 Q270 676 354 660 L372 560 Z" fill="url(#bucket)"/>
+  <path d="M186 660 Q270 676 354 660" stroke="#072230" stroke-width="2" fill="none"/>
+  <ellipse cx="270" cy="560" rx="102" ry="20" fill="url(#liquid)"/>
+  <ellipse cx="270" cy="560" rx="102" ry="20" fill="none" stroke="#0e3346" stroke-width="5"/>
+  <g fill="#f8fbd0" opacity=".85"><circle cx="232" cy="556" r="5"/><circle cx="250" cy="563" r="3"/><circle cx="292" cy="554" r="6"/><circle cx="310" cy="562" r="3.5"/><circle cx="275" cy="566" r="2.5"/><circle cx="214" cy="562" r="2.5"/></g>
+  <path d="M176 566 Q174 600 186 640" stroke="#ffffff" stroke-opacity=".3" stroke-width="5" fill="none"/>
+
+  <!-- the bleach jug, standing at the left -->
+  <ellipse cx="96" cy="668" rx="62" ry="12" fill="#000" opacity=".6" filter="url(#blur6)"/>
+  <g transform="translate(96 664)">
+    <path d="M-56 0 V-150 Q-56 -186 -24 -192 L-18 -214 H18 L22 -192 Q56 -184 56 -150 V0 Q0 8 -56 0 Z" fill="url(#jug)"/>
+    <path d="M22 -170 Q66 -170 64 -122 Q62 -88 50 -86" stroke="#c9cfd2" stroke-width="12" fill="none"/>
+    <path d="M22 -170 Q66 -170 64 -122 Q62 -88 50 -86" stroke="#ffffff" stroke-opacity=".6" stroke-width="3" fill="none"/>
+    <rect x="-20" y="-236" width="40" height="24" rx="4" fill="url(#cap)"/>
+    <path d="M-20 -228 H20 M-20 -220 H20" stroke="#0a1f40" stroke-opacity=".6"/>
+    <rect x="-46" y="-128" width="92" height="84" rx="8" fill="url(#cap)"/>
+    <text x="0" y="-80" text-anchor="middle" style="font:900 26px 'Noto Sans Arabic';fill:#fff">كلور</text>
+    <path d="M-30 -66 H30" stroke="#fff" stroke-opacity=".5" stroke-width="2"/>
+    <path d="M-40 -150 Q-44 -60 -40 -10" stroke="#ffffff" stroke-opacity=".85" stroke-width="6" fill="none" filter="url(#blur2)"/>
+  </g>
+
+  <!-- the toilet cleaner, tipped and pouring into the bucket -->
+  <path d="M274 332 Q262 360 270 420 Q280 500 284 556" stroke="url(#stream)" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <path d="M274 332 Q262 360 270 420 Q280 500 284 556" stroke="#fff" stroke-opacity=".5" stroke-width="2" fill="none"/>
+  <g transform="translate(452 470) rotate(-58)">
+    <path d="M-44 0 V-140 Q-44 -158 -26 -164 L-8 -170 V-196 L26 -226 L36 -216 L12 -194 V-168 Q44 -160 44 -140 V0 Q0 8 -44 0 Z" fill="url(#red)"/>
+    <rect x="-34" y="-122" width="68" height="74" rx="7" fill="#f4f1ec"/>
+    <text x="0" y="-78" text-anchor="middle" style="font:900 19px 'Noto Sans Arabic';fill:#c0261a">مزيل</text>
+    <path d="M-30 -140 Q-34 -60 -30 -8" stroke="#ffd0c4" stroke-opacity=".7" stroke-width="5" fill="none" filter="url(#blur2)"/>
+  </g>
+
+  <!-- brush tags with the key facts -->
+  <g transform="translate(400 300) rotate(4)"><use href="#swash" fill="#f2a0a0" transform="translate(-74 -24) scale(.68 .9)"/><text x="0" y="8" text-anchor="middle" style="font:900 24px 'Noto Sans Arabic';fill:#2b2016">غاز سام!</text></g>
+  <g transform="translate(140 330) rotate(-5)"><use href="#swash" fill="#d8e46a" transform="translate(-70 -22) scale(.64 .85)"/><text x="0" y="8" text-anchor="middle" style="font:900 21px 'Noto Sans Arabic';fill:#2b2016">أصفر مخضر</text></g>
+
+  <rect width="540" height="300" fill="url(#fadeT)"/>
+  <rect y="680" width="540" height="280" fill="url(#fadeB)"/>
+  <rect width="540" height="960" filter="url(#grain)"/>
+</svg>
+  <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
+  <p class="t" style="top:154px;font:900 42px/1.2 'Noto Sans Arabic';color:#fff">أوعى تخلط الكلور!</p>
+  <p class="t" style="top:214px;font:800 24px/1.3 'Noto Sans Arabic';color:#f2c230">مع أي منظف تاني</p>
+  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff">غاز <span style="color:#f2c230">سام</span> في ثواني<br><span style="font-size:24px;color:#d9d4c8">نفس غاز الحرب العالمية الأولى!</span></p>
+</div>
+</body></html>
