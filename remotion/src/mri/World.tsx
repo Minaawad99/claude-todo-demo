@@ -103,21 +103,41 @@ const Field: React.FC<{ t: number; k: number }> = ({ t, k }) => {
   );
 };
 
-// the patient: a simple figure lying on the table; head is a ball with the channel's eyes
+// the patient: a person lying on their back in a hospital gown under a white blanket, head on a pillow, skin-toned face
+// with dark hair; the eyes keep the channel's simple style so moods still read
+const SKIN = "#d9a27a", HAIR = "#2b1d14", GOWN = "#8fc9b8";
 const Patient: React.FC<{ t: number; mood: WorldState["mood"]; plugs: number }> = ({ t, mood, plugs }) => {
   const blink = (t * 0.55 + 0.3) % 1 < 0.05 && mood !== "shock";
-  const eye = (x: number) => mood === "happy" ? <mesh position={[x, 0.07, 0.115]} rotation={[0, 0, Math.PI]}><torusGeometry args={[0.022, 0.007, 6, 12, Math.PI]} /><meshBasicMaterial color="#1c1c1c" /></mesh>
-    : mood === "shock" ? <mesh position={[x, 0.07, 0.12]}><sphereGeometry args={[0.02, 10, 8]} /><meshBasicMaterial color="#1c1c1c" /></mesh>
-    : <mesh position={[x, 0.07, 0.12]} scale={[1, blink ? 0.15 : 1, 1]}><capsuleGeometry args={[0.009, 0.03, 4, 8]} /><meshBasicMaterial color="#1c1c1c" /></mesh>;
+  const breathe = 1 + 0.03 * Math.sin(t * 2.2);
+  const eye = (x: number) => mood === "happy" ? <mesh position={[x, 0.035, 0.098]} rotation={[0, 0, Math.PI]}><torusGeometry args={[0.016, 0.005, 6, 12, Math.PI]} /><meshBasicMaterial color="#1c1c1c" /></mesh>
+    : mood === "shock" ? <group position={[x, 0.035, 0.094]}><mesh><sphereGeometry args={[0.019, 12, 10]} /><meshStandardMaterial color="#ffffff" /></mesh><mesh position={[0, 0, 0.012]}><sphereGeometry args={[0.009, 10, 8]} /><meshBasicMaterial color="#1c1c1c" /></mesh></group>
+    : <mesh position={[x, 0.035, 0.1]} scale={[1, blink ? 0.15 : 1, 1]}><sphereGeometry args={[0.011, 10, 8]} /><meshBasicMaterial color="#1c1c1c" /></mesh>;
   return (
     <group>
-      <mesh position={[0, 0.12, 0]} rotation={[Math.PI / 2, 0, 0]}><capsuleGeometry args={[0.17, 1.1, 8, 16]} /><meshStandardMaterial color="#7fb3d8" roughness={0.8} /></mesh>
-      <group position={[0, 0.2, 0.8]} rotation={[-0.55, 0, 0]}>
-        <mesh><sphereGeometry args={[0.13, 24, 18]} /><meshStandardMaterial color="#fbfbf7" roughness={0.6} /></mesh>
-        {eye(-0.045)}{eye(0.045)}
-        {mood === "shock" && <mesh position={[0, -0.02, 0.122]} scale={[1, 1.3, 1]}><sphereGeometry args={[0.018, 10, 8]} /><meshBasicMaterial color="#1c1c1c" /></mesh>}
-        {mood === "worry" && <mesh position={[0, -0.03, 0.12]} rotation={[0, 0, 0]}><torusGeometry args={[0.025, 0.006, 6, 12, Math.PI]} /><meshBasicMaterial color="#1c1c1c" /></mesh>}
-        {plugs > 0 && [-1, 1].map((s) => <mesh key={s} position={[s * 0.13, 0, 0]} rotation={[0, 0, Math.PI / 2]} scale={plugs}><cylinderGeometry args={[0.025, 0.03, 0.06, 12]} /><meshStandardMaterial color="#ffb020" roughness={0.9} /></mesh>)}
+      {/* pillow */}
+      <mesh position={[0, 0.03, 0.82]} scale={[1, 0.35, 0.7]}><sphereGeometry args={[0.2, 20, 12]} /><meshStandardMaterial color="#ffffff" roughness={0.9} /></mesh>
+      {/* torso in the gown, breathing */}
+      <mesh position={[0, 0.1, 0.38]} rotation={[Math.PI / 2, 0, 0]} scale={[1.15, 1, 0.75 * breathe]}><capsuleGeometry args={[0.15, 0.42, 8, 16]} /><meshStandardMaterial color={GOWN} roughness={0.85} /></mesh>
+      {[...Array(5)].map((_, i) => <mesh key={i} position={[(i - 2) * 0.06, 0.205, 0.38 + ((i % 2) - 0.5) * 0.15]}><sphereGeometry args={[0.012, 8, 6]} /><meshStandardMaterial color="#5f9f8f" /></mesh>)}
+      {/* arms along the sides, hands */}
+      {[-1, 1].map((s) => (<group key={s}>
+        <mesh position={[s * 0.22, 0.07, 0.35]} rotation={[Math.PI / 2, 0, 0]}><capsuleGeometry args={[0.05, 0.42, 6, 10]} /><meshStandardMaterial color={GOWN} roughness={0.85} /></mesh>
+        <mesh position={[s * 0.22, 0.06, 0.06]} scale={[0.8, 0.6, 1.2]}><sphereGeometry args={[0.05, 12, 10]} /><meshStandardMaterial color={SKIN} roughness={0.7} /></mesh></group>))}
+      {/* the white blanket over the legs, the feet making two bumps */}
+      <mesh position={[0, 0.09, -0.5]} scale={[1, 0.45, 1]}><boxGeometry args={[0.46, 0.2, 0.95]} /><meshStandardMaterial color="#f2efe8" roughness={0.95} /></mesh>
+      <mesh position={[0, 0.135, -0.5]} rotation={[Math.PI / 2, 0, 0]} scale={[1, 1, 0.35]}><capsuleGeometry args={[0.2, 0.6, 6, 12]} /><meshStandardMaterial color="#f2efe8" roughness={0.95} /></mesh>
+      {[-1, 1].map((s) => <mesh key={s} position={[s * 0.08, 0.2, -0.93]} scale={[0.8, 1.2, 0.7]}><sphereGeometry args={[0.06, 12, 10]} /><meshStandardMaterial color="#f2efe8" roughness={0.95} /></mesh>)}
+      {/* neck and head, face toward the camera at the bore's opening */}
+      <mesh position={[0, 0.11, 0.7]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.05, 0.055, 0.1, 12]} /><meshStandardMaterial color={SKIN} roughness={0.7} /></mesh>
+      <group position={[0, 0.14, 0.82]} rotation={[-1.2, 0, 0]}>
+        <mesh scale={[0.92, 1.05, 0.95]}><sphereGeometry args={[0.1, 28, 20]} /><meshStandardMaterial color={SKIN} roughness={0.65} /></mesh>
+        <mesh position={[0, 0.02, -0.02]} scale={[1.0, 1.08, 0.95]}><sphereGeometry args={[0.1, 28, 20, 0, Math.PI * 2, 0, Math.PI * 0.55]} /><meshStandardMaterial color={HAIR} roughness={0.9} /></mesh>
+        {[-1, 1].map((s) => <mesh key={s} position={[s * 0.093, 0, 0]} scale={[0.5, 1, 0.8]}><sphereGeometry args={[0.025, 10, 8]} /><meshStandardMaterial color={SKIN} roughness={0.7} /></mesh>)}
+        <mesh position={[0, 0.0, 0.1]} scale={[0.7, 1, 0.9]}><sphereGeometry args={[0.016, 10, 8]} /><meshStandardMaterial color="#c98a64" roughness={0.7} /></mesh>
+        {[-0.034, 0.034].map((x) => <React.Fragment key={x}>{eye(x)}<mesh position={[x, 0.065, 0.088]} rotation={[0, 0, mood === "worry" ? (x > 0 ? 0.35 : -0.35) : 0]}><boxGeometry args={[0.028, 0.006, 0.006]} /><meshBasicMaterial color={HAIR} /></mesh></React.Fragment>)}
+        {mood === "shock" ? <mesh position={[0, -0.045, 0.088]} scale={[1, 1.3, 0.6]}><sphereGeometry args={[0.014, 10, 8]} /><meshBasicMaterial color="#5a2a1e" /></mesh>
+          : <mesh position={[0, -0.042, 0.09]} rotation={[0, 0, mood === "worry" ? 0 : Math.PI]}><torusGeometry args={[0.018, 0.004, 6, 12, Math.PI]} /><meshBasicMaterial color="#7a3a2a" /></mesh>}
+        {plugs > 0 && [-1, 1].map((s) => <mesh key={s} position={[s * 0.1, 0, 0]} rotation={[0, 0, Math.PI / 2]} scale={plugs}><cylinderGeometry args={[0.016, 0.02, 0.04, 12]} /><meshStandardMaterial color="#ffb020" roughness={0.9} /></mesh>)}
       </group>
     </group>
   );
@@ -127,34 +147,49 @@ const Table: React.FC<{ t: number; slide: number; mood: WorldState["mood"]; plug
   const z = lerp(2.0, 0.15, ease(slide));
   return (
     <group>
-      {/* the base on the floor in front of the scanner */}
-      <mesh position={[0, 0.42, 1.9]}><boxGeometry args={[0.6, 0.84, 1.6]} /><meshStandardMaterial color="#e9edf0" roughness={0.4} /></mesh>
+      {/* the pedestal on the floor in front of the scanner */}
+      <mesh position={[0, 0.42, 1.95]}><boxGeometry args={[0.62, 0.84, 1.55]} /><meshStandardMaterial color="#f3f5f7" roughness={0.35} /></mesh>
+      <mesh position={[0, 0.06, 1.95]}><boxGeometry args={[0.7, 0.12, 1.65]} /><meshStandardMaterial color="#9aa2ac" roughness={0.5} /></mesh>
       <group position={[shake[0], CEN_Y - BORE_R + 0.06, z]}>
-        <mesh><boxGeometry args={[0.56, 0.06, 2.0]} /><meshStandardMaterial color="#dfe4e8" roughness={0.5} /></mesh>
-        <mesh position={[0, 0.05, 0]}><boxGeometry args={[0.5, 0.05, 1.95]} /><meshStandardMaterial color="#2f6f9f" roughness={0.9} /></mesh>
-        <group position={[0, 0.07, 0.1]}><Patient t={t} mood={mood} plugs={plugs} /></group>
+        <mesh><boxGeometry args={[0.58, 0.05, 2.05]} /><meshStandardMaterial color="#e4e8eb" roughness={0.45} /></mesh>
+        <mesh position={[0, 0.045, 0]}><boxGeometry args={[0.52, 0.05, 2.0]} /><meshStandardMaterial color="#3a3f46" roughness={0.9} /></mesh>
+        <group position={[0, 0.07, 0.05]}><Patient t={t} mood={mood} plugs={plugs} /></group>
       </group>
     </group>
   );
 };
 
-const Room: React.FC<{ t: number; night: number }> = ({ t, night }) => (
-  <group>
-    <mesh rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[30, 30]} /><meshStandardMaterial color={new THREE.Color("#cfd6dc").lerp(new THREE.Color("#2a3038"), night)} roughness={0.35} metalness={0.05} /></mesh>
-    <mesh position={[0, 3, -3]}><planeGeometry args={[30, 6]} /><meshStandardMaterial color={new THREE.Color("#bcd7e8").lerp(new THREE.Color("#1c2a38"), night)} roughness={0.9} /></mesh>
-    <mesh position={[-5, 3, 0]} rotation={[0, Math.PI / 2, 0]}><planeGeometry args={[30, 6]} /><meshStandardMaterial color={new THREE.Color("#c9dfec").lerp(new THREE.Color("#1c2a38"), night)} roughness={0.9} /></mesh>
-    {/* the control-room window on the left wall, a technician behind it */}
-    <mesh position={[-4.98, 1.7, 0.6]} rotation={[0, Math.PI / 2, 0]}><planeGeometry args={[2.2, 1.1]} /><meshStandardMaterial color="#8fc2da" emissive="#5fa8d0" emissiveIntensity={0.4 + night * 0.4} roughness={0.1} /></mesh>
-    <mesh position={[-4.96, 1.55, 0.3]}><sphereGeometry args={[0.16, 16, 12]} /><meshStandardMaterial color="#fbfbf7" /></mesh>
-    {/* ceiling light panels */}
-    {[-1.5, 1.5].map((x) => <mesh key={x} position={[x, 3.4, 0.5]} rotation={[Math.PI / 2, 0, 0]}><planeGeometry args={[1.2, 1.2]} /><meshBasicMaterial color={night > 0.5 ? "#2a3240" : "#ffffff"} toneMapped={false} /></mesh>)}
-    {/* a yellow-black safety line on the floor around the scanner */}
-    {[...Array(20)].map((_, i) => <mesh key={i} position={[-2.4 + i * 0.25, 0.005, 3.0]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[0.12, 0.08]} /><meshBasicMaterial color={i % 2 ? "#1c1c1c" : "#f2c230"} /></mesh>)}
-    <mesh position={[3.2, 2.2, -2.98]}><circleGeometry args={[0.3, 32]} /><meshBasicMaterial color="#d8352a" /></mesh>
-    <mesh position={[3.2, 2.2, -2.97]} rotation={[0, 0, Math.PI / 4]}><planeGeometry args={[0.5, 0.07]} /><meshBasicMaterial color="#ffffff" /></mesh>
-    {night > 0.3 && <mesh position={[0, CEN_Y, 1.05]}><circleGeometry args={[BORE_R, 40]} /><meshBasicMaterial color="#5fd0ff" transparent opacity={0.25 + 0.1 * Math.sin(t * 2)} toneMapped={false} /></mesh>}
-  </group>
-);
+// the room: deep teal walls with a wooden slat panel behind the scanner, a darker tiled floor, so the white scanner stands out
+const Room: React.FC<{ t: number; night: number }> = ({ t, night }) => {
+  const dk = (c: string, n = night) => new THREE.Color(c).lerp(new THREE.Color("#0c1218"), n * 0.8);
+  return (
+    <group>
+      <mesh rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[30, 30]} /><meshStandardMaterial color={dk("#6b7178")} roughness={0.4} metalness={0.05} /></mesh>
+      {[...Array(13)].map((_, i) => <mesh key={"fx" + i} position={[-6 + i, 0.003, 2]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[0.015, 12]} /><meshBasicMaterial color={dk("#4a5056")} /></mesh>)}
+      {[...Array(12)].map((_, i) => <mesh key={"fz" + i} position={[0, 0.003, -3 + i]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[14, 0.015]} /><meshBasicMaterial color={dk("#4a5056")} /></mesh>)}
+      <mesh position={[0, 3, -3]}><planeGeometry args={[30, 6]} /><meshStandardMaterial color={dk("#24505e")} roughness={0.9} /></mesh>
+      {/* wooden slats behind the scanner */}
+      {[...Array(22)].map((_, i) => <mesh key={"w" + i} position={[-2.6 + i * 0.25, 1.8, -2.96]}><boxGeometry args={[0.17, 3.6, 0.06]} /><meshStandardMaterial color={dk(i % 3 ? "#9a6a42" : "#8a5c38")} roughness={0.7} /></mesh>)}
+      <mesh position={[-5, 3, 0]} rotation={[0, Math.PI / 2, 0]}><planeGeometry args={[30, 6]} /><meshStandardMaterial color={dk("#2c5f6e")} roughness={0.9} /></mesh>
+      <mesh position={[0, 0.06, -2.97]}><boxGeometry args={[30, 0.12, 0.04]} /><meshStandardMaterial color={dk("#3a3f46")} /></mesh>
+      {/* the control-room window on the left wall, a technician behind it, and a monitor glow */}
+      <mesh position={[-4.98, 1.7, 0.6]} rotation={[0, Math.PI / 2, 0]}><planeGeometry args={[2.3, 1.2]} /><meshStandardMaterial color="#20303c" roughness={0.9} /></mesh>
+      <mesh position={[-4.97, 1.7, 0.6]} rotation={[0, Math.PI / 2, 0]}><planeGeometry args={[2.2, 1.1]} /><meshStandardMaterial color="#8fc2da" emissive="#5fa8d0" emissiveIntensity={0.5 + night * 0.5} roughness={0.1} transparent opacity={0.85} /></mesh>
+      <group position={[-5.2, 1.45, 0.3]}><mesh><sphereGeometry args={[0.14, 16, 12]} /><meshStandardMaterial color={SKIN} /></mesh><mesh position={[0, -0.32, 0]}><capsuleGeometry args={[0.16, 0.3, 6, 10]} /><meshStandardMaterial color="#3f7fb8" /></mesh></group>
+      {/* ceiling light panels */}
+      {[-1.5, 1.5].map((x) => <mesh key={x} position={[x, 3.4, 0.5]} rotation={[Math.PI / 2, 0, 0]}><planeGeometry args={[1.2, 1.2]} /><meshBasicMaterial color={night > 0.5 ? "#2a3240" : "#ffffff"} toneMapped={false} /></mesh>)}
+      {/* a yellow-black safety line on the floor around the scanner */}
+      {[...Array(20)].map((_, i) => <mesh key={i} position={[-2.4 + i * 0.25, 0.006, 3.0]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[0.12, 0.08]} /><meshBasicMaterial color={i % 2 ? "#1c1c1c" : "#f2c230"} /></mesh>)}
+      {/* the magnet warning sign on the wall */}
+      <mesh position={[3.2, 2.2, -2.98]}><circleGeometry args={[0.32, 32]} /><meshBasicMaterial color="#ffffff" /></mesh>
+      <mesh position={[3.2, 2.2, -2.975]}><ringGeometry args={[0.24, 0.3, 32]} /><meshBasicMaterial color="#d8352a" /></mesh>
+      <mesh position={[3.2, 2.2, -2.97]} rotation={[0, 0, Math.PI / 4]}><planeGeometry args={[0.52, 0.06]} /><meshBasicMaterial color="#d8352a" /></mesh>
+      {/* soft contact shadow under the scanner */}
+      <mesh position={[0, 0.004, 0.2]} rotation={[-Math.PI / 2, 0, 0]} scale={[1.5, 1.3, 1]}><circleGeometry args={[1.2, 40]} /><meshBasicMaterial color="#000000" transparent opacity={0.28} /></mesh>
+      {night > 0.3 && <mesh position={[0, CEN_Y, 1.05]}><circleGeometry args={[BORE_R, 40]} /><meshBasicMaterial color="#5fd0ff" transparent opacity={0.25 + 0.1 * Math.sin(t * 2)} toneMapped={false} /></mesh>}
+    </group>
+  );
+};
 
 // things pulled in: an office chair, an oxygen tank, a bank card; each flies from its start to the bore's front face
 const flyPos = (k: number, from: V3, to: V3): V3 => { const e = k * k * k; return [lerp(from[0], to[0], e), lerp(from[1], to[1], e) + Math.sin(k * Math.PI) * 0.3, lerp(from[2], to[2], e)]; };
@@ -177,9 +212,12 @@ const Tank: React.FC<{ k: number; t: number }> = ({ k, t }) => {
   const p = flyPos(k, [2.8, 0.6, 3.2], [0.5, CEN_Y + 0.1, 1.08]);
   return (
     <group position={p} rotation={[Math.PI / 2 * k, 0, k < 1 ? k * 5 : 1.2 + Math.sin(t * 28) * 0.02]}>
-      <mesh><cylinderGeometry args={[0.11, 0.11, 0.9, 20]} /><meshStandardMaterial color="#2f9a5a" metalness={0.6} roughness={0.3} /></mesh>
-      <mesh position={[0, 0.48, 0]}><sphereGeometry args={[0.11, 20, 10, 0, Math.PI * 2, 0, Math.PI / 2]} /><meshStandardMaterial color="#fbfbf7" metalness={0.4} roughness={0.3} /></mesh>
-      <mesh position={[0, 0.6, 0]}><cylinderGeometry args={[0.03, 0.04, 0.1, 10]} /><meshStandardMaterial color="#c9ced4" metalness={0.9} roughness={0.2} /></mesh>
+      <mesh><cylinderGeometry args={[0.11, 0.11, 0.9, 24]} /><meshStandardMaterial color="#2f8f55" metalness={0.5} roughness={0.35} /></mesh>
+      <mesh position={[0, -0.1, 0]}><cylinderGeometry args={[0.112, 0.112, 0.2, 24]} /><meshStandardMaterial color="#f4f6f8" roughness={0.5} /></mesh>
+      <mesh position={[0, 0.45, 0]}><sphereGeometry args={[0.11, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2]} /><meshStandardMaterial color="#f4f6f8" metalness={0.3} roughness={0.35} /></mesh>
+      <mesh position={[0, 0.6, 0]}><cylinderGeometry args={[0.035, 0.045, 0.12, 12]} /><meshStandardMaterial color="#c9ced4" metalness={0.95} roughness={0.15} /></mesh>
+      <mesh position={[0, 0.68, 0]} rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[0.05, 0.01, 8, 20]} /><meshStandardMaterial color="#2a2a2a" /></mesh>
+      <group position={[0.06, 0.62, 0]} rotation={[0, 0, -Math.PI / 2]}><mesh><cylinderGeometry args={[0.035, 0.035, 0.03, 20]} /><meshStandardMaterial color="#c9ced4" metalness={0.9} roughness={0.2} /></mesh><mesh position={[0, 0.016, 0]} rotation={[-Math.PI / 2, 0, 0]}><circleGeometry args={[0.03, 20]} /><meshBasicMaterial color="#ffffff" /></mesh></group>
     </group>
   );
 };
@@ -188,26 +226,72 @@ const Card: React.FC<{ k: number; t: number }> = ({ k, t }) => {
   const p = flyPos(Math.min(k, 0.85) / 0.85, [1.2, CEN_Y + 0.9, 2.6], [0.25, CEN_Y + 0.55, 1.15]), wiped = k > 0.85;
   return (
     <group position={p} rotation={[0.2, -0.3 + Math.sin(t * 2) * 0.1, 0.1]} scale={1.6}>
-      <mesh><boxGeometry args={[0.34, 0.215, 0.006]} /><meshStandardMaterial color={wiped ? "#7a8796" : "#2f6fbf"} roughness={0.3} metalness={0.3} /></mesh>
-      <mesh position={[-0.09, 0.02, 0.0035]}><planeGeometry args={[0.06, 0.045]} /><meshStandardMaterial color="#e2c47a" metalness={0.8} roughness={0.3} /></mesh>
-      <mesh position={[0, -0.06, 0.0035]}><planeGeometry args={[0.34, 0.035]} /><meshBasicMaterial color={wiped ? "#c9ced4" : "#1c1c1c"} /></mesh>
+      <RoundCard color={wiped ? "#7a8796" : "#1f4f9f"} stripe={wiped ? "#c9ced4" : "#1c1c1c"} />
       {wiped && [...Array(8)].map((_, i) => <mesh key={i} position={[(rnd(i + Math.floor(t * 12)) - 0.5) * 0.4, (rnd(i + 9 + Math.floor(t * 12)) - 0.5) * 0.3, 0.01]}><planeGeometry args={[0.03, 0.006]} /><meshBasicMaterial color="#ffffff" toneMapped={false} /></mesh>)}
     </group>
   );
 };
+// a bank card with rounded corners, a gold chip, embossed number dots and the magnetic stripe on the back face
+const RoundCard: React.FC<{ color: string; stripe: string }> = ({ color, stripe }) => {
+  const geo = useMemo(() => { const w = 0.17, h = 0.107, r = 0.012, s = new THREE.Shape(); s.moveTo(-w + r, -h); s.lineTo(w - r, -h); s.quadraticCurveTo(w, -h, w, -h + r); s.lineTo(w, h - r); s.quadraticCurveTo(w, h, w - r, h); s.lineTo(-w + r, h); s.quadraticCurveTo(-w, h, -w, h - r); s.lineTo(-w, -h + r); s.quadraticCurveTo(-w, -h, -w + r, -h);
+    const g = new THREE.ExtrudeGeometry(s, { depth: 0.005, bevelEnabled: false }); g.translate(0, 0, -0.0025); return g; }, []);
+  return (<group>
+    <mesh geometry={geo}><meshStandardMaterial color={color} roughness={0.3} metalness={0.3} /></mesh>
+    <mesh position={[-0.09, 0.02, 0.0031]}><planeGeometry args={[0.05, 0.04]} /><meshStandardMaterial color="#e2c47a" metalness={0.9} roughness={0.25} /></mesh>
+    {[...Array(16)].map((_, i) => <mesh key={i} position={[-0.13 + i * 0.016 + Math.floor(i / 4) * 0.012, -0.035, 0.0031]}><planeGeometry args={[0.009, 0.012]} /><meshBasicMaterial color="#e8eef8" /></mesh>)}
+    <mesh position={[0.11, 0.07, 0.0031]}><circleGeometry args={[0.016, 16]} /><meshBasicMaterial color="#e2523a" /></mesh><mesh position={[0.13, 0.07, 0.0032]}><circleGeometry args={[0.016, 16]} /><meshBasicMaterial color="#f2a030" transparent opacity={0.85} /></mesh>
+    <mesh position={[0, 0.06, -0.0031]} rotation={[0, Math.PI, 0]}><planeGeometry args={[0.34, 0.035]} /><meshBasicMaterial color={stripe} /></mesh>
+  </group>);
+};
+// a key: round bow with a hole, a shaft and teeth, extruded from its outline
+const Key: React.FC<{ color: string }> = ({ color }) => {
+  const geo = useMemo(() => { const s = new THREE.Shape(); s.absarc(0, 0, 0.022, 0, Math.PI * 2, false); const h = new THREE.Path(); h.absarc(-0.006, 0, 0.006, 0, Math.PI * 2, true); s.holes.push(h);
+    const b = new THREE.Shape(); b.moveTo(0.018, -0.006); b.lineTo(0.09, -0.006); b.lineTo(0.09, -0.012); b.lineTo(0.082, -0.016); b.lineTo(0.076, -0.011); b.lineTo(0.068, -0.017); b.lineTo(0.06, -0.011); b.lineTo(0.052, -0.016); b.lineTo(0.044, -0.011); b.lineTo(0.036, -0.014); b.lineTo(0.03, -0.006); b.lineTo(0.018, -0.006); b.lineTo(0.018, 0.006); b.lineTo(0.092, 0.006); b.lineTo(0.092, -0.006);
+    const g1 = new THREE.ExtrudeGeometry(s, { depth: 0.003, bevelEnabled: true, bevelSize: 0.001, bevelThickness: 0.001, bevelSegments: 2 }), g2 = new THREE.ExtrudeGeometry(b, { depth: 0.003, bevelEnabled: false });
+    return [g1, g2]; }, []);
+  return (<group><mesh geometry={geo[0]}><meshStandardMaterial color={color} metalness={0.45} roughness={0.25} /></mesh><mesh geometry={geo[1]}><meshStandardMaterial color={color} metalness={0.45} roughness={0.25} /></mesh></group>);
+};
+// a bobby pin: a thin wire bent double, one leg wavy
+const Pin: React.FC = () => {
+  const geo = useMemo(() => { const pts: THREE.Vector3[] = []; for (let i = 0; i <= 30; i++) { const x = 0.06 - (i / 30) * 0.06; pts.push(new THREE.Vector3(x, 0.006 + Math.sin(i * 1.2) * 0.002, 0)); }
+    for (let i = 0; i <= 8; i++) { const a = Math.PI / 2 + (i / 8) * Math.PI; pts.push(new THREE.Vector3(Math.cos(a) * 0.006, Math.sin(a) * 0.006, 0)); }
+    for (let i = 0; i <= 30; i++) pts.push(new THREE.Vector3((i / 30) * 0.062, -0.006, 0));
+    return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 120, 0.0016, 6, false); }, []);
+  return <mesh geometry={geo}><meshStandardMaterial color="#2a2a2e" metalness={0.8} roughness={0.35} /></mesh>;
+};
+// a wristwatch: steel case, white dial with moving hands, brown leather strap
+const Watch: React.FC<{ t: number }> = ({ t }) => (
+  <group>
+    <mesh rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.024, 0.024, 0.01, 28]} /><meshStandardMaterial color="#c9ced4" metalness={0.95} roughness={0.15} /></mesh>
+    <mesh position={[0, 0, 0.0052]}><circleGeometry args={[0.02, 28]} /><meshStandardMaterial color="#fbfbf7" roughness={0.4} /></mesh>
+    <mesh position={[0, 0, 0.006]} rotation={[0, 0, -t * 0.5]}><planeGeometry args={[0.0025, 0.03]} /><meshBasicMaterial color="#1c1c1c" /></mesh>
+    <mesh position={[0, 0, 0.0062]} rotation={[0, 0, -t * 6]}><planeGeometry args={[0.0012, 0.036]} /><meshBasicMaterial color="#d8352a" /></mesh>
+    {[-1, 1].map((s) => <mesh key={s} position={[0, s * 0.055, -0.002]}><boxGeometry args={[0.022, 0.07, 0.004]} /><meshStandardMaterial color="#6a3f22" roughness={0.8} /></mesh>)}
+    <mesh position={[0, 0.09, -0.002]}><boxGeometry args={[0.026, 0.006, 0.006]} /><meshStandardMaterial color="#c9ced4" metalness={0.9} /></mesh>
+  </group>
+);
+const Coin: React.FC<{ gold?: boolean }> = ({ gold }) => (<mesh rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.013, 0.013, 0.002, 24]} /><meshStandardMaterial color={gold ? "#e2c06a" : "#dfe3e8"} metalness={0.45} roughness={0.25} /></mesh>);
 
-// a tray with the patient's metal things: keys, a hair pin, a card, a watch, popping into it one by one
+// a stainless steel trolley; the patient's metal things drop onto its tray one by one
 const Tray: React.FC<{ k: number; t: number }> = ({ k, t }) => {
   if (k <= 0) return null;
-  const items = [0, 1, 2, 3].map((i) => clamp(k * 4 - i));
+  const it = [0, 1, 2, 3, 4].map((i) => clamp(k * 5 - i)), drop = (x: number) => (1 - ease(x)) * 0.5;
+  const steel = <meshStandardMaterial color="#d4dadf" metalness={0.35} roughness={0.3} />;
   return (
-    <group position={[1.4, 1.0, 2.6]} scale={1.8}>
-      <mesh><boxGeometry args={[0.7, 0.04, 0.45]} /><meshStandardMaterial color="#9aa2ac" metalness={0.7} roughness={0.3} /></mesh>
-      <mesh position={[0, -0.5, 0]}><cylinderGeometry args={[0.03, 0.03, 1, 10]} /><meshStandardMaterial color="#9aa2ac" metalness={0.8} /></mesh>
-      {items[0] > 0 && <group position={[-0.2, 0.06 + (1 - items[0]) * 0.6, 0]}><mesh rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[0.05, 0.008, 8, 20]} /><meshStandardMaterial color="#c9ced4" metalness={0.9} roughness={0.2} /></mesh><mesh position={[0.08, 0, 0.02]} rotation={[0, 0, 0.3]}><boxGeometry args={[0.1, 0.012, 0.03]} /><meshStandardMaterial color="#e2c47a" metalness={0.9} roughness={0.2} /></mesh></group>}
-      {items[1] > 0 && <mesh position={[-0.02, 0.04 + (1 - items[1]) * 0.6, 0.08]} rotation={[0, 0.6, 0]}><boxGeometry args={[0.15, 0.008, 0.012]} /><meshStandardMaterial color="#3a3d42" metalness={0.9} /></mesh>}
-      {items[2] > 0 && <mesh position={[0.14, 0.035 + (1 - items[2]) * 0.6, -0.04]} rotation={[-Math.PI / 2, 0, 0.3]}><boxGeometry args={[0.17, 0.107, 0.004]} /><meshStandardMaterial color="#2f6fbf" metalness={0.3} roughness={0.3} /></mesh>}
-      {items[3] > 0 && <group position={[0.2, 0.05 + (1 - items[3]) * 0.6, 0.12]}><mesh rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.04, 0.04, 0.015, 20]} /><meshStandardMaterial color="#c9ced4" metalness={0.9} roughness={0.2} /></mesh><mesh position={[0, 0.009, 0]} rotation={[-Math.PI / 2, 0, t]}><planeGeometry args={[0.005, 0.03]} /><meshBasicMaterial color="#1c1c1c" /></mesh></group>}
+    <group position={[1.4, 0, 2.6]}>
+      <mesh position={[0, 1.0, 0]}><boxGeometry args={[0.6, 0.015, 0.4]} />{steel}</mesh>
+      {[[0, 0.2, 0.6, 0.01], [0, -0.2, 0.6, 0.01], [0.3, 0, 0.01, 0.4], [-0.3, 0, 0.01, 0.4]].map(([x, z, w, d], i) => <mesh key={i} position={[x, 1.025, z]}><boxGeometry args={[w + 0.01, 0.04, d + 0.01]} />{steel}</mesh>)}
+      <mesh position={[0, 0.45, 0]}><boxGeometry args={[0.56, 0.012, 0.36]} />{steel}</mesh>
+      {[[-0.28, -0.18], [0.28, -0.18], [-0.28, 0.18], [0.28, 0.18]].map(([x, z], i) => (<group key={i}><mesh position={[x, 0.52, z]}><cylinderGeometry args={[0.012, 0.012, 0.96, 10]} />{steel}</mesh><mesh position={[x, 0.035, z]} rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[0.035, 0.035, 0.025, 14]} /><meshStandardMaterial color="#2a2a2a" /></mesh></group>))}
+      <group position={[0, 1.012, 0]}>
+        {it[0] > 0 && <group position={[-0.16, 0.004 + drop(it[0]), 0.02]} rotation={[-Math.PI / 2, 0, 0.4]}>
+          <mesh rotation={[0, 0, 0]}><torusGeometry args={[0.025, 0.003, 8, 24]} /><meshStandardMaterial color="#c9ced4" metalness={0.95} roughness={0.15} /></mesh>
+          <group position={[0.03, 0.01, 0]}><Key color="#d9b45a" /></group><group position={[0.02, -0.02, 0.003]} rotation={[0, 0, -0.5]}><Key color="#c9ced4" /></group></group>}
+        {it[1] > 0 && <group position={[0.02, 0.004 + drop(it[1]), 0.1]} rotation={[-Math.PI / 2, 0, 0.7]}><Pin /></group>}
+        {it[2] > 0 && <group position={[0.14, 0.006 + drop(it[2]), -0.06]} rotation={[-Math.PI / 2, 0, 0.25]}><RoundCard color="#1f4f9f" stripe="#1c1c1c" /></group>}
+        {it[3] > 0 && <group position={[-0.05, 0.008 + drop(it[3]), -0.09]} rotation={[-Math.PI / 2, 0, -0.6]}><Watch t={t} /></group>}
+        {it[4] > 0 && [0, 1, 2].map((c) => <group key={c} position={[0.2 + c * 0.03, 0.002 + drop(it[4]) + c * 0.002, 0.11 - c * 0.012]}><Coin gold={c === 1} /></group>)}
+      </group>
     </group>
   );
 };
