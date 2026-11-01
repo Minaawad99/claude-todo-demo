@@ -60,8 +60,9 @@ is "how does X work", say the animation style fits better.
 
 ## 5. Opening clip and music
 
-- The user sends the opening clip each time (vertical selfie video, them pointing or reacting). If they don't send one, ask;
-  if they say to use the old one, use the last one they sent and say which.
+- The user's opening clips are in `videos/_intros/` (six so far; `README.md` there says what each one shows, how long it
+  is, where to cut it and what topics it suits). Pick the one that fits the topic, not the one used last time, and tell the
+  user which one and why. If they send a new clip, add it there with a row in that README.
 - Music: the user usually adds a trending sound in TikTok. Render with the user's track if they send one (`--music`),
   otherwise with the original music bed from `videos/audio/sfx.py` (no copyright problems), and tell them they can mute it
   and pick a sound in the app.
@@ -70,14 +71,13 @@ is "how does X work", say the animation style fits better.
 
 ```
 D=videos/<slug>/list                       # list.js + photos/ already there; list.js has intro: {frames: 0, fps: 30, title: …}
-python3 videos/_templates/photo-list/make.py $D <opening clip> [--music track.mp3] [--intro-dur 5.2]
+python3 videos/_templates/photo-list/make.py $D videos/_intros/<clip>.mp4 [--music track.mp3] [--intro-start 0] [--intro-dur 5.2]
 cd videos && TAIL=0 node render.js $PWD/<slug>/list/index.html <slug>/list/music.wav <scratchpad>/<slug>-photos.mp4
 ```
 
 `make.py` cuts the clip into `intro/*.jpg` (Chromium can't decode H.264 here, so the page shows frames), copies the
 template to `index.html` and writes `music.wav`. Render at the default 60 fps, 1080×1920 (about 5 minutes for 1:40).
-Add `intro/` and `music.wav` to the commit only if the user is fine with their clip being in the repo; otherwise list them
-in `.gitignore` for that folder.
+Don't commit `intro/` or `music.wav` (they can be rebuilt with `make.py`); the clip itself is already in `videos/_intros/`.
 
 ## 7. Check before sending
 

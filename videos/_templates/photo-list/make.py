@@ -1,6 +1,6 @@
 """Set up a «الصور» (photo-list) video folder.
 
-Usage: python make.py <videos/slug/list> <intro clip (any format)> [--music track.mp3] [--intro-dur 5.2]
+Usage: python make.py <videos/slug/list> <intro clip (any format)> [--music track.mp3] [--intro-start 0] [--intro-dur 5.2]
 - cuts the user's opening clip into intro/0001.jpg… (30 fps, 720×1280 cover crop) and writes intro.frames into list.js
   (list.js must already exist with the rest of LIST filled in; see template.html);
 - copies template.html to index.html;
@@ -12,12 +12,12 @@ import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ap = argparse.ArgumentParser(); ap.add_argument("dir"); ap.add_argument("clip")
-ap.add_argument("--music"); ap.add_argument("--intro-dur", type=float)
+ap.add_argument("--music"); ap.add_argument("--intro-dur", type=float); ap.add_argument("--intro-start", type=float, default=0)
 a = ap.parse_args()
 d = os.path.abspath(a.dir); os.makedirs(os.path.join(d, "intro"), exist_ok=True)
 for f in glob.glob(os.path.join(d, "intro", "*.jpg")): os.remove(f)
 cut = ["-t", str(a.intro_dur)] if a.intro_dur else []
-subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", a.clip, *cut, "-vf",
+subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", str(a.intro_start), "-i", a.clip, *cut, "-vf",
                 "fps=30,scale=720:1280:force_original_aspect_ratio=increase,crop=720:1280", "-q:v", "3",
                 os.path.join(d, "intro", "%04d.jpg")], check=True)
 n = len(glob.glob(os.path.join(d, "intro", "*.jpg")))
