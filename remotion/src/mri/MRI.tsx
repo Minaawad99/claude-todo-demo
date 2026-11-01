@@ -28,7 +28,7 @@ const C: V3 = [0, CEN_Y, 0];
 type St = Partial<Omit<WorldState, "t">>;
 type Shot = { p: [V3, V3]; l: [V3, V3]; fov?: number; bg?: string; st: (u: number, d: number, t: number) => St };
 const SH: Shot[] = [
-  /* 0 hook: the patient slides in */ { p: [[3.6, 2.3, 6.2], [2.6, 1.9, 5]], l: [C, [0, 1.15, 0.3]], st: (u, d) => ({ slide: 0.75 * clamp(u / d), mood: "happy" }) },
+  /* 0 hook: the patient slides in */ { p: [[5.2, 3.0, 7.6], [2.3, 1.75, 4.5]], l: [[0.4, 1.0, 1.2], [0, 1.2, 0.3]], st: (u, d) => ({ slide: 0.15 + 0.7 * clamp(u / d), mood: "happy" }) },
   /* 1 the knocking */ { p: [[0.35, 1.5, 2.9], [0.12, 1.42, 2.25]], l: [[0, 1.2, 1.0], [0, 1.2, 1.0]], st: () => ({ slide: 1, grad: 1, mood: "shock" }) },
   /* 2 metal off first */ { p: [[2.4, 2.1, 4.0], [1.9, 1.85, 3.5]], l: [[1.4, 1.05, 2.6], [1.4, 1.05, 2.6]], st: (u, d) => ({ tray: clamp((u - 0.3) / (d * 0.8)), mood: "n" }) },
   /* 3 brand */ { p: [[4.5, 2.6, 5.5], [-1.5, 2.2, 6.2]], l: [C, C], st: () => ({ slide: 0.3, mood: "curious" as never }) },
@@ -47,8 +47,8 @@ const SH: Shot[] = [
   /* 16 the coil shakes and knocks */ { p: [[0.9, 1.55, 2.8], [0.5, 1.45, 2.3]], l: [[0, 1.2, 0.9], [0, 1.2, 0.9]], st: () => ({ slide: 1, xray: 0.45, grad: 1, mood: "shock" }) },
   /* 17 rock concert, earplugs */ { p: [[0.15, 1.45, 1.95], [0.1, 1.38, 1.65]], l: [[0, 1.18, 1.0], [0, 1.18, 1.0]], fov: 55, st: (u) => ({ slide: 1, grad: 1, plugs: clamp((u - 1.4) / 0.5), mood: u > 1.9 ? "happy" : "worry" }) },
   /* 18 every knock draws a piece */ { p: [[3.0, 2.2, 4.4], [2.2, 1.8, 3.6]], l: [C, C], st: () => ({ slide: 1, grad: 1, xray: 0.25, mood: "happy" }) },
-  /* 19 payoff */ { p: [[2.2, 1.8, 5.2], [3.2, 2.2, 6.0]], l: [[0, 1.2, 1], [0, 1.2, 1]], st: (u, d) => ({ slide: 1 - clamp(u / d), mood: "happy" }) },
-  /* 20 outro */ { p: [[-2.5, 2.4, 6], [2.5, 2.4, 6]], l: [C, C], st: () => ({ slide: 0, mood: "happy" }) },
+  /* 19 payoff */ { p: [[3.6, 2.0, 4.4], [-1.6, 2.5, 6.0]], l: [[0, 1.2, 1], [0, 1.2, 1]], st: (u, d) => ({ slide: 1 - clamp(u / d), mood: "happy" }) },
+  /* 20 outro */ { p: [[-3.0, 2.6, 6.2], [3.2, 2.0, 5.2]], l: [C, C], st: () => ({ slide: 0, mood: "happy" }) },
 ];
 
 const shotAt = (t: number) => {
