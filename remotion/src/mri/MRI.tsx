@@ -28,7 +28,7 @@ const C: V3 = [0, CEN_Y, 0];
 type St = Partial<Omit<WorldState, "t">>;
 type Shot = { p: [V3, V3]; l: [V3, V3]; fov?: number; bg?: string; st: (u: number, d: number, t: number) => St };
 const SH: Shot[] = [
-  /* 0 hook: the patient slides in */ { p: [[3.6, 2.3, 6.2], [2.6, 1.9, 5]], l: [C, [0, 1.15, 0.3]], st: (u, d) => ({ slide: 0.75 * ease(clamp((u - 0.4) / (d - 0.6))), mood: "happy" }) },
+  /* 0 hook: the patient slides in */ { p: [[3.6, 2.3, 6.2], [2.6, 1.9, 5]], l: [C, [0, 1.15, 0.3]], st: (u, d) => ({ slide: 0.75 * clamp(u / d), mood: "happy" }) },
   /* 1 the knocking */ { p: [[0.35, 1.5, 2.9], [0.12, 1.42, 2.25]], l: [[0, 1.2, 1.0], [0, 1.2, 1.0]], st: () => ({ slide: 1, grad: 1, mood: "shock" }) },
   /* 2 metal off first */ { p: [[2.4, 2.1, 4.0], [1.9, 1.85, 3.5]], l: [[1.4, 1.05, 2.6], [1.4, 1.05, 2.6]], st: (u, d) => ({ tray: clamp((u - 0.3) / (d * 0.8)), mood: "n" }) },
   /* 3 brand */ { p: [[4.5, 2.6, 5.5], [-1.5, 2.2, 6.2]], l: [C, C], st: () => ({ slide: 0.3, mood: "curious" as never }) },
@@ -47,7 +47,7 @@ const SH: Shot[] = [
   /* 16 the coil shakes and knocks */ { p: [[0.9, 1.55, 2.8], [0.5, 1.45, 2.3]], l: [[0, 1.2, 0.9], [0, 1.2, 0.9]], st: () => ({ slide: 1, xray: 0.45, grad: 1, mood: "shock" }) },
   /* 17 rock concert, earplugs */ { p: [[0.15, 1.45, 1.95], [0.1, 1.38, 1.65]], l: [[0, 1.18, 1.0], [0, 1.18, 1.0]], fov: 55, st: (u) => ({ slide: 1, grad: 1, plugs: clamp((u - 1.4) / 0.5), mood: u > 1.9 ? "happy" : "worry" }) },
   /* 18 every knock draws a piece */ { p: [[3.0, 2.2, 4.4], [2.2, 1.8, 3.6]], l: [C, C], st: () => ({ slide: 1, grad: 1, xray: 0.25, mood: "happy" }) },
-  /* 19 payoff */ { p: [[2.2, 1.8, 5.2], [3.2, 2.2, 6.0]], l: [[0, 1.2, 1], [0, 1.2, 1]], st: (u, d) => ({ slide: 1 - ease(clamp(u / (d * 0.7))), mood: "happy" }) },
+  /* 19 payoff */ { p: [[2.2, 1.8, 5.2], [3.2, 2.2, 6.0]], l: [[0, 1.2, 1], [0, 1.2, 1]], st: (u, d) => ({ slide: 1 - clamp(u / d), mood: "happy" }) },
   /* 20 outro */ { p: [[-2.5, 2.4, 6], [2.5, 2.4, 6]], l: [C, C], st: () => ({ slide: 0, mood: "happy" }) },
 ];
 
@@ -158,7 +158,7 @@ const Captions: React.FC<{ t: number }> = ({ t }) => {
   if (li < 0) return null;
   const L = LINES[li], n = L.words.length, lens = L.words.map((w) => w.w.length + 2), tot = lens.reduce((a, b) => a + b, 0);
   let acc = 0;
-  const size = n > 13 ? 50 : 60;
+  const chars = L.words.reduce((a, w) => a + w.w.length + 1, 0), size = chars > 62 ? 46 : n > 11 ? 52 : 60;
   return (
     <div style={{ position: "absolute", top: PANEL.top + PANEL.h + 40, left: 60, right: 60, textAlign: "center", direction: "rtl", fontFamily: NOTO, fontWeight: 800, fontSize: size, lineHeight: 1.5, color: "#fff" }}>
       {L.words.map((w, j) => { const at = L.start + ((L.end - L.start) * acc) / tot; acc += lens[j]; const k = clamp((t - at) / 0.12);
@@ -176,9 +176,9 @@ export const MRI: React.FC = () => {
   const st: WorldState = { t, ...ZERO, ...S.st(u, d, t) } as WorldState;
   // the camera always creeps along its path, plus a slow hand-held drift; knocking shots jolt with the coils
   const jolt = st.grad * (Math.sin(t * 9.5 * Math.PI) > 0.6 ? 1 : 0) * 0.012;
-  const p = lv(S.p[0], S.p[1], ease(k)), l = lv(S.l[0], S.l[1], ease(k));
-  const sc = i >= 9 && i <= 12 ? 0.25 : 0.06;
-  const pos: V3 = [p[0] + Math.sin(t * 0.7) * sc + Math.sin(t * 61) * jolt, p[1] + Math.cos(t * 0.53) * sc * 0.6 + Math.cos(t * 47) * jolt, p[2]];
+  const p = lv(S.p[0], S.p[1], k), l = lv(S.l[0], S.l[1], k);
+  const sc = i >= 9 && i <= 12 ? 0.3 : 0.14;
+  const pos: V3 = [p[0] + Math.sin(t * 1.1) * sc + Math.sin(t * 61) * jolt, p[1] + Math.cos(t * 0.9) * sc * 0.6 + Math.cos(t * 47) * jolt, p[2] + Math.sin(t * 0.8) * sc * 0.8];
   const bg = S.bg ?? (st.night > 0.5 ? "#0e1620" : "#dfe8ef");
   const fade = Math.min(1, (DURATION + TAIL - t) / 0.6);
   return (

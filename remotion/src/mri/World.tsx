@@ -246,7 +246,7 @@ const Spins: React.FC<{ t: number; k: number; align: number; pulse: number }> = 
         const gx = (i % 5) - 2, gy = Math.floor(i / 5) - 2, rx = Math.sin(t * (0.7 + rnd(i)) + i * 3) * Math.PI, rz = Math.cos(t * (0.6 + rnd(i + 2)) + i) * Math.PI;
         const a = align;
         const prec = t * 6 + i;
-        const tilt = tip * 1.4;
+        const tilt = 0.18 + tip * 1.4;
         return (
           <group key={i} position={[gx * 1.15, gy * 0.75, (rnd(i + 8) - 0.5) * 0.8]} scale={k * 0.8}>
             <group rotation={[lerp(rx, Math.sin(prec) * tilt, a), 0, lerp(rz, Math.cos(prec) * tilt, a)]}><Arrow color={a > 0.5 ? "#2f7fd8" : "#e2b035"} /></group>
