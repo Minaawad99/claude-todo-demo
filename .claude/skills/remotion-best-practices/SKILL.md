@@ -22,6 +22,10 @@ If no Remotion project currently exists, load [Create a new Remotion project](./
 
 If you are writing Remotion React Markup, load [Remotion Markup Best Practices](./remotion-markup/SKILL.md)
 
+## 3D (Three.js)
+
+For 3D scenes, load [Remotion Markup 3D](./remotion-markup/3d.md) for the Remotion rules (`@remotion/three`, `<ThreeCanvas>`, frame-driven animation), then the matching `threejs-*` skill (start with `threejs-react-three-fiber` and `threejs-fundamentals`).
+
 ## Maps
 
 For static maps, animated routes and markers, geographic explainers, Mapbox, MapLibre, MapTiler, GeoJSON, or 3D geographic flyovers, load [Remotion Maps](./remotion-maps/SKILL.md).
