@@ -1,4 +1,4 @@
-// «الصور» — حاجات لقوها من تيتانيك بعد الغرق. Opening clip: videos/_intros/2-room-maroon-point-down-up.mp4
+// «الصور» — حاجات لقوها من تيتانيك بعد الغرق. Opening clip: videos/_intros/4-bench-night-point-hand-cover.mp4 (cut at 5.1 s)
 window.LIST = {
   dur: 8,
   intro: { frames: 0, fps: 30, title: "حاجات لقوها من تيتانيك بعد الغرق 😱" },
