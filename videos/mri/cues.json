@@ -123,7 +123,7 @@
   {
    "t": 4.08,
    "file": "sfx/px-mri.mp3",
-   "gain": 0.54,
+   "gain": 0.48,
    "from": 2,
    "duck": 1.2,
    "dur": 4.54
@@ -492,7 +492,7 @@
   {
    "t": 54.36,
    "file": "sfx/px-mri.mp3",
-   "gain": 0.54,
+   "gain": 0.46,
    "from": 60,
    "duck": 1.2,
    "dur": 4.19
@@ -510,7 +510,7 @@
   {
    "t": 58.45,
    "file": "sfx/px-mri.mp3",
-   "gain": 0.66,
+   "gain": 0.5,
    "from": 8,
    "duck": 1.2,
    "dur": 5.13
@@ -523,7 +523,7 @@
   {
    "t": 63.48,
    "file": "sfx/px-mri.mp3",
-   "gain": 0.54,
+   "gain": 0.46,
    "from": 61,
    "duck": 1.2,
    "dur": 3.66

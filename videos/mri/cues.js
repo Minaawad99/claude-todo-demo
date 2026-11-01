@@ -13,7 +13,7 @@ for (let i = 1; i < T.length; i++) a(L(i) - 0.08, 'whoosh', 0.3);
 // 0: hospital room, the table slides in
 rec(L(0), 'hospital', 0.25, 2, D(0), ['hum', 0.12]); a(L(0) + 0.4, 'servo', 0.3, 2.0); a(L(0) + 1.2, 'pop', 0.7);
 // 1: the knocking
-mri(1, 0.45, 2); rec(L(1) + 0.6, 'hammer', 0.25, 0, 1.6, ['thud', 0.35]); a(L(1) + 0.2, 'pop', 0.7);
+mri(1, 0.4, 2); rec(L(1) + 0.6, 'hammer', 0.25, 0, 1.6, ['thud', 0.35]); a(L(1) + 0.2, 'pop', 0.7);
 // 2: metal into the tray
 for (let k = 0; k < 4; k++) a(L(2) + 0.5 + k * D(2) * 0.2, 'clink', 0.35); a(L(2) + 0.4, 'pop', 0.6); a(L(2) + 1.6, 'pop', 0.5);
 // 3: brand
@@ -38,9 +38,9 @@ rec(L(13) + 0.3, 'scan', 0.3, 0, D(13) - 0.5, ['notify', 0.3]); for (let k = 0; 
 // 14: and the noise?
 mri(14, 0.25, 5); a(L(14) + 0.3, 'pop', 0.7); a(L(14) + 1.5, 'pop', 0.5);
 // 15–18: the gradient coils knocking
-mri(15, 0.45, 60); a(L(15) + 0.5, 'pop', 0.6); a(L(15) + 1.8, 'pop', 0.6);
-mri(16, 0.55, 8); a(L(16) + 0.8, 'pop', 0.6);
-mri(17, 0.45, 61); rec(L(17) + 0.3, 'rock', 0.3, 5, 1.6, ['boom', 0.3]); a(L(17) + 1.5, 'squeeze', 0.3); a(L(17) + 1.5, 'pop', 0.6);
+mri(15, 0.38, 60); a(L(15) + 0.5, 'pop', 0.6); a(L(15) + 1.8, 'pop', 0.6);
+mri(16, 0.42, 8); a(L(16) + 0.8, 'pop', 0.6);
+mri(17, 0.38, 61); rec(L(17) + 0.3, 'rock', 0.3, 5, 1.6, ['boom', 0.3]); a(L(17) + 1.5, 'squeeze', 0.3); a(L(17) + 1.5, 'pop', 0.6);
 mri(18, 0.4, 3); a(L(18) + 0.6, 'pop', 0.6); for (let k = 0; k < 6; k++) a(L(18) + 0.8 + k * 0.5, 'tick', 0.15);
 // 19: payoff, the table slides out
 a(L(19) + 0.2, 'servo', 0.3, 2.0); a(L(19) + 0.4, 'pop', 0.6); a(L(19) + 0.45, 'chime', 0.35); a(L(19) + 1.4, 'pop', 0.6);
