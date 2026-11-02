@@ -73,9 +73,12 @@
   var SH = [];
   function shot(line, cam, draw) { SH.push({ a: L(line), cam: cam, draw: draw }); }
   function at(t) { var i = 0; while (i < SH.length - 1 && SH[i + 1].a <= t) i++; return i; }
+  // screen-fixed overlay (chapter markers, big numbers that must not move with the camera): call fixed(svg) inside draw
+  var OVER = "";
+  function fixed(s) { OVER += s; return ""; }
   window.__panel = function (svg, t) {
-    CLIPN = 0; var i = at(t), sh = SH[i], next = i + 1 < SH.length ? SH[i + 1].a : L(LN.length), u = t - sh.a, d = Math.max(0.5, next - sh.a);
+    CLIPN = 0; OVER = ""; var i = at(t), sh = SH[i], next = i + 1 < SH.length ? SH[i + 1].a : L(LN.length), u = t - sh.a, d = Math.max(0.5, next - sh.a);
     var c = sh.cam(u, d), cx = c[0] + 10 * Math.sin(t * 1.1), cy = c[1] + 8 * Math.cos(t * 1.1), z = c[2] * (1 + 0.02 * Math.sin(t * 0.9));
-    svg.innerHTML = '<g transform="translate(320 400) scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g><rect width="640" height="800" filter="url(#paperN)"/>';
+    svg.innerHTML = '<g transform="translate(320 400) scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g>' + OVER + '<rect width="640" height="800" filter="url(#paperN)"/>';
     return i;
   };

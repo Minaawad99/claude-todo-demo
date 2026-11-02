@@ -1,0 +1,36 @@
+// Sound cues from the line timings: node cues.js → cues.json. Soft diagram-style sounds, all synthesized by audio/sfx.py:
+// paper whooshes and wipes on the cuts, ticks for labels, pops for tags, hum for machines, waves for the sea.
+global.window = {}; eval(require('fs').readFileSync(__dirname + '/timing.js', 'utf8'));
+const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration : T[i].start, D = i => L(i + 1) - L(i), c = [];
+const a = (t, fx, gain, dur) => c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), fx, gain }, dur ? { dur: +dur.toFixed(2) } : {}));
+for (let i = 1; i < T.length; i++) a(L(i) - 0.08, i % 2 ? 'wipe' : 'whoosh', 0.2);
+const lab = (i, dt) => a(L(i) + dt, 'tick', 0.22);
+a(L(0) + 0.45, 'pop', 0.4); a(L(0) + 1.9, 'notify', 0.3); lab(0, 0.5);
+a(L(1) + 0.3, 'whoosh', 0.18); lab(1, 0.4); a(L(1) + 1.7, 'ping', 0.3); lab(1, 2.4);
+a(L(2) + 0.5, 'pop', 0.4); a(L(2) + 1.7, 'pop', 0.3);
+a(L(3) + 0.2, 'tick', 0.3); a(L(3) + 0.8, 'tick', 0.25); a(L(3) + 1.4, 'tick', 0.25);
+a(L(4) + 0.1, 'chime', 0.3); a(L(4) + 1.0, 'snip', 0.3); for (let k = 0; k < 4; k++) a(L(4) + 1.5 + k * 0.25, 'pop', 0.22);
+a(L(5) + 0.3, 'spray', 0.15, 1.0); lab(5, 1.7); lab(5, 2.1);
+a(L(6) + 0.3, 'beep', 0.18); a(L(6) + 0.9, 'beep', 0.15); a(L(6) + 1.1, 'pop', 0.35);
+a(L(7) + 0.7, 'snip', 0.3); a(L(7) + 1.2, 'spray', 0.15, 1.2); lab(7, 2.3); a(L(7) + 2.7, 'pop', 0.4);
+a(L(8) + 0.1, 'paper', 0.3); [0.5, 1.2, 1.9].forEach(dt => lab(8, dt));
+[0.5, 0.85, 1.2, 1.55].forEach(dt => a(L(9) + dt, 'pop', 0.3)); lab(9, 2.3);
+a(L(10) + 0.1, 'chime', 0.3); a(L(10) + 0.7, 'hum', 0.08, D(10) - 0.8); lab(10, 1.3);
+lab(11, 0.4); a(L(11) + 0.5, 'hum', 0.1, D(11) - 0.6); lab(11, 1.5); a(L(11) + 1.0, 'plunk', 0.2);
+a(L(12) + 0.3, 'hum', 0.08, 1.8); lab(12, 0.9); lab(12, 1.9);
+lab(13, 0.4); a(L(13) + 1.3, 'servo', 0.15, 1.5); a(L(13) + 2.1, 'thud', 0.25); lab(13, 2.3);
+a(L(14) + 0.4, 'laser', 0.18); lab(14, 0.7); a(L(14) + 1.7, 'thud', 0.35);
+a(L(15) + 0.1, 'splash', 0.3); a(L(15) + 0.2, 'waves', 0.15, D(15)); a(L(15) + 0.1, 'chime', 0.25); lab(15, 0.7);
+a(L(16) + 0.2, 'whoosh', 0.15); a(L(16) + 0.7, 'bell', 0.3);
+lab(17, 0.6); lab(17, 1.4); a(L(17) + 1.9, 'pop', 0.4);
+a(L(18) + 0.3, 'creak', 0.12); a(L(18) + 1.7, 'ping', 0.3); lab(18, 1.7);
+a(L(19) + 0.2, 'zap', 0.15); for (let k = 0; k < 6; k++) a(L(19) + 0.6 + k * 0.45, 'beep', 0.1); a(L(19) + 1.7, 'pop', 0.35);
+a(L(20) + 0.2, 'waves', 0.12, D(20) - 0.3); lab(20, 0.3); a(L(20) + 3.4, 'ping', 0.3); lab(20, 3.4);
+lab(21, 0.4); a(L(21) + 1.7, 'pop', 0.3); a(L(21) + 1.9, 'hum', 0.1, 1.6); lab(21, 2.3);
+a(L(22) + 0.1, 'chime', 0.3); for (let k = 0; k < 6; k++) a(L(22) + 0.3 + k * 0.18, 'plunk', 0.12); lab(22, 2.1);
+for (let k = 0; k < 6; k++) a(L(23) + 0.6 + k * 0.2, 'clink', 0.14);
+a(L(24) + 0.3, 'pop', 0.35); lab(24, 0.7); a(L(24) + 1.3, 'whoosh', 0.2); a(L(24) + 2.1, 'clink', 0.3);
+a(L(25) + 0.2, 'fill', 0.12, 1.0); a(L(25) + 2.2, 'chime', 0.3); lab(25, 2.5);
+[0.4, 1.5, 2.6, 3.7].forEach(dt => a(L(26) + dt, 'pop', 0.3));
+a(L(27) + 0.1, 'bell', 0.3); [0.3, 0.5, 0.7, 0.9].forEach(dt => a(L(27) + dt, 'pop', 0.2));
+require('fs').writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: c }, null, 1)); console.log(c.length, 'cues');

@@ -2,43 +2,39 @@
 <html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>/*TITLE*/ — إيه الحكاية؟</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  /* «الرسم الهندسي»: cream paper, a double-line card with crop marks, a portrait diagram panel in the top of the card, a
-     ruled two-line caption under it; an opening card for the first line and a summary card for the last. 360×640 canvas. */
+  /* «الرسم الهندسي»: cream paper, a single-line card 35px in (as in the «إزاي الإنترنت بيشتغل؟» reference), a portrait
+     diagram panel (640×800 world) in the top of the card, a ruled one-line caption under it; an optional opening card for
+     the first line (only when the episode defines window.__intro) and a summary card for the last. 360×640 canvas. */
   html, body { margin: 0; background: #eee5d0; }
   .canvas { position: relative; width: 360px; height: 640px; background: #eee5d0; overflow: hidden; font-family: "Noto Sans Arabic", sans-serif; color: #2b2b2b; }
   .crop { position: absolute; width: 10px; height: 10px; border-color: #6a6458; border-style: solid; border-width: 0; }
-  .card { position: absolute; left: 18px; top: 18px; right: 18px; bottom: 18px; border: 1.2px solid #2b2b2b; }
-  .card::after { content: ""; position: absolute; inset: 2.5px; border: .6px solid #2b2b2b; pointer-events: none; }
-  .panel { position: absolute; left: 3px; right: 3px; top: 3px; height: 400px; overflow: hidden; }
+  .card { position: absolute; left: 35px; top: 35px; right: 35px; bottom: 35px; border: 1.1px solid #2b2b2b; }
+  .panel { position: absolute; left: 0; right: 0; top: 0; height: 362px; overflow: hidden; }
   .panel svg { display: block; width: 100%; height: 100%; }
-  .rule { position: absolute; left: 40px; right: 40px; top: 414px; height: 0; border-top: .8px solid #2b2b2b; }
-  .cap { position: absolute; left: 22px; right: 22px; top: 428px; text-align: center; font: 800 16px/1.65 "Noto Sans Arabic", sans-serif; transition: none; }
+  .rule { position: absolute; left: 11px; right: 11px; top: 362px; height: 0; border-top: .7px solid #2b2b2b; }
+  .cap { position: absolute; left: 14px; right: 14px; top: 418px; text-align: center; font: 700 14.5px/1.7 "Noto Sans Arabic", sans-serif; transition: none; }
   .cap .o { color: #c4532c; } .cap .b { color: #46698a; } .cap .g { color: #6b7d3c; }
-  .brand { position: absolute; left: 0; right: 0; bottom: 26px; text-align: center; font: 600 9.5px "Noto Sans Arabic", sans-serif; color: #8a8070; letter-spacing: .3px; }
+  .brand { position: absolute; left: 0; right: 0; bottom: 13px; text-align: center; font: 600 9.5px "Noto Sans Arabic", sans-serif; color: #8a8070; letter-spacing: .3px; }
   .lab { font: 700 20px "Noto Sans Arabic", sans-serif; }
-  .over { position: absolute; inset: 3px; background: #eee5d0; display: none; }
+  .over { position: absolute; inset: 0; background: #eee5d0; display: none; }
   .over .tiny { position: absolute; right: 16px; top: 16px; font: 600 9.5px "Noto Sans Arabic"; color: #6a6458; }
   #intro .cat { position: absolute; left: 0; right: 0; top: 118px; text-align: center; font: 700 10.5px "Noto Sans Arabic"; color: #c4532c; }
   #intro .r1, #intro .r2 { position: absolute; left: 140px; right: 140px; height: 0; border-top: .8px solid #2b2b2b; }
   #intro .hook { position: absolute; left: 20px; right: 20px; top: 150px; text-align: center; font: 900 25px/1.55 "Noto Sans Arabic"; }
   #intro .hook .o { color: #c4532c; } #intro .hook .gr { color: #8a8070; }
   #intro svg { position: absolute; left: 16px; right: 16px; top: 300px; width: 290px; height: 160px; }
-  #outro .q { position: absolute; left: 16px; right: 16px; top: 34px; font: 800 17px/1.5 "Noto Sans Arabic"; }
-  #outro svg { position: absolute; left: 16px; top: 98px; width: 290px; height: 150px; }
-  #outro .leg { position: absolute; left: 16px; right: 16px; top: 254px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font: 600 10px "Noto Sans Arabic"; }
+  #outro .q { position: absolute; left: 14px; right: 14px; top: 34px; font: 800 16px/1.5 "Noto Sans Arabic"; }
+  #outro svg { position: absolute; left: 14px; top: 96px; width: 262px; height: 140px; }
+  #outro .leg { position: absolute; left: 14px; right: 14px; top: 244px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font: 600 10px "Noto Sans Arabic"; }
   #outro .leg span b { display: inline-block; width: 14px; height: 14px; line-height: 13px; border: 1px solid #2b2b2b; border-radius: 50%; text-align: center; font: 700 8.5px "Noto Sans Arabic"; margin-left: 4px; }
-  #outro .stat { position: absolute; left: 16px; right: 16px; top: 326px; display: flex; align-items: center; gap: 10px; }
+  #outro .stat { position: absolute; left: 14px; right: 14px; top: 316px; display: flex; align-items: center; gap: 10px; }
   #outro .stat .n { font: 900 40px/1 "Noto Sans Arabic"; color: #c4532c; }
   #outro .stat .t { font: 700 10.5px/1.5 "Noto Sans Arabic"; }
-  #outro .pts { position: absolute; left: 16px; right: 16px; top: 388px; border-top: .8px solid #2b2b2b; padding-top: 8px; font: 600 10px/1.7 "Noto Sans Arabic"; }
+  #outro .pts { position: absolute; left: 14px; right: 14px; top: 374px; border-top: .8px solid #2b2b2b; padding-top: 8px; font: 600 10px/1.7 "Noto Sans Arabic"; }
   #outro .more { margin-top: 6px; font: 500 9px/1.6 "Noto Sans Arabic"; color: #6a6458; }
 </style></head>
 <body>
 <div class="canvas">
-  <div class="crop" style="left:6px;top:6px;border-left-width:1px;border-top-width:1px"></div>
-  <div class="crop" style="right:6px;top:6px;border-right-width:1px;border-top-width:1px"></div>
-  <div class="crop" style="left:6px;bottom:6px;border-left-width:1px;border-bottom-width:1px"></div>
-  <div class="crop" style="right:6px;bottom:6px;border-right-width:1px;border-bottom-width:1px"></div>
   <div class="card">
     <div class="panel"><svg id="panel" viewBox="0 0 640 800"></svg></div>
     <div class="rule"></div>
@@ -71,13 +67,13 @@
     window.VIDEO_END = TIMING.duration;
     window.renderAt = function (t) {
       var i = 0; while (i < LN.length - 1 && LN[i + 1].start - 0.05 <= t) i++;
-      var first = i === 0, last = i === LN.length - 1;
+      var first = i === 0 && !!window.__intro, last = i === LN.length - 1;
       intro.style.display = first ? "block" : "none"; outro.style.display = last ? "block" : "none";
       if (first) window.__intro(document.getElementById("introArt"), t);
       else if (last) window.__outro(document.getElementById("outroArt"), t - LN[i].start, t);
       else window.__panel(panel, t);
       if (i !== cur) { var c = CAPS[i]; cap.innerHTML = c.w.map(function (w, k) { return c.k[k] ? '<span class="' + c.k[k] + '">' + w + '</span>' : w; }).join(" "); cur = i; }
-      var a = Math.min(1, (t - LN[i].start + 0.05) / 0.25); cap.style.opacity = first || last ? 0 : a; cap.style.transform = "translateY(" + ((1 - a) * 6).toFixed(1) + "px)";
+      var a = Math.min(1, (t - LN[i].start + 0.05) / 0.25); cap.style.opacity = first || last ? 0 : a; /* without window.__intro, line 0 is an ordinary shot with its caption */ cap.style.transform = "translateY(" + ((1 - a) * 6).toFixed(1) + "px)";
     };
     renderAt(30);
   })();
