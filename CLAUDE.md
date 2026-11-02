@@ -32,6 +32,10 @@ For the animation style, ask once per topic: quick mode (default) or full checks
 - **Two photos per item, 4 seconds each, same card on both.** The user sends photos in pairs in list order; whatever is
   missing, find on Wikimedia Commons (slowly, one request at a time). No replicas, film stills or unrelated pictures unless
   the user picked them; drop an item with no real photo and say so.
+- **No sound** in the video: `make.py` writes a silent track by default (the user adds a sound in the app; `--bed` or
+  `--music` only if asked).
+- The opening title card sits **just above the head** (`intro.top`/`intro.shift`, values per clip in `videos/_intros/README.md`);
+  break a long title by hand with `\n`.
 - Card: emoji + short title + **exactly two lines** of body (check with `videos/_templates/photo-list/lines.js`).
 - Build: `videos/_templates/photo-list/` (`make.py`, `template.html`), render with `videos/render.js`.
 - Reference build: `videos/titanic-finds/`.

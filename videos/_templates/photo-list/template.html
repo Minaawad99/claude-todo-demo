@@ -22,7 +22,8 @@
   .card h2 { margin: 0 0 3px; font-size: 16.5px; font-weight: 900; line-height: 1.35; }
   .card p { margin: 0; font-size: 12.4px; font-weight: 700; line-height: 1.6; }
   /* the opening clip */
-  #intro img { position: absolute; inset: 0; width: 360px; height: 640px; object-fit: cover; }
+  #intro img { position: absolute; left: 0; top: 0; width: 360px; height: 640px; object-fit: cover; }
+  #intro #clipbg { filter: blur(14px) brightness(.6); transform: scale(1.15); }
   #intro .card { left: 30px; right: 30px; top: 37px; padding: 12px 16px 14px; }
   #intro .card h2 { font-size: 23px; line-height: 1.55; margin: 0; }
   /* the closing question */
@@ -35,7 +36,8 @@
 <body>
 <script>
 // list.js sets window.LIST = {
-//   intro: {frames: <count of intro/0001.jpg…>, fps: 30, title: "…"},   // the opening clip, cut to JPEG frames
+//   intro: {frames: <count of intro/0001.jpg…>, fps: 30, title: "…", top?: card top px, shift?: px to move the clip down},
+//          // top/shift come from videos/_intros/README.md so the card sits just above the head (shift fills the gap with a blurred copy)
 //   items: [{emoji, title, body, photo: "photos/x.jpg" or ["a.jpg", "b.jpg"], dur?}],  // dur defaults to LIST.dur (8 s), split between the photos
 //   outro: {title, sub, photo, dur?}
 // }
@@ -54,7 +56,7 @@ function photoScene(photo, cardHTML, id) {   // photo: one path, or a list shown
 }
 // opening clip
 const intro = document.createElement('div'); intro.className = 'scene'; intro.id = 'intro';
-intro.innerHTML = `<img id="clip"><div class="card"><h2>${esc(L.intro.title)}</h2></div>`;
+intro.innerHTML = `<img id="clipbg"><img id="clip" style="top:${L.intro.shift || 0}px"><div class="card" style="top:${L.intro.top ?? 37}px"><h2>${esc(L.intro.title).replace(/\n/g, "<br>")}</h2></div>`;
 const introDur = L.intro.dur ?? L.intro.frames / (L.intro.fps || 30);
 add(intro, introDur);
 const frames = Array.from({ length: L.intro.frames }, (_, i) => { const im = new Image(); im.src = `intro/${String(i + 1).padStart(4, '0')}.jpg`; return im; });
@@ -66,7 +68,7 @@ add(photoScene(L.outro.photo, `<h2>${esc(L.outro.title)}</h2><p>${esc(L.outro.su
 window.VIDEO_END = t + XF;
 window.SCENES = scenes.map(s => ({ t0: +s.t0.toFixed(2), t1: +s.t1.toFixed(2), title: s.el.querySelector('h2').textContent.trim() }));
 
-const clip = document.getElementById('clip');
+const clip = document.getElementById('clip'), clipbg = document.getElementById('clipbg');
 async function renderAt(time) {
   for (const s of scenes) {
     let o = 0;
@@ -80,7 +82,7 @@ async function renderAt(time) {
   }
   if (time < introDur) {
     const f = frames[Math.min(frames.length - 1, Math.floor(time * (L.intro.fps || 30)))];
-    if (clip.src !== f.src) { clip.src = f.src; await clip.decode().catch(() => {}); }
+    if (clip.src !== f.src) { clip.src = f.src; await clip.decode().catch(() => {}); if (L.intro.shift) { clipbg.src = f.src; await clipbg.decode().catch(() => {}); } }
   }
 }
 window.renderAt = renderAt;

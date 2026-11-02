@@ -65,6 +65,9 @@ is "how does X work", say the animation style fits better.
 
 ## 5. Opening clip and music
 
+- **No sound by default** (the user's rule): `make.py` writes silence; use `--music track` or `--bed` only when asked.
+- Place the title card just above the head with `intro.top` / `intro.shift` (table in `videos/_intros/README.md`).
+
 - The user's opening clips are in `videos/_intros/` (six so far; `README.md` there says what each one shows, how long it
   is, where to cut it and what topics it suits). Pick the one that fits the topic, not the one used last time, and tell the
   user which one and why. If they send a new clip, add it there with a row in that README.

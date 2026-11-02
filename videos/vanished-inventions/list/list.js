@@ -1,7 +1,7 @@
 // «الصور» — اختراعات عبقرية… اختفت فجأة (suspense). Opening clip: videos/_intros/2-room-maroon-point-down-up.mp4
 window.LIST = {
   dur: 8,
-  intro: { frames: 205, fps: 30, title: "اختراعات عبقرية… اختفت فجأة 🕵️" },
+  intro: { frames: 195, fps: 30, title: "اختراعات عبقرية…\nاختفت فجأة 🕵️", top: 14, shift: 80 },
   items: [
     { emoji: "🎥", title: "ركب القطر… ومنزلش", photo: "photos/x.jpg",
       body: "لويس لوبرنس صوّر أول فيلم متحرك سنة 1888، وبعدها بسنتين ركب قطر لباريس… والقطر وصل من غيره!" },
