@@ -78,7 +78,7 @@
   function fixed(s) { OVER += s; return ""; }
   window.__panel = function (svg, t) {
     CLIPN = 0; OVER = ""; var i = at(t), sh = SH[i], next = i + 1 < SH.length ? SH[i + 1].a : L(LN.length), u = t - sh.a, d = Math.max(0.5, next - sh.a);
-    var c = sh.cam(u, d), cx = c[0] + 10 * Math.sin(t * 1.1), cy = c[1] + 8 * Math.cos(t * 1.1), z = c[2] * (1 + 0.02 * Math.sin(t * 0.9));
+    var c = sh.cam(u, d), cx = c[0] + 16 * Math.sin(t * 1.35), cy = c[1] + 12 * Math.cos(t * 1.35), z = c[2] * (1 + 0.035 * Math.sin(t * 1.1));
     svg.innerHTML = '<g transform="translate(320 400) scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g>' + OVER + '<rect width="640" height="800" filter="url(#paperN)"/>';
     return i;
   };

@@ -1,0 +1,32 @@
+// Sound cues from the line timings: node cues.js → cues.json. Soft diagram-style sounds, all synthesized by audio/sfx.py:
+// paper whooshes on the cuts, clanks and servo for steel parts, thuds for concrete, hum/motor for the crane, wind.
+global.window = {}; eval(require('fs').readFileSync(__dirname + '/timing.js', 'utf8'));
+const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration : T[i].start, D = i => L(i + 1) - L(i), c = [];
+const a = (t, fx, gain, dur) => c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), fx, gain }, dur ? { dur: +dur.toFixed(2) } : {}));
+for (let i = 1; i < T.length; i++) a(L(i) - 0.08, i % 2 ? 'wipe' : 'whoosh', 0.2);
+const lab = (i, dt) => a(L(i) + dt, 'tick', 0.22);
+a(L(0) + 0.3, 'creak', 0.2); a(L(0) + 1.6, 'pop', 0.4);
+a(L(1) + 0.8, 'creak', 0.3); a(L(1) + 2.0, 'thud', 0.5); a(L(1) + 2.2, 'clank', 0.3); a(L(1) + 2.3, 'pop', 0.3);
+a(L(2) + 0.3, 'slosh', 0.25, 2.0); lab(2, 0.7); a(L(2) + 1.7, 'bell', 0.3); a(L(2) + 2.6, 'clank', 0.25);
+a(L(3) + 0.3, 'servo', 0.15, 1.0); lab(3, 1.1); a(L(3) + 2.2, 'thud', 0.35);
+for (let k = 0; k < 8; k++) a(L(4) + 0.2 + k * 0.32, 'clink', 0.14); a(L(4) + 2.7, 'pop', 0.4); lab(4, 2.8);
+a(L(5) + 0.3, 'servo', 0.18, 2.0); lab(5, 1.3); a(L(5) + 2.3, 'pop', 0.4);
+a(L(6) + 0.6, 'creak', 0.35); a(L(6) + 2.2, 'thud', 0.3);
+a(L(7) + 0.3, 'clank', 0.25); for (let k = 0; k < 4; k++) a(L(7) + 1.5 + k * 0.4, 'thud', 0.3); lab(7, 1.7); a(L(7) + 2.7, 'pop', 0.4);
+a(L(8) + 0.4, 'whoosh', 0.15); a(L(8) + 1.2, 'chime', 0.3); lab(8, 1.1);
+for (let k = 0; k < 5; k++) a(L(9) + 0.45 + k * 0.25, 'pop', 0.22); a(L(9) + 1.9, 'pop', 0.4);
+a(L(10) + 0.3, 'motor', 0.15, D(10) - 0.5); lab(10, 0.6);
+a(L(11) + 0.4, 'gear', 0.18, 2.4); lab(11, 0.6); a(L(11) + 1.3, 'chime', 0.2);
+a(L(12) + 0.3, 'motor', 0.12, 1.4); a(L(12) + 1.5, 'creak', 0.35); lab(12, 1.9);
+a(L(13) + 0.3, 'beep', 0.2); a(L(13) + 1.5, 'beep', 0.2); a(L(13) + 2.2, 'beep', 0.25); a(L(13) + 2.6, 'notify', 0.25); lab(13, 0.5);
+a(L(14) + 0.3, 'pop', 0.4); a(L(14) + 1.9, 'pop', 0.4); a(L(14) + 1.6, 'whoosh', 0.15);
+a(L(15) + 0.2, 'wind', 0.25, D(15)); lab(15, 1.3);
+a(L(16) + 0.1, 'wind', 0.2, D(16)); a(L(16) + 0.4, 'clank', 0.25); a(L(16) + 0.7, 'gear', 0.15, 2.2); lab(16, 1.7);
+a(L(17) + 0.4, 'tick', 0.25); a(L(17) + 1.7, 'thud', 0.35);
+for (let k = 0; k < 6; k++) a(L(18) + 0.8 + k * 0.5, 'clank', 0.14); lab(18, 1.3);
+a(L(19) + 0.3, 'servo', 0.2, 1.6); lab(19, 0.6); a(L(19) + 2.0, 'motor', 0.12, 1.5); a(L(19) + 3.6, 'clank', 0.35); lab(19, 2.1);
+a(L(20) + 0.4, 'clank', 0.3); a(L(20) + 0.6, 'clank', 0.2); lab(20, 0.9);
+a(L(21) + 0.3, 'pop', 0.3); a(L(21) + 1.1, 'pop', 0.3); a(L(21) + 1.9, 'ping', 0.3);
+a(L(22) + 0.2, 'bell', 0.35); a(L(22) + 0.3, 'motor', 0.1, 2.0);
+a(L(23) + 0.1, 'chime', 0.3); [0.3, 0.45, 0.6, 0.75, 0.9, 1.05].forEach(dt => a(L(23) + dt, 'pop', 0.18));
+require('fs').writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: c }, null, 1)); console.log(c.length, 'cues');

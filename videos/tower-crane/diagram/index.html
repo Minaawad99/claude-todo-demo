@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>تعمل ونش برجي إزاي؟ — إيه الحكاية؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* «الرسم الهندسي»: cream paper, a single-line card 35px in (as in the «إزاي الإنترنت بيشتغل؟» reference), a portrait
+     diagram panel (640×800 world) in the top of the card, a ruled one-line caption under it; an optional opening card for
+     the first line (only when the episode defines window.__intro) and a summary card for the last. 360×640 canvas. */
+  html, body { margin: 0; background: #eee5d0; }
+  .canvas { position: relative; width: 360px; height: 640px; background: #eee5d0; overflow: hidden; font-family: "Noto Sans Arabic", sans-serif; color: #2b2b2b; }
+  .crop { position: absolute; width: 10px; height: 10px; border-color: #6a6458; border-style: solid; border-width: 0; }
+  .card { position: absolute; left: 35px; top: 35px; right: 35px; bottom: 35px; border: 1.1px solid #2b2b2b; }
+  .panel { position: absolute; left: 0; right: 0; top: 0; height: 362px; overflow: hidden; }
+  .panel svg { display: block; width: 100%; height: 100%; }
+  .rule { position: absolute; left: 11px; right: 11px; top: 362px; height: 0; border-top: .7px solid #2b2b2b; }
+  .cap { position: absolute; left: 14px; right: 14px; top: 418px; text-align: center; font: 700 14.5px/1.7 "Noto Sans Arabic", sans-serif; transition: none; }
+  .cap .o { color: #c4532c; } .cap .b { color: #46698a; } .cap .g { color: #6b7d3c; }
+  .brand { position: absolute; left: 0; right: 0; bottom: 13px; text-align: center; font: 600 9.5px "Noto Sans Arabic", sans-serif; color: #8a8070; letter-spacing: .3px; }
+  .lab { font: 700 20px "Noto Sans Arabic", sans-serif; }
+  .over { position: absolute; inset: 0; background: #eee5d0; display: none; }
+  .over .tiny { position: absolute; right: 16px; top: 16px; font: 600 9.5px "Noto Sans Arabic"; color: #6a6458; }
+  #intro .cat { position: absolute; left: 0; right: 0; top: 118px; text-align: center; font: 700 10.5px "Noto Sans Arabic"; color: #c4532c; }
+  #intro .r1, #intro .r2 { position: absolute; left: 140px; right: 140px; height: 0; border-top: .8px solid #2b2b2b; }
+  #intro .hook { position: absolute; left: 20px; right: 20px; top: 150px; text-align: center; font: 900 25px/1.55 "Noto Sans Arabic"; }
+  #intro .hook .o { color: #c4532c; } #intro .hook .gr { color: #8a8070; }
+  #intro svg { position: absolute; left: 16px; right: 16px; top: 300px; width: 290px; height: 160px; }
+  #outro .q { position: absolute; left: 14px; right: 14px; top: 34px; font: 800 16px/1.5 "Noto Sans Arabic"; }
+  #outro svg { position: absolute; left: 14px; top: 96px; width: 262px; height: 140px; }
+  #outro .leg { position: absolute; left: 14px; right: 14px; top: 244px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font: 600 10px "Noto Sans Arabic"; }
+  #outro .leg span b { display: inline-block; width: 14px; height: 14px; line-height: 13px; border: 1px solid #2b2b2b; border-radius: 50%; text-align: center; font: 700 8.5px "Noto Sans Arabic"; margin-left: 4px; }
+  #outro .stat { position: absolute; left: 14px; right: 14px; top: 316px; display: flex; align-items: center; gap: 10px; }
+  #outro .stat .n { font: 900 40px/1 "Noto Sans Arabic"; color: #c4532c; }
+  #outro .stat .t { font: 700 10.5px/1.5 "Noto Sans Arabic"; }
+  #outro .pts { position: absolute; left: 14px; right: 14px; top: 374px; border-top: .8px solid #2b2b2b; padding-top: 8px; font: 600 10px/1.7 "Noto Sans Arabic"; }
+  #outro .more { margin-top: 6px; font: 500 9px/1.6 "Noto Sans Arabic"; color: #6a6458; }
+</style></head>
+<body>
+<div class="canvas">
+  <div class="card">
+    <div class="panel"><svg id="panel" viewBox="0 0 640 800"></svg></div>
+    <div class="rule"></div>
+    <div class="cap" id="cap"></div>
+    <div class="over" id="intro"><div class="tiny">إيه الحكاية؟</div><div class="cat">هندسة</div><div class="r1" style="top:142px"></div>
+      <div class="hook"></div><div class="r2" style="top:282px"></div><svg id="introArt" viewBox="0 0 580 320"></svg></div>
+    <div class="over" id="outro"><div class="tiny">إيه الحكاية؟</div><div class="q">تعمل ونش برجي إزاي؟</div><svg id="outroArt" viewBox="0 0 580 300"></svg><div class="leg"><span><b>1</b>قاعدة خرسانة</span><span><b>2</b>برج مثلثات</span><span><b>3</b>الذراع والعربية</span><span><b>4</b>الثقل الموازن</span><span><b>5</b>حلقة بتلف</span><span><b>6</b>الكابينة والحساس</span></div><div class="stat"><div class="n">2 طن</div><div class="t">بس في آخر الذراع،<br>مع إنه بيشيل 10 جنب البرج</div></div><div class="pts">1. القاعدة التقيلة والثقل الموازن بيمنعوه يتقلب.<br>2. العربية والحلقة بيوصّلوا الحمل لأي حتة في دايرة.<br>3. بيطوّل نفسه بنفسه، حتة حتة، مع العمارة.<div style="margin-top:10px;border:1px solid #2b2b2b;padding:6px 4px;text-align:center;font:800 11.5px/1.6 Noto Sans Arabic">قولولنا…<br><span style="color:#c4532c">عايزين تعرفوا حكاية إيه المرة الجاية؟</span></div></div></div>
+  </div>
+  <div class="brand">إيه الحكاية؟</div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2b2b2b" stroke-width="1" opacity=".16"/></pattern>
+  <pattern id="hatchW" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#fff" stroke-width="1" opacity=".25"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#dccfb2" stroke-width="1.2" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="soft2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .06 0"/></filter>
+  <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e4e6e2"/><stop offset=".5" stop-color="#d3d6d1"/><stop offset="1" stop-color="#c7cbc5"/></linearGradient>
+  <radialGradient id="glowO" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ff8a3a" stop-opacity=".85"/><stop offset="1" stop-color="#ff8a3a" stop-opacity="0"/></radialGradient>
+  <radialGradient id="glowW" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff3c8" stop-opacity=".95"/><stop offset="1" stop-color="#fff3c8" stop-opacity="0"/></radialGradient>
+  <linearGradient id="cone" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff6d8" stop-opacity=".9"/><stop offset="1" stop-color="#fff6d8" stop-opacity="0"/></linearGradient>
+  <linearGradient id="rayCone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fb8cc" stop-opacity=".55"/><stop offset="1" stop-color="#9fb8cc" stop-opacity=".08"/></linearGradient>
+</defs></svg>
+<script src="../timing.js"></script>
+<script>window.CAPS = [{"w": ["لو", "ركّبت", "عمود", "حديد", "طويل،", "وعلّقت", "في", "آخره", "حبل،", "يبقى", "عملت", "ونش", "برجي؟"], "k": ["", "", "", "", "", "", "", "", "", "", "", "o", "o"]}, {"w": ["للأسف", "لأ،", "أول", "ما", "تشيل", "بيه", "حاجة", "تقيلة،", "العمود", "هيتقلب", "على", "جنبه."], "k": ["", "", "", "", "", "", "", "", "", "o", "", ""]}, {"w": ["عشان", "كده", "بتصب", "الأول", "قاعدة", "خرسانة", "ضخمة،", "تقلها", "ممكن", "يعدّي", "مية", "طن،", "وتثبّت", "فيها", "البرج."], "k": ["", "", "", "", "g", "g", "", "", "", "", "o", "o", "", "", ""]}, {"w": ["بس", "البرج", "لازم", "يبقى", "قوي", "جدًا،", "من", "غير", "ما", "يبقى", "تقيل", "هو", "كمان."], "k": ["", "", "", "", "", "", "", "", "", "", "o", "", ""]}, {"w": ["عشان", "كده", "بيتعمل", "من", "حديد", "مشبّك", "على", "شكل", "مثلثات،", "والمثلث", "شكل", "ما", "بيتطبقش."], "k": ["", "", "", "", "", "", "", "", "o", "", "", "", ""]}, {"w": ["وفوق", "البرج", "بتركّب", "ذراع", "طويل،", "ممكن", "يوصل", "لسبعين", "متر."], "k": ["", "", "", "g", "", "", "", "b", "b"]}, {"w": ["بس", "أول", "ما", "الحمل", "يتعلّق", "في", "آخر", "الذراع،", "الونش", "كله", "هيميل", "لقدام."], "k": ["", "", "", "", "", "", "", "", "", "", "o", ""]}, {"w": ["عشان", "كده", "بتركّب", "ذراع", "قصير", "في", "الضهر،", "وعليه", "بلوكات", "خرسانة", "تقلها", "حوالي", "عشرين", "طن."], "k": ["", "", "", "", "", "", "", "", "g", "", "", "", "o", "o"]}, {"w": ["دي", "اسمها", "الثقل", "الموازن،", "بتشد", "الونش", "لورا", "قد", "ما", "الحمل", "بيشده", "لقدام."], "k": ["", "", "g", "g", "", "", "", "", "", "", "", ""]}, {"w": ["بس", "الحمل", "لازم", "يوصل", "أماكن", "كتير،", "مش", "مكان", "واحد."], "k": ["", "", "", "", "b", "b", "", "", ""]}, {"w": ["عشان", "كده", "بتحط", "عربية", "صغيرة", "بتجري", "على", "الذراع،", "تقرّب", "الحمل", "أو", "تبعده."], "k": ["", "", "", "g", "", "", "", "", "", "", "", ""]}, {"w": ["وفوق", "البرج", "حلقة", "بتلف", "الذراع", "كله،", "فيوصل", "لأي", "حتة", "في", "دايرة", "كاملة."], "k": ["", "", "g", "", "", "", "", "", "", "", "b", "b"]}, {"w": ["بس", "كل", "ما", "الحمل", "يبعد", "عن", "البرج،", "الونش", "يستحمل", "أقل."], "k": ["", "", "", "", "", "", "", "", "", "o"]}, {"w": ["عشان", "كده", "فيه", "جهاز", "بيحسب", "الوزن", "والمسافة،", "ويوقف", "الونش", "لو", "الحمل", "زيادة."], "k": ["", "", "", "b", "", "", "", "", "", "", "", ""]}, {"w": ["فالونش", "اللي", "بيشيل", "عشرة", "طن", "جنب", "البرج،", "ممكن", "ما", "يشيلش", "غير", "اتنين", "طن", "في", "آخر", "الذراع."], "k": ["", "", "", "b", "o", "", "", "", "", "", "", "o", "o", "", "", ""]}, {"w": ["بس", "الريح", "فوق", "جامدة", "جدًا،", "والذراع", "الطويل", "ده", "بيتزق", "زي", "الشراع."], "k": ["", "o", "", "", "", "", "", "", "", "", "o"]}, {"w": ["عشان", "كده", "بعد", "الشغل", "بيفكّوا", "الفرامل،", "ويسيبوا", "الذراع", "يلف", "مع", "الهوا."], "k": ["", "", "", "", "", "g", "", "", "", "", "g"]}, {"w": ["ناس", "كتير", "فاكرة", "إن", "الونش", "بيتركب", "من", "الأول", "بطول", "العمارة."], "k": ["", "", "", "", "", "", "", "", "o", "o"]}, {"w": ["والحقيقة", "إنه", "بيبدأ", "قصير،", "وكل", "ما", "العمارة", "تعلى،", "بيطوّل", "نفسه", "بنفسه."], "k": ["", "", "", "", "", "", "", "", "g", "g", "g"]}, {"w": ["مكبس", "بيرفع", "الجزء", "اللي", "فوق،", "والونش", "يشيل", "حتة", "برج", "جديدة", "ويدخّلها", "تحته."], "k": ["b", "", "", "", "", "", "", "", "", "b", "", ""]}, {"w": ["ولما", "يطول", "أوي،", "بيربطوه", "في", "العمارة", "نفسها", "عشان", "ما", "يتهزّش."], "k": ["", "", "", "b", "", "", "", "", "", ""]}, {"w": ["ضيف", "كابينة", "للسواق،", "وسلم", "جوه", "البرج،", "ولمبة", "حمرا", "فوق", "عشان", "الطيارات."], "k": ["", "g", "", "g", "", "", "", "o", "", "", ""]}, {"w": ["ومبروك،", "كده", "إنت", "عملت", "ونش", "برجي."], "k": ["", "", "", "", "o", "o"]}, {"w": ["قولولنا،", "عايزين", "تعرفوا", "حكاية", "إيه", "المرة", "الجاية؟"], "k": ["", "", "", "", "", "", ""]}];</script>
+<script src="scenes.js"></script>
+<script>
+  (function () {
+    var LN = TIMING.lines, cap = document.getElementById("cap"), panel = document.getElementById("panel"), intro = document.getElementById("intro"), outro = document.getElementById("outro"), cur = -1;
+    window.VIDEO_END = TIMING.duration;
+    window.renderAt = function (t) {
+      var i = 0; while (i < LN.length - 1 && LN[i + 1].start - 0.05 <= t) i++;
+      var first = i === 0 && !!window.__intro, last = i === LN.length - 1;
+      intro.style.display = first ? "block" : "none"; outro.style.display = last ? "block" : "none";
+      if (first) window.__intro(document.getElementById("introArt"), t);
+      else if (last) window.__outro(document.getElementById("outroArt"), t - LN[i].start, t);
+      else window.__panel(panel, t);
+      if (i !== cur) { var c = CAPS[i]; cap.innerHTML = c.w.map(function (w, k) { return c.k[k] ? '<span class="' + c.k[k] + '">' + w + '</span>' : w; }).join(" "); cur = i; }
+      var a = Math.min(1, (t - LN[i].start + 0.05) / 0.25); cap.style.opacity = first || last ? 0 : a; /* without window.__intro, line 0 is an ordinary shot with its caption */ cap.style.transform = "translateY(" + ((1 - a) * 6).toFixed(1) + "px)";
+    };
+    renderAt(30);
+  })();
+</script>
+</body></html>
