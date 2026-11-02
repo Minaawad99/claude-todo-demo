@@ -40,6 +40,36 @@
   // a magnified inset: a circle at (cx,cy) radius r showing `inner` (drawn in its own coordinates, centred on 0,0)
   function inset(cx, cy, r, inner, k) { k = pop(k == null ? 1 : k); if (k <= 0) return ""; var id = "in" + (++CLIPN); return '<g transform="translate(' + f(cx) + ' ' + f(cy) + ') scale(' + f(k) + ')"><clipPath id="' + id + '"><circle r="' + r + '"/></clipPath><circle r="' + r + '" fill="' + PAPER + '"/><g clip-path="url(#' + id + ')">' + inner + '</g><circle r="' + r + '" fill="none" stroke="' + INK + '" stroke-width="2.4"/></g>'; }
 
+  // ---- isometric (true 30°) — every object, room, street and machine is drawn on this grid ----
+  // world units: x to the right-down, y to the left-down, z up; (ox,oy) is where world (0,0,0) lands on screen, s = px per unit
+  var ISO = { ox: 320, oy: 300, s: 1 };
+  function isoAt(ox, oy, s) { ISO = { ox: ox, oy: oy, s: s || 1 }; return ""; }
+  function iso(x, y, z) { return [ISO.ox + (x - y) * 0.866 * ISO.s, ISO.oy + ((x + y) * 0.5 - (z || 0)) * ISO.s]; }
+  function isoPath(pts) { return pts.map(function (p, i) { var q = iso(p[0], p[1], p[2]); return (i ? "L" : "M") + f(q[0]) + " " + f(q[1]); }).join(" ") + " Z"; }
+  // one flat face; hatch: "" none, "hatch" dark lines (the face in shadow), "hatchW" light lines (on dark fills)
+  function isoFace(pts, fill, hatch, sw) {
+    var d = isoPath(pts), s = '<path d="' + d + '" fill="' + fill + '" stroke="' + INK + '" stroke-width="' + (sw == null ? 1.8 : sw) + '" stroke-linejoin="round"/>';
+    return hatch ? s + '<path d="' + d + '" fill="url(#' + hatch + ')" stroke="none"/>' : s;
+  }
+  // a box: corner (x,y,z), size w (x), d (y), h (z). col = [top, left (x-facing, lit), right (y-facing, hatched shade)]
+  function isoBox(x, y, z, w, d, h, col, sw) {
+    col = col || [BONE, PUTTY, PUTTY];
+    return isoFace([[x, y + d, z], [x + w, y + d, z], [x + w, y + d, z + h], [x, y + d, z + h]], col[1], "", sw) +
+           isoFace([[x + w, y, z], [x + w, y + d, z], [x + w, y + d, z + h], [x + w, y, z + h]], col[2], col[2] === INK || col[2] === "#41392f" ? "hatchW" : "hatch", sw) +
+           isoFace([[x, y, z + h], [x + w, y, z + h], [x + w, y + d, z + h], [x, y + d, z + h]], col[0], "", sw);
+  }
+  // a soft contact shadow under an object footprint (keeps things sitting on the floor, not floating)
+  function isoShadow(x, y, w, d, o) { return '<path d="' + isoPath([[x, y, 0], [x + w, y, 0], [x + w, y + d, 0], [x, y + d, 0]]) + '" fill="' + INK + '" opacity="' + (o || 0.12) + '" transform="translate(4 3)"/>'; }
+  // a floor slab / ground tile with the paper grid kept visible through it
+  function isoFloor(x, y, w, d, fill) { return isoFace([[x, y, 0], [x + w, y, 0], [x + w, y + d, 0], [x, y + d, 0]], fill || "#d9c3a8", "", 1.4); }
+  // an upright cylinder (tanks, columns, cable ends seen from above): centre (x,y,z), radius r, height h
+  function isoCyl(x, y, z, r, h, fill, top) {
+    var b = iso(x, y, z), tp = iso(x, y, z + h), rx = r * 1.2247 * ISO.s, ry = r * 0.7071 * ISO.s;
+    return '<path d="M' + f(b[0] - rx) + ' ' + f(b[1]) + ' L' + f(tp[0] - rx) + ' ' + f(tp[1]) + ' L' + f(tp[0] + rx) + ' ' + f(tp[1]) + ' L' + f(b[0] + rx) + ' ' + f(b[1]) + ' A' + f(rx) + ' ' + f(ry) + ' 0 0 1 ' + f(b[0] - rx) + ' ' + f(b[1]) + ' Z" fill="' + fill + '" stroke="' + INK + '" stroke-width="1.8"/>' +
+      '<path d="M' + f(b[0] + rx * 0.35) + ' ' + f(tp[1]) + ' L' + f(b[0] + rx) + ' ' + f(tp[1]) + ' L' + f(b[0] + rx) + ' ' + f(b[1]) + ' A' + f(rx) + ' ' + f(ry) + ' 0 0 1 ' + f(b[0] + rx * 0.35) + ' ' + f(b[1] + ry * 0.94) + ' Z" fill="url(#hatch)"/>' +
+      '<ellipse cx="' + f(tp[0]) + '" cy="' + f(tp[1]) + '" rx="' + f(rx) + '" ry="' + f(ry) + '" fill="' + (top || BONE) + '" stroke="' + INK + '" stroke-width="1.8"/>';
+  }
+
   var SH = [];
   function shot(line, cam, draw) { SH.push({ a: L(line), cam: cam, draw: draw }); }
   function at(t) { var i = 0; while (i < SH.length - 1 && SH[i + 1].a <= t) i++; return i; }
