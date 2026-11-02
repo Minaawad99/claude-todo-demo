@@ -1,0 +1,33 @@
+// Sound cues from the line timings: node cues.js → cues.json. All synthesized by audio/sfx.py: fire crackle (sizzle),
+// the steam blast (boom + whoosh), pouring (splash), lid (clank), knob (tick), door (thud), checklist pops.
+global.window = {}; eval(require('fs').readFileSync(__dirname + '/timing.js', 'utf8'));
+const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration : T[i].start, D = i => L(i + 1) - L(i), c = [];
+const a = (t, fx, gain, dur) => c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), fx, gain }, dur ? { dur: +dur.toFixed(2) } : {}));
+for (let i = 1; i < T.length; i++) a(L(i) - 0.08, 'whoosh', 0.16);
+const fire = (i, from, g) => a(L(i) + (from || 0), 'sizzle', g || 0.14, D(i) - (from || 0));
+a(L(0) + 0.1, 'beep', 0.3); fire(0, 0.2, 0.14); a(L(0) + 2.2, 'thud', 0.35);
+a(L(1) + 1.0, 'splash', 0.35); a(L(1) + 1.25, 'boom', 0.55); a(L(1) + 1.3, 'whoosh', 0.4); fire(1, 1.3, 0.2);
+a(L(2) + 0.2, 'chime', 0.3);
+a(L(3) + 0.3, 'fizz', 0.12, D(3) - 0.4); a(L(3) + 1.0, 'pop', 0.3);
+a(L(4) + 0.4, 'fizz', 0.15, 2.2); a(L(4) + 2.4, 'whoosh', 0.3); fire(4, 2.5, 0.15);
+fire(5, 0, 0.1); a(L(5) + 0.4, 'drip', 0.35); a(L(5) + 2.0, 'pop', 0.3);
+fire(6, 0, 0.1); a(L(6) + 0.6, 'fizz', 0.3, 1.6); a(L(6) + 0.8, 'sizzle', 0.25, 1.5);
+fire(7, 0, 0.1); a(L(7) + 0.4, 'steam', 0.3, 2.6);
+a(L(8) + 0.4, 'fill', 0.15, 2.4); a(L(8) + 0.3, 'pop', 0.3); a(L(8) + 2.6, 'pop', 0.4);
+fire(9, 0, 0.14); a(L(9) + 0.4, 'steam', 0.25, 2.0);
+a(L(10) + 0.2, 'boom', 0.5); a(L(10) + 0.3, 'whoosh', 0.4); fire(10, 0.3, 0.22);
+fire(11, 0, 0.2); a(L(11) + 0.6, 'whoosh', 0.2);
+fire(12, 0, 0.12); a(L(12) + 0.8, 'tick', 0.4); a(L(12) + 1.0, 'pop', 0.35);
+a(L(13) + 0.4, 'whoosh', 0.15); a(L(13) + 1.4, 'clank', 0.4); a(L(13) + 1.45, 'pop', 0.3); a(L(13) + 1.6, 'fizz', 0.1, 1.2);
+a(L(14) + 0.8, 'pop', 0.25); a(L(14) + 1.2, 'fizz', 0.08, 1.4);
+for (let k = 0; k < 8; k++) a(L(15) + 0.3 + k * 0.35, 'tick', 0.14);
+fire(16, 0, 0.1); a(L(16) + 0.4, 'spray', 0.2, 1.6); a(L(16) + 2.4, 'ping', 0.3);
+fire(17, 0, 0.1); a(L(17) + 0.5, 'spray', 0.15, 0.8); a(L(17) + 1.2, 'boom', 0.35); a(L(17) + 1.6, 'thud', 0.4);
+fire(18, 0, 0.14); a(L(18) + 0.5, 'slosh', 0.2, 1.6); a(L(18) + 2.2, 'thud', 0.4);
+fire(19, 0, 0.2); a(L(19) + 2.6, 'thud', 0.45); a(L(19) + 3.2, 'beep', 0.25); a(L(19) + 3.5, 'beep', 0.25);
+a(L(20) + 0.3, 'fizz', 0.08, 2.4);
+a(L(21) + 0.3, 'fizz', 0.1, 1.2); a(L(21) + 1.4, 'tick', 0.4); a(L(21) + 1.6, 'pop', 0.3);
+a(L(22) + 0.5, 'clank', 0.3); a(L(22) + 0.7, 'pop', 0.3);
+a(L(23) + 0.3, 'chime', 0.3);
+a(L(24) + 0.1, 'bell', 0.3); [0.3, 0.65, 1.0, 1.35, 1.7, 2.05].forEach(dt => a(L(24) + dt, 'pop', 0.2));
+require('fs').writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: c }, null, 1)); console.log(c.length, 'cues');
