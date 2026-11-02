@@ -29,7 +29,7 @@ For the animation style, ask once per topic: quick mode (default) or full checks
 - Opening: one of the user's own clips in `videos/_intros/` (see its README: 6 clips, where to cut each, which topics fit).
   Pick one that suits the topic, don't repeat the last video's clip, and say which one. Clips 3–6 end with a hand over the
   lens: cut there so it dissolves into the first photo.
-- **Two photos per item, 4 seconds each, same card on both.** The user sends the photos, in pairs, in list order.
+- **Two photos per item, 5 seconds each (`dur: 10`), same card on both.** Order the items from most to least suspenseful. The user sends the photos, in pairs, in list order.
   **Never search for photos or for extra items yourself** (the user's rule): use only what the user sent, and drop any
   item the user sent no photo for (say which). If an item has one photo, split or crop it into two views.
 - **No sound** in the video: `make.py` writes a silent track by default (the user adds a sound in the app; `--bed` or

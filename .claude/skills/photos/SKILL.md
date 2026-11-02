@@ -21,7 +21,7 @@ Talk to the user in Egyptian Arabic. The user picks the topic and sends the open
 | part | length | what's on screen |
 |---|---|---|
 | opening | ~5 s (the clip's length) | the user's clip, full frame; a white rounded card near the top with the hook in two lines and one emoji |
-| items | 10–14 × 8 s: **two photos per item, 4 s each, same card** (0.4 s dissolve between them), 0.5 s cross-fade between items | the photo, full width, centred a little below the middle; the same photo blurred and darkened behind it; the card at the top |
+| items | 10–14 × 10 s: **two photos per item, 5 s each (`dur: 10`), same card** (0.4 s dissolve between them), 0.5 s cross-fade between items | the photo, full width, centred a little below the middle; the same photo blurred and darkened behind it; the card at the top |
 | closing | ~4.5 s | the first item's photo again; a bigger card with a question to the viewer and «احكيلنا في الكومنتات 👇 وتابع عشان الجزء التاني!» |
 
 Total 1:30–1:50. No narration and no captions under the picture: the card is the only text.
@@ -40,7 +40,7 @@ is "how does X work", say the animation style fits better.
   - `title`: 2–5 words, a hook or the thing's name («لفّة غلط بدأت حرب عالمية», «البنسلين»);
   - `body`: one sentence of 16–24 words that fits in two lines: who, the year, what went wrong, and the twist after «…»,
     ending with «!». Casual Cairo Arabic, digits for years («سنة 1928»).
-- Order: open with the biggest story, keep a strong one for last, mix eras and fields.
+- Order: from the most suspenseful item to the least (the user's rule).
 - Closing card: a question that invites comments, linked to the topic («إنت عمرك غلطت غلطة طلعت في الآخر حلوة؟ 🤔»), and
   the sub line above.
 - Check every fact (names, years, the twist) and list the sources in `videos/<slug>/refs/SOURCES.md`. Drop a story that is a
