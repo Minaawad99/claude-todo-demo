@@ -24,5 +24,5 @@
 the wooden tank is a WWI German dummy, the crossing scene is from a film, the cats picture is an old satirical cartoon
 (Puck), the Arab rider is an illustration, the German soldiers photo is generic WWII. The Viking-ship drawing the user sent
 was left out (Vikings, not Mehmed's fleet); his ships item uses one painting in two views.
-Dropped (no photos): exploding rats, Monty's double, the phantom army, Hannibal's snakes, Washington's campfires,
-Archimedes' mirrors, Quaker guns.
+AI images (made by the user in Gemini from Claude's prompts, labelled «صورة تخيلية بالذكاء الاصطناعي»): exploding rats,
+Monty's double, the phantom army, Hannibal's snakes, Washington's campfires, Archimedes' mirrors, Quaker guns.
