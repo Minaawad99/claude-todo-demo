@@ -10,3 +10,9 @@
 8. Navajo code talkers — National WWII Museum; ~400 Marines; the code was never broken. (Wikipedia "Code talker".)
 9. Starfish sites — Wikipedia: https://en.wikipedia.org/wiki/Starfish_site — Dobinson, Fields of Deception: ~968 tons of bombs diverted.
 10. Pelusium (525 BC) — Polyaenus, Stratagems 7.9: a late, doubtful story; the card says «تروي الحكاية».
+11. Operation Copperhead — Wikipedia: https://en.wikipedia.org/wiki/Operation_Copperhead — actor M. E. Clifton James as Montgomery, Gibraltar and Algiers, late May 1944.
+12. Hannibal's snake pots — Cornelius Nepos, Hannibal 10–11; Dickinson College Commentaries: https://dcc.dickinson.edu/node/229 — Bithynia vs Eumenes II, 184 BC (some date it 183). Card cites Nepos.
+13. Operation Greif — National WWII Museum: https://www.nationalww2museum.org/war/articles/operation-greif-secret-mission-sow-chaos-us-army — Skorzeny's commandos in US uniforms, checkpoint questions, Eisenhower kept at HQ over an assassination rumour.
+14. Khalid's desert march (634) — Wikipedia: https://en.wikipedia.org/wiki/Khalid_ibn_al-Walid ; al-Tabari via Alim — camels made to drink, later slaughtered for water. A partly legendary account (Lynch 2013), so «تروي المصادر».
+15. Quaker guns, Centreville (March 1862) — Wikipedia: https://en.wikipedia.org/wiki/Quaker_gun ; Encyclopedia Virginia — painted logs in the works Johnston left.
+16. Assunpink campfires (2–3 Jan 1777) — Mount Vernon: https://mountvernon.org/george-washington/the-revolutionary-war/10-facts-about-the-battle-of-princeton ; American Battlefield Trust — rearguard kept fires, wheels muffled, Princeton attacked on 3 Jan.
