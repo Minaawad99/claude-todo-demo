@@ -72,6 +72,11 @@ simple, vivid فصحى, e.g. «ركب القطار… ولم ينزل منه», 
 - At least 1000 px on the long side; crop out watermarks, borders and old captions. Save as JPEG, `photos/<n>-<word>.jpg`.
 - Look at every photo before using it (Read the file) to confirm it shows the right thing.
 
+- **AI images (only when the user allows it for missing photos):** `python3 videos/tools/genimg.py "<prompt>" <out.jpg>`
+  (Gemini image models on the environment's key; on 2026-11-02 the key's free tier gave image models a quota of 0 → HTTP 429,
+  so it needs billing enabled on that key). Label every AI image «صورة تخيلية بالذكاء الاصطناعي»; never pass one off as a real photo.
+  If generation isn't available, give the user ready prompts to make the images in the Gemini or ChatGPT app.
+
 ## 5. Opening clip and music
 
 - **No sound by default** (the user's rule): `make.py` writes silence; use `--music track` or `--bed` only when asked.
