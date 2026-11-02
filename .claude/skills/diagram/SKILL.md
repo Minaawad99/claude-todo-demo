@@ -15,7 +15,8 @@ description: >
 The user calls this style **دايجرام** or **الرسم الهندسي**. It is the house drawing style for every new topic: the same
 look, the same drawing rules, a different subject each time. It copies the look and pacing of two reference videos
 (series «طب إزاي؟»): the X-ray explainer (94 s) and «إزاي الإنترنت بيشتغل؟» (178 s, 720×1280 30 fps). We keep our own
-brand («إيه الحكاية؟») in place of «طب إزاي؟».
+brand («إيه الحكاية؟») in place of «طب إزاي؟». **Never write «طب إزاي؟» anywhere** (script, captions, cards, cover,
+titles): the question is always «إيه الحكاية؟» (the user's rule).
 
 **Look at the frames in `reference/` before drawing anything:** the contact sheets (`sheet-1..3.jpg`) show the whole
 internet video shot by shot, and `frame-*.jpg` show single frames at full size (a phone, an isometric room, a cable in
@@ -101,8 +102,8 @@ Puck), reference research, sounds, render, QA, cover and titles all work exactly
 
 Each shot is **one short sentence**, about 2–4 s. A 90–100 s video has about 26–32 shots; a 3-minute video about 50.
 
-1. **Hook** on the running motif, in the second person («بس لما أنا رفعت…»), then the question («طب إزاي؟») with the
-   motif in a circle, then line 3 «إيه الحكاية؟ هشرحهالك في دقيقة.»
+1. **Hook** on the running motif, in the second person («بس لما أنا رفعت…»), then the puzzle as a question
+   (without «طب إزاي؟»), then line 3 «إيه الحكاية؟ هشرحهالك في دقيقة.» with the motif in a circle
 2. **Chapters** (2–4), each opened by the chapter marker. Inside a chapter:
    - start from the everyday place, drawn isometric (the living room, the street, the kitchen);
    - follow the thing as it moves (phone → Wi-Fi waves → router → wall cable → street → data centre → sea cable → other
