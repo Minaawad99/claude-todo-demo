@@ -50,9 +50,9 @@ is "how does X work", say the animation style fits better.
 
 ## 4. Photos → `videos/<slug>/list/photos/`
 
-- **Two photos per item** (`photo: ["photos/01a-….jpg", "photos/01b-….jpg"]`): the user usually sends them in pairs, in the
-  list's order. Whatever the user can't find, search for on Wikimedia Commons (one request at a time, sleep between them;
-  on 429 wait 20 s and retry). A crop or detail of the first photo is an acceptable second photo.
+- **Two photos per item** (`photo: ["photos/01a-….jpg", "photos/01b-….jpg"]`), all sent by the user, in pairs, in the
+  list's order. **Never search for photos or items yourself** (the user's rule, after the Titanic video); drop items with no
+  photo and tell the user which. One photo for an item: crop it into two views (e.g. the Lycurgus cup green, then red).
 - Drop an item with no real photo instead of showing an unrelated or replica picture; tell the user which and why.
 
 - One real photo per item: the actual person, object or event (the 1914 car in Sarajevo, Fleming in his lab, the first X-ray

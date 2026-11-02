@@ -22,5 +22,11 @@
 19. Lycurgus Cup — British Museum: 4th-century Roman, green in reflected light, red in transmitted light; gold–silver nanoparticles (Barber & Freestone, 1990).
 20. Roman concrete — MIT, Science Advances, Jan 2023 (Seymour, Masic et al.): lime clasts and hot mixing give self-healing.
 
+## In the video
+11 items, the ones the user sent photos for: Le Prince, Greek fire, flexible glass, Damascus steel, Starlite, soybean car,
+Chrysler Turbine, EV1, Stradivari, Lycurgus Cup, Hindenburg. Left out (no photos): silphium, Tesla's papers, Dymaxion,
+Tucker 48, Stanley Meyer, Diesel, Ulfberht, Stubblefield, Roman concrete.
+
 ## Photos
-(to fill: two per item)
+All sent by the user (2026-11-02), cropped: Damascus (noblie.eu mark cropped), soybean car (Reddit bar cropped),
+Hindenburg (tail fins with swastikas cropped out, to avoid platform flags), Lycurgus Cup (one photo split: green, then red).

@@ -29,9 +29,9 @@ For the animation style, ask once per topic: quick mode (default) or full checks
 - Opening: one of the user's own clips in `videos/_intros/` (see its README: 6 clips, where to cut each, which topics fit).
   Pick one that suits the topic, don't repeat the last video's clip, and say which one. Clips 3–6 end with a hand over the
   lens: cut there so it dissolves into the first photo.
-- **Two photos per item, 4 seconds each, same card on both.** The user sends photos in pairs in list order; whatever is
-  missing, find on Wikimedia Commons (slowly, one request at a time). No replicas, film stills or unrelated pictures unless
-  the user picked them; drop an item with no real photo and say so.
+- **Two photos per item, 4 seconds each, same card on both.** The user sends the photos, in pairs, in list order.
+  **Never search for photos or for extra items yourself** (the user's rule): use only what the user sent, and drop any
+  item the user sent no photo for (say which). If an item has one photo, split or crop it into two views.
 - **No sound** in the video: `make.py` writes a silent track by default (the user adds a sound in the app; `--bed` or
   `--music` only if asked).
 - The opening title card sits **just above the head** (`intro.top`/`intro.shift`, values per clip in `videos/_intros/README.md`);
@@ -53,6 +53,6 @@ For the animation style, ask once per topic: quick mode (default) or full checks
 - Cloud container, reset between sessions: anything worth keeping must be committed and pushed. Nothing outside the repo
   survives (this file is the memory).
 - Work on the branch the session names; push with `git push -u origin <branch>`.
-- Network is limited. Wikimedia Commons and upload.wikimedia.org have worked; if a host is blocked, tell the user which
+- Network is limited. Wikimedia Commons and upload.wikimedia.org have worked (for covers; not for «الصور» item photos); if a host is blocked, tell the user which
   host to add under Allowed domains in the environment settings.
 - Whisper ASR (sherpa-onnx, `small` model) is installed per session into the scratchpad when needed (see `videos/PLAYBOOK.md`).
