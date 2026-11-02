@@ -42,7 +42,8 @@ For the animation style, ask once per topic: quick mode (default) or full checks
 - **Photo style (copied from the user's reference video):** each photo in a thin white frame with a small radius, centred
   a bit below the middle, and a **yellow label** at its bottom-right saying what the photo is (who/what, old or modern,
   painting or photo): `labels: ["…", "…"]` per item, a few words each, accurate (say «رسمة حديثة» for modern paintings).
-- Card: emoji + short title + **exactly two lines** of body (check with `videos/_templates/photo-list/lines.js`).
+- Card: emoji + short title + a body **rich in detail and suspense** (the user's rule: names, places, years, the twist,
+  the outcome), up to 4 full lines, never one lone word on the last line (check with `videos/_templates/photo-list/lines.js`).
 - Build: `videos/_templates/photo-list/` (`make.py`, `template.html`), render with `videos/render.js`.
 - Reference build: `videos/titanic-finds/`.
 

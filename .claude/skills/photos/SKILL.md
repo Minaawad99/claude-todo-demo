@@ -92,7 +92,7 @@ python3 videos/_templates/photo-list/make.py $D videos/_intros/<clip>.mp4 [--mus
 cd videos && TAIL=0 node render.js $PWD/<slug>/list/index.html <slug>/list/music.wav <scratchpad>/<slug>-photos.mp4
 ```
 
-Before rendering, run `node videos/_templates/photo-list/lines.js $PWD/<dir>/index.html`: every body must be exactly 2 lines (a
+Before rendering, run `node videos/_templates/photo-list/lines.js $PWD/<dir>/index.html`: every body must be full lines, up to 4 (the user wants detail and suspense), with no lone word on the last line (a
 lone word on a third line looks broken); shorten the sentence, don't shrink the font.
 
 `make.py` cuts the clip into `intro/*.jpg` (Chromium can't decode H.264 here, so the page shows frames), copies the
