@@ -75,6 +75,9 @@ python3 videos/_templates/photo-list/make.py $D videos/_intros/<clip>.mp4 [--mus
 cd videos && TAIL=0 node render.js $PWD/<slug>/list/index.html <slug>/list/music.wav <scratchpad>/<slug>-photos.mp4
 ```
 
+Before rendering, run `node videos/_templates/photo-list/lines.js $PWD/<dir>/index.html`: every body must be exactly 2 lines (a
+lone word on a third line looks broken); shorten the sentence, don't shrink the font.
+
 `make.py` cuts the clip into `intro/*.jpg` (Chromium can't decode H.264 here, so the page shows frames), copies the
 template to `index.html` and writes `music.wav`. Render at the default 60 fps, 1080×1920 (about 5 minutes for 1:40).
 Don't commit `intro/` or `music.wav` (they can be rebuilt with `make.py`); the clip itself is already in `videos/_intros/`.

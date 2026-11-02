@@ -15,5 +15,14 @@
 
 Left out: the champagne bottle (brand and "drinkable" claims mix Titanic with the Jönköping wreck) and the crow's-nest bell (which bell it is is disputed).
 
-## Photos
-(to fill: file page, author, licence for each photo)
+## Photos (sent by the user, 2026-11-02)
+- 01-astor-watch.jpg — Astor's Waltham watch (Henry Aldridge & Son auction photo, 2024).
+- 02-hartley-violin.jpg — Hartley's violin on display (cropped).
+- 03-perfume.jpg — Saalfeld vials and the «A. Saalfeld & Co., Manchester» label, exhibition photo (cropped).
+- 04-stopped-watch.jpg — watch from the wreck site; photo John Lamparski/WireImage/Getty Images (caption cropped off).
+- 05-big-piece.jpg — the Big Piece at the Luxor, Las Vegas (cropped).
+- 06-shoes.jpg — boots on the seabed, National Geographic frame (logo and side bar cropped off).
+- 07-diana.jpg — Diana statue: 2024 wreck photo (RMS Titanic Inc.) beside the 1912 lounge photo.
+These are press/agency photos, not free licences. Unused photos the user sent: Titanic film still, a second watch,
+the "Last of the Titanic" lifeboat note, an on-board letter (April 10 1912), two cabin reconstructions, the lounge postcard,
+a second hull section.
