@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — ultrasound</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  /* the reel cover, full bleed at 1080×1920 (540×960 at 2x), in a realistic look: a dark exam room, the ultrasound
+     monitor glowing with a real-looking grainy sonogram of a baby in profile, the probe on the gelled belly sending sound
+     in. Text in Noto, inside the 3:4 crop (y 120–840), clear of TikTok's right-hand buttons. */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #000; }
+  #art { position: absolute; inset: 0; width: 540px; height: 960px; }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 10px rgba(0,0,0,.7); }
+</style></head><body>
+<div class="cover">
+<svg id="art" viewBox="0 0 540 960">
+  <defs>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .45  0 0 0 0 .4  0 0 0 .09 0"/></filter>
+    <!-- ultrasound speckle: fine noise turned into grey grains -->
+    <filter id="speckle" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.6 .55" numOctaves="2" seed="11"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  2.6 0 0 0 -1.15"/></filter>
+    <filter id="tissue" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".9 .35" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3" result="d"/><feGaussianBlur in="d" stdDeviation=".9"/></filter>
+    <filter id="blur6"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="blur2"><feGaussianBlur stdDeviation="2"/></filter>
+    <radialGradient id="glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffd27a" stop-opacity=".55"/><stop offset=".5" stop-color="#e8a83a" stop-opacity=".18"/><stop offset="1" stop-color="#e8a83a" stop-opacity="0"/></radialGradient>
+    <radialGradient id="room" cx=".5" cy=".35" r=".8"><stop offset="0" stop-color="#1d3a44"/><stop offset=".6" stop-color="#0d1c22"/><stop offset="1" stop-color="#05090b"/></radialGradient>
+    <linearGradient id="bezel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3f46"/><stop offset="1" stop-color="#1a1d21"/></linearGradient>
+    <radialGradient id="skin" cx=".5" cy=".2" r=".9"><stop offset="0" stop-color="#f2c4a0"/><stop offset=".55" stop-color="#d89c74"/><stop offset="1" stop-color="#7a4a30"/></radialGradient>
+    <linearGradient id="probeG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9aa3a8"/><stop offset=".35" stop-color="#ffffff"/><stop offset=".7" stop-color="#dfe4e7"/><stop offset="1" stop-color="#8a9398"/></linearGradient>
+    <radialGradient id="beam" cx=".5" cy="0" r="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".22"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+    <clipPath id="fan"><path d="M270 268 L452 520 Q270 600 88 520 Z"/></clipPath>
+    <linearGradient id="fadeT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".95"/><stop offset=".75" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>
+    <linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset=".3" stop-color="#000" stop-opacity=".7"/><stop offset="1" stop-color="#000" stop-opacity=".95"/></linearGradient>
+  </defs>
+
+  <rect width="540" height="960" fill="url(#room)"/>
+  <ellipse cx="270" cy="430" rx="300" ry="250" fill="url(#glow)"/>
+
+  <!-- the monitor -->
+  <rect x="58" y="246" width="424" height="372" rx="18" fill="url(#bezel)" stroke="#0a0c0e" stroke-width="3"/>
+  <rect x="74" y="262" width="392" height="340" rx="6" fill="#020304"/>
+  <g clip-path="url(#fan)">
+    <rect x="60" y="260" width="420" height="360" fill="#0b0b0b"/>
+    <rect x="60" y="260" width="420" height="360" fill="#9a9a9a" filter="url(#speckle)" opacity=".55"/>
+    <!-- the womb wall: a bright speckled band; the dark fluid inside -->
+    <ellipse cx="270" cy="448" rx="166" ry="104" fill="#b8b8b8" filter="url(#tissue)" opacity=".9"/>
+    <ellipse cx="270" cy="448" rx="148" ry="88" fill="#030303" filter="url(#tissue)"/>
+    <!-- the baby in profile, facing right: bright skull line, forehead, nose, lips, chin, a hand by the mouth, the body curled below -->
+    <g filter="url(#tissue)">
+      <path d="M140 500 C150 470 190 462 232 476 C262 486 276 506 268 530 C250 556 170 560 140 540 Z" fill="#9c9c9c"/>
+      <path d="M150 512 C180 500 220 502 252 518" stroke="#e6e6e6" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <circle cx="226" cy="418" r="64" fill="#8a8a8a"/>
+      <path d="M262 366 C284 376 296 392 298 408 C306 414 312 420 314 426 C308 430 302 430 300 432 C306 436 308 442 302 446 C306 450 306 456 300 458 C298 470 290 478 278 482 C258 486 240 480 230 470 Z" fill="#8a8a8a"/>
+      <circle cx="226" cy="418" r="64" fill="none" stroke="#f2f2f2" stroke-width="6"/>
+      <path d="M262 366 C284 376 296 392 298 408 C306 414 312 420 314 426 C308 430 302 430 300 432 C306 436 308 442 302 446 C306 450 306 456 300 458 C298 470 290 478 278 482" stroke="#ffffff" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <ellipse cx="270" cy="410" rx="7" ry="5" fill="#2a2a2a"/>
+      <path d="M296 492 C304 478 318 470 328 474 C336 478 332 488 322 492 Z" fill="#d6d6d6"/>
+      <path d="M318 474 l8 -12 M324 478 l10 -9 M328 484 l11 -5" stroke="#ececec" stroke-width="3" stroke-linecap="round"/>
+      <path d="M268 500 C284 504 294 498 300 490" stroke="#cfcfcf" stroke-width="8" fill="none" stroke-linecap="round"/>
+    </g>
+    <rect x="60" y="260" width="420" height="360" fill="url(#beam)" opacity=".6"/>
+  </g>
+  <path d="M270 268 L452 520 Q270 600 88 520 Z" fill="none" stroke="#2a2d30" stroke-width="1.5"/>
+  <!-- on-screen readouts -->
+  <g style="font:600 10px monospace" fill="#8fd0e0"><text x="86" y="284" direction="ltr">OB 3.5MHz</text><text x="86" y="298" direction="ltr">GA 22w 3d</text><text x="400" y="284" direction="ltr">FR 32</text></g>
+  <path d="M440 300 v220" stroke="#5a6068" stroke-width="1"/><g fill="#8fd0e0">
+    <rect x="436" y="300" width="8" height="1.5"/><rect x="436" y="344" width="8" height="1.5"/><rect x="436" y="388" width="8" height="1.5"/><rect x="436" y="432" width="8" height="1.5"/><rect x="436" y="476" width="8" height="1.5"/><rect x="436" y="520" width="8" height="1.5"/></g>
+  <path d="M90 588 q20 -18 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" stroke="#7cf29a" stroke-width="2" fill="none" opacity=".85"/>
+  <circle cx="452" cy="590" r="4" fill="#ff4d3a"/>
+
+  <!-- the belly with gel, the probe pressing in, the sound going in -->
+  <path d="M-20 960 C10 780 140 690 270 690 C400 690 530 780 560 960 Z" fill="url(#skin)"/>
+  <path d="M120 760 C170 712 230 700 280 702" stroke="#fff" stroke-opacity=".25" stroke-width="8" fill="none" filter="url(#blur2)"/>
+  <ellipse cx="300" cy="712" rx="70" ry="14" fill="#cfefff" opacity=".55"/>
+  <ellipse cx="280" cy="708" rx="22" ry="4" fill="#fff" opacity=".8"/>
+  <g fill="none" stroke="#7fe0ff" stroke-linecap="round">
+    <path d="M250 740 Q300 770 350 740" stroke-width="4" opacity=".9"/><path d="M234 772 Q300 812 366 772" stroke-width="3.5" opacity=".6"/><path d="M220 806 Q300 852 380 806" stroke-width="3" opacity=".35"/></g>
+  <g transform="translate(300 712) rotate(-14) scale(.62)">
+    <ellipse cx="0" cy="4" rx="40" ry="10" fill="#000" opacity=".35" filter="url(#blur6)"/>
+    <path d="M-30 -150 Q-34 -40 -40 -8 H40 Q34 -40 30 -150 Q0 -162 -30 -150 Z" fill="url(#probeG)"/>
+    <path d="M-42 -8 H42 Q42 6 0 8 Q-42 6 -42 -8 Z" fill="#4a5056"/>
+    <rect x="-18" y="-110" width="36" height="9" rx="4" fill="#5fa8d0"/>
+    <path d="M-10 -156 Q-20 -230 -90 -280" stroke="#2a2d30" stroke-width="10" fill="none"/>
+    <path d="M-30 -150 Q-34 -40 -40 -8" stroke="#fff" stroke-opacity=".7" stroke-width="3" fill="none"/>
+  </g>
+
+  <rect width="540" height="300" fill="url(#fadeT)"/>
+  <rect y="680" width="540" height="280" fill="url(#fadeB)"/>
+  <rect width="540" height="960" filter="url(#grain)"/>
+</svg>
+  <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
+  <p class="t" style="top:156px;font:900 34px/1.2 'Noto Sans Arabic';color:#fff">إزاي السونار شاف البيبي؟!</p>
+  <p class="t" style="top:212px;font:800 24px/1.3 'Noto Sans Arabic';color:#f2c230">بصوت محدش بيسمعه!</p>
+  <p class="t" style="top:740px;font:800 32px/1.35 'Noto Sans Arabic';color:#fff">صوت أعلى <span style="color:#f2c230">100 مرة</span><br><span style="font-size:24px;color:#d9d4c8">من اللي ودنك تقدر تسمعه</span></p>
+</div>
+</body></html>
