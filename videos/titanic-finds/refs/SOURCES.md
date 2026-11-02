@@ -15,14 +15,19 @@
 
 Left out: the champagne bottle (brand and "drinkable" claims mix Titanic with the Jönköping wreck) and the crow's-nest bell (which bell it is is disputed).
 
-## Photos (sent by the user, 2026-11-02)
-- 01-astor-watch.jpg — Astor's Waltham watch (Henry Aldridge & Son auction photo, 2024).
-- 02-hartley-violin.jpg — Hartley's violin on display (cropped).
-- 03-perfume.jpg — Saalfeld vials and the «A. Saalfeld & Co., Manchester» label, exhibition photo (cropped).
-- 04-stopped-watch.jpg — watch from the wreck site; photo John Lamparski/WireImage/Getty Images (caption cropped off).
-- 05-big-piece.jpg — the Big Piece at the Luxor, Las Vegas (cropped).
-- 06-shoes.jpg — boots on the seabed, National Geographic frame (logo and side bar cropped off).
-- 07-diana.jpg — Diana statue: 2024 wreck photo (RMS Titanic Inc.) beside the 1912 lounge photo.
-These are press/agency photos, not free licences. Unused photos the user sent: Titanic film still, a second watch,
-the "Last of the Titanic" lifeboat note, an on-board letter (April 10 1912), two cabin reconstructions, the lounge postcard,
-a second hull section.
+13. Hodges letter — ITV: https://www.itv.com/news/meridian/2026-07-27/titanic-letter-sells-for-record-60000-at-auction ; Marine Insight: https://www.marineinsight.com/titanic-passengers-letter-sells-for-record-60000-after-revealing-life-on-board-before-disaster/ — Henry Price Hodges (2nd class, died), to Hector Young, dated 10 April 1912, posted at Queenstown (11 April), sold July 2026 for £60,000.
+
+## Photos (two per item, 4 s each)
+From the user (press/agency photos, not free licences):
+- 01a/01b Astor's watch (auction photos); 02a Hartley violin; 02b still from the 1997 film «Titanic» (the band) — the user's choice;
+  03a/03b Saalfeld vials and label; 04a watch (AP, logo cropped); 04b watch from the wreck site (John Lamparski/WireImage/Getty, caption cropped);
+  06a/06b Hodges letter (06b = crop of the letterhead); 07a/07b hull sections at the Luxor; 08a shoes (National Geographic frame, logo cropped);
+  08b shoes (AP, mark cropped); 10a Diana 2024 + 1912; 10b first-class lounge postcard (Jonathan Smith Postcard Collection, mark cropped).
+From Wikimedia Commons:
+- 05a https://commons.wikimedia.org/wiki/File:Titanic_The_Artifact_Exhibition_Luxor_Dec_2023_20.jpg — DarkNight0917, CC BY-SA 4.0 (coins: "numerous gold sovereigns… recovered from Titanic").
+- 05b https://commons.wikimedia.org/wiki/File:Titanic_The_Artifact_Exhibition_Luxor_Dec_2023_21.jpg — DarkNight0917, CC BY-SA 4.0 (banknotes, playing cards from Howard Irwin's effects).
+- 09a https://commons.wikimedia.org/wiki/File:Detached_rusticles_hires.jpg — Lori Johnston, RMS Titanic Expedition 2003, NOAA-OE, public domain.
+- 09b https://commons.wikimedia.org/wiki/File:Captain_Smith%27s_bathroom.jpg — Lori Johnston, RMS Titanic Expedition 2003, NOAA-OE, public domain.
+Credit for the post description: «صور: DarkNight0917 (CC BY-SA 4.0) و NOAA».
+
+Not used: cabin reconstructions (replicas, not finds), the «Last of the Titanic» lifeboat note (a different story), deck chair and doll's head (no photo found).

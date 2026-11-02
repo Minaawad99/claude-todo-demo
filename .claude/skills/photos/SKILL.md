@@ -21,7 +21,7 @@ Talk to the user in Egyptian Arabic. The user picks the topic and sends the open
 | part | length | what's on screen |
 |---|---|---|
 | opening | ~5 s (the clip's length) | the user's clip, full frame; a white rounded card near the top with the hook in two lines and one emoji |
-| items | 10–14 × ~8 s, 0.5 s cross-fade | the photo, full width, centred a little below the middle; the same photo blurred and darkened behind it; the card at the top |
+| items | 10–14 × 8 s: **two photos per item, 4 s each, same card** (0.4 s dissolve between them), 0.5 s cross-fade between items | the photo, full width, centred a little below the middle; the same photo blurred and darkened behind it; the card at the top |
 | closing | ~4.5 s | the first item's photo again; a bigger card with a question to the viewer and «احكيلنا في الكومنتات 👇 وتابع عشان الجزء التاني!» |
 
 Total 1:30–1:50. No narration and no captions under the picture: the card is the only text.
@@ -49,6 +49,11 @@ is "how does X work", say the animation style fits better.
   an OK before looking for photos.
 
 ## 4. Photos → `videos/<slug>/list/photos/`
+
+- **Two photos per item** (`photo: ["photos/01a-….jpg", "photos/01b-….jpg"]`): the user usually sends them in pairs, in the
+  list's order. Whatever the user can't find, search for on Wikimedia Commons (one request at a time, sleep between them;
+  on 429 wait 20 s and retry). A crop or detail of the first photo is an acceptable second photo.
+- Drop an item with no real photo instead of showing an unrelated or replica picture; tell the user which and why.
 
 - One real photo per item: the actual person, object or event (the 1914 car in Sarajevo, Fleming in his lab, the first X-ray
   of Bertha Röntgen's hand). No AI images, no drawings, unless no photo exists; then a period engraving or painting.

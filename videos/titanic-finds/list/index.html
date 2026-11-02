@@ -11,6 +11,7 @@
   html, body { margin: 0; width: 360px; height: 640px; overflow: hidden; background: #000; }
   body { font-family: "Cairo", sans-serif; color: #111; }
   .scene { position: absolute; inset: 0; opacity: 0; overflow: hidden; }
+  .shot { position: absolute; inset: 0; }
   .bg { position: absolute; inset: -40px; background-size: cover; background-position: center;
         filter: blur(16px) brightness(.72) saturate(.9); }
   .photo { position: absolute; left: 0; right: 0; top: 205px; height: 320px;
@@ -35,7 +36,7 @@
 <script>
 // list.js sets window.LIST = {
 //   intro: {frames: <count of intro/0001.jpg…>, fps: 30, title: "…"},   // the opening clip, cut to JPEG frames
-//   items: [{emoji, title, body, photo: "photos/x.jpg", dur?}],       // dur defaults to LIST.dur (8 s)
+//   items: [{emoji, title, body, photo: "photos/x.jpg" or ["a.jpg", "b.jpg"], dur?}],  // dur defaults to LIST.dur (8 s), split between the photos
 //   outro: {title, sub, photo, dur?}
 // }
 const L = window.LIST, XF = L.xfade ?? 0.5, D = L.dur ?? 8;
@@ -43,10 +44,12 @@ const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', 
 const scenes = [];   // {el, t0, t1}
 let t = 0;
 function add(el, dur) { document.body.appendChild(el); scenes.push({ el, t0: t, t1: t + dur }); t += dur - XF; }
-function photoScene(photo, cardHTML, id) {
+function photoScene(photo, cardHTML, id) {   // photo: one path, or a list shown one after another under the same card
+  const ps = [].concat(photo);
   const el = document.createElement('div'); el.className = 'scene'; if (id) el.id = id;
-  el.innerHTML = `<div class="bg" style="background-image:url('${photo}')"></div>
-    <div class="photo"><img src="${photo}"></div><div class="card">${cardHTML}</div>`;
+  el.innerHTML = ps.map((p, i) => `<div class="shot" data-i="${i}"><div class="bg" style="background-image:url('${p}')"></div>
+    <div class="photo"><img src="${p}"></div></div>`).join('') + `<div class="card">${cardHTML}</div>`;
+  el.shots = [...el.querySelectorAll('.shot')];
   return el;
 }
 // opening clip
@@ -70,6 +73,10 @@ async function renderAt(time) {
     if (time >= s.t0 && time <= s.t1) o = Math.min(1, s.t0 === 0 ? 1 : (time - s.t0) / XF, (s.t1 - time) / XF);
     if (s === scenes[scenes.length - 1] && time > s.t1 - XF) o = 1;   // the last card stays; render.js fades to black
     s.el.style.opacity = Math.max(0, o);
+    if (s.el.shots && s.el.shots.length > 1 && o > 0) {          // photos inside one item share its time; 0.4 s dissolve
+      const n = s.el.shots.length, seg = (s.t1 - s.t0) / n, k = (time - s.t0) / seg, XS = 0.4 / seg;
+      s.el.shots.forEach((sh, i) => { sh.style.opacity = i === 0 ? 1 : Math.max(0, Math.min(1, (k - i + XS / 2) / XS)); });
+    }
   }
   if (time < introDur) {
     const f = frames[Math.min(frames.length - 1, Math.floor(time * (L.intro.fps || 30)))];
