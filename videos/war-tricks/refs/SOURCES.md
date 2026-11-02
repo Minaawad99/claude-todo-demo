@@ -18,3 +18,11 @@
 16. Assunpink campfires (2–3 Jan 1777) — Mount Vernon: https://mountvernon.org/george-washington/the-revolutionary-war/10-facts-about-the-battle-of-princeton ; American Battlefield Trust — rearguard kept fires, wheels muffled, Princeton attacked on 3 Jan.
 17. Explosive rats (SOE, 1941) — Wikipedia: https://en.wikipedia.org/wiki/Explosive_rat — first shipment intercepted, plan dropped; Germans searched for more; SOE: "the trouble caused to them was a much greater success to us than if the rats had actually been used". ("Nine boilers destroyed" is probably a myth; not used.)
 18. Archimedes' mirrors (Syracuse, 213–212 BC) — NYU Archimedes pages: https://math.nyu.edu/Archimedes/Mirrors/legend/legend.html — not in Polybius, Livy or Plutarch; first told centuries later; card calls it a legend and says it is still debated. (The user called it Pelusium; it was Syracuse.)
+
+## Photos (sent by the user, 2026-11-02)
+11 items with photos. Honest labels where a photo is not the event itself: the burning bull is a modern Spanish festival,
+the wooden tank is a WWI German dummy, the crossing scene is from a film, the cats picture is an old satirical cartoon
+(Puck), the Arab rider is an illustration, the German soldiers photo is generic WWII. The Viking-ship drawing the user sent
+was left out (Vikings, not Mehmed's fleet); his ships item uses one painting in two views.
+Dropped (no photos): exploding rats, Monty's double, the phantom army, Hannibal's snakes, Washington's campfires,
+Archimedes' mirrors, Quaker guns.
