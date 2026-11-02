@@ -36,6 +36,9 @@ For the animation style, ask once per topic: quick mode (default) or full checks
   `--music` only if asked).
 - The opening title card sits **just above the head** (`intro.top`/`intro.shift`, values per clip in `videos/_intros/README.md`);
   break a long title by hand with `\n`.
+- **Photo style (copied from the user's reference video):** each photo in a thin white frame with a small radius, centred
+  a bit below the middle, and a **yellow label** at its bottom-right saying what the photo is (who/what, old or modern,
+  painting or photo): `labels: ["…", "…"]` per item, a few words each, accurate (say «رسمة حديثة» for modern paintings).
 - Card: emoji + short title + **exactly two lines** of body (check with `videos/_templates/photo-list/lines.js`).
 - Build: `videos/_templates/photo-list/` (`make.py`, `template.html`), render with `videos/render.js`.
 - Reference build: `videos/titanic-finds/`.

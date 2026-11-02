@@ -48,7 +48,12 @@ is "how does X work", say the animation style fits better.
 - Run the bodies through the `humanizer` skill, then show the full list to the user in one copy-ready block and wait for
   an OK before looking for photos.
 
-## 4. Photos → `videos/<slug>/list/photos/`
+## 4. Photos
+
+- **Look (the user's second reference video):** thin white frame (1.5 px, radius 6) around each photo, and a yellow label
+  (#f7d21e, dark bold text) at the photo's bottom-right corner naming what it shows: `labels: ["لويس لوبرنس", "لقطة من فيلمه سنة 1888"]`.
+  Keep labels to 2–6 words, true to the photo (modern painting, replica, museum piece, year if known).
+ → `videos/<slug>/list/photos/`
 
 - **Two photos per item** (`photo: ["photos/01a-….jpg", "photos/01b-….jpg"]`), all sent by the user, in pairs, in the
   list's order. **Never search for photos or items yourself** (the user's rule, after the Titanic video); drop items with no
