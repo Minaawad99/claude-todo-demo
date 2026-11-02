@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — soft serve machine (3D)</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  /* the reel cover in 3D (three.js, served over http: `python3 -m http.server` from the repo root, then shoot it), full bleed
+     540×960 at 2x: the tunnel-cover palette (near black top and bottom, a warm glow behind the subject) with a real-looking
+     stainless soft-serve machine cut open (hopper, freezing cylinder, dasher, copper coil) and a fresh swirl on a cone.
+     Text stays inside y 120–840 and away from the right-hand buttons. */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #000; }
+  canvas { position: absolute; inset: 0; width: 540px !important; height: 960px !important; }
+  .fade { position: absolute; left: 0; right: 0; pointer-events: none; }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 10px rgba(0,0,0,.7); }
+  #over { position: absolute; inset: 0; width: 540px; height: 960px; }
+  .tag { font-family: "Noto Sans Arabic", sans-serif; font-weight: 800; fill: #2b2016; }
+</style></head><body>
+<div class="cover">
+  <div id="gl"></div>
+  <div class="fade" style="top:0;height:300px;background:linear-gradient(#000e,#0008 70%,#0000)"></div>
+  <div class="fade" style="top:680px;height:280px;background:linear-gradient(#0000,#000b 30%,#000f)"></div>
+  <svg id="over" viewBox="0 0 540 960"><defs><path id="swash" d="M6 14 C40 4 120 2 196 8 C214 10 222 20 214 30 C206 44 140 46 70 44 C30 44 4 40 2 30 C0 24 2 18 6 14 Z"/></defs>
+    <g id="tagA" transform="translate(112 560) rotate(-5)"><use href="#swash" fill="#e8c48e" transform="translate(-74 -26) scale(.68 1.15)"/><text y="8" text-anchor="middle" class="tag" style="font-size:22px">سالب 6° بس</text></g>
+    <g id="tagB" transform="translate(420 300) rotate(4)"><use href="#swash" fill="#e8c48e" transform="translate(-74 -26) scale(.68 1.15)"/><text y="8" text-anchor="middle" class="tag" style="font-size:22px">تلت هوا!</text></g>
+  </svg>
+  <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
+  <p class="t" style="top:154px;font:900 38px/1.2 'Noto Sans Arabic';color:#fff">تعمل آلة آيس كريم إزاي؟</p>
+  <p class="t" style="top:214px;font:800 24px/1.3 'Noto Sans Arabic';color:#f2c230">سوفت… بنفسك!</p>
+  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff">الآلة مش <span style="color:#f2c230">بايظة</span>!<br><span style="font-size:24px;color:#d9d4c8">دي بتطبخ نفسها كل ليلة</span></p>
+</div>
+<script type="importmap">{ "imports": { "three": "../../remotion/node_modules/three/build/three.module.js", "three/addons/": "../../remotion/node_modules/three/examples/jsm/" } }</script>
+<script type="module">
+  import * as THREE from "three";
+  import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+  const W = 540, H = 960, r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+  r.setPixelRatio(2); r.setSize(W, H); r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.0; r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
+  document.getElementById("gl").appendChild(r.domElement);
+  const scene = new THREE.Scene(); scene.background = new THREE.Color("#0a0b10");
+  scene.environment = new THREE.PMREMGenerator(r).fromScene(new RoomEnvironment(), 0.04).texture; scene.environmentIntensity = 0.55;
+  const cam = new THREE.PerspectiveCamera(30, W / H, 0.1, 100); cam.position.set(-2.4, 1.8, 11.6); cam.lookAt(0, 0.12, 0);
+  const tex = (w, h, draw) => { const c = document.createElement("canvas"); c.width = w; c.height = h; draw(c.getContext("2d")); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; };
+  const std = (color, o) => new THREE.MeshStandardMaterial(Object.assign({ color, roughness: 0.8 }, o || {}));
+  const add = (geo, mat, x, y, z, sh) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); if (sh !== false) { m.castShadow = true; m.receiveShadow = true; } scene.add(m); return m; };
+  // brushed stainless steel
+  const brush = tex(512, 512, g => { g.fillStyle = "#b9bec4"; g.fillRect(0, 0, 512, 512); for (let i = 0; i < 1400; i++) { const y = Math.random() * 512, v = 150 + Math.random() * 90; g.strokeStyle = `rgba(${v},${v + 3},${v + 8},.35)`; g.lineWidth = Math.random() * 1.6; g.beginPath(); g.moveTo(0, y); g.lineTo(512, y + (Math.random() - 0.5) * 3); g.stroke(); } });
+  const steel = new THREE.MeshStandardMaterial({ color: "#dfe3e8", map: brush, metalness: 0.85, roughness: 0.32 });
+  const steelD = new THREE.MeshStandardMaterial({ color: "#8a9098", map: brush, metalness: 0.85, roughness: 0.4 });
+  const chrome = new THREE.MeshStandardMaterial({ color: "#f4f6f8", metalness: 1, roughness: 0.12 });
+  const cream = new THREE.MeshPhysicalMaterial({ color: "#fbf3df", roughness: 0.5, sheen: 0.6, sheenColor: new THREE.Color("#fff6e0"), clearcoat: 0.25, clearcoatRoughness: 0.5 });
+  const copper = new THREE.MeshStandardMaterial({ color: "#d07a42", metalness: 0.9, roughness: 0.3 });
+  // the wall behind with a warm glow, the counter (dark marble)
+  const glowT = tex(512, 512, g => { const gr = g.createRadialGradient(256, 256, 10, 256, 256, 256); gr.addColorStop(0, "rgba(255,206,120,1)"); gr.addColorStop(0.45, "rgba(240,150,60,.55)"); gr.addColorStop(1, "rgba(120,50,20,0)"); g.fillStyle = gr; g.fillRect(0, 0, 512, 512); });
+  const gs = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowT, transparent: true, depthWrite: false })); gs.scale.set(9, 9, 1); gs.position.set(0.2, 0.9, -3); scene.add(gs);
+  add(new THREE.PlaneGeometry(30, 20), std("#1a1410", { roughness: 1 }), 0, 4, -3.2, false).receiveShadow = true;
+  const marble = tex(1024, 512, g => { g.fillStyle = "#2a2622"; g.fillRect(0, 0, 1024, 512); for (let i = 0; i < 40; i++) { g.strokeStyle = `rgba(200,190,170,${0.05 + Math.random() * 0.12})`; g.lineWidth = 1 + Math.random() * 2; g.beginPath(); let x = Math.random() * 1024, y = 0; g.moveTo(x, y); while (y < 512) { x += (Math.random() - 0.5) * 40; y += 20; g.lineTo(x, y); } g.stroke(); } });
+  add(new THREE.BoxGeometry(14, 0.3, 5), std("#ffffff", { map: marble, roughness: 0.25, metalness: 0.1 }), 0, -1.75, 0.3);
+  // the cabinet: back, sides, top, base, lower front panel; the upper front is cut open to show the inside
+  const X = 1.1, Y = 1.6, Z = 0.8;
+  add(new THREE.BoxGeometry(2 * X, 2 * Y, 0.06), steelD, 0, 0, -Z);
+  [-X, X].forEach(x => add(new THREE.BoxGeometry(0.06, 2 * Y, 2 * Z), steel, x, 0, 0));
+  add(new THREE.BoxGeometry(2 * X + 0.06, 0.08, 2 * Z + 0.06), steel, 0, Y, 0);
+  add(new THREE.BoxGeometry(2 * X, 0.1, 2 * Z), steelD, 0, -Y + 0.05, 0);
+  add(new THREE.BoxGeometry(2 * X, Y - 0.25, 0.06), steel, 0, -Y + (Y - 0.25) / 2, Z);
+  add(new THREE.BoxGeometry(2 * X, 0.12, 0.06), steel, 0, Y - 0.06, Z);
+  // the cut edge: a thin dark rim to read as a section
+  const rim = std("#2b2e33", { roughness: 0.6 }); [[0, -0.25, 2 * X, 0.04], [0, Y - 0.12, 2 * X, 0.04]].forEach(([x, y, w, h]) => add(new THREE.BoxGeometry(w, h, 0.08), rim, x, y, Z + 0.01));
+  // vents on the lower panel
+  for (let i = 0; i < 9; i++) add(new THREE.BoxGeometry(0.9, 0.035, 0.02), std("#1c1d20"), 0.45, -1.35 + i * 0.09, Z + 0.035, false);
+  // display on the lower panel, glowing
+  const disp = tex(256, 128, g => { g.fillStyle = "#06141e"; g.fillRect(0, 0, 256, 128); g.font = "900 72px Noto Sans Arabic, sans-serif"; g.textAlign = "center"; g.fillStyle = "#ff9a5a"; g.shadowColor = "#ff7a2f"; g.shadowBlur = 18; g.fillText("66°", 128, 92); });
+  add(new THREE.PlaneGeometry(0.5, 0.25), new THREE.MeshBasicMaterial({ map: disp }), 0.55, -0.48, Z + 0.035, false);
+  // inside light (cold blue, from the freezing cylinder) and the interior walls
+  const cold = new THREE.PointLight("#9fd8ff", 6, 3, 1.5); cold.position.set(0, 0.5, 0.4); scene.add(cold);
+  // the hopper: an open steel tank full of mix
+  add(new THREE.BoxGeometry(1.5, 0.04, 1.1), steelD, 0.1, 0.92, -0.1); add(new THREE.BoxGeometry(1.5, 0.5, 0.04), steelD, 0.1, 1.15, -0.65);
+  [-0.65, 0.85].forEach(x => add(new THREE.BoxGeometry(0.04, 0.5, 1.1), steelD, x, 1.15, -0.1));
+  add(new THREE.BoxGeometry(1.46, 0.34, 1.06), cream, 0.1, 1.11, -0.1);
+  add(new THREE.CylinderGeometry(0.06, 0.06, 0.3, 16), chrome, 0.35, 0.78, -0.1);
+  add(new THREE.CylinderGeometry(0.035, 0.035, 0.9, 16), new THREE.MeshPhysicalMaterial({ color: "#d9f0ff", transmission: 0.6, roughness: 0.1, thickness: 0.05 }), -0.35, 1.0, 0.3);
+  // the freezing cylinder: cut open, cream inside, the blue helical dasher, copper coil around
+  const cyl = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 1.7, 64, 1, true, Math.PI / 2, Math.PI), new THREE.MeshStandardMaterial({ color: "#c9ced4", metalness: 0.9, roughness: 0.3, side: THREE.DoubleSide }));
+  cyl.rotation.z = Math.PI / 2; cyl.position.set(0.1, 0.45, 0); cyl.receiveShadow = true; scene.add(cyl);
+  add(new THREE.PlaneGeometry(1.66, 0.64), cream, 0.1, 0.45, -0.01, false);
+  [-0.75, 0.95].forEach(x => add(new THREE.TorusGeometry(0.34, 0.03, 12, 48), chrome, x, 0.45, 0).rotation.y = Math.PI / 2);
+  const helix = new THREE.Curve(); helix.getPoint = (u, v = new THREE.Vector3()) => { const a = u * Math.PI * 2 * 3.5; return v.set(-0.8 + u * 1.6 + 0.1, 0.45 + Math.cos(a) * 0.26, Math.sin(a) * 0.26 + 0.02); };
+  add(new THREE.TubeGeometry(helix, 400, 0.035, 12, false), std("#2f7fc0", { roughness: 0.35, metalness: 0.3 }), 0, 0, 0);
+  add(new THREE.CylinderGeometry(0.04, 0.04, 1.9, 16), chrome, 0.1, 0.45, 0.02).rotation.z = Math.PI / 2;
+  const coil = new THREE.Curve(); coil.getPoint = (u, v = new THREE.Vector3()) => { const a = u * Math.PI * 2 * 11; return v.set(-0.78 + u * 1.56 + 0.1, 0.45 + Math.cos(a) * 0.38, Math.sin(a) * 0.38 * (Math.sin(a) > 0 ? 0.25 : 1)); };
+  add(new THREE.TubeGeometry(coil, 900, 0.022, 10, false), copper, 0, 0, 0);
+  // frost specks on the cylinder
+  const fp = []; for (let i = 0; i < 200; i++) { const a = Math.random() * Math.PI, x = -0.75 + Math.random() * 1.6; fp.push(x, 0.45 + Math.cos(a) * 0.345, Math.sin(a) * 0.345 * 0.2 + 0.05); }
+  const fg = new THREE.BufferGeometry(); fg.setAttribute("position", new THREE.Float32BufferAttribute(fp, 3)); scene.add(new THREE.Points(fg, new THREE.PointsMaterial({ color: "#ffffff", size: 0.02 })));
+  // the beater motor at the back right, the compressor under it
+  add(new THREE.CylinderGeometry(0.22, 0.22, 0.32, 32), std("#2b2e33", { metalness: 0.6, roughness: 0.4 }), 0.92, 0.45, -0.1).rotation.z = Math.PI / 2;
+  // the front door: a chrome plate on the cut edge, the spout with a star nozzle, the draw handle with a red knob
+  add(new THREE.BoxGeometry(0.7, 0.36, 0.1), chrome, -0.55, -0.08, Z + 0.06);
+  add(new THREE.CylinderGeometry(0.07, 0.05, 0.2, 8), chrome, -0.55, -0.34, Z + 0.14);
+  const lever = add(new THREE.CylinderGeometry(0.03, 0.03, 0.42, 16), chrome, -0.55, 0.16, Z + 0.24); lever.rotation.x = 1.0;
+  add(new THREE.SphereGeometry(0.07, 24, 24), std("#c8231a", { roughness: 0.25, metalness: 0.1 }), -0.55, 0.27, Z + 0.42);
+  // drip tray
+  add(new THREE.BoxGeometry(0.8, 0.06, 0.45), chrome, -0.55, -1.56, Z + 0.22);
+  // the cone and the soft-serve swirl coming out of the nozzle (a star shape swept along a tightening helix)
+  const waf = tex(256, 256, g => { g.fillStyle = "#d39a52"; g.fillRect(0, 0, 256, 256); g.strokeStyle = "#a8692e"; g.lineWidth = 6; for (let i = -256; i < 512; i += 32) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i + 256, 256); g.stroke(); g.beginPath(); g.moveTo(i + 256, 0); g.lineTo(i, 256); g.stroke(); } });
+  waf.wrapS = waf.wrapT = THREE.RepeatWrapping; waf.repeat.set(3, 2);
+  const cx = -0.55, cz = Z + 0.22, coneTop = -0.92;
+  const cone = add(new THREE.ConeGeometry(0.2, 0.48, 48, 1, true), new THREE.MeshStandardMaterial({ map: waf, roughness: 0.8, side: THREE.DoubleSide }), cx, coneTop - 0.24, cz); cone.rotation.x = Math.PI;
+  add(new THREE.TorusGeometry(0.19, 0.022, 12, 48), std("#c58a46"), cx, coneTop, cz).rotation.x = Math.PI / 2;
+  const star = new THREE.Shape(); for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2, rr = i % 2 ? 0.055 : 0.075; i ? star.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : star.moveTo(Math.cos(a) * rr, Math.sin(a) * rr); }
+  const pts = []; const turns = 3.6; for (let i = 0; i <= 220; i++) { const u = i / 220, a = u * Math.PI * 2 * turns, rad = 0.16 * (1 - u * 0.85); pts.push(new THREE.Vector3(cx + Math.cos(a) * rad, coneTop + 0.06 + u * 0.42, cz + Math.sin(a) * rad)); }
+  pts.push(new THREE.Vector3(cx + 0.01, coneTop + 0.56, cz), new THREE.Vector3(cx, -0.42, cz));
+  const path = new THREE.CatmullRomCurve3(pts);
+  add(new THREE.ExtrudeGeometry(star, { steps: 500, bevelEnabled: false, extrudePath: path }), cream, 0, 0, 0);
+  const spot = new THREE.SpotLight("#fff1d6", 22, 6, 0.5, 0.6, 1.4); spot.position.set(-1.6, 1.4, 3.2); spot.target.position.set(cx, -0.4, cz); scene.add(spot, spot.target);
+  // falling sugar sparkles in the glow
+  const sp = []; for (let i = 0; i < 160; i++) sp.push((Math.random() - 0.5) * 6, Math.random() * 5 - 1.5, (Math.random() - 0.5) * 3 - 1.5);
+  const sg = new THREE.BufferGeometry(); sg.setAttribute("position", new THREE.Float32BufferAttribute(sp, 3)); scene.add(new THREE.Points(sg, new THREE.PointsMaterial({ color: "#ffe6b0", size: 0.03, transparent: true, opacity: 0.7 })));
+  const key = new THREE.DirectionalLight("#ffe2c0", 1.6); key.position.set(-3, 5, 6); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); Object.assign(key.shadow.camera, { left: -4, right: 4, top: 4, bottom: -4 }); scene.add(key);
+  const back = new THREE.PointLight("#ffb060", 18, 8, 1.4); back.position.set(0.5, 1.2, -2); scene.add(back);
+  scene.add(new THREE.HemisphereLight("#8090b0", "#201810", 0.5));
+  r.render(scene, cam); window.READY = true;
+</script>
+</body></html>
