@@ -26,6 +26,9 @@ For the animation style, ask once per topic: quick mode (default) or full checks
 
 ## «الصور» rules the user set
 
+- **All on-screen text in Modern Standard Arabic (الفصحى)**: titles, cards, labels, closing card and cover, so it reaches
+  every Arab viewer (the user's rule). Keep it simple and gripping, not stiff; replies to the user stay in Egyptian Arabic.
+
 - Opening: one of the user's own clips in `videos/_intros/` (see its README: 6 clips, where to cut each, which topics fit).
   Pick one that suits the topic, don't repeat the last video's clip, and say which one. Clips 3–6 end with a hand over the
   lens: cut there so it dissolves into the first photo.

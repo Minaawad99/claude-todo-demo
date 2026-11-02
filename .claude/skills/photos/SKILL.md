@@ -32,7 +32,11 @@ Lists of surprising true stories: «أخطاء غيّرت العالم», «اخ
 اتمنعت زمان», «أغرب أسباب حروب». Each item needs a real photo (a person, an object, a place or an old document). If the topic
 is "how does X work", say the animation style fits better.
 
-## 3. The items → `videos/<slug>/list/list.js`
+## 3. The items
+
+**Language: Modern Standard Arabic (الفصحى) for every word on screen** (the user's rule, to reach all Arab viewers):
+simple, vivid فصحى, e.g. «ركب القطار… ولم ينزل منه», «أخبرونا في التعليقات 👇 وتابعونا ليصلكم الجزء الثاني!».
+ → `videos/<slug>/list/list.js`
 
 - Hook (opening card): short, ends with one emoji («أخطاء صغيرة غيّرت العالم 😱»). If it's part two, add «(الجزء التاني)».
 - Each item:
