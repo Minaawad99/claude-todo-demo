@@ -472,5 +472,5 @@
     svg.style.transform = 'scale(' + f(1 + 0.03 * Math.sin(t * 1.4)) + ')';
     svg.innerHTML = s;
   };
-  window.__parts = { tube: tube, beads: beads, inset: inset, pd: pd, phone: phone, photo: photo, globe: globe, medMap: medMap, router: router, rack: rack, room: room, satellite: satellite, pkt: pkt, cable: cable, pin: pin, label: label, T: T, TS: TS };
+  window.__parts = { GEO: GEO, ROUTE: ROUTE, tube: tube, beads: beads, inset: inset, pd: pd, phone: phone, photo: photo, globe: globe, medMap: medMap, router: router, rack: rack, room: room, satellite: satellite, pkt: pkt, cable: cable, pin: pin, label: label, T: T, TS: TS };
 })();
