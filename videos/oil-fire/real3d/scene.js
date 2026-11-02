@@ -13,11 +13,11 @@
 
   // ── renderer, scene, camera
   var cv = document.getElementById("gl"), r = new T3.WebGLRenderer({ canvas: cv, antialias: true, preserveDrawingBuffer: true });
-  r.setPixelRatio(window.devicePixelRatio || 1); r.setSize(360, 640, false);
+  var GW = window.GL_W || 360, GH = window.GL_H || 640; r.setPixelRatio(window.devicePixelRatio || 1); r.setSize(GW, GH, false);
   r.toneMapping = T3.ACESFilmicToneMapping; r.toneMappingExposure = 0.62; r.shadowMap.enabled = true; r.shadowMap.type = T3.PCFSoftShadowMap; r.outputColorSpace = T3.SRGBColorSpace;
   var scene = new T3.Scene(); scene.background = new T3.Color("#0d0f13");
   scene.environment = new T3.PMREMGenerator(r).fromScene(new window.RoomEnvironment(), 0.04).texture; scene.environmentIntensity = 0.22;
-  var cam = new T3.PerspectiveCamera(45, 360 / 640, 0.02, 60);
+  var cam = new T3.PerspectiveCamera(45, GW / GH, 0.02, 60);
   function tex(w, h, draw, rep) { var c = document.createElement("canvas"); c.width = w; c.height = h; draw(c.getContext("2d"), w, h); var t = new T3.CanvasTexture(c); t.colorSpace = T3.SRGBColorSpace; t.anisotropy = 4; if (rep) { t.wrapS = t.wrapT = T3.RepeatWrapping; t.repeat.set(rep[0], rep[1]); } return t; }
   function std(color, o) { return new T3.MeshStandardMaterial(Object.assign({ color: color, roughness: 0.8 }, o || {})); }
   function mesh(geo, mat, x, y, z, parent) { var m = new T3.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; (parent || scene).add(m); return m; }
@@ -220,5 +220,6 @@
     var u = t - LN[i].start, d = Math.max(0.5, L(i + 1) - LN[i].start); if (i === LN.length - 1) d = 4;
     apply(S[i](u, d), t, i, u, d);
   };
-  renderAt(0.5);
+  window.__cam = cam; window.__scene = scene; window.__r = r;
+  if (!window.NO_AUTO) renderAt(0.5);
 })();
