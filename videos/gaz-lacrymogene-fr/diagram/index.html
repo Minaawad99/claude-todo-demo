@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="fr" dir="ltr"><head><meta charset="utf-8"><title>Gaz lacrymogène : comment ça marche ? — Comment ça marche ?</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@500;600;700;800;900&family=Noto+Serif:wght@700&display=swap" rel="stylesheet">
+<style>
+  /* «الرسم الهندسي»: cream paper, a single-line card 35px in (as in the «إزاي الإنترنت بيشتغل؟» reference), a portrait
+     diagram panel (640×800 world) in the top of the card, a ruled one-line caption under it; an optional opening card for
+     the first line (only when the episode defines window.__intro) and a summary card for the last. 360×640 canvas. */
+  html, body { margin: 0; background: #eee5d0; }
+  .canvas { position: relative; width: 360px; height: 640px; background: #eee5d0; overflow: hidden; font-family: "Noto Sans", sans-serif; color: #2b2b2b; }
+  .crop { position: absolute; width: 10px; height: 10px; border-color: #6a6458; border-style: solid; border-width: 0; }
+  .card { position: absolute; left: 35px; top: 35px; right: 35px; bottom: 35px; border: 1.1px solid #2b2b2b; }
+  .panel { position: absolute; left: 0; right: 0; top: 0; height: 362px; overflow: hidden; }
+  .panel svg { display: block; width: 100%; height: 100%; }
+  .rule { position: absolute; left: 11px; right: 11px; top: 362px; height: 0; border-top: .7px solid #2b2b2b; }
+  .cap { position: absolute; left: 14px; right: 14px; top: 410px; text-align: center; font: 700 14px/1.55 "Noto Sans", sans-serif; transition: none; }
+  .cap .o { color: #c4532c; } .cap .b { color: #46698a; } .cap .g { color: #6b7d3c; }
+  .brand { position: absolute; left: 0; right: 0; bottom: 13px; text-align: center; font: 600 9.5px "Noto Sans", sans-serif; color: #8a8070; letter-spacing: .3px; }
+  .lab { font: 700 20px "Noto Sans", sans-serif; }
+  .over { position: absolute; inset: 0; background: #eee5d0; display: none; }
+  .over .tiny { position: absolute; left: 16px; top: 16px; font: 600 9.5px "Noto Sans"; color: #6a6458; }
+  #intro .cat { position: absolute; left: 0; right: 0; top: 118px; text-align: center; font: 700 10.5px "Noto Sans"; color: #c4532c; }
+  #intro .r1, #intro .r2 { position: absolute; left: 140px; right: 140px; height: 0; border-top: .8px solid #2b2b2b; }
+  #intro .hook { position: absolute; left: 20px; right: 20px; top: 150px; text-align: center; font: 900 25px/1.55 "Noto Sans"; }
+  #intro .hook .o { color: #c4532c; } #intro .hook .gr { color: #8a8070; }
+  #intro svg { position: absolute; left: 16px; right: 16px; top: 300px; width: 290px; height: 160px; }
+  #outro .q { position: absolute; left: 14px; right: 14px; top: 34px; font: 800 15px/1.4 "Noto Sans"; }
+  #outro svg { position: absolute; left: 14px; top: 96px; width: 262px; height: 140px; }
+  #outro .leg { position: absolute; left: 14px; right: 14px; top: 244px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font: 600 10px "Noto Sans"; }
+  #outro .leg span b { margin-right: 4px;  display: inline-block; width: 14px; height: 14px; line-height: 13px; border: 1px solid #2b2b2b; border-radius: 50%; text-align: center; font: 700 8.5px "Noto Sans"; }
+  #outro .stat { position: absolute; left: 14px; right: 14px; top: 316px; display: flex; align-items: center; gap: 10px; }
+  #outro .stat .n { font: 900 40px/1 "Noto Sans"; color: #c4532c; }
+  #outro .stat .t { font: 700 10.5px/1.5 "Noto Sans"; }
+  #outro .pts { position: absolute; left: 14px; right: 14px; top: 374px; border-top: .8px solid #2b2b2b; padding-top: 8px; font: 600 10px/1.7 "Noto Sans"; }
+  #outro .more { margin-top: 6px; font: 500 9px/1.6 "Noto Sans"; color: #6a6458; }
+</style></head>
+<body>
+<div class="canvas">
+  <div class="card">
+    <div class="panel"><svg id="panel" viewBox="0 0 640 800"></svg></div>
+    <div class="rule"></div>
+    <div class="cap" id="cap"></div>
+    <div class="over" id="intro"><div class="tiny">Comment ça marche ?</div><div class="cat">Santé</div><div class="r1" style="top:142px"></div>
+      <div class="hook"></div><div class="r2" style="top:282px"></div><svg id="introArt" viewBox="0 0 580 320"></svg></div>
+    <div class="over" id="outro"><div class="tiny">Comment ça marche ?</div><div class="q">Gaz lacrymogène : les bons réflexes</div><svg id="outroArt" viewBox="0 0 580 300"></svg><div class="leg"><span><b>1</b>S'éloigner, face au vent</span><span><b>2</b>Ne pas frotter les yeux</span><span><b>3</b>Rincer : eau ou sérum</span><span><b>4</b>Surveiller la respiration</span></div><div class="stat"><div class="n" style="font-size:32px;white-space:nowrap">≈ 30 min</div><div class="t">en général, ça passe<br>à l'air libre</div></div><div class="pts">1. Le « gaz » est une poudre : le CS.<br>2. Citron, vinaigre, dentifrice, lait : non.<br>3. Mal à respirer, mal à la poitrine, yeux après 1 h : le 15.<div style="margin-top:10px;border:1px solid #2b2b2b;padding:6px 4px;text-align:center;font:800 11.5px/1.6 Noto Sans">Dis-nous en commentaire…<br><span style="color:#c4532c">ce que tu veux qu'on t'explique la prochaine fois !</span></div></div></div>
+  </div>
+  <div class="brand">Comment ça marche ?</div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2b2b2b" stroke-width="1" opacity=".16"/></pattern>
+  <pattern id="hatchW" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#fff" stroke-width="1" opacity=".25"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#dccfb2" stroke-width="1.2" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="soft2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .06 0"/></filter>
+  <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e4e6e2"/><stop offset=".5" stop-color="#d3d6d1"/><stop offset="1" stop-color="#c7cbc5"/></linearGradient>
+  <radialGradient id="glowO" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ff8a3a" stop-opacity=".85"/><stop offset="1" stop-color="#ff8a3a" stop-opacity="0"/></radialGradient>
+  <radialGradient id="glowW" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff3c8" stop-opacity=".95"/><stop offset="1" stop-color="#fff3c8" stop-opacity="0"/></radialGradient>
+  <linearGradient id="cone" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff6d8" stop-opacity=".9"/><stop offset="1" stop-color="#fff6d8" stop-opacity="0"/></linearGradient>
+  <linearGradient id="rayCone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fb8cc" stop-opacity=".55"/><stop offset="1" stop-color="#9fb8cc" stop-opacity=".08"/></linearGradient>
+</defs></svg>
+<script src="../timing.js"></script>
+<script>window.CAPS = [{"w": ["Tes", "yeux", "brûlent,", "tu", "pleures,", "tu", "tousses,", "et", "t'arrives", "plus", "à", "respirer."], "k": ["", "", "o", "", "o", "", "o", "", "", "", "", ""]}, {"w": ["Le", "gaz", "lacrymogène,", "beaucoup", "l'ont", "senti", "dans", "la", "rue", "ces", "dernières", "semaines."], "k": ["", "", "b", "", "", "", "", "", "g", "", "", ""]}, {"w": ["Mais", "c'est", "quoi", "exactement,", "et", "comment", "tu", "protèges", "ton", "corps", "?"], "k": ["", "", "", "b", "", "", "", "", "", "g", ""]}, {"w": ["Comment", "ça", "marche", "?", "Je", "t'explique", "en", "une", "minute."], "k": ["", "", "o", "", "", "", "", "", ""]}, {"w": ["Première", "surprise", ":", "le", "gaz", "lacrymogène,", "c'est", "même", "pas", "un", "gaz."], "k": ["", "", "", "", "", "", "", "", "o", "", "o"]}, {"w": ["C'est", "une", "poudre", "très", "fine,", "le", "CS,", "inventée", "en", "mille", "neuf", "cent", "vingt-huit", "par", "deux", "chimistes", "américains."], "k": ["", "", "o", "", "", "", "b", "", "", "", "o", "", "o", "", "", "", ""]}, {"w": ["Dans", "la", "grenade,", "une", "petite", "charge", "chauffe,", "et", "la", "poudre", "part", "en", "fumée,", "en", "millions", "de", "particules."], "k": ["", "", "", "", "", "o", "o", "", "", "", "", "", "b", "", "o", "", ""]}, {"w": ["Ces", "particules", "sont", "plus", "lourdes", "que", "l'air,", "donc", "le", "nuage", "reste", "près", "du", "sol."], "k": ["", "", "", "", "o", "", "", "", "", "", "", "", "", "g"]}, {"w": ["Quand", "elles", "touchent", "tes", "yeux", "humides,", "elles", "allument", "tes", "capteurs", "de", "douleur."], "k": ["", "", "", "", "", "b", "", "", "", "", "", "o"]}, {"w": ["Les", "mêmes", "capteurs", "que", "le", "wasabi,", "mais", "en", "beaucoup", "plus", "fort."], "k": ["", "", "", "", "", "g", "", "", "", "", "o"]}, {"w": ["En", "quelques", "secondes,", "ton", "corps", "se", "défend", ":", "larmes,", "paupières", "fermées,", "toux,", "nez", "qui", "coule."], "k": ["", "", "o", "", "", "", "", "", "b", "", "", "b", "", "", ""]}, {"w": ["Ça", "fait", "peur,", "mais", "chez", "quelqu'un", "en", "bonne", "santé,", "ça", "passe", "en", "général", "en", "une", "demi-heure", "à", "l'air", "libre."], "k": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "o", "", "", "b"]}, {"w": ["Alors,", "qu'est-ce", "que", "tu", "fais", "?", "D'abord,", "tu", "t'éloignes", "du", "nuage,", "en", "marchant,", "sans", "pousser", "la", "foule."], "k": ["", "", "", "", "", "", "", "", "g", "", "", "", "g", "", "", "", ""]}, {"w": ["Tu", "remontes", "face", "au", "vent,", "et", "si", "tu", "peux,", "tu", "vas", "vers", "un", "endroit", "plus", "haut."], "k": ["", "", "", "", "b", "", "", "", "", "", "", "", "", "", "", "g"]}, {"w": ["Surtout,", "tu", "te", "frottes", "pas", "les", "yeux", ":", "tu", "enfonces", "la", "poudre", "encore", "plus."], "k": ["", "", "", "o", "o", "", "", "", "", "", "", "", "", ""]}, {"w": ["Tu", "rinces", "avec", "beaucoup", "d'eau", "propre,", "ou", "du", "sérum", "physiologique,", "la", "tête", "penchée", "sur", "le", "côté."], "k": ["", "", "", "", "b", "b", "", "", "b", "b", "", "", "", "", "", ""]}, {"w": ["Si", "t'as", "des", "lentilles,", "tu", "les", "enlèves", "tout", "de", "suite,", "avec", "les", "mains", "propres."], "k": ["", "", "", "b", "", "", "", "", "", "", "", "", "", "g"]}, {"w": ["Beaucoup", "pensent", "qu'il", "faut", "du", "citron,", "du", "vinaigre", "ou", "du", "dentifrice."], "k": ["", "", "", "", "", "g", "", "g", "", "", "g"]}, {"w": ["Raté", ":", "ça", "irrite", "encore", "plus,", "et", "rien", "ne", "montre", "que", "ça", "marche", "mieux", "que", "l'eau."], "k": ["o", "", "", "o", "", "", "", "", "", "", "", "", "", "", "", "b"]}, {"w": ["Le", "lait", "non", "plus", ":", "il", "est", "pas", "stérile,", "et", "il", "peut", "infecter", "tes", "yeux."], "k": ["", "g", "", "", "", "", "", "", "o", "", "", "", "", "", ""]}, {"w": ["Après,", "tu", "laves", "ta", "peau", "à", "l'eau", "froide", "et", "au", "savon,", "et", "tes", "vêtements", "à", "part."], "k": ["", "", "", "", "", "", "", "b", "", "", "g", "", "", "g", "", ""]}, {"w": ["Si", "tu", "respires", "mal,", "si", "t'as", "mal", "à", "la", "poitrine,", "ou", "si", "tes", "yeux", "brûlent", "encore", "après", "une", "heure,", "tu", "appelles", "le", "quinze."], "k": ["", "", "o", "", "", "", "", "", "", "o", "", "", "", "", "", "", "", "", "o", "", "", "", "o"]}, {"w": ["Surtout", "pour", "les", "asthmatiques,", "les", "enfants", "et", "les", "personnes", "âgées."], "k": ["", "", "", "o", "", "o", "", "", "", "o"]}, {"w": ["Et", "le", "plus", "fou", "?", "Ce", "produit", "est", "interdit", "à", "la", "guerre", "par", "la", "Convention", "sur", "les", "armes", "chimiques."], "k": ["", "", "", "", "", "", "", "", "o", "", "", "o", "", "", "b", "", "", "", ""]}, {"w": ["Mais", "cette", "même", "convention", "l'autorise", "pour", "le", "maintien", "de", "l'ordre."], "k": ["", "", "", "", "b", "", "", "", "", "b"]}, {"w": ["En", "gros", ":", "tu", "t'éloignes,", "tu", "frottes", "pas,", "tu", "rinces", "à", "l'eau,", "et", "tu", "surveilles", "ta", "respiration."], "k": ["", "", "", "", "g", "", "o", "", "", "b", "", "", "", "", "", "", "b"]}, {"w": ["Dis-nous", "en", "commentaire", "ce", "que", "tu", "veux", "qu'on", "t'explique", "la", "prochaine", "fois", "!"], "k": ["", "", "", "", "", "", "", "", "", "", "", "", ""]}];</script>
+<script src="scenes.js"></script>
+<script>
+  (function () {
+    var LN = TIMING.lines, cap = document.getElementById("cap"), panel = document.getElementById("panel"), intro = document.getElementById("intro"), outro = document.getElementById("outro"), cur = -1;
+    window.VIDEO_END = TIMING.duration;
+    window.renderAt = function (t) {
+      var i = 0; while (i < LN.length - 1 && LN[i + 1].start - 0.05 <= t) i++;
+      var first = i === 0 && !!window.__intro, last = i === LN.length - 1;
+      intro.style.display = first ? "block" : "none"; outro.style.display = last ? "block" : "none";
+      if (first) window.__intro(document.getElementById("introArt"), t);
+      else if (last) window.__outro(document.getElementById("outroArt"), t - LN[i].start, t);
+      else window.__panel(panel, t);
+      if (i !== cur) { var c = CAPS[i]; cap.innerHTML = c.w.map(function (w, k) { return c.k[k] ? '<span class="' + c.k[k] + '">' + w + '</span>' : w; }).join(" "); cur = i; }
+      var a = Math.min(1, (t - LN[i].start + 0.05) / 0.25); cap.style.opacity = first || last ? 0 : a; /* without window.__intro, line 0 is an ordinary shot with its caption */ cap.style.transform = "translateY(" + ((1 - a) * 6).toFixed(1) + "px)";
+    };
+    renderAt(30);
+  })();
+</script>
+</body></html>
