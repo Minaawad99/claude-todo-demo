@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — Why we sleep</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* the reel cover, full bleed at TikTok's 1080×1920 (540×960 at 2x): the night bedroom in isometric cut-away, and a big
+     magnifier over the sleeper's head showing the brain being washed. Titles on dark fades; everything that matters stays
+     inside the 3:4 profile-grid crop (y 120–840) and away from the right-hand buttons. */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #000; }
+  #art { position: absolute; inset: 0; width: 540px; height: 960px; }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 10px rgba(0,0,0,.6); }
+</style></head><body>
+<div class="cover">
+  <svg id="art" viewBox="0 0 540 960"></svg>
+  <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
+  <p class="t" style="top:154px;font:900 42px/1.25 'Noto Sans Arabic';color:#fff">مخك بيتغسل كل ليلة!</p>
+  <p class="t" style="top:214px;font:800 24px/1.25 'Noto Sans Arabic';color:#f2c230">وإنت نايم ومش حاسس…</p>
+  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff"><span style="color:#f2c230">تلت عمرك</span> وإنت نايم<br><span style="font-size:24px;color:#d9d4c8">طب مخك بيعمل إيه طول الليل؟</span></p>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2b2b2b" stroke-width="1" opacity=".16"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="14"/></filter>
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .45  0 0 0 0 .4  0 0 0 .08 0"/></filter>
+  <radialGradient id="glowW" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff3c8" stop-opacity=".95"/><stop offset="1" stop-color="#fff3c8" stop-opacity="0"/></radialGradient>
+  <radialGradient id="glowY" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffd23a" stop-opacity=".5"/><stop offset=".6" stop-color="#ffb83a" stop-opacity=".16"/><stop offset="1" stop-color="#ffb83a" stop-opacity="0"/></radialGradient>
+  <linearGradient id="nightSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#070d1c"/><stop offset=".5" stop-color="#14223f"/><stop offset="1" stop-color="#0a0f1c"/></linearGradient>
+  <radialGradient id="lensBg" cx=".5" cy=".45" r=".6"><stop offset="0" stop-color="#26385c"/><stop offset="1" stop-color="#101a30"/></radialGradient>
+  <linearGradient id="cylSh" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient>
+  <radialGradient id="ballSh" cx=".36" cy=".32" r=".72"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></radialGradient>
+  <clipPath id="lens"><circle cx="300" cy="402" r="150"/></clipPath>
+</defs></svg>
+<script src="../../videos/sleep/timing.js"></script>
+<script src="../../videos/sleep/diagram/scenes.js"></script>
+<script>
+  (function () {
+    var P = window.__parts, t = 3.7, s = "", f = function (n) { return (+n).toFixed(1); };
+    // night sky with stars and a moon
+    s += '<rect width="540" height="960" fill="url(#nightSky)"/>';
+    for (var i = 0; i < 70; i++) { var x = (Math.sin(i * 127.1) * 43758.5453) % 1, y = (Math.sin(i * 311.7) * 23421.631) % 1; x = Math.abs(x) * 540; y = Math.abs(y) * 620; s += '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(0.6 + (i % 4) * 0.35) + '" fill="#fff" opacity="' + (0.25 + (i % 5) * 0.12).toFixed(2) + '"/>'; }
+    // the bedroom at night, isometric cut-away, the sleeper in bed
+    var K = P.isoKit(253, 528, 20), h = K.P(P.HEAD[0], P.HEAD[1], P.HEAD[2]);
+    s += P.room(K, t, { night: true, zzz: false, lamp: true });
+    // the magnifier: a warm glow behind it, a cone from the sleeper's head, the brain being washed inside
+    var cx = 300, cy = 402, r = 150;
+    s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (r + 110) + '" fill="url(#glowY)"/>';
+    s += '<path d="M' + f(h[0]) + ' ' + f(h[1]) + ' L' + f(cx - r * 0.97) + ' ' + f(cy + r * 0.26) + ' M' + f(h[0]) + ' ' + f(h[1]) + ' L' + f(cx - r * 0.2) + ' ' + f(cy + r * 0.98) + '" stroke="#f2c230" stroke-width="2.4" stroke-dasharray="7 6" opacity=".85"/>';
+    s += '<circle cx="' + f(h[0]) + '" cy="' + f(h[1]) + '" r="16" fill="none" stroke="#f2c230" stroke-width="3"/>';
+    var inner = '<rect x="0" y="0" width="540" height="960" fill="url(#lensBg)"/>' + P.brain2d(cx, cy + 6, 0.8, t, { wash: 1, glow: false });
+    for (var w = 0; w < 9; w++) { var q = (w + 0.5) / 9; inner += '<circle cx="' + f(cx + 20 + q * 150) + '" cy="' + f(cy - 30 + Math.sin(w * 1.9) * 40 + q * 10) + '" r="' + f(5.2 - q * 2) + '" fill="#a0622c" stroke="#2b2b2b" stroke-width="1.2" opacity="' + (1 - q * 0.6).toFixed(2) + '"/>'; }
+    s += '<g clip-path="url(#lens)">' + inner + '</g>';
+    s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="#2b2b2b" stroke-width="9"/><circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="#f2c230" stroke-width="5"/>';
+    // two diagram labels on the lens
+    s += P.lab(cx - 70, cy - 12, cx - 165, cy - 112, "سايل المخ", "#8fc2e6", 1, 22, 1, "#141414") + P.lab(cx + 128, cy - 8, cx + 72, cy + 190, "فضلات", "#e8865a", 1, 22, 1, "#141414");
+    // dark fades top and bottom so the titles read
+    s += '<defs><linearGradient id="fadeT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".95"/><stop offset=".75" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>' +
+         '<linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset=".3" stop-color="#000" stop-opacity=".7"/><stop offset="1" stop-color="#000" stop-opacity=".95"/></linearGradient></defs>';
+    s += '<rect width="540" height="290" fill="url(#fadeT)"/><rect y="680" width="540" height="280" fill="url(#fadeB)"/>';
+    document.getElementById("art").innerHTML = s + '<rect width="540" height="960" filter="url(#grain)"/>';
+  })();
+</script>
+</body></html>
