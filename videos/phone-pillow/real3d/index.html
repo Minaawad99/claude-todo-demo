@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>أوعى تشحن الموبايل تحت المخدة — إيه الحكاية؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* «أوعى» real-3D style (phone under the pillow: a dark bedroom at night) (from the user's reference: a photoreal kitchen, the object shown as a blue x-ray hologram,
+     a fixed red «أوعى!» header with the key formula, one-line captions that reveal word by word with a coloured key
+     word, small source chips, number badges, a checklist that ticks, a white summary card). 360×640 canvas. */
+  html, body { margin: 0; background: #000; }
+  .canvas { position: relative; width: 360px; height: 640px; overflow: hidden; background: #000; font-family: "Noto Sans Arabic", sans-serif; }
+  canvas#gl { position: absolute; inset: 0; width: 360px !important; height: 640px !important; }
+  .shade { position: absolute; left: 0; right: 0; pointer-events: none; }
+  #head { position: absolute; left: 50%; transform: translateX(-50%); top: 42px; text-align: center; text-shadow: 0 2px 8px rgba(0,0,0,.7); background: rgba(10,12,16,.55); border-radius: 10px; padding: 2px 12px 4px; white-space: nowrap; }
+  #head .a { font: 900 19px "Noto Sans Arabic"; color: #ff5a4a; }
+  #head .f { font: 800 17px "Noto Sans Arabic"; color: #fff; margin-top: -2px; }
+  #head .f .b { color: #5cc8ff; } #head .f .o { color: #ffa040; } #head .f .x { color: #d9b44a; font-family: "DejaVu Sans Mono", monospace; direction: ltr; unicode-bidi: embed; }
+  #cap { position: absolute; left: 22px; right: 22px; top: 404px; text-align: center; font: 800 16px/1.6 "Noto Sans Arabic"; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,.85), 0 0 2px #000; }
+  #cap span { transition: none; } #cap .b { color: #5cc8ff; } #cap .o { color: #ffa040; } #cap .g { color: #6fe08a; }
+  #src { position: absolute; left: 50%; top: 378px; transform: translateX(-50%); background: rgba(20,22,26,.78); border: 1px solid rgba(255,255,255,.18); border-radius: 5px; padding: 2px 8px; font: 600 6.6px/1.5 "Noto Sans Arabic"; color: #d9dde2; white-space: nowrap; }
+  #badge { position: absolute; left: 14px; top: 132px; background: rgba(20,22,26,.85); border: 1px solid rgba(255,255,255,.25); border-radius: 6px; padding: 2px 8px; font: 700 10px "Noto Sans Arabic"; color: #fff; display: none; }
+  #badge b { font: 800 13px "DejaVu Sans Mono", monospace; color: #ffd36a; margin-left: 4px; direction: ltr; unicode-bidi: embed; }
+  #chips { position: absolute; inset: 0; pointer-events: none; }
+  .chip { position: absolute; transform: translate(-50%, -50%); background: rgba(20,22,26,.85); border: 1px solid rgba(255,255,255,.3); border-radius: 10px; padding: 1px 8px; font: 700 8.5px "Noto Sans Arabic"; color: #fff; white-space: nowrap; }
+  #lines { position: absolute; inset: 0; width: 360px; height: 640px; pointer-events: none; }
+  #check { position: absolute; right: 12px; top: 120px; display: none; }
+  #check div { margin-bottom: 4px; background: rgba(20,22,26,.82); border: 1px solid rgba(255,255,255,.2); border-radius: 8px; padding: 1px 7px 1px 5px; font: 700 8.5px "Noto Sans Arabic"; color: #fff; display: flex; align-items: center; gap: 5px; opacity: .45; }
+  #check div i { width: 10px; height: 10px; border-radius: 50%; border: 1.4px solid #9aa; display: inline-block; font: 900 8px/10px sans-serif; text-align: center; color: #fff; font-style: normal; }
+  #check div.on { opacity: 1; } #check div.on i { background: #2fb85a; border-color: #2fb85a; }
+  #x { position: absolute; left: 50%; top: 255px; transform: translate(-50%, -50%); font: 900 120px/1 sans-serif; color: #ff3b30; text-shadow: 0 0 12px rgba(0,0,0,.6); display: none; }
+  #brand { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; font: 700 9px "Noto Sans Arabic"; color: rgba(255,255,255,.7); }
+  #card { position: absolute; left: 22px; right: 22px; top: 150px; background: #fbfaf6; border-radius: 12px; padding: 14px 14px 12px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,.5); color: #222; }
+  #card .q { font: 900 15px "Noto Sans Arabic"; text-align: center; } #card .s { font: 600 8.5px "Noto Sans Arabic"; text-align: center; color: #777; }
+  #card .n { text-align: center; margin: 4px 0 0; font: 900 34px/1.1 "DejaVu Sans", sans-serif; color: #c9962a; direction: ltr; } #card .n small { font: 800 15px "Noto Sans Arabic"; color: #333; }
+  #card .hl { margin: 4px auto 8px; width: fit-content; background: #fbeec2; border-radius: 6px; padding: 1px 8px; font: 700 8.5px "Noto Sans Arabic"; color: #7a5a10; }
+  #card .p { font: 700 10px/1.9 "Noto Sans Arabic"; } #card .p b { display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: #222; color: #fff; text-align: center; font: 800 9px/14px sans-serif; margin-left: 6px; }
+  #card .bar { margin-top: 6px; background: #fbeec2; border-radius: 6px; padding: 3px 8px; font: 700 9px "Noto Sans Arabic"; text-align: center; }
+  #card .srcs { margin-top: 6px; background: #f0f0ec; border-radius: 6px; padding: 3px 8px; font: 500 6.6px/1.5 "Noto Sans Arabic"; color: #555; text-align: center; }
+  #card .cta { margin: 8px auto 0; width: fit-content; border: 1.4px dashed #6ab0d0; border-radius: 8px; padding: 2px 10px; font: 800 10px "Noto Sans Arabic"; }
+  #card .p div, #card .bar, #card .srcs, #card .cta { opacity: 0; }
+</style></head>
+<body>
+<div class="canvas">
+  <canvas id="gl"></canvas>
+  <div class="shade" style="top:0;height:150px;background:linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,0))"></div>
+  <div class="shade" style="top:360px;height:280px;background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.45) 30%,rgba(0,0,0,.6))"></div>
+  <svg id="lines" viewBox="0 0 360 640"></svg>
+  <div id="chips"></div>
+  <div id="head"><div class="a">أوعى!</div><div class="f"><span class="b">موبايل بيشحن</span> + مخدة = <span class="o">نار</span> <span class="x">130°</span></div></div>
+  <div id="badge"></div>
+  <div id="check"><div id="c1"><i>✓</i>سطح مكشوف</div><div id="c2"><i>✓</i>شيل الجراب</div><div id="c3"><i>✓</i>غيّر المنفوخة</div></div>
+  <div id="x">✕</div>
+  <div id="src"></div>
+  <div id="cap"></div>
+  <div id="card">
+    <div class="q">ليه ما تشحنش الموبايل تحت المخدة؟</div>
+    <div class="s">المخدة بتحبس حرارة الشحن جوه البطارية</div>
+    <div class="n">130° <small>الفاصل بيسيح</small></div>
+    <div class="hl">وبعدها ماس جوه البطارية… ونار جنب راسك</div>
+    <div class="p"><div><b>1</b>اشحن على الكومودينو أو ترابيزة مكشوفة</div><div><b>2</b>سخن قوي؟ شيل الجراب وسيبه يبرد</div><div><b>3</b>بطارية منفوخة أو شاحن مضروب؟ غيّرهم</div></div>
+    <div class="bar">طلّع دخان؟ اشده من الفيشة بأمان واطلع برة، والمطافي <b style="direction:ltr;unicode-bidi:embed">180</b></div>
+    <div class="srcs">المصادر: Apple · iPhone operating temperature 0–35°م — فواصل بطاريات الليثيوم بتسيح ≈ 120–140°م — Samsung Galaxy Note 7 recall 2016 — تحذيرات المطافي من الشحن في السرير</div>
+    <div class="cta">قولولنا… عايزين تعرفوا حكاية إيه المرة الجاية؟</div>
+  </div>
+  <div id="brand">إيه الحكاية؟</div>
+</div>
+<script src="../timing.js"></script>
+<script src="caps.js"></script>
+<script src="three.iife.js"></script>
+<script src="scene.js"></script>
+</body></html>

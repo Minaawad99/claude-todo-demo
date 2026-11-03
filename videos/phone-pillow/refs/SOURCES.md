@@ -16,3 +16,8 @@ Facts:
   Lincolnshire Fire & Rescue (Sleaford Standard).
   https://www.slashgear.com/can-charging-my-phone-under-my-pillow-cause-a-fire-10557509/
   https://www.kgun9.com/news/local-news/tucson-fire-says-dont-charge-phone-under-pillow
+
+## «أوعى 3D» version (real3d/)
+Rebuilt in the «أوعى 3D» style (`.claude/skills/awoa-3d`, after `videos/oil-fire/`): a photoreal night bedroom in three.js,
+the pillow and the phone as a blue x-ray hologram, a floating hologram of the battery layers. Extra fact: Egypt's fire service is 180.
+The first takes (cartoon panel, flat look) are kept in `cartoon/`, `flat/`, `script-v1-cartoon.txt` and `old/`.

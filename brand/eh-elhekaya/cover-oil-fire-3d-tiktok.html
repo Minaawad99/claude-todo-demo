@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — oil fire (real 3D)</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  /* the reel cover for «أوعى تطفي زيت مولّع بالمية», full bleed 540×960 (1080×1920 at 2x), rendered from the video's own
+     three.js kitchen (videos/oil-fire/real3d/scene.js) at the moment the water hits the burning oil. Tunnel-cover palette:
+     near black top and bottom, the fire is the warm glow. Text stays inside y 120–840 and away from the right-hand buttons. */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #000; }
+  canvas#gl { position: absolute; inset: 0; width: 540px !important; height: 960px !important; }
+  .fade { position: absolute; left: 0; right: 0; pointer-events: none; }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 10px rgba(0,0,0,.7); }
+  #over { position: absolute; inset: 0; width: 540px; height: 960px; }
+  .tag { font-family: "Noto Sans Arabic", sans-serif; font-weight: 800; fill: #fff; }
+  #hud { display: none; }
+</style></head><body>
+<div class="cover">
+  <canvas id="gl"></canvas>
+  <div class="fade" style="top:0;height:300px;background:linear-gradient(#000e,#0008 75%,#0000)"></div>
+  <div class="fade" style="top:680px;height:280px;background:linear-gradient(#0000,#000b 30%,#000f)"></div>
+  <svg id="over" viewBox="0 0 540 960"><g id="tags"></g></svg>
+  <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
+  <p class="t" style="top:160px;font:900 33px/1.2 'Noto Sans Arabic';color:#fff"><span style="color:#ff5a4a">أوعى</span> تطفي الزيت بالمية!</p>
+  <p class="t" style="top:218px;font:800 24px/1.3 'Noto Sans Arabic';color:#f2c230">كوباية واحدة = كورة نار للسقف</p>
+  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff">المية بتكبر <span style="color:#f2c230" dir="ltr">1700</span> مرة<br><span style="font-size:24px;color:#d9d4c8">في جزء من الثانية!</span></p>
+  <div id="hud"><div id="head"></div><div id="cap"></div><div id="src"></div><div id="badge"></div><div id="chips"></div><svg id="lines"></svg><div id="x"></div>
+    <div id="check"><div id="c1"></div><div id="c2"></div><div id="c3"></div></div><div id="card"><div class="p"><div></div></div><div class="bar"></div><div class="srcs"></div><div class="cta"></div></div></div>
+</div>
+<!-- shot with: shoot(6.6), TAGS = [[0.31,1.1,-1.07,395,455,"مية","#5cc8ff"],[0.1,0.97,-1.12,120,650,"زيت مولّع","#ffa040"]] (software WebGL) -->
+<script>window.GL_W = 540; window.GL_H = 960; window.NO_AUTO = true;</script>
+<script src="../../videos/oil-fire/timing.js"></script>
+<script src="../../videos/oil-fire/real3d/caps.js"></script>
+<script src="../../videos/oil-fire/real3d/three.iife.js"></script>
+<script src="../../videos/oil-fire/real3d/scene.js"></script>
+<script>
+  window.shoot = function (t) {
+    renderAt(t);
+    var cam = window.__cam, T3 = window.THREE, proj = function (x, y, z) { var v = new T3.Vector3(x, y, z).project(cam); return [(v.x + 1) / 2 * 540, (1 - v.y) / 2 * 960]; };
+    var tag = function (p, tx, ty, text, col) { return '<path d="M' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) + ' L' + tx + ' ' + ty + '" stroke="#fff" stroke-width="2"/><circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="4.5" fill="#fff"/><g transform="translate(' + tx + ' ' + ty + ')"><rect x="-62" y="-20" width="124" height="38" rx="19" fill="rgba(20,22,26,.85)" stroke="' + col + '" stroke-width="2"/><text y="7" text-anchor="middle" class="tag" style="font-size:19px;fill:' + col + '">' + text + '</text></g>'; };
+    document.getElementById("tags").innerHTML = (window.TAGS || []).map(function (q) { return tag(proj(q[0], q[1], q[2]), q[3], q[4], q[5], q[6]); }).join("");
+    window.READY = true;
+  };
+</script>
+</body></html>
