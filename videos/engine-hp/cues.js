@@ -9,7 +9,7 @@ a(L(0) + 0.1, 'rev', 0.25, 1.2); a(L(0) + 2.6, 'pop', 0.4);
 for (let k = 0; k < 5; k++) a(L(1) + 0.4 + k * 0.5, 'tick', 0.2); a(L(1) + D(1) - 0.3, 'pop', 0.5);
 a(L(2) + 0.1, 'pop', 0.5);
 a(L(3) + 0.3, 'clank', 0.2); a(L(3) + 1.0, 'ping', 0.25);
-lab(4, 0.4); lab(4, 1.4); a(L(4) + 0.2, 'gear', 0.15, 1.5);
+lab(4, 0.4); lab(4, 1.4);
 a(L(5) + 0.2, 'intake', 0.22, 1.2); a(L(5) + D(5) * 0.5, 'spray', 0.18, 0.6); lab(5, 0.3);
 a(L(6) + D(6) * 0.45, 'spark', 0.35); a(L(6) + D(6) * 0.47, 'boom', 0.25); lab(6, D(6) * 0.45);
 a(L(7) + 0.3, 'gear', 0.2, 1.6); lab(7, 0.4); lab(7, 1.6);
@@ -30,5 +30,21 @@ a(L(21) + 0.4, 'clink', 0.3); for (let k = 0; k < 4; k++) a(L(21) + 0.9 + k * 0.
 a(L(22) + 0.3, 'spool', 0.2, 1.2); for (let k = 0; k < 3; k++) a(L(22) + 0.5 + k * 0.3, 'pop', 0.35); a(L(22) + 1.6, 'rev', 0.25, 1.2);
 for (let k = 0; k < 4; k++) a(L(23) + 0.25 + k * 0.15, 'tick', 0.18); a(L(23) + 0.1, 'chime', 0.35);
 a(L(24) + 0.1, 'pop', 0.45); a(L(24) + 0.5, 'chime', 0.35);
-require('fs').writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: c }, null, 1));
-console.log(c.length + ' cues');
+// recorded sounds (Pixabay, sent by the channel for this episode; sfx/px-*.mp3, gitignored); the synthesized rev, intake,
+// spark, hammer and beep cues above are left out where these play. The turbo spool stays synthesized (no recording).
+const rec = (t, file, gain, from, dur, duck) => c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), file: 'sfx/px-' + file + '.mp3', gain, from: from || 0 }, dur ? { dur: +dur.toFixed(2) } : {}, duck != null ? { duck } : {}));
+rec(L(0) + 0.05, 'engine-start', 0.5, 0.2, 2.8, 0.6);
+rec(L(4), 'engine-idle', 0.22, 0, D(4), 1.2);
+rec(L(5) + 0.2, 'air-intake', 0.4, 2, 1.4, 0.8);
+rec(L(6) + D(6) * 0.43, 'lighter', 0.6, 0.82, 0.4, 0.5);
+rec(L(8) + 0.6, 'air-intake', 0.25, 8, 1.0, 0.8);
+rec(L(12) + 0.3, 'hammer', 0.5, 0.25, Math.min(3.9, D(12) - 0.4), 0.8);
+rec(L(13) + 0.3, 'air-intake', 0.35, 14, 1.2, 0.8);
+rec(L(18) + 0.3, 'air-intake', 0.4, 20, 1.6, 0.8);
+rec(L(19) + 0.3, 'engine-start', 0.45, 20.6, 2.2, 0.8);
+rec(L(20) + 0.2, 'beep', 0.5, 0, 0.45, 0.4);
+rec(L(22) + 1.6, 'engine-start', 0.5, 51.0, 1.6, 0.6);
+const DROP = new Set(['rev', 'intake', 'spark', 'clank', 'clink', 'beep']);
+const keep = c.filter(q => q.file || !DROP.has(q.fx));
+require('fs').writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: keep }, null, 1));
+console.log(keep.length + ' cues');
