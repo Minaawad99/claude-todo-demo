@@ -21,7 +21,7 @@ copy fills the strip above.
 | 1 | ~95 | 12 | 25 |
 | 2 | ~43 | 14 | 80 |
 | 3 | ~113 | 10 | 0 |
-| 4 | ~167 (leans in to ~150 near the end) | 52 | 0 |
+| 4 | ~167 (leans in to ~150 near the end) | 66 (user: closer to the head) | 0 |
 | 5 | ~146 | 42 | 0 |
 | 6 | ~189 | 84 | 0 |
 
