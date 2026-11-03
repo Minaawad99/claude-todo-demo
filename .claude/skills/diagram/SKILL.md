@@ -3,8 +3,10 @@ name: diagram
 description: >
   Make an «إيه الحكاية؟» explainer video in the "الرسم الهندسي" (technical-diagram) style the user picked from a reference
   video (an X-ray explainer): cream graph-paper card, flat technical illustrations with hatching, leader-line labels and
-  magnified insets, a two-line caption under the picture, and a summary infographic card at the end. Use when the user says
-  "بالرسم الهندسي", "بطريقة الرسم الهندسي", "زي فيديو الأشعة", "diagram style" or "technical style". Every other step
+  magnified insets, a two-line caption under the picture, and a summary infographic card at the end. A second reference (an
+  engine / horsepower explainer) adds isometric object drawings, one master cross-section reused all video, gauges, a
+  numbered chapter stepper and a CTA card. Use when the user says "بالرسم الهندسي", "بطريقة الرسم الهندسي", "زي فيديو
+  الأشعة", "زي فيديو الموتور", "بالإيزومتريك", "diagram style", "isometric" or "technical style". Every other step
   (script, voice, sounds, render, QA, cover, titles) follows the animation skill.
 ---
 
@@ -103,3 +105,83 @@ layout and the shot style change.
   - `callout(n,x,y)`, `crossMark`, `waveRay`, `numBox(text)`.
 - Sounds: softer than the cartoon videos. Use paper-like whooshes, ticks, a low hum for machines, and few big effects.
   Library first, then ask with Pixabay search terms.
+
+## Second reference: the engine video (isometric + master cross-section)
+
+Reference 2: «موتورين، كل واحد 2000 سي سي… واحد بيطلع 150 حصان والتاني 400، طب إزاي؟» (164 s, 360×640 30 fps, same
+series, category «الهندسة»). Same paper, grid and ink as reference 1 (paper measured again: `#eee5d0`). What it adds, and
+what to copy:
+
+### Frame and caption (overrides for inner shots)
+
+- **Double frame + crop marks only on the "cards"**: the opening hook, the summary card and the CTA card. Inner shots use a
+  single 1.5 px ink border and no crop marks, so the cards feel like the cover and back page.
+- **Caption = one short line**, 2–6 words, Noto Sans Arabic 800, changing every 1.5–2.5 s (a phrase, not a sentence). It
+  usually ends in «…» and the next shot finishes it. The key word is coloured (red `#bd522b` action/torque, olive `#626b3b`
+  horsepower/part, slate `#5e728d` air/technical) and a new term is **underlined** the first time (e.g. «السلندرات»).
+- A faint brand row sits just above the caption, under the rule: «? إيه الحكاية؟ | @handle» in 40 % ink, small.
+- Shots per minute: about 30 (≈80 shots in 164 s). For our 90–100 s videos that means 40–50 caption swaps; keep 25–29
+  drawings and let several captions play over one moving drawing.
+
+### Isometric object drawings («بالإيزومتريك»)
+
+Used for **things** (the engine block, a turbo, a chip, a bottle, a tractor); cross-sections are used for **how it works**.
+
+- True 30° isometric: x-axis at +30°, y-axis at −30° (150°), z straight up. Build each object from boxes and cylinders
+  with an `iso(x,y,z)` helper → screen `((x−y)·cos30, (x+y)·sin30 − z)`.
+- Three-tone shading from one light from the top-left: top face lightest (paper-putty `#e4dccb`), left face mid
+  (`#cdc4ae`), right face darkest (`#a99f88`). Outlines 2 px `#2b2b2b`, inner detail lines 1 px.
+- Fine diagonal hatching only on the darkest face; small bolts/caps as black circles or filled rectangles on top.
+- Two identical iso objects side by side is the signature "compare" shot: a spec label above each («2000 cc», Noto 800),
+  a big number below each in a **serif display face** (Noto Serif / Amiri 700, about 70 px at 720) coloured olive vs red,
+  with a small unit word under it («حصان»). Numbers count up (ticker) and the winner's number flips colour to red.
+- Upgrades appear as small iso parts that snap onto the object (the turbo snail docks to the engine side), plus a row of
+  small round icons above it (one per upgrade).
+
+### One master cross-section, reused all video
+
+- Draw the core mechanism once (the piston: head, valves, cylinder, rod, crank disc) and reuse it in every mechanism shot.
+  States are recoloured, not redrawn: air = light slate fill + slate dots, fuel = olive dots, burn = pink `#e5cbb6` /
+  `#dcab99` fill with a red ▼ arrow, exhaust = grey dots leaving in a pipe.
+- The camera zooms between scales of the same drawing: a row of 4 cylinders ↔ one cylinder ↔ a detail. Parts that the
+  voice names get a leader-line label that draws itself.
+- Moving parts really move: the piston slides, the rod swings, the crank disc turns, dots stream through the pipes as
+  dotted lines (dash-offset animation).
+
+### Gauges, counters and steppers
+
+- **Vertical bar gauges** beside the drawing: a thin outlined tube that fills from the bottom, label under it («عزم» red,
+  «حصان» olive). Show two gauges to compare (tractor: tall red, short olive; motorcycle: the opposite).
+- **Stopwatch + counter**: a small stopwatch icon with a big serif number under it («0 → 2 دفعة», «8,999 → 9,000 لفة في
+  الدقيقة») that ticks with the action.
+- **Chapter stepper** for "N ways" sections: numbered circles ①②③ across the top (right-to-left), the active one with a
+  red ring and red number, the others grey; it stays on screen through that whole section.
+- **Equation shot**: `icon = icon + icon` in a row (e.g. stronger push = air + fuel), boxes with a thin outline.
+- **Analogy objects** are drawn in the same flat style, on a ground line when they move: hammer and wood block, pulley with
+  a «75 kg» sack, tractor vs motorcycle with speed lines, a 2 L bottle filling with dots, a tyre and a pump.
+- **Big quantity shots**: one labelled object next to a grid of many small ones, with the total as a slate number on top
+  («9,000 L»).
+
+### Ending: summary card, then CTA card
+
+1. Summary card (as above): the question heading with a small red icon, the master drawing in a putty panel with ①–④
+   callouts, a 2-column legend, one big red serif stat («9000») with a two-line explanation, and 3 numbered recap lines.
+2. **CTA card** (last 2–3 s), the summary's lower half replaced by a crop-marked box: «قولولنا…» / «عايزين تعرفوا!» /
+   «إيه الحكاية ____؟» with the blank as a red underline.
+
+### Voice, music and sounds (reference 2)
+
+- Male Egyptian voice, upbeat and fast (about 160–170 words per minute), under a quiet rhythmic electronic music bed.
+- Script flow: two-thing paradox hook («نفس الـ… بس واحد… والتاني…، طب إزاي؟») → quick mechanism → define the unit with an
+  everyday object (2000 cc = a big Pepsi bottle) → the important question (A vs B) with one analogy each → the surprise
+  («والمفاجأة إن…») → «فيه 3 طرق» with the stepper → who controls it → back to the opening pair → «يعني من الآخر…» recap.
+- Effects on the action, one per big beat: engine rev on the hook, whoosh on cuts, ignition boom, hammer clink, motorcycle
+  pass, exhaust puff, pump hiss, turbo spool, high-rev scream, a soft chime on the CTA.
+
+### Extra helpers for `_helpers.js`
+
+`iso(x,y,z)`, `isoBox(x,y,z,w,d,h,tones)`, `isoCyl(...)`, `gauge(x,y,h,value,label,col)`, `stopwatch(x,y,t)`,
+`ticker(from,to,t)`, `stepper(n,active)`, `dotStream(path,t)`, `serifNum(text,col)`.
+
+Reference 2 contact sheets (a frame every 2 s, timestamped), the opening and summary cards and the transcript are in
+`.claude/skills/diagram/reference/engine/`. Look at them before drawing.
