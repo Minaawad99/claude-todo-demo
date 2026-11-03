@@ -178,10 +178,20 @@ Used for **things** (the engine block, a turbo, a chip, a bottle, a tractor); cr
 - Effects on the action, one per big beat: engine rev on the hook, whoosh on cuts, ignition boom, hammer clink, motorcycle
   pass, exhaust puff, pump hiss, turbo spool, high-rev scream, a soft chime on the CTA.
 
+### Template v2 (built for «التكييف بيبرّد إزاي؟», `videos/ac-cooling/diagram/`)
+
+The shared template now does all of the above: crop marks + double frame only on the cards, the faint brand row, one-line
+captions split into phrases at «، . ؟ ! :» (each phrase gets a share of the line's time by length; `u` in a K class
+underlines), `CFG["outro_from"]` for a summary card on the recap line and the CTA box on the last line, and
+`shot(line, cam, draw, hud)` where `hud(u, d, t)` draws in screen space (the chapter stepper stays put while the camera
+zooms). Start new isometric episodes from a copy of `videos/ac-cooling/diagram/`. For contact sheets of the full card
+(not the 16:9 strip that `tools/sheet.js` crops), screenshot the whole 360×640 page per line.
+
 ### Extra helpers for `_helpers.js`
 
 `iso(x,y,z)`, `isoBox(x,y,z,w,d,h,tones)`, `isoCyl(...)`, `gauge(x,y,h,value,label,col)`, `stopwatch(x,y,t)`,
-`ticker(from,to,t)`, `stepper(n,active)`, `dotStream(path,t)`, `serifNum(text,col)`.
+`ticker(from,to,t)`, `stepper(n,active)`, `dotStream(path,t)`, `serifNum(text,col)` — all in `_helpers.js` now, plus
+`isoRing`, `isoFan`, `thermo`, `pipe`, `heatWaves`.
 
 Reference 2 contact sheets (a frame every 2 s, timestamped), the opening and summary cards and the transcript are in
 `.claude/skills/diagram/reference/engine/`. Look at them before drawing.
