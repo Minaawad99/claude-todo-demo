@@ -12,7 +12,9 @@ for i, ws in K.items():
     for w in ws:
         if w not in lines[i].split(" "): print("keyword not found", i, w)
 data = [{"w": l.split(" "), "k": [K.get(i, {}).get(w, "") for w in l.split(" ")]} for i, l in enumerate(lines)]
-open(os.path.join(HERE, "scenes.js"), "w", encoding="utf-8").write(open(os.path.join(TPL, "_helpers.js"), encoding="utf-8").read() + open(os.path.join(HERE, "shots.js"), encoding="utf-8").read())
+GEO = os.path.join(HERE, "geo.js")   # optional: projected map data (refs/geo-make.mjs), placed before the shots
+geo = open(GEO, encoding="utf-8").read() if os.path.exists(GEO) else ""
+open(os.path.join(HERE, "scenes.js"), "w", encoding="utf-8").write(open(os.path.join(TPL, "_helpers.js"), encoding="utf-8").read() + geo + open(os.path.join(HERE, "shots.js"), encoding="utf-8").read())
 html = open(os.path.join(TPL, "template.html"), encoding="utf-8").read()
 for k, v in [("/*TITLE*/", CFG["title"]), ("/*CATEGORY*/", CFG["category"]), ("/*HOOK*/", CFG["hook"]), ("/*OUTRO*/", CFG["outro"]),
              ("/*CAPS*/", "window.CAPS = " + json.dumps(data, ensure_ascii=False) + ";")]:
