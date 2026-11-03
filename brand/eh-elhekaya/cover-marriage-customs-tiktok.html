@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>Marriage customs cover</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  /* «الصور» cover, 540×960 at 2x, the user's photos. Background: Sharo flogging (dark); hero: a Wodaabe man painting his
+     face for the Gerewol; small card: Korean groom's feet. Text inside the 3:4 crop, away from TikTok's buttons. */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #0a0705; }
+  .bg { position: absolute; inset: -20px; background: url(photos/mc-sharo.jpg) center/cover; filter: brightness(.45) saturate(.8) blur(1px); }
+  .glow { position: absolute; left: 50%; top: 520px; width: 500px; height: 420px; transform: translate(-50%, -50%);
+          background: radial-gradient(closest-side, rgba(255,190,70,.5), rgba(255,170,40,.15) 55%, rgba(255,160,40,0)); }
+  .fade { position: absolute; inset: 0; background:
+    linear-gradient(#000000f5 0, #000000c8 170px, #00000030 320px, #00000000 600px, #000000b5 740px, #000000f7 960px); }
+  .hero { position: absolute; left: 50%; top: 512px; width: 420px; transform: translate(-50%, -50%) rotate(-3deg);
+          border: 4px solid #fff; border-radius: 10px; box-shadow: 0 18px 44px rgba(0,0,0,.85), 0 0 50px rgba(255,190,70,.35); }
+  .tag { position: absolute; left: 250px; top: 362px; transform: rotate(5deg); background: #f2c230; color: #111;
+         font: 900 19px/1.15 'Noto Sans Arabic'; padding: 7px 12px 9px; border-radius: 9px; box-shadow: 0 6px 18px rgba(0,0,0,.6); }
+  .small { position: absolute; left: 24px; top: 600px; width: 165px; height: 115px; object-fit: cover; transform: rotate(7deg);
+           border: 3px solid #fff; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.85); }
+  .grain { position: absolute; inset: 0; opacity: .1; mix-blend-mode: overlay;
+           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 4px 14px rgba(0,0,0,.95); }
+</style></head><body>
+<div class="cover">
+  <div class="bg"></div><div class="glow"></div><div class="fade"></div>
+  <img class="hero" src="photos/mc-wodaabe.jpg">
+  <div class="tag">رجال يتزيّنون…<br>لتختارهم النساء!</div>
+  <img class="small" src="photos/mc-korea.jpg">
+  <div class="grain"></div>
+  <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
+  <p class="t" style="top:154px;font:900 40px/1.25 'Noto Sans Arabic';color:#fff">أغرب شروط الزواج…<br>للرجال حول العالم! 💍</p>
+  <p class="t" style="top:262px;font:800 23px/1.25 'Noto Sans Arabic';color:#f2c230">من القفز فوق الثيران إلى الجلد بالعصا!</p>
+  <p class="t" style="top:752px;font:800 30px/1.3 'Noto Sans Arabic';color:#fff">هل كنت ستنجح…<br><span style="color:#f2c230">أم ستبقى أعزب للأبد؟</span></p>
+</div>
+</body></html>
