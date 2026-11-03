@@ -22,6 +22,8 @@ titles): the question is always «إيه الحكاية؟» (the user's rule).
 internet video shot by shot, and `frame-*.jpg` show single frames at full size (a phone, an isometric room, a cable in
 section, the summary card).
 
+For a video in **French** (brand «Comment ça marche ?»), use `.claude/skills/diagram-fr/` instead (the user calls it «الدايجرام الفرنساوي»).
+
 Talk to the user in Egyptian Arabic. Ask the quick-mode question first, as in the animation skill. Script, voice (Gemini
 Puck), reference research, sounds, render, QA, cover and titles all work exactly as in
 `.claude/skills/animation/SKILL.md`. Only the look, the layout and the shot style change.
