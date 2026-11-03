@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=360,height=640">
+<title>Photo list video</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&display=swap">
+<!-- «الصور» style: an opening clip with a title card, then one real photo per item with a white info card on top,
+     a cross-fade between items, and a closing question card. The page is 360×640 CSS px, rendered at 1080×1920. -->
+<style>
+  html, body { margin: 0; width: 360px; height: 640px; overflow: hidden; background: #000; }
+  body { font-family: "Cairo", sans-serif; color: #111; }
+  .scene { position: absolute; inset: 0; opacity: 0; overflow: hidden; }
+  .shot { position: absolute; inset: 0; }
+  .bg { position: absolute; inset: -40px; background-size: cover; background-position: center;
+        filter: blur(16px) brightness(.72) saturate(.9); }
+  /* photo framed like the user's reference: thin white border, small radius, centred lower (centre y≈395),
+     and a yellow label at its bottom-right corner saying what the photo is */
+  .photo { position: absolute; left: 0; right: 0; top: 232px; height: 326px;
+           display: flex; align-items: center; justify-content: center; }
+  .frame { position: relative; display: block; border: 1.5px solid #fff; border-radius: 6px; overflow: hidden;
+           box-shadow: 0 3px 14px rgba(0,0,0,.35); line-height: 0; }
+  .frame img { max-width: 331px; max-height: 323px; display: block; }
+  .lbl { position: absolute; right: 5px; bottom: 5px; background: #f7d21e; color: #111; border-radius: 4px;
+         font: 800 10.5px/1 "Cairo", sans-serif; padding: 3px 7px 5px; white-space: nowrap; }
+  .card { position: absolute; left: 12px; right: 12px; top: 63px; background: #fff; border-radius: 14px;
+          padding: 9px 12px 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,.18); }
+  .card h2 { margin: 0 0 3px; font-size: 16.5px; font-weight: 900; line-height: 1.35; }
+  .card p { margin: 0; font-size: 12.4px; font-weight: 700; line-height: 1.6; }
+  /* the opening clip */
+  #intro img { position: absolute; left: 0; top: 0; width: 360px; height: 640px; object-fit: cover; }
+  #intro #clipbg { filter: blur(14px) brightness(.6); transform: scale(1.15); }
+  #intro .card { left: 30px; right: 30px; top: 37px; padding: 12px 16px 14px; }
+  #intro .card h2 { font-size: 23px; line-height: 1.55; margin: 0; }
+  /* the closing question */
+  #outro .card { left: 8px; right: 8px; top: 23px; padding: 11px 14px 12px; }
+  #outro .card h2 { font-size: 20.5px; line-height: 1.45; margin-bottom: 4px; }
+  #outro .card p { font-size: 11.2px; }
+</style>
+<script src="list.js"></script>
+</head>
+<body>
+<script>
+// list.js sets window.LIST = {
+//   intro: {frames: <count of intro/0001.jpg…>, fps: 30, title: "…", top?: card top px, shift?: px to move the clip down},
+//          // top/shift come from videos/_intros/README.md so the card sits just above the head (shift fills the gap with a blurred copy)
+//   items: [{emoji, title, body, photo: "photos/x.jpg" or ["a.jpg", "b.jpg"], labels?: ["what photo a is", "…b"], dur?}],  // dur defaults to LIST.dur (8 s), split between the photos
+//   outro: {title, sub, photo, dur?}
+// }
+const L = window.LIST, XF = L.xfade ?? 0.5, D = L.dur ?? 8;
+const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+const scenes = [];   // {el, t0, t1}
+let t = 0;
+function add(el, dur) { document.body.appendChild(el); scenes.push({ el, t0: t, t1: t + dur }); t += dur - XF; }
+function photoScene(photo, cardHTML, id, labels) {   // photo: one path, or a list shown one after another under the same card
+  const ps = [].concat(photo), ls = [].concat(labels || []);
+  const el = document.createElement('div'); el.className = 'scene'; if (id) el.id = id;
+  el.innerHTML = ps.map((p, i) => `<div class="shot" data-i="${i}"><div class="bg" style="background-image:url('${p}')"></div>
+    <div class="photo"><span class="frame"><img src="${p}">${ls[i] ? `<span class="lbl">${esc(ls[i])}</span>` : ''}</span></div></div>`).join('') + `<div class="card">${cardHTML}</div>`;
+  el.shots = [...el.querySelectorAll('.shot')];
+  return el;
+}
+// opening clip
+const intro = document.createElement('div'); intro.className = 'scene'; intro.id = 'intro';
+intro.innerHTML = `<img id="clipbg"><img id="clip" style="top:${L.intro.shift || 0}px"><div class="card" style="top:${L.intro.top ?? 37}px"><h2>${esc(L.intro.title).replace(/\n/g, "<br>")}</h2></div>`;
+const introDur = L.intro.dur ?? L.intro.frames / (L.intro.fps || 30);
+add(intro, introDur);
+const frames = Array.from({ length: L.intro.frames }, (_, i) => { const im = new Image(); im.src = `intro/${String(i + 1).padStart(4, '0')}.jpg`; return im; });
+// items
+for (const it of L.items)
+  add(photoScene(it.photo, `<h2>${esc(it.title)} ${it.emoji || ''}</h2><p>${esc(it.body)}</p>`, null, it.labels), it.dur ?? D);
+// closing question
+add(photoScene(L.outro.photo, `<h2>${esc(L.outro.title)}</h2><p>${esc(L.outro.sub)}</p>`, 'outro', L.outro.labels), L.outro.dur ?? 4.5);
+window.VIDEO_END = t + XF;
+window.SCENES = scenes.map(s => ({ t0: +s.t0.toFixed(2), t1: +s.t1.toFixed(2), title: s.el.querySelector('h2').textContent.trim() }));
+
+const clip = document.getElementById('clip'), clipbg = document.getElementById('clipbg');
+async function renderAt(time) {
+  for (const s of scenes) {
+    let o = 0;
+    if (time >= s.t0 && time <= s.t1) o = Math.min(1, s.t0 === 0 ? 1 : (time - s.t0) / XF, (s.t1 - time) / XF);
+    if (s === scenes[scenes.length - 1] && time > s.t1 - XF) o = 1;   // the last card stays; render.js fades to black
+    s.el.style.opacity = Math.max(0, o);
+    if (s.el.shots && s.el.shots.length > 1 && o > 0) {          // photos inside one item share its time; 0.4 s dissolve
+      const n = s.el.shots.length, seg = (s.t1 - s.t0) / n, k = (time - s.t0) / seg, XS = 0.4 / seg;
+      s.el.shots.forEach((sh, i) => { sh.style.opacity = i === 0 ? 1 : Math.max(0, Math.min(1, (k - i + XS / 2) / XS)); });
+    }
+  }
+  if (time < introDur) {
+    const f = frames[Math.min(frames.length - 1, Math.floor(time * (L.intro.fps || 30)))];
+    if (clip.src !== f.src) { clip.src = f.src; await clip.decode().catch(() => {}); if (L.intro.shift) { clipbg.src = f.src; await clipbg.decode().catch(() => {}); } }
+  }
+}
+window.renderAt = renderAt;
+renderAt(0);
+</script>
+</body>
+</html>
