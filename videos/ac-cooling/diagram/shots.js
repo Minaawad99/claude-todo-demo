@@ -253,7 +253,7 @@
   }, HUD(4));
   // 19 — the pressure drops, it gets cold at once — like a spray can going cold in your hand
   shot(19, pan([320, 430], [320, 400], 1.0, 1.1), function (u, d, t) {
-    var o = [250, 560, 1.7], s = paper() + sprayCan(o, t, 0, 0, 0, clamp((u - 0.6) / 1.4)), nz = iso(o, 0, 0, 150);
+    var o = [250, 560, 1.7], s = paper() + sprayCan(o, t, 0, 0, 6 * Math.sin(t * 3.2), clamp((u - 0.6) / 1.4)), nz = iso(o, 0, 0, 150 + 6 * Math.sin(t * 3.2));
     for (var k = 0; k < 30; k++) { var ph = (t * 1.4 + hash(k)) % 1, a = -0.5 + (hash(k + 3) - 0.5) * 0.7; s += '<circle cx="' + f(nz[0] + 12 + ph * 300 * Math.cos(a)) + '" cy="' + f(nz[1] + ph * 300 * Math.sin(a)) + '" r="' + f(2 + ph * 5) + '" fill="' + COLDL + '" opacity="' + f(1 - ph) + '"/>'; }
     var inn = '<rect x="-120" y="-120" width="240" height="240" fill="' + PAPER + '"/><rect x="-120" y="-24" width="90" height="48" fill="' + WARM + '" stroke="' + INK + '" stroke-width="2"/><rect x="-30" y="-6" width="60" height="12" fill="#f2ece0" stroke="' + INK + '" stroke-width="2"/><rect x="30" y="-50" width="100" height="100" fill="#eef3f4" stroke="' + INK + '" stroke-width="2"/>';
     for (var j = 0; j < 10; j++) { var q = (t * 0.8 + j / 10) % 1; inn += '<circle cx="' + f(34 + q * 70) + '" cy="' + f((hash(j) - 0.5) * 80 * q) + '" r="5" fill="' + COLD + '"/>'; }

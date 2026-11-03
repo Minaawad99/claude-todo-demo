@@ -77,7 +77,9 @@ layout and the shot style change.
 
 ## Voice and script
 
-- Egyptian Arabic, calm explaining tone, a little slower and more "teacher" than the cartoon videos.
+- Egyptian Arabic, **Puck with the animation skill's usual Style text** («friendly YouTuber revealing a surprising secret…»,
+  natural relaxed speed), word for word, only the topic and key words changed. Don't write a "calm teacher / unhurried"
+  style: the user tried it on the AC video and the voice sounded strange and slow, and tightening then cut 15% of it.
 - About 90–100 s, 22–26 lines, about 200–240 words.
 - Keep line 3 «إيه الحكاية؟ هشرحهالك في دقيقة.» and the closing «قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟».
 - The reference flow:

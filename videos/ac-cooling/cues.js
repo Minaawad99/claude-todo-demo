@@ -34,5 +34,9 @@ a(L(24) + 0.2, 'gear', 0.2, 1.6); a(L(24) + 0.6, 'paper', 0.25); a(L(24) + 1.7, 
 // 25 summary card, 26 the CTA box
 for (let k = 0; k < 4; k++) a(L(25) + 0.25 + k * 0.15, 'tick', 0.18); a(L(25) + 0.1, 'chime', 0.35);
 a(L(26) + 0.1, 'pop', 0.45); a(L(26) + 0.5, 'chime', 0.35);
-require('fs').writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: c }, null, 1));
-console.log(c.length + ' cues');
+// the long synthesized beds (wind, rotor, hum, motor, fizz, steam, spray) sounded like hiss under the voice: left out until
+// real recordings replace them (sfx/px-*.mp3)
+const LONG = new Set(['wind', 'rotor', 'hum', 'motor', 'fizz', 'steam', 'spray']);
+const keep = c.filter(q => !LONG.has(q.fx));
+require('fs').writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: keep }, null, 1));
+console.log(keep.length + ' cues (' + (c.length - keep.length) + ' long beds left out)');
