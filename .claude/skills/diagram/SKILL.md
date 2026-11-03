@@ -171,9 +171,11 @@ Used for **things** (the engine block, a turbo, a chip, a bottle, a tractor); cr
 2. **CTA card** (last 2–3 s), the summary's lower half replaced by a crop-marked box: «قولولنا…» / «عايزين تعرفوا!» /
    «إيه الحكاية ____؟» with the blank as a red underline.
 
-### Voice, music and sounds (reference 2)
+### Script flow and sounds (reference 2)
 
-- Male Egyptian voice, upbeat and fast (about 160–170 words per minute), under a quiet rhythmic electronic music bed.
+- **The voice is never copied from the reference** (the user's rule): its narrator is a fast male voice (about 160–170
+  words per minute) over an electronic music bed. Ours stays the channel's own: Puck, the animation skill's usual Style
+  text, natural speed (about 140 wpm), no music bed. Copy only the look and the script flow below.
 - Script flow: two-thing paradox hook («نفس الـ… بس واحد… والتاني…، طب إزاي؟») → quick mechanism → define the unit with an
   everyday object (2000 cc = a big Pepsi bottle) → the important question (A vs B) with one analogy each → the surprise
   («والمفاجأة إن…») → «فيه 3 طرق» with the stepper → who controls it → back to the opening pair → «يعني من الآخر…» recap.
