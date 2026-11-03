@@ -32,15 +32,16 @@ For the animation style, ask once per topic: quick mode (default) or full checks
 - Opening: one of the user's own clips in `videos/_intros/` (see its README: 6 clips, where to cut each, which topics fit).
   Pick one that suits the topic, don't repeat the last video's clip, and say which one. Clips 3–6 end with a hand over the
   lens: cut there so it dissolves into the first photo.
-- **Two photos per item, 5 seconds each (`dur: 10`), same card on both.** Order the items from most to least suspenseful. The user sends the photos, in pairs, in list order.
-  **Never search for photos or for extra items yourself** (the user's rule): use only what the user sent, and drop any
-  item the user sent no photo for (say which). If an item has one photo, split or crop it into two views.
+- **Two photos per item, 5 seconds each (`dur: 10`), same card on both.** Order the items from most to least suspenseful.
+  **Photos (the user's latest rule, 2026-11-03):** Claude finds the photos itself (Wikimedia Commons works; Google is
+  blocked here), two per item, and **shows them to the user as a numbered preview sheet before rendering**. Items with no
+  real photo: ask the user (their own photo, a Gemini prompt, or drop it). Download slowly (Commons rate-limits).
 - **No sound** in the video: `make.py` writes a silent track by default (the user adds a sound in the app; `--bed` or
   `--music` only if asked).
 - The opening title card sits **just above the head** (`intro.top`/`intro.shift`, values per clip in `videos/_intros/README.md`);
   break a long title by hand with `\n`.
 - **Photo style (copied from the user's reference video):** each photo in a thin white frame with a small radius, centred
-  a bit below the middle, and a **yellow label** at its bottom-right saying what the photo is (who/what, old or modern,
+  a bit below the middle, and a **yellow label** (13.5 px, readable) at its bottom-right saying what the photo is (who/what, old or modern,
   painting or photo): `labels: ["…", "…"]` per item, a few words each, accurate (say «رسمة حديثة» for modern paintings).
 - Card: emoji + short title + a body **rich in detail and suspense** (the user's rule: names, places, years, the twist,
   the outcome), up to 4 full lines, never one lone word on the last line (check with `videos/_templates/photo-list/lines.js`).
