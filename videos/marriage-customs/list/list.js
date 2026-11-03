@@ -1,7 +1,7 @@
 // «الصور» — أغرب شروط الزواج للرجال حول العالم. Opening clip: videos/_intros/4-bench-night-point-hand-cover.mp4 (cut at 5.1 s; the user's choice)
 window.LIST = {
   dur: 10,   // 5 s per photo
-  intro: { frames: 0, fps: 30, title: "أغرب شروط الزواج…\nللرجال حول العالم! 💍", top: 52, shift: 0 },
+  intro: { frames: 153, fps: 30, title: "أغرب شروط الزواج…\nللرجال حول العالم! 💍", top: 52, shift: 0 },
   items: [
     { emoji: "🐂", title: "اقفز فوق الثيران… لتتزوج", photo: ["photos/01a.jpg", "photos/01b.jpg"], labels: ["طقس القفز فوق الثيران - إثيوبيا", "شباب الهمر يتزيّنون قبل الطقس"],
       body: "عند قبيلة الهَمَر في إثيوبيا، يُصفّ الشاب ثيرانًا متلاصقة، ويجري فوقها عاريًا ذهابًا وإيابًا أربع مرات دون أن يسقط… فإن نجح صار رجلًا يحق له الزواج!" },
