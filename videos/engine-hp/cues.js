@@ -1,0 +1,34 @@
+// Sound cues from the line timings: node cues.js → cues.json. Short synthesized effects only (no long noise beds — they
+// sounded like hiss under the voice on the AC video); recorded engine sounds can replace them later (sfx/px-*.mp3).
+global.window = {}; eval(require('fs').readFileSync(__dirname + '/timing.js', 'utf8'));
+const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration : T[i].start, D = i => L(i + 1) - L(i), c = [];
+const a = (t, fx, gain, dur) => c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), fx, gain }, dur ? { dur: +dur.toFixed(2) } : {}));
+const lab = (i, dt) => a(L(i) + dt, 'tick', 0.22);
+for (let i = 1; i < T.length; i++) a(L(i) - 0.08, i % 2 ? 'wipe' : 'whoosh', 0.2);
+a(L(0) + 0.1, 'rev', 0.25, 1.2); a(L(0) + 2.6, 'pop', 0.4);
+for (let k = 0; k < 5; k++) a(L(1) + 0.4 + k * 0.5, 'tick', 0.2); a(L(1) + D(1) - 0.3, 'pop', 0.5);
+a(L(2) + 0.1, 'pop', 0.5);
+a(L(3) + 0.3, 'clank', 0.2); a(L(3) + 1.0, 'ping', 0.25);
+lab(4, 0.4); lab(4, 1.4); a(L(4) + 0.2, 'gear', 0.15, 1.5);
+a(L(5) + 0.2, 'intake', 0.22, 1.2); a(L(5) + D(5) * 0.5, 'spray', 0.18, 0.6); lab(5, 0.3);
+a(L(6) + D(6) * 0.45, 'spark', 0.35); a(L(6) + D(6) * 0.47, 'boom', 0.25); lab(6, D(6) * 0.45);
+a(L(7) + 0.3, 'gear', 0.2, 1.6); lab(7, 0.4); lab(7, 1.6);
+a(L(8) + 0.2, 'pop', 0.45); a(L(8) + 0.6, 'intake', 0.15, 1.0);
+a(L(9) + 0.2, 'fill', 0.25, 1.6); a(L(9) + 0.3, 'pop', 0.35);
+a(L(10) + 0.3, 'thud', 0.4); a(L(10) + 0.35, 'boom', 0.18);
+for (let k = 0; k < 6; k++) a(L(11) + 0.3 + k * D(11) / 6, 'tick', 0.22);
+for (let k = 0; k < 4; k++) a(L(12) + 0.4 + k * 0.9, 'clank', 0.22); for (let k = 0; k < 6; k++) a(L(12) + 0.6 + k * 0.6, 'clink', 0.12);
+a(L(13) + 0.3, 'intake', 0.2, 1.2); a(L(13) + 1.6, 'snip', 0.3); a(L(13) + 1.65, 'pop', 0.45);
+for (let k = 0; k < 8; k++) a(L(14) + 0.5 + k * 0.3, 'tick', 0.16); a(L(14) + D(14) - 0.4, 'pop', 0.45);
+a(L(15) + 0.2, 'pop', 0.4); a(L(15) + 0.9, 'pop', 0.4); a(L(15) + 1.6, 'boom', 0.22);
+a(L(16) + 0.6, 'ping', 0.3); for (let k = 0; k < 3; k++) a(L(16) + 1.6 + k * 0.15, 'tick', 0.22);
+a(L(17) + 0.3, 'spool', 0.25, 2.0); a(L(17) + 0.1, 'chime', 0.2); lab(17, 0.4); lab(17, 1.0);
+a(L(18) + 0.1, 'chime', 0.2); a(L(18) + 0.3, 'intake', 0.2, 1.6); lab(18, 0.4);
+a(L(19) + 0.1, 'chime', 0.2); a(L(19) + 0.3, 'rev', 0.25, 2.2);
+a(L(20) + 0.2, 'beep', 0.25); for (let k = 0; k < 3; k++) a(L(20) + 0.9 + k * 0.6, 'pop', 0.35);
+a(L(21) + 0.4, 'clink', 0.3); for (let k = 0; k < 4; k++) a(L(21) + 0.9 + k * 0.3, 'tick', 0.18); a(L(21) + 2.0, 'ping', 0.3);
+a(L(22) + 0.3, 'spool', 0.2, 1.2); for (let k = 0; k < 3; k++) a(L(22) + 0.5 + k * 0.3, 'pop', 0.35); a(L(22) + 1.6, 'rev', 0.25, 1.2);
+for (let k = 0; k < 4; k++) a(L(23) + 0.25 + k * 0.15, 'tick', 0.18); a(L(23) + 0.1, 'chime', 0.35);
+a(L(24) + 0.1, 'pop', 0.45); a(L(24) + 0.5, 'chime', 0.35);
+require('fs').writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: c }, null, 1));
+console.log(c.length + ' cues');

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>نفس الموتور، أحصنة مختلفة؟ — إيه الحكاية؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@500;600;700;800;900&family=Noto+Serif:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* «الرسم الهندسي» (v2, after the engine reference): cream paper; the opening, summary and CTA "cards" get a double-line
+     frame and crop marks, inner shots a single border. A portrait diagram panel in the top of the card, a rule, a faint brand
+     row and a one-line caption that swaps phrase by phrase (split at «،» «.» «؟»). 360×640 canvas. */
+  html, body { margin: 0; background: #eee5d0; }
+  .canvas { position: relative; width: 360px; height: 640px; background: #eee5d0; overflow: hidden; font-family: "Noto Sans Arabic", sans-serif; color: #2b2b2b; }
+  .crop { position: absolute; width: 10px; height: 10px; border-color: #6a6458; border-style: solid; border-width: 0; display: none; }
+  .card { position: absolute; left: 18px; top: 18px; right: 18px; bottom: 18px; border: 1.3px solid #2b2b2b; }
+  .card::after { content: ""; position: absolute; inset: 2.5px; border: .6px solid #2b2b2b; pointer-events: none; display: none; }
+  .cards .crop, .cards .card::after { display: block; }
+  .panel { position: absolute; left: 3px; right: 3px; top: 3px; height: 400px; overflow: hidden; }
+  .panel svg { display: block; width: 100%; height: 100%; }
+  .rule { position: absolute; left: 30px; right: 30px; top: 412px; height: 0; border-top: .8px solid #8a8070; }
+  .brandrow { position: absolute; left: 0; right: 0; top: 417px; text-align: center; font: 600 8.5px "Noto Sans Arabic", sans-serif; color: rgba(43,43,43,.4); }
+  .cap { position: absolute; left: 14px; right: 14px; top: 440px; text-align: center; font: 800 17px/1.6 "Noto Sans Arabic", sans-serif; }
+  .cap .o { color: #bd522b; } .cap .b { color: #5e728d; } .cap .g { color: #626b3b; }
+  .cap .u { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 5px; }
+  .over { position: absolute; inset: 3px; background: #eee5d0; display: none; }
+  .over .tiny { position: absolute; right: 16px; top: 16px; font: 600 9.5px "Noto Sans Arabic"; color: #6a6458; }
+  #intro .cat { position: absolute; left: 0; right: 0; top: 64px; text-align: center; font: 700 10.5px "Noto Sans Arabic"; color: #bd522b; }
+  #intro .r1, #intro .r2 { position: absolute; left: 130px; right: 130px; height: 0; border-top: .8px solid #2b2b2b; }
+  #intro .hook { position: absolute; left: 16px; right: 16px; top: 98px; text-align: center; font: 900 23px/1.6 "Noto Sans Arabic"; }
+  #intro .hook .o { color: #bd522b; } #intro .hook .b { color: #5e728d; } #intro .hook .gr { color: #8a8070; }
+  #intro svg { position: absolute; left: 0; right: 0; top: 250px; width: 318px; height: 320px; }
+  #outro .q { position: absolute; left: 16px; right: 16px; top: 36px; font: 800 16px/1.5 "Noto Sans Arabic"; }
+  #outro .q i { font-style: normal; display: inline-block; width: 13px; height: 13px; border: 2px solid #bd522b; border-radius: 50%; vertical-align: -1px; margin-left: 5px; }
+  #outro svg { position: absolute; left: 14px; top: 92px; width: 290px; height: 160px; }
+  #outro .leg { position: absolute; left: 18px; right: 18px; top: 258px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font: 700 10px "Noto Sans Arabic"; }
+  #outro .leg span b { display: inline-block; width: 14px; height: 14px; line-height: 13px; border: 1px solid #2b2b2b; border-radius: 50%; text-align: center; font: 700 8.5px "Noto Sans Arabic"; margin-left: 4px; }
+  #outro .stat { position: absolute; left: 18px; right: 18px; top: 306px; display: flex; align-items: center; gap: 10px; }
+  #outro .stat .n { font: 800 42px/1 "Noto Serif", serif; color: #bd522b; direction: ltr; }
+  #outro .stat .t { font: 700 10.5px/1.55 "Noto Sans Arabic"; }
+  #outro .pts { position: absolute; left: 18px; right: 18px; top: 372px; border-top: .8px solid #2b2b2b; padding-top: 8px; font: 600 10px/1.75 "Noto Sans Arabic"; }
+  #outro .more { margin-top: 5px; font: 500 9px/1.6 "Noto Sans Arabic"; color: #6a6458; }
+  #outro .cta { position: absolute; left: 30px; right: 30px; top: 380px; height: 120px; display: none; text-align: center; border: 1px solid #2b2b2b; outline: .6px solid #2b2b2b; outline-offset: 3px; }
+  #outro .cta div:nth-child(1) { margin-top: 18px; font: 700 12px "Noto Sans Arabic"; }
+  #outro .cta div:nth-child(2) { margin-top: 6px; font: 800 16px "Noto Sans Arabic"; }
+  #outro .cta div:nth-child(3) { margin-top: 6px; font: 800 16px "Noto Sans Arabic"; color: #bd522b; }
+  #outro .cta u { display: inline-block; width: 70px; border-bottom: 2px solid #bd522b; text-decoration: none; }
+  #outro.ctaOn .pts { display: none; } #outro.ctaOn .cta { display: block; }
+</style></head>
+<body>
+<div class="canvas" id="cv">
+  <div class="crop" style="left:6px;top:6px;border-left-width:1px;border-top-width:1px"></div>
+  <div class="crop" style="right:6px;top:6px;border-right-width:1px;border-top-width:1px"></div>
+  <div class="crop" style="left:6px;bottom:6px;border-left-width:1px;border-bottom-width:1px"></div>
+  <div class="crop" style="right:6px;bottom:6px;border-right-width:1px;border-bottom-width:1px"></div>
+  <div class="card">
+    <div class="panel"><svg id="panel" viewBox="0 0 640 800"></svg></div>
+    <div class="rule"></div>
+    <div class="brandrow">؟ إيه الحكاية؟</div>
+    <div class="cap" id="cap"></div>
+    <div class="over" id="intro"><div class="tiny">إيه الحكاية؟</div><div class="cat">الهندسة</div><div class="r1" style="top:88px"></div>
+      <div class="hook">موتورين نفس الحجم…<br><span class="gr">واحد <span class="g">150</span> حصان، والتاني <span class="o">400</span>!</span></div><div class="r2" style="top:236px"></div><svg id="introArt" viewBox="0 0 640 640"></svg></div>
+    <div class="over" id="outro"><div class="tiny">إيه الحكاية؟</div><div class="q"><i></i>إزاي نفس الموتور يطلّع أحصنة مختلفة؟</div><svg id="outroArt" viewBox="0 0 580 320"></svg><div class="leg"><span><b>1</b>الهوا</span><span><b>2</b>البنزين</span><span><b>3</b>الزقة</span><span><b>4</b>العمود</span></div><div class="stat"><div class="n">9000</div><div class="t">لتر هوا محتاجها<br>لتر بنزين واحد عشان يتحرق</div></div><div class="pts">1. السي سي حجم الهوا اللي الأسطوانات بتسحبه في المرة.<br>2. العزم الزقة جامدة قد إيه، والحصان الزقات بتيجي ورا بعض بسرعة قد إيه.<br>3. هوا أكتر وأسرع = أحصنة أكتر من نفس السي سي.<div class="more">معلومة زيادة: نفس الموتور ممكن ينزل بقوتين مختلفتين، والفرق كله في برمجة الكمبيوتر.</div></div>
+      <div class="cta"><div>قولولنا…</div><div>عايزين تعرفوا!</div><div>إيه الحكاية <u></u>؟</div></div></div>
+  </div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2b2b2b" stroke-width="1" opacity=".16"/></pattern>
+  <pattern id="hatchD" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(-30)"><path d="M0 0 V6" stroke="#2b2b2b" stroke-width="1" opacity=".22"/></pattern>
+  <pattern id="hatchW" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#fff" stroke-width="1" opacity=".25"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#dccfb2" stroke-width="1.2" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="soft2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .06 0"/></filter>
+  <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e4e6e2"/><stop offset=".5" stop-color="#d3d6d1"/><stop offset="1" stop-color="#c7cbc5"/></linearGradient>
+  <radialGradient id="glowO" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ff8a3a" stop-opacity=".85"/><stop offset="1" stop-color="#ff8a3a" stop-opacity="0"/></radialGradient>
+  <radialGradient id="glowW" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff3c8" stop-opacity=".95"/><stop offset="1" stop-color="#fff3c8" stop-opacity="0"/></radialGradient>
+  <radialGradient id="glowB" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#9fc0dc" stop-opacity=".8"/><stop offset="1" stop-color="#9fc0dc" stop-opacity="0"/></radialGradient>
+  <linearGradient id="cone" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff6d8" stop-opacity=".9"/><stop offset="1" stop-color="#fff6d8" stop-opacity="0"/></linearGradient>
+  <linearGradient id="rayCone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fb8cc" stop-opacity=".55"/><stop offset="1" stop-color="#9fb8cc" stop-opacity=".08"/></linearGradient>
+</defs></svg>
+<script src="../timing.js"></script>
+<script>window.CAPS = [[{"w": ["موتورين", "نفس", "الحجم", "بالظبط،"], "k": ["", "", "", ""], "f": 0.0}, {"w": ["ألفين", "سي", "سي."], "k": ["", "", ""], "f": 0.7027}], [{"w": ["واحد", "بيطلّع", "مية", "وخمسين", "حصان،"], "k": ["", "", "g", "g", ""], "f": 0.0}, {"w": ["والتاني", "أربعمية!"], "k": ["", "o"], "f": 0.6591}], [{"w": ["طب", "إزاي؟"], "k": ["", ""], "f": 0.0}], [{"w": ["إيه", "الحكاية؟"], "k": ["", ""], "f": 0.0}, {"w": ["هشرحهالك", "في", "دقيقة."], "k": ["", "", ""], "f": 0.4333}], [{"w": ["جوه", "الموتور", "أسطوانات،"], "k": ["", "", "gu"], "f": 0.0}, {"w": ["وفي", "كل", "أسطوانة", "مكبس", "بيطلع", "وينزل."], "k": ["", "", "", "gu", "", ""], "f": 0.4151}], [{"w": ["المكبس", "ينزل", "يسحب", "هوا،"], "k": ["", "", "", "b"], "f": 0.0}, {"w": ["ويترش", "عليه", "بنزين."], "k": ["", "", "g"], "f": 0.5789}], [{"w": ["يطلع", "يكبسهم،"], "k": ["", ""], "f": 0.0}, {"w": ["وشرارة", "صغيرة", "تولّعهم،"], "k": ["o", "", ""], "f": 0.2097}, {"w": ["فيحصل", "انفجار", "يزق", "المكبس", "لتحت."], "k": ["", "o", "", "", ""], "f": 0.5645}], [{"w": ["الزقة", "دي", "بتلف", "عمود،"], "k": ["", "", "", "gu"], "f": 0.0}, {"w": ["والعمود", "بيلف", "العجل."], "k": ["", "", "g"], "f": 0.5263}], [{"w": ["طب", "يعني", "إيه", "ألفين", "سي", "سي؟"], "k": ["", "", "", "b", "b", "b"], "f": 0.0}, {"w": ["ده", "حجم", "الهوا", "اللي", "الأسطوانات", "كلها", "بتسحبه", "في", "المرة."], "k": ["", "b", "b", "", "", "", "", "", ""], "f": 0.3378}], [{"w": ["يعني", "زي", "إزازة", "بيبسي", "كبيرة،"], "k": ["", "", "", "b", ""], "f": 0.0}, {"w": ["اتنين", "لتر."], "k": ["b", "b"], "f": 0.75}], [{"w": ["والعزم،", "هو", "الزقة", "دي", "جامدة", "قد", "إيه."], "k": ["ou", "", "", "", "o", "", ""], "f": 0.0}], [{"w": ["والحصان،", "هو", "الزقات", "دي", "بتيجي", "ورا", "بعض", "بسرعة", "قد", "إيه."], "k": ["gu", "", "", "", "", "", "", "g", "", ""], "f": 0.0}], [{"w": ["زي", "الشاكوش،"], "k": ["", "g"], "f": 0.0}, {"w": ["العزم", "تقل", "الخبطة،"], "k": ["o", "", "o"], "f": 0.2034}, {"w": ["والحصان", "عدد", "الخبطات", "في", "الثانية."], "k": ["g", "", "g", "", ""], "f": 0.5085}], [{"w": ["والمفاجأة", "إن", "اللي", "بيحدد", "قوة", "الزقة", "هو", "الهوا،"], "k": ["", "", "", "", "", "", "", "b"], "f": 0.0}, {"w": ["مش", "البنزين."], "k": ["", "g"], "f": 0.8148}], [{"w": ["لتر", "البنزين", "الواحد", "محتاج", "حوالي", "تسعة", "آلاف", "لتر", "هوا", "عشان", "يتحرق."], "k": ["b", "", "", "", "", "b", "b", "b", "", "", ""], "f": 0.0}], [{"w": ["يعني", "هوا", "أكتر،"], "k": ["", "b", ""], "f": 0.0}, {"w": ["يعني", "بنزين", "أكتر،"], "k": ["", "g", ""], "f": 0.3409}, {"w": ["يعني", "زقة", "أقوى."], "k": ["", "o", "o"], "f": 0.7273}], [{"w": ["بس", "الإزازة", "حجمها", "ثابت،"], "k": ["", "", "", ""], "f": 0.0}, {"w": ["فإزاي", "ندخّل", "هوا", "أكتر؟"], "k": ["", "", "", ""], "f": 0.4107}, {"w": ["فيه", "تلات", "طرق."], "k": ["", "o", "o"], "f": 0.8036}], [{"w": ["أول", "طريقة،", "التيربو،"], "k": ["", "", "ou"], "f": 0.0}, {"w": ["مروحة", "بيلفها", "الشكمان،"], "k": ["", "", ""], "f": 0.2857}, {"w": ["بتكبس", "هوا", "زيادة", "جوه", "الأسطوانة."], "k": ["", "b", "b", "", ""], "f": 0.6}], [{"w": ["تاني", "طريقة،"], "k": ["", ""], "f": 0.0}, {"w": ["نوسّع", "فتحات", "الهوا،"], "k": ["o", "b", "b"], "f": 0.2449}, {"w": ["فالإزازة", "تتملي", "أسرع."], "k": ["", "", ""], "f": 0.6327}], [{"w": ["تالت", "طريقة،"], "k": ["", ""], "f": 0.0}, {"w": ["الموتور", "يلف", "أسرع،"], "k": ["", "", "o"], "f": 0.1667}, {"w": ["فيملا", "الإزازة", "ويفضّيها", "مرات", "أكتر", "في", "الثانية."], "k": ["", "", "", "o", "", "", ""], "f": 0.4167}], [{"w": ["وكمبيوتر", "الموتور", "هو", "اللي", "بيظبط", "كل", "ده،"], "k": ["gu", "gu", "", "", "", "", ""], "f": 0.0}, {"w": ["ضغط", "التيربو،"], "k": ["", "b"], "f": 0.4872}, {"w": ["وكمية", "البنزين،"], "k": ["", "g"], "f": 0.6538}, {"w": ["وميعاد", "الشرارة."], "k": ["", "o"], "f": 0.8462}], [{"w": ["عشان", "كده", "ممكن", "نفس", "الموتور", "يطلّع", "أحصنة", "أكتر،"], "k": ["", "", "", "", "", "", "g", ""], "f": 0.0}, {"w": ["بالبرمجة", "بس."], "k": ["o", ""], "f": 0.8}], [{"w": ["والموتور", "اللي", "بيطلّع", "أربعمية", "حصان،"], "k": ["", "", "", "o", ""], "f": 0.0}, {"w": ["جمع", "التلات", "طرق", "على", "الآخر."], "k": ["", "o", "o", "", ""], "f": 0.5932}], [{"w": ["يعني", "من", "الآخر،"], "k": ["", "", ""], "f": 0.0}, {"w": ["السي", "سي", "حجم", "الإزازة،"], "k": ["", "", "", ""], "f": 0.2113}, {"w": ["والعزم", "قوة", "الزقة،"], "k": ["", "", ""], "f": 0.507}, {"w": ["والحصان", "سرعة", "الزقات."], "k": ["", "", ""], "f": 0.7606}], [{"w": ["قولولنا،", "عايزين", "تعرفوا", "حكاية", "إيه", "المرة", "الجاية؟"], "k": ["", "", "", "", "", "", ""], "f": 0.0}]];window.OUTRO_FROM = 23;</script>
+<script src="scenes.js"></script>
+<script>
+  (function () {
+    var LN = TIMING.lines, cv = document.getElementById("cv"), cap = document.getElementById("cap"), panel = document.getElementById("panel"), intro = document.getElementById("intro"), outro = document.getElementById("outro"), cur = "";
+    var OUT = window.OUTRO_FROM == null ? LN.length - 1 : window.OUTRO_FROM;   // the summary card starts on this line; the CTA box on the last
+    window.VIDEO_END = TIMING.duration;
+    function end(i) { return i + 1 < LN.length ? LN[i + 1].start : TIMING.duration; }
+    window.renderAt = function (t) {
+      var i = 0; while (i < LN.length - 1 && LN[i + 1].start - 0.05 <= t) i++;
+      var first = i === 0, card = first || i >= OUT;
+      cv.className = "canvas" + (card ? " cards" : "");
+      intro.style.display = first ? "block" : "none"; outro.style.display = i >= OUT ? "block" : "none";
+      outro.className = "over" + (i === LN.length - 1 && OUT < LN.length - 1 ? " ctaOn" : "");
+      if (first) window.__intro(document.getElementById("introArt"), t);
+      else if (i >= OUT) window.__outro(document.getElementById("outroArt"), t - LN[OUT].start, t);
+      else window.__panel(panel, t);
+      // the caption: the phrase of line i that is playing now (phrases share the line's time by their length)
+      var c = CAPS[i], a0 = LN[i].start, d = end(i) - a0, p = 0;
+      while (p < c.length - 1 && a0 + c[p + 1].f * d - 0.08 <= t) p++;
+      var key = i + ":" + p;
+      if (key !== cur) { var ph = c[p]; cap.innerHTML = ph.w.map(function (w, k) { return ph.k[k] ? '<span class="' + ph.k[k].split("").join(" ") + '">' + w + '</span>' : w; }).join(" "); cur = key; }
+      var a = Math.min(1, (t - (a0 + c[p].f * d) + 0.05) / 0.22); cap.style.opacity = card ? 0 : a; cap.style.transform = "translateY(" + ((1 - a) * 6).toFixed(1) + "px)";
+    };
+    renderAt(30);
+  })();
+</script>
+</body></html>
