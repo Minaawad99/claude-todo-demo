@@ -247,6 +247,8 @@
     return s + callout(1, a[0], a[1] - 30, K(u, 0.3, 0.4)) + callout(2, b[0] + 30, b[1], K(u, 1.3, 0.4)) + callout(3, c[0], c[1] + 30, K(u, 2.4, 0.4)) + callout(4, e[0], e[1] + 50, K(u, 3.6, 0.4));
   });
 
+  window.__parts = { isoAt: isoAt, iso: iso, isoTrain: isoTrain, trainSide: trainSide, trackSide: trackSide, speedLines: speedLines, G: G, T: T, TS: TS, R: R, line: line, circ: circ };
+
   // ── summary card (the last line)
   window.__outro = function (svg, u, t) {
     var s = '<rect width="580" height="300" fill="' + PAPER + '"/>' + '<g transform="translate(40 240) scale(0.62)">' + trackSide(-60, 800, 0, t, 300, { wire: -150 }) + trainSide(760, 0, 1, t, { sp: 4, n: 1, panto: 1, ptop: 60 }) + '</g>';
