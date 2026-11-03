@@ -140,7 +140,7 @@
     s += T("=", 420, 420, 70, INK, 800) + '<g opacity="' + f(clamp(k(2))) + '">' + cyl(530, 330, 0.42, t, { theta: 2.3 * Math.PI, mode: "fire", dense: 1.4 }) + '</g>';
     return s + T("هوا", 110, 540, 26, SLATE, 800) + T("بنزين", 320, 520, 26, OLV, 800) + T("زقة أقوى", 530, 560, 26, RED, 800); });
   // 16 — but the bottle's size is fixed; so how? three ways
-  shot(16, pan([320, 400], [320, 390], 1.0, 1.1), function (u, d, t) { return paper() + bottle(320, 420, 1.0, 1, "2 L", AIRF, 26) + qMark(520, 250, 120, (u - 0.6) / 0.6, t) + stepper(3, 0, 400, 690, (u - 1.6) / 0.5); });
+  shot(16, pan([320, 400], [320, 390], 1.0, 1.1), function (u, d, t) { return paper() + '<g transform="translate(0 ' + f(8 * Math.sin(t * 2.6)) + ') rotate(' + f(3 * Math.sin(t * 1.9)) + ' 320 420)">' + bottle(320, 420, 1.0, 0.92 + 0.08 * Math.sin(t * 3.1), "2 L", AIRF, 26) + '</g>' + qMark(520, 250, 120, (u - 0.6) / 0.6, t) + stepper(3, 0, 400, 690, (u - 1.6) / 0.5); });
   // 17 — way 1: the turbo, a fan spun by the exhaust, packing extra air in
   shot(17, pan([320, 420], [330, 400], 1.0, 1.12), function (u, d, t) { var s = paper() + cyl(250, 340, 0.6, t, { mode: "air", theta: Math.PI, stream: 2.2, dense: clamp(u / d) + 1 });
     s += snail(500, 250, 0.7, t, OLV) + snail(500, 520, 0.7, t, "#c97a5a") + '<path d="M500 300 V470" stroke="' + INK + '" stroke-width="10"/>';
