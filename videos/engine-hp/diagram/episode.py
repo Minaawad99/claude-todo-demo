@@ -3,7 +3,7 @@
 CFG = {
     "title": "نفس الموتور، أحصنة مختلفة؟",
     "category": "الهندسة",
-    "hook": 'موتورين نفس الحجم…<br><span class="gr">واحد <span class="g">150</span> حصان، والتاني <span class="o">400</span>!</span>',
+    "hook": 'موتورين نفس الحجم…<br><span class="gr">واحد <span class="g">150</span> والتاني <span class="o">400</span>!</span>',
     "outro_from": 23,
     "outro": '<div class="q"><i></i>إزاي نفس الموتور يطلّع أحصنة مختلفة؟</div><svg id="outroArt" viewBox="0 0 580 320"></svg>'
              '<div class="leg"><span><b>1</b>الهوا</span><span><b>2</b>البنزين</span><span><b>3</b>الزقة</span><span><b>4</b>العمود</span></div>'
