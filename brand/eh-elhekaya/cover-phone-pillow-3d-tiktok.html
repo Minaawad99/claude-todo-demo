@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — phone under the pillow (real 3D)</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  /* the reel cover for «أوعى تشحن الموبايل تحت المخدة», full bleed 540×960 (1080×1920 at 2x), rendered from the video's own
+     three.js bedroom (videos/phone-pillow/real3d/scene.js) at the moment the pillow catches fire. Tunnel-cover palette:
+     near black top and bottom, the fire is the warm glow. Text stays inside y 120–840 and away from the right-hand buttons. */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #000; }
+  canvas#gl { position: absolute; inset: 0; width: 540px !important; height: 960px !important; }
+  .fade { position: absolute; left: 0; right: 0; pointer-events: none; }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 10px rgba(0,0,0,.7); }
+  #over { position: absolute; inset: 0; width: 540px; height: 960px; }
+  .tag { font-family: "Noto Sans Arabic", sans-serif; font-weight: 800; fill: #fff; }
+  #hud { display: none; }
+</style></head><body>
+<div class="cover">
+  <canvas id="gl"></canvas>
+  <div class="fade" style="top:0;height:300px;background:linear-gradient(#000e,#0008 75%,#0000)"></div>
+  <div class="fade" style="top:680px;height:280px;background:linear-gradient(#0000,#000b 30%,#000f)"></div>
+  <svg id="over" viewBox="0 0 540 960"><g id="tags"></g></svg>
+  <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
+  <p class="t" style="top:160px;font:900 33px/1.2 'Noto Sans Arabic';color:#fff"><span style="color:#ff5a4a">أوعى</span> تشحن تحت المخدة!</p>
+  <p class="t" style="top:218px;font:800 24px/1.3 'Noto Sans Arabic';color:#f2c230">ممكن يولّع السرير وإنت نايم</p>
+  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff">على <span style="color:#f2c230" dir="ltr">130°</span> البطارية بتولّع<br><span style="font-size:24px;color:#d9d4c8">والمخدة بتحبس الحرارة!</span></p>
+  <div id="hud"><div id="head"></div><div id="cap"></div><div id="src"></div><div id="badge"></div><div id="chips"></div><svg id="lines"></svg><div id="x"></div>
+    <div id="check"><div id="c1"></div><div id="c2"></div><div id="c3"></div></div><div id="card"><div class="p"><div></div></div><div class="bar"></div><div class="srcs"></div><div class="cta"></div></div></div>
+</div>
+<!-- shot with: shoot(T), TAGS below (software WebGL) -->
+<script>window.GL_W = 540; window.GL_H = 960; window.NO_AUTO = true;
+  // the cover moment: the pillow in x-ray with the hot phone glowing under it, the fire catching, smoke rising
+  window.STATE_OVERRIDE = function () { var c = { p: [0.6, 0.98, -1.0], t: [0.22, 0.5, -1.62], f: 50 }; return { a: c, b: c, pil: 1, ph: 0, phX: 0, heat: 1, trap: 1, fire: 1, smoke: 0.5, chips: [], badge: "", x: false, holo: 0 }; };
+  window.TAGS = [[0.24, 0.556, -1.58, 400, 560, "موبايل بيشحن", "#5cc8ff"]];</script>
+<script src="../../videos/phone-pillow/timing.js"></script>
+<script src="../../videos/phone-pillow/real3d/caps.js"></script>
+<script src="../../videos/phone-pillow/real3d/three.iife.js"></script>
+<script src="../../videos/phone-pillow/real3d/scene.js"></script>
+<script>
+  window.shoot = function (t) {
+    renderAt(t);
+    var cam = window.__cam, T3 = window.THREE, proj = function (x, y, z) { var v = new T3.Vector3(x, y, z).project(cam); return [(v.x + 1) / 2 * 540, (1 - v.y) / 2 * 960]; };
+    var tag = function (p, tx, ty, text, col) { return '<path d="M' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) + ' L' + tx + ' ' + ty + '" stroke="#fff" stroke-width="2"/><circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="4.5" fill="#fff"/><g transform="translate(' + tx + ' ' + ty + ')"><rect x="' + (-(text.length * 6 + 22)) + '" y="-20" width="' + (text.length * 12 + 44) + '" height="38" rx="19" fill="rgba(20,22,26,.85)" stroke="' + col + '" stroke-width="2"/><text y="7" text-anchor="middle" class="tag" style="font-size:19px;fill:' + col + '">' + text + '</text></g>'; };
+    document.getElementById("tags").innerHTML = (window.TAGS || []).map(function (q) { return tag(proj(q[0], q[1], q[2]), q[3], q[4], q[5], q[6]); }).join("");
+    window.READY = true;
+  };
+</script>
+</body></html>

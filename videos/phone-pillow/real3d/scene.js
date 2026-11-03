@@ -214,7 +214,8 @@
   window.renderAt = function (t) {
     var i = 0; while (i < LN.length - 1 && LN[i + 1].start - 0.05 <= t) i++;
     var u = t - LN[i].start, d = Math.max(0.5, L(i + 1) - LN[i].start); if (i === LN.length - 1) d = 4;
-    apply(S[i](u, d), t, i, u, d);
+    var st = S[i](u, d); if (window.STATE_OVERRIDE) Object.assign(st, window.STATE_OVERRIDE(st));   // the cover page can mix a custom moment
+    apply(st, t, i, u, d);
   };
   window.__cam = cam; window.__scene = scene; window.__r = r;
   if (!window.NO_AUTO) renderAt(0.5);
