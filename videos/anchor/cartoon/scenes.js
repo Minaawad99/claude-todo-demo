@@ -689,9 +689,10 @@
     return s + tag("أكتر من 300 ألف طن", 200, 30, u, 0.4, -3, 19) + tag("20 طن بس!", 470, 250, u, 2.8, 3, 18, "#f2c230");
   });
   // 1 — a balance: the ship on one side, the anchor on the other: 15,000 times lighter
-  shot(1, function (u, d) { return [320, 185, lerp(1.0, 1.08, u / d)]; }, function (u, d, t) {
+  shot(1, function (u, d) { var k = clamp(u / d); return [lerp(280, 360, k), lerp(170, 200, k), lerp(0.95, 1.2, k)]; }, function (u, d, t) {
     var k = ease(u / 1.4), s = '<rect x="-400" y="-300" width="1440" height="960" fill="#14223a"/>' + stars(t) + '<circle cx="320" cy="170" r="180" fill="#f2c230" opacity=".08" filter="url(#soft)"/>';
-    s += scaleBal(320, 120, lerp(0, 24, k) + Math.sin(t * 2.4) * 3 * k, tanker(0, 2, t, { s: 0.13, noBob: true }).svg, anchorFront(0, -38, { s: 0.3, rust: true, swing: Math.sin(t * 3) * 6 }));
+    for (var ry = 0; ry < 12; ry++) { var ra = ry * 0.52 + t * 0.5; s += '<path d="M320 170 L' + f(320 + Math.cos(ra) * 500) + ' ' + f(170 + Math.sin(ra) * 500) + ' L' + f(320 + Math.cos(ra + 0.18) * 500) + ' ' + f(170 + Math.sin(ra + 0.18) * 500) + ' Z" fill="#f2c230" opacity=".07"/>'; }
+    s += scaleBal(320, 120, lerp(0, 24, k) + Math.sin(t * 2.4) * 6 * k, tanker(0, 2, t, { s: 0.13, noBob: true }).svg, anchorFront(0, -38, { s: 0.3, rust: true, swing: Math.sin(t * 3) * 6 }));
     for (var sp = 0; sp < 8; sp++) { var su = (t * 0.7 + sp / 8) % 1; s += '<circle cx="' + f(200 + hash(sp) * 260) + '" cy="' + f(300 - su * 260) + '" r="' + f(1.5 + su * 2) + '" fill="#f2c230" opacity="' + f(0.8 * (1 - su)) + '"/>'; }
     var cnt = Math.round(15000 * ease((u - 1.0) / 1.4)); if (u > 1.0) s += '<text x="320" y="345" text-anchor="middle" style="font:900 30px Noto Sans Arabic;fill:#f2c230;stroke:#1c1c1c;stroke-width:4;paint-order:stroke">× ' + cnt.toLocaleString("en-US") + '</text>';
     return s + tag("أخف 15 ألف مرة!", 320, 40, u, 1.6, -2, 22);
@@ -792,6 +793,7 @@
   window.__panel = function (svg, t) {
     CLIPN = 0; var i = at(t), sh = SH[i], next = i + 1 < SH.length ? SH[i + 1].a : L(LN.length), u = t - sh.a, d = Math.max(0.5, next - sh.a);
     var c = sh.cam(u, d), cx = c[0] + 16 * Math.sin(t * 1.2), cy = c[1] + 12 * Math.cos(t * 1.2), z = c[2] * (1 + 0.03 * Math.sin(t * 1.1));
+    if (i === 0) z *= 1 + 0.18 * (1 - ease(u / 1.2));   // a quick push-in on the very first frames
     svg.innerHTML = '<g transform="translate(320 180) rotate(' + f(0.9 * Math.sin(t * 0.83)) + ') scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g><rect width="640" height="360" filter="url(#grain)"/>';
     return i;
   };
