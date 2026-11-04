@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>Three Gorges — 3D opening test</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* Real-3D test shot (three.js, software WebGL): the dam at sunset turning to night, like the reference opening.
+     360×640 page, rendered at 3x by videos/render.js through renderAt(t). Everything is a pure function of t. */
+  body { margin: 0; background: #000; }
+  .stage { position: relative; width: 360px; height: 640px; overflow: hidden; background: #0b1a2e; }
+  #gl { position: absolute; inset: 0; width: 360px !important; height: 640px !important; }
+  .shade { position: absolute; left: 0; right: 0; top: 0; height: 230px; pointer-events: none;
+           background: linear-gradient(rgba(8,16,30,.78), rgba(8,16,30,.35) 60%, rgba(8,16,30,0)); }
+  .vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 55%, transparent 55%, rgba(0,0,0,.35)); }
+  .tag { position: absolute; top: 20px; right: 16px; font: 800 12px 'Noto Sans Arabic'; color: rgba(255,255,255,.85); }
+  .tag b { color: #ff7a45; }
+  .cap { position: absolute; top: 52px; left: 14px; right: 14px; margin: 0; text-align: center;
+         font: 900 31px/1.32 'Noto Sans Arabic'; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,.55); }
+  .cap .w { display: inline-block; opacity: 0; }
+  .hot { color: #ff7a45; }
+</style></head><body>
+<div class="stage">
+  <canvas id="gl"></canvas>
+  <div class="shade"></div>
+  <div class="vig"></div>
+  <div class="tag">إيه الحكاية<b>؟</b></div>
+  <p class="cap" id="cap1"><span class="w" data-t="0.25">السد</span> <span class="w" data-t="0.45">ده،</span><br><span class="w" data-t="0.85">خلّى</span> <span class="w" data-t="1.05">اليوم</span> <span class="w hot" data-t="1.3">أطول!</span></p>
+  <p class="cap" id="cap2" style="opacity:0"><span class="w" data-t="2.75">الأرض</span> <span class="w" data-t="2.95">بقت</span><br><span class="w" data-t="3.15">بتلف</span> <span class="w hot" data-t="3.4">أبطأ!</span></p>
+</div>
+<script src="../../lib/three.min.js"></script>
+<script>
+window.VIDEO_END = 4.6;
+const W = 360, H = 640;
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const sm = (a, b, x) => { x = clamp((x - a) / (b - a), 0, 1); return x * x * (3 - 2 * x); };
+const lerp = (a, b, k) => a + (b - a) * k;
+const ease = k => k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+function hash(x, y) { const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return s - Math.floor(s); }
+function vnoise(x, y) {
+  const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi;
+  const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+  return lerp(lerp(hash(xi, yi), hash(xi + 1, yi), u), lerp(hash(xi, yi + 1), hash(xi + 1, yi + 1), u), v);
+}
+function fbm(x, y) { let s = 0, a = .5, f = 1; for (let i = 0; i < 5; i++) { s += a * vnoise(x * f, y * f); a *= .5; f *= 2.03; } return s; }
+const rnd = (() => { let s = 1234567; return () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; }; })();
+
+// ---------- renderer ----------
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(W, H, false);
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.9;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(46, W / H, 0.5, 4000);
+scene.fog = new THREE.Fog(0xf0c890, 320, 1100);
+
+// ---------- world numbers ----------
+const CREST = 21, LAKE = 18.6, RIVER = 1.5, BED = -3;
+const DAM_X = 82;                                   // dam runs x ∈ [-82, 82]
+const faceZ = y => 2 + (16 - y) * 22 / 19;          // downstream face z at height y
+function halfWidth(z) { return z < 0 ? 50 + Math.min(-z, 400) * 0.75 : 50 + z * 0.22; }
+function ground(x, z) {
+  const ax = Math.abs(x), half = halfWidth(z);
+  let h = BED + sm(half - 6, half + 42, ax) * 50;
+  h += (fbm(x * 0.018 + 3.1, z * 0.018 + 7.7) - 0.5) * 16 * sm(half - 8, half + 20, ax);
+  h += (fbm(x * 0.005 + 1.3, z * 0.005 - 2.1) - 0.45) * 70 * sm(half + 10, half + 120, ax);
+  return h;
+}
+
+// ---------- sky ----------
+const skyU = {
+  top: { value: new THREE.Color() }, mid: { value: new THREE.Color() }, hor: { value: new THREE.Color() },
+  sunCol: { value: new THREE.Color(1.0, 0.78, 0.48) }, sunDir: { value: new THREE.Vector3() }, sunGlow: { value: 1 }
+};
+const sky = new THREE.Mesh(new THREE.SphereGeometry(2000, 48, 24), new THREE.ShaderMaterial({
+  uniforms: skyU, side: THREE.BackSide, depthWrite: false, fog: false,
+  vertexShader: `varying vec3 vDir; void main(){ vDir = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+  fragmentShader: `uniform vec3 top, mid, hor, sunCol, sunDir; uniform float sunGlow; varying vec3 vDir;
+    void main(){ vec3 d = normalize(vDir); float h = d.y;
+      vec3 c = mix(hor, mid, smoothstep(0.0, 0.16, h)); c = mix(c, top, smoothstep(0.16, 0.75, h));
+      float s = max(dot(d, normalize(sunDir)), 0.0);
+      c += sunCol * (pow(s, 6.0) * 0.22 + pow(s, 60.0) * 0.5) * sunGlow + vec3(1.0, 0.86, 0.62) * smoothstep(0.9986, 0.9991, s) * 1.6 * sunGlow;
+      gl_FragColor = vec4(c, 1.0); }`
+}));
+sky.renderOrder = -10;
+scene.add(sky);
+
+const starGeo = new THREE.BufferGeometry(); { const p = [];
+  for (let i = 0; i < 1600; i++) { const th = rnd() * Math.PI * 2, y = 0.05 + rnd() * 0.95, r = Math.sqrt(1 - y * y);
+    p.push(Math.cos(th) * r * 1800, y * 1800, Math.sin(th) * r * 1800); }
+  starGeo.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); }
+const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 1.6, sizeAttenuation: false, transparent: true, opacity: 0, fog: false, depthWrite: false }));
+scene.add(stars);
+
+// ---------- lights ----------
+const sun = new THREE.DirectionalLight(0xffd6a0, 2.4);
+sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -140, right: 140, top: 140, bottom: -140, near: 1, far: 900 });
+sun.shadow.bias = -0.0006;
+scene.add(sun, sun.target);
+const hemi = new THREE.HemisphereLight(0xcfe0ff, 0x4d5a36, 0.6); scene.add(hemi);
+const moon = new THREE.DirectionalLight(0x8fb0ff, 0); moon.position.set(-200, 300, 150); scene.add(moon);
+
+// ---------- terrain ----------
+{
+  const g = new THREE.PlaneGeometry(1800, 1800, 300, 300); g.rotateX(-Math.PI / 2);
+  const pos = g.attributes.position, col = [];
+  const cLow = new THREE.Color(0x5f8a3a), cHigh = new THREE.Color(0x3d6a2c), cRock = new THREE.Color(0x8a7f68), cSand = new THREE.Color(0xb9a77d), c = new THREE.Color();
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i), z = pos.getZ(i), h = ground(x, z); pos.setY(i, h);
+    const n = fbm(x * 0.05, z * 0.05);
+    c.copy(cLow).lerp(cHigh, clamp(n * 1.4 - 0.2, 0, 1));
+    const shore = z < 0 ? LAKE : RIVER;
+    if (h < shore + 1.8) c.lerp(cSand, 0.7);
+    if (h > 60) c.lerp(cRock, sm(60, 110, h) * 0.5);
+    col.push(c.r, c.g, c.b);
+  }
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+  g.computeVertexNormals();
+  const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, flatShading: true }));
+  m.receiveShadow = true; scene.add(m);
+}
+
+// ---------- trees (instanced low-poly cones) ----------
+{
+  const N = 5200, cone = new THREE.ConeGeometry(1.5, 5.5, 6); cone.translate(0, 2.4, 0);
+  const trees = new THREE.InstancedMesh(cone, new THREE.MeshStandardMaterial({ roughness: 0.9, flatShading: true }), N);
+  const M = new THREE.Matrix4(), q = new THREE.Quaternion(), s = new THREE.Vector3(), p = new THREE.Vector3(), c = new THREE.Color();
+  let k = 0;
+  for (let tries = 0; k < N && tries < 60000; tries++) {
+    const x = (rnd() - 0.5) * 900, z = -520 + rnd() * 700, h = ground(x, z);
+    const water = z < -2 ? LAKE : RIVER;
+    if (h < water + 1.5) continue;
+    if (Math.abs(z) < 34 && Math.abs(x) < DAM_X + 6) continue;
+    if (z > 20 && x < -20 && Math.hypot(x + 120, z - 110) < 150) continue;   // keep the camera's foreground clear
+    if (fbm(x * 0.03 + 9, z * 0.03) < 0.42) continue;          // clumps, not a carpet
+    const sc = 0.7 + rnd() * 0.9;
+    p.set(x, h - 0.4, z); s.set(sc, sc * (0.8 + rnd() * 0.5), sc);
+    M.compose(p, q, s); trees.setMatrixAt(k, M);
+    c.setHSL(0.27 + rnd() * 0.06, 0.45, 0.17 + rnd() * 0.1); trees.setColorAt(k, c); k++;
+  }
+  trees.count = k; trees.castShadow = true; trees.receiveShadow = true; scene.add(trees);
+}
+
+// ---------- the dam ----------
+const concrete = new THREE.MeshStandardMaterial({ color: 0xe9e2d2, roughness: 0.82 });
+const darkMat = new THREE.MeshStandardMaterial({ color: 0x2b3038, roughness: 0.7 });
+{
+  const sh = new THREE.Shape();
+  // section in (u = -z, y): upstream face vertical, crest, short vertical, long sloping downstream face
+  [[3, BED - 2], [3, CREST], [-2, CREST], [-2, 16], [-24, BED - 2]].forEach(([u, y], i) => i ? sh.lineTo(u, y) : sh.moveTo(u, y));
+  const g = new THREE.ExtrudeGeometry(sh, { depth: DAM_X * 2, bevelEnabled: false });
+  const dam = new THREE.Mesh(g, concrete);
+  dam.rotation.y = Math.PI / 2; dam.position.x = -DAM_X;
+  dam.castShadow = dam.receiveShadow = true; scene.add(dam);
+
+  // buttress ribs down the sloping face
+  const L = Math.hypot(22, 19), rib = new THREE.BoxGeometry(1.1, 0.9, L);
+  const ribMat = new THREE.MeshStandardMaterial({ color: 0xdcd4c2, roughness: 0.85 });
+  for (let x = -DAM_X + 4; x <= DAM_X - 4; x += 7.2) {
+    const r = new THREE.Mesh(rib, ribMat);
+    r.rotation.x = Math.atan2(19, 22);
+    r.position.set(x, 6.5 + 0.759 * 0.45, 13 + 0.655 * 0.45);
+    r.castShadow = r.receiveShadow = true; scene.add(r);
+  }
+  // crest parapet + piers
+  const par = new THREE.Mesh(new THREE.BoxGeometry(DAM_X * 2, 1.2, 0.5), concrete); par.position.set(0, CREST + 0.6, 1.8); scene.add(par);
+  const par2 = par.clone(); par2.position.z = -2.8; scene.add(par2);
+  for (let x = -DAM_X + 2; x < DAM_X; x += 3.6) {
+    const pier = new THREE.Mesh(new THREE.BoxGeometry(0.9, 2.2, 5.2), concrete);
+    pier.position.set(x, CREST + 1.1, -0.5); pier.castShadow = true; scene.add(pier);
+  }
+  // yellow gantry cranes on the crest
+  const yel = new THREE.MeshStandardMaterial({ color: 0xe6b422, roughness: 0.6 });
+  [-50, 8, 46].forEach(x => {
+    [-1.6, 1.6].forEach(dx => [-2.6, 1.6].forEach(dz => { const leg = new THREE.Mesh(new THREE.BoxGeometry(0.35, 5, 0.35), yel); leg.position.set(x + dx, CREST + 2.5, dz); scene.add(leg); }));
+    const beam = new THREE.Mesh(new THREE.BoxGeometry(4, 0.8, 5), yel); beam.position.set(x, CREST + 5.2, -0.5); beam.castShadow = true; scene.add(beam);
+  });
+}
+// spillway gates in the middle of the face
+const GATES = []; for (let i = 0; i < 9; i++) GATES.push(-26 + i * 6.5);
+{
+  const gg = new THREE.BoxGeometry(3, 0.7, 3);
+  GATES.forEach(x => {
+    const y = 9.5, m = new THREE.Mesh(gg, darkMat);
+    m.rotation.x = Math.atan2(19, 22);
+    m.position.set(x, y, faceZ(y) + 0.1); scene.add(m);
+  });
+}
+// powerhouses at the foot, with windows that light up at night
+const winCanvas = document.createElement('canvas'); winCanvas.width = 512; winCanvas.height = 128;
+{ const c = winCanvas.getContext('2d'); c.fillStyle = '#d9d3c4'; c.fillRect(0, 0, 512, 128);
+  for (let i = 0; i < 16; i++) for (let j = 0; j < 2; j++) { c.fillStyle = '#ffe2a8'; c.fillRect(10 + i * 31.5, 22 + j * 52, 18, 34); } }
+const winEmit = document.createElement('canvas'); winEmit.width = 512; winEmit.height = 128;
+{ const c = winEmit.getContext('2d'); c.fillStyle = '#000'; c.fillRect(0, 0, 512, 128);
+  for (let i = 0; i < 16; i++) for (let j = 0; j < 2; j++) { c.fillStyle = '#ffd08a'; c.fillRect(10 + i * 31.5, 22 + j * 52, 18, 34); } }
+const winTex = new THREE.CanvasTexture(winCanvas), winETex = new THREE.CanvasTexture(winEmit);
+winTex.encoding = winETex.encoding = THREE.sRGBEncoding;
+const houseFront = new THREE.MeshStandardMaterial({ map: winTex, emissiveMap: winETex, emissive: 0xffffff, emissiveIntensity: 0, roughness: 0.8 });
+const houseSide = new THREE.MeshStandardMaterial({ color: 0xd9d3c4, roughness: 0.85 });
+const roofMat = new THREE.MeshStandardMaterial({ color: 0x5a6470, roughness: 0.6 });
+function powerhouse(x0, x1) {
+  const w = x1 - x0, g = new THREE.BoxGeometry(w, 9, 8);
+  const m = new THREE.Mesh(g, [houseSide, houseSide, roofMat, houseSide, houseFront, houseSide]);
+  m.position.set((x0 + x1) / 2, RIVER + 4.5, faceZ(RIVER + 4) + 3.5); m.castShadow = m.receiveShadow = true; scene.add(m);
+  const roof = new THREE.Mesh(new THREE.BoxGeometry(w + 0.6, 0.8, 9), roofMat); roof.position.set(m.position.x, RIVER + 9.4, m.position.z); scene.add(roof);
+}
+powerhouse(-64, -34); powerhouse(34, 64);
+
+// ---------- water ----------
+const waterDay = new THREE.Color(0x1f5f8c), waterNight = new THREE.Color(0x040b18);
+function makeWater(w, d, cx, cz, y, sx, sz) {
+  const g = new THREE.PlaneGeometry(w, d, sx, sz); g.rotateX(-Math.PI / 2);
+  const col = new Float32Array(g.attributes.position.count * 3).fill(1);
+  g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const mat = new THREE.MeshPhongMaterial({ color: waterDay, specular: 0x9a7a55, shininess: 90, vertexColors: true, flatShading: false });
+  const m = new THREE.Mesh(g, mat); m.position.set(cx, y, cz); m.receiveShadow = true; scene.add(m);
+  m.userData.base = Float32Array.from(g.attributes.position.array);
+  return m;
+}
+const lake = makeWater(900, 600, 0, -302.5, LAKE, 120, 80);
+const river = makeWater(500, 520, 0, 262, RIVER, 140, 150);
+function foamAt(x, z, t) {                       // white water below the spillway, streaming downstream
+  const zf = 18 + 22;
+  const band = sm(-34, -24, x) * (1 - sm(24, 34, x));
+  const along = sm(16, 24, z) * (1 - sm(zf, zf + 70, z));
+  const streak = 0.55 + 0.45 * fbm(x * 0.25, (z - t * 14) * 0.08);
+  return clamp(band * along * streak * 1.4, 0, 1);
+}
+function animateWater(m, t, amp, flow, foam) {
+  const g = m.geometry, p = g.attributes.position, b = m.userData.base, col = g.attributes.color;
+  for (let i = 0; i < p.count; i++) {
+    const x = b[i * 3], z = b[i * 3 + 2] + m.position.z;
+    let y = amp * (Math.sin(x * 0.21 + t * 1.9) * 0.6 + Math.sin(z * 0.17 - t * (1.3 + flow)) * 0.5 + Math.sin((x + z) * 0.43 + t * 2.7) * 0.25);
+    let f = 0;
+    if (foam) { f = foamAt(x, z, t); y += f * (Math.sin(x * 1.3 + t * 9) * 0.35 + Math.sin(z * 1.1 - t * 7) * 0.3); }
+    p.setY(i, y);
+    if (foam) { const k = 1 + f * 2.2; col.setXYZ(i, k, k, k); }
+  }
+  p.needsUpdate = true; if (foam) col.needsUpdate = true;
+  g.computeVertexNormals();
+}
+
+// ---------- spray particles ----------
+function spriteTex(soft) {
+  const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d');
+  const gr = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(soft, 'rgba(255,255,255,.6)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+  x.fillStyle = gr; x.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c);
+}
+const JET_N = 260, jetSeed = [];
+for (let i = 0; i < GATES.length * JET_N; i++) jetSeed.push([rnd(), rnd() - 0.5, rnd() - 0.5, rnd()]);
+const jetGeo = new THREE.BufferGeometry(); jetGeo.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(jetSeed.length * 3), 3));
+const jetMat = new THREE.PointsMaterial({ map: spriteTex(0.35), size: 1.15, transparent: true, opacity: 0.6, depthWrite: false, color: 0xf4f8ff });
+const jets = new THREE.Points(jetGeo, jetMat); scene.add(jets);
+const MIST_N = 1400, mistSeed = []; for (let i = 0; i < MIST_N; i++) mistSeed.push([rnd(), rnd(), rnd(), rnd()]);
+const mistGeo = new THREE.BufferGeometry(); mistGeo.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(MIST_N * 3), 3));
+const mistMat = new THREE.PointsMaterial({ map: spriteTex(0.15), size: 6, transparent: true, opacity: 0.18, depthWrite: false, color: 0xffffff });
+const mist = new THREE.Points(mistGeo, mistMat); scene.add(mist);
+function animateSpray(t) {
+  const p = jetGeo.attributes.position; let k = 0;
+  GATES.forEach(gx => { for (let j = 0; j < JET_N; j++, k++) {
+    const [ph, jx, jz, sp] = jetSeed[k], life = 1.25, a = ((t * 0.9 + ph) % 1) * life;
+    const y0 = 9.5, z0 = faceZ(y0) + 1.2, vz = 13 + sp * 4, vy = 2 + jz * 2;
+    const spread = 0.6 + a * 1.6;
+    p.setXYZ(k, gx + jx * spread * 1.6, Math.max(RIVER + 0.3, y0 + vy * a - 8.5 * a * a), z0 + vz * a + jz * spread);
+  } });
+  p.needsUpdate = true;
+  const q = mistGeo.attributes.position;
+  for (let i = 0; i < MIST_N; i++) { const [a, b, c, d] = mistSeed[i], age = (t * 0.35 + d) % 1;
+    q.setXYZ(i, -30 + a * 60 + Math.sin(t + i) * 1.5, RIVER + 0.5 + age * 9 * (0.4 + c), 22 + b * 20 + age * 10); }
+  q.needsUpdate = true;
+}
+
+// ---------- crest lamps (night) ----------
+const lampTex = spriteTex(0.12);
+const lampGeo = new THREE.BufferGeometry(); { const p = [];
+  for (let x = -DAM_X + 1; x < DAM_X; x += 3.6) p.push(x, CREST + 2.6, 2.3);
+  lampGeo.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); }
+const lampMat = new THREE.PointsMaterial({ map: lampTex, size: 3.2, color: 0xffd9a0, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending });
+scene.add(new THREE.Points(lampGeo, lampMat));
+
+// ---------- timeline ----------
+const C = hex => new THREE.Color(hex);
+const DAY = { top: C(0x2c5591), mid: C(0x7fa2c8), hor: C(0xf0b878), fog: C(0xc9a985) };
+const NIGHT = { top: C(0x040914), mid: C(0x0b1830), hor: C(0x1c2b48), fog: C(0x14213a) };
+const tmp = new THREE.Color();
+const words = [...document.querySelectorAll('.w')].map(el => [el, +el.dataset.t]);
+const cap1 = document.getElementById('cap1'), cap2 = document.getElementById('cap2');
+
+window.renderAt = function (t) {
+  const n = sm(1.9, 3.3, t);                                    // 0 golden hour → 1 night
+  // sun goes down behind the hills, upstream and to the right of the view
+  const elev = lerp(0.2, -0.09, sm(0, 2.8, t));
+  const sd = new THREE.Vector3(0.9, elev, -0.62).normalize();
+  skyU.sunDir.value.copy(sd); skyU.sunGlow.value = 1 - sm(2.2, 3.0, t);
+  skyU.top.value.copy(DAY.top).lerp(NIGHT.top, n); skyU.mid.value.copy(DAY.mid).lerp(NIGHT.mid, n); skyU.hor.value.copy(DAY.hor).lerp(NIGHT.hor, n);
+  scene.fog.color.copy(DAY.fog).lerp(NIGHT.fog, n);
+  stars.material.opacity = sm(2.4, 3.6, t) * 0.9;
+  sun.position.copy(sd).multiplyScalar(400); sun.target.position.set(0, 0, 0);
+  sun.intensity = lerp(2.4, 0, sm(1.6, 2.9, t));
+  sun.color.setRGB(1, lerp(0.84, 0.6, sm(0, 2.6, t)), lerp(0.62, 0.35, sm(0, 2.6, t)));
+  hemi.intensity = lerp(0.6, 0.16, n); hemi.color.copy(C(0xcfe0ff)).lerp(C(0x4060a0), n);
+  moon.intensity = 0.4 * n;
+  renderer.toneMappingExposure = lerp(0.9, 1.1, n);
+  // water + spray
+  lake.material.color.copy(waterDay).lerp(waterNight, n); river.material.color.copy(waterDay).lerp(waterNight, n);
+  lake.material.specular.copy(C(0x9a7a55)).lerp(C(0x334466), n); river.material.specular.copy(lake.material.specular);
+  animateWater(lake, t, 0.18, 0, false); animateWater(river, t, 0.3, 1.2, true);
+  animateSpray(t);
+  jetMat.color.copy(C(0xf4f8ff)).lerp(C(0x8ea4c8), n); mistMat.color.copy(jetMat.color);
+  // lights come on
+  lampMat.opacity = sm(2.5, 3.1, t); houseFront.emissiveIntensity = 1.6 * sm(2.6, 3.2, t);
+  // camera: slow arc from the powerhouse side, rising a little
+  const k = ease(clamp(t / window.VIDEO_END, 0, 1));
+  camera.position.set(lerp(-122, -98, k), lerp(22, 32, k), lerp(112, 92, k));
+  camera.lookAt(lerp(-2, 10, k), lerp(17, 13, k), lerp(-20, -24, k));
+  // captions, word by word; the second line replaces the first at night
+  words.forEach(([el, t0]) => { const a = sm(t0, t0 + 0.2, t); el.style.opacity = a; el.style.transform = `translateY(${(1 - a) * 10}px) scale(${0.92 + 0.08 * a})`; });
+  cap1.style.opacity = 1 - sm(2.45, 2.65, t); cap2.style.opacity = sm(2.6, 2.75, t);
+  renderer.render(scene, camera);
+};
+renderAt(0);
+</script>
+</body></html>
