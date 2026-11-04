@@ -43,8 +43,8 @@ For the animation style, ask once per topic: quick mode (default) or full checks
 - **Photo style (copied from the user's reference video):** each photo in a thin white frame with a small radius, centred
   a bit below the middle, and a **yellow label** (13.5 px, readable) at its bottom-right saying what the photo is (who/what, old or modern,
   painting or photo): `labels: ["…", "…"]` per item, a few words each, accurate (say «رسمة حديثة» for modern paintings).
-- Card: emoji + short title + a body of **2–3 lines that opens with a hook** (a question or a shocking line, then the
-  fact with the place and the twist; the user's rule, 2026-11-04), never one lone word on the last line
+- Card: emoji + short title + a body of **2–3 lines that goes straight into the story** (no hook phrase at the start;
+  describe what happens, with the place and the twist, in a gripping way; the user's rule, 2026-11-04), never one lone word on the last line
   (check with `videos/_templates/photo-list/lastline.js`).
 - Build: `videos/_templates/photo-list/` (`make.py`, `template.html`), render with `videos/render.js`.
 - Reference build: `videos/titanic-finds/`.
