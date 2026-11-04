@@ -495,7 +495,7 @@
       for (var p = 0; p < 30; p++) { var px = 44 + hash(p) * 42 + Math.sin(t * 7 + p) * 1.6, py = -4 + hash(p + 5) * 80 + Math.cos(t * 6 + p * 2) * 1.6, burnt = fire > 0 && (px - 40) / 50 < fire * 1.2; g += '<circle cx="' + f(px) + '" cy="' + f(py) + '" r="4" fill="' + (burnt ? "#ffb040" : "#4a8ae8") + '" stroke="#1c2a6a" stroke-width=".8"/>'; }
       g += '<path d="M10 -40 L38 -40 L38 80 L10 80 Z" fill="url(#steelD)" stroke="#555"/><path d="M14 30 L34 30 L34 76 L14 76 Z" fill="url(#meshG)"/><path d="M6 -46 L22 -46 L22 20 L6 20 Z" fill="#3a5ac8" stroke="' + INK + '"/><path d="M10 20 V40 M18 20 V40" stroke="#f2c230" stroke-width="2.4"/>';
       if (fire > 0) g += '<circle cx="16" cy="10" r="' + f(10 + 60 * fire) + '" fill="#ff9a2a" opacity="' + f(0.55 * (1 - fire * 0.5)) + '" filter="url(#soft)"/><circle cx="16" cy="6" r="8" fill="#fff6c8" filter="url(#glow)"/>';
-      if (o.labels) g += lbl(172, -30, "الشرارة", 14, "#f2c230", "start") + lbl(172, 10, "الحبوب", 14, "#bfe0ff", "start") + lbl(172, 50, "شبكة تبرّد الغاز", 14, "#ddd", "start") + lbl(172, 90, "الخروم", 14, "#fff", "start"); }
+      if (o.labels) g += lbl(166, -30, "الشرارة", 14, "#f2c230", "end") + lbl(166, 10, "الحبوب", 14, "#bfe0ff", "end") + lbl(166, 50, "شبكة تبرّد الغاز", 14, "#ddd", "end") + lbl(166, 90, "الخروم", 14, "#fff", "end"); }
     return g + '</g>';
   }
   function n2(x, y, s, a, col) { return '<g transform="translate(' + f(x) + ' ' + f(y) + ') rotate(' + f(a) + ') scale(' + (s || 1) + ')"><circle cx="-7" r="9" fill="' + (col || "url(#n2G)") + '" stroke="' + INK + '" stroke-width="1.2"/><circle cx="7" r="9" fill="' + (col || "url(#n2G)") + '" stroke="' + INK + '" stroke-width="1.2"/></g>'; }
