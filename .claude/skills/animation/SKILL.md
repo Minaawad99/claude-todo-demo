@@ -98,6 +98,9 @@ UA="EhElhekayaRefBot/1.0 (https://github.com/minaawad99/claude-todo-demo) curl/8
 curl -s -A "$UA" "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrnamespace=6&gsrlimit=8&gsrsearch=<query>&prop=imageinfo&iiprop=url&iiurlwidth=960"
 ```
 
+- **When you ask the user for photos (the user's rule):** for every photo, give the exact text to type into Google Images,
+  in its own code block so it copies in one tap, in English (it finds far more) plus an Arabic one when that helps, and say
+  in one line what the photo should show and where it goes in the video. Do the same with Pixabay search terms for sounds.
 - Put downloads in their own scratchpad folder; build a contact sheet and view it; note in
   `videos/<slug>/refs/SOURCES.md` what each drawing took from which photo (visual reference only, never reused).
 - If Commons answers 429 / "too many requests", stop, wait, try once later. If it stays blocked, say so plainly
