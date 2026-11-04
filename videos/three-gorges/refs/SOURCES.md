@@ -17,3 +17,11 @@
   number reveal, NASA stamp, pyramid comparison). Looked at only; nothing reused.
 
 `tex.js` is rebuilt from `tex/` with: `python3 -c "import base64; ..."` (see git history), keys day / water / clouds.
+
+## Ship locks and ship lift (lines 7–8)
+- Two-lane, five-step ship locks on the left bank; ship lift beside them lifts ships of up to 3,000 t through 113 m
+  (Wikipedia "Three Gorges Dam" → Navigation). Shapes from the user's photos: gate houses across both lanes, terraced
+  dark rock cuts with green tops, four concrete towers around the lift.
+## Dam model
+- Rebuilt from the user's photos: red portal cranes on the crest, spillway comb, penstocks on the powerhouse sections,
+  low powerhouses with a blue window band, guide walls in the tailwater, white-blue floodlights at night.

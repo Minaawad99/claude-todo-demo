@@ -62,6 +62,9 @@
   <div class="abs pill" id="lb-top"><b>40</b> م</div>
   <div class="abs pill hot" id="lb-wide">تحت عريض يشيل</div>
   <div class="abs pill" id="lb-thin">فوق رفيع</div>
+  <div class="abs pill hot" id="lb-steps">سلّم مية بـ <b style="color:#ff7a45">5</b> درجات</div>
+  <div class="abs pill hot" id="lb-tons"><b style="color:#ff7a45">3000</b> طن</div>
+  <div class="abs pill hot" id="lb-lifth"><b style="color:#ff7a45">113</b> م</div>
   <div class="abs pill" id="counter"><b id="cnum">0</b> مليار م³ مية</div>
   <div class="abs card" id="gauge"><svg width="92" height="64" viewBox="0 0 92 64">
     <path d="M14 52 A32 32 0 0 1 78 52" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="7" stroke-linecap="round"/>
@@ -90,7 +93,8 @@
 <script>
 const TM = window.TIMING, LN = TM.lines;
 window.VIDEO_END = TM.duration;
-const T = i => LN[i].start, TE = i => LN[i].end;
+const IX = i => i >= 7 ? i + 2 : i;   // lines 7–8 (locks, ship lift) were added later; older code keeps its old line numbers
+const T = i => LN[IX(i)].start, TE = i => LN[IX(i)].end, RT = i => LN[i].start;
 const W = 360, H = 640;
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const sm = (a, b, x) => { x = clamp((x - a) / (b - a), 0, 1); return x * x * (3 - 2 * x); };
@@ -314,9 +318,9 @@ const DAM = (() => {
       [0, T(4), V(-105, 58, 100), V(-80, 54, 72), V(0, 24, -10), V(12, 18, -18)],
       [T(4), T(5), V(-170, 135, 175), V(-145, 118, 150), V(0, 0, 0), V(6, 0, -6)],
       [T(5), T(6), V(-62, 44, 72), V(-56, 47, 62), V(55, 14, -6), V(62, 14, -6)],
-      [T(6), T(7), V(58, 30, -84), V(42, 27, -66), V(-28, 16, -4), V(-36, 15, -4)],
+      [T(6), RT(7), V(58, 30, -84), V(42, 27, -66), V(-28, 16, -4), V(-36, 15, -4)],
     ];
-    for (const [a, b, p0, p1, l0, l1] of segs) if (t < b || b === T(7)) { const k = ease(clamp((t - a) / (b - a), 0, 1)); return [p0.clone().lerp(p1, k), l0.clone().lerp(l1, k)]; }
+    for (const [a, b, p0, p1, l0, l1] of segs) if (t < b || b === RT(7)) { const k = ease(clamp((t - a) / (b - a), 0, 1)); return [p0.clone().lerp(p1, k), l0.clone().lerp(l1, k)]; }
   }
   function update(t) {
     const day = t >= T(4) - 0.12;
@@ -553,12 +557,99 @@ const SEC = (() => {
   return { scene, update };
 })();
 
+
+/* =========================================================================================
+   5) THE SHIP LOCKS AND THE SHIP LIFT (new lines 7–8): two lanes of five steps, and a lift tower beside them
+   ========================================================================================= */
+const LOCKS = (() => {
+  const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(46, W / H, 0.5, 3000);
+  scene.background = C(0xbcd3e8); scene.fog = new THREE.Fog(0xc8dcea, 180, 650);
+  scene.add(new THREE.HemisphereLight(0xdfeaff, 0x4d5a36, 0.75));
+  const sun = new THREE.DirectionalLight(0xfff3e0, 2.2); sun.position.set(-80, 140, 60); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+  Object.assign(sun.shadow.camera, { left: -130, right: 130, top: 130, bottom: -130, near: 1, far: 500 }); sun.shadow.bias = -0.0005; scene.add(sun);
+  const M = (c, r = 0.85) => new THREE.MeshStandardMaterial({ color: c, roughness: r });
+  const conc = M(0xe2e0da), concD = M(0xb9b6ae), rock = M(0x434b55, 0.95), green = M(0x557a3a, 0.95), dark = M(0x2a3038, 0.7), red = M(0xd8322a, 0.5);
+  const water = new THREE.MeshStandardMaterial({ color: 0x3f8794, roughness: 0.15 });
+  const box = (w, h, d, mat, x, y, z) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat); m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; scene.add(m); return m; };
+  const LV = [30, 24, 18, 12, 6], ZC = [-40, -20, 0, 20, 40], TOPW = j => LV[j] + 4;
+  // ground, river below, upper plateau with the lake
+  box(1400, 2, 1000, green, 0, -1, 445);
+  box(1400, 34, 600, rock, 0, 15, -355); box(1400, 0.6, 600, green, 0, 32.2, -355);
+  const lake = box(1400, 1, 560, water, 0, 33, -335); lake.receiveShadow = true;
+  box(24, 33, 6, water, 0, 16.5, -52.5);
+  const river = box(1400, 1, 600, water, 0, 2.6, 350);
+  // locks: walls per chamber, floor, water
+  const chamberWater = [[], []];
+  ZC.forEach((z, j) => {
+    const top = TOPW(j);
+    box(2, top, 20, conc, -12, top / 2, z); box(2, top, 20, conc, 12, top / 2, z); box(6, top + 0.6, 20, concD, 0, (top + 0.6) / 2, z);
+    [-7, 7].forEach((x, k) => { const w = box(8, 1, 19.6, water, x, LV[j] / 2, z); w.scale.y = LV[j]; chamberWater[k].push(w); });
+    // terraced rock cut on both sides, with green on top
+    for (const sg of [-1, 1]) for (let k = 0; k < 4; k++) { const h = top + 3 + k * 5; box(6, h, 20, rock, sg * (16 + k * 6), h / 2, z); box(6, 0.4, 20, green, sg * (16 + k * 6), h + 0.2, z); }
+  });
+  // gate houses between steps, each with dark gate leaves
+  [-50, -30, -10, 10, 30, 50].forEach((z, k) => {
+    const hi = k === 0 ? 34 : LV[k - 1] + 4, top = hi + 7;
+    box(26, 3, 3.2, conc, 0, top - 1.5, z); [-12, 0, 12].forEach(x => box(x === 0 ? 6 : 2.4, top, 3.2, concD, x, top / 2, z));
+    [-7, 7].forEach(x => box(7.6, hi - 2, 0.8, dark, x, (hi - 2) / 2 + 1, z));
+    box(4, 2, 2.4, red, -7, top + 1, z); box(4, 2, 2.4, red, 7, top + 1, z);
+  });
+  for (const sg of [-1, 1]) for (let k = 0; k < 4; k++) { const h = 37 + k * 5; box(6, h, 30, rock, sg * (16 + k * 6), h / 2, 62); }
+  // ships
+  function ship(col) {
+    const g = new THREE.Group();
+    const hull = new THREE.Mesh(new THREE.BoxGeometry(3.2, 1.6, 12), M(col, 0.6)); hull.position.y = 0.6; g.add(hull);
+    const deck = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.3, 8), M(0x6b4a2e)); deck.position.set(0, 1.5, -1.5); g.add(deck);
+    const cab = new THREE.Mesh(new THREE.BoxGeometry(2.6, 2.2, 2.8), M(0xf2f2ee)); cab.position.set(0, 2.5, 3.8); g.add(cab);
+    const win = new THREE.Mesh(new THREE.BoxGeometry(2.66, 0.45, 0.4), dark); win.position.set(0, 3.1, 2.45); g.add(win);
+    g.traverse(o => { if (o.isMesh) o.castShadow = true; }); scene.add(g); return g;
+  }
+  const ships = [[0, 0, 0x2f4f8f], [0, 2, 0xb03a2e], [0, 3, 0x2f4f8f], [1, 1, 0x3e6b45], [1, 4, 0xb03a2e]].map(([lane, j, c]) => ({ g: ship(c), lane, j }));
+  const extra = [[-30, -120, 0x2f4f8f], [25, -160, 0xf2f2ee], [-10, 120, 0xb03a2e], [20, 160, 0x2f4f8f]].map(([x, z, c]) => { const g = ship(c); g.position.set(x, z < 0 ? 33.5 : 3.1, z); g.scale.setScalar(1.3); return g; });
+  // ship lift: four towers, a machine deck on top, a water tank (caisson) that carries a whole ship
+  const LX = 66;
+  [[-11, -14], [11, -14], [-11, 14], [11, 14]].forEach(([dx, dz]) => box(7, 58, 7, conc, LX + dx, 29, dz));
+  box(30, 4, 36, concD, LX, 60, 0); box(26, 1.2, 32, red, LX, 62.6, 0);
+  for (let y = 10; y < 56; y += 9) [-14, 14].forEach(dz => box(15, 1, 1.2, concD, LX, y, dz));
+  const caisson = new THREE.Group(); scene.add(caisson);
+  { const add = (w, h, d, mat, x, y, z) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat); m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; caisson.add(m); };
+    add(14, 1, 24, concD, 0, 0, 0); add(1, 5, 24, concD, -7, 2.5, 0); add(1, 5, 24, concD, 7, 2.5, 0); add(14, 5, 1, red, 0, 2.5, -12); add(14, 5, 1, red, 0, 2.5, 12);
+    add(13, 3.6, 23, water, 0, 2.2, 0); }
+  const liftShip = ship(0xb03a2e); caisson.add(liftShip); liftShip.position.set(0, 3.9, 0); liftShip.scale.setScalar(0.95);
+  box(14, 33, 4, conc, LX, 16.5, -40); box(12, 1, 34, conc, LX, 31.5, -32); box(11, 2.4, 33, water, LX, 33, -32);
+  box(14, 1, 40, water, LX, 2.7, 34);
+  const hBar = bar(30, 0.8, 0xff7a45); hBar.rotation.z = Math.PI / 2; scene.add(hBar);
+  const V = (x, y, z) => new THREE.Vector3(x, y, z);
+  function update(t) {
+    const a = RT(7) - 0.12, b = RT(8) - 0.12, e = RT(9) - 0.12, inA = t < b;
+    // lock lane 0: the ship in step 4 is lifted to the level of step 3; lane 1: step 2 is lowered to step 3
+    const kA = ease(sm(a + 0.4, b - 0.2, t));
+    chamberWater[0][3].scale.y = lerp(LV[3], LV[2], inA ? kA : 1); chamberWater[0][3].position.y = chamberWater[0][3].scale.y / 2;
+    chamberWater[1][2].scale.y = lerp(LV[2], LV[3], inA ? kA : 1); chamberWater[1][2].position.y = chamberWater[1][2].scale.y / 2;
+    ships.forEach(({ g, lane, j }, i) => { const lvl = chamberWater[lane][j].scale.y; g.position.set(lane ? 7 : -7, lvl + 0.1 + Math.sin(t * 1.7 + i) * 0.08, ZC[j] + Math.sin(t * 0.5 + i) * 0.4); g.rotation.y = lane ? Math.PI : 0; });
+    extra.forEach((g, i) => { g.position.z += 0; g.position.x += Math.sin(t * 0.3 + i) * 0.02; g.rotation.z = Math.sin(t * 1.3 + i) * 0.02; });
+    // ship lift: the caisson climbs from the river to the lake level during line 8
+    const kL = ease(sm(b + 0.5, e - 0.5, t)), cy = lerp(1.8, 31.6, inA ? 0 : kL);
+    caisson.position.set(LX, cy, 0); liftShip.position.y = 3.9 + Math.sin(t * 2) * 0.05;
+    hBar.visible = !inA; hBar.scale.x = Math.max(inA ? 0.001 : sm(b + 0.6, b + 1.6, t), 0.001); hBar.position.set(LX + 18, 3 + 15 * hBar.scale.x, 18);
+    // camera: aerial down the locks like the photo, then across to the lift
+    if (inA) { const k = ease(clamp((t - a) / (b - a), 0, 1)); camera.position.set(lerp(-6, 4, k), lerp(78, 70, k), lerp(128, 104, k)); camera.lookAt(lerp(-2, 2, k), 12, lerp(-26, -20, k)); }
+    else { const k = ease(clamp((t - b) / (e - b), 0, 1)); camera.position.set(lerp(128, 116, k), lerp(34, 50, k), lerp(78, 66, k)); camera.lookAt(LX - 6, lerp(14, 26, k), 0); }
+    place('lb-steps', V(0, 40, -2), camera, inA ? sm(a + 0.9, a + 1.2, t) : 0, -40);
+    place('lb-tons', V(LX, cy + 9, 0), camera, !inA ? sm(b + 1.6, b + 1.9, t) : 0, -16);
+    place('lb-lifth', V(LX + 18, 18, 18), camera, !inA ? sm(b + 1.8, b + 2.1, t) : 0, 0);
+    return camera;
+  }
+  return { scene, update };
+})();
+
 /* =========================================================================================
    timeline: which scene, captions, widgets
    ========================================================================================= */
 const CUTS = [T(4), T(7), T(9), T(10), T(12), T(14), T(18)].map(c => c - 0.12);
+const LK0 = RT(7) - 0.12;
 function sceneAt(t) {
-  if (t < CUTS[1]) return 'dam';
+  if (t < CUTS[1]) return t >= LK0 ? 'locks' : 'dam';
   if (t < CUTS[2]) return 'skate';
   if (t < CUTS[3]) return 'earth';
   if (t < CUTS[4]) return 'sec';
@@ -579,7 +670,8 @@ const capEl = $('cap'); let capLine = -1, capWords = [];
 function buildCaption(i) {
   const L = LN[i], words = L.text.split(' '), tot = words.reduce((s, w) => s + w.length + 1, 0);
   let acc = 0; capEl.innerHTML = '';
-  capWords = words.map(w => { const el = document.createElement('span'); el.className = 'w' + (KEY[i][w] ? ' k-' + KEY[i][w] : ''); el.textContent = w;
+  const K = i === 7 ? { 'المراكب': 'blue', 'سلّم': 'hot', 'مية': 'blue', 'بخمس': 'hot', 'درجات.': 'hot' } : i === 8 ? { 'أسانسير': 'hot', 'تلات': 'hot', 'آلاف': 'hot', 'طن،': 'hot', 'لفوق!': 'blue' } : KEY[i >= 9 ? i - 2 : i];
+  capWords = words.map(w => { const el = document.createElement('span'); el.className = 'w' + (K[w] ? ' k-' + K[w] : ''); el.textContent = w;
     capEl.appendChild(el); capEl.appendChild(document.createTextNode(' ')); const t0 = L.start + (L.end - L.start) * acc / tot - 0.05; acc += w.length + 1; return [el, t0]; });
   capLine = i;
 }
@@ -594,19 +686,21 @@ window.renderAt = function (t) {
   const s = sceneAt(t);
   let cam, gauge = 0;
   if (s === 'dam') { cam = DAM.update(t); renderer.render(DAM.scene, cam); }
+  else if (s === 'locks') { const c = LOCKS.update(t); renderer.toneMappingExposure = 0.95; renderer.render(LOCKS.scene, c); }
   else if (s === 'skate') { const r = SKATE.update(t); gauge = r.gauge; renderer.toneMappingExposure = 1; renderer.render(SKATE.scene, r.camera); }
   else if (s === 'earth') { const r = EARTH.update(t); gauge = r.gauge; renderer.toneMappingExposure = 1; renderer.render(EARTH.scene, r.camera); }
   else { const c = SEC.update(t); renderer.toneMappingExposure = 1; renderer.render(SEC.scene, c); }
   if (s !== 'dam') ['lb-len', 'lb-h', 'lb-power'].forEach(id => $(id).style.opacity = 0);
+  if (s !== 'locks') ['lb-steps', 'lb-tons', 'lb-lifth'].forEach(id => $(id).style.opacity = 0);
   if (s !== 'sec') ['lb-lake', 'lb-river', 'lb-deep', 'lb-base', 'lb-top', 'lb-wide', 'lb-thin'].forEach(id => $(id).style.opacity = 0);
   // cuts through black
-  $('fade').style.opacity = Math.max(0, ...CUTS.map(c => 1 - Math.abs(t - c) / 0.16)) * 0.95;
+  $('fade').style.opacity = Math.max(0, ...CUTS.concat([LK0]).map(c => 1 - Math.abs(t - c) / 0.16)) * 0.95;
   // captions
   const li = lineAt(t); if (li !== capLine) buildCaption(li);
   capWords.forEach(([el, t0]) => { const a = sm(t0, t0 + 0.16, t); el.style.opacity = a; el.style.transform = `translateY(${(1 - a) * 8}px)`; });
   capEl.style.opacity = li === 19 ? 1 - sm(T(19) - 0.1, T(19) + 0.2, t) * 0 : 1;
   // lake counter (line 6)
-  const c6 = t >= T(6) - 0.1 && t < CUTS[1] ? sm(T(6) + 0.2, T(6) + 0.5, t) : 0;
+  const c6 = t >= T(6) - 0.1 && t < LK0 ? sm(T(6) + 0.2, T(6) + 0.5, t) : 0;
   $('counter').style.opacity = c6; $('counter').style.transform = `translate(-50%,-50%) scale(${0.85 + 0.15 * c6})`;
   $('cnum').textContent = Math.round(40 * ease(sm(T(6) + 0.4, T(6) + 2.4, t)));
   // spin gauge (lines 7–9)
