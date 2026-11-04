@@ -565,6 +565,21 @@
     if (o.face) s += '<g transform="translate(-32 0) rotate(' + f(-ang) + ')">' + eyes(o.face, o.t || 0, 7) + '</g>';
     return s + '</g>';
   }
+  // the same anchor seen from the front (photos: anchors hanging from the hawse, on quays): two broad flukes with chisel tips
+  // rising either side of the shank, a heavy chamfered crown at the bottom, tripping palms, a D-shackle on top.
+  // Local: shackle top at 0,0, crown at y≈100. o: {s, rust, swing}
+  function anchorFront(x, y, o) {
+    o = o || {}; var g = '<g transform="translate(' + f(x) + ' ' + f(y) + ') rotate(' + f(o.swing || 0) + ') scale(' + (o.s || 1) + ')">';
+    var fl = o.rust ? "url(#aRust)" : "url(#aFluke)", sh = o.rust ? "url(#aRustS)" : "url(#aSteel)";
+    function fluke(sx) { var p = [[18, 98], [20, 50], [30, 30], [44, 40], [48, 98]].map(function (q) { return f(q[0] * sx) + " " + q[1]; });
+      return '<path d="M' + p.join(" L") + ' Z" fill="' + fl + '" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/><path d="M' + f(21 * sx) + ' 52 L' + f(30 * sx) + ' 34 L' + f(42 * sx) + ' 42" stroke="#e6ebef" stroke-width="1.3" fill="none" opacity=".6"/><path d="M' + f(46 * sx) + ' 60 L' + f(54 * sx) + ' 84 L' + f(47 * sx) + ' 90" fill="' + fl + '" stroke="#111" stroke-width="1.4"/>'; }
+    g += '<path d="M-6 0 Q-12 0 -12 8 V14 H12 V8 Q12 0 6 0 Z" fill="none" stroke="#111" stroke-width="6"/><path d="M-6 0 Q-12 0 -12 8 V14 H12 V8 Q12 0 6 0 Z" fill="none" stroke="' + sh + '" stroke-width="3.6"/>';
+    g += '<rect x="-7" y="14" width="14" height="86" fill="' + sh + '" stroke="#111" stroke-width="1.8"/><path d="M-3 18 V96" stroke="#eef2f5" stroke-width="1.4" opacity=".55"/>';
+    g += fluke(-1) + fluke(1);
+    g += '<path d="M-56 90 L56 90 L50 108 L-50 108 Z" fill="' + fl + '" stroke="#111" stroke-width="1.8"/><path d="M-54 92 H54" stroke="#e6ebef" stroke-width="1.2" opacity=".5"/>';
+    if (o.rust) for (var r = 0; r < 8; r++) g += '<circle cx="' + f((hash(r) - 0.5) * 80) + '" cy="' + f(30 + hash(r + 4) * 70) + '" r="' + f(1.5 + hash(r + 8) * 2.5) + '" fill="#6a2a10" opacity=".5"/>';
+    return g + '</g>';
+  }
   function ring(x, y, ang, s) { var a = ang * Math.PI / 180; s = s || 1; return [x - 74 * s * Math.cos(a), y - 74 * s * Math.sin(a)]; }
   // shaded stud-link chain along points P; links alternate face-on (with a stud and a highlight) and edge-on
   function chainAlong(P, w, glow) {
@@ -612,8 +627,8 @@
     s += '<text x="' + (L - 120) + '" y="20" text-anchor="middle" style="font:800 13px Noto Serif;fill:#fff;letter-spacing:3px" opacity=".85">EH ELHEKAYA</text></g>';
     s += '<path d="' + hull + '" fill="none" stroke="#111" stroke-width="2.2"/>';
     // the hawse pipe at the bow with the anchor stowed (when it is not down)
-    s += '<ellipse cx="' + (L - 14) + '" cy="8" rx="7" ry="5" fill="#0b0d10" stroke="#555" stroke-width="1.4"/>';
-    if (o.stowed) s += anchor(L - 8, 30, 98, { s: 0.42 });
+    s += '<ellipse cx="' + (L - 14) + '" cy="8" rx="13" ry="11" fill="url(#hullK)" stroke="#111" stroke-width="1.4"/><ellipse cx="' + (L - 16) + '" cy="6" rx="12" ry="9" fill="none" stroke="#6a7480" stroke-width="1.2" opacity=".6"/><ellipse cx="' + (L - 14) + '" cy="8" rx="7" ry="5.5" fill="#0b0d10" stroke="#555" stroke-width="1.2"/>';
+    if (o.stowed) s += anchorFront(L - 14, 4, { s: 0.3, rust: true });
     for (var dm = 0; dm < 5; dm++) s += '<path d="M' + (L - 30) + ' ' + (dr + 4 + dm * 5) + ' h8" stroke="#fff" stroke-width="1.4"/>';
     return { svg: s + '</g>', H: [x + sc * (L - 14), y + sc * (8 - dr)] };
   }
@@ -638,9 +653,12 @@
     [[-36, 1], [-20, -1], [26, 1], [40, -1]].forEach(function (l) { s += '<path d="M' + l[0] + ' -20 l' + f(l[1] * b) + ' 26" stroke="#6a4028" stroke-width="9" stroke-linecap="round"/>'; });
     s += '<ellipse cx="-62" cy="-50" rx="20" ry="16" fill="#8a5a3a" stroke="' + INK + '" stroke-width="2.4"/><path d="M-70 -64 q-10 -10 -4 -16 M-56 -64 q4 -12 12 -12" stroke="#e8e4da" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="-68" cy="-52" r="2.4" fill="' + INK + '"/>';
     return s + '<path d="M54 -46 q14 10 8 26" stroke="#6a4028" stroke-width="4" fill="none"/></g>'; }
-  function windlass(x, y, t, spin, s) {
-    var a = spin * 360, g = '<g transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + (s || 1) + ')"><rect x="-60" y="10" width="120" height="30" fill="#3f6f4f" stroke="' + INK + '" stroke-width="2"/>';
-    g += '<g transform="rotate(' + f(a) + ')"><circle r="34" fill="url(#aSteel)" stroke="' + INK + '" stroke-width="2.4"/>'; for (var i = 0; i < 6; i++) g += '<rect x="-5" y="-38" width="10" height="12" fill="#5a6068" stroke="' + INK + '" transform="rotate(' + (i * 60) + ')"/>'; g += '<circle r="9" fill="#c23a26" stroke="' + INK + '" stroke-width="2"/></g>';
+  function windlass(x, y, t, spin, s) {   // red bow windlass (photo): bedplate, gypsy wheel with the chain over it, warping drum, brake
+    var a = spin * 360, g = '<g transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + (s || 1) + ')">' + shadow(0, 44, 90, 8);
+    g += '<path d="M-80 40 L-70 10 H70 L80 40 Z" fill="url(#tankR)" stroke="' + INK + '" stroke-width="2"/><rect x="40" y="-30" width="34" height="44" rx="6" fill="url(#tankR)" stroke="' + INK + '" stroke-width="2"/><circle cx="57" cy="-8" r="12" fill="#8f2618" stroke="' + INK + '"/>';
+    g += '<g transform="translate(-40 -6) rotate(' + f(a) + ')"><circle r="30" fill="url(#tankR)" stroke="' + INK + '" stroke-width="2.4"/><circle r="22" fill="none" stroke="#5a1a10" stroke-width="3"/>'; for (var i = 0; i < 8; i++) g += '<path d="M0 -22 V-8" stroke="#5a1a10" stroke-width="3" transform="rotate(' + (i * 45) + ')"/>'; g += '<circle r="7" fill="#c9ced4" stroke="' + INK + '" stroke-width="1.6"/></g>';
+    g += chainAlong([[-100, -40], [-70, -36], [-40, -36], [-12, -30], [10, 30], [16, 60]], 0.9);
+    g += '<g transform="translate(10 -6) rotate(' + f(a * 0.7) + ')"><circle r="22" fill="url(#tankR)" stroke="' + INK + '" stroke-width="2"/><circle r="16" fill="#c9a87a" stroke="#6a4a2a" stroke-dasharray="3 2"/><path d="M-16 0 H16" stroke="#6a4a2a" stroke-width="1.4"/></g>';
     return g + '</g>';
   }
   function mudPuff(t, x, y, k, n) { var s = ""; n = n || 7; for (var i = 0; i < n; i++) { var u = (t * 0.9 + i / n) % 1, r = 6 + u * 22; s += '<circle cx="' + f(x + (hash(i) - 0.5) * 50 * u) + '" cy="' + f(y - u * 40) + '" r="' + f(r) + '" fill="#8a6a48" opacity="' + f(0.55 * (1 - u) * k) + '" filter="url(#soft2)"/>'; } return s; }
@@ -666,14 +684,16 @@
   var YS = 120, YB = 300;
 
   // 0 — a giant tanker at anchor; the camera runs down the chain to the small anchor on the seabed
-  shot(0, function (u, d) { var k = ease(u / d); return [lerp(230, 440, k), lerp(130, 255, k), lerp(1.0, 1.6, k)]; }, function (u, d, t) {
+  shot(0, function (u, d) { var k = 0.35 * clamp(u / d) + 0.65 * ease(u / d); return [lerp(230, 440, k), lerp(130, 255, k), lerp(1.0, 1.6, k)]; }, function (u, d, t) {
     var m = moored(t, { xs: 220, ys: YS, yb: YB, ax: 480, lay: 0.35, dig: 0.6, s: 0.4 }), s = cutaway(t, YS, YB) + m.svg + surface(t, YS);
     return s + tag("أكتر من 300 ألف طن", 200, 30, u, 0.4, -3, 19) + tag("20 طن بس!", 470, 250, u, 2.8, 3, 18, "#f2c230");
   });
   // 1 — a balance: the ship on one side, the anchor on the other: 15,000 times lighter
   shot(1, function (u, d) { return [320, 185, lerp(1.0, 1.08, u / d)]; }, function (u, d, t) {
     var k = ease(u / 1.4), s = '<rect x="-400" y="-300" width="1440" height="960" fill="#14223a"/>' + stars(t) + '<circle cx="320" cy="170" r="180" fill="#f2c230" opacity=".08" filter="url(#soft)"/>';
-    s += scaleBal(320, 120, lerp(0, 24, k), tanker(0, 2, t, { s: 0.13, noBob: true }).svg, anchor(4, -18, 90, { s: 0.3 }));
+    s += scaleBal(320, 120, lerp(0, 24, k) + Math.sin(t * 2.4) * 3 * k, tanker(0, 2, t, { s: 0.13, noBob: true }).svg, anchorFront(0, -38, { s: 0.3, rust: true, swing: Math.sin(t * 3) * 6 }));
+    for (var sp = 0; sp < 8; sp++) { var su = (t * 0.7 + sp / 8) % 1; s += '<circle cx="' + f(200 + hash(sp) * 260) + '" cy="' + f(300 - su * 260) + '" r="' + f(1.5 + su * 2) + '" fill="#f2c230" opacity="' + f(0.8 * (1 - su)) + '"/>'; }
+    var cnt = Math.round(15000 * ease((u - 1.0) / 1.4)); if (u > 1.0) s += '<text x="320" y="345" text-anchor="middle" style="font:900 30px Noto Sans Arabic;fill:#f2c230;stroke:#1c1c1c;stroke-width:4;paint-order:stroke">× ' + cnt.toLocaleString("en-US") + '</text>';
     return s + tag("أخف 15 ألف مرة!", 320, 40, u, 1.6, -2, 22);
   });
   // 2 — a sailor at the bow, puzzled: how does that hold this mountain?
@@ -684,7 +704,7 @@
   // 3 — «إيه الحكاية؟»: sunset, the anchor drops into the sea
   shot(3, function (u, d) { return [320, lerp(170, 190, u / d), lerp(1.05, 1.12, u / d)]; }, function (u, d, t) {
     var k = ease(u / 1.1), v = tanker(170, 215, t, { s: 0.7 }), s = sea(t, 215, 0, { sky: "sunset" }) + sun(500, 170, 28, "#ffd27a") + v.svg;
-    var ay = lerp(v.H[1] + 40, 300, k); s += chainAlong([v.H, [v.H[0] + 4, ay - 44]], 0.7) + anchor(v.H[0] + 6, ay, 90, { s: 0.6 }) + front(t, 215, "#3a4f74");
+    var ay = lerp(v.H[1] + 10, 260, k); s += chainAlong([v.H, [v.H[0], ay]], 0.7) + anchorFront(v.H[0], ay, { s: 0.45, rust: true, swing: Math.sin(t * 2.5) * 4 }) + front(t, 215, "#3a4f74");
     if (k > 0.75) for (var i = 0; i < 9; i++) { var uu = (t * 1.5 + i / 9) % 1; s += '<circle cx="' + f(v.H[0] + (hash(i) - 0.5) * 70 * uu) + '" cy="' + f(210 - Math.sin(uu * Math.PI) * 34) + '" r="4" fill="#fff" opacity="' + f(1 - uu) + '"/>'; }
     return s + tag("إيه الحكاية؟", 330, 60, u, 0.4, -3, 26);
   });
@@ -699,7 +719,8 @@
   shot(5, function (u, d) { return u < d * 0.38 ? [lerp(280, 330, u / d), 190, 1.05] : [lerp(320, 300, u / d), 225, 1.7]; }, function (u, d, t) {
     if (u < d * 0.38) { var s0 = sky("day") + clouds(t, 16, 20, 4, 0.8) + sun(520, 60, 22, "#ffe08a") + '<rect x="-400" y="230" width="1440" height="400" fill="url(#gSoil)"/>';
       for (var r = 0; r < 8; r++) s0 += '<path d="M-400 ' + (240 + r * 16) + ' H' + f(170 + u * 20) + '" stroke="#6a4a2a" stroke-width="3" opacity=".6"/>';
-      return s0 + ox(110 + u * 20, 230, t) + plough(260 + u * 20, 236, t, 1) + engineer(340 + u * 20, 100, t, "happy", { s: 0.5 }) + tag("زي المحراث", 470, 110, u, 0.4, 3, 22); }
+      for (var cl = 0; cl < 10; cl++) { var cu = (t * 0.9 + cl / 10) % 1; s0 += '<circle cx="' + f(300 + u * 60 + cu * 140) + '" cy="' + f(232 - Math.sin(cu * Math.PI) * 40) + '" r="' + f(3 + hash(cl) * 4) + '" fill="#6a4a2a" opacity="' + f(1 - cu) + '"/>'; }
+      return s0 + ox(110 + u * 60, 230, t) + plough(260 + u * 60, 236, t, 1) + engineer(340 + u * 60, 100, t, "happy", { s: 0.5 }) + tag("زي المحراث", 470, 110, u, 0.4, 3, 22); }
     var v = u - d * 0.38, k = ease(v / (d * 0.62)), ang = lerp(0, -8, k), fa = lerp(8, 42, ease(v / 1.2)), x = lerp(380, 300, k), y = YB + 4 + 18 * k;
     var s = '<rect x="-400" y="-300" width="1440" height="960" fill="url(#uwSea)"/>' + mudBed(t, YB), R = ring(x, y, ang, 1);
     s += chainAlong([[R[0] - 300, YB - 4], R], 1) + anchor(x, y, ang, { s: 1, fa: fa }) + mudPuff(t, x + 10, YB, k, 6);
@@ -713,8 +734,9 @@
       return s0 + bar(470, 150, 26, 110, k, "#f2c230", "الشد") + bar(520, 150, 26, 110, k * 0.95, "#7cf29a", "المسكة") + uwVig() + tag("تغرز أكتر", 250, 140, u, 0.8, -3, 18); }
     var v = u - d * 0.5, s = '<rect x="-400" y="-300" width="1440" height="960" fill="url(#uwSea)"/>' + mudBed(t, YB - 40) + '<path d="M320 60 V360" stroke="#fff" stroke-width="3" stroke-dasharray="8 6" opacity=".6"/>';
     var R1 = ring(200, YB - 18, -8, 0.8); s += chainAlong([[0, YB - 44], R1], 0.8) + anchor(200, YB - 18, -8, { s: 0.8, fa: 42 });
-    var k2 = ease((v - 0.8) / 1.0), ay = lerp(YB - 26, YB - 140, k2), ang = lerp(-8, 70, k2), R2 = ring(500, ay, ang, 0.8);
+    var k2 = ease((v - 0.8) / 1.0), ay = lerp(YB - 26, YB - 140, k2) + Math.sin(t * 3) * 6 * k2, ang = lerp(-8, 70, k2) + Math.sin(t * 2.6) * 8 * k2, R2 = ring(500, ay, ang, 0.8);
     s += chainAlong([[R2[0] - 20, 40], R2], 0.8) + anchor(500, ay, ang, { s: 0.8, fa: lerp(42, 10, k2) }) + mudPuff(t, 500, YB - 40, k2, 6) + '<path d="M-400 ' + (YB - 37) + ' H1040 V700 H-400 Z" fill="' + MUDC + '" opacity=".4"/>';
+    s += bubbles(t, 500, YB - 60, 8 * (k2 > 0 ? 1 : 0), 0.9, 30, 40);
     return s + uwVig() + badge(200, 130, "✓", "#3a9a5a", pop((v - 0.2) / 0.8)) + badge(560, 130, "✕", "#c23a26", pop((v - 1.6) / 0.8)) + tag("الشد نايم", 160, 60, u, d * 0.5 + 0.1, -3, 18) + tag("الشد لفوق", 480, 60, u, d * 0.5 + 0.9, 3, 18, "#f2a0a0");
   });
   // 7 — the chain: longer than 300 m, over 100 tons (laid out on a quay with tiny workers)
@@ -762,7 +784,7 @@
   });
   // 13 — outro
   shot(13, function (u, d) { return [lerp(300, 340, clamp(u / d)), 180, 1.0]; }, function (u, d, t) {
-    var v = tanker(240 + u * 10, 230, t, { s: 0.75, stowed: true }), s = sea(t, 230, 0, { sky: "sunset", gulls: true }) + sun(500, 175, 30, "#ffd27a") + v.svg + front(t, 230, "#3a4f74");
+    var v = tanker(240 + u * 14, 230, t, { s: 0.75, stowed: true }), s = sea(t, 230, 0, { sky: "sunset", gulls: true }) + sun(500, 175, 30, "#ffd27a") + v.svg + front(t, 230, "#3a4f74");
     return s + tag("قولولنا!", 470, 60, u, 0.4, 3, 26);
   });
 
