@@ -103,13 +103,26 @@
 <script src="../../videos/airbag/cartoon/scenes.js"></script>
 <script>
   (function () {
-    var P = window.__parts, t = 54.3, s = "";
-    s += '<rect width="540" height="960" fill="#14181f"/><circle cx="270" cy="480" r="300" fill="#f2c230" opacity=".22" filter="url(#soft)"/><circle cx="270" cy="470" r="190" fill="#ffd27a" opacity=".22" filter="url(#soft)"/>';
-    for (var i = 0; i < 16; i++) { var a = i / 16 * Math.PI * 2 + 0.2, r = 230 + (i % 3) * 18; s += '<path d="M' + (270 + Math.cos(a) * r).toFixed(1) + ' ' + (480 + Math.sin(a) * r).toFixed(1) + ' l' + (Math.cos(a) * 44).toFixed(1) + ' ' + (Math.sin(a) * 44).toFixed(1) + '" stroke="#fff6c8" stroke-width="4" stroke-linecap="round" opacity=".75"/>'; }
-    s += '<circle cx="270" cy="490" r="120" fill="#ff9a2a" opacity=".55" filter="url(#soft)"/>' + P.wheelFront(270, 500, 1.3, t, 1, 0.5);
-    for (var p = 0; p < 14; p++) { var pa = p / 14 * Math.PI * 2, pr = 190 + (p % 4) * 16; s += '<circle cx="' + (270 + Math.cos(pa) * pr).toFixed(1) + '" cy="' + (500 + Math.sin(pa) * pr * 0.9).toFixed(1) + '" r="' + (14 + (p % 3) * 8) + '" fill="#f4f1e8" opacity=".35" filter="url(#soft2)"/>'; }
-    s += P.stopwatch(100, 360, 44, 1 / 30, "") + '<g transform="translate(440 380)">' + P.head(0, 0, 40, "shock", t) + '</g>';
-    s += P.tag("1/30 ثانية!", 120, 445, 9, 0, -5, 22, "#f2c230") + P.tag("300 كيلو في الساعة", 290, 668, 9, 0, 3, 18);
+    var P = window.__parts, t = 54.3, s = "", CX = 196, CY = 575, K = 1.78, f = function (n) { return (+n).toFixed(1); };
+    // night street, warm streetlight, the city behind
+    s += '<rect width="540" height="960" fill="#121722"/><rect width="540" height="560" fill="url(#sky-night)"/>';
+    s += '<circle cx="470" cy="300" r="160" fill="#ffb84a" opacity=".25" filter="url(#soft)"/><path d="M500 300 V560" stroke="#3a3f48" stroke-width="8"/><path d="M500 300 q-30 -6 -44 6" stroke="#3a3f48" stroke-width="6" fill="none"/><ellipse cx="456" cy="308" rx="16" ry="6" fill="#fff2c8"/>';
+    for (var bx = 0; bx < 9; bx++) { var bw = 50 + (bx * 37) % 40, bh = 120 + (bx * 53) % 140, x0 = -20 + bx * 64; s += '<rect x="' + x0 + '" y="' + (520 - bh) + '" width="' + bw + '" height="' + bh + '" fill="#232a3a"/>'; for (var wy = 530 - bh; wy < 500; wy += 16) for (var wx = x0 + 8; wx < x0 + bw - 8; wx += 14) if ((wx * 7 + wy * 3) % 5 < 2) s += '<rect x="' + wx + '" y="' + wy + '" width="6" height="8" fill="#ffd27a" opacity=".7"/>'; }
+    s += '<rect y="520" width="540" height="440" fill="url(#road)"/><path d="M0 640 H540" stroke="#f4f1e8" stroke-width="5" stroke-dasharray="40 30" opacity=".6"/>';
+    s += '<path d="M-10 604 Q120 600 ' + f(CX - 100 * K) + ' 600 M-10 590 Q120 588 ' + f(CX + 100 * K - 40) + ' 588" stroke="#111" stroke-width="10" opacity=".55" fill="none"/>';
+    // impact glow behind the car, the barrier, the crumpled car
+    s += '<circle cx="' + f(CX + 124 * K) + '" cy="' + (CY - 40) + '" r="170" fill="#f2c230" opacity=".3" filter="url(#soft)"/>';
+    s += '<g transform="translate(' + f(CX + 124 * K - 4) + ' ' + (CY + 34) + ') scale(1.55)">' + P.barrier(0, 0, t, 0).replace(/^<g transform="translate\([^)]*\)">/, '<g>') + '</g>';
+    s += P.sedan(CX, CY, t, { s: K, crush: 1, spin: 0 });
+    // what you see through the front side window: the driver and the white bag
+    s += '<defs><clipPath id="win"><path d="M2 -82 L38 -82 Q70 -80 90 -48 L2 -46 Z"/></clipPath></defs><g transform="translate(' + CX + ' ' + CY + ') scale(' + K + ')"><g clip-path="url(#win)"><rect x="-10" y="-90" width="110" height="50" fill="#1a1d24"/>' + P.head(26, -60, 12, "shock", t) + '<ellipse cx="60" cy="-63" rx="34" ry="26" fill="#fff6c8" opacity=".55" filter="url(#soft2)"/><ellipse cx="58" cy="-63" rx="27" ry="21" fill="url(#bagG)" stroke="#9a968c"/><path d="M40 -70 Q58 -60 78 -72 M42 -54 Q60 -50 76 -58" stroke="#c9c4b8" stroke-width="1.2" fill="none"/><ellipse cx="50" cy="-71" rx="9" ry="5" fill="#fff" opacity=".85"/><path d="M2 -82 L38 -82 Q70 -80 90 -48 L2 -46 Z" fill="url(#glassG)" opacity=".25"/></g><path d="M2 -82 L38 -82 Q70 -80 90 -48 L2 -46 Z" fill="none" stroke="#1c1c1c" stroke-width="1.6"/></g>';
+    // the flash at the nose, smoke from the bonnet, flying debris and glass
+    var nx = CX + 124 * K, ny = CY - 30;
+    s += '<path d="M' + f(nx) + ' ' + f(ny - 60) + ' l14 40 l40 -14 l-30 32 l38 22 l-44 2 l6 42 l-24 -34 l-26 30 l6 -42 l-40 -6 l38 -20 l-28 -30 l40 14 Z" fill="#fff6c8" opacity=".9"/>';
+    for (var p = 0; p < 9; p++) s += '<circle cx="' + f(nx - 60 - p * 14 + (p % 2) * 10) + '" cy="' + f(ny - 80 - p * 22) + '" r="' + (18 + p * 4) + '" fill="#8a9098" opacity="' + f(0.5 - p * 0.04) + '" filter="url(#soft2)"/>';
+    for (var d = 0; d < 14; d++) { var a = -2.6 + d * 0.32, r = 80 + (d * 37) % 70; s += '<path d="M' + f(nx + Math.cos(a) * r) + ' ' + f(ny + Math.sin(a) * r * 0.8) + ' l' + (6 + d % 4 * 3) + ' -4 l-3 ' + (7 + d % 3 * 3) + ' Z" fill="' + (d % 3 ? "#cfe6f2" : "#c8281c") + '" stroke="#1c1c1c" stroke-width="1"/>'; }
+    s += P.tag("الإيرباج اتفتح!", 150, 380, 9, 0, -5, 22, "#f2c230") + P.tag("1/30 ثانية", 110, 300, 9, 0, -3, 19);
+    s += '<path d="M210 404 Q250 430 ' + f(CX + 52 * K) + ' ' + f(CY - 66 * K) + '" stroke="#1c1c1c" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M210 404 Q250 430 ' + f(CX + 52 * K) + ' ' + f(CY - 66 * K) + '" stroke="#f2c230" stroke-width="3.6" fill="none" stroke-linecap="round"/>';
     s += '<defs><linearGradient id="fadeT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".95"/><stop offset=".75" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>' +
          '<linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset=".3" stop-color="#000" stop-opacity=".7"/><stop offset="1" stop-color="#000" stop-opacity=".95"/></linearGradient></defs>';
     s += '<rect width="540" height="290" fill="url(#fadeT)"/><rect y="680" width="540" height="280" fill="url(#fadeB)"/>';
