@@ -299,15 +299,62 @@
   }
   function smell(x, y, s, t, col) { var g = ""; for (var i = 0; i < 3; i++) { var d = "M" + f(x + (i - 1) * 16 * s) + " " + f(y); for (var k = 1; k <= 6; k++) d += " L" + f(x + (i - 1) * 16 * s + Math.sin(k * 1.4 + t * 6 + i) * 6 * s) + " " + f(y - k * 9 * s); g += '<path d="' + d + '" stroke="' + (col || "#7da23a") + '" stroke-width="' + f(3.4 * s) + '" fill="none" stroke-linecap="round" opacity="' + f2(0.6 + 0.3 * Math.sin(t * 4 + i)) + '"/>'; } return g; }
   function xmark(x, y, s, k) { k = pop(k); if (k <= 0) return ""; return '<g transform="translate(' + f(x) + " " + f(y) + ") scale(" + f2(s * k) + ')"><path d="M-30 -30 L30 30 M30 -30 L-30 30" stroke="' + INK + '" stroke-width="20" stroke-linecap="round"/><path d="M-30 -30 L30 30 M30 -30 L-30 30" stroke="#e0402a" stroke-width="13" stroke-linecap="round"/></g>'; }
-  function person(x, y, s, t, mood, o) {   // a ball-head character in striped pyjamas; o.arm = hand target (local), o.phone, o.sniff
-    o = o || {}; var g = '<g transform="translate(' + f(x) + " " + f(y + Math.sin(t * 2.4) * 2) + ") scale(" + (s || 1) + ')">';
-    g += '<path d="M-56 140 C-60 56 -36 32 0 32 C36 32 60 56 56 140 Z" fill="#6f8fb8"/>';
-    for (var k = -2; k <= 2; k++) g += '<path d="M' + (k * 20) + ' 40 V138" stroke="#9fb6d6" stroke-width="5" opacity=".8"/>';
-    g += '<path d="M-56 140 C-60 56 -36 32 0 32 C36 32 60 56 56 140 Z" fill="none" stroke="' + INK + '" stroke-width="3"/>';
-    if (o.arm) { var ax = o.arm[0], ay = o.arm[1]; g += '<path d="M36 60 Q' + f(ax * 0.55 + 24) + " " + f(ay * 0.4 + 50) + " " + f(ax) + " " + f(ay) + '" stroke="' + INK + '" stroke-width="21" fill="none" stroke-linecap="round"/><path d="M36 60 Q' + f(ax * 0.55 + 24) + " " + f(ay * 0.4 + 50) + " " + f(ax) + " " + f(ay) + '" stroke="#6f8fb8" stroke-width="15" fill="none" stroke-linecap="round"/><circle cx="' + f(ax) + '" cy="' + f(ay) + '" r="11" fill="#fbfbf7" stroke="' + INK + '" stroke-width="2.4"/>'; }
-    if (o.phone) g += '<path d="M40 60 Q66 24 50 -6" stroke="' + INK + '" stroke-width="21" fill="none" stroke-linecap="round"/><path d="M40 60 Q66 24 50 -6" stroke="#6f8fb8" stroke-width="15" fill="none" stroke-linecap="round"/><rect x="36" y="-46" width="24" height="40" rx="5" fill="#2b2f34" stroke="' + INK + '" stroke-width="2"/><rect x="40" y="-41" width="16" height="26" rx="2" fill="#8fc2da"/>';
-    g += head(0, -34, 40, mood, t, o.look) + '<path d="M-20 -72 q8 -14 14 -2 q6 -16 14 -2 q8 -12 12 2" stroke="' + INK + '" stroke-width="3.4" fill="none" stroke-linecap="round"/>';
-    if (o.sniff) g += smell(-52, -40, 0.8, t);
+  // a realistic-proportioned person (about six heads tall) in striped pyjamas, three-quarter view facing right
+  // (o.flip faces left). Local units: head centre (2, -58), shoulders y -26, hips y 50, feet y 140.
+  // o.arm = right-hand target (local) reached with a two-bone arm; o.phone = hand to the ear; o.walk = stepping legs;
+  // o.sniff = nose up with smell lines; mood: n, worry, curious, happy, shock.
+  var SKIN = "#c98d6e", SKIN_D = "#a8705a", HAIR = "#2b2420", PJ = "#6f8fb8", PJ_D = "#57749c", PJ_L = "#a9bdd8";
+  function limb(pts, w, col) { var d = "M" + pts.map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L"); return '<path d="' + d + '" stroke="' + INK + '" stroke-width="' + f(w + 4.4) + '" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="' + d + '" stroke="' + col + '" stroke-width="' + f(w) + '" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'; }
+  function ik(sx, sy, tx, ty, a, b, bendDown) {   // elbow position for a two-bone limb from (sx,sy) to (tx,ty)
+    var dx = tx - sx, dy = ty - sy, d = Math.min(Math.hypot(dx, dy), a + b - 0.01), ang = Math.atan2(dy, dx), c = Math.acos(clamp((a * a + d * d - b * b) / (2 * a * d))), e = ang + (bendDown ? c : -c);
+    var ex = sx + Math.cos(e) * a, ey = sy + Math.sin(e) * a, hx = sx + Math.cos(ang) * d, hy = sy + Math.sin(ang) * d; return [ex, ey, hx, hy];
+  }
+  function hand(x, y, r) { return '<ellipse cx="' + f(x) + '" cy="' + f(y) + '" rx="' + f(r * 0.9) + '" ry="' + f(r) + '" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2.4"/><path d="M' + f(x - r * 0.5) + " " + f(y - r * 0.2) + " q" + f(-r * 0.6) + " " + f(-r * 0.5) + " " + f(-r * 0.2) + " " + f(-r * 1.0) + '" stroke="' + INK + '" stroke-width="2" fill="' + SKIN + '"/>'; }
+  function face(t, mood, sniff) {
+    var blink = ((t * 0.27 + 0.3) % 1) < 0.035 && mood !== "shock", g = "";
+    var by = mood === "worry" || mood === "shock" ? -5 : mood === "curious" ? -3 : 0;
+    // brows
+    g += '<path d="M-1 ' + f(-67 + by) + " q5 " + (mood === "worry" ? -4 : -2) + " 10 " + (mood === "worry" ? 2 : 0) + " M12 " + f(-66 + (mood === "curious" ? -5 : by * 0.6)) + ' q4 -2 7 0" stroke="' + HAIR + '" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+    // eyes (near eye bigger, far eye near the profile)
+    if (blink) g += '<path d="M1 -60 q4 1.5 8 0 M13 -60 q3 1.2 6 0" stroke="' + INK + '" stroke-width="2" fill="none"/>';
+    else { var er = mood === "shock" ? 1.25 : 1; g += '<ellipse cx="5" cy="-60" rx="' + f(4 * er) + '" ry="' + f(2.6 * er) + '" fill="#fbf8f0" stroke="' + INK + '" stroke-width="1.4"/><circle cx="6" cy="-60" r="' + f(1.9 * er) + '" fill="#3a2a20"/><ellipse cx="15.5" cy="-60" rx="' + f(2.8 * er) + '" ry="' + f(2.4 * er) + '" fill="#fbf8f0" stroke="' + INK + '" stroke-width="1.2"/><circle cx="16.2" cy="-60" r="' + f(1.5 * er) + '" fill="#3a2a20"/>'; }
+    // nose on the profile, mouth by mood
+    g += '<path d="M14 -58 L20 -51 L15 -49" stroke="' + SKIN_D + '" stroke-width="2.2" fill="none" stroke-linejoin="round"/>';
+    if (mood === "happy") g += '<path d="M5 -44 q6 5 12 -1" stroke="' + INK + '" stroke-width="2.2" fill="none" stroke-linecap="round"/>';
+    else if (mood === "shock" || mood === "worry") g += '<ellipse cx="11" cy="-43" rx="' + (mood === "shock" ? 3.4 : 2.6) + '" ry="' + (mood === "shock" ? 4.4 : 2.2) + '" fill="#5a2a22" stroke="' + INK + '" stroke-width="1.6"/>';
+    else if (mood === "curious") g += '<path d="M6 -43 q5 -2 10 1" stroke="' + INK + '" stroke-width="2.2" fill="none" stroke-linecap="round"/>';
+    else g += '<path d="M6 -43 h9" stroke="' + INK + '" stroke-width="2.2" stroke-linecap="round"/>';
+    if (sniff) g += '<path d="M19 -49 q3 1 2 3" stroke="' + INK + '" stroke-width="1.4" fill="none"/>';
+    return g;
+  }
+  function person(x, y, s, t, mood, o) {
+    o = o || {}; s = s || 1; var g = '<g transform="translate(' + f(x) + " " + f(y + Math.sin(t * 2.4) * 1.2) + ") scale(" + f2(o.flip ? -s : s) + " " + f2(s) + ')">', wk = o.walk ? Math.sin(t * 7) : 0;
+    // legs (pyjama trousers) with slippers; stepping when walking
+    var hipL = [-11, 50], hipR = [11, 50], fL = [-12 + wk * 16, 136 - Math.max(0, wk) * 6], fR = [12 - wk * 16, 136 - Math.max(0, -wk) * 6];
+    var kL = [lerp(hipL[0], fL[0], 0.5) + 3, 94], kR = [lerp(hipR[0], fR[0], 0.5) + 3, 94];
+    g += limb([hipL, kL, fL], 18, PJ_D) + '<ellipse cx="' + f(fL[0] + 6) + '" cy="' + f(fL[1] + 5) + '" rx="13" ry="5.5" fill="#7a3a2a" stroke="' + INK + '" stroke-width="2.2"/>';
+    g += limb([hipR, kR, fR], 18, PJ) + '<ellipse cx="' + f(fR[0] + 6) + '" cy="' + f(fR[1] + 5) + '" rx="13" ry="5.5" fill="#8a4a32" stroke="' + INK + '" stroke-width="2.2"/>';
+    // back (left) arm, hanging, swinging when walking
+    var lh = [-34 - wk * 10, 42], le = [-36 - wk * 5, 10];
+    if (!o.phone) g += limb([[-25, -20], le, [lh[0], lh[1] - 6]], 13, PJ_D) + hand(lh[0], lh[1], 6);
+    // torso: pyjama shirt with stripes, collar and buttons
+    var torso = "M-27 -27 C-30 -6 -27 24 -25 54 L25 54 C27 24 30 -6 27 -27 C17 -32 -17 -32 -27 -27 Z";
+    g += '<path d="' + torso + '" fill="' + PJ + '"/>';
+    for (var k = -2; k <= 2; k++) g += '<path d="M' + (k * 9) + ' -27 V53" stroke="' + PJ_L + '" stroke-width="3.4" opacity=".8"/>';
+    g += '<path d="' + torso + '" fill="none" stroke="' + INK + '" stroke-width="2.8"/><path d="M-10 -29 L2 -12 L14 -29" fill="#f2efe6" stroke="' + INK + '" stroke-width="2.2"/>';
+    for (var bt = 0; bt < 4; bt++) g += '<circle cx="2" cy="' + (-4 + bt * 14) + '" r="1.8" fill="#f2efe6" stroke="' + INK + '" stroke-width="1"/>';
+    // neck and head (three-quarter view to the right): skull, ear, hair, face
+    var tilt = o.sniff ? -8 : 0; g += '<rect x="-5" y="-42" width="13" height="16" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2.2"/>';
+    g += '<g transform="rotate(' + tilt + ' 2 -40)"><path d="M-13 -62 C-14 -80 -2 -86 6 -85 C17 -84 22 -74 21 -62 C21 -52 20 -46 15 -41 C11 -37 4 -36 -2 -38 C-9 -41 -13 -50 -13 -62 Z" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2.6"/>';
+    g += '<ellipse cx="-9" cy="-57" rx="4" ry="6.5" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2"/><path d="M-9.5 -60 q-2 3 0 6" stroke="' + SKIN_D + '" stroke-width="1.4" fill="none"/>';
+    g += '<path d="M-14 -60 C-17 -76 -8 -89 6 -88 C18 -88 24 -80 22 -69 C17 -74 12 -77 6 -76 C2 -71 -4 -68 -8 -68 C-10 -65 -11 -62 -14 -60 Z" fill="' + HAIR + '" stroke="' + INK + '" stroke-width="2"/>';
+    g += '<path d="M0 -88 q-3 -5 -6 -5 M8 -89 q2 -5 6 -5" stroke="' + HAIR + '" stroke-width="3" fill="none" stroke-linecap="round"/>' + face(t, mood, o.sniff) + "</g>";
+    // front (right) arm: hanging, reaching for o.arm, or holding a phone to the ear
+    var sh = [24, -20];
+    if (o.phone) { g += limb([[-25, -20], [-40, -4], [-15, -44]], 13, PJ_D) + '<rect x="-21" y="-69" width="11" height="22" rx="3" fill="#2b2f34" stroke="' + INK + '" stroke-width="1.8"/>' + hand(-15, -45, 6.5) + limb([sh, [34, 10], [30, 36]], 13, PJ) + hand(30, 42, 6.5); }
+    else if (o.arm) { var q = ik(sh[0], sh[1], o.arm[0], o.arm[1], 36, 34, true); g += limb([sh, [q[0], q[1]], [q[2], q[3]]], 13, PJ) + hand(q[2], q[3], 6.5); }
+    else { var rh = [30 + wk * 10, 42]; g += limb([sh, [34 + wk * 5, 10], [rh[0], rh[1] - 6]], 13, PJ) + hand(rh[0], rh[1], 6.5); }
+    if (o.sniff) g += smell(26, -58, 0.55, t);
     return g + "</g>";
   }
   function switchPlate(x, y, s, on) { return '<g transform="translate(' + f(x) + " " + f(y) + ") scale(" + f2(s) + ')"><rect x="-22" y="-32" width="44" height="64" rx="8" fill="#f6f2e8" stroke="' + INK + '" stroke-width="3"/><rect x="-10" y="-20" width="20" height="40" rx="4" fill="#e2dccd" stroke="' + INK + '" stroke-width="2"/><rect x="-8" y="' + (on ? -18 : 0) + '" width="16" height="18" rx="3" fill="#fbfbf7" stroke="' + INK + '" stroke-width="2"/></g>'; }
@@ -386,7 +433,7 @@
 
   // 0 — hook: you wake up, the flat smells of gas, your hand goes to the light switch… don't!
   shot(0, function (u, d) { var k = ease(clamp(u / d)); return [lerp(330, 455, k), lerp(195, 172, k), lerp(1.0, 1.55, k)]; }, function (u, d, t) {
-    var s = roomBg(t) + bed(20, 250, 0.9) + haze(t, -40, 40, 640, 280, 1.2, 0) + person(400, 196, 0.62, t, "worry", { sniff: u < 2.2, arm: [lerp(60, 112, seg(u, 0.6, 2.2)), lerp(20, -50, seg(u, 0.6, 2.2))] });
+    var s = roomBg(t) + bed(20, 250, 0.9) + haze(t, -40, 40, 640, 280, 1.2, 0) + person(452, 196, 0.62, t, "worry", { sniff: u < 2.2, arm: [lerp(30, 76, seg(u, 0.6, 2.2)), lerp(36, -42, seg(u, 0.6, 2.2))] });
     return s + xmark(500, 170, 0.9, seg(u, 2.5, 3.0)) + tag("أوعى!", 560, 110, u, 2.7, 4, 22);
   });
   // 1 — why? what can a light switch do?
@@ -401,7 +448,7 @@
   });
   // 3 — «إيه الحكاية؟»
   shot(3, function (u, d) { return [320, 180, lerp(1.0, 1.15, u / d)]; }, function (u, d, t) {
-    var s = graphPaper(t) + switchCut(210, 190, 0.6, t, 0.5 + 0.5 * Math.sin(t * 3), Math.sin(t * 3) > 0.7) + person(470, 170, 0.62, t, "curious", {});
+    var s = graphPaper(t) + switchCut(210, 190, 0.6, t, 0.5 + 0.5 * Math.sin(t * 3), Math.sin(t * 3) > 0.7) + person(470, 170, 0.62, t, "curious", { flip: true });
     return s + qmark(540, 80, t, 50) + tag("إيه الحكاية؟", 320, 330, u, 0.2, -2, 24);
   });
   // 4 — inside the switch: two metal parts touch when you switch on and part when you switch off
@@ -458,7 +505,7 @@
   });
   // 13 — get out of the flat and call the gas emergency line from outside
   shot(13, function (u, d) { return [lerp(320, 360, u / d), 190, lerp(1.0, 1.12, u / d)]; }, function (u, d, t) {
-    var s = building(t) + person(560, 220, 0.5, t, "happy", { phone: true });
+    var s = building(t) + person(560, 220, 0.5, t, "happy", { phone: true, flip: true });
     for (var w = 0; w < 3; w++) { var q = (t * 1.2 + w / 3) % 1; s += '<path d="M' + f(600 + q * 30) + " " + f(170 - q * 10) + ' q8 10 0 20" stroke="#f2c230" stroke-width="3" fill="none" opacity="' + f2(1 - q) + '"/>'; }
     return s + tag("طوارئ الغاز", 420, 330, u, 0.8, -3, 20) + tag("من بره!", 200, 60, u, 1.6, 3, 19);
   });
@@ -476,7 +523,7 @@
   });
   // 16 — where does the smell come from? natural gas has no smell at all
   shot(16, function (u, d) { return [lerp(300, 330, u / d), 180, lerp(1.0, 1.1, u / d)]; }, function (u, d, t) {
-    var s = graphPaper(t) + '<path d="M-100 250 H360" stroke="' + INK + '" stroke-width="30"/><path d="M-100 250 H360" stroke="#e2b035" stroke-width="22"/>' + haze(t, 300, 150, 420, 260, 1.4, 1) + person(500, 160, 0.65, t, "curious", { sniff: true });
+    var s = graphPaper(t) + '<path d="M-100 250 H360" stroke="' + INK + '" stroke-width="30"/><path d="M-100 250 H360" stroke="#e2b035" stroke-width="22"/>' + haze(t, 300, 150, 420, 260, 1.4, 1) + person(500, 160, 0.65, t, "curious", { sniff: true, flip: true });
     return s + xmark(420, 120, 0.8, seg(u, 1.6, 2.2)) + qmark(560, 60, t, 50) + tag("ملوش ريحة!", 220, 70, u, 2.2, -3, 21);
   });
   // 17 — 1937: a school in Texas fills with gas and nobody notices
@@ -497,12 +544,12 @@
   });
   // 20 — the payoff: the smell is your alarm bell; get out before you touch any switch
   shot(20, function (u, d) { var k = ease(clamp(u / d)); return [lerp(300, 420, k), lerp(180, 190, k), lerp(1.0, 1.1, k)]; }, function (u, d, t) {
-    var s = roomBg(t) + haze(t, -40, 40, 640, 280, 1.0, 0) + bell(180, 110, 0.9, t) + person(lerp(300, 600, ease(seg(u, 1.6, d))), 196, 0.62, t, "happy", {});
+    var s = roomBg(t) + haze(t, -40, 40, 640, 280, 1.0, 0) + bell(180, 110, 0.9, t) + person(lerp(300, 600, ease(seg(u, 1.6, d))), 196, 0.62, t, "happy", { walk: u > 1.6 });
     return s + xmark(500, 170, 0.6, seg(u, 2.0, 2.5)) + tag("جرس الإنذار", 180, 320, u, 0.5, -3, 20) + tag("اطلع بره!", 470, 60, u, 2.6, 3, 20);
   });
   // 21 — outro
   shot(21, function (u, d) { return [320, lerp(190, 170, u / d), lerp(1.0, 1.15, u / d)]; }, function (u, d, t) {
-    var s = graphPaper(t) + switchCut(220, 190, 0.55, t, 0.5 + 0.5 * Math.sin(t * 2), false) + person(440, 170, 0.62, t, "happy", {});
+    var s = graphPaper(t) + switchCut(220, 190, 0.55, t, 0.5 + 0.5 * Math.sin(t * 2), false) + person(440, 170, 0.62, t, "happy", { flip: true });
     return s + qmark(520, 80, t, 56) + qmark(570, 130, t + 1, 36) + tag("حكاية إيه المرة الجاية؟", 320, 330, u, 0.2, -2, 19);
   });
 
