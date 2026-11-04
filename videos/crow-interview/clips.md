@@ -78,6 +78,8 @@ The man listens with growing amazement, eyes widen slightly, he leans back in th
 
 انسخ البرومبت كله زي ما هو.
 
+> **اتغير:** معظم لقطات الشرح بقيت لقطات موشن جرافيك بعملها أنا (فولدر `inserts/`). فاضل عليك **4 بس** من Veo.
+
 **R04 (قابيل: الغراب بيحفر):**
 ```
 Vertical 9:16 cinematic shot. An ancient barren desert valley at dusk, a black crow digging in the dry soil with its beak in the foreground, far in the background the dark blurred silhouette of a kneeling man seen from behind, no face visible, amber sunset haze, dust drifting. Very slow dolly-in. Photorealistic.
@@ -88,64 +90,9 @@ Vertical 9:16 cinematic shot. An ancient barren desert valley at dusk, a black c
 Vertical 9:16 macro shot of a black crow's beak pushing soil to cover a small hole, grains of sand falling in slow motion, dramatic warm amber rim light, dark background, shallow depth of field. Photorealistic.
 ```
 
-**R07 (الباحث والقناع):**
-```
-Vertical 9:16 cinematic documentary shot. On a university campus lawn, a researcher wearing a rubber caveman mask and holding a bird net slowly walks toward several crows on the grass; the crows take off. Overcast daylight. Photorealistic.
-```
-
-**R07b (إطلاق الغراب):**
-```
-Vertical 9:16 slow-motion close-up of two gloved hands opening and releasing a black crow, which flaps and flies away toward a grey sky. Photorealistic.
-```
-
-**R08 (الغربان بتصرخ في القناع):**
-```
-Vertical 9:16 cinematic shot. Several crows perched on lamp posts and wires caw aggressively and swoop toward a person walking below wearing a rubber caveman mask on a campus path, overcast light. Photorealistic.
-```
-
-**R10 (الأب والفرخ):**
-```
-Vertical 9:16 telephoto shot of an adult black crow and a fluffy juvenile crow side by side on a branch, both staring down intently, then slowly turning their heads toward the camera in sync. Warm dusk amber light, blurred background. Photorealistic.
-```
-
 **R11 (اجتماع الغربان):**
 ```
 Vertical 9:16 cinematic shot. A dead crow lying on a wet city sidewalk, a circle of crows gathered around it on the ground and on overhead wires, hopping closer, heads turning, one caws. Overcast moody light, slow orbit. Photorealistic.
-```
-
-**R11b (العين):**
-```
-Vertical 9:16 extreme close-up of a black crow's eye scanning left and right, a city street reflected in the pupil, shallow depth of field. Photorealistic.
-```
-
-**R13 (أداة الخطاف):**
-```
-Vertical 9:16 macro shot on a pure black background with dramatic amber rim light: a black crow holding a small hooked twig in its beak probes into a hole in a mossy log and pulls out a white grub. Floating dust in the light. Photorealistic.
-```
-
-**R14 (أنبوب المية):**
-```
-Vertical 9:16 macro shot on a pure black background with amber rim light: a tall clear glass tube half filled with water with a small treat floating inside; a black crow drops a pebble into it, splash, the water level rises. Slow motion. Photorealistic.
-```
-
-**R15 (الجوز في اليابان):**
-```
-Vertical 9:16 cinematic shot of a Japanese city crosswalk at dusk: a crow drops a walnut onto the road, a car rolls over and cracks it, then the crow hops down to eat while pedestrians wait at the red light. Photorealistic.
-```
-
-**R18 (المخ):**
-```
-Vertical 9:16 scientific visualization on a pure black background: a translucent glowing x-ray style crow head in profile, inside it a small brain densely packed with glowing amber neurons firing. Slow zoom into the brain. No text.
-```
-
-**R19 (التخطيط للمستقبل):**
-```
-Vertical 9:16 shot on a dark background with amber rim light: a large raven in front of a tray of small objects picks up a little stone tool with its beak and hides it under a cloth, a wall clock softly blurred behind. Photorealistic.
-```
-
-**R20 (العد):**
-```
-Vertical 9:16 shot: a crow perched in front of a small glowing screen showing the digit 3, it caws three times, its beak opening each time. Dark room, amber light. Photorealistic.
 ```
 
 **R21 (القمر):**
@@ -155,7 +102,11 @@ Vertical 9:16 cinematic silhouette of a crow on a bare branch against a huge amb
 
 ---
 
+---
+
 ## 4. الترتيب في المونتاج (عليّا)
+
+**M** = لقطات موشن جرافيك بعملها أنا. **PIN** = كرة أرضية عليها دبوس المكان (2.6 ث).
 
 | السطر | الكليبات |
 |---|---|
@@ -165,23 +116,23 @@ Vertical 9:16 cinematic silhouette of a crow on a bare branch against a huge amb
 | 04 | R04 ← R05 |
 | 05 | C02 |
 | 06 | H06 |
-| 07 | R07 ← R07b |
-| 08 | R08 ← C05 |
+| 07 | PIN_WA ← M07 |
+| 08 | M07 (تكملة) ← C05 |
 | 09 | H09 |
-| 10 | R10 |
-| 11 | R11 ← R11b ← C02 |
+| 10 | M10 |
+| 11 | R11 ← M11 |
 | 12 | H12 |
-| 13 | R13 ← C01 |
-| 14 | R14 ← C06 |
-| 15 | R15 |
+| 13 | PIN_NC ← M13 |
+| 14 | M14 ← C06 |
+| 15 | PIN_JP ← M15 |
 | 16 | H16 |
 | 17 | C03 |
-| 18 | R18 ← C02 |
-| 19 | R19 ← C05 |
-| 20 | R20 |
+| 18 | M18 ← C02 |
+| 19 | PIN_SE ← M19 |
+| 20 | PIN_DE ← M20 |
 | 21 | R21 |
 | 22 | H22 |
 | 23 | H23 |
 | 24 | C04 ← شاشة النهاية |
 
-**المجموع: 8 H + 6 C + 15 R = 29 كليب.**
+**المطلوب منك: 8 H + 6 C + 4 R = 18 كليب** (بدل 29).

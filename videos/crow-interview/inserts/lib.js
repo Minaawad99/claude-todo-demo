@@ -55,3 +55,18 @@ function crow(parent, fill = '#060606') {
     rim(color) { g.style.filter = `drop-shadow(0 0 1.2px ${color}) drop-shadow(0 0 5px ${color}66)`; } };
 }
 window.addEventListener('load', () => { if (location.hash === '#play') { const t0 = performance.now(); const f = () => { render((performance.now() - t0) / 1000 % DURATION); requestAnimationFrame(f); }; f(); } else render(+(location.hash.slice(1)) || 2); });
+
+// Caveman rubber mask (front view), centred at 0,0, ~60 wide.
+function mask(parent, s = 1) {
+  const g = el('g', { transform: `scale(${s})` }, parent);
+  el('path', { d: 'M-28 -18 C-30 -42 30 -42 28 -18 L26 14 C24 34 12 44 0 44 C-12 44 -24 34 -26 14 Z', fill: '#c9a27a', stroke: '#5a3d22', 'stroke-width': 1.5 }, g);
+  el('path', { d: 'M-30 -24 C-20 -40 20 -40 30 -24 C26 -30 18 -34 0 -34 C-18 -34 -26 -30 -30 -24 Z', fill: '#3b2a1c' }, g);          // hair
+  el('path', { d: 'M-24 -12 Q-12 -20 -2 -12 L2 -12 Q12 -20 24 -12 L24 -6 Q12 -12 2 -6 L-2 -6 Q-12 -12 -24 -6 Z', fill: '#6e4a2c' }, g); // heavy brow
+  el('ellipse', { cx: -11, cy: -1, rx: 5, ry: 3.5, fill: '#120d09' }, g); el('ellipse', { cx: 11, cy: -1, rx: 5, ry: 3.5, fill: '#120d09' }, g);
+  el('path', { d: 'M-5 4 Q0 16 5 4 Q8 14 0 18 Q-8 14 -5 4 Z', fill: '#a9805a' }, g);                                                  // nose
+  el('path', { d: 'M-22 18 C-18 40 18 40 22 18 C14 26 -14 26 -22 18 Z', fill: '#3b2a1c' }, g);                                       // beard
+  el('path', { d: 'M-8 24 Q0 28 8 24', stroke: '#120d09', 'stroke-width': 2, fill: 'none' }, g);
+  return g;
+}
+// Small mono text helper.
+function mono(parent, x, y, size = 9.5, fill = C.cream, anchor = 'start') { return el('text', { x, y, 'font-family': 'IBM Plex Mono', 'font-size': size, 'letter-spacing': 1.2, fill, 'text-anchor': anchor }, parent); }
