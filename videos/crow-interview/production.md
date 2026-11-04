@@ -138,7 +138,7 @@ BROLL = isolated on a pure black background, dramatic warm amber rim light from 
 
 ## 7. الصوت
 
-- **الأصوات:** المذيع **Charon**، والغراب **Algenib**. متولدين من Google AI Speech (Gemini TTS). الأصلي في `voice/`، والمتظبط في `final/`: الوقفات اتقصّرت، والغراب اتسرّع (أسرع 35%) واتعمّق شوية، وعليه صدى خفيف.
+- **الأصوات:** المذيع **Charon**، والغراب **Algenib**. متولدين من Google AI Speech (Gemini TTS). الأصلي في `voice/`، والمتظبط في `final/`: الوقفات اتقصّرت، والغراب اتسرّع (أسرع 35%) واتعمّق شوية، من غير صدى.
 - **سطرين ناقصين (02 و03):** الحصة المجانية اليومية خلصت. إما أكمّلهم أنا بكره، أو تعملهم إنت في دقيقة من Google AI Studio → Generate speech (Single-speaker، Temperature 1) وتحمّلهم WAV:
   - **02 (Voice: Algenib)**
     - Style: `Read this line in Modern Standard Arabic as an ancient, wise and slightly mysterious talking crow. Deep, slow, deliberate and confident, with a hint of dry humor.`
