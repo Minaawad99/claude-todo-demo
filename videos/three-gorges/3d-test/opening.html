@@ -133,7 +133,7 @@ const moon = new THREE.DirectionalLight(0x8fb0ff, 0); moon.position.set(-200, 30
     const water = z < -2 ? LAKE : RIVER;
     if (h < water + 1.5) continue;
     if (Math.abs(z) < 34 && Math.abs(x) < DAM_X + 6) continue;
-    if (z > 20 && x < -20 && Math.hypot(x + 120, z - 110) < 150) continue;   // keep the camera's foreground clear
+    if (Math.hypot(x + 97, z - 90) < 70) continue;   // keep the camera's foreground clear
     if (fbm(x * 0.03 + 9, z * 0.03) < 0.42) continue;          // clumps, not a carpet
     const sc = 0.7 + rnd() * 0.9;
     p.set(x, h - 0.4, z); s.set(sc, sc * (0.8 + rnd() * 0.5), sc);
@@ -314,8 +314,8 @@ window.renderAt = function (t) {
   lampMat.opacity = sm(2.5, 3.1, t); houseFront.emissiveIntensity = 1.6 * sm(2.6, 3.2, t);
   // camera: slow arc from the powerhouse side, rising a little
   const k = ease(clamp(t / window.VIDEO_END, 0, 1));
-  camera.position.set(lerp(-122, -98, k), lerp(22, 32, k), lerp(112, 92, k));
-  camera.lookAt(lerp(-2, 10, k), lerp(17, 13, k), lerp(-20, -24, k));
+  camera.position.set(lerp(-105, -88, k), lerp(58, 60, k), lerp(100, 80, k));
+  camera.lookAt(lerp(0, 10, k), lerp(24, 20, k), lerp(-10, -18, k));
   // captions, word by word; the second line replaces the first at night
   words.forEach(([el, t0]) => { const a = sm(t0, t0 + 0.2, t); el.style.opacity = a; el.style.transform = `translateY(${(1 - a) * 10}px) scale(${0.92 + 0.08 * a})`; });
   cap1.style.opacity = 1 - sm(2.45, 2.65, t); cap2.style.opacity = sm(2.6, 2.75, t);
