@@ -443,8 +443,8 @@
   }
   function ring(x, y, ang, s) { var a = ang * Math.PI / 180; s = s || 1; return [x - 74 * s * Math.cos(a), y - 74 * s * Math.sin(a)]; }
   // shaded stud-link chain along points P; links alternate face-on (with a stud and a highlight) and edge-on
-  function chainAlong(P, w, glow) {
-    w = w || 1; var s = "", step = 9.5 * w, acc = 0, n = 0;
+  function chainAlong(P, w, off) {
+    w = w || 1; var s = "", step = 9.5 * w, acc = ((off || 0) % (2 * step) + 2 * step) % (2 * step), n = acc >= step ? 1 : 0; acc = acc % step;
     for (var j = 1; j < P.length; j++) {
       var dx = P[j][0] - P[j - 1][0], dy = P[j][1] - P[j - 1][1], L = Math.sqrt(dx * dx + dy * dy) || 0.001, a = Math.atan2(dy, dx) * 180 / Math.PI;
       while (acc <= L) { var k = acc / L, x = P[j - 1][0] + dx * k, y = P[j - 1][1] + dy * k;
@@ -538,7 +538,7 @@
   function ruler(x0, x1, y, label, k) { var xe = lerp(x0, x1, clamp(k)); return '<path d="M' + x0 + ' ' + y + ' H' + f(xe) + '" stroke="#f2c230" stroke-width="3"/><path d="M' + x0 + ' ' + (y - 8) + ' v16 M' + f(xe) + ' ' + (y - 8) + ' v16" stroke="#f2c230" stroke-width="3"/>' + (k > 0.9 ? lbl((x0 + x1) / 2, y - 12, label) : ""); }
   function uwVig() { return '<rect x="-400" y="-300" width="1440" height="960" fill="url(#vig)"/>'; }
 
-  // ── shots (one per line, 14 lines ≈ one minute) ─────────
+  // ── shots (one per line, 21 lines ≈ 1:35) ─────────
   var SH = [];
   function shot(line, cam, draw) { SH.push({ a: L(line), cam: cam, draw: draw }); }
   function at(t) { var i = 0; while (i < SH.length - 1 && SH[i + 1].a <= t) i++; return i; }
@@ -610,14 +610,73 @@
     for (var i = 0; i < 5; i++) s += engineer(-40 + i * 180, 172, t + i, i % 2 ? "shock" : "n", { s: 0.22 });
     return s + ruler(-80, 740, 274, "أكتر من 300 متر", ease((u - 0.6) / 1.4)) + tag("السلسلة", 160, 70, u, 0.2, -3, 24) + tag("أكتر من 100 طن", 470, 70, u, 2.4, 3, 20);
   });
-  // 8 — much of it lies on the seabed, so the pull reaches the anchor flat and it stays dug in
-  shot(8, function (u, d) { var k = ease(u / d); return [lerp(300, 450, k), lerp(205, 265, k), lerp(1.0, 1.7, k)]; }, function (u, d, t) {
-    var m = moored(t, { xs: 150, ys: YS, yb: YB, ax: 560, lay: 0.45, s: 0.4, dig: 1, glowLay: clamp((u - 0.4) / 0.6) }), s = cutaway(t, YS, YB) + m.svg + surface(t, YS);
-    s += arrow(m.R[0] + 4, YB - 16, m.R[0] - 70, YB - 16, "#f2c230", 5, ease((u - 2.0) / 0.8)) + badge(m.R[0] + 46, YB - 50, "✓", "#3a9a5a", pop((u - 3.0) / 0.8) * 0.7);
-    return s + uwVig() + tag("نايمة على القاع", 400, 250, u, 0.6, 3, 18) + tag("الشد نايم", 520, 220, u, 2.2, -3, 16);
+  // 8 — the links: each has a stud across the middle so it cannot twist or knot (a studless one beside it kinks)
+  shot(8, function (u, d) { var k = ease(u / d); return [lerp(290, 350, k), 180, lerp(1.0, 1.12, k)]; }, function (u, d, t) {
+    var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#1f2a38"/><circle cx="220" cy="170" r="200" fill="#f2c230" opacity=".07" filter="url(#soft)"/>', P = [];
+    for (var x = -120; x <= 420; x += 20) P.push([x, 160 + Math.sin(x * 0.02 + t) * 6]);
+    s += shadow(160, 215, 260, 10) + chainAlong(P, 4.2, t * 18);
+    var g = 0.5 + 0.5 * Math.sin(t * 5); s += '<circle cx="' + f(160) + '" cy="160" r="30" fill="none" stroke="#f2c230" stroke-width="3" opacity="' + f(clamp((u - 0.8) / 0.4) * (0.5 + 0.5 * g)) + '"/>';
+    var k = ease((u - 1.6) / 1.0), tw = Math.sin(t * 4) * 10 * k, Q = [];
+    for (var y = 40; y <= 300; y += 16) Q.push([520 + Math.sin(y * 0.06 + t * 2) * 18 * k, y]);
+    s += '<g transform="rotate(' + f(tw) + ' 520 170)">' + chainAlong(Q, 1.6, 0) + '</g>' + badge(590, 90, "✕", "#c23a26", pop((u - 2.4) / 0.8) * 0.8) + badge(230, 90, "✓", "#3a9a5a", pop((u - 1.2) / 0.8) * 0.8);
+    return s + tag("العارضة", 160, 250, u, 0.8, -3, 20) + tag("من غيرها تتعقد", 520, 330, u, 2.2, 3, 16, "#f2a0a0");
   });
-  // 9 — to lift it, the ship heaves in until it is right above it; the pull goes up and it slips out easily
-  shot(9, function (u, d) { var k = ease(u / d); return [lerp(300, 470, k), lerp(200, 215, k), lerp(1.0, 1.2, k)]; }, function (u, d, t) {
+  // 9 — link pulls link pulls link: the pull runs down the chain from the ship to the anchor
+  shot(9, function (u, d) { var k = ease(u / d); return [lerp(470, 170, k), 180, 1.15]; }, function (u, d, t) {
+    var s = cutaway(t, 60, 300), wave = lerp(620, -120, clamp(u / (d * 0.85))), P = [];
+    var v = tanker(820, 60, t, { s: 0.5 }); s += v.svg;
+    for (var x = v.H[0]; x >= 30; x -= 6) { var pull = x > wave ? 1 : 0; P.push([x - pull * 6, x > 600 ? lerp(v.H[1], 200, (v.H[0] - x) / (v.H[0] - 600)) : 200 + (600 - x) * 0.14]); }
+    s += chainAlong(P, 1.4, 0) + anchor(18, 284, -6, { s: 0.9, fa: 40 }) + '<path d="M-400 303 H1040 V700 H-400 Z" fill="' + MUDC + '" opacity=".4"/>';
+    var wy = wave > 600 ? 200 : 200 + (600 - wave) * 0.14; s += '<circle cx="' + f(wave) + '" cy="' + f(wy) + '" r="26" fill="#f2c230" opacity=".35" filter="url(#soft2)"/>' + arrow(wave + 50, wy - 30, wave - 10, wy - 30 + (wave > 600 ? 0 : 8), "#f2c230", 5, 1);
+    for (var n = 0; n < 3; n++) { var tx = lerp(560, 160, n / 2); s += tag("حلقة", tx, 150 + (600 - tx) * 0.14 - 30, u, 0.6 + n * 0.9, n % 2 ? 3 : -3, 15, "#f2c230"); }
+    return s + surface(t, 60) + uwVig() + tag("تشد", 360, 330, u, 1.6, -2, 16) + tag("لحد المرساية", 110, 220, u, d * 0.8, -3, 17);
+  });
+  // 10 — the links are heavy, so the chain sags into a curve and a long stretch lies on the seabed
+  shot(10, function (u, d) { var k = ease(u / d); return [lerp(300, 380, k), lerp(205, 230, k), lerp(1.0, 1.15, k)]; }, function (u, d, t) {
+    var m = moored(t, { xs: 150, ys: YS, yb: YB, ax: 560, lay: lerp(0.05, 0.45, ease(u / (d * 0.6))), s: 0.4, dig: 1, glowChain: clamp((u - 0.4) / 0.6) * (1 - clamp((u - d * 0.6) / 0.6)), glowLay: clamp((u - d * 0.6) / 0.6) }), s = cutaway(t, YS, YB) + m.svg + surface(t, YS);
+    return s + uwVig() + tag("قوس تقيل", 280, 190, u, 0.8, -3, 18) + tag("نايمة على القاع", 430, 250, u, d * 0.62, 3, 18);
+  });
+  // 11 — so the pull reaches the anchor flat and it stays dug in
+  shot(11, function (u, d) { var k = ease(u / d); return [lerp(430, 520, k), lerp(250, 275, k), lerp(1.5, 1.9, k)]; }, function (u, d, t) {
+    var m = moored(t, { xs: 150, ys: YS, yb: YB, ax: 560, lay: 0.45, s: 0.4, dig: 1 }), s = cutaway(t, YS, YB) + m.svg + surface(t, YS);
+    s += arrow(m.R[0] + 4, YB - 16, m.R[0] - 70, YB - 16, "#f2c230", 5, ease((u - 0.3) / 0.8)) + badge(m.R[0] + 46, YB - 50, "✓", "#3a9a5a", pop((u - 1.4) / 0.8) * 0.7);
+    return s + uwVig() + tag("الشد نايم", 520, 220, u, 0.6, -3, 16) + tag("غارزة", 600, 330, u, 1.8, 3, 16, "#f2c230");
+  });
+  // 12 — the part on the seabed rubs against the mud and holds too
+  shot(12, function (u, d) { return [lerp(360, 400, u / d), 262, 1.6]; }, function (u, d, t) {
+    var jig = Math.sin(t * 3) * 5, m = moored(t, { xs: 150 + jig, ys: YS, yb: YB, ax: 560, lay: 0.45, s: 0.4, dig: 1 }), s = cutaway(t, YS, YB) + m.svg + surface(t, YS);
+    for (var i = 0; i < 6; i++) { var x = 360 + i * 30; s += mudPuff(t + i * 0.3, x, YB, 0.7, 3) + '<path d="M' + (x - 8) + ' ' + (YB + 8) + ' h16" stroke="#f2c230" stroke-width="2.4" opacity="' + f(0.5 + 0.5 * Math.sin(t * 8 + i)) + '"/>'; }
+    return s + uwVig() + tag("احتكاك", 400, 220, u, 0.6, -3, 18) + tag("بتمسك هي كمان", 470, 330, u, 1.6, 3, 16);
+  });
+  // 13 — a wave yanks the ship: the curve straightens a little then sags back, like a spring
+  shot(13, function (u, d) { return [lerp(300, 340, u / d), 200, 1.0]; }, function (u, d, t) {
+    var j = Math.max(0, Math.sin(t * 2.2)), m = moored(t, { xs: 160 - j * 30, ys: YS, yb: YB, ax: 560, lay: 0.45 - j * 0.25, taut: j * 0.3, s: 0.4, dig: 1 });
+    var s = cutaway(t, YS, YB) + m.svg + bigWaves(t, YS - 6, 6), sp = 20 + j * 30, coil = "M560 40";
+    for (var i = 0; i <= 10; i++) coil += " L" + f(560 + (i % 2 ? 10 : -10)) + " " + f(40 + i * sp / 10);
+    return s + uwVig() + '<path d="' + coil + '" stroke="#f2c230" stroke-width="4" fill="none"/>' + arrow(200, 50, 120, 50, "#fff", 5, j) + tag("زي السوستة", 440, 40, u, 1.6, 3, 18);
+  });
+  // 14 — sailors pay out a chain 4 to 6 times the water depth
+  shot(14, function (u, d) { return [lerp(300, 330, u / d), 200, 0.98]; }, function (u, d, t) {
+    var k = ease(u / 2.2), m = moored(t, { xs: 120, ys: YS, yb: YB, ax: lerp(240, 560, k), lay: lerp(0, 0.45, k), s: 0.4 }), s = cutaway(t, YS, YB) + m.svg + surface(t, YS);
+    var kd = ease((u - 0.2) / 0.6), ye = lerp(YS + 6, YB - 4, kd); s += '<path d="M80 ' + (YS + 6) + ' V' + f(ye) + '" stroke="#bfe0ff" stroke-width="3" stroke-dasharray="6 4"/><path d="M72 ' + (YS + 6) + ' h16 M72 ' + f(ye) + ' h16" stroke="#bfe0ff" stroke-width="3"/>' + (kd > 0.9 ? lbl(70, (YS + YB) / 2, "العمق", true) : "");
+    return s + uwVig() + ruler(m.H[0], m.R[0], YB + 40, "4 لـ 6 أضعاف العمق", ease((u - 1.6) / 1.0));
+  });
+  // 15 — the windlass: a wheel with pockets the size of the links pulls them in one by one
+  shot(15, function (u, d) { var k = ease(u / d); return [lerp(300, 340, k), 180, lerp(1.25, 1.45, k)]; }, function (u, d, t) {
+    var s = sky("day") + clouds(t, 14, 10, 4, 0.8) + '<rect x="-400" y="230" width="1440" height="400" fill="url(#tankR)"/><path d="M-400 230 H1040" stroke="#5a1a10" stroke-width="3"/>' + '<rect x="-400" y="190" width="1440" height="8" fill="#f4f1e8"/><path d="M-400 194 H1040" stroke="#c9c4b8"/>';
+    for (var p = -400; p < 1040; p += 40) s += '<path d="M' + p + ' 198 V230" stroke="#c9c4b8" stroke-width="2"/>';
+    var ph = t * 0.35, C = [], cx = 320, cy = 170, R = 62;
+    for (var a = 200; a >= 0; a -= 10) { var r = a * Math.PI / 180; C.push([cx + Math.cos(r) * R, cy - Math.sin(r) * R]); }
+    var P = [[-200, 120]].concat([[180, 150]]).concat(C).concat([[cx + R + 10, 260], [cx + R + 14, 420]]);
+    s += shadow(320, 236, 150, 12) + '<path d="M150 236 L170 190 H470 L490 236 Z" fill="url(#tankR)" stroke="' + INK + '" stroke-width="2"/>';
+    s += '<g transform="translate(' + cx + ' ' + cy + ') rotate(' + f(-ph * 360) + ')"><circle r="' + (R - 4) + '" fill="url(#tankR)" stroke="' + INK + '" stroke-width="3"/>';
+    for (var q = 0; q < 10; q++) s += '<g transform="rotate(' + (q * 36) + ')"><rect x="-9" y="' + (-R + 2) + '" width="18" height="14" rx="4" fill="#4a140e" stroke="' + INK + '" stroke-width="1.4"/></g>';
+    s += '<circle r="22" fill="#8f2618" stroke="' + INK + '" stroke-width="2"/><circle r="8" fill="#c9ced4" stroke="' + INK + '" stroke-width="1.6"/></g>' + chainAlong(P, 1.6, -t * 30);
+    s += '<rect x="440" y="80" width="70" height="110" rx="8" fill="url(#tankR)" stroke="' + INK + '" stroke-width="2"/><circle cx="475" cy="135" r="22" fill="#8f2618" stroke="' + INK + '" stroke-width="2"/>' + sailor(560, 110, t, "happy", { s: 0.4 });
+    return s + tag("جيوب على مقاس الحلقات", 300, 40, u, 0.9, -3, 17) + tag("حلقة حلقة", 150, 300, u, 2.2, 3, 18, "#f2c230");
+  });
+  // 16 — to lift it, the ship heaves in until it is right above it; the pull goes up and it slips out easily
+  shot(16, function (u, d) { var k = ease(u / d); return [lerp(300, 470, k), lerp(200, 215, k), lerp(1.0, 1.2, k)]; }, function (u, d, t) {
     var k = ease(u / (d * 0.55)), xs = lerp(150, 396, k), up = ease((u - d * 0.55) / (d * 0.4)), v = tanker(xs, YS, t, { s: 0.4 }), s = cutaway(t, YS, YB) + v.svg;
     var ang = lerp(-4, 90, up), ay = lerp(YB + 18, YB - 110, up), R = ring(560, ay, ang, 0.55), P = up > 0 ? [v.H, R] : catenaryPts(v.H, R, YB + 1, lerp(0.45, 0, k), k * 0.85);
     s += shadow(540, YB + 6, 40, 6) + chainAlong(P, 0.6) + anchor(560, ay, ang, { s: 0.55, fa: lerp(40, 5, up), face: up > 0.3 ? "happy" : null, t: t }) + mudPuff(t, 560, YB, up > 0 ? 1 - up * 0.5 : 0, 7);
@@ -625,27 +684,27 @@
     s += arrow(610, YB - 20, 610, YB - 110, "#7cf29a", 5, up);
     return s + uwVig() + tag("فوقها بالظبط", 470, 40, u, d * 0.5, 3, 18) + tag("بسهولة!", 470, 200, u, d * 0.75, -3, 20);
   });
-  // 10 — in a storm the chain is pulled straight and the anchor drags along the bottom
-  shot(10, function (u, d) { var k = ease(u / d); return [lerp(300, 380, k), 200, 1.0]; }, function (u, d, t) {
+  // 17 — in a storm the chain is pulled straight and the anchor drags along the bottom
+  shot(17, function (u, d) { var k = ease(u / d); return [lerp(300, 380, k), 200, 1.0]; }, function (u, d, t) {
     var k = ease(u / d), shake = Math.sin(t * 5) * 3, ax = lerp(560, 470, k), m = moored(t, { xs: lerp(160, 70, k) + shake, ys: YS, yb: YB, ax: ax, lay: 0.02, taut: 0.85, s: 0.4, dig: 0.2, tilt: Math.sin(t * 2) * 3 });
     var s = cutaway(t, YS, YB, { sky: "storm" }) + '<path d="M' + f(ax) + ' ' + (YB + 6) + ' H660" stroke="#2a1c10" stroke-width="10" opacity=".6"/>' + m.svg + surface(t, YS, true) + rain(t, 0.6) + mudPuff(t, ax + 20, YB, 1, 7);
     if (Math.sin(t * 7) > 0.92) s += '<path d="M520 -60 L500 0 L520 0 L494 70" stroke="#fff6c8" stroke-width="4" fill="none"/>';
     return s + uwVig() + arrow(540, 40, 420, 40, "#fff", 6, 1) + tag("بتتجر!", 520, 250, u, 1.2, 3, 22, "#f2a0a0");
   });
-  // 11 — Oct 2023: a ship dragged its anchor and broke the gas pipeline between Finland and Estonia
-  shot(11, function (u, d) { var k = ease(u / d); return [lerp(260, 380, k), 220, lerp(1.0, 1.15, k)]; }, function (u, d, t) {
+  // 18 — Oct 2023: a ship dragged its anchor and broke the gas pipeline between Finland and Estonia
+  shot(18, function (u, d) { var k = ease(u / d); return [lerp(260, 380, k), 220, lerp(1.0, 1.15, k)]; }, function (u, d, t) {
     var k = ease(u / (d * 0.7)), ax = lerp(120, 400, k), m = moored(t, { xs: ax - 360, ys: YS, yb: YB, ax: ax, lay: 0.02, taut: 0.85, s: 0.4, dig: 0.2 });
     var s = cutaway(t, YS, YB, { sky: "storm" }) + '<path d="M-200 ' + (YB + 6) + ' H' + f(ax) + '" stroke="#2a1c10" stroke-width="10" opacity=".6"/>' + pipeline(400, 1000, YB, t, k > 0.97 ? 430 : 0) + m.svg + surface(t, YS, true) + mudPuff(t, ax, YB, 1, 6);
     s += '<g transform="translate(520 40)">' + shadow(4, 76, 90, 8) + '<rect x="-90" y="-26" width="180" height="96" rx="10" fill="#f4f1e8" stroke="' + INK + '" stroke-width="2.4"/><path d="M-80 -10 Q-40 -20 0 -8 T80 -12 V8 H-80 Z" fill="#9dbb6e"/><path d="M-80 46 Q-30 36 20 48 T80 44 V62 H-80 Z" fill="#9dbb6e"/><path d="M-80 8 V46 H80 V8 Z" fill="#9fd0e8" opacity=".6"/><path d="M-60 26 H60" stroke="#c9a050" stroke-width="4"/><text x="0" y="2" text-anchor="middle" style="font:800 12px Noto Sans Arabic;fill:#1c1c1c">فنلندا</text><text x="0" y="60" text-anchor="middle" style="font:800 12px Noto Sans Arabic;fill:#1c1c1c">إستونيا</text></g>';
     return s + uwVig() + tag("2023", 150, 40, u, 0.4, -3, 22) + tag("خط غاز اتقطع", 520, 230, u, 3.2, 3, 18, "#f2a0a0");
   });
-  // 12 — payoff: a dug-in anchor and a heavy chain lying on the bottom
-  shot(12, function (u, d) { var k = ease(u / d); return [lerp(400, 320, k), 200, lerp(1.2, 1.0, k)]; }, function (u, d, t) {
+  // 19 — payoff: a dug-in anchor and a heavy chain lying on the bottom
+  shot(19, function (u, d) { var k = ease(u / d); return [lerp(400, 320, k), 200, lerp(1.2, 1.0, k)]; }, function (u, d, t) {
     var m = moored(t, { xs: 150, ys: YS, yb: YB, ax: 560, lay: 0.45, s: 0.4, dig: 1, glowLay: clamp((u - 1.6) / 0.6), face: "happy" }), s = cutaway(t, YS, YB, { sky: "sunset" }) + sun(520, 50, 24, "#ffd27a") + m.svg + surface(t, YS);
     return s + uwVig() + tag("مرساية غارزة", 560, 250, u, 0.8, 3, 17, "#f2c230") + tag("سلسلة نايمة", 380, 340, u, 1.8, -2, 17);
   });
-  // 13 — outro
-  shot(13, function (u, d) { return [lerp(300, 340, clamp(u / d)), 180, 1.0]; }, function (u, d, t) {
+  // 20 — outro
+  shot(20, function (u, d) { return [lerp(300, 340, clamp(u / d)), 180, 1.0]; }, function (u, d, t) {
     var v = tanker(240 + u * 14, 230, t, { s: 0.75, stowed: true }), s = sea(t, 230, 0, { sky: "sunset", gulls: true }) + sun(500, 175, 30, "#ffd27a") + v.svg + front(t, 230, "#3a4f74");
     return s + tag("قولولنا!", 470, 60, u, 0.4, 3, 26);
   });

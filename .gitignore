@@ -1,1 +1,4 @@
 __pycache__/
+
+# Pixabay sound clips the user sends (Pixabay Content License): kept out of git
+videos/*/sfx/px-*
