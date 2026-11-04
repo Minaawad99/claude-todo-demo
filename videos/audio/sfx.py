@@ -314,7 +314,8 @@ def mix(voice, cues, use_bed=True, bed_db=-18.0, fx_db=-10.0, duck_db=-8.0, tail
     speech_rms = rms_db(v[mask]) if act.any() else -20
     out = v.copy()
     if use_bed:
-        b = bed(n / SR)[:n]; b *= 10 ** ((speech_rms + bed_db - rms_db(b)) / 20); out += b * gain
+        b = bed(n / SR + 0.01)[:n];  # +10 ms: n / SR * SR can round down a sample
+        b *= 10 ** ((speech_rms + bed_db - rms_db(b)) / 20); out += b * gain
     for c in cues:
         f = clip(c) if "file" in c else FX[c["fx"]](c.get("dur", None) or FX[c["fx"]].__defaults__[0], **({"f": c["f"]} if "f" in c else {})); s = int(c["t"] * SR)
         # recorded clips are levelled by loudness (RMS) against the voice, rec_db above it at gain 1, so a jet roar can stand up
