@@ -1,33 +1,33 @@
 <!doctype html>
-<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — Three Gorges dam (3D)</title>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — Three Gorges dam (photo)</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;800;900&display=swap" rel="stylesheet">
 <style>
   /* Reel cover for the 3D Three Gorges episode («السد ده خلّى اليوم أطول»), full bleed 540×960 at 2x.
-     The picture is a clean frame of the episode's three.js dam at night (videos/three-gorges/3d/index.html at t = 9.5 s,
-     overlays hidden) saved as photos/three-gorges-3d-night.jpg. Tunnel-cover palette: near black top and bottom and a
-     warm glow behind the dam. Text stays inside y 120–840 and away from the right-hand buttons. */
+     The picture is the user's aerial photo of the dam (spillway open, a rainbow in the spray), cropped to a vertical slice
+     and upscaled to photos/three-gorges-aerial.jpg (1080×1520), placed at y 100–860 and faded to black top and bottom
+     (tunnel-cover palette), with a soft warm glow on the spray. Text stays inside y 120–840 and away from the right-hand buttons. */
   body { margin: 0; background: #000; }
   .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #000; }
-  #bg { position: absolute; inset: 0; width: 540px; height: 960px; object-fit: cover; }
+  #bg { position: absolute; left: 0; top: 100px; width: 540px; height: 760px; }
   .glow { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
-          background: radial-gradient(ellipse 340px 220px at 300px 500px, rgba(255,176,70,.42), rgba(255,140,40,.12) 55%, rgba(0,0,0,0) 80%); }
+          background: radial-gradient(ellipse 260px 200px at 340px 560px, rgba(255,186,90,.28), rgba(255,150,50,.08) 55%, rgba(0,0,0,0) 80%); }
   .fade { position: absolute; left: 0; right: 0; pointer-events: none; }
   .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 10px rgba(0,0,0,.6); }
   #over { position: absolute; inset: 0; width: 540px; height: 960px; }
   .tag { font-family: "Noto Sans Arabic", sans-serif; font-weight: 800; fill: #2b2016; }
 </style></head><body>
 <div class="cover">
-  <img id="bg" src="photos/three-gorges-3d-night.jpg" alt="">
+  <img id="bg" src="photos/three-gorges-aerial.jpg" alt="">
   <div class="glow"></div>
-  <div class="fade" style="top:0;height:300px;background:linear-gradient(#000e,#0008 75%,#0000)"></div>
-  <div class="fade" style="top:660px;height:300px;background:linear-gradient(#0000,#000b 30%,#000f)"></div>
+  <div class="fade" style="top:0;height:330px;background:linear-gradient(#000 0,#000 100px,#000c 170px,#0006 260px,#0000)"></div>
+  <div class="fade" style="top:640px;height:320px;background:linear-gradient(#0000,#000b 35%,#000 69%)"></div>
   <svg id="over" viewBox="0 0 540 960">
     <defs>
       <path id="swash" d="M6 14 C40 4 120 2 196 8 C214 10 222 20 214 30 C206 44 140 46 70 44 C30 44 4 40 2 30 C0 24 2 18 6 14 Z"/>
       <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .45  0 0 0 0 .4  0 0 0 .08 0"/></filter>
     </defs>
-    <g transform="translate(380 610) rotate(4)"><use href="#swash" fill="#f2c230" transform="translate(-80 -26) scale(.74 1.15)"/><text y="8" text-anchor="middle" class="tag" style="font-size:24px">ارتفاعه 181 م</text></g>
-    <g transform="translate(150 380) rotate(-5)"><use href="#swash" fill="#e8c48e" transform="translate(-80 -26) scale(.74 1.15)"/><text y="8" text-anchor="middle" class="tag" style="font-size:22px">40 مليار م³ مية</text></g>
+    <g transform="translate(395 335) rotate(4)"><use href="#swash" fill="#f2c230" transform="translate(-80 -26) scale(.74 1.15)"/><text y="8" text-anchor="middle" class="tag" style="font-size:24px">ارتفاعه 181 م</text></g>
+    <g transform="translate(112 455) rotate(-5)"><use href="#swash" fill="#e8c48e" transform="translate(-80 -26) scale(.74 1.15)"/><text y="8" text-anchor="middle" class="tag" style="font-size:22px">40 مليار م³ مية</text></g>
     <rect width="540" height="960" filter="url(#grain)"/>
   </svg>
   <p class="t" style="top:124px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
