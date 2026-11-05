@@ -1,7 +1,7 @@
 // «الصور» — مدن ابتلعتها الأرض والبحر. Opening clip: videos/_intros/6-pool-jersey-point-hand-cover.mp4 (suggested; sea topic)
 window.LIST = {
   dur: 10,
-  intro: { frames: 0, fps: 30, title: "مدن كاملة…\nابتلعتها الأرض والبحر! 🌊", top: 84, shift: 0 },
+  intro: { frames: 0, fps: 30, title: "مدن كاملة اختفت في لحظة…\nوإحداها مصرية! 😱🌊", top: 84, shift: 0 },
   items: [
     { emoji: "🗿", title: "مدينة مصرية تحت البحر", photo: "photos/x.jpg", labels: [],
       body: "قرب أبو قير بالإسكندرية ظلت مدينة «هيراكليون» الفرعونية مفقودة تحت الماء ألف عام… حتى عثر عليها الغواصون عام 2000 بتماثيلها العملاقة وعشرات السفن!" },
