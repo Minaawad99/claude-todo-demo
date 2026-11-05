@@ -46,7 +46,7 @@
   window.__panel = function (svg, t) {
     CLIPN = 0; var i = at(t), sh = SH[i], next = i + 1 < SH.length ? SH[i + 1].a : L(LN.length), u = t - sh.a, d = Math.max(0.5, next - sh.a);
     var c = sh.cam(u, d), cx = c[0] + 10 * Math.sin(t * 1.1), cy = c[1] + 8 * Math.cos(t * 1.1), z = c[2] * (1 + 0.02 * Math.sin(t * 0.9));
-    var bg = '<rect x="-600" y="-600" width="1840" height="2000" fill="' + PAPER + '"/><rect x="-600" y="-600" width="1840" height="2000" fill="url(#grid)" transform="translate(' + f(-((t * 18) % 48)) + ' ' + f(-((t * 12) % 48)) + ')"/>';
+    var bg = '<rect x="-600" y="-600" width="1840" height="2000" fill="' + PAPER + '"/><rect x="-600" y="-600" width="1840" height="2000" fill="url(#grid)" transform="translate(' + f(-((t * 46) % 48)) + " " + f(-((t * 30) % 48)) + ')"/>';
     svg.innerHTML = '<g transform="translate(320 400) scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + bg + sh.draw(u, d, t) + '</g><rect width="640" height="800" filter="url(#paperN)"/>';
     return i;
   };
