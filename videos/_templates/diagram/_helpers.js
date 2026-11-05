@@ -49,3 +49,7 @@
     svg.innerHTML = '<g transform="translate(320 400) scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g><rect width="640" height="800" filter="url(#paperN)"/>';
     return i;
   };
+  window.shot = shot;
+  window.H = { f: f, clamp: clamp, lerp: lerp, ease: ease, pop: pop, hash: hash, INK: INK, PAPER: PAPER, ORANGE: ORANGE, BLUE: BLUE, OLIVE: OLIVE, PUTTY: PUTTY, SKIN: SKIN, BONE: BONE,
+    R: R, paper: paper, dark: dark, T: T, label: label, callout: callout, crossMark: crossMark, numBox: numBox, waveRay: waveRay, arrow: arrow, inset: inset };
+})();
