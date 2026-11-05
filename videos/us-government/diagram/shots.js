@@ -106,7 +106,7 @@
     var p = ease(clamp(t / 1.2));
     var o = R(20, 70, 230, 170, "#e4d9bd", 2, 6) + R(330, 70, 230, 170, "#e4d9bd", 2, 6);
     o += T("كاليفورنيا", 135, 268, 20, INK, 800) + T("أوريجون", 445, 268, 20, INK, 800);
-    o += '<g transform="translate(' + f(290) + ' ' + f(150) + ') scale(' + f(0.9 * p) + ')">' + shirt(0, 0, 1, BONE) + '</g>';
+    o += '<g transform="translate(' + f(290) + ' ' + f(150 + Math.sin(t * 2.2) * 4) + ') scale(' + f(0.9 * p) + ')">' + shirt(0, 0, 1, BONE) + '</g>';
     o += '<g opacity="' + f(clamp((t - 0.8) / 0.6)) + '">' + T("+ ضريبة", 135, 130, 26, ORANGE, 800) + T("صفر", 445, 130, 40, OLIVE, 900) + '</g>';
     svg.innerHTML = '<rect x="-100" y="-100" width="800" height="500" fill="' + PAPER + '"/>' + o;
   };
@@ -335,6 +335,6 @@
     o += capitol(50, 146, 0.2) + callout("3", 50, 104, pop(clamp(p * 3 - 0.3)));
     o += whitehouse(150, 146, 0.25) + callout("2", 150, 100, pop(clamp(p * 3 - 0.6)));
     o += court(250, 146, 0.2) + callout("4", 250, 104, pop(clamp(p * 3 - 0.9)));
-    svg.innerHTML = '<rect x="-20" y="-20" width="340" height="200" fill="' + PAPER + '"/>' + o;
+    svg.innerHTML = '<rect x="-20" y="-20" width="340" height="200" fill="' + PAPER + '"/><rect x="-20" y="-20" width="340" height="200" fill="url(#grid)" transform="translate(' + f(-((t * 6) % 48)) + ' 0)"/>' + o;
   };
 })();
