@@ -56,7 +56,7 @@
   }
   function bgIn(t) {
     var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#f6e7d6"/>';
-    for (var i = 0; i < 26; i++) { var x = -300 + hash(i) * 1240 + Math.sin(t * 0.7 + i) * 8, y = ((hash(i + 5) * 700 - t * (5 + hash(i) * 9)) % 700 + 700) % 700 - 300; s += '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(1.2 + hash(i + 2) * 2.2) + '" fill="#d9b48f" opacity=".6"/>'; }
+    for (var i = 0; i < 26; i++) { var x = -300 + hash(i) * 1240 + Math.sin(t * 0.7 + i) * 8, y = ((hash(i + 5) * 700 - t * (30 + hash(i) * 40)) % 700 + 700) % 700 - 300; s += '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(1.2 + hash(i + 2) * 2.2) + '" fill="#d9b48f" opacity=".6"/>'; }
     return s;
   }
   function puffs(t, x, y0, n, col) { var s = ""; for (var i = 0; i < n; i++) { var u = (t * 1.6 + i / n) % 1, y = y0 - u * 260, px = x + Math.sin(u * 8 + i) * 16; s += '<circle cx="' + f(px) + '" cy="' + f(y) + '" r="' + f(4 + u * 14) + '" fill="' + (col || "#ffffff") + '" stroke="' + AIR + '" stroke-width="1.4" opacity="' + f(1 - u) + '"/>'; } return s; }
@@ -212,7 +212,7 @@
   window.__parts = { profile: profile, torso: torso, throat: throat };
   window.__panel = function (svg, t) {
     var i = at(t), sh = SH[i], next = i + 1 < SH.length ? SH[i + 1].a : L(LN.length), u = t - sh.a, d = Math.max(0.5, next - sh.a);
-    var c = sh.cam(u, d), cx = c[0] + 10 * Math.sin(t * 1.2), cy = c[1] + 8 * Math.cos(t * 1.2), z = c[2] * (1 + 0.03 * Math.sin(t * 1.1));
+    var c = sh.cam(u, d), cx = c[0] + 18 * Math.sin(t * 1.7), cy = c[1] + 14 * Math.cos(t * 1.7), z = c[2] * (1 + 0.04 * Math.sin(t * 1.3));
     svg.innerHTML = '<g transform="translate(320 180) rotate(' + f(0.9 * Math.sin(t * 0.83)) + ') scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g><rect width="640" height="360" filter="url(#grain)"/>';
     return i;
   };
