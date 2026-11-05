@@ -22,5 +22,5 @@ pack() {   # pack <skill> <extra paths...>
 pack animation $COMMON $(ep monorail) $(ep tbm-tunnel) $(ep container-ship) $(ep pisa) \
   brand/eh-elhekaya/cover-container-ship-tiktok.html brand/eh-elhekaya/cover-tbm-tunnel-tiktok.html brand/eh-elhekaya/cover-pisa-tiktok.html
 pack diagram $COMMON videos/_templates/diagram $(ep xray-diagram) brand/eh-elhekaya/cover-xray-diagram-tiktok.html
-pack law $COMMON $(ep nuclear-shelter) brand/eh-elhekaya/cover-nuclear-shelter-3d-tiktok.html
+pack law $COMMON $(ep nuclear-shelter) $(ep house-fire) brand/eh-elhekaya/cover-nuclear-shelter-3d-tiktok.html brand/eh-elhekaya/cover-house-fire-tiktok.html
 pack humanizer

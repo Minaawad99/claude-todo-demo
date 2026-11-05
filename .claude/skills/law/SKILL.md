@@ -91,6 +91,8 @@ keywords, the «إيه الحكاية؟» brand at the bottom). Start from a cop
 - **Fix shots («عشان كده…»)** push in on the new part as it appears, with a brush tag naming it and the number.
 - **The payoff shot** pulls back to show the whole build at once, every part in place, the people inside happy.
 - Motion and QA rules as in the animation skill.
+- People inside the build are drawn with `human()` (see Characters in the animation skill); the reference for a build with
+  people moving through it is `videos/house-fire/` («تهرب من حريقة إزاي؟»: the flat in cross-section, crawling under smoke).
 
 ## 5. Cover
 

@@ -22,7 +22,7 @@ Talk to the user in Egyptian Arabic. Work in this order, end to end; the voice i
 
 **Ask before every new topic (the user's rule, to save usage limit):** when the user names a new video, ask in one short
 question whether to run it in quick mode or with the full checks. Quick mode is the default the user asked for:
-- no motion check (`tools/motion.js`) and no fix-and-retry loops for stills;
+- no motion check (`tools/motion.js`) and no fix-and-retry loops for stills (people are the exception: see Characters);
 - no contact sheets, frames or other screenshots looked at during the build (no image review);
 - still run the NaN/error check (text only) and `qa.py` on the final video (numbers only, don't open its sheet); if QA fails,
   tell the user and ask before re-rendering.
@@ -146,7 +146,15 @@ The page is 360×640 CSS px, rendered at 1080×1920:
 
 Drawing language (`_helpers.js`):
 
-- **Characters:** ball-head characters with moods (n, happy, shock, dizzy, curious, worry) and sometimes a mascot (oil drop, pixel, phone).
+- **Characters:** people are always drawn with `human(x, y, t, mood, o)` from `_helpers.js` (the user fixed this look after
+  the house-fire video): a real side-view person with a neck, hair, a shirt torso, arms with elbows and hands, legs in
+  trousers with knees and shoes, and the ball head with moods (n, happy, shock, dizzy, curious, worry) as the face.
+  Poses: `stand`, `walk`, `reach` (`p` 0..1), `wave` (`cloth: true`), `worry`, `crawl` (hands and knees, head up); `dir: -1`
+  faces left; `s: 0.62` is an adult in a 640×360 room. Add a new pose in `poseOf()` rather than drawing a body by hand.
+  Never draw a person as a ball head on a blob body, or crawling as a horizontal ellipse with stick legs: the user said
+  it looks like a dog. The hard-hat engineer (`hardHat`) and mascots (oil drop, pixel, phone) stay as they are.
+  **Even in quick mode**, look at `node ../../tools/poses.js $PWD/index.html <out.png>` and one frame of every shot
+  with a new pose before the render (the user asked for this after the figures came out badly).
 - **Labels:** brush-swash tags that pop in.
 - **Backgrounds:** sky, clouds, city, grass, plus film grain. Objects use gradients so they read as 3D.
 - **Realistic objects:** each is a function drawn from the real shape in the reference photos (layout, colours, parts).

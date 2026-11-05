@@ -498,46 +498,6 @@
     return g + '</g>'; }
   function clock(x, y, r, secs, t) { var a = -Math.PI / 2 + (1 - secs / 120) * Math.PI * 2, d = 'M0 0 L0 ' + (-r) + ' A' + r + ' ' + r + ' 0 ' + ((1 - secs / 120) > 0.5 ? 1 : 0) + ' 1 ' + f(Math.cos(a) * r) + ' ' + f(Math.sin(a) * r) + ' Z'; var mm = Math.floor(secs / 60), ss = Math.floor(secs % 60); return '<g transform="translate(' + x + ' ' + y + ')"><circle r="' + (r + 6) + '" fill="#f4f1e8" stroke="' + INK + '" stroke-width="3"/><path d="' + d + '" fill="#e23b2f" opacity=".75"/>' + txt(mm + ":" + (ss < 10 ? "0" : "") + ss, 0, 9, 24, "#fff") + '</g>'; }
 
-  // ── a real person (side view, facing dir): head with hair, neck, shirt torso, two-segment arms with hands, two-segment
-  // legs in trousers with shoes. Joints by forward kinematics; limbs are outlined capsules, the far-side limbs darker.
-  // o: { s, col (shirt), pants, hair, pose: stand|walk|reach|wave|crawl, p (reach 0..1), dir (1 right, -1 left), look }
-  function shade(hex, k) { var n = parseInt(hex.slice(1), 16), r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255; return "rgb(" + Math.round(r * k) + "," + Math.round(g * k) + "," + Math.round(b * k) + ")"; }
-  function rad(a) { return a * Math.PI / 180; }
-  function down(p, len, a) { return [p[0] + Math.sin(rad(a)) * len, p[1] + Math.cos(rad(a)) * len]; }
-  function limb(pts, w, col) { var d = "M" + pts.map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L"); return '<path d="' + d + '" stroke="' + INK + '" stroke-width="' + (w + 4) + '" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="' + d + '" stroke="' + col + '" stroke-width="' + w + '" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'; }
-  function poseOf(o, t) {
-    var P = { tor: 0, hd: 0, sF: 8, eF: 12, sB: -8, eB: 12, hF: 3, kF: 0, hB: -3, kB: 0 }, ph = t * 6;
-    if (o.pose === "walk") { var w = Math.sin(ph); P.sF = 28 * w; P.sB = -28 * w; P.eF = P.eB = 18; P.hF = 22 * w; P.hB = -22 * w; P.kF = Math.max(0, -w) * 30 + 5; P.kB = Math.max(0, w) * 30 + 5; P.tor = 4; }
-    if (o.pose === "reach") { var p = clamp(o.p == null ? 1 : o.p); P.sF = lerp(10, 82, p); P.eF = lerp(14, 4, p); P.tor = 4 * p; }
-    if (o.pose === "wave") { P.sF = 140; P.eF = 15 + 25 * Math.sin(t * 9); P.sB = 20; }
-    if (o.pose === "worry") { P.sF = 45 + 8 * Math.sin(t * 5); P.eF = 50; P.sB = -40 - 8 * Math.sin(t * 5); P.eB = 50; P.tor = -4; }
-    if (o.pose === "crawl") { var c = Math.sin(ph * 0.8); P.tor = 72; P.hd = -52; P.hF = 4 + 10 * c; P.kF = 92; P.hB = 4 - 10 * c; P.kB = 92; P.sF = 6 + 18 * c; P.eF = 14; P.sB = 6 - 18 * c; P.eB = 14; }
-    return P;
-  }
-  function human(x, y, t, mood, o) {
-    o = o || {}; if (o.push != null && !o.pose) { o.pose = "reach"; o.p = o.push; }
-    var sc = (o.s || 0.62) * 0.76, dir = o.dir || 1, P = poseOf(o, t), col = o.col || "#2f6fae", pants = o.pants || "#3a4a6a", hair = o.hair || "#3a2a1e";
-    var TOR = 58, UA = 30, FA = 28, TH = 41, SH = 41, R = 17;
-    var hip = [0, 0], neck = [Math.sin(rad(P.tor)) * TOR, -Math.cos(rad(P.tor)) * TOR], sh = [neck[0] * 0.88 + Math.cos(rad(P.tor)) * 3, neck[1] * 0.88 + Math.sin(rad(P.tor)) * 3];
-    function leg(h, k) { var kn = down(hip, TH, h), an = down(kn, SH, h - k), toe = down(an, 13, h - k - 90 * -1 + 0); toe = [an[0] + Math.cos(rad(h - k)) * 13, an[1] - Math.sin(rad(h - k)) * 13]; return [kn, an, toe]; }
-    function arm(a, e) { var el = down(sh, UA, a), ha = down(el, FA, a + e); return [el, ha]; }
-    var LF = leg(P.hF, P.kF), LB = leg(P.hB, P.kB), AF = arm(P.sF, P.eF), AB = arm(P.sB, P.eB);
-    var low = Math.max(LF[0][1], LF[1][1], LB[0][1], LB[1][1], LF[2][1], LB[2][1], AF[1][1] - 6, AB[1][1] - 6) + (o.pose === "crawl" ? 6 : 6);
-    var hd = [neck[0] + Math.sin(rad(P.tor + P.hd)) * (R + 11), neck[1] - Math.cos(rad(P.tor + P.hd)) * (R + 11)];
-    var s = '<g transform="translate(' + f(x) + ' ' + f(y + (o.pose === "walk" ? -Math.abs(Math.sin(t * 6)) * 2 : 0)) + ') scale(' + f(sc * dir) + ' ' + f(sc) + ') translate(0 ' + f(-low) + ')">';
-    function shoe(L, c) { return limb([L[1], L[2]], 9, c); }
-    s += limb([sh, AB[0], AB[1]], 10, shade(col, 0.7)) + '<circle cx="' + f(AB[1][0]) + '" cy="' + f(AB[1][1]) + '" r="6" fill="#d9d4c8" stroke="' + INK + '" stroke-width="2"/>';
-    s += limb([hip, LB[0], LB[1]], 14, shade(pants, 0.75)) + shoe(LB, "#1e1e22");
-    s += limb([hip, LF[0], LF[1]], 14, pants) + shoe(LF, "#2b2b30");
-    s += limb([[hip[0] - Math.sin(rad(P.tor)) * 2, hip[1] + 4], neck], 27, col) + '<path d="M' + f(hip[0] + Math.sin(rad(P.tor)) * 6 - 10) + ' ' + f(hip[1] - 4) + ' h20" stroke="' + shade(col, 0.75) + '" stroke-width="3" transform="rotate(' + f(P.tor) + ' 0 0)"/>';
-    s += limb([neck, [neck[0] + (hd[0] - neck[0]) * 0.4, neck[1] + (hd[1] - neck[1]) * 0.4]], 9, "#d9d4c8");
-    s += '<g transform="scale(' + dir + ' 1) translate(' + f(hd[0] * dir) + ' ' + f(hd[1]) + ') scale(' + dir + ' 1)">' + head(0, 0, R, mood, t, o.look == null ? 1 : o.look);
-    s += '<path d="M' + f(-R * 1.0) + ' ' + f(-R * 0.05) + ' C' + f(-R * 1.15) + ' ' + f(-R * 1.25) + ' ' + f(R * 0.6) + ' ' + f(-R * 1.45) + ' ' + f(R * 0.95) + ' ' + f(-R * 0.45) + ' C' + f(R * 0.4) + ' ' + f(-R * 0.75) + ' ' + f(-R * 0.3) + ' ' + f(-R * 0.75) + ' ' + f(-R * 0.75) + ' ' + f(-R * 0.1) + ' Z" fill="' + hair + '" stroke="' + INK + '" stroke-width="2"/></g>';
-    s += limb([sh, AF[0], AF[1]], 10, col) + '<circle cx="' + f(AF[1][0]) + '" cy="' + f(AF[1][1]) + '" r="6" fill="#fbfbf7" stroke="' + INK + '" stroke-width="2"/>';
-    if (o.cloth) s += '<path d="M' + f(AF[1][0]) + ' ' + f(AF[1][1]) + ' q14 ' + f(-6 + Math.sin(t * 9) * 5) + ' 30 ' + f(-2 + Math.sin(t * 9 + 1) * 6) + ' l-3 26 q-14 ' + f(4 + Math.sin(t * 9) * 4) + ' -27 0 Z" fill="#fff" stroke="' + INK + '" stroke-width="2"/>';
-    return s + '</g>';
-  }
-
   // ── shots ───────────────────────────────────────────────
   var SLEEP = 50;
   // 0 — you wake up and the flat is on fire: run and open the bedroom door?
