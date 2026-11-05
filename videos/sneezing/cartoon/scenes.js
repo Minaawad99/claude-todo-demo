@@ -177,7 +177,7 @@
   // the chest (side view): lungs grow with b (0..1), the diaphragm drops with them, abdominal muscles can glow
   function bob(t, g) { return '<g transform="translate(0 ' + f(2.5 * Math.sin(t * 2.2)) + ')">' + g + "</g>"; }
   function torso(t, o) {
-    o = o || {}; var b = o.b || 0, pu = 0.5 + 0.5 * Math.sin(t * 6), g = "";
+    o = o || {}; var b = (o.b || 0) + 0.12 * Math.sin(t * 4), pu = 0.5 + 0.5 * Math.sin(t * 6), g = "";
     g += '<path d="M276 110 C300 98 340 98 364 110 C384 122 388 170 384 230 C380 268 360 286 320 288 C280 286 262 268 258 230 C254 170 258 122 276 110 Z" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2.4"/>';
     var lr = 24 + 10 * b + 1.5 * Math.sin(t * 2);
     g += '<ellipse cx="296" cy="168" rx="' + f(lr * 0.62) + '" ry="' + f(lr) + '" fill="' + PINK + '" stroke="' + PINKD + '" stroke-width="1.6"/><ellipse cx="344" cy="168" rx="' + f(lr * 0.62) + '" ry="' + f(lr) + '" fill="' + PINK + '" stroke="' + PINKD + '" stroke-width="1.6"/>';
@@ -201,6 +201,7 @@
     return s;
   }
   function puffs(t, x, y0, n, col) { var s = ""; for (var i = 0; i < n; i++) { var u = (t * 1.6 + i / n) % 1, y = y0 - u * 260, px = x + Math.sin(u * 8 + i) * 16; s += '<circle cx="' + f(px) + '" cy="' + f(y) + '" r="' + f(4 + u * 14) + '" fill="' + (col || "#ffffff") + '" stroke="' + AIR + '" stroke-width="1.4" opacity="' + f(1 - u) + '"/>'; } return s; }
+  function rays(t, cx, cy, n, len, col) { var s = "", i; for (i = 0; i < n; i++) { var a = t * 0.6 + i * 2 * Math.PI / n, L2 = len * (0.7 + 0.3 * Math.sin(t * 3 + i)); s += '<path d="M' + f(cx + Math.cos(a) * 60) + ' ' + f(cy + Math.sin(a) * 60) + ' L' + f(cx + Math.cos(a) * L2) + ' ' + f(cy + Math.sin(a) * L2) + '" stroke="' + (col || "#ffffff") + '" stroke-width="10" stroke-linecap="round" opacity=".35"/>'; } return s; }
   function sparks(t, cx, cy, rx, ry, n) { var s = ""; for (var i = 0; i < n; i++) { var a = t * 4 + i * 2 * Math.PI / n; s += '<circle cx="' + f(cx + Math.cos(a) * rx) + '" cy="' + f(cy + Math.sin(a) * ry) + '" r="2.6" fill="' + NERVE + '" stroke="' + INK + '" stroke-width=".8"/>'; } return s; }
   function paper(t, i) { var x = 300 + ((hash(i) * 260 + t * 150) % 340), y = 100 + hash(i + 3) * 160 + Math.sin(t * 3 + i) * 8; return '<rect x="' + f(x - 11) + '" y="' + f(y - 8) + '" width="22" height="16" fill="#fff" stroke="' + INK + '" stroke-width="1.2" transform="rotate(' + f(t * 200 + i * 40) + ' ' + f(x) + ' ' + f(y) + ')"/>'; }
   function alarm(x, y, t, sc) { var k = (sc || 1) * (1 + 0.12 * Math.sin(t * 8)); return '<g transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + k.toFixed(3) + ')"><path d="M0 -30 L30 22 L-30 22 Z" fill="#f2c230" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/><text y="14" text-anchor="middle" style="font:900 30px Noto Sans Arabic;fill:' + INK + '">!</text></g>'; }
@@ -232,7 +233,7 @@
   });
   // 3 — the brand line
   shot(3, still(320, 170, 1.0), function (u, d, t) {
-    return sk(t) + profile(t, { mood: "happy" }) + vt(320, 180, 1, "إيه الحكاية؟", u, 0.5, 26);
+    return sk(t) + rays(t, 320, 170, 12, 230, "#fff3c4") + profile(t, { mood: "happy" }) + vt(320, 180, 1, "إيه الحكاية؟", u, 0.5, 26);
   });
   // 4 — zoom to the nose
   shot(4, zoom(320, 170, 1.0, 362, 176, 1.5), function (u, d, t) {
@@ -348,7 +349,7 @@
   });
   // 26 — outro
   shot(26, zoom(300, 180, 1.0, 340, 180, 1.0), function (u, d, t) {
-    return sk(t) + profile(t, { x: 320, y: 170, s: 0.9, mood: "happy" }) + tag("قولولنا!", 460, 60, u, 0.4, 3, 26);
+    return sk(t) + rays(t, 320, 170, 12, 260, "#fff3c4") + profile(t, { x: 320, y: 170, s: 0.9, mood: "happy" }) + tag("قولولنا!", 460, 60, u, 0.4, 3, 26);
   });
 
   window.__parts = { profile: profile, torso: torso, throat: throat };
