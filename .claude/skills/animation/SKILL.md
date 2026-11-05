@@ -27,6 +27,22 @@ question whether to run it in quick mode or with the full checks. Quick mode is 
 - still run the NaN/error check (text only) and `qa.py` on the final video (numbers only, don't open its sheet); if QA fails,
   tell the user and ask before re-rendering.
 
+## 0. Working outside this repo (another Claude account)
+
+The paths below (`videos/…`, `brand/…`) are this repo's. If they are not in your working directory, this skill was
+installed from its zip: copy its kit in first, then work as written:
+
+```
+cp -r <this skill's folder>/kit/. .     # → videos/ (render, QA, voice and sound tools, reference builds) and brand/
+```
+The script and titles go through the `humanizer` skill: install `humanizer.zip` too.
+
+It needs Node with Playwright and Chromium, ffmpeg, Python 3 with numpy, and `pip install sherpa-onnx` plus the
+`sherpa-onnx-whisper-small` model (k2-fsa/sherpa-onnx GitHub releases, `asr-models`) for the timing. The voice needs a
+Gemini API key for `generativelanguage.googleapis.com` (header `x-goog-api-key`), given to the environment as a secret,
+never pasted in chat. Without one, the user records the voice in Google AI Studio with the settings below.
+The full channel repo is github.com/minaawad99/claude-todo-demo, if it can be attached instead.
+
 ## 1. Script → `videos/<slug>/script.txt`
 
 - 25–29 lines, one sentence per line, about 230–280 words → 1:40–2:00 of voice (the tunnel video: 29 lines, 274 words, 1:56).

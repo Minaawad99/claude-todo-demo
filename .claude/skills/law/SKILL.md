@@ -22,6 +22,23 @@ reference research, audio pipeline, sounds, render, QA, cover and titles all wor
 `.claude/skills/animation/SKILL.md`. Only the script shape, the voice style text, the on-screen title and the way the
 shots build up change.
 
+## 0. Working outside this repo (another Claude account)
+
+The paths below (`videos/…`, `brand/…`) are this repo's. If they are not in your working directory, this skill was
+installed from its zip: copy its kit in first, then work as written:
+
+```
+cp -r <this skill's folder>/kit/. .     # → videos/ (render, QA, voice and sound tools, reference builds) and brand/
+```
+This skill builds on the `animation` skill (voice, sounds, render, QA, cover, titles): install `animation.zip` too.
+The script also goes through the `humanizer` skill (`humanizer.zip`).
+
+It needs Node with Playwright and Chromium, ffmpeg, Python 3 with numpy, and `pip install sherpa-onnx` plus the
+`sherpa-onnx-whisper-small` model (k2-fsa/sherpa-onnx GitHub releases, `asr-models`) for the timing. The voice needs a
+Gemini API key for `generativelanguage.googleapis.com` (header `x-goog-api-key`), given to the environment as a secret,
+never pasted in chat. Without one, the user records the voice in Google AI Studio with the settings below.
+The full channel repo is github.com/minaawad99/claude-todo-demo, if it can be attached instead.
+
 ## 1. Topics that fit
 
 Something the viewer could, in theory, build or set up themselves, where each part exists to solve a problem: a shelter,
