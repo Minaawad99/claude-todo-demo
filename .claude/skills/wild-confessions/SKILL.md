@@ -50,6 +50,31 @@ promising anything (one tiny request per model).
 - **Graphics:** black background with an amber rim light, floating dust, a small mono label top-left in museum brackets
   `⌜ … ⌝`, and a short Arabic caption at the bottom.
 
+## 1b. The user (read this first on a new account)
+
+This skill was made with the user over the whole first episode. Things they told us, so nobody has to ask again:
+- They are the host. Their face is fixed. If `assets/host/` exists in this skill (front, side, half-body photos) and
+  `assets/masters/` (A, B, C, D from episode 1), **use them**: the user can upload them with the first message, and
+  the masters can be reused for every new episode (only the guest changes in B and C). If they are missing, ask for
+  them once.
+- Fixed host description, paste it into every prompt that shows the host:
+  ```
+  HOST = a young Egyptian man in his mid-20s, athletic broad-shouldered build, short dark-brown thick wavy-curly hair with volume on top and short tapered sides, thick dark straight eyebrows, warm brown eyes, light olive skin, short neatly trimmed stubble beard and mustache, strong jawline, no glasses. Wearing an open dark olive-green overshirt jacket over a plain black crew-neck t-shirt, dark trousers, a simple black watch. Exactly matches the face in the reference photos.
+  ```
+- They make images and clips on Gemini (Nano Banana, Veo) on their phone, then upload the clips here one by one,
+  named by ID (H01, K02, C05, R04…). Accept them as they arrive, check each one, and say briefly what you saw.
+- They want step-by-step instructions («اكتبلي خطوة خطوة عايز مني إيه») and **complete prompts in code blocks**, one
+  per clip, with the Arabic line already inside. Never "replace this word".
+- They prefer that you make as much as possible yourself (graphics, voice, sync, edit, covers) and keep their part
+  small.
+- Voice: the guest faster and without echo; the host clear. Their own name for the reference is «فيديو الجمل»; the
+  first episode is «فيديو الغراب».
+- What made them angry: an episode delivered with clipped sentence endings. Run the QA in section 9 before every
+  delivery, every time, and say what was checked.
+- Language: Egyptian Arabic in chat; the episode itself is in simple Modern Standard Arabic.
+- Platforms: Facebook, YouTube (Shorts), TikTok, Instagram. Deliver a reel cover, an Instagram 3:4-safe cover, a
+  YouTube thumbnail and post copy for all four.
+
 ## 2. Topic and script → `videos/<slug>/lines.tsv`
 
 - A guest with a famous myth or bad reputation, and 4–6 surprising, **verifiable** facts with real numbers and named
