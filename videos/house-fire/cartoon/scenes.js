@@ -637,50 +637,90 @@
     return g + '</g>'; }
   function clock(x, y, r, secs, t) { var a = -Math.PI / 2 + (1 - secs / 120) * Math.PI * 2, d = 'M0 0 L0 ' + (-r) + ' A' + r + ' ' + r + ' 0 ' + ((1 - secs / 120) > 0.5 ? 1 : 0) + ' 1 ' + f(Math.cos(a) * r) + ' ' + f(Math.sin(a) * r) + ' Z'; var mm = Math.floor(secs / 60), ss = Math.floor(secs % 60); return '<g transform="translate(' + x + ' ' + y + ')"><circle r="' + (r + 6) + '" fill="#f4f1e8" stroke="' + INK + '" stroke-width="3"/><path d="' + d + '" fill="#e23b2f" opacity=".75"/>' + txt(mm + ":" + (ss < 10 ? "0" : "") + ss, 0, 9, 24, "#fff") + '</g>'; }
 
+  // ── a real person (side view, facing dir): head with hair, neck, shirt torso, two-segment arms with hands, two-segment
+  // legs in trousers with shoes. Joints by forward kinematics; limbs are outlined capsules, the far-side limbs darker.
+  // o: { s, col (shirt), pants, hair, pose: stand|walk|reach|wave|crawl, p (reach 0..1), dir (1 right, -1 left), look }
+  function shade(hex, k) { var n = parseInt(hex.slice(1), 16), r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255; return "rgb(" + Math.round(r * k) + "," + Math.round(g * k) + "," + Math.round(b * k) + ")"; }
+  function rad(a) { return a * Math.PI / 180; }
+  function down(p, len, a) { return [p[0] + Math.sin(rad(a)) * len, p[1] + Math.cos(rad(a)) * len]; }
+  function limb(pts, w, col) { var d = "M" + pts.map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L"); return '<path d="' + d + '" stroke="' + INK + '" stroke-width="' + (w + 4) + '" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="' + d + '" stroke="' + col + '" stroke-width="' + w + '" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'; }
+  function poseOf(o, t) {
+    var P = { tor: 0, hd: 0, sF: 8, eF: 12, sB: -8, eB: 12, hF: 3, kF: 0, hB: -3, kB: 0 }, ph = t * 6;
+    if (o.pose === "walk") { var w = Math.sin(ph); P.sF = 28 * w; P.sB = -28 * w; P.eF = P.eB = 18; P.hF = 22 * w; P.hB = -22 * w; P.kF = Math.max(0, -w) * 30 + 5; P.kB = Math.max(0, w) * 30 + 5; P.tor = 4; }
+    if (o.pose === "reach") { var p = clamp(o.p == null ? 1 : o.p); P.sF = lerp(10, 82, p); P.eF = lerp(14, 4, p); P.tor = 4 * p; }
+    if (o.pose === "wave") { P.sF = 140; P.eF = 15 + 25 * Math.sin(t * 9); P.sB = 20; }
+    if (o.pose === "worry") { P.sF = 45 + 8 * Math.sin(t * 5); P.eF = 50; P.sB = -40 - 8 * Math.sin(t * 5); P.eB = 50; P.tor = -4; }
+    if (o.pose === "crawl") { var c = Math.sin(ph * 0.8); P.tor = 72; P.hd = -52; P.hF = 4 + 10 * c; P.kF = 92; P.hB = 4 - 10 * c; P.kB = 92; P.sF = 6 + 18 * c; P.eF = 14; P.sB = 6 - 18 * c; P.eB = 14; }
+    return P;
+  }
+  function human(x, y, t, mood, o) {
+    o = o || {}; if (o.push != null && !o.pose) { o.pose = "reach"; o.p = o.push; }
+    var sc = (o.s || 0.62) * 0.76, dir = o.dir || 1, P = poseOf(o, t), col = o.col || "#2f6fae", pants = o.pants || "#3a4a6a", hair = o.hair || "#3a2a1e";
+    var TOR = 58, UA = 30, FA = 28, TH = 41, SH = 41, R = 17;
+    var hip = [0, 0], neck = [Math.sin(rad(P.tor)) * TOR, -Math.cos(rad(P.tor)) * TOR], sh = [neck[0] * 0.88 + Math.cos(rad(P.tor)) * 3, neck[1] * 0.88 + Math.sin(rad(P.tor)) * 3];
+    function leg(h, k) { var kn = down(hip, TH, h), an = down(kn, SH, h - k), toe = down(an, 13, h - k - 90 * -1 + 0); toe = [an[0] + Math.cos(rad(h - k)) * 13, an[1] - Math.sin(rad(h - k)) * 13]; return [kn, an, toe]; }
+    function arm(a, e) { var el = down(sh, UA, a), ha = down(el, FA, a + e); return [el, ha]; }
+    var LF = leg(P.hF, P.kF), LB = leg(P.hB, P.kB), AF = arm(P.sF, P.eF), AB = arm(P.sB, P.eB);
+    var low = Math.max(LF[0][1], LF[1][1], LB[0][1], LB[1][1], LF[2][1], LB[2][1], AF[1][1] - 6, AB[1][1] - 6) + (o.pose === "crawl" ? 6 : 6);
+    var hd = [neck[0] + Math.sin(rad(P.tor + P.hd)) * (R + 11), neck[1] - Math.cos(rad(P.tor + P.hd)) * (R + 11)];
+    var s = '<g transform="translate(' + f(x) + ' ' + f(y + (o.pose === "walk" ? -Math.abs(Math.sin(t * 6)) * 2 : 0)) + ') scale(' + f(sc * dir) + ' ' + f(sc) + ') translate(0 ' + f(-low) + ')">';
+    function shoe(L, c) { return limb([L[1], L[2]], 9, c); }
+    s += limb([sh, AB[0], AB[1]], 10, shade(col, 0.7)) + '<circle cx="' + f(AB[1][0]) + '" cy="' + f(AB[1][1]) + '" r="6" fill="#d9d4c8" stroke="' + INK + '" stroke-width="2"/>';
+    s += limb([hip, LB[0], LB[1]], 14, shade(pants, 0.75)) + shoe(LB, "#1e1e22");
+    s += limb([hip, LF[0], LF[1]], 14, pants) + shoe(LF, "#2b2b30");
+    s += limb([[hip[0] - Math.sin(rad(P.tor)) * 2, hip[1] + 4], neck], 27, col) + '<path d="M' + f(hip[0] + Math.sin(rad(P.tor)) * 6 - 10) + ' ' + f(hip[1] - 4) + ' h20" stroke="' + shade(col, 0.75) + '" stroke-width="3" transform="rotate(' + f(P.tor) + ' 0 0)"/>';
+    s += limb([neck, [neck[0] + (hd[0] - neck[0]) * 0.4, neck[1] + (hd[1] - neck[1]) * 0.4]], 9, "#d9d4c8");
+    s += '<g transform="scale(' + dir + ' 1) translate(' + f(hd[0] * dir) + ' ' + f(hd[1]) + ') scale(' + dir + ' 1)">' + head(0, 0, R, mood, t, o.look == null ? 1 : o.look);
+    s += '<path d="M' + f(-R * 1.0) + ' ' + f(-R * 0.05) + ' C' + f(-R * 1.15) + ' ' + f(-R * 1.25) + ' ' + f(R * 0.6) + ' ' + f(-R * 1.45) + ' ' + f(R * 0.95) + ' ' + f(-R * 0.45) + ' C' + f(R * 0.4) + ' ' + f(-R * 0.75) + ' ' + f(-R * 0.3) + ' ' + f(-R * 0.75) + ' ' + f(-R * 0.75) + ' ' + f(-R * 0.1) + ' Z" fill="' + hair + '" stroke="' + INK + '" stroke-width="2"/></g>';
+    s += limb([sh, AF[0], AF[1]], 10, col) + '<circle cx="' + f(AF[1][0]) + '" cy="' + f(AF[1][1]) + '" r="6" fill="#fbfbf7" stroke="' + INK + '" stroke-width="2"/>';
+    if (o.cloth) s += '<path d="M' + f(AF[1][0]) + ' ' + f(AF[1][1]) + ' q14 ' + f(-6 + Math.sin(t * 9) * 5) + ' 30 ' + f(-2 + Math.sin(t * 9 + 1) * 6) + ' l-3 26 q-14 ' + f(4 + Math.sin(t * 9) * 4) + ' -27 0 Z" fill="#fff" stroke="' + INK + '" stroke-width="2"/>';
+    return s + '</g>';
+  }
+
   // ── shots ───────────────────────────────────────────────
   var SLEEP = 50;
   // 0 — you wake up and the flat is on fire: run and open the bedroom door?
   shot(0, function (u, d) { var k = clamp(u / d); return [lerp(130, 190, k), lerp(200, 190, k), lerp(1.7, 1.4, k)]; }, function (u, d, t) {
     var wake = u > 0.8, s = flat(t, { fire: 1, smokeH: 90, smokeB: 30, doorB: { seep: true } });
-    if (u < 2.0) s += sleeper(SLEEP, t, wake ? "shock" : "happy"); else s += bed(SLEEP, t) + person(lerp(120, 205, ease(clamp((u - 2) / 1))), FLR, t, "shock", { s: 0.62, col: "#c23a26" });
+    if (u < 2.0) s += sleeper(SLEEP, t, wake ? "shock" : "happy"); else s += bed(SLEEP, t) + human(lerp(120, 205, ease(clamp((u - 2) / 1))), FLR, t, "shock", { s: 0.62, col: "#c23a26", pose: u < 3 ? "walk" : "stand" });
     return s + qmark(200, 120, t, 44) + tag("تفتح؟", 110, 70, u, 2.4, -3, 22);
   });
   // 1 — no: you might be opening it onto the fire itself
   shot(1, function (u, d) { var k = clamp(u / d); return [lerp(230, 250, k), 200, lerp(1.5, 1.8, k)]; }, function (u, d, t) {
     var op = ease(clamp((u - 0.3) / 0.6)), s = flat(t, { fire: 1, smokeH: 110, smokeB: 40 + op * 60, doorB: { open: op, fireBehind: true } });
-    s += person(200 - op * 20, FLR, t, op > 0.3 ? "shock" : "n", { s: 0.62, col: "#c23a26", push: 0.4 });
+    s += human(200 - op * 20, FLR, t, op > 0.3 ? "shock" : "n", { s: 0.62, col: "#c23a26", push: 0.4 });
     if (op > 0.5) s += '<ellipse cx="250" cy="220" rx="' + f(60 + Math.sin(t * 9) * 6) + '" ry="70" fill="url(#gFireGlow)"/>';
     return s + cross(250, 120, 34, (u - 1.2) / 0.4) + tag("النار نفسها!", 330, 80, u, 1.4, 3, 20, "#f2a0a0");
   });
   // 2 — first: the back of your hand on the door and the knob before you open
   shot(2, function (u, d) { var k = clamp(u / d); return [lerp(230, 240, k), lerp(200, 225, k), lerp(1.8, 2.4, k)]; }, function (u, d, t) {
     var s = flat(t, { fire: 1, smokeH: 110, smokeB: 30, doorB: {} }), hy = u < 2 ? FLR - 120 : FLR - 72;
-    s += person(196, FLR, t, "curious", { s: 0.62, col: "#c23a26", push: 0.55 + 0.05 * Math.sin(t * 2) });
+    s += human(196, FLR, t, "curious", { s: 0.62, col: "#c23a26", push: 0.55 + 0.05 * Math.sin(t * 2) });
     s += '<circle cx="' + f(236 + Math.sin(t * 3)) + '" cy="' + f(hy) + '" r="14" fill="none" stroke="#f2c230" stroke-width="3" opacity="' + f(0.6 + 0.4 * Math.sin(t * 6)) + '"/>';
     return s + tag("ضهر إيدك", 180, 120, u, 0.6, -3, 18) + tag("والأوكرة", 290, 160, u, 2.2, 3, 16, "#bfe0ff");
   });
   // 3 — if they're hot the fire is behind it: don't open, find another way out
   shot(3, function (u, d) { var k = clamp(u / d); return [lerp(240, 170, k), lerp(220, 180, k), lerp(2.2, 1.5, k)]; }, function (u, d, t) {
     var h = clamp(u / 0.8), s = flat(t, { fire: 1, smokeH: 110, smokeB: 30, doorB: { hot: h } });
-    s += person(lerp(196, 150, ease(clamp((u - 1.2) / 1))), FLR, t, "shock", { s: 0.62, col: "#c23a26" }) + cross(250, 140, 22, (u - 0.9) / 0.4);
+    s += human(lerp(196, 150, ease(clamp((u - 1.2) / 1))), FLR, t, "shock", { s: 0.62, col: "#c23a26", pose: u > 1.2 && u < 2.2 ? "walk" : "stand" }) + cross(250, 140, 22, (u - 0.9) / 0.4);
     s += arrow(140, 150, 110, 120, "#3cae6a", 5, clamp((u - 1.8) / 0.6));
     return s + tag("سخن!", 300, 90, u, 0.5, 3, 20, "#f2a0a0") + tag("مخرج تاني", 110, 60, u, 2.0, -3, 17);
   });
   // 4 — but the room fills with smoke and it's hard to breathe
   shot(4, function (u, d) { var k = clamp(u / d); return [lerp(140, 150, k), lerp(180, 170, k), lerp(1.5, 1.7, k)]; }, function (u, d, t) {
     var sm = lerp(40, 150, clamp(u / d)), s = flat(t, { fire: 1, smokeH: 160, smokeB: sm, doorB: { seep: true } });
-    s += person(150, FLR, t, "worry", { s: 0.62, col: "#c23a26" }) + '<circle cx="' + f(165 + Math.sin(t * 10) * 3) + '" cy="' + (FLR - 70) + '" r="5" fill="#8a8580" opacity=".7"/>';
+    s += human(150, FLR, t, "worry", { s: 0.62, col: "#c23a26", pose: "worry" }) + '<circle cx="' + f(165 + Math.sin(t * 10) * 3) + '" cy="' + (FLR - 70) + '" r="5" fill="#8a8580" opacity=".7"/>';
     return s + tag("دخان!", 120, 70, u, 0.6, -3, 22, "#f2a0a0");
   });
   // 5 — so you get down on the floor and crawl
   shot(5, function (u, d) { var k = clamp(u / d); return [lerp(120, 170, k), lerp(230, 240, k), lerp(1.6, 1.9, k)]; }, function (u, d, t) {
-    var s = flat(t, { fire: 1, smokeH: 160, smokeB: 160, doorB: {} }) + crawler(lerp(90, 170, clamp(u / d)), t, "curious", 1);
+    var s = flat(t, { fire: 1, smokeH: 160, smokeB: 160, doorB: {} }) + human(lerp(175, 222, clamp(u / d)), FLR, t, "curious", { pose: "crawl", col: "#c23a26" });
     return s + tag("ازحف!", 140, 120, u, 0.5, -3, 22);
   });
   // 6 — hot smoke rises; the cleaner air stays near the floor
   shot(6, function (u, d) { var k = clamp(u / d); return [140, lerp(200, 220, k), lerp(1.4, 1.6, k)]; }, function (u, d, t) {
     var s = flat(t, { fire: 1, smokeH: 160, smokeB: 170, doorB: {} });
-    s += '<rect x="' + WL + '" y="' + (FLR - 50) + '" width="' + (PB - WL) + '" height="46" fill="#bfe6f7" opacity="' + f(0.3 + 0.15 * Math.sin(t * 3)) + '"/>' + crawler(150, t, "n", 1);
+    s += '<rect x="' + WL + '" y="' + (FLR - 50) + '" width="' + (PB - WL) + '" height="46" fill="#bfe6f7" opacity="' + f(0.3 + 0.15 * Math.sin(t * 3)) + '"/>' + human(205, FLR, t, "n", { pose: "crawl", col: "#c23a26" });
     for (var i = 0; i < 4; i++) { var yy = 200 - ((t * 40 + i * 30) % 120); s += arrow(60 + i * 50, yy, 60 + i * 50, yy - 30, "#ff8a3a", 4, 1); }
     return s + tag("سخن لفوق", 140, 60, u, 0.6, -3, 18, "#f2a0a0") + tag("الهوا الأنضف", 150, 330, u, 1.8, 3, 18, "#bfe0ff");
   });
@@ -693,13 +733,13 @@
   // 8 — say the door is cool and you get out into the hall
   shot(8, function (u, d) { var k = clamp(u / d); return [lerp(230, 300, k), 200, lerp(1.7, 1.4, k)]; }, function (u, d, t) {
     var op = ease(clamp((u - 0.6) / 0.6)), s = flat(t, { fire: 0.6, smokeH: 90, smokeB: 30, doorB: { open: op } });
-    s += person(lerp(200, 300, ease(clamp((u - 1.2) / 1.2))), FLR, t, "n", { s: 0.62, col: "#c23a26" }) + check(250, 120, 16, (u - 0.3) / 0.4);
+    s += human(lerp(200, 300, ease(clamp((u - 1.2) / 1.2))), FLR, t, "n", { s: 0.62, col: "#c23a26", pose: u > 1.2 && u < 2.4 ? "walk" : "stand" }) + check(250, 120, 16, (u - 0.3) / 0.4);
     return s + tag("بارد", 190, 80, u, 0.3, -3, 20, "#bfe0ff");
   });
   // 9 — so you close every door behind you on the way out
   shot(9, function (u, d) { var k = clamp(u / d); return [lerp(280, 400, k), 190, lerp(1.5, 1.3, k)]; }, function (u, d, t) {
     var c1 = 1 - ease(clamp((u - 0.4) / 0.5)), s = flat(t, { fire: 0.6, smokeH: 90, smokeB: 30, doorB: { open: c1 }, doorF: { open: 1 - ease(clamp((u - 1.8) / 0.5)) } });
-    s += person(lerp(290, 520, ease(clamp(u / d))), FLR, t, "n", { s: 0.62, col: "#c23a26", push: 0.3 });
+    s += human(lerp(290, 520, ease(clamp(u / d))), FLR, t, "n", { s: 0.62, col: "#c23a26", pose: "walk" });
     return s + tag("اقفل وراك", 380, 70, u, 0.8, 3, 21);
   });
   // 10 — the US test: closed-door room stayed under 40°C, open-door room passed 500
@@ -714,31 +754,31 @@
   // 11 — the stairs are crowded and the lift is empty in front of you
   shot(11, function (u, d) { var k = clamp(u / d); return [lerp(540, 570, k), lerp(220, 210, k), lerp(1.6, 1.8, k)]; }, function (u, d, t) {
     var s = flat(t, { fire: 0.6, smokeH: 60, doorF: {} });
-    for (var i = 0; i < 4; i++) s += person(PF + 40 + i * 18 + Math.sin(t * 3 + i) * 2, FLR + 30 + i * 18, t + i, "worry", { s: 0.42, col: ["#2f6fae", "#3cae6a", "#e2b035", "#8a5cc2"][i] });
-    s += person(545, FLR, t, "curious", { s: 0.6, col: "#c23a26", look: 1 }) + '<rect x="574" y="' + (FLR - 130) + '" width="64" height="130" fill="#fff8d0" opacity="' + f(0.25 + 0.15 * Math.sin(t * 4)) + '"/>';
+    for (var i = 0; i < 4; i++) s += human(PF + 40 + i * 18 + Math.sin(t * 3 + i) * 2, FLR + 30 + i * 18, t + i, "worry", { s: 0.42, pose: "walk", col: ["#2f6fae", "#3cae6a", "#e2b035", "#8a5cc2"][i] });
+    s += human(545, FLR, t, "curious", { s: 0.6, col: "#c23a26", look: 1 }) + '<rect x="574" y="' + (FLR - 130) + '" width="64" height="130" fill="#fff8d0" opacity="' + f(0.25 + 0.15 * Math.sin(t * 4)) + '"/>';
     return s + qmark(606, 120, t, 40) + tag("الأسانسير؟", 560, 70, u, 0.8, 3, 19);
   });
   // 12 — so you take the stairs: the lift can stop with you inside and smoke coming in
   shot(12, function (u, d) { var k = clamp(u / d); return [lerp(570, 540, k), lerp(200, 240, k), lerp(1.8, 1.5, k)]; }, function (u, d, t) {
     var s = flat(t, { fire: 0.6, smokeH: 60, doorF: {}, lift: "x" }) + smoke(570, 642, 90 + 30 * Math.sin(t), t) + cross(606, 200, 28, (u - 0.4) / 0.4);
-    s += person(lerp(500, 560, clamp((u - 1) / 2)), lerp(FLR, FLR + 100, clamp((u - 1) / 2)), t, "n", { s: 0.5, col: "#c23a26" }) + arrow(510, FLR + 10, 580, FLR + 110, "#3cae6a", 5, clamp((u - 1.2) / 0.8));
+    s += human(lerp(500, 560, clamp((u - 1) / 2)), lerp(FLR, FLR + 100, clamp((u - 1) / 2)), t, "n", { s: 0.5, col: "#c23a26", pose: u > 1 && u < 3 ? "walk" : "stand" }) + arrow(510, FLR + 10, 580, FLR + 110, "#3cae6a", 5, clamp((u - 1.2) / 0.8));
     return s + tag("السلم", 470, 380, u, 1.6, -3, 21) + tag("ممكن يقف", 600, 70, u, 2.6, 3, 16, "#f2a0a0");
   });
   // 13 — but say the door is hot and you're trapped in the room
   shot(13, function (u, d) { var k = clamp(u / d); return [lerp(160, 170, k), lerp(180, 190, k), lerp(1.4, 1.6, k)]; }, function (u, d, t) {
-    var s = flat(t, { fire: 1, smokeH: 160, smokeB: 40, doorB: { hot: 1, seep: true } }) + person(150, FLR, t, "worry", { s: 0.62, col: "#c23a26" });
+    var s = flat(t, { fire: 1, smokeH: 160, smokeB: 40, doorB: { hot: 1, seep: true } }) + human(150, FLR, t, "worry", { s: 0.62, col: "#c23a26", pose: "worry" });
     return s + tag("محبوس!", 130, 70, u, 0.8, -3, 22, "#f2a0a0");
   });
   // 14 — so you keep the door shut and put a wet towel under it to block the smoke
   shot(14, function (u, d) { var k = clamp(u / d); return [lerp(230, 245, k), lerp(240, 260, k), lerp(2.0, 2.6, k)]; }, function (u, d, t) {
     var tw = u > 1.0, s = flat(t, { fire: 1, smokeH: 160, smokeB: 40, doorB: { hot: 0.6, seep: !tw, towel: tw } });
-    s += crawler(200, t, "curious", 1) + (tw ? check(260, 220, 14, (u - 1.4) / 0.5) : "");
+    s += human(200, FLR, t, "curious", { pose: "crawl", col: "#c23a26" }) + (tw ? check(260, 220, 14, (u - 1.4) / 0.5) : "");
     return s + tag("فوطة مبلولة", 230, 160, u, 1.0, -3, 17, "#bfe0ff");
   });
   // 15 — go to the window, wave something light-coloured, and call the fire brigade on 180
   shot(15, function (u, d) { var k = clamp(u / d); return [lerp(130, 120, k), lerp(160, 170, k), lerp(1.6, 1.8, k)]; }, function (u, d, t) {
-    var s = flat(t, { fire: 1, smokeH: 160, smokeB: 40, doorB: { hot: 0.5, towel: true } }) + person(100, FLR - 30, t, "n", { s: 0.62, col: "#c23a26", push: 0.9 + 0.1 * Math.sin(t * 8) });
-    s += '<path d="M' + f(140 + Math.sin(t * 8) * 6) + ' ' + f(FLR - 104) + ' l24 -6 l-4 22 l-22 2 Z" fill="#fff" stroke="' + INK + '" stroke-width="1.4"/>' + phone(200, 140, t, clamp((u - 1.6) / 0.6) * 1.2);
+    var s = flat(t, { fire: 1, smokeH: 160, smokeB: 40, doorB: { hot: 0.5, towel: true } }) + human(100, FLR - 30, t, "n", { s: 0.62, col: "#c23a26", pose: "wave", cloth: true });
+    s += phone(200, 140, t, clamp((u - 1.6) / 0.6) * 1.2);
     return s + tag("شاور", 80, 60, u, 0.6, -3, 18) + tag("المطافي", 200, 230, u, 2.0, 3, 16, "#f2a0a0");
   });
   // 16 — but the fire started while you were asleep and nobody woke you
@@ -759,7 +799,7 @@
   });
   // 19 — many think there's time to grab the phone, the money and the gold
   shot(19, function (u, d) { var k = clamp(u / d); return [lerp(150, 170, k), 180, lerp(1.5, 1.6, k)]; }, function (u, d, t) {
-    var s = flat(t, { fire: 1, smokeH: 120, smokeB: 30, alarm: 1, beep: true }) + person(150, FLR, t, "curious", { s: 0.62, col: "#c23a26" });
+    var s = flat(t, { fire: 1, smokeH: 120, smokeB: 30, alarm: 1, beep: true }) + human(150, FLR, t, "curious", { s: 0.62, col: "#c23a26" });
     s += item("phone", 100, 110, clamp((u - 0.3) / 0.4), t) + item("cash", 160, 90, clamp((u - 1.1) / 0.4), t) + item("gold", 220, 110, clamp((u - 1.9) / 0.4), t);
     return s + qmark(160, 50, t, 30);
   });
@@ -770,13 +810,13 @@
   });
   // 21 — once you're out, don't even think about going back in
   shot(21, function (u, d) { var k = clamp(u / d); return [lerp(300, 290, k), 200, lerp(1.2, 1.4, k)]; }, function (u, d, t) {
-    var s = outside(t, { burning: true }) + person(390, 320, t, "worry", { s: 0.62, col: "#c23a26", look: -1 }) + arrow(370, 270, 310, 270, "#e23b2f", 5, clamp(u / 0.6)) + cross(330, 250, 22, (u - 0.8) / 0.4);
+    var s = outside(t, { burning: true }) + human(390, 320, t, "worry", { s: 0.62, col: "#c23a26", dir: -1 }) + arrow(370, 270, 310, 270, "#e23b2f", 5, clamp(u / 0.6)) + cross(330, 250, 22, (u - 0.8) / 0.4);
     return s + tag("متدخلش تاني", 430, 80, u, 1.0, 3, 19, "#f2a0a0");
   });
   // 22 — add an extinguisher in the kitchen, a meeting point outside, and a plan agreed with your family
   shot(22, function (u, d) { var k = ease(clamp((u - 2) / 1)); return [lerp(300, 520, k), lerp(220, 220, k), lerp(1.6, 1.3, k)]; }, function (u, d, t) {
     var s = u < 2 ? flat(t, { ext: clamp((u - 0.3) / 0.6), alarm: 1 }) : outside(t, { sign: 520 });
-    if (u >= 2) for (var i = 0; i < 4; i++) s += person(450 + i * 34, 320, t + i, "happy", { s: [0.6, 0.55, 0.42, 0.38][i], col: ["#c23a26", "#2f6fae", "#e2b035", "#3cae6a"][i] });
+    if (u >= 2) for (var i = 0; i < 4; i++) s += human(450 + i * 34, 320, t + i, "happy", { s: [0.6, 0.55, 0.42, 0.38][i], col: ["#c23a26", "#2f6fae", "#e2b035", "#3cae6a"][i], hair: ["#3a2a1e", "#1c1c1c", "#6a4a2a", "#3a2a1e"][i], dir: -1 });
     return s + (u < 2 ? tag("طفاية", 380, 200, u, 0.6, 3, 20) : tag("نقطة تجمع", 380, 120, u, 2.4, -3, 18) + tag("خطة مع أهلك", 560, 380, u, 3.2, 3, 17, "#bfe0ff"));
   });
   // 23 — congratulations: you've made an escape plan that can save your whole family
@@ -787,11 +827,11 @@
   // 24 — outro
   shot(24, function (u, d) { return [lerp(320, 360, clamp(u / d)), 190, 1.0]; }, function (u, d, t) {
     var s = outside(t, { sign: 520, sky: "dawn" });
-    for (var i = 0; i < 4; i++) s += person(450 + i * 34, 320, t + i, "happy", { s: [0.6, 0.55, 0.42, 0.38][i], col: ["#c23a26", "#2f6fae", "#e2b035", "#3cae6a"][i] });
+    for (var i = 0; i < 4; i++) s += human(450 + i * 34, 320, t + i, "happy", { s: [0.6, 0.55, 0.42, 0.38][i], col: ["#c23a26", "#2f6fae", "#e2b035", "#3cae6a"][i], hair: ["#3a2a1e", "#1c1c1c", "#6a4a2a", "#3a2a1e"][i], dir: -1 });
     return s + tag("قولولنا!", 470, 80, u, 0.4, 3, 26);
   });
 
-  window.__parts = { flat: flat, outside: outside, fire: fire, flame: flame, smoke: smoke, door: door, person: person, crawler: crawler, alarm: alarm, extinguisher: extinguisher, phone: phone, tag: tag, hardHat: hardHat, sleeper: sleeper, bed: bed };
+  window.__parts = { flat: flat, outside: outside, fire: fire, flame: flame, smoke: smoke, door: door, person: human, crawler: crawler, alarm: alarm, extinguisher: extinguisher, phone: phone, tag: tag, hardHat: hardHat, sleeper: sleeper, bed: bed };
   window.__panel = function (svg, t) {
     CLIPN = 0; OILN = 0; var i = at(t), sh = SH[i], next = i + 1 < SH.length ? SH[i + 1].a : L(LN.length), u = t - sh.a, d = Math.max(0.5, next - sh.a);
     var c = sh.cam(u, d), cx = c[0] + 16 * Math.sin(t * 1.2), cy = c[1] + 12 * Math.cos(t * 1.2), z = c[2] * (1 + 0.03 * Math.sin(t * 1.1));   // a slow circle: the drift never comes to rest
