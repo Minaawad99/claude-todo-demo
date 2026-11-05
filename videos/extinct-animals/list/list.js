@@ -1,7 +1,7 @@
 // «الصور» — حيوانات منقرضة… نحمد الله على انقراضها. Opening clip: videos/_intros/3-hut-jersey-gesture-hand-cover.mp4 (suggested)
 window.LIST = {
   dur: 10,
-  intro: { frames: 0, fps: 30, title: "حيوانات منقرضة…\nنحمد الله على انقراضها! 🦖", top: 10, shift: 0 },
+  intro: { frames: 0, fps: 30, title: "لو عاشت هذه الحيوانات اليوم…\nلما خرجنا من بيوتنا! 😱🦖", top: 10, shift: 0 },
   items: [
     { emoji: "🦈", title: "قرش أطول من حافلة", photo: "photos/x.jpg", labels: [],
       body: "كان الميغالودون يجوب المحيطات قبل ملايين السنين بطول يقارب 15 مترًا، وأسنانه بحجم كف اليد… وكان يبتلع الحيتان كما نبتلع نحن السمك!" },
