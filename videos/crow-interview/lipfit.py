@@ -11,7 +11,7 @@ import sys, re, subprocess, tempfile, os
 clip, line, out = sys.argv[1:4]; MAXR = float(sys.argv[sys.argv.index("--max")+1]) if "--max" in sys.argv else 1.2; SKIP = int(sys.argv[sys.argv.index("--skip")+1]) if "--skip" in sys.argv else 0
 if "--part" in sys.argv:
     a_,b_=sys.argv[sys.argv.index("--part")+1].split(":"); cut_line=tempfile.mktemp(suffix=".wav")
-    subprocess.run(["ffmpeg","-v","error","-y","-i",line,"-ss",a_,"-to",b_,cut_line],check=True); line=cut_line
+    subprocess.run(["ffmpeg","-v","error","-y","-ss",a_,"-t",f"{float(b_)-float(a_):.3f}","-i",line,cut_line],check=True); line=cut_line
 def dur(f): return float(subprocess.run(["ffprobe","-v","error","-show_entries","format=duration","-of","csv=p=0",f],capture_output=True,text=True).stdout)
 def speech(f, db, d=0.2, gap=0.18, minlen=0.25):
     log = subprocess.run(["ffmpeg","-i",f,"-af",f"silencedetect=noise={db}dB:d={d}","-f","null","-"],capture_output=True,text=True).stderr
@@ -44,12 +44,22 @@ if not V: sys.exit("no speech found in clip")
 tmp=tempfile.mkdtemp(); parts=[]
 if len(V)==len(O) and '--span' not in sys.argv: pairs=list(zip(O,V)); mode="phrase"
 else: pairs=[([O[0][0],O[-1][1]],[V[0][0],V[-1][1]])]; mode="span"
+# Each phrase keeps a margin of our own audio around it, so soft word starts and the fading end of the last
+# syllable are never cut: up to 0.15 s before and 0.40 s after, but never into the neighbouring phrase.
+LO=[p[0] for p in pairs]; LD=dur(line)
 for i,(o,v) in enumerate(pairs):
-    r=(o[1]-o[0])/(v[1]-v[0]); p=f"{tmp}/p{i}.wav"
-    subprocess.run(["ffmpeg","-v","error","-y","-i",line,"-ss",f"{o[0]:.3f}","-to",f"{o[1]:.3f}","-af",atempo(r)+",afade=t=in:d=0.02","-ar","48000","-ac","1",p],check=True)
-    parts.append((p,v[0])); print(f"  {mode} {i}: ours {o[0]:.2f}-{o[1]:.2f}s -> clip {v[0]:.2f}-{v[1]:.2f}s  (x{r:.2f})")
+    r=(o[1]-o[0])/(v[1]-v[0]); rr=max(.8,min(MAXR,r))
+    pre=min(0.15, o[0] - (LO[i-1][1] + 0.02 if i else 0.0)); pre=max(0.0, pre)
+    post=min(0.40, (LO[i+1][0] - 0.02 if i+1 < len(LO) else LD) - o[1]); post=max(0.0, post)
+    a0, a1 = o[0]-pre, o[1]+post; p=f"{tmp}/p{i}.wav"
+    subprocess.run(["ffmpeg","-v","error","-y","-ss",f"{a0:.3f}","-t",f"{a1-a0:.3f}","-i",line,"-af",atempo(r)+",afade=t=in:d=0.01,areverse,afade=t=in:d=0.03,areverse","-ar","48000","-ac","1",p],check=True)
+    parts.append((p,max(0.0, v[0]-pre/rr))); print(f"  {mode} {i}: ours {o[0]:.2f}-{o[1]:.2f}s (+{pre:.2f}/{post:.2f}) -> clip {v[0]:.2f}-{v[1]:.2f}s  (x{r:.2f})")
 inp=[]; fl=[]
 for i,(p,t) in enumerate(parts): inp+=["-i",p]; fl.append(f"[{i+1}]adelay={int(t*1000)}:all=1[a{i}]")
-mix="".join(f"[a{i}]" for i in range(len(parts)))+f"amix=inputs={len(parts)}:normalize=0,apad,atrim=0:{dur(clip)-CUT:.3f}[aout]"
-subprocess.run(["ffmpeg","-v","error","-y","-ss",f"{CUT:.3f}","-i",clip,*inp,"-filter_complex",";".join(fl)+";"+mix,"-map","0:v","-map","[aout]","-c:v","libx264","-crf","16","-pix_fmt","yuv420p","-c:a","aac","-b:a","192k","-ar","48000",out],check=True)
+mix="".join(f"[a{i}]" for i in range(len(parts)))+f"amix=inputs={len(parts)}:normalize=0,apad=pad_dur=0.4[aout]"
+# 1) the synced voice as a lossless wav (what build.py uses), 2) the clip with that voice, its last frame held if the voice runs longer
+wav=out[:-4]+".wav"
+subprocess.run(["ffmpeg","-v","error","-y",*inp,"-filter_complex",";".join(f.replace(f"[{i+1}]",f"[{i}]") for i,f in enumerate(fl))+";"+mix,"-map","[aout]","-ar","48000","-ac","1",wav],check=True)
+T=max(dur(clip)-CUT, dur(wav))
+subprocess.run(["ffmpeg","-v","error","-y","-ss",f"{CUT:.3f}","-i",clip,"-i",wav,"-map","0:v","-map","1:a","-vf","tpad=stop_mode=clone:stop_duration=5","-t",f"{T:.3f}","-c:v","libx264","-crf","16","-pix_fmt","yuv420p","-c:a","aac","-b:a","192k","-ar","48000","-af","apad",out],check=True)
 print(out, f"veo phrases {len(V)}, ours {len(O)}")

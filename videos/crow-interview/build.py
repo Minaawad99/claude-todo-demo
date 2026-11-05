@@ -28,8 +28,9 @@ blocks = []   # (audio array, [(src, in, dur|None, grade)], fx cues relative to 
 
 def talk(k, cover=None, fx=()):
     """A line spoken on camera: audio and picture both from the synced clip. cover=[(src,in,dur,grade)] replaces the picture after `at` seconds."""
-    s, e = speech_span(S(k)); a0, a1 = max(0, s - 0.25), min(dur(S(k)), e + 0.2)
-    aud = pcm(S(k), a0, a1); L = len(aud) / SR + GAP
+    w = S(k)[:-4] + ".wav"                      # lossless synced voice written by lipfit.py
+    s, e = speech_span(w); a0, a1 = max(0, s - 0.25), min(dur(w), e + 0.3)
+    aud = pcm(w, a0, a1); L = len(aud) / SR + GAP
     if cover:
         at, pieces = cover; vid = [(S(k), a0, at, "")] + pieces
     else: vid = [(S(k), a0, None, "")]
@@ -42,12 +43,12 @@ talk("H01", fx=[(0, "wind_in")])
 talk("K02")
 talk("H03")
 talk("K04")
-over("04", [(C("R04"), 0.5, 4.2, WARM), (C("R05"), 0, None, "")], a=5.85)
+over("04", [(C("R04"), 0.5, 4.2, WARM), (C("R05"), 0, None, "")], a=5.75)
 talk("K05")
 talk("H06")
 talk("K07")
-over("07", [(I("PIN_WA"), 0, 2.6, ""), (I("M07"), 0, None, "")], a=1.50, fx=[(0, "whoosh"), (1.4, "pop")])
-over("08", [(I("M07"), 6.6, 1.4, ""), (C("C05"), 0, None, "")])
+over("07", [(I("PIN_WA"), 0, 2.6, ""), (I("M07"), 0, None, "")], a=3.62, fx=[(0, "whoosh"), (1.4, "pop")])
+over("08", [(I("M07"), 4.5, 3.5, ""), (C("C05"), 0, None, "")])
 talk("H09")
 talk("K10", cover=(2.4, [(I("M10"), 0, None, "")]))
 over("11", [(C("R11"), 0, 6.0, WARM), (I("M11"), 2.2, None, "")])
@@ -112,11 +113,15 @@ for k, ch in enumerate(chords * int(total // 32 + 1)):
 air = sfx.lp_fast(sfx.noise(n), 900) * (0.25 + 0.15 * np.sin(2 * np.pi * 0.05 * tt))
 bed = sfx.lp_fast(bed, 1200) + air.astype(np.float32) * 0.6
 fade = np.minimum(1, np.minimum(tt / 2.0, (total - tt) / 2.5)).astype(np.float32); bed *= fade
+# even out the voice: TTS lets the last syllables of a sentence drop ~20 dB, which sounds cut off under music
+sfx.write_wav(f"{TMP}/vraw.wav", voice)
+run("ffmpeg", "-v", "error", "-y", "-i", f"{TMP}/vraw.wav", "-af", "acompressor=threshold=0.03:ratio=5:attack=3:release=150:knee=6:makeup=3,alimiter=limit=0.9", "-ar", str(SR), "-ac", "1", f"{TMP}/vcomp.wav")
+voice = pcm(f"{TMP}/vcomp.wav")
 v = np.zeros(n, np.float32); v[:len(voice)] = voice[:n]
 def db(x): return 20 * np.log10(np.sqrt(np.mean(x[np.abs(x) > 1e-3] ** 2)) + 1e-9)
 vr = db(v)
 env_v = sfx.lp_fast(np.abs(v), 4) ; duck = 1 - 0.55 * np.clip(env_v / (np.max(env_v) * 0.15), 0, 1)
-bed *= 10 ** ((vr - 21 - db(bed)) / 20); bed *= duck.astype(np.float32)
+bed *= 10 ** ((vr - 23 - db(bed)) / 20); bed *= duck.astype(np.float32)
 fxmap = {"wind_in": lambda: sfx.fx_wind(3.0), "whoosh": sfx.fx_whoosh, "pop": sfx.fx_pop, "drop": sfx.fx_drop, "clink": lambda: sfx.fx_clink(0.5, 900)}
 fx = np.zeros(n, np.float32)
 for ct, name in cues:
@@ -124,7 +129,7 @@ for ct, name in cues:
     fx[s0:s0 + len(x)] += x * 10 ** ((vr - 16 - db(x)) / 20)
 mix = v + bed + fx
 mix /= max(1.0, np.max(np.abs(mix)) / 0.95)
-sfx.write_wav(f"{TMP}/mix.wav", mix)
+sfx.write_wav(f"{TMP}/mix.wav", mix); sfx.write_wav(OUT.replace(".mp4", "-voice.wav"), v)   # voice-only track, for checks
 
 # ── final: picture + sound ──
 run("ffmpeg", "-v", "error", "-y", "-i", f"{TMP}/pic.mp4", "-i", f"{TMP}/mix.wav",
