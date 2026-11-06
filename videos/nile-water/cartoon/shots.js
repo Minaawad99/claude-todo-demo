@@ -333,7 +333,7 @@
   window.__parts = { nTank: nTank, nPipe: nPipe, nFlow: nFlow, nWater: nWater, head: head, tag: tag, gauge: gauge, nMicro: nMicro, nRiverBed: nRiverBed };
   window.__panel = function (svg, t) {
     var i = at(t), sh = SH[i], next = i + 1 < SH.length ? SH[i + 1].a : L(LN.length), u = t - sh.a, d = Math.max(0.5, next - sh.a);
-    var c = sh.cam(u, d), cx = c[0] + 16 * Math.sin(t * 1.2), cy = c[1] + 12 * Math.cos(t * 1.2), z = c[2] * (1 + 0.03 * Math.sin(t * 1.1));   // a slow circle: the drift never comes to rest
+    var c = sh.cam(u, d), cx = c[0] + 30 * Math.sin(t * 1.7), cy = c[1] + 22 * Math.cos(t * 1.7), z = c[2] * (1 + 0.05 * Math.sin(t * 1.3));   // a slow circle: the drift never comes to rest
     svg.innerHTML = '<g transform="translate(320 180) rotate(' + f(0.9 * Math.sin(t * 0.83)) + ') scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g><rect width="640" height="360" filter="url(#grain)"/>';
     return i;
   };
