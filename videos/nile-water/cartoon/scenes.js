@@ -103,280 +103,339 @@
   function spark(x, y, t, col) { var k = 0.5 + 0.5 * Math.sin(t * 6 + x); return '<path d="M' + f(x) + ' ' + f(y - 8 * k) + ' L' + f(x + 2) + ' ' + f(y - 2) + ' L' + f(x + 8 * k) + ' ' + f(y) + ' L' + f(x + 2) + ' ' + f(y + 2) + ' L' + f(x) + ' ' + f(y + 8 * k) + ' L' + f(x - 2) + ' ' + f(y + 2) + ' L' + f(x - 8 * k) + ' ' + f(y) + ' L' + f(x - 2) + ' ' + f(y - 2) + ' Z" fill="' + (col || "#fff") + '" stroke="#fff" stroke-width="1"/>'; }
 
   window.__kit = { W: W, H: H, L: L, LN: LN, clamp: clamp, lerp: lerp, ease: ease, pop: pop, hash: hash, f: f, pts: pts, sun: sun, clouds: clouds, sky: sky, bubbles: bubbles, water: water, soil: soil, grass: grass, sand: sand, gravel: gravel, floc: floc, microbe: microbe, pipe: pipe, along: along, flow: flow, tank: tank, pump: pump, gauge: gauge, big: big, tag: tag, spark: spark, INK: INK, ORANGE: ORANGE, YEL: YEL, NAVY: NAVY, BLUE: BLUE, PINK: PINK, GREEN: GREEN, BROWN: BROWN };
-  // ── the 25 shots (full-bleed 360×436 picture, reference look) ──
-  var K = window.__kit, f = K.f, pop = K.pop, clamp = K.clamp, hash = K.hash, ORANGE = K.ORANGE, YEL = K.YEL, PINK = K.PINK, GREEN = K.GREEN, BLUE = K.BLUE, lerp = K.lerp;
-  var RIVER = [[400, 470], [330, 370], [250, 330], [170, 250], [120, 150], [30, 60], [-40, -20]];   // the Nile from the bottom right to the top left
+  // ── the 25 shots, reference look (full-bleed 360×436, bold white outlines), with the real parts of a Nile treatment plant:
+  //    bar screen + rake, flash mixer, flocculation, rectangular clarifier with a chain scraper, rapid sand filter with wash
+  //    troughs and underdrain, chlorine cylinders + contact tank, underground clear-water tank, high-lift pumps, booster station ──
+  var K = window.__kit, ORANGE = K.ORANGE, YEL = K.YEL, PINK = K.PINK, GREEN = K.GREEN, BLUE = K.BLUE, NAVY = "#0d1a33";
   var SH = [];
-  function shot(line, cam, draw) { SH.push({ a: K.L(line), cam: cam, draw: draw }); }
+  function shot(line, cam, draw) { SH.push({ a: L(line), cam: cam, draw: draw }); }
   function at(t) { var i = 0; while (i < SH.length - 1 && SH[i + 1].a <= t) i++; return i; }
-  function CAM(x, y, z) { return function (u, d) { var k = clamp(u / d); return [lerp(x[0], x[1], k), lerp(y[0], y[1], k), lerp(z[0], z[1], k)]; }; }
+  function CAM(x, y, z) { return function (u, d) { var k = ease(clamp(u / d)); return [lerp(x[0], x[1], k), lerp(y[0], y[1], k), lerp(z[0], z[1], k)]; }; }
+  function grow(u, d) { return clamp(u / (d * 0.55)); }
+  function P(p) { return "M" + p.map(function (q) { return f(q[0]) + " " + f(q[1]); }).join(" L"); }
+  function bg(fill) { return '<rect x="-80" y="-80" width="520" height="600" fill="' + fill + '"/>'; }
+  function navyBg() { var s = bg("url(#skyNight)"); for (var x = -80; x < 440; x += 24) s += '<path d="M' + x + ' -80 V520" stroke="#fff" stroke-opacity=".05"/>'; for (var y = -80; y < 520; y += 24) s += '<path d="M-80 ' + y + ' H440" stroke="#fff" stroke-opacity=".05"/>'; return s; }
 
-  function reveal(u, d) { return clamp(u / (d * 0.5)); }   // a thing that grows over the first half of its shot
+  // ── realistic pieces ──
+  function faucet(x, y, s, t) {   // a chrome single-lever gooseneck mixer on a deck plate
+    var g = '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')">';
+    g += '<ellipse cx="0" cy="0" rx="34" ry="9" fill="url(#steelG)" stroke="#fff" stroke-width="3"/>';
+    g += '<path d="M-14 0 V-120 Q-14 -170 36 -170 Q86 -170 86 -120 V-104" fill="none" stroke="#fff" stroke-width="30" stroke-linecap="round"/><path d="M-14 0 V-120 Q-14 -170 36 -170 Q86 -170 86 -120 V-104" fill="none" stroke="url(#steelG)" stroke-width="22" stroke-linecap="round"/>';
+    g += '<path d="M-20 -120 Q-20 -176 36 -176" fill="none" stroke="#fff" stroke-width="4" opacity=".8"/>';
+    g += '<rect x="74" y="-108" width="24" height="12" rx="4" fill="#5d6873" stroke="#fff" stroke-width="2.5"/>';
+    g += '<path d="M-14 -40 L-52 -62" stroke="#fff" stroke-width="16" stroke-linecap="round"/><path d="M-14 -40 L-52 -62" stroke="url(#steelG)" stroke-width="10" stroke-linecap="round"/>';
+    return g + '</g>';
+  }
+  function stream(x, y0, y1, t, w) {   // a glossy falling stream of water
+    var s = '<path d="M' + (x - w / 2) + ' ' + y0 + ' Q' + (x - w / 2 - 1) + ' ' + ((y0 + y1) / 2) + ' ' + (x - w / 2 + 1) + ' ' + y1 + ' L' + (x + w / 2 - 1) + ' ' + y1 + ' Q' + (x + w / 2 + 1) + ' ' + ((y0 + y1) / 2) + ' ' + (x + w / 2) + ' ' + y0 + ' Z" fill="#9fe0ff" opacity=".85" stroke="#fff" stroke-width="1.5"/>';
+    for (var i = 0; i < 6; i++) { var k = (t * 2.2 + i / 6) % 1; s += '<rect x="' + f(x - w / 2 + 2) + '" y="' + f(y0 + k * (y1 - y0)) + '" width="' + f(w * 0.25) + '" height="10" rx="2" fill="#fff" opacity=".8"/>'; }
+    return s;
+  }
+  function splash(x, y, t) { var s = ""; for (var i = 0; i < 7; i++) { var k = (t * 2.5 + i / 7) % 1, a = -Math.PI * (0.15 + 0.7 * hash(i)); s += '<circle cx="' + f(x + Math.cos(a) * 26 * k) + '" cy="' + f(y + Math.sin(a) * 22 * k + 30 * k * k) + '" r="' + f(3 * (1 - k) + 1) + '" fill="#cfefff" stroke="#fff" stroke-width="1"/>'; } return s; }
+  function glass(x, y, w, h, level, fill, t) {   // a tumbler, slightly narrower at the base, with highlights
+    var s = '<path d="M' + (x - w / 2) + ' ' + (y - h) + ' L' + (x - w / 2 + 6) + ' ' + y + ' L' + (x + w / 2 - 6) + ' ' + y + ' L' + (x + w / 2) + ' ' + (y - h) + ' Z" fill="#fff" fill-opacity=".18" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>';
+    var ly = y - 6 - (h - 10) * clamp(level), lw = w / 2 - 6 * (ly - (y - h)) / h;
+    if (level > 0) { var d = "M" + f(x - (w / 2 - 5)) + " " + f(ly); for (var q = -w / 2 + 6; q <= w / 2 - 6; q += 6) d += " L" + f(x + q) + " " + f(ly + Math.sin(q * 0.3 + t * 5) * 1.5); s += '<path d="' + d + ' L' + f(x + w / 2 - 10) + ' ' + (y - 4) + ' L' + f(x - w / 2 + 10) + ' ' + (y - 4) + ' Z" fill="' + fill + '"/>'; }
+    s += '<path d="M' + (x - w / 2 + 9) + ' ' + (y - h + 10) + ' L' + (x - w / 2 + 13) + ' ' + (y - 12) + '" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".7"/>';
+    return s;
+  }
+  function palm(x, y, s, t) {
+    var sw = Math.sin(t * 1.6 + x) * 4, g = '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')"><path d="M0 0 Q4 -40 ' + f(sw) + ' -80" stroke="#8a5a2b" stroke-width="9" fill="none" stroke-linecap="round"/>';
+    for (var i = 0; i < 6; i++) { var a = -Math.PI / 2 + (i - 2.5) * 0.55 + Math.sin(t * 1.4 + i) * 0.06, ex = f(sw + Math.cos(a) * 44), ey = f(-80 + Math.sin(a) * 30 + 14); g += '<path d="M' + f(sw) + ' -80 Q' + f(sw + Math.cos(a) * 26) + ' ' + f(-80 + Math.sin(a) * 34) + ' ' + ex + ' ' + ey + '" stroke="#2f8a4a" stroke-width="9" fill="none" stroke-linecap="round"/>'; }
+    return g + '</g>';
+  }
+  function felucca(x, y, s, t) {   // the Nile sailing boat
+    var b = Math.sin(t * 2) * 2; return '<g transform="translate(' + f(x) + ' ' + f(y + b) + ') scale(' + s + ')"><path d="M-40 0 Q0 16 44 0 L36 -6 H-34 Z" fill="#c8793a" stroke="#fff" stroke-width="3"/><path d="M0 -6 V-60" stroke="#5a3a1a" stroke-width="3"/><path d="M2 -62 L40 -10 L2 -10 Z" fill="#fff8e6" stroke="#fff" stroke-width="2"/><path d="M-2 -70 L-30 -14 L-2 -12" fill="#f0e6cf" stroke="#fff" stroke-width="2"/></g>';
+  }
+  function skyline(y, t) {   // Cairo: blocks, minarets, the Cairo Tower with its lotus top
+    var s = ""; for (var i = 0; i < 12; i++) { var x = -40 + i * 36, h = 30 + hash(i) * 50; s += '<rect x="' + x + '" y="' + f(y - h) + '" width="32" height="' + f(h) + '" fill="' + (i % 2 ? "#5a7fa8" : "#6f93b8") + '" stroke="#fff" stroke-width="2"/>'; for (var w = 0; w < 3; w++) s += '<rect x="' + (x + 6 + w * 8) + '" y="' + f(y - h + 8) + '" width="4" height="5" fill="#ffe08a" opacity="' + (hash(i + w) > 0.5 ? 0.9 : 0.3) + '"/>'; }
+    s += '<path d="M250 ' + y + ' L254 ' + (y - 110) + ' L262 ' + (y - 110) + ' L266 ' + y + ' Z" fill="#c9d6e4" stroke="#fff" stroke-width="2.5"/><path d="M248 ' + (y - 110) + ' Q258 ' + (y - 132) + ' 268 ' + (y - 110) + ' Z" fill="#9fb4c9" stroke="#fff" stroke-width="2.5"/><path d="M258 ' + (y - 132) + ' V' + (y - 146) + '" stroke="#fff" stroke-width="2"/>';
+    s += '<path d="M90 ' + y + ' V' + (y - 70) + '" stroke="#e8dcc4" stroke-width="6"/><circle cx="90" cy="' + (y - 74) + '" r="5" fill="#e8dcc4" stroke="#fff" stroke-width="2"/>';
+    return s;
+  }
+  // Africa and the Nile, from rough real coordinates (lon/lat) projected onto the frame
+  var AF = [[-6, 36], [10, 37], [11, 33], [20, 31], [25, 32], [32, 31.5], [34, 28], [35, 24], [38, 18], [43, 12], [51, 12], [51, 10], [45, 2], [40, -3], [40, -10], [35, -20], [33, -26], [27, -34], [20, -35], [18, -30], [14, -22], [12, -15], [13, -6], [9, -1], [9, 4], [5, 4.5], [-2, 5], [-8, 4.5], [-13, 8], [-17, 14], [-17, 21], [-13, 27], [-9, 32]];
+  var WHITE = [[33, -0.5], [32.5, 3.5], [31.6, 9.5], [32.5, 15.6]], BLUEN = [[37.3, 11.8], [36.2, 10.4], [35, 11.5], [33.6, 13.6], [32.5, 15.6]], MAIN = [[32.5, 15.6], [33.8, 17.7], [32, 19], [31, 20.5], [33, 22.5], [32.9, 24.1], [32.6, 25.7], [31.2, 30], [31, 31.4]];
+  function pj(p) { return [20 + (p[0] + 20) / 75 * 320, 20 + (38 - p[1]) / 74 * 396]; }
+  function pjs(a) { return a.map(pj); }
+  function africa(t, k, kB) {
+    var s = '<path d="' + P(pjs(AF)) + ' Z" fill="#e6c88f" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>';
+    s += '<path d="' + P(pjs([[29, -5], [30, -8], [31, -10], [32, -8]])) + '" stroke="#c9a96b" stroke-width="2" fill="none"/>';
+    s += '<path d="' + P(pjs([[34, 14], [38, 14], [40, 9], [38, 6], [35, 8]])) + ' Z" fill="#a8b97a" opacity=".8"/>';   // the Ethiopian highlands
+    var v = pj([33, -1]); s += '<ellipse cx="' + f(v[0]) + '" cy="' + f(v[1]) + '" rx="13" ry="11" fill="#3fb0e6" stroke="#fff" stroke-width="2.5"/>';
+    var ta = pj([37.3, 12]); s += '<circle cx="' + f(ta[0]) + '" cy="' + f(ta[1]) + '" r="5" fill="#3fb0e6" stroke="#fff" stroke-width="2"/>';
+    var dash = function (a, kk, w, col) { var p = pjs(a); return '<path d="' + P(p) + '" stroke="#fff" stroke-width="' + (w + 4) + '" fill="none" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="' + f(kk) + ' 1"/><path d="' + P(p) + '" stroke="' + col + '" stroke-width="' + w + '" fill="none" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="' + f(kk) + ' 1"/>'; };
+    s += dash(WHITE, k, 4, "#7fc8ef") + dash(BLUEN, kB == null ? k : kB, 5, "#1f6fd1") + dash(MAIN, k, 6, "#1f7fbf");
+    var c = pj([31.2, 30]); s += '<circle cx="' + f(c[0]) + '" cy="' + f(c[1]) + '" r="5" fill="' + ORANGE + '" stroke="#fff" stroke-width="2"/>';
+    return s;
+  }
+  function lens(x, y, r, inner) {   // a microscope view
+    return '<clipPath id="lensC"><circle cx="' + x + '" cy="' + y + '" r="' + r + '"/></clipPath><g clip-path="url(#lensC)">' + inner + '</g><circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="none" stroke="#fff" stroke-width="7"/><circle cx="' + x + '" cy="' + y + '" r="' + (r + 9) + '" fill="none" stroke="#24476b" stroke-width="10"/>';
+  }
+  function diatom(x, y, s, a, t) {   // a pennate diatom: a long boat-shaped glass shell with ribs
+    var g = '<g transform="translate(' + f(x) + ' ' + f(y) + ') rotate(' + f(a + Math.sin(t + x) * 4) + ') scale(' + s + ')"><path d="M-26 0 Q0 -9 26 0 Q0 9 -26 0Z" fill="#c9b45a" stroke="#fff" stroke-width="2"/>';
+    for (var i = -4; i <= 4; i++) g += '<path d="M' + (i * 5) + ' -5 V5" stroke="#8a7a2a" stroke-width="1.2"/>';
+    return g + '<path d="M-22 0 H22" stroke="#8a7a2a" stroke-width="1.4"/></g>';
+  }
+  function rod(x, y, a, t) { return '<g transform="translate(' + f(x) + ' ' + f(y) + ') rotate(' + f(a + t * 30) + ')"><rect x="-10" y="-4" width="20" height="8" rx="4" fill="#ff7aa2" stroke="#fff" stroke-width="1.6"/><path d="M10 0 q6 -4 10 0 t10 0" stroke="#fff" stroke-width="1.2" fill="none"/></g>'; }
+  function silt(x0, y0, w, h, n, t, seed) { var s = ""; for (var i = 0; i < n; i++) { var x = x0 + ((hash(i + seed) * w + t * 8 * (hash(i + 2) - 0.5)) % w + w) % w, y = y0 + ((hash(i + seed + 5) * h + Math.sin(t + i) * 5) % h + h) % h; s += '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(1.4 + hash(i + 7) * 2.4) + '" fill="#8a5a2b"/>'; } return s; }
+  function rake(x, y, h, t) { var k = (t * 0.25) % 1, ry = y + h - k * h; return '<rect x="' + (x - 8) + '" y="' + f(ry - 6) + '" width="60" height="12" rx="3" fill="' + ORANGE + '" stroke="#fff" stroke-width="2.5"/><path d="M' + (x + 44) + ' ' + f(ry) + ' V' + (y - 30) + '" stroke="#fff" stroke-width="3"/>'; }
+  function impeller(x, y, r, t, col) { var s = '<g transform="translate(' + x + ' ' + y + ') rotate(' + f(t * 300) + ')">'; for (var k = 0; k < 4; k++) s += '<rect x="-3" y="' + (-r) + '" width="6" height="' + r + '" rx="2" fill="' + (col || "#e6ecf2") + '" stroke="#fff" stroke-width="1.5" transform="rotate(' + (k * 90) + ')"/>'; return s + '</g>'; }
+  function cylinder(x, y, s) {   // a chlorine cylinder on its cradle, with valve
+    return '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')"><rect x="-60" y="-22" width="120" height="44" rx="22" fill="#e9c94a" stroke="#fff" stroke-width="3"/><path d="M-56 -8 H56" stroke="#fff" stroke-width="3" opacity=".5"/><rect x="-6" y="-34" width="12" height="12" fill="#5d6873" stroke="#fff" stroke-width="2"/><path d="M-40 22 L-48 36 M40 22 L48 36" stroke="#8a95a3" stroke-width="5"/><text x="0" y="8" text-anchor="middle" font-family="Noto Sans Arabic" font-weight="900" font-size="18" fill="#5a4a10">Cl₂</text></g>';
+  }
+  function pumpSet(x, y, s, t, col) {   // a horizontal end-suction pump with its motor on a base plate
+    var g = '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')"><rect x="-70" y="22" width="150" height="12" fill="#5d6873" stroke="#fff" stroke-width="2.5"/>';
+    g += '<rect x="-64" y="-20" width="72" height="42" rx="8" fill="' + (col || "#2f6fb5") + '" stroke="#fff" stroke-width="3"/>'; for (var i = 0; i < 6; i++) g += '<path d="M' + (-58 + i * 11) + ' -16 V18" stroke="#fff" stroke-opacity=".35" stroke-width="2"/>';
+    g += '<rect x="8" y="-6" width="14" height="12" fill="#8a95a3" stroke="#fff" stroke-width="2"/><circle cx="42" cy="0" r="22" fill="#d9483b" stroke="#fff" stroke-width="3"/>' + impeller(42, 0, 14, t, "#ffd0c8").replace('<g transform', '<g opacity=".9" transform');
+    return g + '<rect x="34" y="-44" width="16" height="22" fill="#d9483b" stroke="#fff" stroke-width="2.5"/></g>';
+  }
+  function dial(x, y, r, v, txt) { return gauge(x, y, r, v, txt); }
+  function house(x, y, w, h, roof) { return '<rect x="' + x + '" y="' + (y - h) + '" width="' + w + '" height="' + h + '" fill="#f2d3a8" stroke="#fff" stroke-width="4"/><path d="M' + (x - 12) + ' ' + (y - h + 2) + ' L' + (x + w / 2) + ' ' + (y - h - (roof || 50)) + ' L' + (x + w + 12) + ' ' + (y - h + 2) + ' Z" fill="#d9654b" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>'; }
 
-  // 0 — the hook: the tap at home
-  shot(0, CAM([170, 190], [180, 160], [1.25, 1.0]), function (u, d, t) {
-    var s = '<rect x="-60" y="-60" width="480" height="560" fill="url(#tileG)"/>';
-    for (var x = -60; x < 420; x += 40) s += '<path d="M' + x + ' -60 V500" stroke="#fff" stroke-opacity=".12" stroke-width="2"/>';
-    s += '<rect x="90" y="250" width="200" height="110" rx="20" fill="url(#concG)" stroke="#fff" stroke-width="4"/><rect x="108" y="268" width="164" height="80" rx="12" fill="url(#waterG)" stroke="#fff" stroke-width="3"/>';
-    s += '<rect x="175" y="60" width="26" height="110" rx="8" fill="url(#steelG)" stroke="#fff" stroke-width="4"/>';
-    s += '<path d="M188 60 Q188 30 230 30 Q248 30 248 60" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"/><path d="M188 60 Q188 30 230 30 Q248 30 248 60" fill="none" stroke="url(#steelG)" stroke-width="6" stroke-linecap="round"/>';
-    s += '<rect x="240" y="58" width="22" height="46" rx="6" fill="url(#steelG)" stroke="#fff" stroke-width="3"/>';
-    s += K.flow(t, [[251, 104], [251, 240]], "#bfeaff", 9, 0.9, 5);
-    s += '<path d="M251 104 L251 240" stroke="#7fd3f5" stroke-width="10" opacity=".6"/>';
-    s += '<path d="M120 238 V330 M300 238 V330" stroke="#fff" stroke-width="0"/>' + K.spark(70, 150, t, YEL) + K.spark(300, 200, t + 1, YEL);
-    return s + K.tag("الميه دي جاية منين؟", 180, 380, u, 0.6, 22, ORANGE);
+  // 0 — the hook: a real kitchen tap
+  shot(0, CAM([200, 180], [210, 200], [1.35, 1.0]), function (u, d, t) {
+    var s = bg("#1f6f8f");
+    for (var x = -80; x < 440; x += 44) for (var y = -80; y < 300; y += 30) s += '<rect x="' + (x + (y / 30 % 2) * 22) + '" y="' + y + '" width="42" height="28" rx="3" fill="#2a7fa1" stroke="#fff" stroke-opacity=".18" stroke-width="2"/>';
+    s += '<rect x="-80" y="296" width="520" height="20" fill="#e8edf2" stroke="#fff" stroke-width="3"/><rect x="-80" y="316" width="520" height="220" fill="#5a3f2b"/>';
+    s += '<path d="M60 300 Q60 390 180 390 Q300 390 300 300 Z" fill="#c9d3dd" stroke="#fff" stroke-width="5"/><ellipse cx="180" cy="378" rx="10" ry="4" fill="#5d6873"/>';
+    s += faucet(110, 300, 1.05, t) + stream(203, 194, 330, t, 11) + glass(204, 372, 54, 70, 0.25 + 0.6 * grow(u, d), "rgba(120,200,240,.8)", t) + splash(204, 320, t);
+    return s + tag("الميه دي جاية منين؟", 200, 110, u, 0.7, 17, ORANGE);
   });
 
-  // 1 — the river is far away, the tap is at home
-  shot(1, CAM([160, 200], [200, 200], [1.0, 1.1]), function (u, d, t) {
-    var s = sky("day", t) + '<rect x="-60" y="330" width="480" height="200" fill="url(#grassG)"/>';
-    s += '<path d="M-60 400 Q180 360 420 390" stroke="none" fill="none"/>';
-    s += '<path d="M' + RIVER.map(function (p) { return p[0] + " " + p[1]; }).join(" L") + '" stroke="#fff" stroke-width="58" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
-    s += '<path d="M' + RIVER.map(function (p) { return p[0] + " " + p[1]; }).join(" L") + '" stroke="url(#waterG)" stroke-width="50" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
-    s += '<path d="M' + RIVER.map(function (p) { return p[0] + " " + p[1]; }).join(" L") + '" stroke="#bfeaff" stroke-width="5" stroke-dasharray="16 26" stroke-dashoffset="' + f(-t * 60) + '" fill="none" opacity=".7"/>';
-    s += K.flow(t, RIVER, "#fff", 8, 0.1, 4);
-    s += K.pipe([[250, 330], [250, 300], [320, 300], [320, 250]], 10);
-    s += '<rect x="290" y="200" width="60" height="60" fill="#ffd9b0" stroke="#fff" stroke-width="3"/><path d="M280 202 L320 160 L360 202Z" fill="#ff7a5c" stroke="#fff" stroke-width="3"/>';
-    return s + K.tag("من نهر بعيد جداً!", 180, 60, u, 0.9, 22, ORANGE);
+  // 1 — the river is far away: the Nile with palms and a felucca, Cairo behind, a pipe running to a house
+  shot(1, CAM([180, 200], [180, 210], [1.0, 1.1]), function (u, d, t) {
+    var s = sky("day", t) + sun(300, 50, 16) + skyline(170, t) + '<rect x="-80" y="168" width="520" height="40" fill="url(#grassG)"/>';
+    s += water(t, 205) + felucca(lerp(40, 140, (t * 0.05) % 1), 260, 0.9, t) + palm(30, 210, 0.9, t) + palm(320, 210, 0.8, t + 1);
+    s += '<rect x="-80" y="320" width="520" height="200" fill="url(#soilG)"/>' + pipe([[60, 300], [60, 350], [300, 350], [300, 395]], 12) + flow(t, [[60, 300], [60, 350], [300, 350], [300, 395]], "#bfeaff", 8, 0.2, 4);
+    s += house(268, 420, 64, 50, 26);
+    return s + tag("من نهر بعيد جداً!", 180, 120, u, 0.9, 21, ORANGE);
   });
 
-  // 2 — muddy water vs clear water
-  shot(2, CAM([180, 180], [180, 200], [1.0, 1.05]), function (u, d, t) {
-    var s = '<rect x="-60" y="-60" width="480" height="560" fill="url(#skyNight)"/>';
-    s += '<circle cx="95" cy="200" r="78" fill="#fff" stroke="#fff" stroke-width="5" opacity=".2"/><circle cx="95" cy="200" r="72" fill="url(#mudG)" stroke="#fff" stroke-width="4"/>' + K.floc(95, 200, 50, 14, 2, 1) + K.sand(60, 160, 70, 80, 12, 3);
-    s += '<circle cx="265" cy="200" r="78" fill="#fff" stroke="#fff" stroke-width="5" opacity=".2"/><circle cx="265" cy="200" r="72" fill="url(#waterG)" stroke="#fff" stroke-width="4"/>' + K.spark(240, 170, t, "#fff") + K.spark(290, 230, t + 2, "#fff") + K.spark(262, 205, t + 4, "#fff");
-    s += '<path d="M205 200 L225 200" stroke="#fff" stroke-width="6" stroke-linecap="round"/>';
-    s += K.big("؟", 180, 330, 72, YEL);
-    return s + K.tag("عكرة!", 95, 318, u, 0.6, 22, "#7a4f2a") + K.tag("صافية؟", 265, 318, u, 1.4, 22, "#2a8fc0");
+  // 2 — muddy river water vs the clear water in the glass
+  shot(2, CAM([180, 200], [180, 210], [1.0, 1.06]), function (u, d, t) {
+    var s = navyBg();
+    s += glass(95, 330, 120, 200, 0.85, "url(#mudG)", t) + silt(42, 150, 106, 170, 40, t, 3) + floc(95, 250, 34, 6, 7, 1);
+    s += glass(265, 330, 120, 200, 0.85 * grow(u, d) + 0.05, "rgba(110,200,245,.85)", t) + spark(240, 190, t, "#fff") + spark(290, 250, t + 2, "#fff") + bubbles(t, 265, 320, 6, 0.3, 50, 2);
+    s += big("←", 180, 250, 40, "#fff");
+    return s + tag("ميه النهر", 95, 380, u, 0.5, 18, "#7a4f2a") + tag("ميه الحنفية", 265, 380, u, 1.3, 18, "#2a8fc0");
   });
 
   // 3 — the question
-  shot(3, CAM([180, 200], [180, 180], [1.0, 1.1]), function (u, d, t) {
-    var s = water(t, 0) + K.bubbles(t, 180, 436, 14, 0.2, 360, 4);
-    s += K.big("؟", 150 + Math.sin(t) * 6, 240, 190, YEL) + K.big("؟", 290, 130, 60, ORANGE) + K.big("؟", 60, 330, 46, PINK);
-    return s + K.tag("إيه الحكاية؟", 180, 60, u, 0.3, 26, ORANGE);
+  shot(3, CAM([180, 220], [180, 200], [1.0, 1.12]), function (u, d, t) {
+    var s = water(t, -80) + bubbles(t, 180, 436, 16, 0.2, 360, 4);
+    s += big("؟", 160 + Math.sin(t * 1.5) * 8, 260, 200, YEL) + big("؟", 300, 130, 64, ORANGE) + big("؟", 54, 340, 48, PINK);
+    return s + tag("إيه الحكاية؟", 180, 60, u, 0.3, 26, ORANGE);
   });
 
-  // 4 — the Nile is very long
-  shot(4, CAM([180, 180], [180, 200], [1.0, 1.0]), function (u, d, t) {
-    var s = sky("day", t) + '<rect x="-60" y="0" width="480" height="500" fill="url(#grassG)" opacity=".5"/>';
-    var n = 8, p = RIVER.map(function (q) { return q; }), k = reveal(u, d);
-    s += '<path d="M' + RIVER.map(function (q) { return q[0] + " " + q[1]; }).join(" L") + '" stroke="#fff" stroke-width="54" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="' + f(1200 * k) + ' 1200"/>';
-    s += '<path d="M' + RIVER.map(function (q) { return q[0] + " " + q[1]; }).join(" L") + '" stroke="url(#waterG)" stroke-width="46" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="' + f(1200 * k) + ' 1200"/>';
-    s += K.flow(t, RIVER, "#fff", 10, 0.12, 4);
-    return s + K.big("6650 كم!", 180, 80, 44, ORANGE) + K.tag("أطول نهر في الدنيا تقريباً", 180, 400, u, 1.4, 17, "#0d1a33");
+  // 4 — the Nile is about 6,650 km long: the whole river drawn on Africa
+  shot(4, CAM([200, 160], [180, 230], [1.05, 1.0]), function (u, d, t) {
+    var s = water(t, -80) + africa(t, grow(u, d));
+    var c = pj([31.2, 30]), v = pj([33, -1]);
+    s += tag("القاهرة", f(c[0] + 50), f(c[1] - 4), u, 1.5, 14, NAVY) + tag("بحيرة فيكتوريا", f(v[0] + 6), f(v[1] + 34), u, 0.6, 14, NAVY);
+    return s + big("6650 كم", 120, 400, 40, ORANGE);
   });
 
-  // 5 — two sources: the White Nile from the lake, the Blue Nile from the highlands
-  shot(5, CAM([180, 180], [180, 200], [1.0, 1.06]), function (u, d, t) {
-    var s = sky("day", t);
-    s += '<path d="M-60 250 L40 120 L120 170 L190 90 L280 180 L330 140 L420 250 V500 H-60Z" fill="url(#hillG)" stroke="#fff" stroke-width="4"/><path d="M190 90 l22 30 l-14 -4 l-16 14z" fill="#fff"/>';
-    s += '<ellipse cx="70" cy="300" rx="76" ry="36" fill="url(#waterG)" stroke="#fff" stroke-width="4"/>';
-    var a = [[120, 300], [200, 330], [240, 360]], b = [[300, 210], [270, 280], [240, 360]], c = [[240, 360], [260, 420], [300, 470]];
-    s += '<path d="M120 300 Q190 330 240 360 Q270 420 300 470" stroke="#fff" stroke-width="30" fill="none" stroke-linecap="round"/><path d="M120 300 Q190 330 240 360 Q270 420 300 470" stroke="url(#waterG)" stroke-width="22" fill="none" stroke-linecap="round"/>';
-    s += '<path d="M300 210 Q270 280 240 360" stroke="#fff" stroke-width="22" fill="none" stroke-linecap="round"/><path d="M300 210 Q270 280 240 360" stroke="url(#waterG)" stroke-width="14" fill="none" stroke-linecap="round"/>';
-    s += K.flow(t, a, "#fff", 4, 0.22, 4) + K.flow(t, b, "#fff", 4, 0.22, 4) + K.flow(t, c, "#fff", 5, 0.2, 4);
-    s += K.tag("النيل الأبيض", 70, 250, u, 0.4, 16, "#2a8fc0") + K.tag("النيل الأزرق", 290, 170, u, 1.2, 16, "#2a8fc0");
-    return s + K.tag("بحيرة فيكتوريا", 70, 360, u, 1.8, 15, "#0d1a33") + K.tag("هضبة إثيوبيا", 290, 80, u, 2.4, 15, "#0d1a33");
+  // 5 — two sources: White Nile from Lake Victoria, Blue Nile from Lake Tana in the Ethiopian highlands, meeting at Khartoum
+  shot(5, CAM([250, 248], [205, 175], [1.6, 1.9]), function (u, d, t) {
+    var s = water(t, -80) + africa(t, 1);
+    var v = pj([33, -1]), ta = pj([37.3, 12]), kh = pj([32.5, 15.6]);
+    s += '<circle cx="' + f(kh[0]) + '" cy="' + f(kh[1]) + '" r="' + f(4 + Math.sin(t * 4)) + '" fill="#fff"/>';
+    s += tag("النيل الأبيض", f(v[0] - 30), f(v[1] - 40), u, 0.4, 9, "#2a8fc0") + tag("النيل الأزرق", f(ta[0] + 18), f(ta[1] - 14), u, 1.2, 9, "#1f6fd1");
+    return s + tag("الخرطوم", f(kh[0] - 24), f(kh[1] - 8), u, 2.0, 8, NAVY) + tag("هضبة إثيوبيا", f(ta[0] + 14), f(ta[1] + 16), u, 2.6, 8, NAVY);
   });
 
-  // 6 — the Blue Nile gives about 60%
-  shot(6, CAM([180, 180], [180, 200], [1.0, 1.04]), function (u, d, t) {
-    var s = water(t, 0) + K.bubbles(t, 180, 436, 10, 0.15, 360, 3);
-    s += K.gauge(180, 220, 128, clamp(u / 1.6) * 0.6, "");
-    s += K.big("60%", 180, 240, 52, ORANGE) + K.flow(t, [[40, 380], [320, 380]], "#fff", 6, 0.2, 4);
-    return s + K.tag("النيل الأزرق لوحده", 180, 60, u, 0.2, 20, "#0d1a33") + K.tag("حوالي ستين في المية", 180, 376, u, 1.6, 18, "#0d1a33");
+  // 6 — the Blue Nile gives about 60% of the water reaching Aswan (a donut split)
+  shot(6, CAM([180, 210], [180, 200], [1.0, 1.05]), function (u, d, t) {
+    var s = water(t, -80) + bubbles(t, 180, 436, 10, 0.15, 360, 3);
+    var k = grow(u, d) * 0.6, R = 110, cx = 180, cy = 210, arc = function (a0, a1) { return 'M' + f(cx + Math.sin(a0) * R) + ' ' + f(cy - Math.cos(a0) * R) + ' A' + R + ' ' + R + ' 0 ' + (a1 - a0 > Math.PI ? 1 : 0) + ' 1 ' + f(cx + Math.sin(a1) * R) + ' ' + f(cy - Math.cos(a1) * R); };
+    s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="none" stroke="#fff" stroke-width="44"/><circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="none" stroke="#bfe6f7" stroke-width="36"/>';
+    if (k > 0.001) s += '<path d="' + arc(0, k * 2 * Math.PI) + '" fill="none" stroke="#1f5fc8" stroke-width="36"/>';
+    s += '<circle cx="' + cx + '" cy="' + cy + '" r="80" fill="' + NAVY + '" stroke="#fff" stroke-width="4"/>' + big(Math.round(k * 100) + "%", cx, cy + 16, 46, ORANGE);
+    return s + tag("النيل الأزرق", 180, 60, u, 0.2, 20, "#1f5fc8") + tag("الباقي: النيل الأبيض والعطبرة", 180, 380, u, 1.6, 14, NAVY);
   });
 
-  // 7 — in the flood season it goes up to 80%
-  shot(7, CAM([180, 180], [180, 200], [1.0, 1.05]), function (u, d, t) {
-    var s = sky("dusk", t) + water(t, 170, { muddy: true }) + K.bubbles(t, 200, 436, 8, 0.12, 300, 3);
-    s += K.sand(-20, 200, 400, 240, 14, 90) + K.floc(230, 300, 60, 6, 91, 1);
-    s += K.gauge(180, 200, 64, 0.8, "") + K.big("80%", 180, 212, 30, ORANGE);
-    s += K.big("موسم الفيضان", 180, 110, 24, YEL);
-    return s + K.tag("تمانين في المية!", 180, 370, u, 0.9, 20, "#0d1a33");
+  // 7 — in the flood season (July–October) it reaches about 80%, and the river turns brown with silt
+  shot(7, CAM([180, 200], [180, 220], [1.0, 1.06]), function (u, d, t) {
+    var lv = lerp(260, 170, grow(u, d)), s = sky("dusk", t) + skyline(200, t) + palm(40, 210, 0.9, t) + palm(330, 210, 0.8, t + 1);
+    s += water(t, lv, { muddy: true }) + silt(-40, lv + 10, 440, 300, 60, t, 9);
+    s += '<path d="M-80 ' + f(lv + 6) + ' H440" stroke="#fff" stroke-width="2" stroke-dasharray="8 8" opacity=".6"/>';
+    s += gauge(280, 320, 56, 0.8 * grow(u, d), "") + big("80%", 280, 330, 26, ORANGE);
+    return s + tag("موسم الفيضان", 120, 330, u, 0.6, 20, NAVY);
   });
 
-  // 8 — the water carries mud, sand and microbes
-  shot(8, CAM([180, 200], [180, 180], [1.0, 1.06]), function (u, d, t) {
-    var s = water(t, -60, { muddy: true });
-    s += K.sand(-20, 0, 400, 460, 26, 5) + K.gravel(-20, 0, 400, 460, 10, 22);
-    s += K.microbe(70, 120, 1.9, t, PINK, 1) + K.microbe(260, 200, 1.7, t, GREEN, 2) + K.microbe(120, 330, 1.8, t, GREEN, 3) + K.microbe(300, 350, 1.6, t, PINK, 4);
-    return s + K.tag("طين وطمي ورمل", 180, 60, u, 0.5, 20, "#0d1a33") + K.tag("وميكروبات!", 180, 376, u, 1.8, 20, "#0d1a33");
+  // 8 — under the microscope: silt, sand, diatoms (algae), bacteria
+  shot(8, CAM([180, 210], [180, 200], [1.0, 1.08]), function (u, d, t) {
+    var inner = bg("url(#mudG)") + '<rect x="0" y="0" width="360" height="436" fill="#d9b98a" opacity=".5"/>' + silt(30, 50, 300, 330, 70, t, 1) + sand(70, 90, 220, 260, 8, 5);
+    inner += diatom(120, 150, 1.6, 20, t) + diatom(250, 300, 1.4, -30, t) + diatom(200, 120, 1.1, 70, t) + rod(110, 300, 10, t) + rod(270, 170, 80, t) + rod(220, 340, 140, t);
+    var s = navyBg() + lens(180, 220, 150, inner);
+    return s + tag("طمي ورمل", 70, 70, u, 0.5, 16, "#7a4f2a") + tag("طحالب", 300, 80, u, 1.4, 16, "#3f9a55") + tag("ميكروبات", 280, 390, u, 2.2, 16, "#c2456b");
   });
 
-  // 9 — the intake on the river bank, a screen catches the big things
-  shot(9, CAM([170, 190], [190, 200], [1.0, 1.05]), function (u, d, t) {
-    var s = sky("day", t) + '<rect x="-60" y="240" width="480" height="200" fill="url(#grassG)"/>';
-    s += '<rect x="170" y="200" width="300" height="240" fill="url(#mudG)"/>' + K.water(t, 230, { muddy: true }).replace(/x="-60"/g, 'x="170"');
-    s += '<rect x="90" y="190" width="120" height="200" rx="8" fill="url(#concG)" stroke="#fff" stroke-width="5"/>';
-    s += '<rect x="130" y="210" width="50" height="170" fill="#4a3520" stroke="#fff" stroke-width="3"/>';
-    for (var g = 0; g < 7; g++) s += '<path d="M' + (138 + g * 6) + ' 215 V375" stroke="#fff" stroke-width="2"/>';
-    s += '<path d="M130 230 H180 M130 260 H180 M130 290 H180 M130 320 H180 M130 350 H180" stroke="#fff" stroke-width="1.5" opacity=".6"/>';
-    s += '<rect x="180" y="330" width="30" height="8" rx="3" fill="#8b5a2b" stroke="#fff" stroke-width="2" transform="rotate(-18 195 334)"/><rect x="150" y="300" width="40" height="8" rx="3" fill="#a06a35" stroke="#fff" stroke-width="2" transform="rotate(12 170 304)"/>';
-    s += K.flow(t, [[330, 330], [230, 300], [180, 300]], "#e8c48e", 6, 0.25, 4);
-    return s + K.tag("شبك بيمسك الكبير", 180, 60, u, 0.5, 20, "#0d1a33");
+  // 9 — the intake on the river bank: a bar screen with a moving rake catches branches, plastic and leaves
+  shot(9, CAM([170, 200], [200, 210], [1.0, 1.1]), function (u, d, t) {
+    var s = sky("day", t) + '<rect x="-80" y="120" width="520" height="40" fill="url(#grassG)"/>' + soil(t, 150);
+    s += '<rect x="150" y="150" width="300" height="300" fill="url(#mudG)"/>' + water(t, 170, { muddy: true }).replace(/x="-60"/g, 'x="150"') + silt(160, 190, 260, 240, 30, t, 4);
+    s += '<rect x="40" y="90" width="120" height="330" fill="url(#concG)" stroke="#fff" stroke-width="5"/><rect x="48" y="100" width="104" height="22" fill="#5d6873" stroke="#fff" stroke-width="2"/>';
+    s += '<rect x="132" y="170" width="20" height="240" fill="#3b4a5a" stroke="#fff" stroke-width="2"/>'; for (var g = 0; g < 4; g++) s += '<path d="M' + (135 + g * 5) + ' 172 V408" stroke="#d8dee6" stroke-width="2.2"/>';
+    s += rake(120, 170, 230, t);
+    s += '<path d="M150 260 l18 -6 l2 8 z" fill="#3f9a55" stroke="#fff" stroke-width="1.5"/><rect x="152" y="300" width="34" height="7" rx="3" fill="#8a5a2b" stroke="#fff" stroke-width="1.5" transform="rotate(-25 169 303)"/><rect x="154" y="340" width="12" height="26" rx="4" fill="#9fd8ef" stroke="#fff" stroke-width="2" transform="rotate(70 160 353)"/>';
+    s += flow(t, [[380, 300], [240, 300], [160, 300]], "#e8c48e", 7, 0.22, 4) + pipe([[48, 380], [-80, 380]], 22);
+    return s + tag("مأخذ المية", 100, 60, u, 0.4, 18, NAVY) + tag("الشبك بيمسك الكبير", 230, 120, u, 1.4, 15, NAVY);
   });
 
-  // 10 — alum is added, the tiny mud particles stick together
-  shot(10, CAM([180, 200], [180, 200], [1.0, 1.06]), function (u, d, t) {
-    var s = '<rect x="-60" y="-60" width="480" height="560" fill="url(#skyNight)"/>';
-    s += '<path d="M120 20 L240 20 L210 110 L150 110 Z" fill="url(#concG)" stroke="#fff" stroke-width="4"/>' + '<rect x="160" y="110" width="40" height="14" fill="url(#steelG)" stroke="#fff" stroke-width="2"/>';
-    for (var i = 0; i < 14; i++) { var p = (t * 0.9 + i / 14) % 1; s += '<circle cx="' + f(180 + Math.sin(i * 3) * 10 * p) + '" cy="' + f(124 + p * 110) + '" r="3.5" fill="#fff" stroke="#fff"/>'; }
-    s += K.tank(90, 130, 180, 240, 0.9, t, { muddy: true });
-    var grow = reveal(u, d) * 1.0 + 0.45;
-    s += K.floc(150, 270, 50, 8, 11, grow) + K.floc(230, 310, 40, 6, 12, grow) + K.floc(180, 200, 30, 4, 13, grow);
-    return s + K.tag("بيتضاف الشبة", 180, 60, u, 0.4, 20, "#0d1a33") + K.tag("الطين بيلزق ويكبر!", 180, 376, u, 1.6, 17, "#0d1a33");
+  // 10 — alum (الشبة) is dosed into a flash mixer; in the lens the fine silt gathers into flocs
+  shot(10, CAM([180, 210], [180, 200], [1.0, 1.06]), function (u, d, t) {
+    var s = navyBg();
+    s += '<rect x="20" y="40" width="80" height="110" rx="10" fill="#e8edf2" stroke="#fff" stroke-width="4"/><rect x="26" y="80" width="68" height="64" fill="#f6f2e6"/>' + big("شبة", 60, 70, 18, NAVY);
+    s += pipe([[60, 150], [60, 180], [150, 180], [150, 200]], 8) + flow(t, [[60, 150], [60, 180], [150, 180], [150, 205]], "#fff", 5, 0.5, 3);
+    s += tank(100, 200, 120, 200, 0.85, t, { muddy: true }) + '<path d="M160 160 V340" stroke="#fff" stroke-width="7"/><path d="M160 160 V340" stroke="#8a95a3" stroke-width="3"/>' + impeller(160, 340, 22, t * 2) + '<rect x="140" y="140" width="40" height="24" rx="4" fill="#2f6fb5" stroke="#fff" stroke-width="3"/>';
+    var g2 = grow(u, d), inner = bg("url(#mudG)") + silt(220, 120, 140, 200, Math.round(40 * (1 - g2)) + 6, t, 2) + floc(290, 170, 26, Math.round(3 + 7 * g2), 21, g2 + 0.2) + floc(270, 260, 22, Math.round(2 + 6 * g2), 23, g2 + 0.2);
+    s += lens(290, 220, 72, inner);
+    return s + tag("بيتضاف الشبة", 180, 50, u, 0.4, 20, NAVY) + tag("الطين الناعم بيلزق في كتل", 200, 390, u, 1.6, 15, NAVY);
   });
 
-  // 11 — the clumps are heavy, they sink to the bottom: sedimentation
-  shot(11, CAM([180, 200], [180, 200], [1.0, 1.05]), function (u, d, t) {
-    var s = '<rect x="-60" y="-60" width="480" height="560" fill="url(#skyNight)"/>';
-    s += K.tank(60, 90, 240, 280, 0.92, t);
-    s += '<rect x="66" y="330" width="228" height="34" fill="url(#mudG)"/>' + K.sand(66, 330, 228, 34, 14, 40);
-    var fall = clamp(u / 3.0);
-    for (var i = 0; i < 8; i++) { var cy = lerp(130, 300, clamp(fall * 1.3 - i * 0.05)); s += K.floc(100 + i * 25, cy, 8, 3, 50 + i, 1); }
-    s += '<path d="M66 130 H294" stroke="#fff" stroke-width="3" opacity=".7"/>';
-    return s + K.tag("الترسيب", 180, 60, u, 0.3, 22, "#0d1a33") + K.tag("الميه اللي فوق بقت أصفى", 180, 376, u, 1.4, 16, "#0d1a33");
+  // 11 — sedimentation: a long rectangular basin; the flocs settle, a chain scraper pushes the sludge, clear water spills over the weir
+  shot(11, CAM([200, 220], [160, 220], [1.15, 1.0]), function (u, d, t) {
+    var s = navyBg() + '<rect x="0" y="100" width="360" height="260" fill="url(#concG)" stroke="#fff" stroke-width="5"/>';
+    s += '<rect x="8" y="120" width="344" height="232" fill="url(#waterG)"/><rect x="8" y="120" width="120" height="232" fill="#a87a4a" opacity=".55"/><rect x="128" y="120" width="100" height="232" fill="#a87a4a" opacity=".25"/>';
+    s += '<path d="M8 330 Q180 318 352 336 V352 H8 Z" fill="#6b4a2a" stroke="#fff" stroke-width="2"/>';
+    for (var i = 0; i < 12; i++) { var k = (t * 0.12 + i / 12) % 1, x = 20 + k * 300, y = 130 + Math.pow(k, 0.7) * 190 * (0.6 + 0.4 * hash(i)); s += floc(x, y, 6, 3, 30 + i, 1); }
+    var sk = (t * 30) % 60; for (var j = 0; j < 7; j++) s += '<rect x="' + f(20 + j * 60 - sk) + '" y="334" width="6" height="14" fill="' + ORANGE + '" stroke="#fff" stroke-width="1.5"/>';
+    s += '<path d="M330 120 V96 H360" stroke="#fff" stroke-width="5" fill="none"/>' + flow(t, [[330, 118], [352, 104], [372, 104]], "#bfeaff", 4, 0.6, 3.5);
+    return s + tag("حوض الترسيب", 180, 60, u, 0.3, 20, NAVY) + tag("الكتل التقيلة بتنزل لتحت", 180, 400, u, 1.4, 15, NAVY);
   });
 
-  // 12 — the sand and gravel filter
-  shot(12, CAM([180, 200], [180, 200], [1.0, 1.06]), function (u, d, t) {
-    var s = '<rect x="-60" y="-60" width="480" height="560" fill="url(#skyNight)"/>';
-    s += '<rect x="90" y="70" width="180" height="300" fill="url(#concG)" stroke="#fff" stroke-width="5" rx="6"/>';
-    s += '<rect x="96" y="76" width="168" height="60" fill="url(#waterG)"/>';
-    s += '<rect x="96" y="136" width="168" height="110" fill="#ffc64d"/>' + K.sand(96, 136, 168, 110, 30, 60);
-    s += '<rect x="96" y="246" width="168" height="78" fill="#7d8896"/>' + K.gravel(96, 246, 168, 78, 22, 70);
-    s += K.pipe([[180, 324], [180, 350], [300, 350], [300, 420]], 12);
-    for (var k = 0; k < 9; k++) { var p = (t * 0.6 + k / 9) % 1; s += '<circle cx="' + f(120 + k * 18) + '" cy="' + f(90 + p * 150) + '" r="4" fill="#bfeaff" stroke="#fff" stroke-width="1.5" opacity="' + f(1 - p * 0.4) + '"/>'; }
-    return s + K.tag("فلاتر رمل وزلط", 180, 40, u, 0.4, 20, "#0d1a33") + K.tag("الرمل بيمسك اللي فاضل", 180, 376, u, 1.6, 16, "#0d1a33");
+  // 12 — the rapid sand filter: water layer, wash trough, fine sand, graded gravel, the underdrain with nozzles
+  shot(12, CAM([180, 160], [180, 260], [1.15, 1.0]), function (u, d, t) {
+    var s = navyBg() + '<rect x="40" y="40" width="280" height="370" rx="6" fill="url(#concG)" stroke="#fff" stroke-width="5"/>';
+    s += '<rect x="48" y="48" width="264" height="86" fill="url(#waterG)"/><path d="M150 70 V110 Q180 128 210 110 V70" fill="#8a95a3" stroke="#fff" stroke-width="3"/>';
+    s += '<rect x="48" y="134" width="264" height="120" fill="#f2c25a"/>' + sand(48, 134, 264, 120, 46, 60);
+    s += '<rect x="48" y="254" width="264" height="44" fill="#9aa5b2"/>' + gravel(48, 254, 264, 44, 18, 70) + '<rect x="48" y="298" width="264" height="50" fill="#7d8896"/>';
+    for (var g = 0; g < 9; g++) s += '<circle cx="' + (64 + g * 30) + '" cy="' + (306 + (g % 2) * 22) + '" r="12" fill="#b8c2cc" stroke="#fff" stroke-width="2"/>';
+    s += '<rect x="48" y="350" width="264" height="52" fill="#24476b"/>'; for (var n = 0; n < 8; n++) s += '<rect x="' + (66 + n * 32) + '" y="342" width="8" height="12" fill="#e6ecf2" stroke="#fff" stroke-width="1.5"/>';
+    for (var k = 0; k < 12; k++) { var p = (t * 0.45 + k / 12) % 1; s += '<circle cx="' + f(70 + (k * 23) % 230) + '" cy="' + f(80 + p * 300) + '" r="3.5" fill="#bfeaff" stroke="#fff" stroke-width="1.2"/>'; }
+    s += flow(t, [[312, 376], [400, 376]], "#bfeaff", 4, 0.4, 4);
+    return s + tag("رمل ناعم", 290, 190, u, 0.8, 13, NAVY) + tag("زلط", 300, 280, u, 1.4, 13, NAVY) + tag("فلتر الرمل والزلط", 180, 300, u, 0.3, 18, NAVY);
   });
 
-  // 13 — algae clog the filters
-  shot(13, CAM([180, 200], [180, 200], [1.0, 1.06]), function (u, d, t) {
-    var s = '<rect x="-60" y="-60" width="480" height="560" fill="url(#skyNight)"/>';
-    s += '<rect x="70" y="150" width="220" height="180" fill="url(#concG)" stroke="#fff" stroke-width="5" rx="6"/><rect x="76" y="210" width="208" height="112" fill="#ffc64d"/>' + K.sand(76, 210, 208, 112, 24, 80);
-    var grow = reveal(u, d) * 0.9 + 0.3;
-    for (var i = 0; i < 12; i++) { var rr = (14 + hash(i) * 14) * grow; s += '<ellipse cx="' + f(100 + hash(i + 4) * 170) + '" cy="' + f(200 + hash(i + 8) * 16) + '" rx="' + f(rr) + '" ry="' + f(rr * 0.6) + '" fill="' + GREEN + '" stroke="#fff" stroke-width="2.5"/>'; }
-    s += K.microbe(300, 120, 1.6, t, GREEN, 9);
-    return s + K.tag("الطحالب بتسد الفلاتر", 180, 60, u, 0.5, 19, "#0d1a33") + K.tag("الجرعات لازم تتضبط!", 180, 376, u, 1.8, 17, "#0d1a33");
+  // 13 — algae: a green mat grows on the sand and clogs it, the water level above rises; the doses are tuned
+  shot(13, CAM([180, 200], [180, 220], [1.0, 1.08]), function (u, d, t) {
+    var g2 = grow(u, d), s = navyBg() + '<rect x="40" y="80" width="280" height="290" rx="6" fill="url(#concG)" stroke="#fff" stroke-width="5"/>';
+    var lvl = lerp(170, 100, g2); s += '<rect x="48" y="' + f(lvl) + '" width="264" height="' + f(200 - lvl) + '" fill="url(#waterG)"/><rect x="48" y="200" width="264" height="162" fill="#f2c25a"/>' + sand(48, 200, 264, 162, 36, 90);
+    for (var i = 0; i < 14; i++) s += diatom(70 + (i * 19) % 230, 196 + (i % 3) * 4, 0.5 + 0.6 * g2, (i * 37) % 180, t);
+    s += '<path d="M48 200 H312" stroke="' + GREEN + '" stroke-width="' + f(4 + 10 * g2) + '" opacity=".9"/>';
+    s += gauge(300, 60, 36, 0.3 + 0.5 * g2, "") + big("↑", 300, 70, 22, ORANGE);
+    return s + tag("الطحالب بتسد الفلاتر", 160, 50, u, 0.5, 17, NAVY) + tag("الجرعات بتتظبط كل يوم", 180, 400, u, 1.8, 15, NAVY);
   });
 
-  // 14 — chlorine kills the leftover microbes
-  shot(14, CAM([180, 200], [180, 200], [1.0, 1.05]), function (u, d, t) {
-    var s = '<rect x="-60" y="-60" width="480" height="560" fill="url(#skyNight)"/>';
-    s += '<rect x="30" y="50" width="70" height="120" rx="14" fill="url(#concG)" stroke="#fff" stroke-width="4"/><rect x="36" y="100" width="58" height="66" fill="#d6f25a" opacity=".9"/>';
-    s += K.flow(t, [[65, 175], [65, 230], [180, 250]], "#d6f25a", 4, 0.5, 4);
-    s += K.tank(120, 180, 210, 220, 0.85, t);
-    var pop2 = clamp(u / 2.2);
-    for (var i = 0; i < 6; i++) { var sc = Math.max(0.05, 1.6 * (1 - pop2) + (i % 2) * 0.1); s += K.microbe(160 + i * 25, 250 - (i % 2) * 40, sc, t, i % 2 ? PINK : GREEN, i); }
-    for (var k = 0; k < 5; k++) { var ps = clamp((u - 1.4) / 1.4); if (ps > 0) s += K.spark(170 + k * 22, 230 - (k % 2) * 40, t + k, YEL); }
-    return s + K.tag("الكلور بيقتل الميكروبات", 180, 60, u, 0.5, 19, "#0d1a33") + K.tag("بكمية صغيرة", 180, 376, u, 1.8, 18, "#0d1a33");
+  // 14 — chlorine from the cylinders into the contact tank; the leftover microbes die
+  shot(14, CAM([180, 200], [180, 210], [1.0, 1.06]), function (u, d, t) {
+    var s = navyBg() + cylinder(90, 80, 0.9) + cylinder(250, 80, 0.9);
+    s += pipe([[90, 110], [90, 150], [250, 150], [250, 110]], 6) + pipe([[170, 150], [170, 200]], 6) + flow(t, [[170, 150], [170, 210]], "#e9f27a", 4, 0.6, 3);
+    s += tank(40, 200, 280, 200, 0.9, t);
+    var kk = clamp((u - 0.8) / 1.6);
+    for (var i = 0; i < 7; i++) { var sc = Math.max(0.01, 1.4 * (1 - kk)); s += microbe(80 + i * 34, 280 + (i % 2) * 40, sc, t, i % 2 ? PINK : GREEN, i); if (kk > 0.3) s += spark(80 + i * 34, 280 + (i % 2) * 40, t + i, YEL); }
+    return s + tag("الكلور", 180, 150, u, 0.3, 18, NAVY) + tag("بيقتل الميكروبات اللي فاضلة", 180, 380, u, 1.6, 14, NAVY);
   });
 
-  // 15 — a little chlorine stays in the pipe to keep the water safe
-  shot(15, CAM([180, 200], [180, 200], [1.0, 1.04]), function (u, d, t) {
-    var s = sky("day", t) + '<rect x="-60" y="300" width="480" height="200" fill="url(#soilG)"/>';
-    s += K.pipe([[-60, 210], [420, 210]], 40);
-    s += K.flow(t, [[-60, 210], [420, 210]], "#d6f25a", 16, 0.16, 5) + K.flow(t, [[-60, 210], [420, 210]], "#2a8fc0", 8, 0.16, 3);
-    s += K.big("▶", 40, 260, 26, "#fff");
-    return s + K.tag("الكلور بيفضل شوية", 180, 60, u, 0.5, 20, "#0d1a33") + K.tag("علشان الميه تفضل سليمة", 180, 376, u, 1.6, 17, "#0d1a33");
+  // 15 — a little chlorine stays with the water all the way through the pipes (the residual)
+  shot(15, CAM([160, 210], [220, 210], [1.1, 1.0]), function (u, d, t) {
+    var s = sky("day", t) + skyline(150, t) + '<rect x="-80" y="150" width="520" height="40" fill="url(#grassG)"/>' + soil(t, 180);
+    s += '<rect x="-80" y="232" width="560" height="56" fill="#fff"/><rect x="-80" y="238" width="560" height="44" fill="url(#waterG)"/>';
+    for (var i = 0; i < 9; i++) { var x = ((t * 50 + i * 60) % 560) - 80; s += '<circle cx="' + f(x) + '" cy="' + f(260 + Math.sin(t * 3 + i) * 8) + '" r="9" fill="#e9f27a" stroke="#fff" stroke-width="2"/><text x="' + f(x) + '" y="' + f(264 + Math.sin(t * 3 + i) * 8) + '" text-anchor="middle" font-family="Noto Sans Arabic" font-weight="900" font-size="9" fill="#5a4a10">Cl</text>'; }
+    return s + tag("شوية كلور بيفضلوا في الميه", 180, 330, u, 0.5, 15, NAVY) + tag("لحد ما توصل بيتك", 180, 380, u, 1.6, 15, NAVY);
   });
 
-  // 16 — the water is stored in a big tank under the ground
-  shot(16, CAM([180, 200], [180, 200], [1.0, 1.05]), function (u, d, t) {
-    var s = sky("day", t) + K.soil(t, 150);
-    s += K.tank(90, 190, 180, 200, 0.7, t);
-    s += K.pipe([[40, 60], [40, 150], [90, 190]], 12) + K.flow(t, [[40, 60], [40, 150], [90, 190]], "#bfeaff", 5, 0.3, 4);
-    s += K.pipe([[270, 290], [340, 290]], 16) + K.flow(t, [[270, 290], [340, 290]], "#bfeaff", 4, 0.3, 4);
-    return s + K.tag("خزان تحت الأرض", 180, 60, u, 0.5, 20, "#0d1a33") + K.tag("جوه المحطة", 180, 376, u, 1.6, 18, "#0d1a33");
+  // 16 — the underground clear-water tank: columns inside, vent pipes poking up through the grass
+  shot(16, CAM([180, 160], [180, 240], [1.1, 1.0]), function (u, d, t) {
+    var s = sky("day", t) + '<rect x="-80" y="110" width="520" height="30" fill="url(#grassG)"/>' + soil(t, 136);
+    s += '<path d="M90 110 V70 Q90 60 100 60 H110" stroke="#fff" stroke-width="10" fill="none"/><path d="M90 110 V70 Q90 60 100 60 H110" stroke="#8a95a3" stroke-width="5" fill="none"/><path d="M270 110 V70 Q270 60 260 60 H250" stroke="#fff" stroke-width="10" fill="none"/><path d="M270 110 V70 Q270 60 260 60 H250" stroke="#8a95a3" stroke-width="5" fill="none"/>';
+    s += tank(20, 160, 320, 230, 0.65 + 0.1 * grow(u, d), t);
+    for (var c = 0; c < 5; c++) s += '<rect x="' + (52 + c * 60) + '" y="166" width="14" height="218" fill="#c9d3dd" stroke="#fff" stroke-width="2" opacity=".85"/>';
+    s += pipe([[-80, 230], [20, 230]], 14) + flow(t, [[-80, 230], [26, 230]], "#bfeaff", 4, 0.4, 4);
+    return s + tag("خزان تحت الأرض", 180, 90, u, 0.4, 19, NAVY) + tag("جوه المحطة", 180, 420, u, 1.6, 16, NAVY);
   });
 
-  // 17 — the big pumps push the water into the pipes
-  shot(17, CAM([180, 200], [180, 200], [1.0, 1.05]), function (u, d, t) {
-    var s = sky("day", t) + K.soil(t, 260);
-    s += '<rect x="40" y="170" width="120" height="110" rx="10" fill="url(#concG)" stroke="#fff" stroke-width="5"/>' + K.pump(100, 225, 42, t);
-    s += K.pipe([[160, 225], [420, 225]], 26) + K.flow(t, [[160, 225], [420, 225]], "#bfeaff", 14, 0.22, 5);
-    return s + K.tag("طلمبات قوية", 180, 60, u, 0.4, 20, "#0d1a33") + K.tag("بتدفع الميه في المواسير", 180, 376, u, 1.3, 17, "#0d1a33");
+  // 17 — the high-lift pump hall: three pump sets, a common header, pressure gauges
+  shot(17, CAM([150, 210], [210, 210], [1.15, 1.0]), function (u, d, t) {
+    var s = navyBg() + '<rect x="-80" y="330" width="520" height="200" fill="#3b4a5a"/><path d="M-80 330 H440" stroke="#fff" stroke-width="3"/>';
+    s += pipe([[-80, 150], [440, 150]], 26) + flow(t, [[-80, 150], [440, 150]], "#bfeaff", 14, 0.28, 5);
+    for (var i = 0; i < 3; i++) { var x = 60 + i * 120; s += pipe([[x + 42, 270], [x + 42, 150]], 12) + pumpSet(x, 300, 0.9, t + i, "#2f6fb5") + gauge(x + 70, 214, 16, 0.65 + 0.05 * Math.sin(t * 3 + i), ""); }
+    return s + tag("طلمبات الضغط العالي", 180, 60, u, 0.4, 18, NAVY) + tag("بتدفع الميه في المواسير", 180, 400, u, 1.3, 16, NAVY);
   });
 
-  // 18 — the pipe runs for tens of kilometres under the road
-  shot(18, CAM([180, 200], [180, 200], [1.0, 1.04]), function (u, d, t) {
-    var s = sky("dusk", t) + '<rect x="-60" y="280" width="480" height="260" fill="#2b3346"/>';
-    s += '<path d="M-60 300 H420" stroke="#ffd166" stroke-width="4" stroke-dasharray="26 20" stroke-dashoffset="' + f(-t * 120) + '"/>';
-    for (var i = 0; i < 4; i++) { var x = ((t * 60 * (i % 2 ? 1 : -1) + i * 120) % 540 + 540) % 540 - 90; s += '<rect x="' + f(x) + '" y="' + (i % 2 ? 330 : 360) + '" width="56" height="22" rx="7" fill="' + ["#ff7a5c", "#2a8fc0", "#ffd166", "#7bd389"][i] + '" stroke="#fff" stroke-width="3"/>'; }
-    s += K.pipe([[-60, 250], [420, 250]], 22) + K.flow(t, [[-60, 250], [420, 250]], "#bfeaff", 12, 0.2, 4);
-    return s + K.tag("عشرات الكيلومترات", 180, 60, u, 0.5, 22, "#0d1a33");
+  // 18 — a big main under the road: tens of kilometres to the city
+  shot(18, CAM([180, 210], [180, 210], [1.0, 1.06]), function (u, d, t) {
+    var s = sky("dusk", t) + skyline(170, t) + '<rect x="-80" y="168" width="520" height="70" fill="#3a4152"/>';
+    s += '<path d="M-80 204 H440" stroke="#ffd166" stroke-width="4" stroke-dasharray="26 20" stroke-dashoffset="' + f(-t * 140) + '"/>';
+    for (var i = 0; i < 4; i++) { var x = ((t * 70 * (i % 2 ? 1 : -1) + i * 140) % 560 + 560) % 560 - 100; s += '<rect x="' + f(x) + '" y="' + (i % 2 ? 176 : 212) + '" width="54" height="20" rx="7" fill="' + ["#ff7a5c", "#2a8fc0", "#ffd166", "#7bd389"][i] + '" stroke="#fff" stroke-width="3"/><circle cx="' + f(x + 12) + '" cy="' + (i % 2 ? 196 : 232) + '" r="5" fill="#222"/><circle cx="' + f(x + 42) + '" cy="' + (i % 2 ? 196 : 232) + '" r="5" fill="#222"/>'; }
+    s += soil(t, 238) + '<circle cx="-10" cy="320" r="0"/>' + pipe([[-80, 320], [440, 320]], 56) + flow(t, [[-80, 320], [440, 320]], "#bfeaff", 14, 0.2, 6);
+    s += '<rect x="290" y="250" width="50" height="34" rx="6" fill="#2f7a4a" stroke="#fff" stroke-width="3"/><text x="315" y="273" text-anchor="middle" font-family="Noto Sans Arabic" font-weight="900" font-size="14" fill="#fff">كم 18</text>';
+    return s + tag("عشرات الكيلومترات", 180, 400, u, 0.5, 20, NAVY);
   });
 
-  // 19 — booster pumps on the way keep the pressure up
-  shot(19, CAM([180, 200], [180, 200], [1.0, 1.06]), function (u, d, t) {
-    var s = sky("day", t) + K.soil(t, 290);
-    s += '<rect x="120" y="180" width="130" height="110" rx="10" fill="url(#concG)" stroke="#fff" stroke-width="5"/>' + K.pump(185, 235, 36, t);
-    s += K.pipe([[-60, 235], [120, 235]], 22) + K.pipe([[250, 235], [420, 235]], 22) + K.flow(t, [[-60, 235], [420, 235]], "#bfeaff", 12, 0.2, 4);
-    s += K.gauge(300, 120, 44, clamp(u / 1.5) * 0.7 + 0.2, "");
-    return s + K.tag("محطة تقوية", 180, 60, u, 0.5, 22, "#0d1a33") + K.tag("الضغط بيرجع قوي تاني", 180, 376, u, 1.6, 17, "#0d1a33");
+  // 19 — a booster station on the way: pressure drops along the pipe, the pump lifts it again
+  shot(19, CAM([180, 210], [180, 210], [1.0, 1.06]), function (u, d, t) {
+    var s = sky("day", t) + '<rect x="-80" y="250" width="520" height="40" fill="url(#grassG)"/>' + soil(t, 286);
+    s += '<rect x="110" y="150" width="140" height="130" rx="6" fill="#e8dcc4" stroke="#fff" stroke-width="4"/><path d="M100 152 H260 L240 130 H120 Z" fill="#8a95a3" stroke="#fff" stroke-width="3"/>' + pumpSet(180, 240, 0.7, t, "#2f6fb5");
+    s += pipe([[-80, 330], [150, 330], [150, 262]], 18) + pipe([[214, 262], [214, 330], [440, 330]], 18);
+    s += flow(t, [[-80, 330], [150, 330]], "#bfeaff", 4, 0.12, 4) + flow(t, [[214, 330], [440, 330]], "#bfeaff", 9, 0.35, 4);
+    s += gauge(40, 200, 30, 0.2, "") + gauge(320, 200, 30, 0.2 + 0.6 * grow(u, d), "");
+    return s + tag("ضعيف", 40, 250, u, 0.6, 13, "#c2456b") + tag("قوي", 320, 250, u, 1.6, 13, "#3f9a55") + tag("محطة تقوية", 180, 60, u, 0.3, 20, NAVY);
   });
 
-  // 20 — at home the tap gives clean water
-  shot(20, CAM([180, 200], [180, 200], [1.0, 1.04]), function (u, d, t) {
-    var s = sky("day", t) + '<rect x="-60" y="300" width="480" height="200" fill="url(#grassG)"/>';
-    s += '<rect x="150" y="150" width="200" height="160" fill="#ffd9b0" stroke="#fff" stroke-width="5"/><path d="M130 152 L250 80 L370 152Z" fill="#ff7a5c" stroke="#fff" stroke-width="5"/>';
-    s += '<rect x="200" y="200" width="120" height="10" fill="url(#steelG)" stroke="#fff" stroke-width="3"/>' + K.pipe([[260, 150], [260, 200]], 8);
-    s += K.flow(t, [[260, 212], [260, 262]], "#bfeaff", 4, 1.0, 4);
-    var fill = clamp(u / 2.5) * 80;
-    s += '<path d="M220 340 H300 L294 262 H226Z" fill="rgba(255,255,255,.3)" stroke="#fff" stroke-width="4"/><rect x="230" y="' + f(336 - fill) + '" width="60" height="' + f(fill) + '" fill="url(#waterG)"/>';
-    return s + K.tag("الحنفية اللي إنت فاتحها!", 180, 60, u, 0.4, 19, "#0d1a33");
+  // 20 — the building: the riser carries the water up to every floor, the kitchen tap at the top
+  shot(20, CAM([180, 330], [200, 170], [1.2, 1.0]), function (u, d, t) {
+    var s = sky("day", t) + '<rect x="-80" y="400" width="520" height="80" fill="url(#soilG)"/>';
+    s += '<rect x="60" y="60" width="240" height="340" fill="#f2d3a8" stroke="#fff" stroke-width="5"/>'; for (var fl = 0; fl < 4; fl++) s += '<path d="M60 ' + (140 + fl * 80) + ' H300" stroke="#fff" stroke-width="3"/><rect x="200" y="' + (80 + fl * 80) + '" width="70" height="40" fill="#9fd8ef" stroke="#fff" stroke-width="3"/>';
+    s += pipe([[180, 470], [180, 400], [120, 400], [120, 100]], 8); for (var j = 0; j < 4; j++) s += pipe([[120, 130 + j * 80], [150, 130 + j * 80]], 6);
+    s += flow(t, [[180, 470], [180, 400], [120, 400], [120, 100]], "#bfeaff", 10, 0.3, 3.5);
+    s += faucet(160, 136, 0.28, t) + stream(173, 106, 128, t, 3);
+    return s + tag("الحنفية اللي إنت فاتحها!", 190, 60, u, 0.4, 15, NAVY);
   });
 
-  // 21 — the lab takes samples and checks the water
-  shot(21, CAM([180, 200], [180, 200], [1.0, 1.04]), function (u, d, t) {
-    var s = '<rect x="-60" y="-60" width="480" height="560" fill="url(#skyNight)"/>';
-    s += '<rect x="-60" y="290" width="480" height="150" fill="#24476b" stroke="#fff" stroke-width="4"/>';
-    for (var i = 0; i < 4; i++) s += '<path d="M' + (60 + i * 70) + ' 210 L' + (80 + i * 70) + ' 210 L' + (86 + i * 70) + ' 290 L' + (54 + i * 70) + ' 290 Z" fill="' + BLUE + '" fill-opacity=".5" stroke="#fff" stroke-width="3"/>' + '<rect x="' + (56 + i * 70) + '" y="' + (250 + i * 2) + '" width="28" height="40" fill="' + ["#2a8fc0", "#ffd166", "#7bd389", "#ff7aa2"][i] + '"/>';
-    s += '<rect x="200" y="90" width="150" height="120" rx="12" fill="#0d1a33" stroke="#fff" stroke-width="4"/>';
-    s += '<text x="275" y="130" text-anchor="middle" font-family="Noto Sans Arabic" font-weight="800" font-size="16" fill="#7fd3f5">NTU</text>';
-    s += '<text x="275" y="190" text-anchor="middle" font-family="Noto Sans Arabic" font-weight="900" font-size="50" fill="' + GREEN + '">' + (u < 1 ? "12.0" : "0.4") + '</text>';
-    s += '<path d="M300 232 l14 14 l28 -30" stroke="' + GREEN + '" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="' + f(clamp((u - 1.6) / 0.6)) + '"/>';
-    return s + K.tag("معمل التحاليل", 180, 60, u, 0.4, 20, "#0d1a33") + K.tag("بياخد عينات كل فترة", 180, 376, u, 1.6, 17, "#0d1a33");
+  // 21 — the lab: a turbidimeter reading in NTU, chlorine test vials, sample bottles
+  shot(21, CAM([180, 200], [190, 210], [1.0, 1.06]), function (u, d, t) {
+    var s = navyBg() + '<rect x="-80" y="300" width="520" height="200" fill="#e8edf2" stroke="#fff" stroke-width="3"/><rect x="-80" y="300" width="520" height="14" fill="#c9d3dd"/>';
+    s += '<rect x="30" y="160" width="150" height="140" rx="12" fill="#e6ecf2" stroke="#fff" stroke-width="4"/><rect x="44" y="176" width="122" height="64" rx="6" fill="#0d1a33"/>';
+    s += '<text x="105" y="200" text-anchor="middle" font-family="Noto Sans Arabic" font-weight="800" font-size="12" fill="#7fd3f5">NTU</text><text x="105" y="232" text-anchor="middle" font-family="Noto Sans Arabic" font-weight="900" font-size="30" fill="' + GREEN + '">' + (u < 1.2 ? "12.0" : "0.4") + '</text><rect x="90" y="250" width="30" height="40" rx="4" fill="#cfefff" stroke="#fff" stroke-width="2"/>';
+    var vials = ["#fff6c8", "#ffe28a", "#ffcf5a", "#ffb938"]; for (var i = 0; i < 4; i++) s += '<rect x="' + (210 + i * 28) + '" y="230" width="18" height="70" rx="6" fill="' + vials[i] + '" stroke="#fff" stroke-width="2.5"/>';
+    s += '<path d="M330 296 V250 L350 220 V200 H364" stroke="#fff" stroke-width="3" fill="none" opacity=".0"/>';
+    s += '<path d="M200 150 l14 14 l28 -30" stroke="' + GREEN + '" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="' + f(clamp((u - 1.6) / 0.6)) + '"/>';
+    return s + tag("معمل التحاليل", 180, 60, u, 0.4, 20, NAVY) + tag("بياخد عينات كل فترة", 180, 380, u, 1.4, 16, NAVY);
   });
 
-  // 22 — the clean water comes out of the tap
-  shot(22, CAM([180, 200], [180, 200], [1.0, 1.05]), function (u, d, t) {
-    var s = '<rect x="-60" y="-60" width="480" height="560" fill="url(#tileG)"/>';
-    s += '<rect x="60" y="330" width="240" height="90" rx="22" fill="url(#concG)" stroke="#fff" stroke-width="5"/>';
-    s += K.pipe([[180, 40], [180, 80], [220, 80], [220, 170]], 14);
-    s += K.flow(t, [[220, 180], [220, 300]], "#e6f7ff", 7, 1.0, 4);
-    var fill = clamp(u / 2.4) * 80;
-    s += '<path d="M180 300 H260 L254 220 H186Z" fill="rgba(255,255,255,.35)" stroke="#fff" stroke-width="4"/><rect x="190" y="' + f(296 - fill) + '" width="60" height="' + f(fill) + '" fill="url(#waterG)"/>';
-    s += K.spark(120, 180, t, YEL) + K.spark(300, 140, t + 2, YEL);
-    return s + K.tag("صافية!", 180, 60, u, 0.4, 26, "#2a8fc0");
+  // 22 — the clean water pours from the tap into the glass
+  shot(22, CAM([200, 200], [190, 220], [1.4, 1.1]), function (u, d, t) {
+    var s = bg("#1f6f8f"); for (var x = -80; x < 440; x += 44) for (var y = -80; y < 300; y += 30) s += '<rect x="' + (x + (y / 30 % 2) * 22) + '" y="' + y + '" width="42" height="28" rx="3" fill="#2a7fa1" stroke="#fff" stroke-opacity=".18" stroke-width="2"/>';
+    s += '<rect x="-80" y="296" width="520" height="20" fill="#e8edf2" stroke="#fff" stroke-width="3"/><rect x="-80" y="316" width="520" height="220" fill="#5a3f2b"/>';
+    s += faucet(110, 300, 1.05, t) + stream(203, 194, 300, t, 11) + glass(204, 372, 70, 100, 0.2 + 0.7 * grow(u, d), "rgba(120,200,240,.85)", t) + spark(260, 260, t, "#fff") + spark(150, 230, t + 2, "#fff");
+    return s + tag("صافية ونضيفة", 200, 110, u, 0.4, 18, "#2a8fc0");
   });
 
-  // 23 — the payoff: the water in your glass started in the Ethiopian highlands
-  shot(23, CAM([180, 200], [180, 200], [1.0, 1.05]), function (u, d, t) {
-    var s = sky("dusk", t);
-    s += '<path d="M-60 260 L40 120 L120 170 L190 90 L280 180 L330 140 L420 260 V500 H-60Z" fill="url(#hillG)" stroke="#fff" stroke-width="4"/>';
-    var p = [[190, 110], [210, 180], [260, 250], [320, 300]];
-    s += '<path d="M190 110 Q210 180 260 250 T320 300" stroke="#fff" stroke-width="24" fill="none" stroke-linecap="round"/><path d="M190 110 Q210 180 260 250 T320 300" stroke="url(#waterG)" stroke-width="16" fill="none" stroke-linecap="round"/>';
-    s += K.flow(t, p, "#fff", 8, 0.16, 4);
-    s += '<rect x="290" y="300" width="60" height="70" fill="#ffd9b0" stroke="#fff" stroke-width="4"/><path d="M280 302 L320 262 L360 302Z" fill="#ff7a5c" stroke="#fff" stroke-width="4"/>';
-    return s + K.tag("من هضبة إثيوبيا لحنفيتك", 180, 60, u, 0.4, 19, "#0d1a33");
+  // 23 — the payoff: from the Ethiopian highlands, down the Nile, into your glass
+  shot(23, CAM([262, 240], [160, 85], [2.0, 1.7]), function (u, d, t) {
+    var s = water(t, -80) + africa(t, 1);
+    var ta = pj([37.3, 12]), c = pj([31.2, 30]);
+    var path = pjs(BLUEN.concat(MAIN.slice(1, 8)));
+    for (var i = 0; i < 6; i++) { var q = along(path, (t * 0.12 + i / 6) % 1); s += '<circle cx="' + f(q[0]) + '" cy="' + f(q[1]) + '" r="3" fill="#fff"/>'; }
+    s += glass(c[0] + 6, c[1] - 6, 16, 22, 0.8, "rgba(120,200,240,.9)", t);
+    return s + tag("من إثيوبيا", f(ta[0] + 10), f(ta[1] + 18), u, 0.5, 9, NAVY) + tag("لكوبايتك", f(c[0] + 30), f(c[1] - 26), u, 1.8, 9, ORANGE);
   });
 
   // 24 — the call to action
-  shot(24, CAM([180, 200], [180, 200], [1.0, 1.0]), function (u, d, t) {
-    var s = sky("dusk", t) + K.water(t, 300) + K.bubbles(t, 180, 436, 10, 0.2, 360, 4);
-    s += K.big("قولولنا!", 180, 230, 50, YEL);
-    s += K.spark(60, 120, t, YEL) + K.spark(300, 110, t + 1, YEL);
-    return s + K.tag("حكاية إيه المرة الجاية؟", 180, 360, u, 0.8, 18, "#0d1a33");
+  shot(24, CAM([180, 200], [180, 220], [1.0, 1.05]), function (u, d, t) {
+    var s = sky("dusk", t) + skyline(260, t) + water(t, 260) + felucca(lerp(60, 280, (t * 0.04) % 1), 300, 0.8, t);
+    s += big("قولولنا!", 180, 170, 52, YEL);
+    return s + tag("عايزين حكاية إيه المرة الجاية؟", 180, 400, u, 0.8, 15, NAVY);
   });
 
-  window.__parts = { water: K.water };
+  window.__parts = { faucet: faucet, glass: glass, stream: stream, splash: splash, palm: palm, felucca: felucca, skyline: skyline, africa: africa, pj: pj, sand: sand, gravel: gravel, water: water, pipe: pipe, flow: flow, tag: tag, big: big, spark: spark, sky: sky, sun: sun, soil: soil };
   window.__panel = function (svg, t) {
-    var i = at(t), sh = SH[i], next = i + 1 < SH.length ? SH[i + 1].a : K.L(K.LN.length), u = t - sh.a, d = Math.max(0.5, next - sh.a);
-    var c = sh.cam(u, d), cx = c[0] + 14 * Math.sin(t * 1.7), cy = c[1] + 10 * Math.cos(t * 1.7), z = c[2] * (1 + 0.04 * Math.sin(t * 1.3));   // the drift never comes to rest
-    svg.innerHTML = '<g transform="translate(180 218) rotate(' + f(0.7 * Math.sin(t * 0.83)) + ') scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g><rect width="360" height="436" filter="url(#grain)"/>';
+    var i = at(t), sh = SH[i], next = i + 1 < SH.length ? SH[i + 1].a : L(LN.length), u = t - sh.a, d = Math.max(0.5, next - sh.a);
+    var c = sh.cam(u, d), cx = c[0] + 12 * Math.sin(t * 1.7), cy = c[1] + 9 * Math.cos(t * 1.7), z = c[2] * (1 + 0.035 * Math.sin(t * 1.3));   // the drift never comes to rest
+    svg.innerHTML = '<g transform="translate(180 218) rotate(' + f(0.6 * Math.sin(t * 0.83)) + ') scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g><rect width="360" height="436" filter="url(#grain)"/>';
     return i;
   };
 })();

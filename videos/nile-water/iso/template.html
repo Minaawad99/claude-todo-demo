@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>المية من النيل لحنفيتك (أيزومتريك) — إيه الحكاية؟</title>
+<meta name="viewport" content="width=360, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --navy: #0d1a33; --ink: #ffffff; --accent: #ff9f43; }
+  body { margin: 0; background: var(--navy); }
+  .frame { position: relative; width: 360px; height: 640px; overflow: hidden; background: var(--navy); }
+  .frame::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px); background-size: 22px 22px; }
+  #panel { position: absolute; left: 0; top: 0; width: 360px; height: 436px; }
+  #prog { position: absolute; left: 14px; right: 14px; top: 10px; height: 14px; border-radius: 7px; background: rgba(13,26,51,.55); }
+  #prog i { position: absolute; top: 50%; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; background: rgba(255,255,255,.45); }
+  #prog i.past { background: var(--accent); }
+  #prog i.now { background: #fff; width: 12px; height: 12px; margin: -6px 0 0 -6px; box-shadow: 0 0 0 3px rgba(255,159,67,.6); }
+  #cap { position: absolute; left: 18px; right: 18px; top: 462px; text-align: center; font: 900 22px/1.55 "Noto Sans Arabic", sans-serif; color: var(--ink); direction: rtl; }
+  #cap span { opacity: 0; transition: opacity .08s; }
+  #cap span.on { opacity: 1; }
+  #cap span.k { color: var(--accent); }
+  #cap.long { font-size: 19px; }
+  .brand { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; font: 800 13px "Noto Sans Arabic", sans-serif; color: #7f93b5; }
+</style></head><body>
+<div class="frame">
+  <svg id="panel" viewBox="0 0 360 436" aria-hidden="true"></svg>
+  <div id="prog"></div>
+  <div id="cap"></div>
+  <div class="brand">إيه الحكاية؟</div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .45  0 0 0 0 .4  0 0 0 .07 0"/></filter>
+  <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3fa9e0"/><stop offset=".6" stop-color="#8fd6f2"/><stop offset="1" stop-color="#d9f3ff"/></linearGradient>
+  <linearGradient id="skyDusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b3f7a"/><stop offset=".55" stop-color="#e0717a"/><stop offset="1" stop-color="#ffb07a"/></linearGradient>
+  <linearGradient id="skyNight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a1a3c"/><stop offset="1" stop-color="#1f4f7a"/></linearGradient>
+  <linearGradient id="tileG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1e6f8f"/><stop offset="1" stop-color="#15506b"/></linearGradient>
+  <linearGradient id="waterG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3fb0e6"/><stop offset=".6" stop-color="#1f7fbf"/><stop offset="1" stop-color="#14588a"/></linearGradient>
+  <linearGradient id="mudG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c4965f"/><stop offset="1" stop-color="#7a4f2a"/></linearGradient>
+  <linearGradient id="soilG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a6b3c"/><stop offset="1" stop-color="#4e3420"/></linearGradient>
+  <linearGradient id="grassG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7bd389"/><stop offset="1" stop-color="#3f9a55"/></linearGradient>
+  <linearGradient id="hillG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6fc27a"/><stop offset="1" stop-color="#2f7a4a"/></linearGradient>
+  <linearGradient id="steelG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7d8896"/><stop offset=".5" stop-color="#e6ecf2"/><stop offset="1" stop-color="#7d8896"/></linearGradient>
+  <linearGradient id="concG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9c3cf"/><stop offset="1" stop-color="#6d7a8a"/></linearGradient>
+</defs></svg>
+<script src="../timing.js"></script>
+<script>/*CAPS*/</script>
+<script src="scenes.js"></script>
+<script>
+  (function () {
+    var LN = TIMING.lines, cap = document.getElementById("cap"), panel = document.getElementById("panel"), prog = document.getElementById("prog"), cur = -1;
+    window.VIDEO_END = TIMING.duration;
+    // progress track: one dot per line, filled once passed
+    var dots = [];
+    for (var j = 0; j < LN.length; j++) { var d = document.createElement("i"); d.style.left = (100 * (j + 0.5) / LN.length) + "%"; prog.appendChild(d); dots.push(d); }
+    window.renderAt = function (t) {
+      window.__panel(panel, t);
+      var i = 0; while (i < LN.length - 1 && LN[i + 1].start - 0.05 <= t) i++;
+      var c = CAPS[i], l = LN[i];
+      for (var q = 0; q < dots.length; q++) dots[q].className = q < i ? "past" : q === i ? "now" : "";
+      if (i !== cur) { cap.className = c.w.join(" ").length > 62 ? "long" : ""; cap.innerHTML = c.w.map(function (w, k) { return '<span class="' + (c.k[k] ? "k" : "") + '">' + w + '</span>'; }).join(" "); cur = i; }
+      var tot = c.w.join("").length, acc = 0, sp = cap.children;
+      for (var k = 0; k < sp.length; k++) { var at = l.start + (l.end - l.start) * (acc / tot) - 0.05; sp[k].classList.toggle("on", t >= at); acc += c.w[k].length; }
+    };
+    renderAt(60);
+  })();
+</script>
+</body></html>
