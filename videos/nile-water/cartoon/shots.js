@@ -123,21 +123,19 @@
     return s + tag("إيه الحكاية؟", 180, 60, u, 0.3, 26, ORANGE);
   });
 
-  // 4 — the Nile is about 6,650 km long: the whole river drawn on Africa
-  shot(4, CAM([200, 160], [180, 230], [1.05, 1.0]), function (u, d, t) {
-    var s = water(t, -80) + africa(t, grow(u, d));
-    var c = pj([31.2, 30]), v = pj([33, -1]);
-    s += tag("القاهرة", f(c[0] + 50), f(c[1] - 4), u, 1.5, 14, NAVY) + tag("بحيرة فيكتوريا", f(v[0] + 6), f(v[1] + 34), u, 0.6, 14, NAVY);
-    return s + big("6650 كم", 120, 400, 40, ORANGE);
+  // 4 — the Nile drawn from Lake Victoria to the Mediterranean on a real map of the basin: about 6,650 km
+  shot(4, function (u, d) { var k = ease(clamp(u / d)), v = NM(33, -1); return [lerp(v[0], 180, k), lerp(v[1] - 40, 214, k), lerp(1.7, 1.0, k)]; }, function (u, d, t) {
+    var g2 = grow(u, d), s = nileMap(t, { k: g2 }) + nileLabels(u, { cities: [["بحيرة فيكتوريا", 32.8, -2.6, 0.3, 10, "#2a8fc0", 16], ["القاهرة", 31.24, 30.04, 2.2, 10, ORANGE]] });
+    return s + big(Math.round(6650 * g2) + " كم", 90, 120, 30, ORANGE);
   });
 
-  // 5 — two sources: White Nile from Lake Victoria, Blue Nile from Lake Tana in the Ethiopian highlands, meeting at Khartoum
-  shot(5, CAM([250, 248], [205, 175], [1.6, 1.9]), function (u, d, t) {
-    var s = water(t, -80) + africa(t, 1);
-    var v = pj([33, -1]), ta = pj([37.3, 12]), kh = pj([32.5, 15.6]);
-    s += '<circle cx="' + f(kh[0]) + '" cy="' + f(kh[1]) + '" r="' + f(4 + Math.sin(t * 4)) + '" fill="#fff"/>';
-    s += tag("النيل الأبيض", f(v[0] - 30), f(v[1] - 40), u, 0.4, 9, "#2a8fc0") + tag("النيل الأزرق", f(ta[0] + 18), f(ta[1] - 14), u, 1.2, 9, "#1f6fd1");
-    return s + tag("الخرطوم", f(kh[0] - 24), f(kh[1] - 8), u, 2.0, 8, NAVY) + tag("هضبة إثيوبيا", f(ta[0] + 14), f(ta[1] + 16), u, 2.6, 8, NAVY);
+  // 5 — two sources: the White Nile from Lake Victoria, the Blue Nile from Lake Tana in the Ethiopian highlands, meeting at Khartoum
+  shot(5, function (u, d) { var k = ease(clamp(u / d)), a = NM(33.2, 2.5), b = NM(35, 12.5); return [lerp(a[0], b[0], k), lerp(a[1], b[1], k), lerp(2.0, 2.2, k)]; }, function (u, d, t) {
+    var s = nileMap(t, { k: 1, flow: true }) + nileLabels(u, { countries: true, seas: false, size: 0.6, cities: [
+      ["النيل الأبيض", 31.0, 6.0, 0.3, 11, "#2a8fc0", 0], ["بحيرة فيكتوريا", 32.8, -1.2, 0.6, 10, "#2a8fc0", 0],
+      ["النيل الأزرق", 35.4, 11.2, 1.4, 11, "#1f5fc8", -14], ["بحيرة تانا", 37.3, 12.0, 1.8, 10, "#1f5fc8", -14],
+      ["الخرطوم", 32.53, 15.6, 2.4, 11, ORANGE, -14], ["هضبة إثيوبيا", 39.6, 6.2, 2.8, 10, "#5a5a20", 0]] });
+    return s;
   });
 
   // 6 — the Blue Nile gives about 60% of the water reaching Aswan (a donut split)
@@ -309,14 +307,12 @@
     return s + tag("صافية ونضيفة", 200, 110, u, 0.4, 18, "#2a8fc0");
   });
 
-  // 23 — the payoff: from the Ethiopian highlands, down the Nile, into your glass
-  shot(23, CAM([262, 240], [160, 85], [2.0, 1.7]), function (u, d, t) {
-    var s = water(t, -80) + africa(t, 1);
-    var ta = pj([37.3, 12]), c = pj([31.2, 30]);
-    var path = pjs(BLUEN.concat(MAIN.slice(1, 8)));
-    for (var i = 0; i < 6; i++) { var q = along(path, (t * 0.12 + i / 6) % 1); s += '<circle cx="' + f(q[0]) + '" cy="' + f(q[1]) + '" r="3" fill="#fff"/>'; }
-    s += glass(c[0] + 6, c[1] - 6, 16, 22, 0.8, "rgba(120,200,240,.9)", t);
-    return s + tag("من إثيوبيا", f(ta[0] + 10), f(ta[1] + 18), u, 0.5, 9, NAVY) + tag("لكوبايتك", f(c[0] + 30), f(c[1] - 26), u, 1.8, 9, ORANGE);
+  // 23 — the payoff: from Lake Tana in the Ethiopian highlands, down the Blue Nile and the Nile, to Cairo and your glass
+  shot(23, function (u, d) { var k = ease(clamp(u / d)), a = NM(36.5, 13), b = NM(31.6, 28.5); return [lerp(a[0], b[0], k), lerp(a[1], b[1], k), lerp(2.0, 1.7, k)]; }, function (u, d, t) {
+    var s = nileMap(t, { k: 1 }), path = NMD.blue.concat(NMD.main.slice(1)).map(function (q) { return NM(q[0], q[1]); });
+    for (var i = 0; i < 10; i++) { var q = along(path, (t * 0.08 + i / 10) % 1); s += '<circle cx="' + f(q[0]) + '" cy="' + f(q[1]) + '" r="3.2" fill="#fff" stroke="#1f5fc8" stroke-width="1.2"/>'; }
+    var c = NM(31.24, 30.04); s += glass(c[0] + 18, c[1] + 4, 16, 22, 0.8, "rgba(120,200,240,.95)", t);
+    return s + nileLabels(u, { seas: false, size: 0.7, cities: [["من إثيوبيا", 37.3, 12.0, 0.4, 12, "#1f5fc8", 18], ["لكوبايتك في القاهرة", 31.24, 30.04, 1.8, 12, ORANGE, -16]] });
   });
 
   // 24 — the call to action
