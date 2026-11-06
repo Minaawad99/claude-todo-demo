@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>الحب بيتآكل بالإهمال الصغير — إيه الحكاية؟</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@500;700;900&display=block">
+<script src="timing.js"></script>
+<style>
+  /* 360×640 canvas, rendered at 3x by render.js. Black stage, white line-art, yellow keywords (reference style). */
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  html, body { margin: 0; width: 360px; height: 640px; overflow: hidden; background: #000; }
+  body { position: relative; font-family: "Noto Sans Arabic", sans-serif; color: #fff; }
+  .brand { position: absolute; top: 22px; left: 0; right: 0; text-align: center; font: 700 13px/1 "Noto Sans Arabic", sans-serif; color: #cfcfcf; letter-spacing: .2px; }
+  .brand i { display: inline-block; width: 16px; height: 13px; border-radius: 3px; background: #ffc83d; vertical-align: -2px; margin-left: 6px; }
+  .stage { position: absolute; left: 0; top: 52px; width: 360px; height: 380px; }
+  .stage svg { position: absolute; inset: 0; width: 360px; height: 380px; overflow: visible; }
+  .cap { position: absolute; left: 22px; right: 22px; top: 452px; text-align: center; font: 700 19px/1.75 "Noto Sans Arabic", sans-serif; color: #fff; }
+  .cap.long { font-size: 17px; line-height: 1.7; }
+  .cap, .cap div { overflow-wrap: anywhere; }
+  .cap span { opacity: 0; }
+  .cap span.k { color: #ffc83d; }
+  .endcard { position: absolute; left: 0; right: 0; bottom: 34px; text-align: center; font: 500 12px/1.4 "Noto Sans Arabic", sans-serif; color: #9a9a9a; }
+</style>
+</head>
+<body>
+<div class="brand"><i></i>إيه الحكاية؟</div>
+<div class="stage"><svg id="art" viewBox="0 0 360 380"><defs><linearGradient id="beam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".34"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><radialGradient id="glow"><stop offset="0" stop-color="#ffc83d" stop-opacity=".38"/><stop offset="1" stop-color="#ffc83d" stop-opacity="0"/></radialGradient></defs></svg></div>
+<div class="cap" id="cap"></div>
+
+<script>
+// keywords per script line (yellow in the caption)
+window.KEYWORDS = [["الحب", "بالراحة"], ["مختارة"], ["صغيرة"], ["دقيقة"], ["رسالة", "صغيرة"], ["الأمان"], ["تسمعها"], ["بالصدفة"], ["الإهمال", "شرخ"], ["نسيان"], ["تافهة"], ["مهمة"], ["يبرد"], ["التفاصيل"], ["بتفكر"], ["اسألها", "اسمعها"], ["شكراً"], ["الاهتمام"], ["بعيدة"], ["الشرخ"], ["مختارة"], ["التفاصيل"], ["واضح"], ["يسمعه"], ["المرة"]];
+</script>
+<script>
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var GY = 300;                      // ground line in the 360×380 stage
+  var INK = "#f4f4f4", YEL = "#ffc83d", RED = "#ff4d6d", BLU = "#6cc4ff", GRN = "#7ddc8a";
+  var svg = document.getElementById("art");
+  var T = window.TIMING.lines;
+  var END = window.TIMING.duration;
+  var clamp = function (x) { return x < 0 ? 0 : x > 1 ? 1 : x; };
+  var ease = function (x) { x = clamp(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+  var sm = function (a, b, t) { return ease((t - a) / (b - a)); };
+
+  function el(tag, attrs, parent) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function set(e, a) { for (var k in a) e.setAttribute(k, a[k]); }
+  function g(parent, x, y) { return el("g", { transform: "translate(" + (x || 0) + "," + (y || 0) + ")" }, parent); }
+
+  // Stick figure standing on GY at x. Arms are lines whose ends we move per frame.
+  function fig(P, x, s) {
+    var root = g(P, x, GY);
+    var body = el("g", {}, root);
+    var head = el("circle", { cx: 0, cy: -84, r: 12, fill: "none", stroke: INK, "stroke-width": 3 }, body);
+    el("line", { x1: 0, y1: -72, x2: 0, y2: -34, stroke: INK, "stroke-width": 3, "stroke-linecap": "round" }, body);
+    var aL = el("line", { stroke: INK, "stroke-width": 3, "stroke-linecap": "round" }, body);
+    var aR = el("line", { stroke: INK, "stroke-width": 3, "stroke-linecap": "round" }, body);
+    var lL = el("line", { x1: 0, y1: -34, x2: -11, y2: 0, stroke: INK, "stroke-width": 3, "stroke-linecap": "round" }, body);
+    var lR = el("line", { x1: 0, y1: -34, x2: 11, y2: 0, stroke: INK, "stroke-width": 3, "stroke-linecap": "round" }, body);
+    var f = { root: root, body: body, head: head, aL: aL, aR: aR, lL: lL, lR: lR, x: x, s: s || 1 };
+    f.move = function (nx, ny) { set(root, { transform: "translate(" + nx + "," + (ny === undefined ? GY : ny) + ") scale(" + f.s + ")" }); f.x = nx; };
+    // hands: (lx,ly) and (rx,ry) relative to the body; mood adds a small head tilt
+    f.arms = function (lx, ly, rx, ry, t) {
+      var sway = Math.sin(t * 2.4 + x) * 4;
+      set(aL, { x1: 0, y1: -62, x2: lx, y2: ly + sway });
+      set(aR, { x1: 0, y1: -62, x2: rx, y2: ry - sway });
+    };
+    f.idle = function (t) {
+      f.arms(-16, -44, 16, -44, t);
+      var st = Math.sin(t * 5 + x) * 4;               // legs swing: the figure is always walking on the spot
+      set(lL, { x2: (-11 + st).toFixed(2), y2: (2 - Math.abs(st) * 0.3).toFixed(2) });
+      set(lR, { x2: (11 - st).toFixed(2), y2: (2 - Math.abs(st) * 0.3).toFixed(2) });
+      set(body, { transform: "translate(0," + (Math.sin(t * 3.2 + x) * 2.8).toFixed(2) + ")" });
+    };
+    f.idle(0);
+    return f;
+  }
+
+  function heart(P, x, y, s, col) {
+    var h = el("path", { d: "M0,8 C-18,-6 -12,-20 0,-9 C12,-20 18,-6 0,8Z", fill: col || RED }, P);
+    set(h, { transform: "translate(" + x + "," + y + ") scale(" + (s || 1) + ")" });
+    return h;
+  }
+  function tag(P, x, y, txt, col, w) {
+    var grp = g(P, x, y);
+    w = w || (txt.length * 13 + 26);
+    el("rect", { x: -w / 2, y: -15, width: w, height: 30, rx: 6, fill: "#000", stroke: col || YEL, "stroke-width": 2 }, grp);
+    var t = el("text", { x: 0, y: 6, "text-anchor": "middle", fill: col || YEL, "font-size": 16, "font-weight": 700, "font-family": "Noto Sans Arabic" }, grp);
+    t.textContent = txt;
+    return grp;
+  }
+  function bubble(P, x, y, txt, col, w) {
+    var grp = g(P, x, y);
+    w = w || (txt.length * 14 + 30);
+    el("rect", { x: -w / 2, y: -20, width: w, height: 36, rx: 16, fill: "#fff" }, grp);
+    el("path", { d: "M-6,15 L0,26 L6,15 Z", fill: "#fff" }, grp);
+    var t = el("text", { x: 0, y: 5, "text-anchor": "middle", fill: "#000", "font-size": 17, "font-weight": 700, "font-family": "Noto Sans Arabic" }, grp);
+    t.textContent = txt;
+    if (col) set(grp, { "data-col": col });
+    return grp;
+  }
+  function box(P, x, y, s, col) {
+    var r = el("rect", { x: -s / 2, y: -s / 2, width: s, height: s, rx: 3, fill: "none", stroke: col || INK, "stroke-width": 2.5 }, g(P, x, y));
+    return r.parentNode;
+  }
+  function tick(P, x, y, col) {
+    return el("path", { d: "M-8,0 L-2,6 L9,-7", fill: "none", stroke: col || GRN, "stroke-width": 3, "stroke-linecap": "round", "stroke-linejoin": "round", transform: "translate(" + x + "," + y + ")" }, P);
+  }
+  function house(P, x, y, s) {
+    var grp = g(P, x, y);
+    el("path", { d: "M-22,0 L-22,-24 L0,-44 L22,-24 L22,0 Z", fill: "none", stroke: INK, "stroke-width": 2.5 }, grp);
+    el("rect", { x: -6, y: -14, width: 12, height: 14, fill: YEL }, grp);
+    set(grp, { transform: "translate(" + x + "," + y + ") scale(" + (s || 1) + ")" });
+    return grp;
+  }
+  function ctr(f) { return f; }
+
+  // Each scene: make(P) draws once and returns update(u, D, t): u = seconds since the line started.
+  var SCENES = [];
+  var K = [];  // keywords per line (exact words, no punctuation)
+
+  // 0 — someone comes close, then walks away
+  SCENES[0] = function (P) {
+    var a = fig(P, 230), b = fig(P, -40), h = heart(P, 230, 150, 0, RED);
+    return function (u, D, t) {
+      var k = sm(0, 1.6, u), out = sm(2.6, 4.0, u);
+      var x = -40 + 190 * k + (out * -240 * 1);
+      b.move(x); b.idle(t); a.idle(t);
+      a.arms(-18, -40 + Math.sin(t * 2) * 2, 18, -40, t);
+      set(h, { transform: "translate(230,150) scale(" + (0.9 + 0.25 * Math.sin(t * 6)).toFixed(3) + ")", opacity: sm(0.8, 1.2, u) * (1 - sm(2.6, 3.2, u)) });
+    };
+  };
+
+  // 1 — a question: "إمتى بالظبط؟"
+  SCENES[1] = function (P) {
+    var a = fig(P, 110), b = fig(P, 250);
+    var q = el("text", { x: 180, y: 110, "text-anchor": "middle", fill: YEL, "font-size": 64, "font-weight": 900, "font-family": "Noto Sans Arabic" }, P);
+    q.textContent = "؟";
+    var hb = bubble(P, 180, 200, "مختارة؟", null, 110);
+    return function (u, D, t) {
+      a.idle(t); b.idle(t);
+      a.arms(-16, -44, 22, -66 + Math.sin(t * 3) * 3, t);
+      set(q, { opacity: sm(0, .5, u) * (0.75 + 0.25 * Math.sin(t * 5)), transform: "translate(0," + (-sm(0, .5, u) * 8) + ")" });
+      set(hb, { opacity: sm(.8, 1.2, u) });
+    };
+  };
+
+  // 2 — one side takes, the other gives: a box moves from one to the other
+  SCENES[2] = function (P) {
+    var a = fig(P, 90), b = fig(P, 270), bx = box(P, 0, 0, 26, YEL);
+    var lbl = tag(P, 180, 150, "إهمال", YEL, 90);
+    return function (u, D, t) {
+      a.idle(t); b.idle(t);
+      var k = sm(0.6, 2.2, u);
+      set(bx, { transform: "translate(" + (90 + 180 * k) + "," + (226 - 40 * Math.sin(Math.PI * k)) + ")" });
+      set(lbl, { opacity: sm(.4, .9, u) });
+    };
+  };
+
+  // 3 — the title: the question mark lights up, a figure points at it
+  SCENES[3] = function (P) {
+    var a = fig(P, 180, 1.1);
+    var sun = el("circle", { cx: 180, cy: 120, r: 26, fill: "none", stroke: YEL, "stroke-width": 3 }, P);
+    var rays = el("g", {}, P);
+    for (var i = 0; i < 8; i++) {
+      var ang = i * Math.PI / 4;
+      el("line", { x1: 180 + Math.cos(ang) * 36, y1: 120 + Math.sin(ang) * 36, x2: 180 + Math.cos(ang) * 50, y2: 120 + Math.sin(ang) * 50, stroke: YEL, "stroke-width": 3, "stroke-linecap": "round" }, rays);
+    }
+    return function (u, D, t) {
+      a.idle(t);
+      a.arms(-18, -40, 40, -86 + Math.sin(t * 3) * 3, t);
+      set(rays, { transform: "rotate(" + (t * 40).toFixed(1) + " 180 120)", opacity: sm(0, .6, u) });
+      set(sun, { opacity: sm(0, .6, u) });
+    };
+  };
+
+  // 4 — actions over time: a timeline of small moments, each with a tick
+  SCENES[4] = function (P) {
+    var base = el("line", { x1: 30, y1: 220, x2: 330, y2: 220, stroke: "#555", "stroke-width": 2 }, P);
+    var dots = [];
+    for (var i = 0; i < 6; i++) {
+      var x = 50 + i * 52;
+      var d = el("circle", { cx: x, cy: 220, r: 6, fill: "#222", stroke: INK, "stroke-width": 2 }, P);
+      var tk = tick(P, x, 186, GRN);
+      dots.push([d, tk, x]);
+    }
+    var lab = tag(P, 180, 150, "كل يوم", YEL, 130);
+    var f = fig(P, 180, 1);
+    return function (u, D, t) {
+      f.idle(t);
+      f.arms(-16, -44, 16, -44, t);
+      dots.forEach(function (c, i) {
+        var on = sm(0.4 + i * 0.5, 0.9 + i * 0.5, u);
+        set(c[0], { fill: on > .5 ? YEL : "#222" });
+        set(c[1], { opacity: on });
+      });
+      set(lab, { opacity: sm(0, .5, u) });
+    };
+  };
+
+  // 5 — sweet words: a bubble with sparkles, then a calendar with "كل يوم"
+  SCENES[5] = function (P) {
+    var a = fig(P, 110), b = fig(P, 260);
+    var bub = bubble(P, 180, 150, "كلمة حلوة", null, 130);
+    var spark = el("g", {}, P);
+    [[120, 110], [246, 96], [236, 170]].forEach(function (p) {
+      el("path", { d: "M0,-9 L2,-2 L9,0 L2,2 L0,9 L-2,2 L-9,0 L-2,-2Z", fill: YEL, transform: "translate(" + p[0] + "," + p[1] + ")" }, spark);
+    });
+    var cal = g(P, 180, 250);
+    el("rect", { x: -40, y: -26, width: 80, height: 48, rx: 6, fill: "none", stroke: INK, "stroke-width": 2.5 }, cal);
+    el("line", { x1: -40, y1: -12, x2: 40, y2: -12, stroke: INK, "stroke-width": 2.5 }, cal);
+    var ct = el("text", { x: 0, y: 14, "text-anchor": "middle", fill: YEL, "font-size": 15, "font-weight": 700, "font-family": "Noto Sans Arabic" }, cal);
+    ct.textContent = "كل يوم";
+    return function (u, D, t) {
+      a.idle(t); b.idle(t);
+      set(bub, { opacity: sm(0, .5, u) });
+      set(spark, { opacity: .4 + .6 * Math.abs(Math.sin(t * 4)), transform: "scale(" + (0.9 + 0.2 * Math.sin(t * 4)).toFixed(3) + ")" });
+    };
+  };
+
+  // 6 — remembers details: a checklist with ticks, one line each
+  SCENES[6] = function (P) {
+    var a = fig(P, 80), b = fig(P, 280);
+    var rows = [], items = ["بيسمعها", "بيفتكر تفاصيلها", "بيقولها شكراً"];
+    items.forEach(function (txt, i) {
+      var y = 130 + i * 40;
+      el("rect", { x: 262, y: y - 11, width: 22, height: 22, rx: 3, fill: "none", stroke: INK, "stroke-width": 2 }, P);
+      var tk = tick(P, 273, y, GRN);
+      var t = el("text", { x: 250, y: y + 5, "text-anchor": "end", fill: INK, "font-size": 16, "font-weight": 500, "font-family": "Noto Sans Arabic" }, P);
+      t.textContent = txt;
+      rows.push(tk);
+    });
+    return function (u, D, t) {
+      a.idle(t); b.idle(t);
+      rows.forEach(function (tk, i) { set(tk, { opacity: sm(0.5 + i * 0.7, 1 + i * 0.7, u) }); });
+    };
+  };
+
+  // 7 — messages: "فين إنت؟" vs "إزيك؟" with a heart
+  SCENES[7] = function (P) {
+    var a = fig(P, 120), b = fig(P, 240);
+    var m1 = bubble(P, 240, 120, "فين إنت؟", null, 150);
+    var m2 = bubble(P, 120, 120, "بفكر فيكي", null, 170);
+    var hh = heart(P, 180, 170, 1.0, RED);
+    return function (u, D, t) {
+      a.idle(t); b.idle(t);
+      set(m1, { opacity: sm(0, .4, u) * (1 - sm(3.3, 3.8, u)) });
+      set(m2, { opacity: sm(2.2, 2.6, u) });
+      set(hh, { opacity: sm(2.4, 2.9, u), transform: "translate(180,170) scale(" + (1 + 0.1 * Math.sin(t * 5)).toFixed(3) + ")" });
+    };
+  };
+
+  // 8 — "لأ": a bubble with the word, the other one listens, then a check
+  SCENES[8] = function (P) {
+    var a = fig(P, 110), b = fig(P, 250);
+    var no = bubble(P, 110, 110, "أهلاً", RED, 70);
+    var ok = tick(P, 250, 130, GRN); set(ok, { "stroke-width": 6 });
+    return function (u, D, t) {
+      a.idle(t); b.idle(t);
+      set(no, { opacity: sm(0, .4, u) });
+      set(ok, { opacity: sm(1.6, 2.0, u) });
+    };
+  };
+
+  // 9 — the small request passes between them, the reply is calm
+  SCENES[9] = function (P) {
+    var a = fig(P, 80), b = fig(P, 280);
+    var card = tag(P, 0, 0, "رسالة صغيرة", YEL, 120);
+    return function (u, D, t) {
+      a.idle(t); b.idle(t);
+      var k = sm(0.3, 1.8, u);
+      set(card, { transform: "translate(" + (80 + 200 * k) + ",190)", opacity: sm(0, .3, u) * (1 - sm(1.9, 2.3, u)) });
+    };
+  };
+
+  // 10 — stays close: the other one walks back and stands near, a shield
+  SCENES[10] = function (P) {
+    var a = fig(P, 200), b = fig(P, 40);
+    var sh = el("path", { d: "M0,-22 L18,-14 L16,4 C14,16 0,24 0,24 C0,24 -14,16 -16,4 L-18,-14Z", fill: "none", stroke: BLU, "stroke-width": 3, transform: "translate(120,140)" }, P);
+    var ck = el("path", { d: "M-7,0 L-2,6 L8,-6", fill: "none", stroke: BLU, "stroke-width": 3, transform: "translate(120,140)" }, P);
+    return function (u, D, t) {
+      a.idle(t);
+      var k = sm(0, 1.8, u);
+      b.move(40 + 130 * k);
+      b.idle(t);
+      set(sh, { opacity: sm(2.0, 2.6, u) });
+      set(ck, { opacity: sm(2.0, 2.6, u) });
+    };
+  };
+
+  // 11 — hurt: a broken heart and a silent bubble
+  SCENES[11] = function (P) {
+    var a = fig(P, 180);
+    var hb = el("path", { d: "M0,8 C-18,-6 -12,-20 0,-9 C12,-20 18,-6 0,8Z", fill: "none", stroke: RED, "stroke-width": 3 }, P);
+    set(hb, { transform: "translate(180,150) scale(1.4)" });
+    var crack = el("path", { d: "M-2,-14 L3,-6 L-3,0 L4,8", fill: "none", stroke: RED, "stroke-width": 3 }, P);
+    set(crack, { transform: "translate(180,150) scale(1.4)" });
+    var sil = bubble(P, 280, 120, "...", null, 60);
+    return function (u, D, t) {
+      a.idle(t);
+      set(hb, { opacity: sm(0, .4, u) });
+      set(crack, { opacity: sm(0.8, 1.2, u) });
+      set(sil, { opacity: sm(1.2, 1.6, u) });
+    };
+  };
+
+  // 12 — gradual: a slope of small steps, the figure climbs
+  SCENES[12] = function (P) {
+    var steps = [];
+    for (var i = 0; i < 6; i++) {
+      steps.push(el("line", { x1: 50 + i * 50, y1: GY - i * 14, x2: 50 + i * 50 + 50, y2: GY - i * 14, stroke: "#777", "stroke-width": 3 }, P));
+      el("line", { x1: 100 + i * 50, y1: GY - i * 14, x2: 100 + i * 50, y2: GY - (i + 1) * 14, stroke: "#777", "stroke-width": 3 }, P);
+    }
+    var a = fig(P, 60);
+    var lab = tag(P, 240, 120, "تدريجي", YEL, 110);
+    return function (u, D, t) {
+      a.idle(t);
+      var k = sm(0.2, 3.2, u);
+      a.move(60 + 240 * k, GY - 84 * k * 0.5);
+      set(lab, { opacity: sm(1.0, 1.4, u) });
+    };
+  };
+
+  // 13 — small asks, then bigger ones
+  SCENES[13] = function (P) {
+    var a = fig(P, 110), b = fig(P, 260);
+    var sizes = [16, 24, 34, 46];
+    var bx = [];
+    sizes.forEach(function (s, i) { bx.push(box(P, 180, 0, s, YEL)); });
+    return function (u, D, t) {
+      a.idle(t); b.idle(t);
+      sizes.forEach(function (s, i) {
+        var on = sm(0.3 + i * 0.6, 0.8 + i * 0.6, u);
+        set(bx[i], { opacity: on, transform: "translate(" + (150 + i * 20) + "," + (GY - 30 - s / 2 + 0) + ")" });
+      });
+    };
+  };
+
+  // 14 — when they object, a new reason to blame them: the tag reads "مش مهم؟"
+  SCENES[14] = function (P) {
+    var a = fig(P, 110), b = fig(P, 260);
+    var q = tag(P, 0, 0, "مش مهم؟", RED, 110);
+    return function (u, D, t) {
+      a.idle(t); b.idle(t);
+      set(q, { transform: "translate(260," + (90 + Math.sin(t * 3) * 3) + ")", opacity: sm(0.6, 1.0, u) });
+      a.arms(-20, -40, 20, -60 + Math.sin(t * 6) * 4, t);
+    };
+  };
+
+  // 15 — a lopsided balance: giving outweighs taking
+  SCENES[15] = function (P) {
+    var pivot = g(P, 180, 200);
+    el("line", { x1: -110, y1: 0, x2: 110, y2: 0, stroke: INK, "stroke-width": 3, "stroke-linecap": "round" }, pivot);
+    el("path", { d: "M-16,30 L0,0 L16,30 Z", fill: INK }, pivot);
+    tag(pivot, -80, -36, "بتدي", YEL, 80);
+    tag(pivot, 80, -36, "بتاخد", INK, 90);
+    return function (u, D, t) {
+      var tip = -12 * sm(0.4, 1.4, u) + Math.sin(t * 1.5) * 1.5;
+      set(pivot, { transform: "translate(180,200) rotate(" + tip.toFixed(2) + ")" });
+    };
+  };
+
+  // 16 — how you feel after talking: a battery that drains
+  SCENES[16] = function (P) {
+    var a = fig(P, 180);
+    var bt = g(P, 180, 120);
+    el("rect", { x: -60, y: -26, width: 120, height: 52, rx: 8, fill: "none", stroke: INK, "stroke-width": 3 }, bt);
+    el("rect", { x: 60, y: -10, width: 8, height: 20, rx: 2, fill: INK }, bt);
+    var lev = el("rect", { x: -52, y: -18, width: 104, height: 36, rx: 4, fill: GRN }, bt);
+    return function (u, D, t) {
+      a.idle(t);
+      var lv = 1 - sm(0.6, 3.0, u);
+      set(lev, { width: Math.max(2, 104 * lv).toFixed(2), fill: lv < .3 ? RED : GRN });
+    };
+  };
+
+  // 17 — tired and doubting yourself
+  SCENES[17] = function (P) {
+    var a = fig(P, 180);
+    var q = tag(P, 0, 0, "زعلانة؟", RED, 100);
+    return function (u, D, t) {
+      a.arms(-20, -20 + sm(0, 1, u) * 20, 20, -20 + sm(0, 1, u) * 20, t);
+      set(a.body, { transform: "translate(0," + (sm(0, 1, u) * 12 + Math.sin(t * 3.2) * 1.2).toFixed(2) + ") rotate(" + (sm(0, 1, u) * 10).toFixed(2) + ")" });
+      set(q, { transform: "translate(230,130)", opacity: sm(0.8, 1.2, u) });
+    };
+  };
+
+  // 18 — close to yourself and to your family, not isolated
+  SCENES[18] = function (P) {
+    var a = fig(P, 120), b = fig(P, 240);
+    var hh = heart(P, 180, 150, 1.2, RED);
+    var hs = house(P, 300, 300, 0.8);
+    var fam = fig(P, 300, 0.7);
+    return function (u, D, t) {
+      a.idle(t); b.idle(t); fam.idle(t);
+      set(hh, { opacity: sm(0, .5, u), transform: "translate(180,150) scale(" + (1 + 0.12 * Math.sin(t * 5)).toFixed(3) + ")" });
+      set(hs, { opacity: sm(1.2, 1.6, u) });
+      set(fam.root, { opacity: sm(1.2, 1.6, u) });
+    };
+  };
+
+  // 19 — controlling: a fence closes in, with the tags "الشغل" "الموبايل" "الخروج"
+  SCENES[19] = function (P) {
+    var a = fig(P, 180);
+    var fence = el("rect", { x: 90, y: 90, width: 180, height: 210, rx: 6, fill: "none", stroke: RED, "stroke-width": 3, "stroke-dasharray": "10 8" }, P);
+    var labs = [tag(P, 180, 75, "الشغل", RED, 90), tag(P, 180, 265, "الموبايل", RED, 90), tag(P, 180, 180, "الخروج", RED, 90)];
+    labs.forEach(function (l) { set(l, { opacity: 0 }); });
+    return function (u, D, t) {
+      a.idle(t);
+      set(fence, { "stroke-dashoffset": (-t * 20).toFixed(2), opacity: sm(0, .4, u) });
+      labs.forEach(function (l, i) { set(l, { opacity: sm(0.5 + i * 0.5, 1.0 + i * 0.5, u) }); });
+    };
+  };
+
+  // 20 — the first step: a path with a dotted arrow forward
+  SCENES[20] = function (P) {
+    var a = fig(P, 110), q = el("text", { x: 230, y: 120, "text-anchor": "middle", fill: YEL, "font-size": 56, "font-weight": 900, "font-family": "Noto Sans Arabic" }, P);
+    q.textContent = "؟";
+    var path = el("path", { d: "M130,300 C190,300 170,240 250,230", fill: "none", stroke: YEL, "stroke-width": 3, "stroke-dasharray": "2 10", "stroke-linecap": "round" }, P);
+    return function (u, D, t) {
+      a.idle(t);
+      set(path, { "stroke-dashoffset": (-t * 30).toFixed(2), opacity: sm(0.3, 0.8, u) });
+      set(q, { opacity: sm(0, .5, u) });
+    };
+  };
+
+  // 21 — talk about what he did, not who he is
+  SCENES[21] = function (P) {
+    var a = fig(P, 110), b = fig(P, 260);
+    var bub1 = bubble(P, 110, 110, "فعل", YEL, 90);
+    var bub2 = bubble(P, 260, 110, "مش كلام", null, 120);
+    return function (u, D, t) {
+      a.idle(t); b.idle(t);
+      set(bub1, { opacity: sm(0, .5, u) });
+      set(bub2, { opacity: sm(1.6, 2.0, u) });
+    };
+  };
+
+  // 22 — help: a phone with a call icon and a support figure
+  SCENES[22] = function (P) {
+    var a = fig(P, 180);
+    var ph = el("rect", { x: 260, y: 150, width: 52, height: 90, rx: 8, fill: "none", stroke: INK, "stroke-width": 3 }, P);
+    var w1 = el("path", { d: "M240,170 Q232,190 240,210", fill: "none", stroke: BLU, "stroke-width": 3, "stroke-linecap": "round" }, P);
+    var w2 = el("path", { d: "M228,160 Q212,190 228,220", fill: "none", stroke: BLU, "stroke-width": 3, "stroke-linecap": "round" }, P);
+    return function (u, D, t) {
+      a.idle(t);
+      set(ph, { opacity: sm(0, .5, u) });
+      set(w1, { opacity: .3 + .7 * Math.abs(Math.sin(t * 4)) });
+      set(w2, { opacity: .2 + .8 * Math.abs(Math.sin(t * 4 + 1)) });
+    };
+  };
+
+  // 23 — love gives freely, exploitation keeps count
+  SCENES[23] = function (P) {
+    var l = g(P, 100, 0), r = g(P, 260, 0);
+    var hh = heart(l, 0, 150, 1.6, RED);
+    var lab1 = tag(l, 0, 230, "الاهتمام", RED, 80);
+    var clip = el("rect", { x: -26, y: 110, width: 52, height: 70, rx: 6, fill: "none", stroke: INK, "stroke-width": 3 }, r);
+    var lines = [];
+    [130, 150, 170].forEach(function (y) { lines.push(el("line", { x1: -14, y1: y, x2: 14, y2: y, stroke: INK, "stroke-width": 2.5 }, r)); });
+    var lab2 = tag(r, 0, 230, "الإهمال", YEL, 110);
+    var parts = [];
+    for (var i = 0; i < 6; i++) parts.push(el("circle", { r: 2.5, fill: RED }, l));
+    return function (u, D, t) {
+      set(hh, { transform: "translate(0,150) scale(" + (1.4 + 0.12 * Math.sin(t * 4)).toFixed(3) + ")" });
+      parts.forEach(function (p, i) {
+        var a2 = t * 0.9 + i * 1.05, rr = 30 + 14 * Math.sin(t * 2 + i);
+        set(p, { cx: (Math.cos(a2) * rr).toFixed(2), cy: (150 + Math.sin(a2) * rr).toFixed(2), opacity: 0.8 });
+      });
+      lines.forEach(function (ln, i) { set(ln, { opacity: sm(0.3 + i * 0.4, 0.7 + i * 0.4, u) }); });
+      set(clip, { opacity: sm(0, .4, u) });
+    };
+  };
+
+  // 24 — end card: a question bubble and a follow button
+  SCENES[24] = function (P) {
+    var a = fig(P, 110), b = fig(P, 250);
+    var qb = bubble(P, 180, 120, "؟", YEL, 60);
+    var btn = el("g", {}, P);
+    el("rect", { x: 120, y: 240, width: 120, height: 36, rx: 18, fill: YEL }, btn);
+    var bt = el("text", { x: 180, y: 264, "text-anchor": "middle", fill: "#000", "font-size": 17, "font-weight": 900, "font-family": "Noto Sans Arabic" }, btn);
+    bt.textContent = "تابعنا";
+    return function (u, D, t) {
+      a.idle(t); b.idle(t);
+      set(qb, { opacity: sm(0, .5, u) });
+      set(btn, { opacity: sm(0.8, 1.2, u), transform: "translate(0," + (Math.sin(t * 4) * 1.5).toFixed(2) + ")" });
+    };
+  };
+
+  // ---- build all scenes into the stage ----
+  var root = el("g", {}, svg);
+  var updates = [], groups = [];
+  var beams = [], glows = [], dashes = [], dusts = [];
+  for (var i = 0; i < T.length; i++) {
+    var gi = el("g", { opacity: 0 }, root);
+    var bm = el("polygon", { points: "168,0 192,0 262,300 98,300", fill: "url(#beam)" }, gi);
+    var gl = el("ellipse", { cx: 180, cy: 292, rx: 110, ry: 26, fill: "url(#glow)" }, gi);
+    var gnd = el("line", { x1: 0, y1: GY + 6, x2: 360, y2: GY + 6, stroke: "#777", "stroke-width": 2, "stroke-dasharray": "14 10" }, gi);
+    var dust = [];
+    for (var k = 0; k < 9; k++) dust.push(el("circle", { r: 1.6 + (k % 3) * 0.6, fill: "#ffc83d" }, gi));
+    beams.push(bm); glows.push(gl); dashes.push(gnd); dusts.push(dust);
+    groups.push(gi);
+    updates.push(SCENES[i] ? SCENES[i](gi) : function () {});
+  }
+
+  // Captions: one text block per line; words reveal with the voice; keywords in yellow.
+  var KEYS = window.KEYWORDS || [];
+  var cap = document.getElementById("cap");
+  var capLines = [];
+  T.forEach(function (l, i) {
+    var words = l.text.split(/\s+/);
+    var box = document.createElement("div");
+    box.style.display = "none";
+    var ws = words.map(function (w) {
+      var s = document.createElement("span");
+      s.textContent = w + " ";
+      var bare = w.replace(/[^؀-ۿ\w]/g, "");
+      if (KEYS[i] && KEYS[i].indexOf(bare) >= 0) s.className = "k";
+      box.appendChild(s);
+      return s;
+    });
+    if (l.text.length > 60) box.className = "long";
+    cap.appendChild(box);
+    capLines.push({ box: box, ws: ws, start: l.start, end: l.end });
+  });
+
+  window.renderAt = function (t) {
+    var idx = 0;
+    for (var i = 0; i < T.length; i++) if (t >= T[i].start) idx = i;
+    for (var j = 0; j < T.length; j++) {
+      var on = j === idx;
+      var fade = j === 0 ? 1 : clamp((t - T[j].start) / 0.25);
+      groups[j].setAttribute("opacity", on ? fade : 0);
+      if (on) {
+        // constant drift of the whole scene so nothing ever freezes
+        var sc = 1 + 0.03 * Math.sin(t * 0.7 + j);
+        groups[j].setAttribute("transform", "translate(180,190) scale(" + sc.toFixed(4) + ") translate(-180,-190) translate(" + (Math.sin(t * 0.9 + j) * 10).toFixed(2) + ",0)");
+        beams[j].setAttribute("transform", "rotate(" + (Math.sin(t * 0.8 + j) * 7).toFixed(2) + " 180 0)");
+        beams[j].setAttribute("opacity", (0.7 + 0.3 * Math.sin(t * 1.7 + j)).toFixed(3));
+        var gs = 1 + 0.18 * Math.sin(t * 2.3 + j);
+        glows[j].setAttribute("transform", "translate(180,292) scale(" + gs.toFixed(3) + ") translate(-180,-292)");
+        glows[j].setAttribute("opacity", (0.6 + 0.4 * Math.abs(Math.sin(t * 2.3 + j))).toFixed(3));
+        dashes[j].setAttribute("stroke-dashoffset", (-t * 40).toFixed(2));
+        dusts[j].forEach(function (d, k) {
+          var yy = 300 - ((t * 22 + k * 37) % 300);
+          set(d, { cx: (20 + ((k * 53 + j * 17) % 320) + Math.sin(t + k) * 8).toFixed(2), cy: yy.toFixed(2), opacity: (0.25 + 0.5 * Math.abs(Math.sin(t * 1.3 + k))).toFixed(3) });
+        });
+        updates[j] && updates[j](t - T[j].start, (T[j].end - T[j].start), t);
+      }
+      capLines[j].box.style.display = on ? "block" : "none";
+    }
+    var c = capLines[idx];
+    var span = Math.max(0.2, c.end - c.start);
+    var p = (t - c.start) / span;
+    c.ws.forEach(function (s, k) {
+      var at = (k + 1) / c.ws.length * 0.92;
+      s.style.opacity = t >= c.start + at * span ? 1 : 0;
+    });
+    // the closing "keywords" line: once the voice stops, the caption stays put until the next line
+  };
+
+  window.VIDEO_END = END;
+  window.renderAt(0);
+})();
+</script>
+</body>
+</html>
