@@ -142,9 +142,12 @@
   var INK = "#1c1c1c", SKIN = "#f2c9a0", PINK = "#f08a9a", PINKD = "#c95b72", BRAIN = "#f6b3c0", BRAIND = "#d97d92",
       NERVE = "#ffd166", DUST = "#c9a24a", GERM = "#6fae4a", MUC = "#dbeeb0", ALERT = "#e2523a", AIR = "#7ec8e8";
   var HX = 320, HY = 170;
-  var SKINP = "M0 -92 C40 -94 62 -74 66 -48 C68 -36 72 -26 80 -8 C84 0 78 4 68 6 C70 14 72 20 66 26 C60 30 62 36 66 44 C68 56 60 66 52 74 C44 84 40 96 26 104 L-44 104 C-70 84 -74 56 -76 20 C-80 -10 -76 -40 -66 -64 C-52 -84 -30 -92 0 -92 Z";
+  var SKINP = "M0 -94 C42 -96 68 -70 70 -44 C71 -36 70 -30 73 -26 C77 -22 79 -14 82 -4 C85 4 88 9 86 12 C84 15 80 15 78 15 C76 17 77 20 75 22 C73 23 71 23 70 24 C71 28 72 30 71 32 C70 35 69 36 70 38 C71 42 72 46 71 50 C70 56 73 66 76 72 C72 80 66 84 60 90 C56 96 52 104 52 116 L-42 116 C-56 98 -72 80 -77 56 C-82 30 -82 -10 -76 -40 C-70 -70 -48 -92 0 -94 Z";
+  var SKULLP = "M-64 -40 C-66 -84 -30 -98 4 -84 C32 -72 36 -40 32 -22 C28 -6 8 4 -14 4 C-40 4 -62 -6 -64 -40 Z";
+  var CEREBP = "M-54 6 C-50 -2 -30 -2 -24 6 C-18 14 -34 20 -44 18 C-52 16 -56 12 -54 6 Z";
   var BRAINP = "M-58 -44 C-58 -80 -22 -88 2 -74 C22 -62 26 -40 22 -24 C18 -8 2 0 -14 -2 C-36 -2 -58 -10 -58 -44 Z";
-  var NOSEP = "M80 -2 C60 -6 44 -10 30 -6 C16 -2 8 6 2 14 L-4 22 L4 26 C14 16 24 14 40 14 C56 14 68 10 78 6 Z";
+  var NOSEP = "M78 6 C62 -2 42 -8 26 -6 C14 -4 6 6 -2 14 L-4 26 C6 22 20 18 36 16 C54 15 68 14 78 12 Z";
+  var TURB = ["M72 4 C58 1 48 1 38 5", "M66 10 C54 8 44 9 34 13", "M60 15 C50 14 42 15 36 18"];
   var STEMP = "M-16 -4 H6 L4 34 H-14 Z";
   var NERVEP = [[48, 8], [40, -6], [18, -26]], OPTP = [[40, -46], [26, -68], [0, -48]];
   var ZIGP = "M40 -6 L30 -16 L24 -8 L16 -24 L10 -16 L2 -34 L-6 -28 L-14 -46";
@@ -159,10 +162,13 @@
     g += '<g transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + s + ')">';
     g += '<path d="' + SKINP + '" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2.4"/>';
     g += '<path d="' + BRAINP + '" fill="' + BRAIN + '" stroke="' + BRAIND + '" stroke-width="2"/>';
-    g += '<path d="M-46 -54 Q-32 -64 -16 -56 M-38 -30 Q-20 -38 0 -30 M-44 -14 Q-24 -18 -2 -12" stroke="' + BRAIND + '" stroke-width="1.6" fill="none"/>';
+    g += '<path d="' + SKULLP + '" fill="none" stroke="#efe6d2" stroke-width="7"/><path d="' + SKULLP + '" fill="none" stroke="#b5a58a" stroke-width="1"/>';
+    g += '<path d="M-50 -58 C-40 -70 -28 -60 -22 -70 C-14 -80 2 -74 4 -60 M-52 -36 C-42 -46 -30 -40 -20 -50 C-10 -58 4 -50 10 -40 M-44 -18 C-34 -26 -22 -20 -12 -26 C-2 -32 10 -26 16 -20 M-20 -68 C-14 -56 -10 -48 -6 -36 M-6 -66 C0 -56 6 -44 12 -40" stroke="' + BRAIND + '" stroke-width="1.8" fill="none" stroke-linecap="round"/>';
+    g += '<path d="' + CEREBP + '" fill="#e58aa0" stroke="' + BRAIND + '" stroke-width="1.4"/><path d="M-50 6 q6 -3 12 0 M-42 10 q6 -3 12 0 M-34 13 q5 -2 9 0" stroke="' + BRAIND + '" stroke-width="1" fill="none"/>';
     if (o.brain) g += '<path d="' + BRAINP + '" fill="' + ALERT + '" opacity="' + f((0.2 + 0.35 * pu) * o.brain) + '"/>';
     g += '<path d="' + STEMP + '" fill="' + (o.stem ? NERVE : BRAIND) + '" stroke="' + INK + '" stroke-width="' + (o.stem ? 2.6 : 1.2) + '"/>';
     g += '<path d="' + NOSEP + '" fill="' + PINK + '" stroke="' + PINKD + '" stroke-width="1.6"/>';
+    for (var q = 0; q < TURB.length; q++) g += '<path d="' + TURB[q] + '" fill="none" stroke="#f7c0c8" stroke-width="3" stroke-linecap="round"/><path d="' + TURB[q] + '" fill="none" stroke="' + PINKD + '" stroke-width="0.8" opacity=".6"/>';
     if (o.center) g += '<circle cx="-6" cy="26" r="' + f(7 + 9 * pu) + '" fill="' + ALERT + '" opacity="' + f(0.3 + 0.4 * pu) + '"/>';
     g += '<circle cx="-6" cy="26" r="3.6" fill="' + ALERT + '" stroke="' + INK + '" stroke-width="1"/>';
     if (o.cilia) for (var i = 0; i < 7; i++) { var cx = 14 + i * 9, wv = Math.sin(t * 7 + i * 1.7) * 4; g += '<path d="M' + cx + ' 14 q' + f(wv) + ' -4 ' + f(wv * 1.2) + ' -8" stroke="' + PINKD + '" stroke-width="1.5" fill="none" stroke-linecap="round"/>'; }
@@ -194,6 +200,24 @@
     for (var m = 0; m < 8; m++) g += '<circle cx="' + f(296 + hash(m) * 48) + '" cy="' + f(40 + ((t * 30 + m * 40) % 260)) + '" r="3.2" fill="' + MUC + '" stroke="' + PINKD + '" stroke-width="1"/>';
     g += '<path d="M280 170 L' + f(320 - gap) + ' 170" stroke="' + PINKD + '" stroke-width="9" stroke-linecap="round"/><path d="M360 170 L' + f(320 + gap) + ' 170" stroke="' + PINKD + '" stroke-width="9" stroke-linecap="round"/>';
     return g;
+  }
+  // bacteria: rods (bacilli) with a wavy flagellum, and cocci in short chains; mucus: a wobbling translucent gel blob
+  function bacillus(x, y, a, t, sc) {
+    var w = 4 * Math.sin(t * 8 + x), g = '<g transform="translate(' + f(x) + ' ' + f(y) + ') rotate(' + f(a) + ') scale(' + sc + ')">';
+    g += '<path d="M-10 0 C-16 ' + f(w) + ' -22 ' + f(-w) + ' -30 0 S-40 ' + f(-w) + ' -46 0" stroke="#5b7f3a" stroke-width="1.1" fill="none" stroke-linecap="round"/>';
+    g += '<rect x="-10" y="-4.5" width="20" height="9" rx="4.5" fill="#8fc85a" stroke="#3d6b2a" stroke-width="1"/>';
+    g += '<ellipse cx="-3" cy="-2" rx="4.5" ry="1.4" fill="#eaffc4" opacity=".75"/></g>';
+    return g;
+  }
+  function coccus(x, y, a, t, sc) {
+    var g = '<g transform="translate(' + f(x) + ' ' + f(y) + ') rotate(' + f(a) + ') scale(' + sc + ')">', i;
+    for (i = -1; i <= 1; i++) g += '<circle cx="' + (i * 7.5) + '" cy="' + f(Math.sin(t * 5 + i) * 0.8) + '" r="4.2" fill="#9ed46a" stroke="#3d6b2a" stroke-width="1"/><circle cx="' + (i * 7.5 - 1.2) + '" cy="-1.6" r="1.1" fill="#eaffc4" opacity=".8"/>';
+    return g + '</g>';
+  }
+  function mucus(x, y, r, t) {
+    var d = "", i, a, k;
+    for (i = 0; i < 9; i++) { a = i * 2 * Math.PI / 9; k = r * (1 + 0.12 * Math.sin(t * 3 + i * 1.7)); d += (i ? " L" : "M") + f(x + Math.cos(a) * k) + " " + f(y + Math.sin(a) * k); }
+    return '<path d="' + d + ' Z" fill="' + MUC + '" fill-opacity=".85" stroke="#a9c96e" stroke-width="1.2"/><ellipse cx="' + f(x - r * 0.3) + '" cy="' + f(y - r * 0.35) + '" rx="' + f(r * 0.35) + '" ry="' + f(r * 0.18) + '" fill="#fff" opacity=".7"/>';
   }
   function bgIn(t) {
     var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#f6e7d6"/>';
@@ -306,7 +330,7 @@
     var s = bgIn(t), i, a, r, x, y;
     for (i = 0; i < 14; i++) {
       a = (hash(i) - 0.5) * 1.2; r = ((t * 90 + i * 30) % 300); x = 330 + Math.cos(a) * r; y = 170 + Math.sin(a) * r * 0.7;
-      s += i % 2 ? '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="4" fill="' + GERM + '" stroke="' + INK + '" stroke-width="1"/>' : '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="6" fill="' + MUC + '" stroke="' + PINKD + '" stroke-width="1.2"/>';
+      s += i % 3 === 0 ? mucus(x, y, 6, t) : i % 3 === 1 ? bacillus(x, y, a * 57 + t * 20, t, 1.1) : coccus(x, y, a * 57, t, 1);
     }
     return s + profile(t, { x: 250 }) + vt(330, 170, 1, "مخاط وجراثيم!", u, 0.6, 22);
   });
