@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Reel cover — US government</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* 540×960 at 2x = 1080×1920 reel cover, «الرسم الهندسي» look: cream paper, graph grid, double frame, crop marks.
+     Instagram's grid shows the middle 3:4 (y 120–840); the reel's caption and buttons cover the bottom ~200px. */
+  :root { --paper: #eee5d0; --grid: #c9b993; --ink: #2b2b2b; --heat: #c4532c; --water: #46698a; --olive: #6b7d3c; --land: #d9cdae; }
+  html, body { margin: 0; background: var(--paper); }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: var(--paper);
+    background-image: linear-gradient(to right, var(--grid) 1px, transparent 1px), linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+    background-size: 36px 36px; background-position: 18px 12px; color: var(--ink); font-family: "Noto Sans Arabic", sans-serif; }
+  .frame { position: absolute; left: 22px; right: 22px; top: 22px; bottom: 22px; border: 2.4px solid var(--ink); }
+  .frame::after { content: ""; position: absolute; inset: 5px; border: 1.2px solid var(--ink); }
+  .crop { position: absolute; width: 16px; height: 16px; border: 0 solid #6a6458; }
+  .t { position: absolute; left: 0; right: 0; text-align: center; margin: 0; }
+  .brand { top: 56px; font: 700 15px/1 "Noto Sans Arabic"; color: #6a6458; }
+  .cat { top: 92px; font: 800 17px/1 "Noto Sans Arabic"; color: var(--heat); }
+  .cat::before, .cat::after { content: ""; display: inline-block; width: 40px; height: 0; border-top: 1.5px solid var(--ink); vertical-align: middle; margin: 0 12px; }
+  .h1 { top: 130px; font: 900 62px/1.2 "Noto Sans Arabic"; }
+  .h1 .o { color: var(--heat); }
+  .h2 { top: 300px; font: 700 22px/1.5 "Noto Sans Arabic"; color: #5a5448; }
+  svg.map { position: absolute; left: 40px; top: 352px; width: 460px; height: 300px; }
+  .lab { font: 800 22px "Noto Sans Arabic"; }
+  .stat { position: absolute; left: 0; right: 0; top: 650px; display: flex; justify-content: center; align-items: center; gap: 14px; }
+  .stat .n { font: 900 118px/1 "Noto Sans Arabic"; color: var(--heat); }
+  .stat .s { font: 800 24px/1.45 "Noto Sans Arabic"; text-align: right; }
+  .pill { position: absolute; left: 0; right: 0; top: 800px; display: flex; justify-content: center; }
+  .pill span { font: 800 25px/1 "Noto Sans Arabic"; padding: 13px 26px; background: var(--heat); color: #fff; border: 2.5px solid var(--ink); box-shadow: 5px 5px 0 var(--ink); }
+  .brandbot { top: 880px; font: 700 16px/1 "Noto Sans Arabic"; color: #6a6458; }
+</style>
+</head>
+<body>
+<div class="cover">
+  <div class="frame"></div>
+  <div class="crop" style="left:14px;top:14px;border-left-width:1.2px;border-top-width:1.2px"></div>
+  <div class="crop" style="right:14px;top:14px;border-right-width:1.2px;border-top-width:1.2px"></div>
+  <div class="crop" style="left:14px;bottom:14px;border-left-width:1.2px;border-bottom-width:1.2px"></div>
+  <div class="crop" style="right:14px;bottom:14px;border-right-width:1.2px;border-bottom-width:1.2px"></div>
+
+  <div class="t brand">إيه الحكاية؟</div>
+  <div class="t cat">السياسة</div>
+  <div class="t h1">الحكم في أمريكا<br><span class="o">بيمشي إزاي؟</span></div>
+  <div class="t h2">50 ولاية… ولكل واحدة قوانينها</div>
+
+  <svg class="map" viewBox="0 0 460 300" aria-hidden="true" id="map"></svg>
+
+  <div class="stat"><div class="n">270</div><div class="s">صوت من 538<br>عشان تفوز بالرئاسة</div></div>
+  <div class="pill"><span>تيشيرت واحد… ضريبته بتختلف!</span></div>
+  <div class="t brandbot"><span dir="ltr">@tabizzay</span></div>
+</div>
+<script src="../../videos/us-government/diagram/usmap.js"></script>
+<script>
+  // draw the real state borders (usmap.js is a 600×380 frame) into a 460×300 box, Michigan olive and California orange
+  (function () {
+    var svg = document.getElementById("map"), k = 460 / 600, o = "";
+    var fills = { CA: "#c4532c", MI: "#6b7d3c" };
+    Object.keys(USMAP).forEach(function (code) {
+      o += '<path d="' + USMAP[code] + '" transform="translate(0 ' + ((300 - 380 * k) / 2).toFixed(2) + ') scale(' + k.toFixed(4) + ')" fill="' + (fills[code] || "#d9cdae") + '" stroke="#2b2b2b" stroke-width="' + (0.9 / k).toFixed(2) + '" stroke-linejoin="round"/>';
+    });
+    svg.innerHTML = o;
+  })();
+</script>
+</body>
+</html>
