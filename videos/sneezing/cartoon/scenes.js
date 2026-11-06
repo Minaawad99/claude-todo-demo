@@ -142,12 +142,13 @@
   var INK = "#1c1c1c", SKIN = "#f2c9a0", PINK = "#f08a9a", PINKD = "#c95b72", BRAIN = "#f6b3c0", BRAIND = "#d97d92",
       NERVE = "#ffd166", DUST = "#c9a24a", GERM = "#6fae4a", MUC = "#dbeeb0", ALERT = "#e2523a", AIR = "#7ec8e8";
   var HX = 320, HY = 170;
-  var SKINP = "M0 -94 C42 -96 68 -70 70 -44 C71 -36 70 -30 73 -26 C77 -22 79 -14 82 -4 C85 4 88 9 86 12 C84 15 80 15 78 15 C76 17 77 20 75 22 C73 23 71 23 70 24 C72 26 73 29 72 31 C66 33 62 36 63 40 C64 43 70 45 70 48 C70 56 73 66 76 72 C72 80 66 84 60 90 C56 96 52 104 52 116 L-42 116 C-56 98 -72 80 -77 56 C-82 30 -82 -10 -76 -40 C-70 -70 -48 -92 0 -94 Z";
-  var SKULLP = "M-78 -40 C-80 -80 -50 -92 -8 -90 C30 -88 50 -66 50 -40 C50 -26 46 -16 40 -8 C30 -2 14 -4 -4 -4 C-30 -4 -58 -6 -68 -20 C-76 -28 -78 -34 -78 -40 Z";
+  var SKINP = "M0 -94 C42 -96 68 -70 70 -44 C71 -36 72 -30 76 -26 C82 -20 86 -10 90 -2 C94 4 95 10 90 13 C86 15 82 15 80 16 C78 18 79 21 75 22 C73 23 71 23 70 24 C72 26 73 29 72 31 C66 33 62 36 63 40 C64 43 70 45 70 48 C70 56 73 66 76 72 C72 80 66 84 60 90 C56 96 52 104 52 116 L-42 116 C-56 98 -72 80 -77 56 C-82 30 -82 -10 -76 -40 C-70 -70 -48 -92 0 -94 Z";
+  var HAIRP = "M-80 -30 C-86 -70 -62 -100 -20 -104 C14 -108 50 -98 66 -76 C72 -68 74 -60 72 -52 C64 -62 58 -70 48 -74 C36 -76 26 -70 16 -74 C4 -78 -6 -70 -18 -74 C-34 -78 -48 -70 -56 -56 C-64 -44 -66 -36 -68 -26 Z";
+  var SKULLP = "M-70 -40 C-72 -76 -46 -86 -8 -84 C26 -80 44 -62 44 -40 C44 -26 42 -16 38 -8 C30 -2 14 -4 -4 -4 C-30 -4 -56 -6 -64 -20 C-70 -28 -70 -34 -70 -40 Z";
   var CEREBP = "M-46 4 C-34 -4 -14 -2 -10 8 C-8 18 -22 26 -38 24 C-52 22 -58 12 -46 4 Z";
   var BRAINP = "M44 -12 C58 -34 58 -62 44 -74 C30 -86 6 -86 -14 -82 C-40 -78 -62 -66 -66 -40 C-68 -22 -60 -6 -44 0 C-30 4 -16 0 -4 -2 C12 -4 30 -4 44 -12 Z";
-  var NOSEP = "M78 7 C62 -2 42 -8 26 -6 C14 -4 6 6 -2 14 L-4 26 C6 22 20 18 36 16 C54 15 68 14 78 13 Z";
-  var TURB = ["M72 4 C58 1 48 1 38 5", "M66 10 C54 8 44 9 34 13", "M60 15 C50 14 42 15 36 18"];
+  var NOSEP = "M80 4 C64 -4 44 -8 28 -6 C16 -4 8 2 0 8 L-4 14 C8 12 20 12 36 12 C54 11 68 10 80 9 Z";
+  var TURB = ["M70 3 C58 0 48 0 38 3", "M64 8 C54 6 44 7 34 10", "M58 12 C50 11 42 12 36 14"];
   var STEMP = "M-20 -2 C-8 -2 0 2 4 10 L2 36 C-2 44 -18 44 -22 34 C-24 22 -24 6 -20 -2 Z";
   var NERVEP = [[48, 8], [40, -6], [18, -26]], OPTP = [[40, -46], [26, -68], [0, -48]];
   var ZIGP = "M40 -6 L30 -16 L24 -8 L16 -24 L10 -16 L2 -34 L-6 -28 L-14 -46";
@@ -161,6 +162,7 @@
     o = o || {}; var s = o.s || 1, x = o.x == null ? HX : o.x, y = (o.y == null ? HY : o.y) + 3 * Math.sin(t * 2.2), pu = 0.5 + 0.5 * Math.sin(t * 5), g = "", i, q;
     g += '<g transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + s + ')">';
     g += '<path d="' + SKINP + '" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2.4"/>';
+    g += '<path d="' + HAIRP + '" fill="#3b2a1e" stroke="#2a1d14" stroke-width="1.2"/><path d="M-20 -96 C-10 -88 0 -86 8 -88 M20 -98 C28 -90 36 -88 42 -84 M-50 -80 C-40 -86 -30 -88 -22 -86" stroke="#5a4232" stroke-width="1.4" fill="none" stroke-linecap="round"/>';
     // skull, then the cerebrum (cortex outline, folds, white matter arch, ventricle, thalamus)
     g += '<path d="' + SKULLP + '" fill="none" stroke="#efe6d2" stroke-width="7"/><path d="' + SKULLP + '" fill="none" stroke="#b5a58a" stroke-width="1"/>';
     g += '<path d="' + BRAINP + '" fill="' + BRAIN + '" stroke="' + BRAIND + '" stroke-width="2"/>';
@@ -174,9 +176,9 @@
     g += '<path d="' + STEMP + '" fill="' + (o.stem ? NERVE : "#e9a3b4") + '" stroke="' + INK + '" stroke-width="' + (o.stem ? 2.6 : 1.2) + '"/>';
     g += '<rect x="-15" y="38" width="9" height="34" rx="4" fill="#e9a3b4" stroke="' + INK + '" stroke-width="1"/>';
     // the nose: cavity with turbinates and a clear nostril
-    g += '<path d="' + NOSEP + '" fill="' + PINK + '" stroke="' + PINKD + '" stroke-width="1.6"/>';
+    g += '<path d="' + NOSEP + '" fill="#f7c3ca" stroke="' + PINKD + '" stroke-width="1.2"/>';
     for (q = 0; q < TURB.length; q++) g += '<path d="' + TURB[q] + '" fill="none" stroke="#f7c0c8" stroke-width="3" stroke-linecap="round"/><path d="' + TURB[q] + '" fill="none" stroke="' + PINKD + '" stroke-width="0.8" opacity=".6"/>';
-    g += '<ellipse cx="79" cy="11" rx="4" ry="2.6" fill="#6d3340" stroke="' + INK + '" stroke-width="0.8"/>';
+    g += '<ellipse cx="85" cy="11" rx="4" ry="2.4" fill="#6d3340" stroke="' + INK + '" stroke-width="0.8"/>';
     // the open mouth from the side: palate, tongue, uvula
     g += '<path d="M72 31 C62 33 48 36 38 40 C30 44 32 50 40 51 C52 52 62 47 70 48 C66 42 64 40 63 40 C66 37 70 34 72 31 Z" fill="#7a2f3e" stroke="' + INK + '" stroke-width="1.2"/>';
     g += '<path d="M70 33 C58 32 46 34 38 38" stroke="#e8a0a8" stroke-width="2" fill="none" stroke-linecap="round"/>';
@@ -189,7 +191,8 @@
     if (o.nerve) for (i = 0; i < 3; i++) { var p = qb(NERVEP, (t * 0.9 + i / 3) % 1); g += '<circle cx="' + f(p[0]) + '" cy="' + f(p[1]) + '" r="3" fill="' + NERVE + '" stroke="' + INK + '" stroke-width=".8"/>'; }
     if (o.optic) { g += '<path d="' + qd(OPTP) + '" stroke="' + AIR + '" stroke-width="3" fill="none"/>'; for (i = 0; i < 3; i++) { var qq = qb(OPTP, (t * 0.8 + i / 3) % 1); g += '<circle cx="' + f(qq[0]) + '" cy="' + f(qq[1]) + '" r="2.6" fill="' + AIR + '"/>'; } }
     if (o.zig) g += '<path d="' + ZIGP + '" stroke="' + ALERT + '" stroke-width="3" fill="none" stroke-linejoin="round" stroke-dasharray="' + (2 + pu * 3).toFixed(1) + ' 2"/>';
-    g += '<g transform="translate(40 -46)">' + eyes(o.mood || "n", t, 8) + '</g>';
+    g += '<path d="M54 -44 C58 -50 66 -50 70 -45 C66 -41 58 -40 54 -44 Z" fill="#fbfbf7" stroke="' + INK + '" stroke-width="1"/><circle cx="63" cy="-45" r="2.6" fill="#4a3a2a"/><circle cx="63" cy="-45" r="1" fill="' + INK + '"/>';
+    g += '<path d="M53 -46 C58 -52 67 -52 71 -46" stroke="' + INK + '" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M69 -47 l3 -2 M67 -50 l2 -3" stroke="' + INK + '" stroke-width="1.1" stroke-linecap="round"/><path d="M51 -58 C58 -63 66 -63 73 -57" stroke="#3b2a1e" stroke-width="3" fill="none" stroke-linecap="round"/>';
     if (o.air) g += airflow(t, 90, 170, 2, 6, "#ffffff", 1.4, 4);
     return g + "</g>";
   }
