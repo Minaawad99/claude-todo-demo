@@ -12,38 +12,56 @@
   function ch(x, y, s, k) { k = pop(k == null ? 1 : k); if (k <= 0) return ""; return '<g transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + f(k * s) + ')"><path d="M-28 2 L-8 22 L30 -24" fill="none" stroke="' + OLIVE + '" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g>'; }
   function circ(x, y, r, fill, sw) { return '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(r) + '" fill="' + fill + '" stroke="' + INK + '" stroke-width="' + (sw || 2) + '"/>'; }
 
-  // the lower 48 in a 400×240 frame (simplified outline), and a few states
-  var US = [[30,40],[60,30],[100,28],[150,30],[200,26],[250,30],[300,34],[330,44],[352,60],[362,76],[380,92],[372,104],[356,108],[350,122],[340,140],[330,160],[318,176],[300,186],[290,206],[268,214],[250,206],[234,216],[210,214],[196,226],[180,232],[160,222],[140,220],[118,226],[100,216],[84,226],[70,214],[68,196],[52,190],[46,172],[30,160],[22,140],[28,120],[16,96],[20,70]];
-  var ST = {
-    CA: [[22,140],[30,160],[46,172],[52,190],[68,196],[70,214],[84,226],[100,216],[104,190],[88,170],[70,150],[60,120],[40,116],[28,120]],
-    OR: [[20,70],[30,40],[60,30],[100,28],[100,88],[64,96],[36,104],[28,120],[16,96]],
-    MI: [[318,70],[334,62],[346,72],[344,84],[340,96],[348,104],[352,116],[338,112],[322,104],[322,90],[316,80]],
-    MIU: [[300,58],[318,56],[320,66],[300,66]]
-  };
+  // real state boundaries (usmap.js, 600×380 frame). Drawn at scale s × (400/600) so the layout matches the older 400-wide map.
   function usMap(x, y, s, hl) {
     hl = hl || {};
-    var o = '<path d="' + poly(US, x, y, s) + '" fill="' + LAND + '" stroke="' + INK + '" stroke-width="2" stroke-linejoin="round"/>';
-    Object.keys(hl).forEach(function (k) { o += '<path d="' + poly(ST[k], x, y, s) + '" fill="' + hl[k] + '" stroke="' + INK + '" stroke-width="1.6" stroke-linejoin="round"/>'; });
+    var k = s * 400 / 600, sw = 0.9 / k, o = "";
+    Object.keys(USMAP).forEach(function (code) {
+      var fill = hl[code] || LAND;
+      o += '<path d="' + USMAP[code] + '" transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + f(k) + ')" fill="' + fill + '" stroke="' + INK + '" stroke-width="' + f(sw) + '" stroke-linejoin="round"/>';
+    });
     return o;
+  }
+  // one state placed so its bounding-box centre lands on (cx, cy) at scale k (600-frame units)
+  function stateAt(code, cx, cy, k, fill) {
+    var B = USBOUNDS[code], tx = cx - B[0] * k, ty = cy - B[1] * k;
+    return '<path d="' + USMAP[code] + '" transform="translate(' + f(tx) + ' ' + f(ty) + ') scale(' + f(k) + ')" fill="' + (fill || LAND) + '" stroke="' + INK + '" stroke-width="' + f(1.4 / k) + '" stroke-linejoin="round"/>';
+  }
+  function stateShape(code, x, y, k, fill) {
+    return '<path d="' + USMAP[code] + '" transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + f(k) + ')" fill="' + (fill || LAND) + '" stroke="' + INK + '" stroke-width="' + f(1.4 / k) + '" stroke-linejoin="round"/>';
   }
   function pt(x, y, s, px, py) { return [x + px * s, y + py * s]; }
 
   // buildings: x = centre, y = base line
+  function windows(x, y, cols, rows, gx, gy, w, h, col) {
+    var o = "";
+    for (var r = 0; r < rows; r++) for (var c = 0; c < cols; c++) o += R(x + c * gx, y + r * gy, w, h, col || "#b9b29c", 1.2, 1);
+    return o;
+  }
   function capitol(x, y, s) {
-    var W = 240 * s, o = "";
-    o += R(x - W / 2, y - 14 * s, W, 14 * s, PUTTY, 2, 0);
-    o += R(x - W * 0.48, y - 60 * s, W * 0.24, 46 * s, BONE, 2) + R(x + W * 0.24, y - 60 * s, W * 0.24, 46 * s, BONE, 2);
-    o += R(x - W * 0.16, y - 84 * s, W * 0.32, 70 * s, BONE, 2);
-    o += '<path d="M' + f(x - W * 0.2) + ' ' + f(y - 84 * s) + ' A' + f(W * 0.2) + ' ' + f(W * 0.18) + ' 0 0 1 ' + f(x + W * 0.2) + ' ' + f(y - 84 * s) + ' Z" fill="' + PUTTY + '" stroke="' + INK + '" stroke-width="2"/>';
-    for (var i = 0; i < 5; i++) o += '<line x1="' + f(x - W * 0.12 + i * W * 0.06) + '" y1="' + f(y - 80 * s) + '" x2="' + f(x - W * 0.12 + i * W * 0.06) + '" y2="' + f(y - 18 * s) + '" stroke="' + INK + '" stroke-width="1.2"/>';
+    var W = 240 * s, o = "", i;
+    o += R(x - W / 2 - 6 * s, y - 12 * s, W + 12 * s, 12 * s, PUTTY, 2, 0);            // platform
+    o += R(x - W / 2, y - 62 * s, W * 0.27, 50 * s, BONE, 2, 0) + R(x + W / 2 - W * 0.27, y - 62 * s, W * 0.27, 50 * s, BONE, 2, 0);
+    o += windows(x - W / 2 + 10 * s, y - 52 * s, 3, 1, 22 * s, 0, 10 * s, 18 * s);
+    o += windows(x + W / 2 - W * 0.27 + 10 * s, y - 52 * s, 3, 1, 22 * s, 0, 10 * s, 18 * s);
+    o += R(x - W * 0.2, y - 92 * s, W * 0.4, 80 * s, BONE, 2, 0);                       // central block
+    o += '<path d="M' + f(x - W * 0.22) + ' ' + f(y - 92 * s) + ' L' + f(x) + ' ' + f(y - 118 * s) + ' L' + f(x + W * 0.22) + ' ' + f(y - 92 * s) + ' Z" fill="' + BONE + '" stroke="' + INK + '" stroke-width="2"/>';
+    for (i = 0; i < 6; i++) o += R(x - W * 0.17 + i * W * 0.068, y - 80 * s, 6 * s, 66 * s, PAPER, 1.4, 0);     // columns
+    o += R(x - W * 0.14, y - 130 * s, W * 0.28, 36 * s, BONE, 2, 0);                   // drum
+    o += '<path d="M' + f(x - W * 0.15) + ' ' + f(y - 130 * s) + ' A' + f(W * 0.15) + ' ' + f(W * 0.15) + ' 0 0 1 ' + f(x + W * 0.15) + ' ' + f(y - 130 * s) + ' Z" fill="' + PUTTY + '" stroke="' + INK + '" stroke-width="2"/>';
+    o += R(x - 3 * s, y - 175 * s, 6 * s, 20 * s, INK, 1, 0);                          // lantern
     return o;
   }
   function whitehouse(x, y, s) {
-    var W = 170 * s, H = 70 * s, o = "";
+    var W = 170 * s, H = 70 * s, o = "", i;
+    o += R(x - W / 2 - 8 * s, y, W + 16 * s, 8 * s, PUTTY, 2, 0);                       // base
     o += R(x - W / 2, y - H, W, H, BONE, 2, 0);
-    o += '<path d="M' + f(x - W / 2 - 8 * s) + ' ' + f(y - H) + ' L' + f(x) + ' ' + f(y - H - 44 * s) + ' L' + f(x + W / 2 + 8 * s) + ' ' + f(y - H) + ' Z" fill="' + BONE + '" stroke="' + INK + '" stroke-width="2"/>';
-    o += R(x - 13 * s, y - 36 * s, 26 * s, 36 * s, OLIVE, 1.5, 0);
-    o += R(x - W / 2 - 10 * s, y, W + 20 * s, 8 * s, PUTTY, 2, 0);
+    o += '<path d="M' + f(x - W / 2 - 8 * s) + ' ' + f(y - H) + ' L' + f(x) + ' ' + f(y - H - 42 * s) + ' L' + f(x + W / 2 + 8 * s) + ' ' + f(y - H) + ' Z" fill="' + BONE + '" stroke="' + INK + '" stroke-width="2"/>';
+    o += windows(x - W / 2 + 14 * s, y - H + 12 * s, 3, 1, 46 * s, 0, 16 * s, 14 * s);
+    o += windows(x - W / 2 + 14 * s, y - H + 36 * s, 3, 1, 46 * s, 0, 16 * s, 14 * s);
+    o += windows(x + 0 - 0, y - H + 12 * s, 0, 1, 0, 0, 0, 0);
+    o += R(x - 18 * s, y - H + 30 * s, 36 * s, H - 30 * s, OLIVE, 1.6, 0);             // door
+    for (i = 0; i < 4; i++) o += R(x - 30 * s + i * 20 * s, y - H + 6 * s, 6 * s, H - 14 * s, PAPER, 1.2, 0); // portico columns
     return o;
   }
   function court(x, y, s) {
@@ -118,8 +136,8 @@
   shot(1, P(320, 400, 1, 330, 420, 1.08), function (u, d, t) {
     var p = ease(clamp(u / 0.7));
     return usMap(70, 170, 1.25, { CA: ORANGE, OR: OLIVE }) +
-      label(145, 370, 96, 330, "كاليفورنيا", ORANGE, p, 26) +
-      label(145, 262, 430, 230, "أوريجون", OLIVE, p, 26) +
+      label(145, 370, 110, 580, "كاليفورنيا", ORANGE, p, 26) +
+      label(145, 262, 120, 150, "أوريجون", OLIVE, p, 26) +
       numBox("؟", 320, 110, p, 40);
   });
   // 2: fifty states
@@ -127,10 +145,10 @@
     var p = clamp(u / (d * 0.7)), o = usMap(70, 110, 1.25, {}), i, c, r;
     for (i = 0; i < 50; i++) {
       c = i % 10; r = Math.floor(i / 10);
-      var on = clamp(p * 50 - i) , x = 110 + c * 40, y = 540 + r * 36;
+      var on = clamp(p * 50 - i) , x = 110 + c * 40, y = 520 + r * 36;
       o += R(x - 14, y - 12, 28, 22, on > 0 ? OLIVE : PUTTY, 1.4, 4);
     }
-    return o + numBox("50", 320, 470, pop(clamp(u / 0.5)), 34) + T("ولاية", 320, 720, 22, INK, 800);
+    return o + numBox("50", 320, 470, pop(clamp(u / 0.5)), 34);
   });
   // 3: the stopwatch
   shot(3, C(320, 400, 1), function (u, d, t) {
@@ -157,10 +175,10 @@
   // 5: most daily things belong to the state (inset with a school and a receipt)
   shot(5, P(320, 380, 1, 320, 400, 1.1), function (u, d, t) {
     var p = ease(clamp(u / 0.8)), ins = "";
-    ins += R(-70, -20, 140, 90, BONE, 2, 0) + '<path d="M-84 -20 L0 -62 L84 -20 Z" fill="' + BONE + '" stroke="' + INK + '" stroke-width="2"/>';
-    ins += R(-14, 30, 28, 40, OLIVE, 1.6, 0) + R(-52, 0, 22, 22, PUTTY, 1.6, 0) + R(30, 0, 22, 22, PUTTY, 1.6, 0);
-    ins += R(-40, 96, 80, 60, BONE, 2, 3) + T("%", 0, 140, 36, ORANGE, 900);
-    return usMap(40, 220, 1.05, { MI: OLIVE, MIU: OLIVE }) +
+    ins += R(-100, -10, 90, 80, BONE, 2, 0) + '<path d="M-108 -10 L-55 -48 L-2 -10 Z" fill="' + BONE + '" stroke="' + INK + '" stroke-width="2"/>';
+    ins += R(-72, 30, 22, 40, OLIVE, 1.6, 0) + R(-94, 0, 14, 14, PUTTY, 1.6, 0) + R(-38, 0, 14, 14, PUTTY, 1.6, 0);
+    ins += R(20, -6, 60, 80, BONE, 2, 3) + T("%", 50, 44, 40, ORANGE, 900) + R(30, 56, 40, 4, INK, 1, 0) + R(30, 66, 30, 4, INK, 1, 0);
+    return usMap(40, 220, 1.05, { MI: OLIVE }) +
       '<line x1="' + f(440) + '" y1="' + f(260) + '" x2="' + f(420) + '" y2="' + f(430) + '" stroke="' + INK + '" stroke-width="1.6" stroke-dasharray="5 5"/>' +
       inset(470, 520, 110 * p + 0.01, ins, 1) +
       label(110, 290, 360, 150, "التعليم", INK, p, 26) +
@@ -169,9 +187,9 @@
   // 6: three powers in one government
   shot(6, P(320, 400, 1, 320, 420, 1.04), function (u, d, t) {
     var p = ease(clamp(u / 0.8)), o = "";
-    o += capitol(130, 520, 0.6) + whitehouse(320, 520, 0.8) + court(510, 520, 0.6);
-    o += callout("1", 130, 380, pop(clamp(p * 3))) + callout("2", 320, 300, pop(clamp(p * 3 - 0.3))) + callout("3", 510, 380, pop(clamp(p * 3 - 0.6)));
-    o += T("الكونجرس", 130, 580, 24, INK, 800) + T("الرئيس", 320, 580, 24, INK, 800) + T("المحاكم", 510, 580, 24, INK, 800);
+    o += capitol(130, 560, 0.62) + whitehouse(320, 560, 0.85) + court(510, 560, 0.7);
+    o += callout("1", 130, 400, pop(clamp(p * 3))) + callout("2", 320, 320, pop(clamp(p * 3 - 0.3))) + callout("3", 510, 400, pop(clamp(p * 3 - 0.6)));
+    o += T("الكونجرس", 130, 650, 24, INK, 800) + T("الرئيس", 320, 650, 24, INK, 800) + T("المحاكم", 510, 650, 24, INK, 800);
     o += arrow(190, 430, 250, 430, ORANGE, 3, clamp(p * 2 - 0.5)) + arrow(450, 430, 390, 430, ORANGE, 3, clamp(p * 2 - 0.5));
     return o;
   });
@@ -180,7 +198,7 @@
     var p = ease(clamp(u / 0.8)), o = capitol(320, 600, 1.4);
     o += '<g transform="translate(470 420) rotate(' + f(-8 + Math.sin(t * 2) * 3) + ')">' + paperDoc(0, 0, 0.9, BONE) + '</g>';
     o += callout("1", 320, 250, pop(p));
-    return o + label(320, 300, 200, 230, "الكونجرس", INK, p, 28);
+    return o + label(320, 250, 430, 170, "الكونجرس", INK, p, 26);
   });
   // 8: the House, 435 seats
   shot(8, P(320, 380, 1, 320, 420, 1.12), function (u, d, t) {
@@ -201,7 +219,7 @@
   });
   // 10: Michigan has 13 seats
   shot(10, P(320, 400, 1, 470, 300, 1.8), function (u, d, t) {
-    var p = ease(clamp(u / 0.9)), o = usMap(70, 170, 1.25, { MI: OLIVE, MIU: OLIVE });
+    var p = ease(clamp(u / 0.9)), o = usMap(70, 170, 1.25, { MI: OLIVE });
     o += label(482, 282, 500, 150, "13 مقعد", OLIVE, p, 28);
     for (var i = 0; i < 13; i++) o += person(170 + i * 30, 640, 0.5, i < 13 * p ? OLIVE : PUTTY);
     return o;
@@ -232,14 +250,14 @@
   shot(13, P(320, 400, 1, 320, 420, 1.05), function (u, d, t) {
     var p = ease(clamp(u / 1.2)), o = "";
     o += seats(150, 300, 50, 110, 60, BLUE, 1) + seats(490, 300, 50, 110, 60, BLUE, 1);
-    o += T("النواب", 150, 230, 22, INK, 800) + T("الشيوخ", 490, 230, 22, INK, 800);
+    o += T("النواب", 150, 150, 22, INK, 800) + T("الشيوخ", 490, 150, 22, INK, 800);
     o += whitehouse(320, 690, 0.9);
     var s1 = clamp(p * 2), s2 = clamp(p * 2 - 1);
     var x = lerp(150, 320, s1), y = lerp(330, 470, s1);
     if (s1 >= 1) { x = lerp(490, 320, s2); y = lerp(330, 470, s2); }
     o += arrow(150, 340, 280, 460, INK, 2, s1) + arrow(490, 340, 360, 460, INK, 2, s2);
     o += '<g transform="translate(' + f(x) + ' ' + f(y) + ')">' + paperDoc(0, 0, 0.45, BONE) + '</g>';
-    return o + T("قانون", 320, 720, 26, OLIVE, 900);
+    return o + T("قانون", 320, 752, 26, OLIVE, 900);
   });
   // 14: the President signs, or vetoes
   shot(14, P(320, 400, 1, 320, 420, 1.06), function (u, d, t) {
@@ -251,31 +269,31 @@
   shot(15, P(320, 400, 1, 320, 420, 1.06), function (u, d, t) {
     var p = ease(clamp(u / 0.9)), o = court(320, 630, 1.4);
     o += paperDoc(320, 330, 0.9, BONE) + cross(320, 330, 0.9, p);
-    return o + label(320, 240, 170, 200, "دستور", INK, p, 26) + label(320, 480, 500, 560, "المحكمة العليا", INK, p, 26);
+    return o + label(320, 240, 170, 200, "دستور", INK, p, 26) + label(320, 480, 520, 730, "المحكمة العليا", INK, p, 26);
   });
   // 16: each power can stop the others
   shot(16, C(320, 400, 1), function (u, d, t) {
     var p = clamp(u / 1), N = [[320, 230, "الكونجرس", "1"], [160, 560, "الرئيس", "2"], [480, 560, "المحاكم", "3"]], o = "";
     o += arrow(280, 290, 200, 510, INK, 2.4, p) + arrow(200, 560, 440, 560, INK, 2.4, p) + arrow(440, 510, 360, 290, INK, 2.4, p);
     o += arrow(360, 292, 440, 510, ORANGE, 2.4, p) + arrow(420, 560, 200, 560, ORANGE, 2.4, p) + arrow(200, 510, 280, 292, ORANGE, 2.4, p);
-    N.forEach(function (n, i) { o += circ(n[0], n[1], 62, BONE, 2.4) + callout(n[3], n[0], n[1] - 74, pop(clamp(p * 2 - i * 0.2))) + T(n[2], n[0], n[1] + 90, 24, INK, 800); });
+    N.forEach(function (n, i) { o += circ(n[0], n[1], 66, BONE, 2.4) + T(n[2], n[0], n[1] + 7, 20, INK, 800) + callout(n[3], n[0], n[1] - 80, pop(clamp(p * 2 - i * 0.2))); });
     return o + T("يوقفوا بعض", 320, 690, 30, ORANGE, 900);
   });
   // 17: the President is elected indirectly
   shot(17, P(320, 400, 1, 320, 420, 1.05), function (u, d, t) {
     var p = ease(clamp(u / 0.9)), o = "";
-    o += ballot(230, 540, 1.3);
-    o += paperDoc(230 + Math.sin(t * 2) * 3, 430 + p * 60 * 0, 0.6, BONE);
-    o += usMap(330, 380, 0.85, { CA: BLUE, OR: BLUE, MI: OLIVE, MIU: OLIVE });
-    o += numBox("؟", 320, 230, pop(p), 40);
-    return o + label(230, 480, 130, 620, "الشعب", INK, p, 26) + label(470, 470, 540, 620, "المجمع الانتخابي", ORANGE, p, 22);
+    o += ballot(190, 600, 1.2);
+    o += paperDoc(190 + Math.sin(t * 2) * 3, 500, 0.6, BONE);
+    o += usMap(170, 250, 0.75, { CA: BLUE, OR: BLUE, MI: OLIVE });
+    o += numBox("؟", 320, 190, pop(p), 40);
+    return o + label(190, 540, 150, 680, "الشعب", INK, p, 26) + label(330, 400, 500, 640, "المجمع الانتخابي", ORANGE, p, 22);
   });
   // 18: 538 electors
   shot(18, C(320, 400, 1), function (u, d, t) {
     var p = ease(clamp(u / 1.2)), o = "";
     o += electorBar(60, 400, 520, 90, p, false);
     o += numBox("538", 320, 300, pop(clamp(u / 0.5)), 46);
-    o += T("435 نواب", 60 + 520 * 217 / 538, 370, 20, INK, 800) + T("100 شيوخ", 60 + 520 * 0.9 / 1, 530, 20, BLUE, 800) + T("3 واشنطن", 580, 530, 18, ORANGE, 800);
+    o += T("435 نواب", 60 + 520 * 217 / 538, 378, 20, INK, 800) + T("100 شيوخ", 60 + 520 * 485 / 538, 378, 20, BLUE, 800) + T("3 واشنطن", 60 + 520 * 536.5 / 538, 530, 18, ORANGE, 800);
     return o;
   });
   // 19: 270 is the majority
@@ -299,7 +317,7 @@
   // 21: Michigan's 15 votes all go to one candidate
   shot(21, P(320, 400, 1, 320, 420, 1.06), function (u, d, t) {
     var p = ease(clamp(u / 1.2)), o = "";
-    o += '<g transform="translate(180 330) scale(2.1)">' + '<path d="' + poly(ST.MI, 0, 0, 1).replace(/ Z$/, "") + ' Z" fill="' + OLIVE + '" stroke="' + INK + '" stroke-width="1.8"/></g>';
+    o += stateAt('MI', 225, 380, 2.3, OLIVE);
     o += numBox("15", 140, 200, pop(clamp(u / 0.5)), 46);
     for (var i = 0; i < 15; i++) {
       var q = clamp(p * 1.6 - i * 0.05), x = lerp(230 + (i % 5) * 16, 440, q), y = lerp(300 + Math.floor(i / 5) * 16, 360, q);
@@ -332,7 +350,7 @@
   /* ---------- summary card (line 24, shown over the closing question) ---------- */
   window.__outro = function (svg, u, t) {
     var p = ease(clamp(u / 0.8)), o = "";
-    o += usMap(20, 10, 0.42, { CA: ORANGE, MI: OLIVE, MIU: OLIVE });
+    o += usMap(20, 10, 0.42, { CA: ORANGE, MI: OLIVE });
     o += callout("1", 150, 18, pop(clamp(p * 3)));
     o += capitol(50, 146, 0.2) + callout("3", 50, 104, pop(clamp(p * 3 - 0.3)));
     o += whitehouse(150, 146, 0.25) + callout("2", 150, 100, pop(clamp(p * 3 - 0.6)));
