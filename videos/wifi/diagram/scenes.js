@@ -115,13 +115,16 @@
   function alongPoly(pts, p) { var n = pts.length - 1, s = clamp(p) * n, i = Math.min(n - 1, Math.floor(s)); return lerp3(pts[i], pts[i + 1], s - i); }
   function lab(c, lx, ly, text, col, k, sz) { var q = P(c); return label(q[0], q[1], lx, ly, text, col, k, sz); }
   function camV(th0, ph0, th1, ph1, z0, z1, pan) {
-    return function (u, d) { var k = clamp(u / d), kk = k * k * (3 - 2 * k); setView(lerp(th0, th1, kk), lerp(ph0, ph1, kk)); var zz = lerp(z0, z1, kk); return [pan ? pan[0] : 0, pan ? pan[1] : 0, zz < 1.9 ? zz * 0.8 : zz]; };
+    return function (u, d) { var k = clamp(u / d), kk = 0.5 * k + 0.5 * k * k * (3 - 2 * k); setView(lerp(th0, th1, kk), lerp(ph0, ph1, kk)); var zz = lerp(z0, z1, kk), q = P(pan && pan.length === 3 ? pan : [0, 0, 40]); return [q[0] + (pan && pan.length === 2 ? pan[0] : 0), q[1] + (pan && pan.length === 2 ? pan[1] : 0), zz < 1.9 ? zz * 0.8 : zz]; };
   }
+  function ln3(a, b, col, w, op) { var p = P(a), q = P(b); return '<path d="M' + f(p[0]) + ' ' + f(p[1]) + ' L' + f(q[0]) + ' ' + f(q[1]) + '" stroke="' + col + '" stroke-width="' + (w || 1) + '"' + (op != null ? ' opacity="' + op + '"' : '') + ' stroke-linecap="round"/>'; }
   function floorGrid(ext, step) {
-    var s = slab([0, 0, -1], [1, 0, 0], [0, 1, 0], rectPts(ext * 2, ext * 2), 2, "#e6dcc4");
-    for (var k = -ext; k <= ext; k += step) { s += tube([[k, -ext, 0], [k, ext, 0]], 0.5, "#cbbd9f") + tube([[-ext, k, 0], [ext, k, 0]], 0.5, "#cbbd9f"); }
+    var s = slab([0, 0, -1.5], [1, 0, 0], [0, 1, 0], rectPts(ext * 2, ext * 2), 3, "#e9e0ca", { face: "#ece3cd" });
+    for (var k = -ext + step; k < ext; k += step) s += ln3([k, -ext, 0], [k, ext, 0], "#cdbf9f", 1.1) + ln3([-ext, k, 0], [ext, k, 0], "#cdbf9f", 1.1);
     return s;
   }
+  // a soft shadow on the floor, drawn before every object
+  function shadow(c, A, B, rx, ry) { L3.push([-1e9, poly3(circPts(1, 24).map(function (p) { return [c[0] + A[0] * p[0] * rx + B[0] * p[1] * ry, c[1] + A[1] * p[0] * rx + B[1] * p[1] * ry, 0.3]; }), "rgba(60,45,20,.16)", 0)]); }
   // ── objects ─────────────────────────────────────────────────────────────────────────────────────────────
   function phone3(c, F, t, s, o) {
     s = s || 1; o = o || {}; var ob = orient(F), A = ob.A, B = ob.B, T = 7 * s;
@@ -137,11 +140,14 @@
     } else if (o.screen === "photo") {
       for (var r = 0; r < 4; r++) for (var c2 = 0; c2 < 3; c2++) { var v = hash(r * 3 + c2 + 2); ui += plane(add3(sc, F, 0.35 * s), A, B, rectPts(9 * s, 9 * s).map(function (p) { return [p[0] + (c2 - 1) * 10 * s, p[1] + (r - 1.5) * 12 * s]; }), v > 0.6 ? "#e2a04a" : v > 0.3 ? "#5f9a5a" : "#2f7fb8"); }
     }
+    ui += poly3(mapP(add3(sc, F, 0.45 * s), A, B, [[-19 * s, 6 * s], [-4 * s, 41 * s], [6 * s, 41 * s], [-19 * s, -4 * s]], 0), "rgba(255,255,255,.09)", 0);
+    if (Math.abs(c[2] - 44 * s) < 2) shadow([c[0], c[1], 0], A, F, 30 * s, 12 * s);
     return body + scr + ui;
   }
   var YEL = "#f2c230", BLUE = "#46698a", OLIVE = "#6b7d3c", ORANGE = "#c4532c";
   function router3(c, t, s) {
     s = s || 1; var W = 96 * s, D = 58 * s, H = 26 * s, cc = [c[0], c[1], c[2] + H / 2];
+    if (c[2] === 0) shadow([c[0] + 6 * s, c[1] + 6 * s, 0], [1, 0, 0], [0, 1, 0], W * 0.62, D * 0.68);
     var out = slab(cc, [1, 0, 0], [0, 1, 0], rrectPts(W, D, 9 * s), H, BONE, { face: BONE2 });
     for (var k = 0; k < 3; k++) { var q = P([c[0] - 20 * s + k * 16 * s, c[1] - 8 * s, c[2] + H + 0.5]); out += '<circle cx="' + f(q[0]) + '" cy="' + f(q[1]) + '" r="' + f(3.2 * s) + '" fill="' + (k === 2 ? BLUE : GRN) + '" opacity="' + f(0.4 + 0.6 * Math.abs(Math.sin(t * 3 + k))) + '" stroke="' + INK + '" stroke-width="1"/>'; }
     for (var v = 0; v < 6; v++) out += plane([c[0] - 30 * s + v * 12 * s, c[1] + D / 2 + 0.2, c[2] + H * 0.4], [1, 0, 0], [0, 0, 1], rectPts(6 * s, H * 0.4), "#8a929c", 0);
@@ -208,21 +214,28 @@
     var out = [[60, -30, 40], [130, -60, 90], [170, -90, 140]];
     s += bitsPath(out, 8, t, 0.5, BLUE, 26);
     var a = P([60, -30, 40]);
-    return s + label(a[0], a[1], -230, -130, "الراوتر", BLUE, (u - 0.3) / 0.8, 22) + label(P([130, -60, 90])[0], P([130, -60, 90])[1], 200, 160, "أصفار وواحدات", ORANGE, (u - 1.1) / 0.8, 22);
+    return s + label(a[0], a[1], -110, -110, "الراوتر", BLUE, (u - 0.3) / 0.8, 14) + label(P([130, -60, 90])[0], P([130, -60, 90])[1], -30, 110, "أصفار وواحدات", ORANGE, (u - 1.1) / 0.8, 14);
   });
-  // 5 — the photo leaves the phone, dissolves into bits, and the bits go down the cable
-  shot(5, camV(0.9, 0.35, 1.2, 0.5, 1.4, 1.5), function (u, d, t) {
-    var a = clamp(u / d), PC = [-160, 0, 44], FP = un([1, 0, 0]), s = paper() + floorGrid(170, 34);
-    var cab = [[-160, -40, 6], [-60, -40, 6], [20, -40, 6], [102, -40, 6]];
-    put(PC, phone3(PC, FP, t, 1.25, { screen: "photo" })); put([150, -40, 0], router3([150, -40, 0], t, 1.2));
+  // 5 — the photo lifts out of the phone, floats out, bursts into 0s and 1s, and the bits dive into the cable to the router
+  shot(5, function (u, d) {
+    var k = clamp(u / d), kk = 0.5 * k + 0.5 * k * k * (3 - 2 * k); setView(lerp(0.95, 1.3, kk), lerp(0.38, 0.52, kk));
+    var a = P([-150, 0, 60]); return [lerp(a[0], 0, kk), lerp(a[1], -10, kk), lerp(1.45, 1.0, kk)];
+  }, function (u, d, t) {
+    var a = clamp(u / d), PC = [-160, 0, 44], FP = un([1, 0.35, 0]), RT = [160, -50, 0], s = paper() + floorGrid(190, 34);
+    var cab = [[-118, -50, 5], [-40, -50, 5], [40, -50, 5], [104, -50, 5]];
+    put(PC, phone3(PC, FP, t, 1.25, { screen: a < 0.3 ? "photo" : "movie" })); put(RT, router3(RT, t, 1.1));
+    put([-124, -50, 0], cubeObj([-124, -50, 0], 16, 12, 10, "#c9ced4"));
     s += flush() + cable(cab, "#3c5a46");
-    var card, fade = 1, spread = 0;
-    if (a < 0.3) { var k1 = a / 0.3; card = lerp3([-150, 0, 60], [-60, 30, 130], k1 * k1 * (3 - 2 * k1)); fade = 1; }
-    else if (a < 0.55) { var k2 = (a - 0.3) / 0.25; card = lerp3([-70, 20, 120], [-100, -40, 30], k2); fade = 1 - k2; }
-    if (card) { var F = un([1, 0.2 + Math.sin(a * 6) * 0.3, 0.4]); s += token3(card, 0, F, 3.2 * (fade < 1 ? fade : 1) + 0.01) + ""; }
-    s += bitsPath(cab, 16, t, 0.22, BLUE, 26);
-    var lp = P([-60, -40, 6]), lb = P([-130, 0, 50]), lc = P([40, -40, 6]);
-    return s + label(lb[0], lb[1], -250, -250, "صورة", BLUE, (u - 0.3) / 0.8, 20) + label(lp[0], lp[1] + 10, -250, 130, "سلك", OLIVE, (u - 0.9) / 0.8, 20) + label(lc[0], lc[1], 170, 250, "أرقام بتتسافر", ORANGE, (u - 1.4) / 0.8, 20);
+    var c0 = add3(PC, FP, 8), c1 = [-95, 45, 125], c2 = [-55, 10, 112], card = null, sc = 3.2;
+    if (a < 0.3) { var k1 = a / 0.3, e1 = k1 * k1 * (3 - 2 * k1); card = lerp3(c0, c1, e1); sc = lerp(2.2, 3.2, e1); }
+    else if (a < 0.55) { var k2 = (a - 0.3) / 0.25; card = lerp3(c1, c2, k2); sc = 3.2 * (1 - k2 * k2); }
+    if (card && sc > 0.05) s += token3(card, 0, un(add3(VW.V, [Math.sin(t * 2) * 0.25, 0, Math.cos(t * 1.7) * 0.15])), sc);
+    // the burst: each bit leaves the card and runs down into the cable plug, then along the cable
+    var path = [c2, [-100, -30, 70], [-118, -50, 26], [-118, -50, 5], [-40, -50, 5], [40, -50, 5], [104, -50, 5]], g = (a - 0.42) / 0.58;
+    for (var i = 0; i < 16; i++) { var pi = clamp(g * 1.5 - i * 0.03); if (pi <= 0 || pi >= 1) continue; var q = P(alongPoly(path, pi)); s += '<g opacity="' + f(Math.min(1, (1 - pi) * 6)) + '">' + T(hash(i * 7) > 0.5 ? "1" : "0", q[0] + (hash(i) - 0.5) * 18 * (1 - pi), q[1] + 6, 22, BLUE, 900) + '</g>'; }
+    if (a > 0.7) s += '<g opacity="' + f(clamp((a - 0.7) / 0.2)) + '">' + bitsPath(cab, 10, t, 0.3, BLUE, 20) + '</g>';
+    var lb = P(c1), lp = P([-40, -50, 5]), lr = P([RT[0], RT[1], 30]);
+    return s + label(lb[0], lb[1], -250, -260, "صورة", BLUE, (u - 0.2) / 0.7, 22) + label(lp[0], lp[1] + 8, -220, 200, "أرقام في السلك", OLIVE, (a - 0.62) * d / 0.7, 20) + label(lr[0], lr[1], 200, -180, "الراوتر", BLUE, (a - 0.8) * d / 0.6, 20);
   });
   // 6 — the router turns the bits into a radio wave
   shot(6, camV(0.8, 1.05, 1.3, 1.1, 1.5, 1.6), function (u, d, t) {
@@ -246,15 +259,17 @@
     var s = paper() + floorGrid(170, 34), pts = [];
     for (var x = -200; x <= 200; x += 4) { var b = Math.floor((x + t * 60) / 60), v = hash(b * 3) > 0.5, A = v ? 26 : 9, fr = v ? 0.3 : 0.12; pts.push([x, 0, 60 + Math.sin(x * fr - t * 7) * A]); }
     s += tube(pts, 3.5, BLUE);
-    return s + label(P([0, 0, 60])[0], P([0, 0, 60])[1], 120, -220, "الداتا هي الشكل", BLUE, (u - 0.5) / 0.8, 20);
+    return s + label(P([0, 0, 60])[0], P([0, 0, 60])[1], -90, 110, "الداتا هي الشكل", BLUE, (u - 0.5) / 0.8, 13);
   });
   // 9 — it travels at the speed of light, which the eye can't see
-  shot(9, camV(0.2, 0.2, 0.8, 0.35, 1.0, 1.2), function (u, d, t) {
+  shot(9, camV(0.2, 0.2, 0.8, 0.35, 1.4, 1.55), function (u, d, t) {
     var s = paper() + floorGrid(190, 34), R0 = [-160, 0, 0], PH = [160, 0, 44];
     put(R0, router3(R0, t, 1.1)); put(PH, phone3(PH, un([-1, 0, 0]), t, 1.2, { screen: "movie" })); s += flush();
     var a = P([-100, 0, 110]), b = P([100, 0, 110]);
     s += '<path d="M' + f(a[0]) + ' ' + f(a[1]) + ' L' + f(b[0]) + ' ' + f(b[1]) + '" stroke="' + ORANGE + '" stroke-width="5" stroke-linecap="round" stroke-dasharray="16 12" stroke-dashoffset="' + f(-t * 160) + '"/>';
-    s += '<circle cx="230" cy="-270" r="22" fill="#f4c26b" stroke="' + INK + '" stroke-width="1.6"/>';
+    s += bitsPath([[-100, 0, 135], [100, 0, 135]], 8, t, 0.7, ORANGE, 18);
+    var sx = 230 + Math.sin(t * 2) * 4; s += '<circle cx="' + f(sx) + '" cy="-270" r="' + f(22 + Math.sin(t * 3) * 2) + '" fill="#f4c26b" stroke="' + INK + '" stroke-width="1.6"/>';
+    for (var r = 0; r < 8; r++) { var an = r * Math.PI / 4 + t * 0.8; s += '<path d="M' + f(sx + Math.cos(an) * 30) + ' ' + f(-270 + Math.sin(an) * 30) + ' L' + f(sx + Math.cos(an) * 40) + ' ' + f(-270 + Math.sin(an) * 40) + '" stroke="' + INK + '" stroke-width="2" stroke-linecap="round"/>'; }
     return s + label(a[0], a[1], -220, -220, "بسرعة الضوء", ORANGE, (u - 0.4) / 0.8, 22);
   });
   // 10 — the antenna catches the wave; a chip reads it (magnified inset)
@@ -269,12 +284,12 @@
     return s + label(P([0, 0, 120])[0], P([0, 0, 120])[1], -240, -130, "الهوائي", BLUE, (u - 1.2) / 0.8, 20);
   });
   // 11 — the bits come back together as a picture, a message or a sound
-  shot(11, camV(0.6, 0.5, 0.4, 0.45, 1.3, 1.4), function (u, d, t) {
-    var s = paper() + floorGrid(170, 34), rows = [[120, -60, 50, 0], [120, 0, 50, 1], [120, 60, 50, 2]];
+  shot(11, camV(0.6, 0.5, 0.4, 0.45, 1.6, 1.75, [50, 0, 50]), function (u, d, t) {
+    var s = paper() + floorGrid(170, 34), rows = [[120, 0, 135, 0], [120, 0, 80, 1], [120, 0, 25, 2]];
     rows.forEach(function (r) { put([r[0], r[1], r[2]], token3([r[0], r[1], r[2]], r[3], un([1, 0.6, 0.2]), 2.6)); }); s += flush();
-    s += bitsPath([[-160, 0, 50], [60, 0, 50], [110, 0, 50]], 14, t, 0.3, BLUE, 18);
-    var a = P([120, -60, 50]), b = P([120, 0, 50]), c = P([120, 60, 50]);
-    return s + label(a[0], a[1], 230, -250, "صورة", BLUE, (u - 0.8) / 0.8, 20) + label(b[0], b[1], 230, -40, "رسالة", ORANGE, (u - 1.2) / 0.8, 20) + label(c[0], c[1], 230, 150, "صوت", OLIVE, (u - 1.6) / 0.8, 20);
+    s += bitsPath([[-160, 0, 80], [60, 0, 80], [100, 0, 80]], 14, t, 0.3, BLUE, 18);
+    var a = P([120, 0, 135]), b = P([120, 0, 80]), c = P([120, 0, 25]);
+    return s + label(a[0], a[1], 110, -190, "صورة", BLUE, (u - 0.8) / 0.8, 20) + label(b[0], b[1], 150, -60, "رسالة", ORANGE, (u - 1.2) / 0.8, 20) + label(c[0], c[1], 150, 90, "صوت", OLIVE, (u - 1.6) / 0.8, 20);
   });
   // 12 — one router, many devices on the same air
   shot(12, camV(1.0, 1.1, 1.4, 1.0, 1.25, 1.3), function (u, d, t) {
@@ -285,7 +300,7 @@
     s += flush();
     devs.forEach(function (p, i) { s += tube([[0, 0, 40], [p[0] * 0.5, p[1] * 0.5, 60], [p[0], p[1], 60]], 0.8, "#b9b08f"); s += bitsPath([[0, 0, 40], [p[0] * 0.5, p[1] * 0.5, 60], [p[0], p[1], 60]], 2, t, 0.3 + i * 0.02, BLUE, 16); });
     var q = P([0, 0, 160]);
-    return s + numBox("20", q[0], q[1] - 10, clamp((u - 0.2) / 0.5), 26) + label(P([-190, -90, 44])[0], P([-190, -90, 44])[1], -240, -250, "عشرين جهاز", ORANGE, (u - 0.8) / 0.8, 20);
+    return s + numBox("20", q[0], q[1] - 10, clamp((u - 0.2) / 0.5), 26) + label(P([-190, -90, 44])[0], P([-190, -90, 44])[1], -170, -180, "عشرين جهاز", ORANGE, (u - 0.8) / 0.8, 20);
   });
   // 13 — they listen first, and wait while someone else is sending
   shot(13, camV(0.2, 0.5, 0.9, 0.5, 1.4, 1.5), function (u, d, t) {
@@ -313,9 +328,9 @@
   shot(15, camV(0.4, 0.8, 1.0, 0.8, 1.3, 1.4), function (u, d, t) {
     var s = paper() + floorGrid(170, 34);
     put([-200, 0, 0], cubeObj([-200, 0, 0], 60, 40, 46, "#9b7b52", { hatch: true }));
-    for (var i = 0; i < 5; i++) { var x = -60 + (i % 3) * 110, y = -60 + Math.floor(i / 3) * 130; put([x, y, 0], cubeObj([x, y, 0], 64, 44, 26, "#c8b48f")); put([x, y, 26], token3([x, y, 26], 0, un([0, -1, 0.6]), 1)); }
+    for (var i = 0; i < 5; i++) { var x = -60 + (i % 3) * 110, y = -60 + Math.floor(i / 3) * 130; put([x, y, 0], cubeObj([x, y, 0], 64, 44, 26, "#c8b48f")); put([x, y, 27], token3([x, y, 27], 0, [0, 0, 1], 1.4)); }
     s += flush();
-    for (var k = 0; k < 6; k++) { var p = (t * 0.5 + k / 6) % 1, tx = lerp(-200, -60 + (k % 3) * 110, p), ty = lerp(0, -60 + Math.floor(k / 3) * 130, p), tz = 60 + Math.sin(p * Math.PI) * 70; s += token3([tx, ty, tz], 0, un([0, -1, 0.5]), 1.1); }
+    for (var k = 0; k < 6; k++) { var p = (t * 0.5 + k / 6) % 1, tx = lerp(-200, -60 + (k % 3) * 110, p), ty = lerp(0, -60 + Math.floor(k / 3) * 130, p), tz = 60 + Math.sin(p * Math.PI) * 70; s += token3([tx, ty, tz], 0, un(add3(VW.V, [Math.sin(t * 3 + k) * 0.3, 0, 0])), 1.4); }
     var a = P([-200, 0, 46]), b = P([-60, -60, 26]);
     return s + label(a[0], a[1], -240, -180, "المدرس", BLUE, (u - 0.4) / 0.8, 20) + label(b[0], b[1], 60, -200, "الكراسات", OLIVE, (u - 1.2) / 0.8, 20);
   });
@@ -333,9 +348,8 @@
   // 17 — two rooms, three walls: four bars in one room, one bar behind the walls
   shot(17, camV(0.4, 1.1, 0.6, 1.2, 1.4, 1.4), function (u, d, t) {
     var s = paper() + floorGrid(170, 34);
-    put([0, 0, 0], slab([-60, 0, 80], [0, 1, 0], [0, 0, 1], rectPts(300, 160), 0.1, "#fff", {}));
     var W1 = [[-70, 0, 0], [-40, 0, 0], [-10, 0, 0]];
-    [-70, -10, 50].forEach(function (x) { put([x, 0, 0], slab([x, 0, 80], [0, 1, 0], [0, 0, 1], rectPts(14, 160), 160, PUTTY, { hatch: true })); });
+    [-70, -10, 50].forEach(function (x) { put([x, 0, 0], slab([x, 0, 45], [0, 1, 0], [0, 0, 1], rectPts(300, 90), 14, PUTTY, { hatch: true })); });
     put([-200, -60, 0], router3([-200, -60, 0], t, 0.9)); put([-120, 40, 44], phone3([-120, 40, 44], un([1, 0, 0]), t, 0.9, { screen: "movie" }));
     put([120, 40, 44], phone3([120, 40, 44], un([-1, 0, 0]), t, 0.9, { screen: "movie" }));
     s += flush();
@@ -356,13 +370,19 @@
     var q = P([-120, 0, 120]);
     return s + numBox("2.45 GHz", q[0] + 70, q[1] + 60, clamp((u - 0.9) / 0.6), 22) + label(P([-120, 0, 40])[0], P([-120, 0, 40])[1], -240, -160, "الميكروويف", BLUE, (u - 0.4) / 0.8, 20) + label(P([0, 0, 90])[0], P([0, 0, 90])[1], 60, -250, "خناقة", ORANGE, (u - 1.6) / 0.8, 22);
   });
-  // 19 — the name: not an acronym, a marketing choice (flat card)
-  shot(19, camV(0.5, 0.5, 0.5, 0.5, 1, 1.05), function (u, d, t) {
+  // 19 — the name: not an acronym, a marketing choice (a flat card on drifting bits; the card bobs, the letters bounce)
+  shot(19, function (u, d) { var k = clamp(u / d); return [lerp(-40, 40, k), lerp(30, -30, k), lerp(0.95, 1.2, k)]; }, function (u, d, t) {
     var s = paper();
-    s += '<ellipse cx="0" cy="-40" rx="200" ry="100" fill="#fff" stroke="' + INK + '" stroke-width="3"/><path d="M-60 52 L-90 130 L-20 66 Z" fill="#fff" stroke="' + INK + '" stroke-width="3"/>';
-    s += T("Wi-Fi", 0, -20, 54, BLUE, 900) + T("Wireless Fidelity", 0, 30, 18, "#6f6a62", 700);
-    var sl = clamp((u - 1.2) / 0.8); s += '<path d="M-130 26 L' + f(-130 + 260 * sl) + ' 26" stroke="' + RED + '" stroke-width="4" stroke-linecap="round"/>';
-    return s + label(90, 26, 230, 160, "مش اختصار", ORANGE, (u - 1.4) / 0.8, 22);
+    for (var i = 0; i < 46; i++) { var x = -330 + hash(i) * 660, y = ((hash(i + 7) * 840 - t * (40 + hash(i + 3) * 40)) % 840 + 840) % 840 - 420; s += T(hash(i + 11) > 0.5 ? "1" : "0", x, y, 18 + hash(i) * 12, "#d6c9a9", 900); }
+    var k = pop((u - 0.1) / 0.7), bob = Math.sin(t * 2.2) * 8, rot = Math.sin(t * 1.4) * 4;
+    var g = '<ellipse cx="0" cy="-40" rx="200" ry="100" fill="#fff" stroke="' + INK + '" stroke-width="3"/><path d="M-60 52 L-90 130 L-20 66 Z" fill="#fff" stroke="' + INK + '" stroke-width="3"/><path d="M-62 55 L-22 61" stroke="#fff" stroke-width="7"/>';
+    ["W", "i", "-", "F", "i"].forEach(function (ch, j) { g += T(ch, [-56, -20, 2, 28, 58][j], -20 + Math.sin(t * 6 + j * 0.9) * 6, 56, BLUE, 900); });
+    g += T("Wireless Fidelity", 0, 30, 18, "#6f6a62", 700);
+    var sl = clamp((u - 1.2) / 0.8); g += '<path d="M-84 24 L' + f(-84 + 168 * sl) + ' 24" stroke="' + RED + '" stroke-width="4" stroke-linecap="round"/>';
+    s += '<g transform="translate(0 ' + f(bob) + ') rotate(' + f(rot) + ') scale(' + f(k) + ')">' + g + '</g>';
+    var st = pop((u - 2.2) / 0.6); if (st > 0) s += '<g transform="translate(110 200) rotate(' + f(-10 + Math.sin(t * 3) * 3) + ') scale(' + f(st) + ')"><rect x="-130" y="-38" width="260" height="76" rx="8" fill="' + PAPER + '" stroke="' + ORANGE + '" stroke-width="5"/>' + T("مش اختصار!", 0, 14, 38, ORANGE, 900) + '</g>';
+    var yr = pop((u - 3.2) / 0.6); if (yr > 0) s += '<g transform="translate(-170 260) scale(' + f(yr) + ')">' + T("1999", 0, 0, 34, OLIVE, 900) + T("شركة تسويق اختارته", 0, 34, 18, INK, 700) + '</g>';
+    return s;
   });
   // 20 — a radio telescope on the ground, a black hole in the sky (inset)
   shot(20, camV(0.2, 0.25, 0.9, 0.4, 1.3, 1.4), function (u, d, t) {
@@ -408,19 +428,24 @@
 
   window.__panel = window.__panel;
   window.__intro = function (svg, t) {
-    setView(0.9 + t * 0.3, 0.5);
-    var s = '<rect width="580" height="320" fill="#141414"/><g transform="translate(290 170) scale(1.1)">';
-    put([0, 0, 0], phone3([0, 0, 44], un([1, 0.4, 0]), t, 1.2, { screen: "movie" }));
-    put([-170, 0, 0], router3([-170, 0, 0], t, 0.9));
-    s += flush() + floorRings([-170, 0, 2], t, 3, BLUE, 20, 40) + '</g>';
+    setView(0.55 + t * 0.22, 0.42 + 0.08 * Math.sin(t * 1.3));
+    var s = '<rect width="580" height="320" fill="#141414"/><g transform="translate(290 196) scale(1.05)">';
+    put([110, 20, 44], phone3([110, 20, 44], un([-0.6, 1, 0]), t, 1.25, { screen: "movie" }));
+    put([-130, -20, 0], router3([-130, -20, 0], t, 1.0));
+    s += flush() + floorRings([-130, -20, 2], t, 3, "#7fb2d8", 24, 40);
+    s += bitsPath([[-130, -20, 90], [-20, 0, 150], [110, 20, 110]], 12, t, 0.55, YEL, 22) + '</g>';
+    var sx = ((t * 300) % 760) - 90; s += '<rect x="' + f(sx) + '" y="0" width="70" height="320" fill="#9fc3dc" opacity=".16"/><path d="M' + f(sx + 35) + ' 0 V320" stroke="#bfe0ff" stroke-width="3" opacity=".7"/>';
     svg.innerHTML = s;
   };
   window.__outro = function (svg, u, t) {
-    setView(0.8 + u * 0.2, 0.6);
-    var s = '<rect width="580" height="300" fill="#e4d9bf"/><g transform="translate(290 160) scale(0.9)">';
-    put([-130, 0, 0], router3([-130, 0, 0], t, 1.1)); put([130, 0, 44], phone3([130, 0, 44], un([-1, 0, 0]), t, 1.1, { screen: "movie" }));
-    s += flush() + floorRings([-130, 0, 130], t, 3, BLUE, 30, 40) + '</g>';
-    [["1", 130, 80], ["2", 280, 60], ["3", 220, 220], ["4", 400, 150], ["5", 440, 90], ["6", 330, 260]].forEach(function (c, i) { s += callout(c[0], c[1], c[2], (u - 0.2 - i * 0.15) / 0.6); });
+    setView(0.5 + u * 0.4, 0.55 + 0.08 * Math.sin(t * 1.2));
+    var s = '<rect width="580" height="300" fill="#e4d9bf"/><g transform="translate(290 176) scale(0.9)">', T0 = function (p) { var q = P(p); return [290 + 0.9 * q[0], 176 + 0.9 * q[1]]; };
+    put([-140, 0, 0], router3([-140, 0, 0], t, 1.1)); put([140, 0, 44], phone3([140, 0, 44], un([-1, 0.2, 0]), t, 1.1, { screen: "movie" }));
+    put([10, 0, 0], slab([10, 0, 35], [0, 1, 0], [0, 0, 1], rectPts(110, 70), 10, PUTTY, { hatch: true }));
+    s += flush() + floorRings([-140, 0, 120], t, 3, BLUE, 30, 40) + bitsPath([[-110, 0, 120], [10, 0, 160], [130, 0, 120]], 10, t, 0.45, BLUE, 18) + '</g>';
+    var sx = ((u * 260) % 700) - 60; s += '<rect x="' + f(sx) + '" y="0" width="50" height="300" fill="#fff" opacity=".28"/>';
+    [["1", [-140, 0, 40]], ["2", [-60, 0, 175]], ["3", [140, 0, 105]], ["4", [140, 0, 55]], ["5", [140, 0, 5]], ["6", [10, 0, 80]]].forEach(function (c, i) { var q = T0(c[1]); s += callout(c[0], q[0], q[1], (u - 0.2 - i * 0.15) / 0.6); });
+    if (typeof document !== "undefined") { var nn = document.querySelector('#outro .n'); if (nn) nn.textContent = Math.round(300 * clamp(u / 1.6)) + ' ألف'; }
     svg.innerHTML = s;
   };
   window.__parts = { router3: router3, phone3: phone3 };

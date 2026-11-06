@@ -6,7 +6,7 @@ CFG = {
     "outro": '<div class="q">الواي فاي بيبعت الداتا في الهوا إزاي؟</div><svg id="outroArt" viewBox="0 0 580 300"></svg>'
              '<div class="leg"><span><b>1</b>الراوتر</span><span><b>2</b>الموجة</span><span><b>3</b>الهوائي</span><span><b>4</b>الشريحة</span>'
              '<span><b>5</b>الموبايل</span><span><b>6</b>الحيطة</span></div>'
-             '<div class="stat"><div class="n">300 ألف</div><div class="t">كيلومتر في الثانية: سرعة الموجة<br>اللي بتحمل الداتا، زي الضوء بالظبط</div></div>'
+             '<div class="stat"><div class="n" style="font-size:30px;white-space:nowrap">300 ألف</div><div class="t">كيلومتر في الثانية: سرعة الموجة<br>اللي بتحمل الداتا، زي الضوء بالظبط</div></div>'
              '<div class="pts">1. الراوتر بيحوّل الداتا لأصفار وواحدات، وبعدين لموجة راديو.<br>'
              '2. الموجة بتحمل شكلها كرقم، وبتسافر في الهوا بسرعة الضوء.<br>'
              '3. الموبايل بيلقط الموجة ويفكّها تاني لصورة وصوت.'
