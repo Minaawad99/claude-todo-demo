@@ -186,7 +186,7 @@ window.USBOUNDS = {"AK":[34.6,333.6,166.6,89.2],"AZ":[118.3,237.9,78.2,91.4],"CO
     o += '<g transform="translate(' + f(290) + ' ' + f(150 + Math.sin(t * 2.2) * 4) + ') scale(' + f(0.9 * p) + ')">' + shirt(0, 0, 1, BONE) + '</g>';
     o += '<g opacity="' + f(clamp((t - 0.8) / 0.6)) + '">' + T("+ ضريبة", 135, 130, 26, ORANGE, 800) + T("صفر", 445, 130, 40, OLIVE, 900) + '</g>';
     var belt = '';
-    for (var i = 0; i < 16; i++) { var x = ((i * 40 - t * 70) % 640 + 640) % 640 - 30; belt += '<circle cx="' + f(x) + '" cy="290" r="5" fill="' + (i % 3 ? ORANGE : OLIVE) + '"/>'; }
+    for (var i = 0; i < 24; i++) { var x = ((i * 30 - t * 140) % 720 + 720) % 720 - 40; belt += '<circle cx="' + f(x) + '" cy="292" r="8" fill="' + (i % 3 ? ORANGE : OLIVE) + '"/>'; }
     svg.innerHTML = '<rect x="-100" y="-100" width="800" height="500" fill="' + PAPER + '"/><rect x="-100" y="-100" width="800" height="500" fill="url(#grid)" transform="translate(' + f(-((t * 40) % 48)) + ' 0)"/>' + o + belt;
   };
 
@@ -415,7 +415,7 @@ window.USBOUNDS = {"AK":[34.6,333.6,166.6,89.2],"AZ":[118.3,237.9,78.2,91.4],"CO
     o += whitehouse(150, 146, 0.25) + callout("2", 150, 100, pop(clamp(p * 3 - 0.6)));
     o += court(250, 146, 0.2) + callout("4", 250, 104, pop(clamp(p * 3 - 0.9)));
     var belt2 = '';
-    for (var j = 0; j < 12; j++) { var x2 = ((j * 30 - t * 50) % 360 + 360) % 360 - 30; belt2 += '<circle cx="' + f(x2) + '" cy="150" r="3" fill="' + (j % 2 ? ORANGE : INK) + '"/>'; }
+    for (var j = 0; j < 16; j++) { var x2 = ((j * 24 - t * 120) % 420 + 420) % 420 - 30; belt2 += '<circle cx="' + f(x2) + '" cy="150" r="5" fill="' + (j % 2 ? ORANGE : INK) + '"/>'; }
     svg.innerHTML = '<rect x="-20" y="-20" width="340" height="200" fill="' + PAPER + '"/><rect x="-20" y="-20" width="340" height="200" fill="url(#grid)" transform="translate(' + f(-((t * 20) % 48)) + ' 0)"/>' + o + belt2;
   };
 })();
