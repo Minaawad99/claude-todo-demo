@@ -142,13 +142,13 @@
   var INK = "#1c1c1c", SKIN = "#f2c9a0", PINK = "#f08a9a", PINKD = "#c95b72", BRAIN = "#f6b3c0", BRAIND = "#d97d92",
       NERVE = "#ffd166", DUST = "#c9a24a", GERM = "#6fae4a", MUC = "#dbeeb0", ALERT = "#e2523a", AIR = "#7ec8e8";
   var HX = 320, HY = 170;
-  var SKINP = "M0 -94 C42 -96 68 -70 70 -44 C71 -36 70 -30 73 -26 C77 -22 79 -14 82 -4 C85 4 88 9 86 12 C84 15 80 15 78 15 C76 17 77 20 75 22 C73 23 71 23 70 24 C71 28 72 30 71 32 C70 35 69 36 70 38 C71 42 72 46 71 50 C70 56 73 66 76 72 C72 80 66 84 60 90 C56 96 52 104 52 116 L-42 116 C-56 98 -72 80 -77 56 C-82 30 -82 -10 -76 -40 C-70 -70 -48 -92 0 -94 Z";
-  var SKULLP = "M-64 -40 C-66 -84 -30 -98 4 -84 C32 -72 36 -40 32 -22 C28 -6 8 4 -14 4 C-40 4 -62 -6 -64 -40 Z";
-  var CEREBP = "M-54 6 C-50 -2 -30 -2 -24 6 C-18 14 -34 20 -44 18 C-52 16 -56 12 -54 6 Z";
-  var BRAINP = "M-58 -44 C-58 -80 -22 -88 2 -74 C22 -62 26 -40 22 -24 C18 -8 2 0 -14 -2 C-36 -2 -58 -10 -58 -44 Z";
-  var NOSEP = "M78 6 C62 -2 42 -8 26 -6 C14 -4 6 6 -2 14 L-4 26 C6 22 20 18 36 16 C54 15 68 14 78 12 Z";
+  var SKINP = "M0 -94 C42 -96 68 -70 70 -44 C71 -36 70 -30 73 -26 C77 -22 79 -14 82 -4 C85 4 88 9 86 12 C84 15 80 15 78 15 C76 17 77 20 75 22 C73 23 71 23 70 24 C72 26 73 29 72 31 C66 33 62 36 63 40 C64 43 70 45 70 48 C70 56 73 66 76 72 C72 80 66 84 60 90 C56 96 52 104 52 116 L-42 116 C-56 98 -72 80 -77 56 C-82 30 -82 -10 -76 -40 C-70 -70 -48 -92 0 -94 Z";
+  var SKULLP = "M-78 -40 C-80 -80 -50 -92 -8 -90 C30 -88 50 -66 50 -40 C50 -26 46 -16 40 -8 C30 -2 14 -4 -4 -4 C-30 -4 -58 -6 -68 -20 C-76 -28 -78 -34 -78 -40 Z";
+  var CEREBP = "M-46 4 C-34 -4 -14 -2 -10 8 C-8 18 -22 26 -38 24 C-52 22 -58 12 -46 4 Z";
+  var BRAINP = "M44 -12 C58 -34 58 -62 44 -74 C30 -86 6 -86 -14 -82 C-40 -78 -62 -66 -66 -40 C-68 -22 -60 -6 -44 0 C-30 4 -16 0 -4 -2 C12 -4 30 -4 44 -12 Z";
+  var NOSEP = "M78 7 C62 -2 42 -8 26 -6 C14 -4 6 6 -2 14 L-4 26 C6 22 20 18 36 16 C54 15 68 14 78 13 Z";
   var TURB = ["M72 4 C58 1 48 1 38 5", "M66 10 C54 8 44 9 34 13", "M60 15 C50 14 42 15 36 18"];
-  var STEMP = "M-16 -4 H6 L4 34 H-14 Z";
+  var STEMP = "M-20 -2 C-8 -2 0 2 4 10 L2 36 C-2 44 -18 44 -22 34 C-24 22 -24 6 -20 -2 Z";
   var NERVEP = [[48, 8], [40, -6], [18, -26]], OPTP = [[40, -46], [26, -68], [0, -48]];
   var ZIGP = "M40 -6 L30 -16 L24 -8 L16 -24 L10 -16 L2 -34 L-6 -28 L-14 -46";
   var SHIELD = "M0 -40 L34 -26 L30 6 C26 26 12 36 0 42 C-12 36 -26 26 -30 6 L-34 -26 Z";
@@ -158,23 +158,36 @@
   // the head: skin outline, brain, brainstem, nasal lining, trigeminal nerve (o.nerve: signal running), optic nerve, eye.
   // o: {s, x, y, brain (0..1 alarm glow), stem (highlight), center (sneeze centre pulses), cilia, nerve, optic, zig, mood, air}
   function profile(t, o) {
-    o = o || {}; var s = o.s || 1, x = o.x == null ? HX : o.x, y = (o.y == null ? HY : o.y) + 3 * Math.sin(t * 2.2), pu = 0.5 + 0.5 * Math.sin(t * 5), g = "";
+    o = o || {}; var s = o.s || 1, x = o.x == null ? HX : o.x, y = (o.y == null ? HY : o.y) + 3 * Math.sin(t * 2.2), pu = 0.5 + 0.5 * Math.sin(t * 5), g = "", i, q;
     g += '<g transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + s + ')">';
     g += '<path d="' + SKINP + '" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2.4"/>';
-    g += '<path d="' + BRAINP + '" fill="' + BRAIN + '" stroke="' + BRAIND + '" stroke-width="2"/>';
+    // skull, then the cerebrum (cortex outline, folds, white matter arch, ventricle, thalamus)
     g += '<path d="' + SKULLP + '" fill="none" stroke="#efe6d2" stroke-width="7"/><path d="' + SKULLP + '" fill="none" stroke="#b5a58a" stroke-width="1"/>';
-    g += '<path d="M-50 -58 C-40 -70 -28 -60 -22 -70 C-14 -80 2 -74 4 -60 M-52 -36 C-42 -46 -30 -40 -20 -50 C-10 -58 4 -50 10 -40 M-44 -18 C-34 -26 -22 -20 -12 -26 C-2 -32 10 -26 16 -20 M-20 -68 C-14 -56 -10 -48 -6 -36 M-6 -66 C0 -56 6 -44 12 -40" stroke="' + BRAIND + '" stroke-width="1.8" fill="none" stroke-linecap="round"/>';
-    g += '<path d="' + CEREBP + '" fill="#e58aa0" stroke="' + BRAIND + '" stroke-width="1.4"/><path d="M-50 6 q6 -3 12 0 M-42 10 q6 -3 12 0 M-34 13 q5 -2 9 0" stroke="' + BRAIND + '" stroke-width="1" fill="none"/>';
+    g += '<path d="' + BRAINP + '" fill="' + BRAIN + '" stroke="' + BRAIND + '" stroke-width="2"/>';
+    g += '<path d="M-14 -62 C-4 -70 10 -68 16 -58 M-40 -60 C-30 -66 -20 -66 -14 -62 M-52 -40 C-44 -48 -36 -44 -30 -36 M-50 -18 C-42 -22 -34 -18 -28 -12 M-16 -18 C-8 -24 2 -20 6 -12 M22 -40 C30 -46 40 -44 42 -34 M26 -24 C32 -28 38 -26 40 -18" stroke="' + BRAIND + '" stroke-width="1.8" fill="none" stroke-linecap="round"/>';
+    g += '<path d="M-18 -36 C-6 -48 14 -48 26 -34" stroke="#fff3e6" stroke-width="5" fill="none" stroke-linecap="round" opacity=".9"/><path d="M-18 -36 C-6 -48 14 -48 26 -34" stroke="' + BRAIND + '" stroke-width="1" fill="none"/>';
+    g += '<path d="M-8 -28 C0 -40 14 -38 18 -26 C12 -22 2 -20 -8 -28 Z" fill="#f7e6d8" stroke="' + BRAIND + '" stroke-width="1"/>';
+    g += '<ellipse cx="2" cy="-16" rx="7" ry="5" fill="#f08fa3" stroke="' + BRAIND + '" stroke-width="1"/>';
     if (o.brain) g += '<path d="' + BRAINP + '" fill="' + ALERT + '" opacity="' + f((0.2 + 0.35 * pu) * o.brain) + '"/>';
-    g += '<path d="' + STEMP + '" fill="' + (o.stem ? NERVE : BRAIND) + '" stroke="' + INK + '" stroke-width="' + (o.stem ? 2.6 : 1.2) + '"/>';
+    // cerebellum with its folia, then the brainstem (pons, medulla) and the spinal cord going down the neck
+    g += '<path d="' + CEREBP + '" fill="#e58aa0" stroke="' + BRAIND + '" stroke-width="1.4"/><path d="M-46 8 q7 -4 14 0 M-40 13 q7 -4 14 0 M-32 17 q6 -3 12 0 M-24 10 q4 -3 8 0" stroke="' + BRAIND + '" stroke-width="1" fill="none"/>';
+    g += '<path d="' + STEMP + '" fill="' + (o.stem ? NERVE : "#e9a3b4") + '" stroke="' + INK + '" stroke-width="' + (o.stem ? 2.6 : 1.2) + '"/>';
+    g += '<rect x="-15" y="38" width="9" height="34" rx="4" fill="#e9a3b4" stroke="' + INK + '" stroke-width="1"/>';
+    // the nose: cavity with turbinates and a clear nostril
     g += '<path d="' + NOSEP + '" fill="' + PINK + '" stroke="' + PINKD + '" stroke-width="1.6"/>';
-    for (var q = 0; q < TURB.length; q++) g += '<path d="' + TURB[q] + '" fill="none" stroke="#f7c0c8" stroke-width="3" stroke-linecap="round"/><path d="' + TURB[q] + '" fill="none" stroke="' + PINKD + '" stroke-width="0.8" opacity=".6"/>';
+    for (q = 0; q < TURB.length; q++) g += '<path d="' + TURB[q] + '" fill="none" stroke="#f7c0c8" stroke-width="3" stroke-linecap="round"/><path d="' + TURB[q] + '" fill="none" stroke="' + PINKD + '" stroke-width="0.8" opacity=".6"/>';
+    g += '<ellipse cx="79" cy="11" rx="4" ry="2.6" fill="#6d3340" stroke="' + INK + '" stroke-width="0.8"/>';
+    // the open mouth from the side: palate, tongue, uvula
+    g += '<path d="M72 31 C62 33 48 36 38 40 C30 44 32 50 40 51 C52 52 62 47 70 48 C66 42 64 40 63 40 C66 37 70 34 72 31 Z" fill="#7a2f3e" stroke="' + INK + '" stroke-width="1.2"/>';
+    g += '<path d="M70 33 C58 32 46 34 38 38" stroke="#e8a0a8" stroke-width="2" fill="none" stroke-linecap="round"/>';
+    g += '<path d="M66 46 C56 50 44 50 36 47 C44 54 60 55 68 49 Z" fill="#e0707f" stroke="#a94a5a" stroke-width="1"/>';
+    g += '<ellipse cx="32" cy="42" rx="3" ry="4" fill="#e0707f"/>';
     if (o.center) g += '<circle cx="-6" cy="26" r="' + f(7 + 9 * pu) + '" fill="' + ALERT + '" opacity="' + f(0.3 + 0.4 * pu) + '"/>';
     g += '<circle cx="-6" cy="26" r="3.6" fill="' + ALERT + '" stroke="' + INK + '" stroke-width="1"/>';
-    if (o.cilia) for (var i = 0; i < 7; i++) { var cx = 14 + i * 9, wv = Math.sin(t * 7 + i * 1.7) * 4; g += '<path d="M' + cx + ' 14 q' + f(wv) + ' -4 ' + f(wv * 1.2) + ' -8" stroke="' + PINKD + '" stroke-width="1.5" fill="none" stroke-linecap="round"/>'; }
+    if (o.cilia) for (i = 0; i < 7; i++) { var cx = 14 + i * 9, wv = Math.sin(t * 7 + i * 1.7) * 4; g += '<path d="M' + cx + ' 14 q' + f(wv) + ' -4 ' + f(wv * 1.2) + ' -8" stroke="' + PINKD + '" stroke-width="1.5" fill="none" stroke-linecap="round"/>'; }
     g += '<path d="' + qd(NERVEP) + '" stroke="' + (o.nerve ? NERVE : BRAIND) + '" stroke-width="' + (o.nerve ? 3 : 1.4) + '" fill="none" stroke-dasharray="3 3"/>';
-    if (o.nerve) for (var k = 0; k < 3; k++) { var p = qb(NERVEP, (t * 0.9 + k / 3) % 1); g += '<circle cx="' + f(p[0]) + '" cy="' + f(p[1]) + '" r="3" fill="' + NERVE + '" stroke="' + INK + '" stroke-width=".8"/>'; }
-    if (o.optic) { g += '<path d="' + qd(OPTP) + '" stroke="' + AIR + '" stroke-width="3" fill="none"/>'; for (var j = 0; j < 3; j++) { var q = qb(OPTP, (t * 0.8 + j / 3) % 1); g += '<circle cx="' + f(q[0]) + '" cy="' + f(q[1]) + '" r="2.6" fill="' + AIR + '"/>'; } }
+    if (o.nerve) for (i = 0; i < 3; i++) { var p = qb(NERVEP, (t * 0.9 + i / 3) % 1); g += '<circle cx="' + f(p[0]) + '" cy="' + f(p[1]) + '" r="3" fill="' + NERVE + '" stroke="' + INK + '" stroke-width=".8"/>'; }
+    if (o.optic) { g += '<path d="' + qd(OPTP) + '" stroke="' + AIR + '" stroke-width="3" fill="none"/>'; for (i = 0; i < 3; i++) { var qq = qb(OPTP, (t * 0.8 + i / 3) % 1); g += '<circle cx="' + f(qq[0]) + '" cy="' + f(qq[1]) + '" r="2.6" fill="' + AIR + '"/>'; } }
     if (o.zig) g += '<path d="' + ZIGP + '" stroke="' + ALERT + '" stroke-width="3" fill="none" stroke-linejoin="round" stroke-dasharray="' + (2 + pu * 3).toFixed(1) + ' 2"/>';
     g += '<g transform="translate(40 -46)">' + eyes(o.mood || "n", t, 8) + '</g>';
     if (o.air) g += airflow(t, 90, 170, 2, 6, "#ffffff", 1.4, 4);
