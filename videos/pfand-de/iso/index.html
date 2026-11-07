@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="de" dir="ltr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>Wie erkennt der Pfandautomat deine Flasche? — Was steckt dahinter?</title>
+<link rel="stylesheet" href="../../../design-system/tokens.css">
+<link rel="stylesheet" href="../../../design-system/components/bundle.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@500;600;700;800&display=swap">
+<style>
+  /* 360×640 canvas at 3x. Air/coolant blue, fire/heat red, fuel amber, parts green, exhaust grey. All drawings are 3D (TebEzay.iso). */
+  :root { --font-sans: "Noto Sans", "Inter", system-ui, sans-serif; --fuel: #d99a1e; --fuel-text: #a8700a; --fuel-soft: #f1d58e; --exhaust: #8d877c; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  html, body { margin: 0; width: 360px; height: 640px; overflow: hidden; background: var(--paper); }
+  body { font-family: var(--font-sans); color: var(--ink); }
+  .canvas { position: relative; width: 360px; height: 640px; background: var(--paper); }
+  .scene { position: absolute; inset: 35px; opacity: 0; }
+  .frame { position: absolute; inset: 0; border: 2px solid var(--ink); background: var(--paper); display: grid; grid-template-rows: 69% 0 1fr; }
+  .stage { position: relative; overflow: hidden; }
+  .stage > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .rule { border-top: 1px solid var(--line-soft); margin-inline: 10px; }
+  .caps { position: relative; }
+  .cap { position: absolute; inset: 0; padding: 14px 14px 0; text-align: center; opacity: 0; font: 600 18px / 1.5 var(--font-sans); text-wrap: balance; }
+  .cap p { margin: 0; }
+  .sheet { position: absolute; inset: 0; border: 2px solid var(--ink); outline: 1px solid var(--ink); outline-offset: -6px; background: var(--paper); }
+  .corners { position: absolute; inset: -12px; pointer-events: none; --c: var(--ink); --l: 10px; --w: 1px;
+    background:
+      linear-gradient(var(--c), var(--c)) top right / var(--l) var(--w), linear-gradient(var(--c), var(--c)) top right / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) top left / var(--l) var(--w), linear-gradient(var(--c), var(--c)) top left / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) bottom right / var(--l) var(--w), linear-gradient(var(--c), var(--c)) bottom right / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) bottom left / var(--l) var(--w), linear-gradient(var(--c), var(--c)) bottom left / var(--w) var(--l);
+    background-repeat: no-repeat; }
+  .w { --wc: var(--ink); color: color-mix(in srgb, var(--wc) var(--mix, 100%), var(--ink-ghost)); }
+  .w.tz-k--heat { --wc: var(--heat-text); } .w.tz-k--water { --wc: var(--water); } .w.tz-k--part { --wc: var(--olive-text); }
+  .w.tz-k--fuel { --wc: var(--fuel-text); } .w.tz-k--ink { --wc: #5d574d; }
+  [data-v="pop"], [data-v="grow"], [data-loop="pulse"] { transform-box: fill-box; transform-origin: center; }
+  .panel { position: absolute; inset: 0; opacity: 0; } .panel > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .ink-f { fill: var(--ink); } .lit { fill: var(--paper-raised); }
+  .lbl { font: 700 15px var(--font-sans); fill: var(--c, var(--ink)); paint-order: stroke; stroke: var(--paper); stroke-width: 5px; stroke-linejoin: round; }
+  .c-water { --c: var(--water); } .c-heat { --c: var(--heat-text); } .c-part { --c: var(--olive-text); } .c-fuel { --c: var(--fuel-text); } .c-ink { --c: #4a443b; }
+  .pt-air { fill: var(--water); } .pt-fuel { fill: var(--fuel); } .pt-exh { fill: var(--exhaust); } .pt-cool { fill: var(--water); }
+  .stream { fill: none; stroke: none; }
+  .num { font: 700 56px / 1 var(--font-numeral); color: var(--heat); font-variant-numeric: tabular-nums; }
+  .num.blue { color: var(--water); } .num.amber { color: var(--fuel-text); } .num.olive { color: var(--olive-text); }
+  .unit { font: 700 13px / 1.25 var(--font-sans); }
+  .counter { position: absolute; }
+  .counter > div { background: var(--paper-raised); padding: 2px 8px; border: 1px solid var(--line-soft); }
+  /* the 4-step strip */
+  .steps { position: absolute; left: 8px; right: 8px; top: 8px; opacity: 0; }
+  .steps__row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+  .step { position: relative; font: 800 11px/1 var(--font-sans); letter-spacing: .04em; text-align: center; padding: 7px 0 6px; background: var(--paper-raised); border: 1.5px solid var(--ink); color: var(--ink); }
+  .step b { display: block; font: 700 15px/1 var(--font-numeral); margin-bottom: 3px; }
+  .step > i { position: absolute; inset: -1.5px; opacity: 0; } .step > i > i { position: absolute; inset: 0; background: var(--sc); mix-blend-mode: multiply; }
+  .step.c-air { --sc: color-mix(in srgb, var(--water) 45%, transparent); } .step.c-fuel { --sc: color-mix(in srgb, var(--fuel) 50%, transparent); }
+  .step.c-heat { --sc: color-mix(in srgb, var(--heat) 50%, transparent); } .step.c-ink { --sc: color-mix(in srgb, var(--exhaust) 55%, transparent); }
+  /* 3D parts used only in this episode */
+  .iso-tire { fill: #3b352e; stroke: var(--ink); stroke-width: 1.4; }
+  .iso-spoke { fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; }
+  .iso-ghost { fill: none; stroke: var(--ink); stroke-width: 1.3; stroke-linejoin: round; opacity: .55; }
+  .iso-ghost--far { stroke-dasharray: 4 4; opacity: .35; }
+  .iso-ghost--win { fill: color-mix(in srgb, var(--water-body) 30%, transparent); }
+  .iso-fuel { fill: var(--fuel); stroke: var(--ink); stroke-width: 1.4; } .iso-fuel-x { fill: color-mix(in srgb, var(--fuel) 75%, var(--ink)); stroke: var(--ink); stroke-width: 1.4; }
+  .iso-fuel-top { fill: var(--fuel-soft); stroke: var(--ink); stroke-width: 1.4; }
+  .iso-pipe-fuel { fill: none; stroke: var(--fuel); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+  .iso-pipe-air { fill: none; stroke: color-mix(in srgb, var(--water-body) 70%, var(--paper-raised)); stroke-width: 5; stroke-linecap: round; }
+  .iso-pipe-shaft { fill: none; stroke: var(--olive); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+  .iso-shaft-spin { fill: none; stroke: var(--ink); stroke-width: 2; stroke-dasharray: 3 9; opacity: .6; }
+  .iso-cut-edge { fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linejoin: round; }
+  .iso-rod { fill: none; stroke: color-mix(in srgb, var(--olive) 70%, var(--ink)); stroke-width: 4; stroke-linecap: round; }
+  .iso-burn { fill: #f08a3c; stroke: var(--heat); stroke-width: 1.2; } .iso-burn-top { fill: #ffc65c; stroke: var(--heat); stroke-width: 1.2; }
+  .iso-bolt { fill: none; stroke: #f2b705; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; paint-order: stroke; }
+  .iso-spark-glow { fill: #ffe27a; opacity: .75; }
+  .iso-hose { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
+  .iso-bore { fill: color-mix(in srgb, var(--khaki) 45%, var(--paper-raised)); stroke: var(--ink); stroke-width: 1.4; }
+  .iso-cut { fill: var(--khaki); stroke: var(--ink); stroke-width: 1.6; stroke-linejoin: round; }
+  .iso-port { fill: var(--paper-raised); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+  .iso-injector { fill: none; stroke: var(--ink); stroke-width: 7; stroke-linecap: round; }
+  .iso-ring { fill: none; stroke: var(--ink); stroke-width: 1; opacity: .7; }
+  .iso-stem { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
+  .iso-spring { fill: none; stroke: color-mix(in srgb, var(--olive) 70%, var(--ink)); stroke-width: 1.6; stroke-linejoin: round; }
+  .iso-ceramic { fill: #f6f3ea; stroke: var(--ink); stroke-width: 1.4; }
+  .iso-spray { fill: none; stroke: var(--fuel); stroke-width: 2; stroke-dasharray: 3 4; stroke-linecap: round; }
+  .iso-gas { stroke: none; } .iso-gas-top { stroke-width: 1; }
+  .g-air { fill: color-mix(in srgb, var(--water) 40%, transparent); stroke: var(--water); }
+  .g-mix { fill: color-mix(in srgb, var(--fuel) 55%, transparent); stroke: var(--fuel); }
+  .g-burn { fill: #f08a3c; stroke: var(--heat); }
+  .g-exh { fill: color-mix(in srgb, var(--exhaust) 60%, transparent); stroke: var(--exhaust); }
+  .iso-halo { stroke-width: 2.5; }
+  .iso-brown { fill: #8a5a22; stroke: var(--ink); stroke-width: 1.3; } .iso-brown-top { fill: #b07a38; stroke: var(--ink); stroke-width: 1.3; }
+  .iso-beam { fill: #fff3b0; opacity: .45; stroke: none; } .iso-ir { fill: #c03aa8; opacity: .4; stroke: none; }
+  .iso-flap { fill: none; stroke: #e2a92c; stroke-width: 6; stroke-linecap: round; }
+  .iso-code { fill: #fff; stroke: var(--ink); stroke-width: 1; }
+  .iso-ink { fill: #3a3f46; stroke: var(--ink); stroke-width: 1.3; } .iso-glow { fill: #9fe0a8; stroke: var(--ink); stroke-width: 1; }
+  .iso-screen { fill: #2f6fd8; stroke: var(--ink); stroke-width: 1.2; } .iso-led { fill: #5bbf6a; stroke: var(--ink); stroke-width: 1; }
+  .iso-lead { fill: none; stroke: #c8261c; stroke-width: 2.4; stroke-linecap: round; }
+  .iso-iron { fill: #5f5d5a; stroke: var(--ink); stroke-width: 1.4; } .iso-iron-top { fill: #8a8782; stroke: var(--ink); stroke-width: 1.4; }
+  .iso-horse { fill: #a8743f; stroke: var(--ink); stroke-width: 1.6; stroke-linejoin: round; } .iso-horse-dark { fill: #4a2e16; stroke: var(--ink); stroke-width: 1.2; stroke-linejoin: round; }
+  .iso-horse-leg { fill: none; stroke: #8a5a2e; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; } .iso-horse-far { stroke: #5a3a1e; }
+  .iso-hoof { fill: #1c1c1c; stroke: var(--ink); stroke-width: 1; }
+  .bigk { font: 900 26px var(--font-sans); paint-order: stroke; stroke: var(--paper); stroke-width: 6px; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<div class="canvas">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- mark: speech bubble + ! + stopwatch crown -->
+    <g id="mark">
+      <rect x="84" y="4" width="32" height="10" class="ink-f"/><rect x="94" y="14" width="12" height="14" class="ink-f"/>
+      <path class="ink-f" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)"/>
+      <path class="lit" style="stroke:var(--ink);stroke-width:7;stroke-linejoin:round" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z"/>
+      <rect x="94" y="58" width="24" height="54" rx="4" style="fill:var(--heat)"/><rect x="94" y="120" width="24" height="20" rx="4" style="fill:var(--heat)"/>
+    </g>
+  </defs>
+</svg>
+
+<!-- ═══ Intro sheet (0–2) ═══ -->
+<section class="scene" data-scene="0-2">
+  <div class="corners"></div>
+  <div class="sheet">
+    <span style="position:absolute;left:14px;top:12px;display:flex;align-items:center;gap:6px;font:800 11px var(--font-sans)"><svg viewBox="0 0 200 200" width="22" height="22"><use href="#mark"/></svg>Was steckt dahinter?</span>
+    <span class="tz-tag" style="position:absolute;left:50%;translate:-50% 0;top:54px">SUPERMARKT</span>
+    <div style="position:absolute;left:20px;right:20px;top:92px;height:118px;border-block:1px solid var(--line-soft)">
+      <div class="cap" data-cap="0" style="font:700 18px/1.45 var(--font-sans);padding:10px 4px"><p data-words="0">Du schiebst eine Flasche in den Automaten, und eine Sekunde später zählt er <span class="tz-k tz-k--heat">25 Cent</span>.</p></div>
+      <div class="cap" data-cap="1" style="font:700 18px/1.45 var(--font-sans);padding:10px 4px"><p data-words="1">Aber woher weiß er eigentlich, dass das eine <span class="tz-k tz-k--fuel">Pfandflasche</span> ist?</p></div>
+      <div class="cap" data-cap="2" style="font:700 18px/1.45 var(--font-sans);padding:10px 4px"><p data-words="2">Und warum <span class="tz-k tz-k--heat">spuckt</span> er manche Flaschen einfach wieder aus?</p></div>
+    </div>
+    <svg viewBox="0 0 290 340" style="position:absolute;left:0;bottom:0;width:100%;height:340px"><g class="drift" data-c="145 200"><g id="introcar"></g><g id="introfx"></g></g></svg>
+    <div class="counter" style="right:16px;bottom:24px;opacity:0" data-v="fade" data-l="0" data-o="2.4" data-d="0.3"><div data-v="out" data-l="1" data-o="0" data-d="0.3" style="display:flex;gap:6px;align-items:center"><span class="num" style="font-size:38px">0,25</span><span class="unit">€</span></div></div>
+  </div>
+</section>
+
+<!-- ═══ Brand (3) ═══ -->
+<section class="scene" data-scene="3-3">
+  <div class="frame" style="grid-template-rows:1fr">
+    <div class="drift-el" style="display:grid;place-items:center;align-content:center;gap:14px;text-align:center">
+      <svg viewBox="0 0 220 220" style="width:200px;height:200px;overflow:visible">
+        <circle cx="110" cy="118" r="98" style="fill:none;stroke:var(--line-soft);stroke-width:2;opacity:.35"/>
+        <circle data-v="ring" data-l="3" data-o="-0.3" data-d="1.6" cx="110" cy="118" r="98" pathLength="100" transform="rotate(-90 110 118)" style="fill:none;stroke:var(--heat);stroke-width:3;stroke-dasharray:100"/>
+        <g class="drift" data-c="110 118"><g data-v="pop" data-l="3" data-o="0" data-d="0.5"><g transform="translate(40 40) scale(.7)"><use href="#mark"/></g></g></g>
+      </svg>
+      <span style="font:800 28px/1.2 var(--font-sans)">Was steckt dahinter<span style="color:var(--heat)">?</span></span>
+      <span style="font:600 16px var(--font-sans);padding:0 20px"><span data-words="3">Was steckt dahinter? Ich erklär's dir in <span class="tz-k tz-k--heat">einer Minute.</span></span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ One-way deposit: bottle + can, 2003, 25 cents (4–5) ═══ -->
+<section class="scene" data-scene="4-5">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488"><g class="drift" data-c="180 244"><g id="camA"><g id="mA"></g><g id="fxA"></g><g id="halosA"></g></g></g></svg>
+      <div class="counter" style="left:10px;top:10px;opacity:0" data-v="fade" data-l="4" data-o="0.3" data-d="0.3"><div data-v="out" data-l="5" data-o="0" data-d="0.3" style="display:flex;gap:6px;align-items:center"><span class="num " style="font-size:34px">2003</span><span class="unit">seit</span></div></div>
+      <div class="counter" style="left:10px;top:62px;opacity:0" data-v="fade" data-l="5" data-o="0.3" data-d="0.3"><div data-v="out" data-l="6" data-o="0" data-d="0.3" style="display:flex;gap:6px;align-items:center"><span class="num " style="font-size:34px" data-v="count" data-l="5" data-o="0.3" data-d="1.2" data-from="0" data-to="25">25</span><span class="unit">Cent</span></div></div>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="4"><p data-words="4">Seit <span class="tz-k tz-k--part">2003</span> gibt es in Deutschland Pfand auf <span class="tz-k tz-k--water">Einwegflaschen und Dosen</span>.</p></div>
+      <div class="cap" data-cap="5"><p data-words="5">Für jede davon bekommst du <span class="tz-k tz-k--heat">25 Cent</span> zurück.</p></div>
+    </div>
+  </div>
+</section>
+<!-- ═══ Inside the machine: rollers, cameras, barcode, mark, shape, decision (6–15) ═══ -->
+<section class="scene" data-scene="6-15">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488"><g class="drift" data-c="180 244"><g id="camM"><g id="mM"></g><g id="fxM"></g><g id="halosM"></g></g></g></svg>
+
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="6"><p data-words="6">Sobald die Flasche drin liegt, drehen <span class="tz-k tz-k--part">Rollen</span> sie im Kreis.</p></div>
+      <div class="cap" data-cap="7"><p data-words="7">Ringsum schauen <span class="tz-k tz-k--water">Kameras</span> auf die Flasche, aus allen Richtungen.</p></div>
+      <div class="cap" data-cap="8"><p data-words="8">Zuerst suchen sie den <span class="tz-k tz-k--ink">Strichcode</span> auf dem Etikett.</p></div>
+      <div class="cap" data-cap="9"><p data-words="9">Der verrät, welche Flasche das ist, und ob sie <span class="tz-k tz-k--part">Einweg oder Mehrweg</span> ist.</p></div>
+      <div class="cap" data-cap="10"><p data-words="10">Dann prüfen sie das <span class="tz-k tz-k--heat">Pfandlogo</span> mit dem Pfeil und der Flasche.</p></div>
+      <div class="cap" data-cap="11"><p data-words="11">Das ist mit einer <span class="tz-k tz-k--heat">Spezialfarbe</span> gedruckt, die der Automat im <span class="tz-k tz-k--heat">Infrarot</span> erkennt.</p></div>
+      <div class="cap" data-cap="12"><p data-words="12">So kann niemand einfach ein Logo auf irgendeine Flasche <span class="tz-k tz-k--heat">kopieren</span>.</p></div>
+      <div class="cap" data-cap="13"><p data-words="13">Gleichzeitig misst er die <span class="tz-k tz-k--fuel">Form</span>, und viele Automaten <span class="tz-k tz-k--fuel">wiegen</span> die Flasche auch.</p></div>
+      <div class="cap" data-cap="14"><p data-words="14">Ist sie <span class="tz-k tz-k--heat">zerdrückt</span> oder fehlt das Etikett, findet er nichts, und sie kommt <span class="tz-k tz-k--heat">zurück</span>.</p></div>
+      <div class="cap" data-cap="15"><p data-words="15">Passt alles, entscheidet ein <span class="tz-k tz-k--part">Computer</span> in <span class="tz-k tz-k--part">Sekundenbruchteilen</span>, wohin sie kommt.</p></div>
+    </div>
+  </div>
+</section>
+<!-- ═══ Press and crate (16–18) ═══ -->
+<section class="scene" data-scene="16-18">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488"><g class="drift" data-c="180 244"><g id="camS"><g id="mS"></g><g id="fxS"></g><g id="halosS"></g></g></g></svg>
+
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="16"><p data-words="16">Einwegflaschen und Dosen landen in einer <span class="tz-k tz-k--heat">Presse</span> und werden <span class="tz-k tz-k--heat">platt gedrückt</span>.</p></div>
+      <div class="cap" data-cap="17"><p data-words="17">Das Plastik wird später <span class="tz-k tz-k--part">geschreddert</span> und zu <span class="tz-k tz-k--water">neuen Flaschen</span> recycelt.</p></div>
+      <div class="cap" data-cap="18"><p data-words="18"><span class="tz-k tz-k--water">Mehrwegflaschen</span> kommen dagegen heil in einen <span class="tz-k tz-k--water">Kasten</span>.</p></div>
+    </div>
+  </div>
+</section>
+<!-- ═══ Refill line, 50 times, 8/15 cents, receipt (19–22) ═══ -->
+<section class="scene" data-scene="19-22">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488"><g class="drift" data-c="180 244"><g id="camW"><g id="mW"></g><g id="fxW"></g><g id="halosW"></g></g></g></svg>
+      <div class="counter" style="left:10px;top:10px;opacity:0" data-v="fade" data-l="20" data-o="0.3" data-d="0.3"><div data-v="out" data-l="21" data-o="0" data-d="0.3" style="display:flex;gap:6px;align-items:center"><span class="num amber" style="font-size:34px" data-v="count" data-l="20" data-o="0.3" data-d="1.2" data-from="0" data-to="50">50</span><span class="unit">× befüllt</span></div></div>
+      <div class="counter" style="left:10px;top:10px;opacity:0" data-v="fade" data-l="21" data-o="0.3" data-d="0.3"><div data-v="out" data-l="22" data-o="0" data-d="0.3" style="display:flex;gap:6px;align-items:center"><span class="num amber" style="font-size:34px">8</span><span class="unit">Cent Glas</span></div></div>
+      <div class="counter" style="left:10px;top:62px;opacity:0" data-v="fade" data-l="21" data-o="0.9" data-d="0.3"><div data-v="out" data-l="22" data-o="0" data-d="0.3" style="display:flex;gap:6px;align-items:center"><span class="num blue" style="font-size:34px">15</span><span class="unit">Cent Plastik</span></div></div>
+      <div class="panel" data-v="fade" data-l="22" data-o="0.3" data-d="0.35"><div class="panel tz-paper drift-el" data-v="out" data-l="23" data-o="-0.2" data-d="0.3" style="opacity:1">
+        <div style="position:absolute;left:50%;top:60px;translate:-50% 0;width:170px;background:#fbfaf6;border:2px solid var(--ink);padding:14px 12px;font:700 13px var(--font-sans);text-align:center" data-v="rise" data-l="22" data-o="0.4" data-d="0.8">
+          <div style="font:800 17px var(--font-sans);letter-spacing:.06em">PFANDBON</div><div style="border-top:1px dashed var(--ink);margin:8px 0"></div>
+          <div style="display:flex;justify-content:space-between"><span>10 × 0,25</span><span>2,50 €</span></div><div style="display:flex;justify-content:space-between;margin-top:4px"><span>2 × 0,08</span><span>0,16 €</span></div>
+          <div style="border-top:1px dashed var(--ink);margin:8px 0"></div><div style="display:flex;justify-content:space-between;font-weight:800"><span>Summe</span><span style="color:var(--heat)">2,66 €</span></div>
+          <div style="height:34px;margin-top:10px;background:repeating-linear-gradient(90deg,#111 0 2px,#fff 2px 4px,#111 4px 5px,#fff 5px 8px)"></div>
+        </div>
+      </div></div>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="19"><p data-words="19">Sie fahren zurück zum Abfüller, werden <span class="tz-k tz-k--water">gewaschen</span> und <span class="tz-k tz-k--fuel">neu befüllt</span>.</p></div>
+      <div class="cap" data-cap="20"><p data-words="20">Eine Mehrweg-Glasflasche schafft das <span class="tz-k tz-k--heat">bis zu 50 Mal</span>.</p></div>
+      <div class="cap" data-cap="21"><p data-words="21">Dafür gibt es weniger Pfand: <span class="tz-k tz-k--fuel">8 Cent</span> für Glas, <span class="tz-k tz-k--water">15</span> für Plastik.</p></div>
+      <div class="cap" data-cap="22"><p data-words="22">Am Ende druckt der Automat deinen <span class="tz-k tz-k--heat">Pfandbon</span>.</p></div>
+    </div>
+  </div>
+</section>
+<!-- ═══ Tomra, 1972, 98 % and the summary (23–26) ═══ -->
+<section class="scene" data-scene="23-26">
+  <div class="frame">
+    <div class="stage tz-paper">
+      <svg viewBox="0 0 360 488"><g class="drift" data-c="180 244"><g id="camH"><g id="mH"></g><g id="fxH"></g><g id="halosH"></g></g></g></svg>
+      <div class="counter" style="left:10px;top:10px;opacity:0" data-v="fade" data-l="23" data-o="0.3" data-d="0.3"><div data-v="out" data-l="24" data-o="0" data-d="0.3" style="display:flex;gap:6px;align-items:center"><span class="num " style="font-size:34px">1972</span><span class="unit">Norwegen</span></div></div>
+      <div class="counter" style="left:10px;top:10px;opacity:0" data-v="fade" data-l="25" data-o="0.3" data-d="0.3"><div data-v="out" data-l="26" data-o="0" data-d="0.3" style="display:flex;gap:6px;align-items:center"><span class="num olive" style="font-size:34px" data-v="count" data-l="25" data-o="0.3" data-d="1.2" data-from="0" data-to="98">98</span><span class="unit">% zurück</span></div></div>
+    </div>
+    <div class="rule"></div>
+    <div class="caps">
+      <div class="cap" data-cap="23"><p data-words="23">Erfunden haben solche Automaten übrigens <span class="tz-k tz-k--part">zwei Brüder</span> in Norwegen, <span class="tz-k tz-k--heat">1972</span>.</p></div>
+      <div class="cap" data-cap="24"><p data-words="24">Ihre Firma heißt <span class="tz-k tz-k--heat">Tomra</span> und baut bis heute einen Großteil dieser Automaten.</p></div>
+      <div class="cap" data-cap="25"><p data-words="25">Und das System wirkt: Fast <span class="tz-k tz-k--heat">98 %</span> der Einwegflaschen kommen zurück.</p></div>
+      <div class="cap" data-cap="26"><p data-words="26">Deine Flasche wird also in einer Sekunde <span class="tz-k tz-k--part">gedreht</span>, <span class="tz-k tz-k--water">fotografiert</span>, <span class="tz-k tz-k--fuel">geprüft</span> und <span class="tz-k tz-k--heat">sortiert</span>.</p></div>
+    </div>
+  </div>
+</section>
+<!-- ═══ Outro (27) ═══ -->
+<section class="scene" data-scene="27-27">
+  <div class="corners"></div>
+  <div class="sheet drift-el" style="padding:16px;display:grid;align-content:start;gap:8px">
+    <span style="display:flex;align-items:center;gap:6px;font:800 11px var(--font-sans)"><svg viewBox="0 0 200 200" width="22" height="22"><use href="#mark"/></svg>Was steckt dahinter?</span>
+    <h2 style="margin:0;font:800 19px/1.3 var(--font-sans)">Wie erkennt der Pfandautomat deine Flasche?</h2>
+    <svg viewBox="0 0 290 170" style="width:100%;height:112px;background:var(--panel)"><g class="drift" data-c="145 90"><g id="outro"></g></g></svg>
+    <ol class="tz-legend" style="font-size:11px;line-height:15px;--cols:1;gap:4px">
+      <li><span class="tz-num">1</span>Rollen drehen die Flasche, Kameras sehen ringsum</li>
+      <li><span class="tz-num">2</span>Strichcode + Pfandlogo mit Infrarot-Farbe</li>
+      <li><span class="tz-num">3</span>Form und Gewicht müssen passen</li>
+      <li><span class="tz-num">4</span>Einweg → Presse, Mehrweg → Kasten</li>
+    </ol>
+    <div class="tz-ask" style="margin:2px 6px;padding:8px;gap:0" data-v="pop" data-l="27" data-o="0" data-d="0.5">
+      <span class="tz-ask__lead" style="font-size:15px">Was sollen wir euch</span>
+      <span class="tz-ask__line" style="font-size:18px">als Nächstes erklären? <span class="tz-ask__blank" style="min-width:2.5em"></span></span>
+    </div>
+    <div style="position:relative;height:60px">
+      <div class="cap" data-cap="27" style="font-size:15px;padding:4px 0 0"><p data-words="27">Sagt uns: Was sollen wir euch als <span class="tz-k tz-k--heat">Nächstes</span> erklären?</p></div>
+    </div>
+  </div>
+</section>
+
+</div>
+<script src="../timing.js"></script>
+<script src="../../../design-system/components/bundle.js"></script>
+<script>TebEzay.patterns();</script>
+<script src="iso.js"></script>
+<script src="iso-scene.js"></script>
+<script src="../../engine.js"></script>
+<script>(function () { var r = window.renderAt; window.renderAt = function (t) { r(t); window.__extra(t); }; renderAt(window.VIDEO_END); })();</script>
+</body>
+</html>
