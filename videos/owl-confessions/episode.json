@@ -1,10 +1,23 @@
 {
-  "show": "اعترافات برّية",
-  "guest": "البومة",
-  "voices": {
-    "host": {"voice": "Charon", "style": "Read this line in Modern Standard Arabic as a calm, curious, professional talk-show host interviewing a surprising guest. Warm, clear, slightly playful on questions. Natural conversational pace:", "speed": 1.05, "max_pause": 0.35, "max_stretch": 1.2},
-    "guest": {"voice": "Algenib", "style": "Read this line in Modern Standard Arabic as a wise, calm, slightly mysterious owl. Soft but clear, at a normal conversational pace (not slow), with a hint of dry humor. No long pauses:", "speed": 1.4, "pitch": 0.96, "max_pause": 0.22, "max_stretch": 1.4}
+ "show": "اعترافات برّية",
+ "guest": "البومة",
+ "voices": {
+  "host": {
+   "voice": "Charon",
+   "style": "Read this line in Modern Standard Arabic as a calm, curious, professional talk-show host interviewing a surprising guest. Warm, clear, slightly playful on questions. Natural conversational pace:",
+   "speed": 1.05,
+   "max_pause": 0.35,
+   "max_stretch": 1.2
   },
-  "sync": [],
-  "blocks": []
+  "guest": {
+   "voice": "Algenib",
+   "style": "Read this line in Modern Standard Arabic as a wise, calm, slightly mysterious owl. Soft but clear, at a brisk conversational pace, not slow, with a hint of dry humor. No long pauses:",
+   "speed": 1.5,
+   "pitch": 0.96,
+   "max_pause": 0.22,
+   "max_stretch": 1.4
+  }
+ },
+ "sync": [],
+ "blocks": []
 }
