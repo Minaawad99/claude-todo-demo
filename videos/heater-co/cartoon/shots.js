@@ -211,11 +211,13 @@
     return s + tag("أصفر!", 200, 40, u, 1.4, -3, 26, "#f2c230") + tag("مفيش أكسجين كفاية", 500, 300, u, 0.6, 2, 15, "#bfe0ff");
   });
   // 11 — instead of carbon dioxide, a different gas comes out: carbon monoxide
-  shot(11, function (u, d) { return [320, 180, lerp(1.04, 1.0, clamp(u / d))]; }, function (u, d, t) {
-    var k = ease(clamp((u - 1.2) / 1.4)), s = bgc("#1a1416") + '<circle cx="420" cy="180" r="' + f(60 + 60 * k) + '" fill="#e2412f" opacity="' + f(0.25 * k) + '" filter="url(#soft)"/>';
-    s += mol("CO2", 200, 170 + Math.sin(t * 1.4) * 6, 2.0, Math.sin(t) * 6, "CO₂") + '<path d="M290 170 H350" stroke="#fff" stroke-width="4" stroke-dasharray="8 6" stroke-dashoffset="' + f(-t * 20) + '"/>';
+  shot(11, function (u, d) { var k = clamp(u / d); return [lerp(270, 370, k), lerp(165, 190, k), lerp(1.14, 0.96, k)]; }, function (u, d, t) {
+    var k = ease(clamp((u - 0.15) / 1.8)), s = bgc("#1a1416") + '<circle cx="420" cy="180" r="' + f(60 + 60 * k + 10 * Math.sin(t * 4)) + '" fill="#e2412f" opacity="' + f(0.25 * k) + '" filter="url(#soft)"/>';
+    for (var sp = 0; sp < 45; sp++) { var su = (t * (0.15 + hash(sp) * 0.2) + hash(sp + 3)) % 1; s += '<circle cx="' + f(-100 + hash(sp + 7) * 840 + Math.sin(t + sp) * 10) + '" cy="' + f(400 - su * 460) + '" r="' + f(2 + hash(sp + 1) * 3) + '" fill="#ffb08a" opacity="' + f(0.6 * Math.sin(Math.PI * su)) + '"/>'; }
+    s += mol("CO2", 200, 170 + Math.sin(t * 1.4) * 10, 2.0, Math.sin(t * 1.3) * 14, "CO₂") + '<path d="M290 170 H350" stroke="#fff" stroke-width="4" stroke-dasharray="8 6" stroke-dashoffset="' + f(-t * 20) + '"/>';
     s += '<g opacity="' + f(1 - k * 0.8) + '">' + atom(lerp(250, 300, k), lerp(170, 60 - 40 * k, k), 24, OC) + '</g>';
-    s += mol("CO", 440, 170 + Math.sin(t * 1.6) * 6, 2.0 * (0.6 + 0.4 * k), Math.sin(t * 1.2) * 8, k > 0.3 ? "CO" : "");
+    for (var m = 0; m < 7; m++) { var mu = (t * 0.12 + m / 7) % 1; s += '<g opacity="' + f(0.55 * k * Math.sin(Math.PI * mu)) + '">' + mol("CO", 700 - mu * 900, 40 + hash(m) * 280, 0.7, t * 60 + m * 40) + '</g>'; }
+    var sh = k * (0.5 + 0.5 * Math.sin(t * 3)); s += mol("CO", 440 + Math.sin(t * 7) * 6 * sh, 170 + Math.sin(t * 1.6) * 12, 2.0 * (0.6 + 0.4 * k) * (1 + 0.08 * Math.sin(t * 6)), Math.sin(t * 5) * 18 * sh + t * 10, k > 0.3 ? "CO" : "");
     return s + tag("ناقص أكسجين واحد", 260, 60, u, 1.4, -2, 16, "#bfe0ff") + tag("أول أكسيد الكربون", 440, 300, u, 2.4, 2, 20, "#f2a0a0");
   });
   // 12 — the silent killer: no colour, no smell, and you breathe it without noticing
@@ -256,9 +258,9 @@
     return s + tag("نعاس", 130, 80, u, 0.3, -3, 19, "#bfe0ff") + tag("رجليه تقيلة", 160, 330, u, 1.0, 2, 17) + tag("الباب بعيد!", 520, 60, u, 2.2, 3, 18, "#f2a0a0");
   });
   // 18 — less than two parts in a thousand in the air is enough to kill in about an hour
-  shot(18, function (u, d) { var k = ease(clamp(u / d)); return [lerp(300, 330, k), lerp(170, 180, k), lerp(1.25, 1.0, k)]; }, function (u, d, t) {
-    var s = bgc("#141a24"), rv = clamp((u - 0.2) / 1.6), red = [[13, 7], [27, 18]];
-    for (var r = 0; r < 25; r++) for (var c = 0; c < 40; c++) { var on = r * 40 + c < rv * 1000; if (!on) continue; var isR = (r === red[0][1] && c === red[0][0]) || (r === red[1][1] && c === red[1][0]); if (isR) continue; s += '<circle cx="' + (34 + c * 14.4) + '" cy="' + (16 + r * 11.4) + '" r="3.4" fill="#5d93ad"/>'; }
+  shot(18, function (u, d) { var k = clamp(u / d); return [lerp(290, 340, k), lerp(165, 185, k), lerp(1.3, 1.0, k)]; }, function (u, d, t) {
+    var s = bgc("#141a24"), rv = clamp(u / 1.6), red = [[13, 7], [27, 18]];
+    for (var r = 0; r < 25; r++) for (var c = 0; c < 40; c++) { var on = r * 40 + c < rv * 1000; if (!on) continue; var isR = (r === red[0][1] && c === red[0][0]) || (r === red[1][1] && c === red[1][0]); if (isR) continue; s += '<circle cx="' + (34 + c * 14.4) + '" cy="' + (16 + r * 11.4) + '" r="3.4" fill="#5d93ad" opacity="' + f(0.55 + 0.45 * Math.sin(t * 3 + c * 0.7 + r * 1.3)) + '"/>'; }
     if (rv >= 1) red.forEach(function (p, i) { var pk = pop((u - 1.9 - i * 0.3) / 1.0); s += '<circle cx="' + (34 + p[0] * 14.4) + '" cy="' + (16 + p[1] * 11.4) + '" r="' + f(4 + 10 * pk * (1 + 0.15 * Math.sin(t * 6))) + '" fill="#e2412f" opacity=".35"/><circle cx="' + (34 + p[0] * 14.4) + '" cy="' + (16 + p[1] * 11.4) + '" r="' + f(3.4 + 2 * pk) + '" fill="#e2412f" stroke="#fff" stroke-width="1"/>'; });
     var k2 = pop((u - 2.6) / 1.0); if (k2 > 0) s += '<g transform="translate(320 190) scale(' + f(k2) + ')"><rect x="-150" y="-62" width="300" height="124" rx="16" fill="#141a24" opacity=".85" stroke="#f2c230" stroke-width="3"/>' + clock(-90, 0, 40, t, 360) + '<text x="40" y="-6" text-anchor="middle" style="font:900 28px Noto Sans Arabic;fill:#fff">2 من 1000</text><text x="40" y="34" text-anchor="middle" style="font:800 22px Noto Sans Arabic;fill:#f2c230">حوالي ساعة</text></g>';
     return s;
@@ -289,9 +291,9 @@
     return s + tag("شعلة صفرا", 210, 120, u, 0.4, -3, 18, "#f2c230") + tag("سواد", 260, 40, u, 1.1, 2, 18) + tag("صيانة فورًا!", 200, 300, u, 2.4, -2, 20, "#f2a0a0");
   });
   // 23 — if someone is dizzy or passed out: turn the heater off, get them to fresh air, call the ambulance on 123
-  shot(23, function (u, d) { return [320, 180, lerp(1.02, 1.0, clamp(u / d))]; }, function (u, d, t) {
-    var s = bgc("#f3e6d3") + '<rect x="-400" y="300" width="1440" height="400" fill="#d9c4a8"/>';
-    s += '<g opacity="' + (u > 0.2 ? 1 : 0) + '">' + valve(120, 180, 1.3, ease(clamp((u - 0.6) / 0.8))) + '</g>';
+  shot(23, function (u, d) { var k = ease(clamp(u / d)); return [lerp(250, 360, k), lerp(170, 185, k), lerp(1.12, 0.98, k)]; }, function (u, d, t) {
+    var vk = ease(clamp((u - 0.6) / 0.8)), s = bath(t, {});
+    s += valve(120, 180, 1.3, vk); if (vk < 1) for (var g = 0; g < 6; g++) { var gu = (t * 1.2 + g / 6) % 1; s += '<circle cx="' + f(30 + gu * 70) + '" cy="180" r="4" fill="#fff6c8" opacity="' + f((1 - vk) * Math.sin(Math.PI * gu)) + '"/>'; }
     if (u > 2.0) s += popIn('<rect x="240" y="60" width="150" height="130" fill="url(#sky-day)" stroke="' + INK + '" stroke-width="3"/>' + clouds(t, 10, 80, 2, 0.9, 0.4) + '<path d="M240 60 L200 50 V200 L240 190 M390 60 L430 50 V200 L390 190" fill="#cfe6f2" stroke="' + INK + '" stroke-width="2"/>' + bather(315, 300, t, "dizzy", { s: 0.55, arm: "up" }) + breath(340, 182, t, 0.8, 3), 315, 180, u, 2.0);
     if (u > 3.8) s += popIn(phone123(530, 180, 1.1, t), 530, 180, u, 3.8);
     return s + step(1, 120, 40, u, 0.2) + step(2, 315, 30, u, 2.0) + step(3, 530, 40, u, 3.8) + tag("اقفل السخان", 120, 300, u, 0.8, -2, 17) + tag("هوا!", 315, 330, u, 2.4, 2, 19, "#bfe0ff") + tag("الإسعاف 123", 530, 300, u, 4.2, 2, 18, "#f2a0a0");
