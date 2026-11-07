@@ -1,0 +1,201 @@
+{
+ "duration": 113.08,
+ "lines": [
+  {
+   "i": 0,
+   "start": 0.21,
+   "end": 3.41,
+   "text": "Ein Golf hat hundertfünfzig PS, ein Sportwagen vierhundert.",
+   "heard": "Ein Golf hat 150 PS. und Sportwagen 400."
+  },
+  {
+   "i": 1,
+   "start": 4.04,
+   "end": 5.83,
+   "text": "Aber was bedeutet diese Zahl eigentlich?",
+   "heard": "Aber was bedeutet diese Zahl eigentlich?"
+  },
+  {
+   "i": 2,
+   "start": 6.09,
+   "end": 9.41,
+   "text": "Und wie holt man aus einem Motor fast dreimal so viel raus?",
+   "heard": "Und wie holt man aus einem Motor fast? Dreimal so viel raus."
+  },
+  {
+   "i": 3,
+   "start": 9.91,
+   "end": 12.43,
+   "text": "Was steckt dahinter? Ich erklär's dir in einer Minute.",
+   "heard": "Fast steckt dahinter. Ich erkläste dir in einer Minute."
+  },
+  {
+   "i": 4,
+   "start": 13.17,
+   "end": 18.89,
+   "text": "PS heißt Pferdestärke: Ein PS hebt fünfundsiebzig Kilo in einer Sekunde einen Meter hoch.",
+   "heard": "PS heißt Pferdestärke. Ein PS hebt 75 Kilo in. 1 Sekunde einen Meter hoch."
+  },
+  {
+   "i": 5,
+   "start": 19.51,
+   "end": 22.55,
+   "text": "Ein echtes Pferd schafft übrigens kurzzeitig fast fünfzehn PS.",
+   "heard": "Echtes Pferd, übrigens kurzzeitig fast 15 PS."
+  },
+  {
+   "i": 6,
+   "start": 23.16,
+   "end": 28.72,
+   "text": "In beiden Motoren läuft derselbe Takt: Ansaugen, Verdichten, Zünden, Ausstoßen.",
+   "heard": "[Musik] In beiden Motoren läuft derselbe Takt. ansaugen Verdichten. Zünd [Musik] Ausstoßen."
+  },
+  {
+   "i": 7,
+   "start": 29.45,
+   "end": 32.03,
+   "text": "Der Kolben saugt Luft und Benzin an und presst sie zusammen.",
+   "heard": "Der Kolben saugt Luft und Benzin an und presst sie zusammen."
+  },
+  {
+   "i": 8,
+   "start": 32.63,
+   "end": 36.43,
+   "text": "Dann zündet die Zündkerze, und die Explosion drückt den Kolben nach unten.",
+   "heard": "Dann zündet die Zündkerze und die Explosion drückt den Kolben nach unten."
+  },
+  {
+   "i": 9,
+   "start": 37.04,
+   "end": 39.57,
+   "text": "Die Kurbelwelle macht aus diesem Auf und Ab eine Drehung.",
+   "heard": "Die Kurbelwelle macht aus diesem Auf und Ab. Eine Drehung."
+  },
+  {
+   "i": 10,
+   "start": 40.63,
+   "end": 44.63,
+   "text": "Der Hundertfünfzig-PS-Motor hat oft nur vier Zylinder und anderthalb Liter Hubraum.",
+   "heard": "Der 150 PS Motor hat oft nur vier Zylinder und anderthalb Liter Hubraum."
+  },
+  {
+   "i": 11,
+   "start": 45.37,
+   "end": 48.85,
+   "text": "Der Vierhundert-PS-Motor ist zum Beispiel ein V8 mit vier Litern.",
+   "heard": "Der 400-S-Motor ist zum Beispiel ein V8 mit 4 Litern."
+  },
+  {
+   "i": 12,
+   "start": 49.45,
+   "end": 52.48,
+   "text": "Mehr Hubraum heißt mehr Luft und mehr Benzin pro Explosion.",
+   "heard": "Mehr Hubraum heißt mehr Luft und mehr Benzin pro Explosion."
+  },
+  {
+   "i": 13,
+   "start": 53.1,
+   "end": 55.67,
+   "text": "Und mehr Zylinder heißt mehr Explosionen pro Umdrehung.",
+   "heard": "und mehr Zylinder heißt mehr Explosionen pro Umdrehung."
+  },
+  {
+   "i": 14,
+   "start": 56.46,
+   "end": 60.18,
+   "text": "Bei sechstausend Umdrehungen knallt es im Vierzylinder zweihundertmal pro Sekunde.",
+   "heard": "Bei 6000 Umdrehungen knallte es im Vierzylinder 200 mal pro Sekunde."
+  },
+  {
+   "i": 15,
+   "start": 60.58,
+   "end": 62.81,
+   "text": "Im V8 sind es vierhundertmal.",
+   "heard": "Im V18 ist 400 Mal. [Musik]"
+  },
+  {
+   "i": 16,
+   "start": 63.0,
+   "end": 64.4,
+   "text": "Der zweite Trick ist der Turbo.",
+   "heard": "Der zweite Trick ist der Turbo."
+  },
+  {
+   "i": 17,
+   "start": 64.97,
+   "end": 69.4,
+   "text": "Die heißen Abgase drehen ein Turbinenrad mit bis zu zweihunderttausend Umdrehungen pro Minute.",
+   "heard": "Die heißen Abgaset drehen ein Turbinenrad mit bis zu 200.000 Umdrehungen pro Minute."
+  },
+  {
+   "i": 18,
+   "start": 70.25,
+   "end": 73.36,
+   "text": "Auf derselben Welle sitzt ein Verdichter, der frische Luft in den Motor presst.",
+   "heard": "Auf derselben Welle sitzt ein Verdichter, der frische Luft in den Motor presst"
+  },
+  {
+   "i": 19,
+   "start": 73.92,
+   "end": 76.95,
+   "text": "Mehr Luft heißt mehr Sauerstoff, also kann mehr Benzin verbrennen.",
+   "heard": "Mehr Luft heißt mehr Sauerstoff. Also kann mehr Benzin verbrennen."
+  },
+  {
+   "i": 20,
+   "start": 77.58,
+   "end": 79.97,
+   "text": "Darum hat der große Motor oft zwei Turbos statt einem.",
+   "heard": "Darum hat der große Motor auf zwei Turbos statt einem."
+  },
+  {
+   "i": 21,
+   "start": 80.53,
+   "end": 85.69,
+   "text": "Audi holt vierhundert PS sogar aus nur fünf Zylindern, mit sehr viel Ladedruck.",
+   "heard": "Audi holt 400. PS sogar aus nur fünf Zylindern. mit sehr viel Ladedruck."
+  },
+  {
+   "i": 22,
+   "start": 86.26,
+   "end": 89.08,
+   "text": "Aber Achtung: PS sind nicht dasselbe wie Drehmoment.",
+   "heard": "Aber Achtung! PS sind nicht dasselbe wie Drehmoment."
+  },
+  {
+   "i": 23,
+   "start": 89.67,
+   "end": 95.09,
+   "text": "Drehmoment ist, wie kräftig der Motor dreht, und PS sind Drehmoment mal Drehzahl.",
+   "heard": "Drehmoment ist Wie kräftig der Motor dreht. und PS sind. Drehmoment. mal Drehzahl."
+  },
+  {
+   "i": 24,
+   "start": 96.0,
+   "end": 100.21,
+   "text": "Deshalb braucht der Golf etwa achteinhalb Sekunden auf Hundert, der Sportwagen um die vier.",
+   "heard": "Deshalb braucht der Golf etwa. 8,5 Sekunden auf 100 [Musik] der Sportwagen um die 4."
+  },
+  {
+   "i": 25,
+   "start": 101.08,
+   "end": 104.69,
+   "text": "Dafür schluckt der starke Motor deutlich mehr Benzin und wird viel heißer.",
+   "heard": "Dafür schluckt der starke Motor deutlich mehr Benzin. und wird viel heißer."
+  },
+  {
+   "i": 26,
+   "start": 105.37,
+   "end": 109.64,
+   "text": "Am Ende ist es dieselbe Explosion, nur größer, öfter und mit mehr Luft.",
+   "heard": "Am Ende ist es dieselbe Explosion. nur größer. Ich f und mit mehr Luft."
+  },
+  {
+   "i": 27,
+   "start": 110.49,
+   "end": 112.76,
+   "text": "Sagt uns: Was sollen wir euch als Nächstes erklären?",
+   "heard": "Sagt uns, was sollen wir euch als Nächstes erklären?"
+  }
+ ]
+}
