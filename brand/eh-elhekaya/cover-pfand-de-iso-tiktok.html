@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="de" dir="ltr" data-theme="light"><head><meta charset="utf-8"><title>TikTok cover — Pfandautomat, isometric (German)</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../../design-system/components/bundle.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@600;800;900&family=Noto+Serif:wght@700&display=swap">
+<style>
+  /* 360×640 canvas at 3x. Air/coolant blue, fire/heat red, fuel amber, parts green, exhaust grey. All drawings are 3D (TebEzay.iso). */
+  :root { --font-sans: "Noto Sans", "Inter", system-ui, sans-serif; --fuel: #d99a1e; --fuel-text: #a8700a; --fuel-soft: #f1d58e; --exhaust: #8d877c; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  html, body { margin: 0; width: 540px; height: 960px; overflow: hidden; background: var(--paper); }
+  body { font-family: var(--font-sans); color: var(--ink); }
+  .canvas { position: relative; width: 360px; height: 640px; background: var(--paper); }
+  .scene { position: absolute; inset: 35px; opacity: 0; }
+  .frame { position: absolute; inset: 0; border: 2px solid var(--ink); background: var(--paper); display: grid; grid-template-rows: 69% 0 1fr; }
+  .stage { position: relative; overflow: hidden; }
+  .stage > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .rule { border-top: 1px solid var(--line-soft); margin-inline: 10px; }
+  .caps { position: relative; }
+  .cap { position: absolute; inset: 0; padding: 14px 14px 0; text-align: center; opacity: 0; font: 600 18px / 1.5 var(--font-sans); text-wrap: balance; }
+  .cap p { margin: 0; }
+  .sheet { position: absolute; inset: 0; border: 2px solid var(--ink); outline: 1px solid var(--ink); outline-offset: -6px; background: var(--paper); }
+  .corners { position: absolute; inset: -12px; pointer-events: none; --c: var(--ink); --l: 10px; --w: 1px;
+    background:
+      linear-gradient(var(--c), var(--c)) top right / var(--l) var(--w), linear-gradient(var(--c), var(--c)) top right / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) top left / var(--l) var(--w), linear-gradient(var(--c), var(--c)) top left / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) bottom right / var(--l) var(--w), linear-gradient(var(--c), var(--c)) bottom right / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) bottom left / var(--l) var(--w), linear-gradient(var(--c), var(--c)) bottom left / var(--w) var(--l);
+    background-repeat: no-repeat; }
+  .w { --wc: var(--ink); color: color-mix(in srgb, var(--wc) var(--mix, 100%), var(--ink-ghost)); }
+  .w.tz-k--heat { --wc: var(--heat-text); } .w.tz-k--water { --wc: var(--water); } .w.tz-k--part { --wc: var(--olive-text); }
+  .w.tz-k--fuel { --wc: var(--fuel-text); } .w.tz-k--ink { --wc: #5d574d; }
+  [data-v="pop"], [data-v="grow"], [data-loop="pulse"] { transform-box: fill-box; transform-origin: center; }
+  .panel { position: absolute; inset: 0; opacity: 0; } .panel > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .ink-f { fill: var(--ink); } .lit { fill: var(--paper-raised); }
+  .lbl { font: 700 15px var(--font-sans); fill: var(--c, var(--ink)); paint-order: stroke; stroke: var(--paper); stroke-width: 5px; stroke-linejoin: round; }
+  .c-water { --c: var(--water); } .c-heat { --c: var(--heat-text); } .c-part { --c: var(--olive-text); } .c-fuel { --c: var(--fuel-text); } .c-ink { --c: #4a443b; }
+  .pt-air { fill: var(--water); } .pt-fuel { fill: var(--fuel); } .pt-exh { fill: var(--exhaust); } .pt-cool { fill: var(--water); }
+  .stream { fill: none; stroke: none; }
+  .num { font: 700 56px / 1 var(--font-numeral); color: var(--heat); font-variant-numeric: tabular-nums; }
+  .num.blue { color: var(--water); } .num.amber { color: var(--fuel-text); } .num.olive { color: var(--olive-text); }
+  .unit { font: 700 13px / 1.25 var(--font-sans); }
+  .counter { position: absolute; }
+  .counter > div { background: var(--paper-raised); padding: 2px 8px; border: 1px solid var(--line-soft); }
+  /* the 4-step strip */
+  .steps { position: absolute; left: 8px; right: 8px; top: 8px; opacity: 0; }
+  .steps__row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+  .step { position: relative; font: 800 11px/1 var(--font-sans); letter-spacing: .04em; text-align: center; padding: 7px 0 6px; background: var(--paper-raised); border: 1.5px solid var(--ink); color: var(--ink); }
+  .step b { display: block; font: 700 15px/1 var(--font-numeral); margin-bottom: 3px; }
+  .step > i { position: absolute; inset: -1.5px; opacity: 0; } .step > i > i { position: absolute; inset: 0; background: var(--sc); mix-blend-mode: multiply; }
+  .step.c-air { --sc: color-mix(in srgb, var(--water) 45%, transparent); } .step.c-fuel { --sc: color-mix(in srgb, var(--fuel) 50%, transparent); }
+  .step.c-heat { --sc: color-mix(in srgb, var(--heat) 50%, transparent); } .step.c-ink { --sc: color-mix(in srgb, var(--exhaust) 55%, transparent); }
+  /* 3D parts used only in this episode */
+  .iso-tire { fill: #3b352e; stroke: var(--ink); stroke-width: 1.4; }
+  .iso-spoke { fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; }
+  .iso-ghost { fill: none; stroke: var(--ink); stroke-width: 1.3; stroke-linejoin: round; opacity: .55; }
+  .iso-ghost--far { stroke-dasharray: 4 4; opacity: .35; }
+  .iso-ghost--win { fill: color-mix(in srgb, var(--water-body) 30%, transparent); }
+  .iso-fuel { fill: var(--fuel); stroke: var(--ink); stroke-width: 1.4; } .iso-fuel-x { fill: color-mix(in srgb, var(--fuel) 75%, var(--ink)); stroke: var(--ink); stroke-width: 1.4; }
+  .iso-fuel-top { fill: var(--fuel-soft); stroke: var(--ink); stroke-width: 1.4; }
+  .iso-pipe-fuel { fill: none; stroke: var(--fuel); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+  .iso-pipe-air { fill: none; stroke: color-mix(in srgb, var(--water-body) 70%, var(--paper-raised)); stroke-width: 5; stroke-linecap: round; }
+  .iso-pipe-shaft { fill: none; stroke: var(--olive); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+  .iso-shaft-spin { fill: none; stroke: var(--ink); stroke-width: 2; stroke-dasharray: 3 9; opacity: .6; }
+  .iso-cut-edge { fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linejoin: round; }
+  .iso-rod { fill: none; stroke: color-mix(in srgb, var(--olive) 70%, var(--ink)); stroke-width: 4; stroke-linecap: round; }
+  .iso-burn { fill: #f08a3c; stroke: var(--heat); stroke-width: 1.2; } .iso-burn-top { fill: #ffc65c; stroke: var(--heat); stroke-width: 1.2; }
+  .iso-bolt { fill: none; stroke: #f2b705; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; paint-order: stroke; }
+  .iso-spark-glow { fill: #ffe27a; opacity: .75; }
+  .iso-hose { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
+  .iso-bore { fill: color-mix(in srgb, var(--khaki) 45%, var(--paper-raised)); stroke: var(--ink); stroke-width: 1.4; }
+  .iso-cut { fill: var(--khaki); stroke: var(--ink); stroke-width: 1.6; stroke-linejoin: round; }
+  .iso-port { fill: var(--paper-raised); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+  .iso-injector { fill: none; stroke: var(--ink); stroke-width: 7; stroke-linecap: round; }
+  .iso-ring { fill: none; stroke: var(--ink); stroke-width: 1; opacity: .7; }
+  .iso-stem { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
+  .iso-spring { fill: none; stroke: color-mix(in srgb, var(--olive) 70%, var(--ink)); stroke-width: 1.6; stroke-linejoin: round; }
+  .iso-ceramic { fill: #f6f3ea; stroke: var(--ink); stroke-width: 1.4; }
+  .iso-spray { fill: none; stroke: var(--fuel); stroke-width: 2; stroke-dasharray: 3 4; stroke-linecap: round; }
+  .iso-gas { stroke: none; } .iso-gas-top { stroke-width: 1; }
+  .g-air { fill: color-mix(in srgb, var(--water) 40%, transparent); stroke: var(--water); }
+  .g-mix { fill: color-mix(in srgb, var(--fuel) 55%, transparent); stroke: var(--fuel); }
+  .g-burn { fill: #f08a3c; stroke: var(--heat); }
+  .g-exh { fill: color-mix(in srgb, var(--exhaust) 60%, transparent); stroke: var(--exhaust); }
+  .iso-halo { stroke-width: 2.5; }
+  .iso-brown { fill: #8a5a22; stroke: var(--ink); stroke-width: 1.3; } .iso-brown-top { fill: #b07a38; stroke: var(--ink); stroke-width: 1.3; }
+  .iso-beam { fill: #fff3b0; opacity: .45; stroke: none; } .iso-ir { fill: #c03aa8; opacity: .4; stroke: none; }
+  .iso-flap { fill: none; stroke: #e2a92c; stroke-width: 6; stroke-linecap: round; }
+  .iso-code { fill: #fff; stroke: var(--ink); stroke-width: 1; }
+  .iso-ink { fill: #3a3f46; stroke: var(--ink); stroke-width: 1.3; } .iso-glow { fill: #9fe0a8; stroke: var(--ink); stroke-width: 1; }
+  .iso-screen { fill: #2f6fd8; stroke: var(--ink); stroke-width: 1.2; } .iso-led { fill: #5bbf6a; stroke: var(--ink); stroke-width: 1; }
+  .iso-lead { fill: none; stroke: #c8261c; stroke-width: 2.4; stroke-linecap: round; }
+  .iso-iron { fill: #5f5d5a; stroke: var(--ink); stroke-width: 1.4; } .iso-iron-top { fill: #8a8782; stroke: var(--ink); stroke-width: 1.4; }
+  .iso-horse { fill: #a8743f; stroke: var(--ink); stroke-width: 1.6; stroke-linejoin: round; } .iso-horse-dark { fill: #4a2e16; stroke: var(--ink); stroke-width: 1.2; stroke-linejoin: round; }
+  .iso-horse-leg { fill: none; stroke: #8a5a2e; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; } .iso-horse-far { stroke: #5a3a1e; }
+  .iso-hoof { fill: #1c1c1c; stroke: var(--ink); stroke-width: 1; }
+  .bigk { font: 900 26px var(--font-sans); paint-order: stroke; stroke: var(--paper); stroke-width: 6px; stroke-linejoin: round; }
+</style>
+<style>
+  /* the isometric reel cover, 540×960 (1080×1920 at 2x), in the light technical style of the isometric video.
+     Everything that matters stays inside the 3:4 profile-grid crop (y 120–840) and away from TikTok's right-hand buttons. */
+  .cv { position: relative; width: 540px; height: 960px; overflow: hidden; }
+  .cv > svg { position: absolute; inset: 0; width: 540px; height: 960px; }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; color: var(--ink); }
+  .tag2 { display: inline-block; padding: 4px 12px; border: 2px solid var(--ink); background: var(--paper-raised); font: 800 13px var(--font-sans); letter-spacing: .12em; }
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- mark: speech bubble + ! + stopwatch crown -->
+    <g id="mark">
+      <rect x="84" y="4" width="32" height="10" class="ink-f"/><rect x="94" y="14" width="12" height="14" class="ink-f"/>
+      <path class="ink-f" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)"/>
+      <path class="lit" style="stroke:var(--ink);stroke-width:7;stroke-linejoin:round" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z"/>
+      <rect x="94" y="58" width="24" height="54" rx="4" style="fill:var(--heat)"/><rect x="94" y="120" width="24" height="20" rx="4" style="fill:var(--heat)"/>
+    </g>
+  </defs>
+</svg>
+<div class="cv tz-paper">
+  <svg viewBox="0 0 540 960"><g id="art"></g><g id="lab"></g></svg>
+  <p class="t" style="top:126px"><span class="tag2">WAS STECKT DAHINTER?</span></p>
+  <p class="t" style="top:168px;font:900 42px/1.15 var(--font-sans)">Woher weiß er das?!</p>
+  <p class="t" style="top:222px;font:800 23px/1.3 var(--font-sans);color:var(--heat)">Das Geheimnis vom Pfandautomat</p>
+  <p class="t" style="top:712px;font:800 30px/1.3 var(--font-sans)"><span style="font:700 40px var(--font-numeral);color:var(--heat)">1</span> Sekunde für deine Flasche<br><span style="font:700 20px var(--font-sans);color:#5d574d">gedreht · fotografiert · geprüft · sortiert</span></p>
+</div>
+<script>window.TIMING = { duration: 1, lines: [{ start: 0, end: 1 }] };</script>
+<script src="../../design-system/components/bundle.js"></script>
+<script>TebEzay.patterns();</script>
+<script src="../../videos/pfand-de/iso/iso.js"></script>
+<script>
+  (function () {
+    // the machine cut open: the bottle lies on the rollers inside the camera ring, the cameras flash, the press waits behind
+    var art = document.getElementById("art"), m = RVMModel(art, { scale: 0.9, x: 300, y: 590 }), I = m.iso;
+    m.update(2.0, { x: -40, scan: true, ir: true, code: true, kind: "pet" });
+    // the machine front beside it (after the T-710 photo), small, for recognition
+    var J = TebEzay.iso(art, { scale: 0.42, x: 80, y: 690 }), g = J.group(art); FrontModel(J, g, 0, 0, {});
+    var NS = "http://www.w3.org/2000/svg", lab = document.getElementById("lab");
+    function label(c, s, cls, px) { var q = I.P(c[0], c[1], c[2]), e = document.createElementNS(NS, "text"); e.setAttribute("class", "iso-label " + cls); e.setAttribute("x", q[0].toFixed(1)); e.setAttribute("y", q[1].toFixed(1)); e.setAttribute("text-anchor", "middle"); e.setAttribute("style", "font-size:" + px + "px;font-weight:800;stroke-width:" + (px / 3).toFixed(1) + "px"); e.textContent = s; lab.appendChild(e); }
+    function halo(c, r, plane, s, cls, px) { var h = I.face(lab, I.ring(c[0], c[1], c[2], r, 32, plane), "iso-halo"); h.style.strokeWidth = "3"; var q = I.P(c[0], c[1], c[2]); label([c[0], c[1], c[2] + r + 12], s, cls, px); }
+    halo([-70, 0, 150], 56, "x", "Kameras ringsum", "c-water", 16);
+    label([-150, 70, 60], "Strichcode + Pfandlogo", "c-heat", 16);
+    label([105, 40, 215], "Presse", "c-ink", 15);
+  })();
+</script>
+</body></html>
