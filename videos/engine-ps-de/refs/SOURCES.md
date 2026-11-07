@@ -1,8 +1,18 @@
 # References
 
-Drawings reuse the engine pieces already drawn from photos for earlier episodes (`../car-egypt/refs/SOURCES.md` for the
-cartoon cylinder, `../car-us/iso.js` for the isometric car and cylinder). New pieces (row engine, V8, turbo, sports coupé,
-horse, weight lift) are drawn from known shapes; no new photos were downloaded for this episode.
+Photos looked at on Wikimedia Commons (visual reference only, nothing reused):
+- `308_cu_in_Holden_V8_engine_(2015-08-29)_02.jpg`: V8 seen from the front: ribbed valve covers on both banks, intake
+  manifold in the valley, red plug leads, pulleys and belt at the front → `v8()`.
+- `Cutaway_of_a_MAN_V8_Diesel_engine.jpg`: cut-away block: bores, piston crown with rings, the head above → the cut window
+  in `engineRow()` and `v8()`.
+- `Cutaway_of_motorcycle_inline-four_engine1.jpg`: inline-four cut away (block, head, cam cover) → `engineRow()`.
+- `Piston_and_connecting_rod.jpg`: piston with three ring grooves and the pin boss, I-beam rod, big end with bolted cap
+  → the piston, rod and crank in `cylinder()`.
+Commons rate-limited the searches for the Golf, the Porsche 911 and a turbo cutaway (HTTP 429); those three are drawn from
+their well-known shapes: Golf-like hatchback, 911-like fastback coupé, a turbocharger with cast-iron turbine snail,
+aluminium compressor snail, centre housing with oil lines and the wastegate actuator. The horse is drawn with real
+proportions (deep chest, arched neck, thin legs with knees and hocks, dark hooves) and trots with diagonal leg pairs.
+The isometric version reuses `../car-us/iso.js` (car and cylinder) and adds simple 3D models for the row engine, V8, turbo and lift.
 
 Facts checked:
 - 1 PS = 75 kp·m/s = 735.5 W (lifting 75 kg by 1 m in 1 s).

@@ -14,7 +14,7 @@ for i, ws in K.items():
     for w in ws:
         if w not in lines[i].split(" "): print("keyword not found", i, w)
 data = [{"w": l.split(" "), "k": [w in K.get(i, []) for w in l.split(" ")]} for i, l in enumerate(lines)]
-open(os.path.join(HERE, "scenes.js"), "w", encoding="utf-8").write(open(os.path.join(HERE, "_helpers.js"), encoding="utf-8").read() + open(os.path.join(HERE, "pieces.js"), encoding="utf-8").read() + open(os.path.join(HERE, "shots-main.js"), encoding="utf-8").read())
+open(os.path.join(HERE, "scenes.js"), "w", encoding="utf-8").write(open(os.path.join(HERE, "_helpers.js"), encoding="utf-8").read() + open(os.path.join(HERE, "pieces.js"), encoding="utf-8").read() + open(os.path.join(HERE, "shots-main.js"), encoding="utf-8").read().replace("  // ── shots ──", open(os.path.join(HERE, "realism.js"), encoding="utf-8").read() + "  // ── shots ──", 1))
 html = open(os.path.join(HERE, "template.html"), encoding="utf-8").read().replace("/*CAPS*/", "window.CAPS = " + json.dumps(data, ensure_ascii=False) + ";")
 open(os.path.join(HERE, "index.html"), "w", encoding="utf-8").write(html)
 print("built,", len(lines), "lines")
