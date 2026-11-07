@@ -136,3 +136,51 @@ Vertical 9:16 cinematic silhouette of a crow on a bare branch against a huge amb
 | 24 | C04 ← شاشة النهاية |
 
 **المطلوب منك: 8 H + 6 C + 4 R = 18 كليب** (بدل 29).
+
+---
+
+## 2b. ردود أفعال المذيع الجديدة (بدل C05 وC06 اللي كانوا باهتين)
+
+الرد لازم يطلع من الكلام اللي قبله: المذيع بيعيش الكلمة. كل برومبت بيحدد **الكلام اللي هيتعمل رد عليه**، عشان الكليب يتركب على السطر بالظبط في المونتاج. مفيش كلام في الكليب، والصورة A أو D.
+
+**C07 (بعد السطر 04: "قتل قابيل أخاه")، صورة D:**
+```
+The man stops moving and looks down at the table, his face becomes serious and heavy, he slowly lowers his eyes and exhales through his nose, a slow sad nod. No speech. Static camera, warm amber light, emotional and grave.
+```
+
+**C08 (بعد السطر 08: "صرخت في وجهه الغربان")، صورة D:**
+```
+The man's eyes widen and he flinches back into the armchair, one hand rises to his chest as if startled, his eyebrows go up sharply, his mouth opens slightly in disbelief. No speech. Static camera, quick reaction, then he holds the pose.
+```
+
+**C09 (بعد السطر 10: "الثأر عندنا يُورَّث")، صورة A:**
+```
+The man leans forward in his chair, narrows his eyes, lips press together, he slowly shakes his head in slight disbelief and rubs his chin with one hand. No speech. Static camera, tense mood.
+```
+
+**C10 (بعد السطر 15: "أضع الجوز على الطريق")، صورة A:**
+```
+The man's eyebrows lift high, he leans toward the camera with a surprised, delighted expression, his mouth forms a wide "oh", he claps once softly with both hands. No speech. Static camera, lively.
+```
+
+**C11 (بعد السطر 16: "بدماغٍ في حجمِ حبّةِ الجوز؟")، صورة D:**
+```
+The man bursts into a short, genuine laugh, eyes squinting, shoulders shake, he shakes his head in amazement and points at the crow with an open palm. No speech. Static camera, warm light.
+```
+
+**C12 (بعد السطر 20: "من واحدٍ إلى أربعة")، صورة D:**
+```
+The man holds up four fingers slowly, one by one, his eyes go wide with amazement, he leans back and lets out a soft impressed whistle with a big smile. No speech. Static camera.
+```
+
+**C13 (بعد السطر 23 و24: الختام، "ومَن قال إنّي لم أحفظْه؟")، صورة D:**
+```
+The man laughs out loud, leans back in the armchair, covers his mouth with one hand, then points at the crow and gives a playful head shake. No speech. Static camera, warm and funny.
+```
+
+**C14 (افتتاحية الهوك، قبل السطر 01)، صورة C:**
+```
+The crow in the lamp light slowly turns its head to the lens, its eye catches the light, it opens and closes its beak in short bursts as if speaking, then goes still and stares into the camera. Very slow push-in, dramatic low light.
+```
+
+**ملاحظة:** C05 وC06 القديمين بيتشالوا من المونتاج. حط C07 لـ C13 مكانهم، و C14 كبداية الهوك قبل سطر 01.
