@@ -360,7 +360,7 @@
   shot(0, function (u, d) { return [lerp(300, 360, clamp(u / d)), lerp(190, 160, clamp(u / d)), lerp(1.25, 1.0, ease(u / d))]; }, function (u, d, t) {
     var k = clamp((u - 0.6) / (d - 0.6)), px = lerp(180, 420, k), py = 262 - 70 * k * k, pitch = 9 * clamp(k * 3);
     var s = airport(t, 290, { speed: 260 }) + a380(px, py, t, { s: 0.75, pitch: pitch, thrust: 1, gear: 1 - clamp(k * 2 - 1), flaps: 0.5 });
-    return s + tag("Airbus A380", 160, 70, u, 0.4, -3, 22) + tag("575 Tonnen", 470, 290, u, 2.0, 3, 24, "#f2a0a0");
+    return s + tag("Airbus A380", 160, 70, u, 0.4, -3, 22) + tag("575 Tonnen", 430, 290, u, 2.0, 3, 24, "#f2a0a0");
   });
   // 1 — as much as about 400 cars
   shot(1, function (u, d) { return [320, 180, lerp(1.0, 1.1, u / d)]; }, function (u, d, t) {
@@ -384,8 +384,8 @@
     return s + tag("Was steckt dahinter?", 320, 290, u, 0.2, -2, 28) + engineer(560, 250, t, "happy", { s: 0.5, point: true });
   });
   // 4 — four forces on every plane
-  shot(4, function (u, d) { return [320, 180, lerp(0.92, 1.0, u / d)]; }, function (u, d, t) {
-    var s = highSky(t) + streaks(t, 8, 0.6) + a380(320, 180 + Math.sin(t * 1.4) * 4, t, { s: 0.75, gear: 0 });
+  shot(4, function (u, d) { var k = ease(u / d); return [lerp(350, 300, k), 180, lerp(0.9, 1.04, k)]; }, function (u, d, t) {
+    var s = highSky(t) + clouds(t, 120, 300, 4, 0.5, 1.3) + streaks(t, 18, 1.2) + a380(320, 180 + Math.sin(t * 1.9) * 7, t, { s: 0.75, gear: 0 });
     s += forces(320, 180, t, { l: clamp((u - 0.3) / 0.5), w: clamp((u - 0.7) / 0.5), th: clamp((u - 1.1) / 0.5), d: clamp((u - 1.5) / 0.5) });
     return s + tag("4 Kräfte", 320, 330, u, 1.9, -2, 26);
   });

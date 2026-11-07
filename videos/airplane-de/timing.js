@@ -1,172 +1,172 @@
 window.TIMING = {
- "duration": 137.88,
+ "duration": 98.29,
  "lines": [
   {
    "i": 0,
-   "start": 0.15,
-   "end": 5.36,
+   "start": 0.24,
+   "end": 4.48,
    "text": "Ein Airbus A380 wiegt beim Start bis zu fünfhundertfünfundsiebzig Tonnen."
   },
   {
    "i": 1,
-   "start": 5.71,
-   "end": 8.21,
+   "start": 4.79,
+   "end": 6.74,
    "text": "So viel wie rund vierhundert Autos."
   },
   {
    "i": 2,
-   "start": 8.56,
-   "end": 11.78,
+   "start": 7.32,
+   "end": 9.26,
    "text": "Und dieser Koloss bleibt einfach in der Luft?"
   },
   {
    "i": 3,
-   "start": 12.13,
-   "end": 15.99,
+   "start": 9.88,
+   "end": 12.2,
    "text": "Was steckt dahinter? Ich erklär's dir in einer Minute."
   },
   {
    "i": 4,
-   "start": 16.34,
-   "end": 19.55,
+   "start": 12.51,
+   "end": 14.7,
    "text": "An jedem Flugzeug zerren ständig vier Kräfte."
   },
   {
    "i": 5,
-   "start": 19.9,
-   "end": 24.61,
+   "start": 15.06,
+   "end": 18.08,
    "text": "Das Gewicht zieht es nach unten, der Auftrieb drückt es nach oben."
   },
   {
    "i": 6,
-   "start": 24.96,
-   "end": 29.39,
+   "start": 18.39,
+   "end": 21.23,
    "text": "Der Schub schiebt es nach vorne, der Luftwiderstand bremst es."
   },
   {
    "i": 7,
-   "start": 29.74,
-   "end": 32.03,
+   "start": 21.53,
+   "end": 22.82,
    "text": "Den Schub machen die Triebwerke."
   },
   {
    "i": 8,
-   "start": 32.38,
-   "end": 37.02,
+   "start": 23.32,
+   "end": 26.48,
    "text": "Vorne saugt ein riesiger Fan pro Sekunde über eine Tonne Luft an."
   },
   {
    "i": 9,
-   "start": 37.37,
-   "end": 42.66,
+   "start": 26.79,
+   "end": 30.1,
    "text": "Ein Teil wird verdichtet, mit Kerosin verbrannt und hinten rausgeschossen."
   },
   {
    "i": 10,
-   "start": 43.01,
-   "end": 47.94,
+   "start": 30.4,
+   "end": 33.15,
    "text": "Den meisten Schub macht aber der Fan selbst, wie ein Riesenpropeller."
   },
   {
    "i": 11,
-   "start": 48.29,
-   "end": 52.86,
+   "start": 33.75,
+   "end": 36.84,
    "text": "So rast der A380 mit fast dreihundert Sachen über die Startbahn."
   },
   {
    "i": 12,
-   "start": 53.21,
-   "end": 55.56,
+   "start": 37.4,
+   "end": 38.61,
    "text": "Jetzt kommt der Flügel ins Spiel."
   },
   {
    "i": 13,
-   "start": 55.91,
-   "end": 60.34,
+   "start": 38.91,
+   "end": 42.12,
    "text": "Von der Seite ist er oben gewölbt und vorne leicht angestellt."
   },
   {
    "i": 14,
-   "start": 60.69,
-   "end": 63.55,
+   "start": 42.43,
+   "end": 44.03,
    "text": "Deshalb lenkt er die Luft nach unten ab."
   },
   {
    "i": 15,
-   "start": 63.9,
-   "end": 69.33,
+   "start": 44.33,
+   "end": 47.73,
    "text": "Drückt der Flügel die Luft nach unten, drückt die Luft den Flügel nach oben."
   },
   {
    "i": 16,
-   "start": 69.68,
-   "end": 73.75,
+   "start": 48.04,
+   "end": 50.41,
    "text": "Und oben strömt die Luft schneller, dort sinkt der Druck."
   },
   {
    "i": 17,
-   "start": 74.1,
-   "end": 79.03,
+   "start": 50.71,
+   "end": 53.86,
    "text": "Unten hoher Druck, oben niedriger, der Flügel wird nach oben gesaugt."
   },
   {
    "i": 18,
-   "start": 79.38,
-   "end": 86.59,
+   "start": 54.18,
+   "end": 58.42,
    "text": "Übrigens kommt die Luft oben hinten sogar früher an, nicht gleichzeitig, wie viele Schulbücher sagen."
   },
   {
    "i": 19,
-   "start": 86.94,
-   "end": 92.09,
+   "start": 58.88,
+   "end": 62.97,
    "text": "Jeder Quadratmeter Flügel trägt beim A380 rund sechshundertachtzig Kilo."
   },
   {
    "i": 20,
-   "start": 92.44,
-   "end": 97.72,
+   "start": 63.29,
+   "end": 66.67,
    "text": "Halt mal die Hand schräg aus dem Autofenster: Genau diese Kraft spürst du."
   },
   {
    "i": 21,
-   "start": 98.07,
-   "end": 102.93,
+   "start": 67.03,
+   "end": 70.22,
    "text": "Beim Start fahren Klappen aus, der Flügel wird größer und gewölbter."
   },
   {
    "i": 22,
-   "start": 103.28,
-   "end": 108.78,
+   "start": 70.54,
+   "end": 74.98,
    "text": "Dann zieht der Pilot am Sidestick, die Nase hebt sich, und der Riese hebt ab."
   },
   {
    "i": 23,
-   "start": 109.13,
-   "end": 114.49,
+   "start": 75.31,
+   "end": 79.23,
    "text": "Gelenkt wird mit Querrudern an den Flügeln, Höhen- und Seitenruder am Heck."
   },
   {
    "i": 24,
-   "start": 114.84,
-   "end": 120.12,
+   "start": 79.55,
+   "end": 83.8,
    "text": "In elf Kilometern Höhe ist die Luft so dünn, dass sie viel weniger bremst."
   },
   {
    "i": 25,
-   "start": 120.47,
-   "end": 126.19,
+   "start": 84.11,
+   "end": 89.61,
    "text": "Und im Test bog sich der Flügel einer Boeing 787 um über sieben Meter nach oben."
   },
   {
    "i": 26,
-   "start": 126.54,
-   "end": 133.46,
+   "start": 90.08,
+   "end": 95.26,
    "text": "Fünfhundertfünfundsiebzig Tonnen bleiben oben, weil die Flügel pausenlos Luft nach unten drücken."
   },
   {
    "i": 27,
-   "start": 133.81,
-   "end": 137.53,
+   "start": 95.56,
+   "end": 97.99,
    "text": "Sagt uns: Was sollen wir euch als Nächstes erklären?"
   }
  ]
