@@ -41,4 +41,16 @@ Wikimedia Commons رجّع "too many requests" (HTTP 429) في المحاولت�
 
 ## الأصوات
 
-كل المؤثرات متولّدة في `audio/sfx.py`، ومفيش تسجيلات خارجية في الحلقة دي.
+المؤثرات القصيرة (ووش، بوب، تكات، رنين) متولّدة في `audio/sfx.py`.
+الأصوات المسجّلة بعتتها القناة من Pixabay (Pixabay Content License)، وموجودة في `sfx/` برا git:
+
+| الملف | الكليب الأصلي على Pixabay | مكانه |
+| --- | --- | --- |
+| `px-fetal-heartbeat.mp3` | freesound_community — ultrasound heartbeat fetus (microcassette) | قلبه بيبدأ يدق |
+| `px-underwater.mp3` | pwlpl — underwater rumble sound effect | المشاهد اللي جوه الرحم |
+| `px-baby-cry.mp3` | freesound_community — newborn baby crying | «بقت بيبي بيعيط في حضنك» |
+| `px-baby-giggle.mp3` | freesound_community — baby giggle | آخر مشهد |
+| `px-yawn.mp3` | freesound_community — a yawn | التعب والنوم |
+| `px-monitor-beep.mp3` | freesound_community — heartbeat with beep | الحضّانة |
+| `px-phone-ring.mp3` | freesound_community — cellphone ringing | «لازم الدكتور يعرف فورًا» |
+| `px-pen.mp3` | freesound_community — pen writing on paper | القلم بيرسم النقطة |
