@@ -4,19 +4,25 @@
  "voices": {
   "host": {
    "voice": "Charon",
-   "style": "Read this line in Modern Standard Arabic as a calm, curious, professional talk-show host interviewing a surprising guest. Warm, clear, slightly playful on questions. Natural conversational pace:",
+   "style": "[calm, curious, warm talk-show host, clear, natural pace]",
    "speed": 1.05,
    "max_pause": 0.35,
    "max_stretch": 1.2
   },
   "guest": {
    "voice": "Algenib",
-   "style": "Read this line in Modern Standard Arabic as a wise, calm, slightly mysterious owl. Soft but clear, at a brisk conversational pace, not slow, with a hint of dry humor. No long pauses:",
+   "style": "[wise, calm, slightly mysterious owl; soft but clear; brisk pace, not slow; hint of dry humor]",
    "speed": 1.5,
    "pitch": 0.96,
    "max_pause": 0.22,
    "max_stretch": 1.4
-  }
+  },
+  "models": [
+   "gemini-3.8-flash-lite-tts",
+   "gemini-3.8-flash-tts",
+   "gemini-3.1-flash-tts-preview",
+   "gemini-2.5-flash-preview-tts"
+  ]
  },
  "sync": [],
  "blocks": []
