@@ -1,0 +1,14 @@
+{
+  "name": "eh-elhekaya-hyperframes",
+  "private": true,
+  "description": "HyperFrames workspace (HTML compositions rendered to MP4) with three.js for 3-D scenes",
+  "scripts": {
+    "check": "hyperframes check",
+    "render": "hyperframes render --fps 60"
+  },
+  "dependencies": {
+    "gsap": "3.15.0",
+    "hyperframes": "0.9.19",
+    "three": "0.170.0"
+  }
+}
