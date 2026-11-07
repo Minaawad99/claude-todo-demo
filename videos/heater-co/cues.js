@@ -13,11 +13,11 @@ const burner = (i, g, from) => HAVE('gas-burner') ? rec(L(i), 'gas-burner', g, f
 const shower = (i, g, from) => HAVE('shower') ? rec(L(i), 'shower', g, from || 0, D(i), 1.2) : a(L(i) + 0.05, 'spray', g * 0.5, D(i) - 0.1);
 for (let i = 1; i < T.length; i++) a(L(i) - 0.08, 'whoosh', 0.3);
 // 0: the door shuts, warning
-burner(0, 0.3); a(L(0) + 1.7, 'thud', 0.7); if (HAVE('door-close')) rec(L(0) + 1.5, 'door-close', 0.5, 0, 1.0, 0.6); a(L(0) + 2.05, 'beep', 0.4); tagPop(0, 0.7); tagPop(0, 2.2, 0.75);
+burner(0, 0.3); a(L(0) + 1.7, 'thud', 0.7); if (HAVE('door-close')) rec(L(0) + 1.65, 'door-close', 0.5, 0, 1.0, 0.6); a(L(0) + 2.05, 'beep', 0.4); tagPop(0, 0.7); tagPop(0, 2.2, 0.75);
 // 1: shower + heater, curious
 shower(1, 0.35, 2); tagPop(1, 0.8); tagPop(1, 1.8);
 // 2: every winter: the siren and the news
-if (HAVE('siren')) rec(L(2) + 0.1, 'siren', 0.35, 0, D(2) - 0.1, 1.0); else for (let k = 0; k < 5; k++) a(L(2) + 0.1 + k * 0.5, k % 2 ? 'beep' : 'notify', 0.25); tagPop(2, 0.6, 0.65); tagPop(2, 1.4);
+if (HAVE('siren')) rec(L(2) + 0.05, 'siren', 0.3, 0.55, D(2) - 0.05, 1.0); else for (let k = 0; k < 5; k++) a(L(2) + 0.1 + k * 0.5, k % 2 ? 'beep' : 'notify', 0.25); tagPop(2, 0.6, 0.65); tagPop(2, 1.4);
 // 3: brand
 a(L(3) + 0.05, 'pop', 0.9); a(L(3) + 0.2, 'chime', 0.5);
 // 4: air drawn into the burner

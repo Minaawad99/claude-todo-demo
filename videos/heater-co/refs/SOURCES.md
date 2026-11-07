@@ -25,4 +25,14 @@ Wikimedia Commons كان قافل الطلبات (HTTP 429) في الحلقة ا
 
 ## الأصوات
 
-المؤثرات القصيرة متولّدة في `audio/sfx.py`. التثاؤب وجهاز القلب ورنة التليفون كليبات Pixabay بعتتها القناة لحلقة الحمل (`sfx/px-yawn.mp3`، `sfx/px-monitor-beep.mp3`، `sfx/px-phone-ring.mp3`، برا git).
+المؤثرات القصيرة (ووش، بوب، تكات) متولّدة في `audio/sfx.py`. الأصوات المسجّلة كليبات Pixabay (Pixabay Content License) بعتتها القناة، وموجودة في `sfx/` برا git:
+
+| الملف | الكليب الأصلي على Pixabay | مكانه |
+| --- | --- | --- |
+| `px-shower.mp3` | jadeallencook — running shower water sound in bathroom with steady stream | مشاهد الدش |
+| `px-gas-burner.mp3` | freesound_community — gas water heater | السخان وهو شغال والشعلة |
+| `px-door-close.mp3` | freesound_community — door close | أول مشهد، الباب بيتقفل |
+| `px-siren.mp3` | u_xg7ssi08yr — ambulance siren | «كل شتا بنسمع…» |
+| `px-yawn.mp3` | freesound_community — a yawn (من حلقة الحمل) | النعاس |
+| `px-monitor-beep.mp3` | freesound_community — heartbeat with beep (من حلقة الحمل) | المخ والقلب بيتخنقوا |
+| `px-phone-ring.mp3` | freesound_community — cellphone ringing (من حلقة الحمل) | الاتصال بالإسعاف |
