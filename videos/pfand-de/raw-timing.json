@@ -1,0 +1,201 @@
+{
+ "duration": 109.4,
+ "lines": [
+  {
+   "i": 0,
+   "start": 0.45,
+   "end": 5.57,
+   "text": "Du schiebst eine Flasche in den Automaten, und eine Sekunde später zählt er fünfundzwanzig Cent.",
+   "heard": "Du schiebst seine Flasche in den Automaten und Eine Sekunde später zählt er. 25 Cent. *Sie"
+  },
+  {
+   "i": 1,
+   "start": 6.1,
+   "end": 9.11,
+   "text": "Aber woher weiß er eigentlich, dass das eine Pfandflasche ist?",
+   "heard": "Aber woher weiß er eigentlich, dass das eine Pfand f***ing ist Flasche ist."
+  },
+  {
+   "i": 2,
+   "start": 9.2,
+   "end": 11.88,
+   "text": "Und warum spuckt er manche Flaschen einfach wieder aus?",
+   "heard": "[Lachen und Warum spuckt er manche Flaschen einfach wieder aus?"
+  },
+  {
+   "i": 3,
+   "start": 12.24,
+   "end": 14.98,
+   "text": "Was steckt dahinter? Ich erklär's dir in einer Minute.",
+   "heard": "Was steckt dahinter? Ich erklärst dir in... einer Minute."
+  },
+  {
+   "i": 4,
+   "start": 15.64,
+   "end": 19.86,
+   "text": "Seit zweitausenddrei gibt es in Deutschland Pfand auf Einwegflaschen und Dosen.",
+   "heard": "[MUSIK Seit 2003 gibt es in Deutschland Pfand auf Einwegflaschen. und Dosen."
+  },
+  {
+   "i": 5,
+   "start": 20.36,
+   "end": 22.94,
+   "text": "Für jede davon bekommst du fünfundzwanzig Cent zurück.",
+   "heard": "*Sie Für jede davon bekommst du 25 Cent zurück."
+  },
+  {
+   "i": 6,
+   "start": 23.64,
+   "end": 26.63,
+   "text": "Sobald die Flasche drin liegt, drehen Rollen sie im Kreis.",
+   "heard": "Sobald die Flasche drin liegt... Drehen rollen Sie im Kreis."
+  },
+  {
+   "i": 7,
+   "start": 27.08,
+   "end": 30.8,
+   "text": "Ringsum schauen Kameras auf die Flasche, aus allen Richtungen.",
+   "heard": "Rings um schauen Kameras auf die Flasche. aus allen Richtungen. [MUS"
+  },
+  {
+   "i": 8,
+   "start": 30.97,
+   "end": 33.1,
+   "text": "Zuerst suchen sie den Strichcode auf dem Etikett.",
+   "heard": "Zuerst suchen Sie den Strichcode auf dem Etikett."
+  },
+  {
+   "i": 9,
+   "start": 33.64,
+   "end": 36.93,
+   "text": "Der verrät, welche Flasche das ist, und ob sie Einweg oder Mehrweg ist.",
+   "heard": "der verrät, welche Flasche das ist und ob sie ein Weg oder mehr Weg ist."
+  },
+  {
+   "i": 10,
+   "start": 37.72,
+   "end": 40.61,
+   "text": "Dann prüfen sie das Pfandlogo mit dem Pfeil und der Flasche.",
+   "heard": "[Musik] dann prüfen sie das Fand-Logo mit dem Pfeil und der Fl"
+  },
+  {
+   "i": 11,
+   "start": 41.18,
+   "end": 45.09,
+   "text": "Das ist mit einer Spezialfarbe gedruckt, die der Automat im Infrarot erkennt.",
+   "heard": "Das ist mit einer Spezialfarbe gedruckt. die der Automat im Infrarot erkennt."
+  },
+  {
+   "i": 12,
+   "start": 45.66,
+   "end": 49.37,
+   "text": "So kann niemand einfach ein Logo auf irgendeine Flasche kopieren.",
+   "heard": "So kann niemand einfach ein Logo auf irgendeine Flasche kopieren. [Musik]"
+  },
+  {
+   "i": 13,
+   "start": 49.56,
+   "end": 53.0,
+   "text": "Gleichzeitig misst er die Form, und viele Automaten wiegen die Flasche auch.",
+   "heard": "Gleichzeitig misst er die Form. Und viele Automaten wiegen die Flasche auch."
+  },
+  {
+   "i": 14,
+   "start": 53.46,
+   "end": 57.44,
+   "text": "Ist sie zerdrückt oder fehlt das Etikett, findet er nichts, und sie kommt zurück.",
+   "heard": "*Sie Ist sie zerdrückt oder fehlt das Etikett? Findet er nichts? und sie kommt zurück."
+  },
+  {
+   "i": 15,
+   "start": 58.35,
+   "end": 62.0,
+   "text": "Passt alles, entscheidet ein Computer in Sekundenbruchteilen, wohin sie kommt.",
+   "heard": "passt alles. entscheidet ein Computer in Sekundenbruchteilen, wohin sie kommt."
+  },
+  {
+   "i": 16,
+   "start": 62.77,
+   "end": 66.17,
+   "text": "Einwegflaschen und Dosen landen in einer Presse und werden platt gedrückt.",
+   "heard": "Einwegflaschen und Dosen. landen in einer Presse. und werden platt gedrückt."
+  },
+  {
+   "i": 17,
+   "start": 66.48,
+   "end": 69.94,
+   "text": "Das Plastik wird später geschreddert und zu neuen Flaschen recycelt.",
+   "heard": "Das Plastik wird später geschreddert und zu neuen Flaschen recycelt."
+  },
+  {
+   "i": 18,
+   "start": 70.67,
+   "end": 72.83,
+   "text": "Mehrwegflaschen kommen dagegen heil in einen Kasten.",
+   "heard": "Mehr Wegflaschen kommen dagegen Heil in einen Kasten."
+  },
+  {
+   "i": 19,
+   "start": 73.02,
+   "end": 76.49,
+   "text": "Sie fahren zurück zum Abfüller, werden gewaschen und neu befüllt.",
+   "heard": "[Musik] Sie fahren zurück zum Apfüller. werden gewaschen und neu befüllt."
+  },
+  {
+   "i": 20,
+   "start": 77.22,
+   "end": 80.12,
+   "text": "Eine Mehrweg-Glasflasche schafft das bis zu fünfzig Mal.",
+   "heard": "eine mehr wie Glasflasche schafft das bis zu 50 mal."
+  },
+  {
+   "i": 21,
+   "start": 80.9,
+   "end": 84.74,
+   "text": "Dafür gibt es weniger Pfand: acht Cent für Glas, fünfzehn für Plastik.",
+   "heard": "Dafür gibt es weniger Pfand. 18 für Glas 15 für Plastik."
+  },
+  {
+   "i": 22,
+   "start": 85.2,
+   "end": 87.53,
+   "text": "Am Ende druckt der Automat deinen Pfandbon.",
+   "heard": "Am Ende drückt der Automat. deinen Pfandpunkt."
+  },
+  {
+   "i": 23,
+   "start": 88.11,
+   "end": 92.43,
+   "text": "Erfunden haben solche Automaten übrigens zwei Brüder in Norwegen, neunzehnhundertzweiundsiebzig.",
+   "heard": "Erfunden haben solche Automaten übrigens zwei Brüder in Norwegen, 1972."
+  },
+  {
+   "i": 24,
+   "start": 92.99,
+   "end": 96.64,
+   "text": "Ihre Firma heißt Tomra und baut bis heute einen Großteil dieser Automaten.",
+   "heard": "Ihre Firma heißt Tomra und Baute bis heute einen Großteil dieser Automaten."
+  },
+  {
+   "i": 25,
+   "start": 97.18,
+   "end": 101.33,
+   "text": "Und das System wirkt: Fast achtundneunzig Prozent der Einwegflaschen kommen zurück.",
+   "heard": "und das System wirkt. Fast. 98% der Einwegflaschen kommen zurück."
+  },
+  {
+   "i": 26,
+   "start": 101.98,
+   "end": 106.31,
+   "text": "Deine Flasche wird also in einer Sekunde gedreht, fotografiert, geprüft und sortiert.",
+   "heard": "Deine Flasche wird also in Einer Sekunde. gedreht fotografiert, geprüft. und sortiert."
+  },
+  {
+   "i": 27,
+   "start": 106.93,
+   "end": 109.09,
+   "text": "Sagt uns: Was sollen wir euch als Nächstes erklären?",
+   "heard": "sagt uns. Was sollen wir euch als Nächstes erklären?"
+  }
+ ]
+}
