@@ -209,83 +209,151 @@
 
   // ───────────────────────────── «150 PS gegen 400 PS»: engines, turbo, weight lift ─────────────────────────────
   // an engine block in a row (n cylinders along x), open on the +y side so the pistons show; centred on (ox, oy)
+  // an inline engine, after the cut-away photos: aluminium block open on the +y side (bores, pistons with rings, rods to the crank),
+  // the head with a ribbed valve cover, coil packs, intake runners rising to a plenum on the far side, the exhaust collector
+  // leaving at the front end, and the timing cover with its pulleys and belt. Centred on (ox, oy).
   window.RowEngine = function (I, root, ox, oy, n, o) {
     o = o || {}; var g = I.group(root), sp = o.sp || 26, W = n * sp + 12, x0 = ox - W / 2, x1 = ox + W / 2, y0 = oy - 26, y1 = oy + 26, z0 = 0, z1 = 86;
+    // intake runners + plenum behind the head (far side, −y)
+    I.box(g, x0 + 4, x1 - 4, y0 - 44, y0 - 26, z1 + 34, z1 + 52, { z: "iso-steel", x: "iso-x", y: "iso-y" });
+    var CX = []; for (var i = 0; i < n; i++) CX.push(x0 + 6 + sp / 2 + i * sp);
+    CX.forEach(function (x) { I.pipe(g, [[x, y0, z1 + 6], [x, y0 - 16, z1 + 14], [x, y0 - 30, z1 + 36]], "iso-pipe-air"); });
+    // block walls + crankcase floor
     I.face(g, [[x0, y0, z0], [x1, y0, z0], [x1, y0, z1], [x0, y0, z1]], "iso-wall2");
     I.face(g, [[x0, y0, z0], [x0, y1, z0], [x0, y1, z1], [x0, y0, z1]], "iso-wall");
     I.face(g, [[x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0]], "iso-floor");
+    CX.forEach(function (x) { I.face(g, I.ring(x, oy, 22, sp * 0.44, 20, "z", Math.PI, Math.PI * 2).concat(I.ring(x, oy, z1 - 2, sp * 0.44, 20, "z", Math.PI, Math.PI * 2).reverse()), "iso-bore"); });
     I.pipe(g, [[x0, oy, 14], [x1, oy, 14]], "iso-pipe-shaft");
     var pistons = I.group(g);
     I.face(g, [[x1, y0, z0], [x1, y1, z0], [x1, y1, z1], [x1, y0, z1]], "iso-x");
     I.face(g, [[x1, y0, z0], [x1, y1, z0], [x1, y1, z1], [x1, y0, z1]], "tz-pat-hatch");
     I.line(g, [[x0, y1, z1], [x0, y1, z0], [x1, y1, z0], [x1, y1, z1]], "iso-cut-edge");
-    I.box(g, x0, x1, y0, y1, z1, z1 + 16, {});
-    var CX = []; for (var i = 0; i < n; i++) CX.push(x0 + 6 + sp / 2 + i * sp);
-    CX.forEach(function (x) { I.cyl(g, x, oy + 14, 4, z1 + 16, z1 + 30, "iso-top", "iso-top"); });
+    // oil pan
+    I.box(g, x0 + 6, x1 - 6, y0 + 4, y1 - 4, -24, 0, { z: "iso-top", x: "iso-part-x", y: "iso-part" });
+    // head + ribbed valve cover + oil cap + coil packs
+    I.box(g, x0 - 2, x1 + 2, y0, y1, z1, z1 + 14, {});
+    I.box(g, x0 + 4, x1 - 4, y0 + 6, y1 - 6, z1 + 14, z1 + 28, { z: "iso-steel", x: "iso-x", y: "iso-y" });
+    for (var rx = x0 + 12; rx < x1 - 8; rx += 9) I.line(g, [[rx, y0 + 8, z1 + 28.5], [rx, y1 - 8, z1 + 28.5]], "iso-wire");
+    I.cyl(g, x1 - 14, oy - 10, 5, z1 + 28, z1 + 34, "iso-part", "iso-part-top");
+    CX.forEach(function (x) { I.box(g, x - 5, x + 5, oy + 2, oy + 14, z1 + 28, z1 + 40, { z: "iso-part-top", x: "iso-part-x", y: "iso-part" }); });
+    // exhaust collector out of the front end, down and away
+    I.pipe(g, [[x1 + 2, y1 - 8, z1 + 4], [x1 + 18, y1 - 4, z1 - 10], [x1 + 22, y1 + 6, 20], [x1 + 30, y1 + 30, 4]], "iso-pipe-dirty");
+    // timing cover + pulleys + belt on the front end (+x)
+    I.box(g, x1, x1 + 8, y0 + 4, y1 - 4, -10, z1 + 20, { z: "iso-top", x: "iso-part-x", y: "iso-part" });
+    var PU = [[oy, 4, 13], [oy, z1 + 6, 11], [oy - 18, 48, 8], [oy + 16, 56, 9]];
+    I.line(g, [[x1 + 9, PU[0][0] - 13, PU[0][1]], [x1 + 9, PU[2][0] - 8, PU[2][1]], [x1 + 9, PU[1][0] - 11, PU[1][1]], [x1 + 9, PU[1][0] + 11, PU[1][1]], [x1 + 9, PU[3][0] + 9, PU[3][1]], [x1 + 9, PU[0][0] + 13, PU[0][1]]], "iso-hose");
+    var pul = I.group(g);
     var ORD = n === 4 ? [0, 2, 3, 1] : n === 5 ? [0, 3, 1, 4, 2] : [0, 2, 1, 3];
     function update(phi, fire) {
       while (pistons.firstChild) pistons.removeChild(pistons.firstChild);
+      while (pul.firstChild) pul.removeChild(pul.firstChild);
       CX.forEach(function (x, i) {
         var ph = ((phi + ORD[i % ORD.length] * 720 / n) % 720 + 720) % 720, top = 40 + 28 * (0.5 + 0.5 * Math.cos(ph * Math.PI / 180));
-        I.line(pistons, [[x, oy, 14], [x, oy, top - 12]], "iso-rod");
-        I.cyl(pistons, x, oy, sp * 0.4, top - 12, top, "iso-steel", "iso-top");
+        I.line(pistons, [[x, oy, 14], [x, oy, top - 14]], "iso-rod");
+        I.cyl(pistons, x, oy, sp * 0.4, top - 14, top, "iso-steel", "iso-top");
+        [3, 6].forEach(function (d) { I.line(pistons, I.ring(x, oy, top - d, sp * 0.4, 12, "z", -Math.PI / 4, Math.PI * 3 / 4), "iso-ring"); });
         var f = ph < 110 ? 1 - ph / 110 : 0;
-        if (f > 0 && fire !== false) { var c = I.cyl(pistons, x, oy, sp * 0.4, top, z1, "iso-burn", "iso-burn-top"); c.style.opacity = f.toFixed(2); c.previousSibling.style.opacity = f.toFixed(2); }
+        if (f > 0 && fire !== false) { var c = I.cyl(pistons, x, oy, sp * 0.4, top, z1 - 2, "iso-burn", "iso-burn-top"); c.style.opacity = f.toFixed(2); c.previousSibling.style.opacity = f.toFixed(2); }
       });
+      var a = phi * Math.PI / 180;
+      PU.forEach(function (p, k) { I.disc(pul, x1 + 9, p[0], p[1], p[2], "x", "iso-steel"); var b = a * (k === 1 ? 0.5 : 1); I.line(pul, [[x1 + 9.5, p[0] - Math.cos(b) * p[2] * 0.8, p[1] - Math.sin(b) * p[2] * 0.8], [x1 + 9.5, p[0] + Math.cos(b) * p[2] * 0.8, p[1] + Math.sin(b) * p[2] * 0.8]], "iso-stem"); I.disc(pul, x1 + 10, p[0], p[1], 2.5, "x", "iso-top"); });
     }
     return { update: update, g: g, top: [ox, oy, z1 + 30] };
   };
-  // a V8 in 3D: two closed cylinder banks of four leaning out at 45° from a crankcase; the end face shows the V,
-  // the spark plugs on each head flash in firing order
+  // a V8 after the Holden V8 photo: two closed banks leaning out at 45° from the crankcase, silver ribbed valve covers,
+  // the intake manifold sitting in the valley with its throttle body, red plug leads, and the pulleys + belt at the front
   window.VEngine = function (I, root, ox, oy, o) {
     o = o || {}; var g = I.group(root), sp = 26, n = 4, W = n * sp + 12, x0 = ox - W / 2, x1 = ox + W / 2, ax = 0.7, az = 0.7, Lb = 84, w = 20;
-    function bank(sg) {   // point on bank sg: s along the bank axis (0 = crank, 1 = head), d across it
+    function bank(sg) {
       var uy = sg * ax, uz = az, ny = az, nz = -sg * ax;
       return function (x, s, d) { return [x, oy + sg * 10 + uy * Lb * s + ny * d, 24 + uz * Lb * s + nz * d]; };
     }
-    var BK = [bank(-1), bank(1)];
-    // crankcase (a box under the V) with the crank pipe
+    var BK = [bank(-1), bank(1)], plugs = [];
+    I.box(g, x0 + 6, x1 - 6, oy - 28, oy + 28, -22, 0, { z: "iso-top", x: "iso-part-x", y: "iso-part" });
     I.box(g, x0, x1, oy - 34, oy + 34, 0, 26, {});
-    var plugs = [];
     function drawBank(P3, k) {
       I.face(g, [P3(x0, 0, w), P3(x1, 0, w), P3(x1, 1, w), P3(x0, 1, w)], k ? "iso-y" : "iso-wall");
       I.face(g, [P3(x1, 0, -w), P3(x1, 0, w), P3(x1, 1, w), P3(x1, 1, -w)], "iso-x");
       I.face(g, [P3(x1, 0, -w), P3(x1, 0, w), P3(x1, 1, w), P3(x1, 1, -w)], "tz-pat-hatch");
       for (var c = 0; c < n; c++) { var cx = x0 + 6 + sp / 2 + c * sp; I.face(g, [P3(cx - 9, 0.2, w + 0.5), P3(cx + 9, 0.2, w + 0.5), P3(cx + 9, 0.85, w + 0.5), P3(cx - 9, 0.85, w + 0.5)], "iso-bore"); }
-      I.face(g, [P3(x0, 1, w), P3(x1, 1, w), P3(x1, 1.2, w), P3(x0, 1.2, w)], "iso-part");
-      I.face(g, [P3(x1, 1, -w), P3(x1, 1, w), P3(x1, 1.2, w), P3(x1, 1.2, -w)], "iso-part-x");
-      I.face(g, [P3(x0, 1.2, -w), P3(x1, 1.2, -w), P3(x1, 1.2, w), P3(x0, 1.2, w)], "iso-part-top");
+      // head, then the silver valve cover with ribs
+      I.face(g, [P3(x0, 1, w), P3(x1, 1, w), P3(x1, 1.12, w), P3(x0, 1.12, w)], "iso-part");
+      I.face(g, [P3(x1, 1, -w), P3(x1, 1, w), P3(x1, 1.12, w), P3(x1, 1.12, -w)], "iso-part-x");
+      I.face(g, [P3(x0 + 3, 1.12, w - 3), P3(x1 - 3, 1.12, w - 3), P3(x1 - 3, 1.3, w - 3), P3(x0 + 3, 1.3, w - 3)], "iso-y");
+      I.face(g, [P3(x1 - 3, 1.12, -w + 3), P3(x1 - 3, 1.12, w - 3), P3(x1 - 3, 1.3, w - 3), P3(x1 - 3, 1.3, -w + 3)], "iso-x");
+      I.face(g, [P3(x0 + 3, 1.3, -w + 3), P3(x1 - 3, 1.3, -w + 3), P3(x1 - 3, 1.3, w - 3), P3(x0 + 3, 1.3, w - 3)], "iso-steel");
+      for (var r = x0 + 12; r < x1 - 8; r += 9) I.line(g, [P3(r, 1.3, -w + 5), P3(r, 1.3, w - 5)], "iso-wire");
       var gg = I.group(g); plugs.push(gg);
     }
-    drawBank(BK[0], 0); drawBank(BK[1], 1);
+    drawBank(BK[0], 0);
+    // intake manifold in the valley (between the banks), throttle body at the front
+    I.box(g, x0 + 4, x1 - 4, oy - 16, oy + 16, 60, 82, { z: "iso-steel", x: "iso-x", y: "iso-y" });
+    I.disc(g, x1 - 3, oy, 71, 9, "x", "iso-part"); I.disc(g, x1 - 2, oy, 71, 5, "x", "iso-top");
+    drawBank(BK[1], 1);
+    // front pulleys + belt
+    var PU = [[oy, 8, 15], [oy, 48, 10], [oy + 34, 40, 9], [oy - 30, 44, 8]];
+    I.line(g, [[x1 + 7, PU[0][0] - 15, PU[0][1]], [x1 + 7, PU[3][0] - 8, PU[3][1]], [x1 + 7, PU[1][0], PU[1][1] + 10], [x1 + 7, PU[2][0] + 9, PU[2][1]], [x1 + 7, PU[0][0] + 15, PU[0][1]]], "iso-hose");
+    var pul = I.group(g);
     function update(phi, fire) {
       plugs.forEach(function (gg, k) {
         while (gg.firstChild) gg.removeChild(gg.firstChild);
         for (var c = 0; c < n; c++) {
-          var cx = x0 + 6 + sp / 2 + c * sp, q = BK[k](cx, 1.2, 0), ph = ((phi + (c * 2 + k) * 90) % 720 + 720) % 720, f = ph < 120 ? 1 - ph / 120 : 0;
-          I.cyl(gg, q[0], q[1], 4, q[2], q[2] + 12, "iso-steel", "iso-top");
-          if (f > 0 && fire !== false) { var e = I.disc(gg, q[0], q[1], q[2] + 14, 6 + 8 * f, "z", "iso-burn"); e.style.opacity = f.toFixed(2); }
+          var cx = x0 + 6 + sp / 2 + c * sp, q = BK[k](cx, 1.3, w - 2), ph = ((phi + (c * 2 + k) * 90) % 720 + 720) % 720, f = ph < 120 ? 1 - ph / 120 : 0;
+          I.line(gg, [q, [q[0], q[1] + (k ? 14 : -14), q[2] - 8]], "iso-lead");
+          I.cyl(gg, q[0], q[1], 3.5, q[2], q[2] + 8, "iso-ceramic", "iso-top");
+          if (f > 0 && fire !== false) { var e = I.disc(gg, q[0], q[1], q[2] + 10, 5 + 8 * f, "z", "iso-burn"); e.style.opacity = f.toFixed(2); }
         }
       });
+      while (pul.firstChild) pul.removeChild(pul.firstChild);
+      var a = phi * Math.PI / 180;
+      PU.forEach(function (p) { I.disc(pul, x1 + 7, p[0], p[1], p[2], "x", "iso-steel"); I.line(pul, [[x1 + 7.5, p[0] - Math.cos(a) * p[2] * 0.8, p[1] - Math.sin(a) * p[2] * 0.8], [x1 + 7.5, p[0] + Math.cos(a) * p[2] * 0.8, p[1] + Math.sin(a) * p[2] * 0.8]], "iso-stem"); I.disc(pul, x1 + 8, p[0], p[1], 2.5, "x", "iso-top"); });
     }
     return { update: update, g: g, top: [ox, oy, 100] };
   };
-  // a turbocharger standing up: turbine wheel at the bottom in a hot housing, compressor wheel on the same shaft on top
+  // a turbocharger standing up, after cut-away turbos: cast-iron turbine housing below (its scroll outlet and flange bolts,
+  // a glowing rim), the centre bearing housing with oil feed and drain, the aluminium compressor housing above with its
+  // scroll outlet, and the round wastegate actuator with its rod
   window.Turbo = function (I, root, ox, oy, oz, o) {
     o = o || {}; var g = I.group(root), r = o.r || 34;
-    I.cyl(g, ox, oy, r + 8, oz, oz + 30, "iso-hot", "iso-hot-top");
+    I.pipe(g, [[ox + r, oy + 6, oz + 14], [ox + r + 22, oy + 18, oz + 14]], "iso-pipe-dirty");
+    I.cyl(g, ox, oy, r + 8, oz, oz + 30, "iso-iron", "iso-iron-top");
+    var glow = I.face(g, I.ring(ox, oy, oz + 30, r + 7, 28, "z"), "iso-heat-glow"); glow.style.opacity = ".45";
+    for (var b = 0; b < 8; b++) { var ba = b * Math.PI / 4; I.disc(g, ox + Math.cos(ba) * (r + 3), oy + Math.sin(ba) * (r + 3), oz + 30.5, 2, "z", "iso-stem"); }
     var tw = I.group(g);
-    I.cyl(g, ox, oy, 8, oz + 30, oz + 60, "iso-steel", "iso-top");
+    I.cyl(g, ox, oy, 14, oz + 30, oz + 60, "iso-steel", "iso-top");
+    I.pipe(g, [[ox - 8, oy + 12, oz + 64], [ox - 8, oy + 30, oz + 90]], "iso-pipe-fuel"); I.pipe(g, [[ox + 6, oy + 12, oz + 34], [ox + 6, oy + 30, oz + 8]], "iso-pipe-fuel");
+    I.pipe(g, [[ox - r, oy - 6, oz + 76], [ox - r - 26, oy - 22, oz + 76]], "iso-pipe-air");
     I.cyl(g, ox, oy, r + 8, oz + 60, oz + 88, "iso-steel", "iso-top");
     var cw = I.group(g);
+    I.cyl(g, ox + r + 4, oy - r - 8, 12, oz + 64, oz + 82, "iso-part", "iso-part-top");
+    I.line(g, [[ox + r + 4, oy - r - 8, oz + 64], [ox + r - 2, oy - 6, oz + 22]], "iso-stem");
     function blades(gg, z, rr, ang, cls) {
       while (gg.firstChild) gg.removeChild(gg.firstChild);
-      I.disc(gg, ox, oy, z, rr, "z", "iso-floor");
-      for (var k = 0; k < 9; k++) { var a = ang + k * Math.PI * 2 / 9; I.line(gg, [[ox, oy, z], [ox + Math.cos(a) * rr, oy + Math.sin(a) * rr, z], [ox + Math.cos(a + 0.35) * rr * 0.9, oy + Math.sin(a + 0.35) * rr * 0.9, z]], cls); }
-      I.disc(gg, ox, oy, z, 5, "z", "iso-top");
+      I.disc(gg, ox, oy, z, rr, "z", "iso-bore");
+      for (var k = 0; k < 11; k++) { var a = ang + k * Math.PI * 2 / 11; I.line(gg, [[ox + Math.cos(a) * 5, oy + Math.sin(a) * 5, z], [ox + Math.cos(a + 0.25) * rr * 0.6, oy + Math.sin(a + 0.25) * rr * 0.6, z], [ox + Math.cos(a + 0.5) * rr * 0.95, oy + Math.sin(a + 0.5) * rr * 0.95, z]], cls); }
+      I.disc(gg, ox, oy, z, 6, "z", "iso-top");
     }
     function update(ang) { blades(tw, oz + 30.5, r, ang, "iso-heat"); blades(cw, oz + 88.5, r, ang, "iso-pipe-shaft"); }
     return { update: update, g: g, hot: [ox, oy, oz + 15], cold: [ox, oy, oz + 88] };
+  };
+  // a horse in side view (real proportions: deep chest, arched neck, long head, thin legs with knees and dark hooves, mane
+  // and tail), standing on the floor at model point (hx, py, 0). An upright figure reads best as a flat side view placed
+  // at its 3D foot point (like the labels), so it is not sheared by the projection. Faces left, trots with diagonal pairs.
+  window.isoHorse = function (I, g, hx, py, t) {
+    var q = I.P(hx, py, 0), st = Math.sin(t * 9), k = I.scale * 0.62;
+    var G = I.el("g", { transform: "translate(" + q[0].toFixed(1) + " " + (q[1] - Math.abs(Math.sin(t * 9)) * 2).toFixed(1) + ") scale(" + (-k).toFixed(3) + " " + k.toFixed(3) + ")" }, g);
+    function leg(hx0, sw, far) { var kx = hx0 + sw * 10, fx = kx + sw * 8, fy = -4 + Math.max(0, sw) * -6;
+      I.el("path", { d: "M" + hx0 + " -76 L" + kx.toFixed(1) + " -40 L" + fx.toFixed(1) + " " + fy.toFixed(1), "class": far ? "iso-horse-leg iso-horse-far" : "iso-horse-leg" }, G);
+      I.el("path", { d: "M" + (fx - 6).toFixed(1) + " " + fy.toFixed(1) + " h12 l-2 -7 h-8 Z", "class": "iso-hoof" }, G); }
+    leg(-46, -st, true); leg(44, st, true);
+    I.el("path", { d: "M-62 -88 C-90 -86 -100 -52 -92 -22 C-86 -42 -78 -62 -64 -74", "class": "iso-horse-dark", transform: "rotate(" + (Math.sin(t * 4) * 6).toFixed(1) + " -62 -88)" }, G);
+    I.el("path", { d: "M-64 -92 C-70 -112 -50 -122 -20 -120 C10 -118 40 -122 56 -116 C70 -110 70 -82 62 -68 C50 -52 20 -54 -10 -56 C-40 -54 -60 -60 -64 -92 Z", "class": "iso-horse" }, G);
+    I.el("path", { d: "M40 -118 C52 -142 70 -166 84 -174 C92 -178 100 -176 104 -170 L126 -142 C130 -136 128 -130 120 -130 C112 -130 106 -134 100 -140 L86 -148 C80 -132 72 -112 62 -96 Z", "class": "iso-horse" }, G);
+    I.el("path", { d: "M88 -174 C74 -162 62 -142 52 -120 L60 -116 C70 -138 80 -156 94 -170 Z", "class": "iso-horse-dark" }, G);
+    I.el("path", { d: "M92 -176 L96 -192 L102 -174 Z", "class": "iso-horse" }, G);
+    I.el("circle", { cx: 104, cy: -160, r: 3, "class": "iso-hoof" }, G);
+    leg(-50, st, false); leg(48, -st, false);
+    return G;
   };
   // a crane post with a pulley and a 75 kg weight that rises 1 m
   window.Lift = function (I, root) {

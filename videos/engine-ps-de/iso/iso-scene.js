@@ -46,12 +46,9 @@
   var IP = TebEzay.iso($("mP"), { scale: 0.85, x: 200, y: 360 }), lift = Lift(IP, $("mP"));
   var horseG = IP.group($("mP"));
   function horse(k, t) {
-    clear(horseG); var hx = -150 - 70 * k, st = Math.sin(t * 9) * 6, I = IP;
-    [[-14, -10, st], [-14, 10, -st], [24, -10, -st], [24, 10, st]].forEach(function (l) { I.box(horseG, hx + l[0] + l[2] - 4, hx + l[0] + l[2] + 4, 40 + l[1] - 4, 40 + l[1] + 4, 0, 34, { z: "iso-hot-top", x: "iso-hot", y: "iso-hot" }); });
-    I.box(horseG, hx - 24, hx + 34, 28, 52, 30, 56, { z: "iso-hot-top", x: "iso-hot", y: "iso-hot" });
-    I.box(horseG, hx + 26, hx + 40, 32, 48, 50, 82, { z: "iso-hot-top", x: "iso-hot", y: "iso-hot" });
-    I.box(horseG, hx + 30, hx + 58, 33, 47, 76, 90, { z: "iso-hot-top", x: "iso-hot", y: "iso-hot" });
-    I.line(horseG, [[hx + 34, 40, 60], [-62, 1, 222]], "iso-hose");
+    clear(horseG); var hx = -110 - 70 * k;
+    isoHorse(IP, horseG, hx, 40, t);
+    IP.line(horseG, [[hx + 10, 40, 30], [-62, 1, 222]], "iso-hose");
   }
   cam("camP", IP, [[4, 0, [-70, 10, 100], 0.95], [5, 0, [-130, 30, 80], 1.15]]);
   word($("fxP"), IP, 4, 0.4, 5, 0, [-50, 0, 300], "1 PS", "c-heat", 22, 0);
