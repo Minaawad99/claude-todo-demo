@@ -625,5 +625,5 @@
     if (typeof document !== "undefined") { var nn = document.querySelector('#outro .n'); if (nn) nn.textContent = Math.round(300 * clamp(u / 1.6)) + ' ألف'; }
     svg.innerHTML = s;
   };
-  window.__parts = { router3: router3, phone3: phone3, standPhone: standPhone, livingRoom: livingRoom, put: put, flush: flush, setView: setView };
+  window.__parts = { router3: router3, phone3: phone3, standPhone: standPhone, livingRoom: livingRoom, token3: token3, put: put, flush: flush, setView: setView, P: P, un: un, slab: slab, rectPts: rectPts, ringArc: ringArc, floorRings: floorRings, bitsPath: bitsPath, lerp3: lerp3 };
 })();

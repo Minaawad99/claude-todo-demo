@@ -2,8 +2,9 @@
 <html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — wifi</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;800;900&display=swap" rel="stylesheet">
 <style>
-  /* the reel cover, full bleed at TikTok's 1080×1920 (540×960 at 2x). The picture is the isometric router and phone from the
-     video's scenes; the titles sit on dark fades and stay inside the 3:4 profile-grid crop (y 120–840). */
+  /* the reel cover, full bleed at TikTok's 1080×1920 (540×960 at 2x). The picture is the video's own drawings (the TP-Link
+     style router and the phone on its stand, from ../../videos/wifi/diagram/scenes.js) on a dark floor with a warm glow;
+     titles sit on dark fades inside the 3:4 profile-grid crop (y 120–840), away from TikTok's right-hand buttons. */
   body { margin: 0; background: #000; }
   .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #05080f; }
   #art { position: absolute; inset: 0; width: 540px; height: 960px; }
@@ -12,32 +13,40 @@
 <div class="cover">
   <svg id="art" viewBox="0 0 540 960">
     <defs>
-      <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1730"/><stop offset=".5" stop-color="#101d33"/><stop offset="1" stop-color="#05080f"/></linearGradient>
-      <radialGradient id="glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#f2c230" stop-opacity=".45"/><stop offset="1" stop-color="#f2c230" stop-opacity="0"/></radialGradient>
-      <linearGradient id="fadeT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#05080f" stop-opacity=".95"/><stop offset="1" stop-color="#05080f" stop-opacity="0"/></linearGradient>
-      <linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#05080f" stop-opacity="0"/><stop offset="1" stop-color="#05080f" stop-opacity=".95"/></linearGradient>
+      <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1730"/><stop offset=".5" stop-color="#13213a"/><stop offset="1" stop-color="#05080f"/></linearGradient>
+      <radialGradient id="glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#f2c230" stop-opacity=".5"/><stop offset="1" stop-color="#f2c230" stop-opacity="0"/></radialGradient>
+      <linearGradient id="fadeT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#05080f" stop-opacity=".96"/><stop offset="1" stop-color="#05080f" stop-opacity="0"/></linearGradient>
+      <linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#05080f" stop-opacity="0"/><stop offset="1" stop-color="#05080f" stop-opacity=".96"/></linearGradient>
       <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .45  0 0 0 0 .4  0 0 0 .08 0"/></filter>
+      <filter id="soft2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
       <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2b2b2b" stroke-width="1" opacity=".16"/></pattern>
     </defs>
     <rect width="540" height="960" fill="url(#bg)"/>
-    <circle cx="270" cy="470" r="290" fill="url(#glow)"/>
-    <g id="scene" transform="translate(262 585) scale(1.45)"></g>
+    <circle cx="270" cy="500" r="300" fill="url(#glow)"/>
+    <g id="scene" transform="translate(262 610) scale(1.45)"></g>
     <rect y="0" width="540" height="330" fill="url(#fadeT)"/>
-    <rect y="600" width="540" height="360" fill="url(#fadeB)"/>
+    <rect y="640" width="540" height="320" fill="url(#fadeB)"/>
     <rect width="540" height="960" filter="url(#grain)"/>
   </svg>
   <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
   <p class="t" style="top:158px;font:900 36px/1.3 'Noto Sans Arabic';color:#fff">الداتا بتسافر في الهوا إزاي؟</p>
-  <p class="t" style="top:300px;font:800 24px/1.3 'Noto Sans Arabic';color:#f2c230">من غير ولا سلك واحد!</p>
+  <p class="t" style="top:214px;font:800 24px/1.3 'Noto Sans Arabic';color:#f2c230">من غير ولا سلك واحد!</p>
   <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff"><span style="color:#f2c230">0</span> و<span style="color:#f2c230">1</span> بس<br><span style="font-size:24px;color:#d9d4c8">بتتحول لموجة راديو في الهوا!</span></p>
 </div>
 <script src="../../videos/wifi/timing.js"></script>
 <script src="../../videos/wifi/diagram/scenes.js"></script>
 <script>
   (function () {
-    var P = window.__parts, g = document.getElementById("scene");
-    var s = P.router3([-60, 0, 0], 0.4, 1.0) + P.phone3([90, 30, 44], [-0.8, -0.6, 0], 0.4, 1.1, { screen: "movie" });
-    g.innerHTML = s;
+    var X = window.__parts, t = 2.1; X.setView(0.85, 0.5);
+    var s = X.slab([0, 0, -2], [1, 0, 0], [0, 1, 0], X.rectPts(300, 260), 4, "#1f2b3c", { face: "#243246" });
+    X.put([-80, -40, 10], X.router3([-80, -40, 0], t, 1.05));
+    X.put([95, 45, 50], X.standPhone(95, 45, 0, X.un([1, 0.9, 0]), t, 1.15, { screen: "movie" }));
+    s += X.flush() + X.floorRings([-80, -40, 100], 0.9, 3, "#7fb2d8", 16, 30);
+    var A = [-80, -40, 120], B = [95, 45, 150];
+    for (var i = 0; i < 3; i++) { var p = 0.28 + i * 0.22, q = X.lerp3(A, B, p); q[2] += Math.sin(p * Math.PI) * 30; s += X.token3(q, i, X.un([0.66, 0.6, 0.45]), 1.5); }
+    var bits = "", pts = []; for (var k = 0; k <= 14; k++) { var r = X.lerp3(A, B, k / 14); r[2] += Math.sin(k / 14 * Math.PI) * 5; pts.push(r); }
+    pts.forEach(function (r, k) { if (k % 2) return; var q = X.P(r); bits += '<text x="' + q[0].toFixed(1) + '" y="' + (q[1] + 6).toFixed(1) + '" text-anchor="middle" style="font:900 15px Noto Sans Arabic;fill:#f2c230">' + (k % 4 ? "1" : "0") + '</text>'; });
+    document.getElementById("scene").innerHTML = s + bits;
   })();
 </script>
 </body></html>

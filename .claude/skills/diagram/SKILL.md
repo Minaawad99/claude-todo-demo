@@ -1,105 +1,203 @@
 ---
 name: diagram
 description: >
-  Make an «إيه الحكاية؟» explainer video in the "الرسم الهندسي" (technical-diagram) style the user picked from a reference
-  video (an X-ray explainer): cream graph-paper card, flat technical illustrations with hatching, leader-line labels and
-  magnified insets, a two-line caption under the picture, and a summary infographic card at the end. Use when the user says
-  "بالرسم الهندسي", "بطريقة الرسم الهندسي", "زي فيديو الأشعة", "diagram style" or "technical style". Every other step
-  (script, voice, sounds, render, QA, cover, titles) follows the animation skill.
+  Make an «إيه الحكاية؟» explainer video in the realistic "الرسم الهندسي" style. This is the channel's default for every
+  new video (the user's decision after the Wi-Fi video): real devices redrawn from reference photos as lit 3-D drawings,
+  set in their real places (living room, kitchen, classroom, field), a camera that moves and changes angle in every shot,
+  leader-line labels and magnified insets on cream paper, an opening card and a summary card. Use for any new «إيه الحكاية؟»
+  video unless the user names another style, and when the user says "بالرسم الهندسي", "بطريقة الرسم الهندسي",
+  "زي فيديو الواي فاي", "الطريقة الواقعية" or "diagram style". Script, voice, sounds, render, QA, cover and titles follow
+  the animation skill.
 ---
 
-# «إيه الحكاية؟» — the "الرسم الهندسي" style
+# «إيه الحكاية؟» — الرسم الهندسي الواقعي (the default)
 
-The user's name for this style is **الرسم الهندسي**. It copies the look and the pacing of a reference video the user sent
-(«الدكتور شاف الكسر اللي في عضمك…», 94 s, 720×1280 30 fps, series «طب إزاي؟»). We keep our own brand («إيه الحكاية؟») in
-place of «طب إزاي؟».
+**This is the channel's fixed way of making every new video** (the user's decision: «ثبت الطريقة دي» after the Wi-Fi
+video). The reference build is the Wi-Fi episode:
 
-Talk to the user in Egyptian Arabic. Ask the quick-mode question first, as in the animation skill. Script, voice (Gemini
-Puck), sounds, render, QA, cover and titles all work exactly as in `.claude/skills/animation/SKILL.md`. Only the look, the
-layout and the shot style change.
+- `videos/wifi/` — script, style, voice, timing, cues;
+- `videos/wifi/diagram/` — `episode.py`, `shots.js`, `build.py`;
+- `videos/wifi/refs/SOURCES.md` — the reference photos;
+- `brand/eh-elhekaya/cover-wifi-tiktok.html` — the cover.
 
-## Look (measured from the reference)
+Start every new video from copies of them. The cartoon style (`.claude/skills/animation/`) and the «لو» style
+(`.claude/skills/law/`) are used only when the user names them.
 
-- **Paper:** the whole frame is cream paper `#eee5d0`, with small crop marks at the corners. A double-line frame card
-  (outer line about 2 px, inner line 1 px, ink `#2b2b2b`) sits about 36 px in from the edges at 720 wide.
-- **Panel:** the illustration fills the top of the card, about 70 % of its height. The background is a faint square grid
-  (`#e3d8bf` lines, about 48 px cells at 720 wide), or a black panel `#111` for "photo / X-ray" shots. A thin rule separates
-  the panel from the caption.
-- **Caption:** two short lines, centred under the rule, in Noto Sans Arabic 800, ink `#2b2b2b`. The key word in each line
-  is coloured:
+Talk to the user in Egyptian Arabic. Ask the quick-mode question first, as in the animation skill. Script (§1), voice (§2),
+audio pipeline (§4), sounds (§7), render and QA (§8), cover and titles (§9) work exactly as in
+`.claude/skills/animation/SKILL.md`. This file covers the reference photos, the look, the 3-D drawing engine and the
+review.
+
+**Quick mode in this style** still includes three checks, because the realistic look only came out right after them (the
+Wi-Fi video failed three times without them):
+
+- one frame per shot, looked at (§5);
+- `motion.js` on the cards (§5);
+- `nancheck.js` (§5).
+
+What quick mode skips is the fix-and-look-again loop beyond one round of fixes, and frame reviews during the render.
+
+## 1. Order of work
+
+1. Script, voice and timing (animation skill §1, §2, §4). About 25 lines, 1:50–1:55 after `tighten.py`.
+2. Reference photos of every real object in the story (§2 below). Never skip this: the user rejected drawings that did not
+   look like the real devices («الصور غير واقعية»).
+3. Build the shots (§3, §4).
+4. Review (§5), one round of fixes.
+5. Sounds, render, QA, then send. Commit and push.
+6. Cover and titles when the user asks.
+
+## 2. Reference photos (always)
+
+Wikimedia Commons, with the scripts in `videos/tools/`. They send one request at a time with long pauses. Commons answers
+429 when hurried; the scripts wait and retry.
+
+```
+python3 videos/tools/commons_search.py <scratchpad>/refs/search.json "TP-Link wireless router" "microwave oven" ...
+python3 videos/tools/commons_fetch.py <scratchpad>/refs/search.json <scratchpad>/refs "File:A.jpg" "File:B.jpg"
+```
+
+- Make a contact sheet of the downloads and look at it.
+- Note in the episode's `refs/SOURCES.md` a table with three columns: drawing | Commons file | what the drawing takes from
+  it (shape, colours, parts). Use `videos/wifi/refs/SOURCES.md` as the model.
+- Photos are visual reference only; nothing from them goes into the video.
+- If a download stays blocked, say so in `SOURCES.md` and draw from the object's well-known shape.
+
+What "from the photo" meant in the Wi-Fi video:
+
+- **Router:** white two-step body, LED bar with green lights at the front, three flat blade antennas on hinges (outer two
+  leaning out), blue WAN and yellow LAN ports on the back.
+- **Phone:** black glass, aluminium frame, punch-hole camera, status bar, gesture bar, side buttons, camera island on the
+  back.
+- **Microwave:** dark mesh window over two thirds of the door, control strip with two dials.
+- **Parkes telescope:** terracotta tower with white bands and windows, white dish with an outer mesh ring, tripod and focus
+  cabin.
+
+## 3. The look
+
+The paper and the card (measured from the user's X-ray reference video «الدكتور شاف الكسر اللي في عضمك…»):
+
+- **Paper:** cream `#eee5d0`, crop marks at the corners, a double-line card (outer about 2 px, inner 1 px, ink `#2b2b2b`).
+- **Panel:** the picture fills the top of the card (SVG viewBox 640×800); a thin rule under it.
+- **Caption:** two short lines in Noto Sans Arabic 800, swapped per sentence (no karaoke). The key word is coloured:
   - orange-red `#c4532c` for the action or the danger;
   - slate blue `#46698a` for the technical term;
   - olive `#6b7d3c` for the named part.
-  The caption changes per sentence (no karaoke). A line often ends in «…» and carries on in the next shot.
-- **Drawing:** flat editorial-technical drawing.
-  - Thin dark outlines (about 2 px).
-  - Muted fills: putty `#cdc9bb`, sage/olive `#6b7d3c`, slate blue, beige, skin `#d9a184`, with the warm-orange accent kept
-    for action.
-  - Fine diagonal hatching inside the big shapes, cut-away and section views, cross-sections of machines.
-  - **Leader-line labels:** a thin line from a dot on the part to a small label (Noto 700, about 14 px at 720), coloured
-    like the caption key word.
-  - Magnified inset circles (a zoom of a detail in the top corner), a big red ✗ for a wrong idea, numbered round callouts
-    ①②③.
-  - Energy as wavy lines or bundles of thin arrows. Particles as small dots.
-- **No cartoon faces, no title bar, no brush tags.** Labels and captions carry all the text.
+- **Labels:** leader-line labels on the parts, magnified inset circles for tiny things (a chip, a black hole), numbered
+  callouts, a dark number box for numbers («2.45 GHz», «20»), a red ✗ for a wrong idea.
+- **No cartoon faces, no brush tags.**
 
-## Structure and pacing (reference: 20-odd shots in 94 s)
+The realism rules (what made the user accept the Wi-Fi video):
 
-1. **Opening card** (about 2–3 s, under the hook):
-   - a small brand label top right («إيه الحكاية؟», grey);
-   - the category in orange-red (e.g. «جسم الإنسان والطب»), between two short rules;
-   - the hook in Noto 900, about 34 px at 720, with one orange word, the second line in grey;
-   - a black "photo" panel under it, showing the subject with a red circle on the key detail.
-2. **The mechanism, one step per shot:**
-   - start from an everyday analogy (the reference: a torch behind the hand in the dark);
-   - then the real machine in cut-away;
-   - zoom into each part as the voice names it (leader-line label on it);
-   - show what happens (particles, rays, heat), with a number tag such as «100,000 V» in a dark box when there is a
-     number.
-3. **The misconception** («ناس كتير فاكرة إن…»), with a red ✗ on the wrong idea, then the right picture.
-4. **A history fact** on a black "old photo" panel, with the year under it.
-5. **The payoff:** one shot that ties it together, with an inset circle recalling the machine.
-6. **Summary card** (the last 3–4 s):
-   - the question as a heading;
-   - a small labelled diagram with numbered callouts and a 2-column legend;
-   - one big stat in orange-red Noto 900 (e.g. «99%») with its explanation beside it;
-   - 3 numbered recap lines;
-   - a smaller «معلومة زيادة:» line.
-   It stays on screen into the tail.
+- **Lit 3-D drawings, not flat icons.** Every object is built from extruded outlines with rounded corners, cylinders and
+  tubes. Faces are lit from the upper left, back faces are hidden, and every object casts a soft shadow. Screens, LEDs,
+  ports, windows and labels sit as decals on the faces.
+- **Every device in its real place**, not floating on a grid:
+  - a living room: wood floor, rug, sofa, TV on a cabinet, window, side table with the router, coffee table with the phone
+    on a stand;
+  - a kitchen: tiles, counter with cabinet doors, the microwave on the counter;
+  - a classroom: board on the wall, desks;
+  - a field: grass, trees.
 
-**Motion:** the camera never parks.
-- A slow push-in or pan inside each panel.
-- The parts the voice names animate: rays travel, particles drift, a disc spins, a label line draws itself.
-- Cuts between shots, with the caption swapping at the same moment.
-- Same QA rules as the animation style (no still over 0.75 s), unless the user picked quick mode.
+  The paper-grid floor is only for abstract shots: a wave, data tokens, lanes.
+- **Screens show real interfaces:** a video player (film frame, red progress bar, title lines, next videos) and a photo
+  gallery grid, plus the status bar, punch-hole and gesture bar.
+- **Data is shown as things that move:**
+  - printed photo cards, chat bubbles and music discs flying;
+  - 0/1 glyphs running along paths and cables;
+  - rings for radio waves.
+- **Show the whole chain when something turns into data.** The user asked for this explicitly. In the Wi-Fi video:
+  1. the photo lifts out of the gallery on the phone screen;
+  2. it bursts into 0s and 1s;
+  3. the bits fly through the air (Wi-Fi) to the router;
+  4. they go down the blue cable into the wall socket.
+- **The camera never stays on one angle.** Each shot orbits or pushes in while it plays, and consecutive shots change the
+  view: low across the room, high plan view, close-up, wide.
 
-## Voice and script
+Structure and pacing (from the reference video):
 
-- Egyptian Arabic, calm explaining tone, a little slower and more "teacher" than the cartoon videos.
-- About 90–100 s, 22–26 lines, about 200–240 words.
-- Keep line 3 «إيه الحكاية؟ هشرحهالك في دقيقة.» and the closing «قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟».
-- The reference flow:
-  1. a hook in the second person («الدكتور شاف الكسر اللي في عضمك من غير ما يلمس جلدك»);
-  2. the promise;
-  3. an analogy;
-  4. the steps;
-  5. the misconception;
-  6. the history;
-  7. «يعني من الآخر…» recap.
+- **Opening card** under the hook: brand label, the category in orange-red, the hook in Noto 900 with one orange word, a
+  dark panel with the subject moving.
+- **The mechanism, one step per shot:** the real object in its place first, then a close-up on each part as the voice names
+  it, with what happens shown moving (particles, rays, rings) and a number box when there is a number.
+- **The misconception** with a red ✗, a **history fact**, the **payoff**.
+- **Summary card** for the last line: the question as a heading, a small labelled drawing with numbered callouts and a
+  2-column legend, one big stat in orange-red (it counts up), 3 numbered recap lines, a «معلومة زيادة:» line.
 
-## Build
+## 4. The 3-D drawing engine (copy `videos/wifi/diagram/shots.js`)
 
-- Use the same engine as the cartoon videos:
-  - `timing.js`, `shots.js` (`shot(line, cam, draw)`), `build.py` → `scenes.js` + `index.html`;
-  - `render.js`, `qa.py`, `tools/frame.js`.
-- The first diagram video makes the template `videos/_templates/diagram/template.html`, and later videos copy it:
-  - the 1080×1920 page is the paper + card + crop marks;
-  - the panel is an SVG in the top of the card, viewBox 640×720 (portrait, not 16:9);
-  - the caption block sits under the rule;
-  - the summary card is a full-card HTML layer shown from the last line on.
-- Put the shared drawing helpers in `videos/_templates/diagram/_helpers.js`:
-  - `paperGrid`, `hatch(id)` (an SVG pattern);
-  - `label(x1,y1,x2,y2,text,col)` (leader line + text), `inset(cx,cy,r,inner)`;
-  - `callout(n,x,y)`, `crossMark`, `waveRay`, `numBox(text)`.
-- Sounds: softer than the cartoon videos. Use paper-like whooshes, ticks, a low hum for machines, and few big effects.
-  Library first, then ask with Pixabay search terms.
+`build.py` builds `scenes.js` from the shared `videos/_templates/diagram/_helpers.js` (paper, the `T()` text helper,
+`callout`, `crossMark`, `numBox`, `inset`, the panel camera) followed by the episode's `shots.js`, and builds `index.html`
+from `episode.py` (title, category, hook, the summary card's HTML, and the caption key words `K`). `shots.js` has these
+parts in order; keep the first three and replace the shots:
+
+1. **Engine:**
+   - `setView(yaw, pitch)`, `P(point)` — the 3-D projection;
+   - `slab(center, A, B, outline, thickness, colour, {face, hatch, hatchUp})` — an extruded convex outline, lit, back faces
+     hidden;
+   - `poly3`, `tube`, `ringArc`, `dotAt`, `ln3`, `mapP`;
+   - `put(center, svg)` + `flush()` — draw order by depth;
+   - `camV(...)` — the shot camera;
+   - `floorGrid`.
+2. **Objects:**
+   - devices: `router3`, `phone3`, `standPhone`, `microwave3`, `parkes3`, `rj45`, `laptop3`, `tv3`;
+   - furniture: `table3`, `sofa3`, `counter3`, `tree3`, `bundle3`;
+   - shapes and data: `cubeObj`, `cyl`, `token3` (photo, message, sound, sheet), `bitsPath`, `floorRings`;
+   - the frame-aware `label()`.
+3. **Places:** `room3(ext, height, {tiles, window, board, winX})`, `deskTop`, `livingRoom(t, {onTable, tv, tvOn, coffee, side})`.
+4. **Shots:** one `shot(line, camV(...), draw)` per script line. Line 0 is the opening card and the last line is the summary
+   card (placeholders in the panel); then `window.__intro`, `window.__outro`, `window.__parts`.
+
+Rules that cost a re-render when they were missed:
+
+- **Camera:** `camV(yaw0, pitch0, yaw1, pitch1, zoom0, zoom1, lookAt)`. Both angles change during the shot; `lookAt` is the
+  3-D point at the centre of the frame (default 40 above the floor centre). Zooms under 1.9 are multiplied by 0.8. In rooms
+  keep yaw between 0.1 and 1.5: the two walls stand at x = −ext and y = −ext.
+- **Draw order:** `put()` each object with its centre and `flush()` once. Anything standing on a table goes in that table's
+  own string (`table3(..., onTop)`). Otherwise a table drawn later covers it.
+- **Colours:** always hex. `shade`/`hexShade` parse hex only, and an `rgb()` string turns a face black (it made every table
+  black once).
+- **Labels:** use the `label()` in `shots.js`. It overrides the shared one: the same size at any zoom, a paper backing, and
+  it stays inside the frame. Anchor it on the part with `P(point)`, and hide a label when its part leaves the shot.
+- **Never parks:** each shot's camera eases half-linear, so the first and last frames still move. The opening card, any
+  flat 2-D card (like the Wi-Fi name card) and the summary card need their own motion:
+  - objects orbiting;
+  - bits flowing;
+  - a sweep line;
+  - drifting 0/1 glyphs behind a flat card;
+  - letters bouncing;
+  - the stat counting up.
+
+## 5. Review (one round, also in quick mode)
+
+```
+node videos/tools/nancheck.js videos/<slug> diagram                  # no errors, no NaN, all frames + both cards
+node videos/tools/shotsheet.js $PWD/videos/<slug>/diagram/index.html <scratchpad>/shots 0.6
+python3 videos/tools/montage.py <scratchpad>/shots <scratchpad>/a.png 0 12
+python3 videos/tools/montage.py <scratchpad>/shots <scratchpad>/b.png 12 25
+node videos/tools/motion.js $PWD/videos/<slug>/diagram/index.html 0 <end of line 0>   # and each flat card, the summary
+```
+
+Look at both sheets and fix:
+
+- labels cut at the edge;
+- objects off frame or too small;
+- black faces;
+- things overlapping the title;
+- anything that does not look like the device in the photo.
+
+Aim for `motion.js` ≤ 0.6 s still on the cards before the render; `qa.py` must then say PASS (the Wi-Fi video: 0.67 s frozen
+in total).
+
+## 6. Sounds, render, QA, cover, titles
+
+Follow the animation skill §7–§9. Sounds are softer here: paper whooshes, ticks, a low hum for machines, few big effects.
+
+The cover uses the video's own drawings on the dark cover palette. `cover-wifi-tiktok.html` loads the episode's `timing.js`
+and `diagram/scenes.js` and composes the scene from `window.__parts`:
+
+- `router3`, `standPhone`, `token3`, `floorRings`;
+- a dark floor slab under them;
+- a warm glow behind the scene.
+
+Keep the flying objects below the yellow sub-title.

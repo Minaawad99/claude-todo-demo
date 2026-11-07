@@ -3,19 +3,25 @@ name: animation
 description: |
   Make an «إيه الحكاية؟» explainer video in the "animation" (cartoon-panel) style, end to end: script, voice
   settings, reference research, 25–29 animated shots, sound effects, 1080×1920 60fps render, QA, full-bleed reel cover and
-  TikTok/Facebook/YouTube Shorts titles. This is the default for every new video (built like the Suez Canal tunnel video). Use when the user says "بطريقة الانيميشن", "بالانيميشن", "الأسلوب الكارتون",
-  "animation style", or asks for a new «إيه الحكاية؟» video without naming another style.
+  TikTok/Facebook/YouTube Shorts titles (built like the Suez Canal tunnel video). Use when the user names this style:
+  "بطريقة الانيميشن", "بالانيميشن", "الأسلوب الكارتون", "الكرتون" or "animation style". A new video with no style named
+  uses the realistic «الرسم الهندسي» style (the diagram skill), which also takes its script, voice, sound, render, QA,
+  cover and titles steps from this skill.
 ---
 
 # «إيه الحكاية؟» — the animation (cartoon-panel) style
 
-**This is the channel's fixed way of making every new video** (the user's decision): the cartoon panel, built like the
-Suez Canal tunnel video. The reference build is `videos/tbm-tunnel/cartoon/` («مين حفر نفق القناة؟», 29 shots, 1:56) and
+**The default for new videos is now the realistic «الرسم الهندسي» style** (`.claude/skills/diagram/`, built like the Wi-Fi
+video; the user's decision «ثبت الطريقة دي»). Use this cartoon-panel style only when the user names it. The steps shared by
+every style (script §1, voice §2, references §3, audio §4, sounds §7, render and QA §8, cover and titles §9) live here.
+
+The cartoon panel is built like the Suez Canal tunnel video. The reference build is `videos/tbm-tunnel/cartoon/` («مين حفر نفق القناة؟», 29 shots, 1:56) and
 its cover `brand/eh-elhekaya/cover-tbm-tunnel-tiktok.html`. Start every new video from a copy of them. Older builds in the
 same style: `videos/gps-traffic/cartoon/`, `videos/lcd-tv/cartoon/`, `videos/offshore-oil/cartoon/`, `videos/elevator/cartoon/`,
 `videos/submarine/cartoon/`.
 
-Use another style only when the user names it (the other styles: `.claude/skills/diagram/` «الرسم الهندسي» and `.claude/skills/law/` «لو», the build-along style of the nuclear shelter video). Remotion 3D (`remotion/src/lightning/`, `remotion/src/rainbow/`) renders on
+The other styles: `.claude/skills/diagram/` «الرسم الهندسي» (the default) and `.claude/skills/law/` «لو», the build-along
+style of the nuclear shelter video. Remotion 3D (`remotion/src/lightning/`, `remotion/src/rainbow/`) renders on
 the CPU here (no GPU) and takes about 40 minutes a video against about 15 for the cartoon panel, so never pick it on your own.
 
 Talk to the user in Egyptian Arabic. Work in this order, end to end; the voice is generated here (section 2).
