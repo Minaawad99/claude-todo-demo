@@ -68,7 +68,9 @@ rec(L(26) + 0.1, 'paper', 0.35, 0, 0.5, 1.0, 'paper', 0.25); a(L(26) + 0.3, 'pop
 
 // music: the recorded bed when it's here, otherwise sfx.py's own bed (both ~8 dB under the voice, the whole video)
 // px-music-long.mp3 = «Calm Ambient» (universfield, Pixabay) looped 3× with 4 s crossfades (ffmpeg acrossfade), 172 s
-const MUSIC = has('music-long') ? 'music-long' : 'music-bed';
-if (has(MUSIC)) rec(0, MUSIC, 0.6, 0.35, window.TIMING.duration + 2.5, 0.6);   // ~8 dB under the voice in the gaps, ducked a little more under speech
+// px-music-soft.mp3 = «Mysterious Music Box – The Midnight Hour» (sent by the channel) with the bright music-box ring cut
+// (high shelf -5 dB above 3 kHz) and the first 12 s pulled down a further 4 dB → 0 (ffmpeg); lower than the old bed, as asked
+const MUSIC = has('music-soft') ? 'music-soft' : has('music-long') ? 'music-long' : 'music-bed';
+if (has(MUSIC)) rec(0, MUSIC, MUSIC === 'music-soft' ? 0.42 : 0.6, 0, window.TIMING.duration + 2.5, 0.6);   // ~8 dB under the voice in the gaps, ducked a little more under speech
 fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: !has(MUSIC), cues: c }, null, 1));
-console.log(c.length + ' cues; recorded clips here: ' + (['ocean-waves', 'water-rush', 'wind-gust', 'swipe', 'paper', 'pencil-scribble', 'clock-ticking', 'ding', 'space-drone', 'brake-squeak', 'music-long'].filter(has).join(', ') || 'none'));
+console.log(c.length + ' cues; recorded clips here: ' + (['ocean-waves', 'water-rush', 'wind-gust', 'swipe', 'paper', 'pencil-scribble', 'clock-ticking', 'ding', 'space-drone', 'brake-squeak', 'music-soft'].filter(has).join(', ') || 'none'));

@@ -24,3 +24,5 @@
 - `px-pencil-scribble.mp3`: «Pencil on Paper Scribble 2» by freesound_community (Pixabay 68772), 0.75–1.5 s.
 - `px-wind-gust.mp3`: «Wind Gust» by Dragon Studio (Pixabay 386158).
 - `px-water-rush.mp3`: «Above Rushing Water (Waterfall)» by freesound_community (Pixabay 61158), from 3 s.
+- `px-music-soft.mp3` (the music now used): «Mysterious Music Box – The Midnight Hour», sent by the channel; high shelf -5 dB
+  above 3 kHz and the first 12 s faded up from -4 dB, to calm the music-box ring. It replaces «Calm Ambient».
