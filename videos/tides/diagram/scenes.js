@@ -181,6 +181,44 @@ function beach(o, zw, t, opt) {
   }
   return s;
 }
+// ── the beach from the side (eye level, a cut through the sand bed), 608 × 520 box. zw = water level (-46 low … +16 high).
+// The sea climbs the sand slope at high water and leaves wet sand at low water; the tide staff shows the level.
+function ys(x) { return 250 + 0.36 * x; }   // sand surface (y grows downward)
+function beachSide(zw, t, opt) {
+  opt = opt || {}; var W = 608, H = 520, yw = 360 - zw * 2.3, xw = Math.max(0, (yw - 250) / 0.36), s = "", k, x;
+  var sand = "M0 " + f(ys(0)); for (k = 1; k <= 16; k++) { x = W * k / 16; sand += " L" + f(x) + " " + f(ys(x) + 3 * Math.sin(x * .05)); }
+  s += '<path d="' + sand + ' L' + W + ' ' + H + ' L0 ' + H + ' Z" fill="' + SAND_SIDE + '" stroke="' + INK + '" stroke-width="2.2" stroke-linejoin="round"/>';
+  s += '<path d="' + sand + ' L' + W + ' ' + H + ' L0 ' + H + ' Z" fill="url(#hatch)" opacity=".7"/>';
+  [34, 78, 130].forEach(function (dz, j) { var d = ""; for (k = 0; k <= 16; k++) { x = W * k / 16; d += (k ? " L" : "M") + f(x) + " " + f(Math.min(H - 6, ys(x) + dz)); } s += '<path d="' + d + '" stroke="' + STRATA + '" stroke-width="' + (2.4 - j * .5) + '" fill="none"' + (j ? ' stroke-dasharray="7 6"' : "") + '/>'; });
+  for (k = 0; k < 26; k++) { var px = hash(k) * W, py = ys(px) + 12 + hash(k + 40) * 150; if (py < H - 8) s += '<circle cx="' + f(px) + '" cy="' + f(py) + '" r="' + f(2 + hash(k + 9) * 3) + '" fill="' + STRATA + '"/>'; }
+  // wet sand between the low-water line and the highest the sea reached
+  var hiX = (360 - 16 * 2.3 - 250) / 0.36; if (xw > hiX) s += '<path d="M' + f(hiX) + ' ' + f(ys(hiX)) + ' L' + f(xw) + ' ' + f(ys(xw)) + ' L' + f(xw) + ' ' + f(ys(xw) + 7) + ' L' + f(hiX) + ' ' + f(ys(hiX) + 7) + ' Z" fill="' + WET + '"/>';
+  // umbrella and towel on the dry sand
+  if (opt.umbrella !== false) s += '<path d="M60 ' + f(ys(60)) + ' L66 ' + f(ys(60) - 120) + '" stroke="' + INK + '" stroke-width="3"/>' + '<path d="M6 ' + f(ys(60) - 104) + ' Q66 ' + f(ys(60) - 160) + ' 126 ' + f(ys(60) - 104) + ' Z" fill="#e9e1cc" stroke="' + INK + '" stroke-width="2"/><path d="M46 ' + f(ys(60) - 108) + ' Q66 ' + f(ys(60) - 150) + ' 86 ' + f(ys(60) - 108) + ' Z" fill="' + ORANGE + '" stroke="' + INK + '" stroke-width="1.6"/>' +
+    '<path d="M18 ' + f(ys(18) - 3) + ' L110 ' + f(ys(110) - 3) + '" stroke="#c96a4a" stroke-width="6" stroke-linecap="round"/>';
+  // pier: posts into the sand (drawn before the sea so the water covers their feet), a plank deck on top
+  var posts = ""; for (x = 250; x < W; x += 66) posts += R(x, 214, 13, ys(x) + 26 - 214, WOOD_D, 1.8) + '<rect x="' + f(x + 8) + '" y="214" width="5" height="' + f(ys(x) + 26 - 214) + '" fill="' + INK + '" opacity=".2"/>';
+  s += posts;
+  // the sea: water body over the slope, a lighter surface band, moving wave crests, foam at the shoreline
+  if (xw < W) {
+    var top = "M" + f(xw) + " " + f(yw); for (x = xw; x <= W + 1; x += 8) top += " L" + f(x) + " " + f(yw + 4 * Math.sin((x - t * 70) * .045));
+    var body = top + " L" + W + " " + f(ys(W)); for (k = 16; k >= 0; k--) { x = xw + (W - xw) * k / 16; body += " L" + f(x) + " " + f(ys(x)); } body += " Z";
+    s += '<path d="' + body + '" fill="' + SEA_SIDE + '" opacity=".88" stroke="' + INK + '" stroke-width="2"/>';
+    s += '<path d="' + top + ' L' + W + ' ' + f(yw + 16) + ' L' + f(xw + 16) + ' ' + f(yw + 16) + ' Z" fill="' + SEA_TOP + '" opacity=".75"/>';
+    for (k = 0; k < 7; k++) { var cx2 = xw + 30 + ((k * 92 + t * 70) % Math.max(80, W - xw - 30)); s += '<path d="M' + f(cx2 - 12) + ' ' + f(yw + 30 + (k % 3) * 22) + ' q12 -5 24 0" stroke="#d6e2e6" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".8"/>'; }
+    s += '<path d="M' + f(xw - 6) + ' ' + f(yw + 1) + ' q8 -6 18 -2 t18 0" stroke="#f6f3ea" stroke-width="4" fill="none" stroke-linecap="round"/>';
+  }
+  s += R(230, 200, W - 222, 16, "#c69a6c", 2) + R(230, 216, W - 222, 6, WOOD_D, 1.4); for (x = 252; x < W; x += 24) s += '<path d="M' + x + ' 200 v16" stroke="' + WOOD_D + '" stroke-width="1.2"/>';
+  // the tide staff on the sea-end post: white board, red and black marks, the level number beside the waterline
+  var sx = 520; s += R(sx, 150, 26, 300, "#f4efe3", 1.8);
+  for (k = 0; k < 15; k++) { var my = 158 + k * 20; s += R(sx, my, k % 2 ? 13 : 26, 6, my > yw - 2 && opt.staffHi ? ORANGE : INK, 0); }
+  // the boat: a rowing boat in profile, aground and tilted at low water, floating level at high water
+  if (opt.boat !== false) {
+    var bx = 360, ground = ys(bx + 55) - 2, fl = yw + 6, by = Math.min(fl, ground), tilt = fl > ground ? -9 : 2 * Math.sin(t * 1.8);
+    s += G("translate(" + f(bx) + " " + f(by) + ") rotate(" + f(tilt) + " 55 0)", '<path d="M0 -26 L110 -26 L96 4 Q55 12 14 4 Z" fill="#3f6a7e" stroke="' + INK + '" stroke-width="2.2" stroke-linejoin="round"/><path d="M4 -22 L106 -22" stroke="#e7e1d1" stroke-width="4"/><path d="M30 -26 l-8 -16 M80 -26 l10 -14" stroke="' + WOOD_D + '" stroke-width="4" stroke-linecap="round"/>');
+  }
+  return s;
+}
 // the water level that a beach at angle a (radians from the Earth–Moon line) sees: high on both bulges, low at the sides
 function levelAt(a) { return lerp(-46, 16, (Math.cos(2 * a) + 1) / 2); }
 
@@ -274,7 +312,7 @@ shot(11, push(320, 400, 1.0, 1.06), function (u, d, t) {
     label(530, 330, 470, 190, "انتفاخ", BLUE, at(u, .3, .5), 26) + label(40, 420, 90, 620, "انتفاخ تاني", BLUE, at(u, 1.1, .5), 26);
 });
 // 12 · «طب ليه البحر عندك بيعلى وينزل؟»: back to the beach, the staff, a question mark
-shot(12, push(330, 430, 1.1, 1.0), function (u, d, t) { return paper() + beach({ ox: 250, oy: 300, s: .62 }, lerp(-30, 12, (Math.sin(t * 1.4) + 1) / 2), t, { staffHi: true }) + T("؟", 500, 250, 130, ORANGE, 800); }, { tr: "out" });
+shot(12, push(320, 430, 1.05, 1.0), function (u, d, t) { return paper() + G("translate(16 200)", beachSide(lerp(-30, 12, (Math.sin(t * 1.4) + 1) / 2), t, { staffHi: true })) + T("؟", 500, 250, 130, ORANGE, 800); }, { tr: "out" });
 // 13–15 · seen from above the North Pole: the Earth turns inside the two bulges; the dot is your beach
 function polar(u, t, op) {
   op = op || {}; var spin = op.spin == null ? t * 22 : op.spin, cx = op.cx || 290, cy = op.cy || 400, r = op.r || 175;
@@ -287,7 +325,7 @@ shot(13, push(300, 400, 0.95, 1.05), function (u, d, t) {
 });
 shot(14, push(300, 420, 1.05, 1.0), function (u, d, t) {
   var a = beachAngle(t * 22), lv = levelAt(a), hi = lv > -15;
-  return paper() + polar(u, t) + iconBox(450, 190, 250, G("translate(-125 -125)", beach({ ox: 82, oy: 48, s: .29 }, lv, t, { umbrella: false })), at(u, .2, .3)) +
+  return paper() + polar(u, t) + iconBox(450, 190, 250, G("translate(-125 -125) scale(.41) translate(0 40)", beachSide(lv, t, { umbrella: false, staffHi: true })), at(u, .2, .3)) +
     tag(hi ? "مد" : "جزر", 450, 360, at(u, .4, .3), 36, hi ? BLUE : ORANGE);
 });
 // 15 · twice a day each: a 24-hour dial with the four tides round it
@@ -356,7 +394,7 @@ window.SCENE = window.SCENE || {};
 SCENE.intro = function (svg, t, li) {
   // line 0: a calm beach. line 1: the sea comes in over the sand, then goes out again. line 2: no wind (a crossed-out wind sign)
   var l1 = LN[1], k = clamp((t - l1.start) / Math.max(1, l1.end - l1.start)), lv = li === 0 ? -30 : li === 1 ? lerp(-30, 16, Math.sin(k * Math.PI)) : -30;
-  var s = beach({ ox: 196, oy: 150, s: .76 }, lv, t, { staffHi: true });
+  var s = G("translate(0 120)", beachSide(lv, t, { staffHi: true }));
   if (li >= 1) s += iconBox(530, 70, 110, '<circle r="34" fill="#f4ecdb" stroke="' + INK + '" stroke-width="2"/><path d="M0 0 V-24 M0 0 L16 10" stroke="' + INK + '" stroke-width="4" stroke-linecap="round"/>' + T("6 ساعات", 0, 52, 15, INK, 700), ease((t - l1.start) / .4));
   if (li >= 2) { var u = t - LN[2].start; s += G("translate(90 90)", '<path d="M-56 -22 H14 C34 -22 38 -46 22 -48 C10 -50 6 -40 10 -34 M-56 0 H34 C58 0 60 -28 40 -30 M-56 22 H4 C24 22 26 44 12 46 C2 47 -2 38 2 33" fill="none" stroke="' + INK + '" stroke-width="5" stroke-linecap="round"/>', ease(u / .3)) + cross(90, 90, 1.1, ease((u - .4) / .4)); }
   return s;
