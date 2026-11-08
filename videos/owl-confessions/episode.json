@@ -4,24 +4,21 @@
  "voices": {
   "host": {
    "voice": "Charon",
-   "style": "[calm, curious, warm talk-show host, clear, natural pace]",
+   "style": "[Modern Standard Arabic (fusha), neutral formal accent, no dialect; calm, curious, warm talk-show host; clear; natural pace]",
    "speed": 1.0,
    "max_pause": 0.35,
    "max_stretch": 1.2
   },
   "guest": {
    "voice": "Algenib",
-   "style": "[wise, calm, slightly mysterious owl; soft but clear; brisk pace, not slow; hint of dry humor]",
+   "style": "[Modern Standard Arabic (fusha), neutral formal accent, no dialect; wise, calm, slightly mysterious owl; soft but clear; steady pace; hint of dry humor]",
    "speed": 1.3,
    "pitch": 0.96,
    "max_pause": 0.3,
    "max_stretch": 1.4
   },
   "models": [
-   "gemini-3.8-flash-lite-tts",
-   "gemini-3.8-flash-tts",
-   "gemini-3.1-flash-tts-preview",
-   "gemini-2.5-flash-preview-tts"
+   "gemini-3.8-flash-tts"
   ]
  },
  "sync": [],

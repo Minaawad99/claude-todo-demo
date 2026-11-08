@@ -40,7 +40,7 @@ A dark, moody late-night podcast studio styled like an old natural-history archi
 
 **H00 (صورة D، 8 ثواني):**
 ```
-The man in the image is a talk-show host. He leans slightly toward the camera and says in Arabic, with a playful, curious tone: "كل الناس بتسألني سؤال واحد: لو البومة وقفت على سطح بيتك، هل معنى ده إن حد من أهل البيت هيموت؟" Natural lip movement, raises one eyebrow on the question, small open-palm hand gesture. Static camera, warm studio light. Keep his face exactly the same.
+The man in the image is a talk-show host. He leans slightly toward the camera and says in Arabic, with a playful, curious tone: "الجميع يسألونني سؤالاً واحداً: إذا وقفت البومة على سطح بيتك، فهل يعني ذلك أن أحداً من أهل البيت سيموت؟" Natural lip movement, raises one eyebrow on the question, small open-palm hand gesture. Static camera, warm studio light. Keep his face exactly the same.
 ```
 
 **H02 (صورة A، 6 ثواني):**
