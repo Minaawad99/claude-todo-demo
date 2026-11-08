@@ -1,6 +1,7 @@
 // «اسكتش» starter sound cues: copy to videos/<episode>/cues.js, fill in the per-line section, then
 //   node cues.js && python3 ../audio/sfx.py voice.wav cues.json <scratchpad>/<episode>-mix.wav
-// The kit (Pixabay clips the channel sent for «المد والجزر»; put them in <episode>/sfx/, gitignored). The slices below are
+// The kit (Pixabay clips the channel sent for «المد والجزر») is committed in videos/_templates/sketch/sfx/ and found from there;
+// a one-off clip for one episode goes in <episode>/sfx/ (gitignored) and wins over the kit. The slices below are
 // the clean parts measured with silencedetect. A missing clip falls back to its synthesized stand-in from audio/sfx.py.
 //   swipe           «Paper Flipping» (koiroylers 351981)            one page flip 0.60–1.02 s   → every shot change
 //   paper           «Paper Slide Short» (oxidvideos 478835)         0–0.5 s                     → a card or note laid down
@@ -17,10 +18,12 @@
 const fs = require('fs');
 global.window = {}; eval(fs.readFileSync(__dirname + '/timing.js', 'utf8'));
 const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration : T[i].start, D = i => L(i + 1) - L(i), c = [];
-const has = n => fs.existsSync(__dirname + '/sfx/px-' + n + '.mp3');
+// a clip lives in the episode's sfx/ (gitignored, one-off sounds) or in the shared «اسكتش» kit (committed)
+const KIT = '../_templates/sketch/sfx/', where = n => fs.existsSync(__dirname + '/sfx/px-' + n + '.mp3') ? 'sfx/px-' + n + '.mp3' : fs.existsSync(__dirname + '/' + KIT + 'px-' + n + '.mp3') ? KIT + 'px-' + n + '.mp3' : null;
+const has = n => !!where(n);
 const a = (t, fx, gain, dur) => c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), fx, gain }, dur ? { dur: +dur.toFixed(2) } : {}));
 const rec = (t, file, gain, from, dur, duck, alt, altGain) => has(file)
-  ? c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), file: 'sfx/px-' + file + '.mp3', gain: +gain.toFixed(2), from: from || 0 }, dur ? { dur: +dur.toFixed(2) } : {}, duck != null ? { duck } : {}))
+  ? c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), file: where(file), gain: +gain.toFixed(2), from: from || 0 }, dur ? { dur: +dur.toFixed(2) } : {}, duck != null ? { duck } : {}))
   : alt && a(t, alt, altGain == null ? gain : altGain, dur);
 // the kit as one-liners
 const lab = (i, dt) => a(L(i) + dt, 'tick', 0.2);                                                      // a label draws in

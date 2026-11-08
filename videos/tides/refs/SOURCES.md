@@ -12,7 +12,7 @@
   day (lunar day 24 h 50 min); the Sun's tidal pull is about 46% of the Moon's; spring tides at new and full moon, neap
   tides at the quarters; the Moon moves away about 3.8 cm a year (lunar laser ranging).
 
-## Sounds (Pixabay Content License, sent by the channel; files kept out of git in `sfx/`)
+## Sounds (Pixabay Content License, sent by the channel; now the shared kit in `videos/_templates/sketch/sfx/`)
 
 - `px-music-bed.mp3`: «Calm Ambient» by universfield (Pixabay 153275). `px-music-long.mp3` is it looped 3× with 4 s crossfades.
 - `px-swipe.mp3`: «Paper Flipping» by koiroylers (Pixabay 351981); single flips at 0.64, 1.0 and 1.17 s.

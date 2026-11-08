@@ -140,9 +140,10 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
 
 ## 5. Sound
 
-**Library first.** The Pixabay clips (`sfx/px-*.mp3`) are gitignored, so a fresh container doesn't have them. Look in
-`videos/*/sfx/`. If the kit isn't there, send the user this table and ask for the files. Every clip has a synthesized
-stand-in, so the episode works while you wait.
+**The kit is in the repo:** `videos/_templates/sketch/sfx/` (committed at the user's request, about 11 MB). `cues.js` finds
+a clip in the episode's own `sfx/` first and then in the kit, so a new episode needs nothing copied. Ask the user only for
+sounds the kit doesn't have, with Pixabay search terms. Those one-off clips go in `<episode>/sfx/` (gitignored). Every
+clip still has a synthesized stand-in.
 
 | file | Pixabay title (the one the user picked) | slice | use |
 |---|---|---|---|
@@ -155,9 +156,9 @@ stand-in, so the episode works while you wait.
 | px-ocean-waves | Ocean Waves (Dragon Studio 376898) | 0.2–22 s | sea |
 | px-water-rush | Above Rushing Water (61158) | from 3 s | water moving |
 | px-wind-gust | Wind Gust (Dragon Studio 386158) | 0.25–4.76 s | wind |
-| px-music-box → px-music-soft | **Mysterious Music Box – The Midnight Hour** (the series music) | whole | bed |
+| px-music-box (source) → px-music-soft (used) | **Mysterious Music Box – The Midnight Hour** (the series music) | whole | bed |
 
-**Music.** The user approved this music and its level:
+**Music.** The user approved this music and its level. `px-music-soft.mp3` in the kit is already made this way:
 - **Soften the ring:**
   `ffmpeg -i px-music-box.mp3 -af "highshelf=f=3000:g=-5,volume='if(lt(t,12),0.6+0.4*t/12,1)':eval=frame" px-music-soft.mp3`
   This takes down the music-box ring, which the user found too much at the start.
