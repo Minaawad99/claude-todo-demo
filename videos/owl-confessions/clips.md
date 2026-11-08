@@ -38,9 +38,16 @@ A dark, moody late-night podcast studio styled like an old natural-history archi
 
 الجملة العربي جوه البرومبت عشان الشفايف تتحرك على نفس الكلام. أنا بشيل صوت Veo وبحط صوتنا.
 
-**H00 (صورة D، 8 ثواني):**
+**H00a (صورة A، 4 ثواني):** (أول جملة في الحلقة، وإنت بتبص للكاميرا)
 ```
-The man in the image is a talk-show host. He leans slightly toward the camera and says in Arabic, with a playful, curious tone: "الجميع يسألونني سؤالاً واحداً: إذا وقفت البومة على سطح بيتك، فهل يعني ذلك أن أحداً من أهل البيت سيموت؟" Natural lip movement, raises one eyebrow on the question, small open-palm hand gesture. Static camera, warm studio light. Keep his face exactly the same.
+The man in the image is a talk-show host. He looks straight into the camera with a playful, knowing look and says in Arabic: "الجميع يسألونني سؤالاً واحداً:" Natural lip movement, raises one finger on the last word, subtle head movement, natural blinking. Static camera, warm studio light. Keep his face exactly the same.
+```
+
+بين H00a وH00b هتيجي لقطة R01 (البومة بتنزل على سطح بيت بالليل) على جملة "إذا وقفت البومة على سطح بيتك".
+
+**H00b (صورة A، 4 ثواني):**
+```
+The man in the image is a talk-show host. He leans slightly toward the camera, lowers his voice as if asking something serious, and says in Arabic: "فهل يعني ذلك أن أحداً من أهل البيت سيموت؟" Natural lip movement, raises one eyebrow on the question, then turns his head toward his guest. Static camera, warm studio light. Keep his face exactly the same.
 ```
 
 **H02 (صورة A، 6 ثواني):**
@@ -244,7 +251,7 @@ Vertical 9:16 shot of a barn owl perched on an old wooden fence post at dusk, it
 | النوع | العدد | الأرقام |
 |---|---|---|
 | صور ماستر | 3 (+ D لو مش موجودة) | A، B، C (D) |
-| المذيع بيتكلم H | 12 | H00، H02، H04، H06، H08، H10، H12، H14، H16، H18، H22، H24 |
+| المذيع بيتكلم H | 13 | H00a، H00b، H02، H04، H06، H08، H10، H12، H14، H16، H18، H22، H24 |
 | البومة بتتكلم K | 9 | K01، K03، K05، K09، K13، K17، K20، K21، K25 |
 | ردود أفعال C | 7 | C03، C07، C11، C15، C21، C23، C25 |
 | فيديوهات الشرح R | 8 | R01، R03، R05، R09، R11، R13، R19، R21 |
