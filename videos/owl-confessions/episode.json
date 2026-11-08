@@ -12,7 +12,7 @@
   "guest": {
    "voice": "Algenib",
    "style": "[Modern Standard Arabic (fusha), neutral formal accent, no dialect; wise, calm, slightly mysterious owl; soft but clear; steady pace; hint of dry humor]",
-   "speed": 1.5,
+   "speed": 1.65,
    "pitch": 0.96,
    "max_pause": 0.3,
    "max_stretch": 1.4
