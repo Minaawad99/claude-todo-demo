@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<!-- Made with the Bang Motion skill v1.19.0 by Bang Tutorial (https://youtube.com/bangtutorial) - MIT - https://github.com/bangtutorial/bang-motion -->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>افتتاحية إيه الحكاية</title>
+<!--
+  =====  STYLE BRIEF  =====
+  Tema/produk + 3 kata sifat : قناة «إيه الحكاية؟» — فضول، وضوح، دفا الورق المرسوم
+  Konsep                      : 1) اللوجو هو المسرح  2) سؤال مكتوب على الحاجة → إجابة مقطعية  3) الـ؟ بتتحول لحاجات
+                                → المختار: 12 (Logo sebagai panggung)
+  Sidik jari struktur         : لوجو-مسرح · 7 · ؟+فقاعة / سحاب / طيارة / مركب / طابعة / ساعة / لوجو+اسم ·
+                                ؟ تقع والحبر يرسم الفقاعة · الكاميرا تطلع فنكتشف إن كله جوه الفقاعة
+  Palet (dari brand)          : أحمر #c15636 (الـ؟ في اللوجو) · ورق #ebe3cd (tokens.css) · أزرق #3c6484 (أسهم البراند)
+  Font                        : Noto Sans Arabic 500/800 (خط البراند) + Noto Serif للأرقام
+  Bahasa latar                : Kertas & cetak — ورق مربعات + رسم هندسي بالحبر والتهشير
+  Tanda tangan gerak          : الخط الحبر يرسم الشكل → التهشير/اللون يملاه
+  Gerak latar (§7c)           : شبكة الورق بتتنفس + parallax مع الكاميرا + حبيبات حية
+  Permukaan latar (§7d)       : ورق كريمي + شبكة + بقع ضوء دافية + حبيبات (4 طبقات)
+  Gaya render objek (§7e)     : flat رسم هندسي بالحبر + تهشير
+  Transisi                    : غطسة في الفقاعة · متابعة الطيارة · whip لتحت · whip لليمين · دخول في الورقة · طلعة كاميرا
+  Momen istimewa              : الطلعة: كل اللي شفناه كان جوه الفقاعة
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@500;800&family=Noto+Serif:wght@600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<style>
+:root{
+  --paper:#ebe3cd; --paper-raised:#f2e9d6; --paper-grid:#d7ceb7; --page:#fbf7ec;
+  --khaki:#cbbfa7; --khaki-deep:#a2967e;
+  --ink:#1e1712; --ink-muted:#5f554a;
+  --heat:#c15636; --heat-text:#9e4129; --on-heat:#fbf4e4;
+  --water:#3c6484; --water-body:#bec3bd; --olive:#929f7a;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;background:#14110d;overflow:hidden;
+  font-family:"Noto Sans Arabic",Tahoma,sans-serif;color:var(--ink)}
+#filters{position:fixed;width:0;height:0;opacity:0;pointer-events:none}
+#stage{position:fixed;left:50%;top:50%;width:1920px;height:1080px;
+  transform:translate(-50%,-50%);overflow:hidden;background:var(--paper)}
+
+/* ورق: أساس + بقع ضوء + شبكة (الشبكة بتتحرك من render) */
+#paper{position:absolute;inset:-200px;
+  background:
+   radial-gradient(40% 50% at 22% 28%,rgba(255,248,230,.75),transparent 70%),
+   radial-gradient(45% 55% at 80% 78%,rgba(203,191,167,.45),transparent 70%),
+   var(--paper)}
+#grid{position:absolute;inset:-200px;
+  background-image:linear-gradient(to right,var(--paper-grid) 1.5px,transparent 1.5px),
+                   linear-gradient(to bottom,var(--paper-grid) 1.5px,transparent 1.5px);
+  background-size:60px 60px;opacity:.75}
+#world{position:absolute;left:0;top:0;width:4000px;height:4000px;transform-origin:0 0}
+#world>svg{position:absolute;left:0;top:0;overflow:visible}
+#grain{position:absolute;inset:-100px;pointer-events:none;z-index:30;opacity:.16;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .12  0 0 0 0 .09  0 0 0 0 .07  0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E")}
+#vig{position:absolute;inset:0;pointer-events:none;z-index:29;
+  background:radial-gradient(ellipse 80% 75% at 50% 50%,transparent 55%,rgba(120,100,70,.22) 100%)}
+
+/* أدوات الرسم (من design-system/components/bundle.css) */
+.tz-ink{fill:none;stroke:var(--ink);stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
+.tz-f-paper{fill:var(--paper-raised)} .tz-f-deep{fill:var(--khaki-deep)} .tz-f-heat{fill:var(--heat)}
+.tz-f-water{fill:var(--water-body)} .tz-pat-hatch{fill:url(#tz-hatch)}
+.body-lit{fill:var(--paper-raised)} .body-shade{fill:var(--khaki)}
+.hl{fill:none;stroke:var(--paper);stroke-width:2;opacity:.9}
+.cloud{fill:var(--paper-raised);stroke:var(--ink);stroke-width:1.5}
+.box1{fill:var(--heat)} .box2{fill:var(--water)} .box3{fill:var(--olive)} .box4{fill:var(--khaki)}
+
+/* نصوص الشاشة */
+.line{position:absolute;white-space:nowrap;width:max-content;font-weight:500;letter-spacing:0;opacity:0;z-index:20;
+  color:var(--ink);text-shadow:0 2px 0 rgba(251,247,236,.9)}
+.line .wd{display:inline-block;opacity:0}
+.line .q{color:var(--heat)}
+#l1{font-size:104px;width:auto;left:0;right:0;text-align:center;top:770px}
+#l2{font-size:124px;right:150px;top:120px}
+#l3{font-size:98px;left:140px;top:300px}
+#l4{font-size:156px;font-weight:800;left:120px;top:380px}
+#wm{font-size:170px;font-weight:800;left:110px;top:330px}
+#chips{position:absolute;width:max-content;left:110px;top:600px;display:flex;gap:22px;z-index:20;direction:rtl}
+#chips span{font:600 40px/1 "Noto Sans Arabic",sans-serif;padding:16px 26px;border:3px solid var(--ink);
+  background:var(--paper-raised);opacity:0;display:inline-block}
+#chips span:first-child{background:var(--heat-text);border-color:var(--heat-text);color:var(--on-heat)}
+
+/* الورقة اللي بتملا الشاشة (نفس لون الورقة في الدنيا) */
+#pageov{position:absolute;inset:0;background:var(--page);opacity:0;visibility:hidden;z-index:15}
+#pageov svg{position:absolute;inset:0}
+#count{font:600 120px/1 "Noto Serif",serif;font-variant-numeric:tabular-nums;fill:var(--ink)}
+
+#ui{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);direction:ltr;
+  display:none;align-items:center;gap:14px;padding:11px 18px;border-radius:16px;
+  background:rgba(14,16,22,.9);font:13px system-ui;color:#A0A6B4;z-index:50}
+#ui.on{display:flex}
+#ui button{background:#262A34;color:#fff;border:none;padding:8px 16px;border-radius:9px;font:inherit;cursor:pointer}
+#scrub{width:340px}
+#clock{font-variant-numeric:tabular-nums;min-width:5.2ch;text-align:right}
+</style>
+</head>
+<body>
+<svg id="filters"><defs>
+  <pattern id="tz-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+    <line x1="0" y1="0" x2="0" y2="6" stroke="#a2967e" stroke-width="1"/></pattern>
+</defs></svg>
+
+<div id="stage">
+  <div id="paper"></div>
+  <div id="grid"></div>
+  <div id="world">
+   <svg width="4000" height="4000" viewBox="0 0 4000 4000">
+    <defs>
+      <clipPath id="inside"><path d="M670 870 H3570 V2930 H600 Z"/></clipPath>
+      <clipPath id="printClip"><rect x="2700" y="1000" width="1000" height="1414"/></clipPath>
+    </defs>
+
+    <!-- ===== اللوجو: الفقاعة (×20 من مقاس 200 في brand.html) ===== -->
+    <g id="mk">
+      <g id="crown"><rect x="1680" y="80" width="640" height="200" fill="var(--ink)"/><rect x="1880" y="280" width="240" height="280" fill="var(--ink)"/></g>
+      <path id="bshadow" d="M600 800 H3640 V3000 H1920 L1200 3720 V3000 H600 Z" fill="var(--ink)"/>
+      <path id="bfill" d="M600 800 H3640 V3000 H1920 L1200 3720 V3000 H600 Z" fill="var(--paper-raised)"/>
+    </g>
+
+    <!-- ===== جوه الفقاعة: الدنيا اللي الحكايات بتحصل فيها ===== -->
+    <g id="inner" clip-path="url(#inside)">
+      <g id="sky">
+        <g class="obj" id="cl1" transform="translate(760 1000) scale(8)"><path class="cloud" d="M0 34 C0 24 8 19 16 21 C18 10 34 6 42 14 C48 6 64 9 66 20 C76 19 84 26 82 34 Z"/><path class="tz-pat-hatch" d="M-4 34 H86 V40 H-4 Z"/></g>
+        <g class="obj" id="cl2" transform="translate(2250 1180) scale(6)"><path class="cloud" d="M0 34 C0 24 8 19 16 21 C18 10 34 6 42 14 C48 6 64 9 66 20 C76 19 84 26 82 34 Z"/><path class="tz-pat-hatch" d="M-4 34 H86 V40 H-4 Z"/></g>
+        <g class="obj" id="cl3" transform="translate(760 1430) scale(4.5)"><path class="cloud" d="M0 34 C0 24 8 19 16 21 C18 10 34 6 42 14 C48 6 64 9 66 20 C76 19 84 26 82 34 Z"/><path class="tz-pat-hatch" d="M-4 34 H86 V40 H-4 Z"/></g>
+        <g class="obj" id="cl4" transform="translate(2900 900) scale(5)"><path class="cloud" d="M0 34 C0 24 8 19 16 21 C18 10 34 6 42 14 C48 6 64 9 66 20 C76 19 84 26 82 34 Z"/><path class="tz-pat-hatch" d="M-4 34 H86 V40 H-4 Z"/></g>
+        <!-- الطيارة (من رسمة الغلاف) + سهم الرفع -->
+        <g id="plane">
+          <g class="obj" id="jet">
+            <path class="tz-f-deep tz-ink" d="M150 50 L222 22 L238 22 L198 52 Z"/><path class="tz-pat-hatch" d="M150 50 L222 22 L238 22 L198 52 Z"/>
+            <path class="tz-f-deep tz-ink" d="M262 46 L290 30 L299 30 L284 48 Z"/>
+            <path class="body-lit tz-ink" d="M244 46 L268 43 L298 2 L281 2 Z"/><path class="tz-pat-hatch" d="M268 43 L298 2 L291 2 L262 44 Z"/>
+            <path class="body-lit tz-ink" d="M24 46 C8 47 2 54 2 60 C2 67 10 72 26 73 L250 73 C268 72 286 62 298 50 L298 43 L268 43 L240 46 Z"/>
+            <path class="body-shade" d="M8 64 L292 64 C282 70 268 73 250 73 L26 73 C16 72 10 69 8 64 Z"/>
+            <path class="hl" d="M30 50 L236 49"/>
+            <path class="tz-f-water tz-ink" d="M8 54 Q12 50 22 50 L22 55 Z"/>
+            <path class="dots" style="fill:none;stroke:var(--ink);stroke-width:2.6;stroke-dasharray:1.2 6.8;stroke-linecap:round" d="M40 56 H228"/>
+            <path class="body-shade tz-ink" d="M118 64 L178 66 L240 100 L220 102 L132 74 Z"/><path class="tz-pat-hatch" d="M178 66 L240 100 L232 101 L170 68 Z"/>
+            <path class="body-shade tz-ink" d="M150 78 L184 78 Q190 84 184 90 L150 90 Z"/><ellipse class="tz-f-deep tz-ink" cx="150" cy="84" rx="4.5" ry="6"/>
+            <path class="body-shade tz-ink" d="M258 62 L300 76 L290 78 L254 68 Z"/>
+          </g>
+          <g id="lift">
+            <path d="M139 178 V132 H129 L150 106 L171 132 H161 V178 Z" fill="var(--water)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
+            <text x="180" y="160" font-size="24" font-weight="800" fill="var(--water)" style="paint-order:stroke;stroke:var(--paper-raised);stroke-width:5px;stroke-linejoin:round">الرفع</text>
+          </g>
+        </g>
+      </g>
+
+      <!-- البحر والمركب -->
+      <g id="sea">
+        <path id="water" fill="var(--water-body)" d=""/>
+        <path id="wave" fill="none" stroke="var(--water)" stroke-width="7" d=""/>
+        <g id="ship">
+          <g class="obj" id="hull">
+            <path class="tz-f-deep tz-ink" d="M10 86 L330 86 L316 122 L36 122 Z"/>
+            <path class="tz-f-heat" d="M22 110 L324 110 L316 122 L36 122 Z"/>
+            <path class="body-lit tz-ink" d="M260 26 L300 26 L300 86 L260 86 Z"/>
+            <path class="tz-pat-hatch" d="M286 26 L300 26 L300 86 L286 86 Z"/>
+            <path class="tz-ink" d="M266 38 H294 M266 50 H294"/>
+            <path class="tz-f-deep tz-ink" d="M272 6 L288 6 L288 26 L272 26 Z"/>
+          </g>
+          <g id="boxes" stroke="var(--ink)" stroke-width="1.2">
+            <rect class="box1" x="40" y="66" width="34" height="20"/><rect class="box2" x="74" y="66" width="34" height="20"/>
+            <rect class="box3" x="108" y="66" width="34" height="20"/><rect class="box4" x="142" y="66" width="34" height="20"/>
+            <rect class="box2" x="176" y="66" width="34" height="20"/><rect class="box1" x="210" y="66" width="34" height="20"/>
+            <rect class="box3" x="57" y="46" width="34" height="20"/><rect class="box1" x="91" y="46" width="34" height="20"/>
+            <rect class="box4" x="125" y="46" width="34" height="20"/><rect class="box2" x="159" y="46" width="34" height="20"/>
+          </g>
+        </g>
+      </g>
+
+      <!-- الأوضة: ترابيزة وطابعة وورقة -->
+      <g id="room">
+        <g class="obj" id="table">
+          <path class="tz-ink" style="stroke-width:6" d="M2760 2700 H3640"/>
+          <path class="tz-ink" style="stroke-width:6" d="M2860 2700 V3000 M3500 2700 V3000"/>
+          <path class="tz-pat-hatch" d="M2760 2706 H3640 V2740 H2760 Z" transform="scale(1)"/>
+        </g>
+        <g id="pageWrap" clip-path="url(#printClip)">
+          <g id="page">
+            <path d="M2990 2400 H3290 V2780 H2990 Z" fill="var(--page)" stroke="var(--ink)" stroke-width="4"/>
+            <path id="heart" d="M3140 2650 C3104 2626 3074 2602 3074 2575 C3074 2554 3089 2542 3107 2542 C3122 2542 3134 2551 3140 2563 C3146 2551 3158 2542 3173 2542 C3191 2542 3206 2554 3206 2575 C3206 2602 3176 2626 3140 2650 Z" fill="var(--ink)"/>
+            <path d="M3030 2470 H3250 M3030 2500 H3200" stroke="var(--khaki-deep)" stroke-width="6" stroke-linecap="round"/>
+          </g>
+        </g>
+        <g class="obj" id="printer" transform="translate(2878 2282) scale(2.2)">
+          <path class="body-lit tz-ink" d="M20 60 L60 30 L260 30 L220 60 Z"/>
+          <path class="tz-f-deep tz-ink" d="M70 50 L90 38 L200 38 L180 50 Z"/>
+          <path class="body-shade tz-ink" d="M220 60 L260 30 L260 160 L220 190 Z"/><path class="tz-pat-hatch" d="M220 60 L260 30 L260 160 L220 190 Z"/>
+          <rect class="body-lit tz-ink" x="20" y="60" width="200" height="130"/>
+          <rect class="tz-f-deep tz-ink" x="40" y="74" width="120" height="10"/>
+          <rect class="body-shade tz-ink" x="30" y="150" width="180" height="30"/>
+          <rect class="tz-f-water tz-ink" x="176" y="96" width="32" height="18"/><circle class="tz-f-heat tz-ink" cx="186" cy="128" r="5"/>
+        </g>
+      </g>
+    </g>
+
+    <!-- إطار الفقاعة بالحبر (فوق الدنيا) -->
+    <path id="bline" d="M600 800 H3640 V3000 H1920 L1200 3720 V3000 H600 Z" fill="none" stroke="var(--ink)" stroke-width="140" stroke-linejoin="round" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1"/>
+    <!-- الـ؟ -->
+    <g id="qm"><text x="2120" y="2800" text-anchor="middle" font-size="2400" font-weight="800" fill="var(--heat)" font-family="Noto Sans Arabic">؟</text></g>
+   </svg>
+  </div>
+
+  <!-- ورقة الطابعة وهي مالية الشاشة: الساعة -->
+  <div id="pageov">
+    <svg viewBox="0 0 1920 1080" width="1920" height="1080">
+      <g id="watch">
+        <rect id="wcrown1" x="1250" y="148" width="120" height="40" fill="var(--ink)"/>
+        <rect id="wcrown2" x="1290" y="188" width="40" height="44" fill="var(--ink)"/>
+        <circle id="wface" cx="1310" cy="560" r="320" fill="var(--paper-raised)"/>
+        <path id="wfill" d="" fill="var(--heat)" opacity=".18"/>
+        <g id="wticks" stroke="var(--ink)" stroke-width="10" stroke-linecap="round"></g>
+        <circle id="wring" cx="1310" cy="560" r="320" fill="none" stroke="var(--ink)" stroke-width="18" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" transform="rotate(-90 1310 560)"/>
+        <text id="count" x="1310" y="760" text-anchor="middle">0</text>
+        <g id="hand"><path d="M1310 590 V300" stroke="var(--heat)" stroke-width="16" stroke-linecap="round"/></g>
+        <circle cx="1310" cy="560" r="24" fill="var(--ink)"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="line" id="l1">كل حاجة حواليك ليها حكاية</div>
+  <div class="line" id="l2">بتشتغل إزاي<span class="q">؟</span></div>
+  <div class="line" id="l3">مرسومة ومشروحة</div>
+  <div class="line" id="l4">في دقيقة</div>
+  <div class="line" id="wm">إيه الحكاية<span class="q">؟</span></div>
+  <div id="chips"><span>أجهزة البيت</span><span>طيران</span><span>بحر</span><span>تكنولوجيا</span></div>
+
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+
+<div id="ui">
+  <button id="btn-play">Pause</button><button id="btn-restart">Restart</button>
+  <input id="scrub" type="range" min="0" max="1000" value="0">
+  <span id="clock">0.00s</span>
+</div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const Q=new URLSearchParams(location.search);
+
+/* ===== blur berarah (starter) ===== */
+const defs=$('#filters defs'); let fc=0;
+function makeBlur(){const id='mb'+(fc++);const f=document.createElementNS(NS,'filter');f.id=id;
+  f.setAttribute('x','-70%');f.setAttribute('y','-70%');f.setAttribute('width','240%');f.setAttribute('height','240%');
+  const g=document.createElementNS(NS,'feGaussianBlur');g.setAttribute('stdDeviation','0 0');f.appendChild(g);defs.appendChild(f);
+  return {url:`url(#${id})`,node:g};}
+function blurTween(tl,targets,at,from,to,dur,{ease='power3.out',ax=1,ay=.08}={}){
+  const b=makeBlur(),o={v:from};tl.set(targets,{filter:b.url},at);
+  tl.to(o,{v:to,duration:dur,ease,onUpdate(){b.node.setAttribute('stdDeviation',`${(o.v*ax).toFixed(2)} ${(o.v*ay).toFixed(2)}`);}},at);
+  tl.set(targets,{filter:'none'},at+dur);}
+/* عربي: التقسيم بالكلمة، مش بالحرف (الحروف العربية متصلة) */
+function splitWords(el){const out=[];[...el.childNodes].forEach(n=>{
+  if(n.nodeType===3){const parts=n.textContent.split(/(\s+)/);const frag=document.createDocumentFragment();
+    parts.forEach(p=>{if(!p)return;if(/^\s+$/.test(p)){frag.appendChild(document.createTextNode(' '));return;}
+      const s=document.createElement('span');s.className='wd';s.textContent=p;frag.appendChild(s);out.push(s);});
+    el.replaceChild(frag,n);}
+  else{n.classList.add('wd');out.push(n);}});return out;}
+
+/* ===== tanda tangan gerak: الحبر يرسم، بعدين اللون يملا =====
+   كل .obj بيتنسخ: نسخة خطوط (pathLength=1 + dash) فوق، والأصل (ألوان + تهشير) تحت. */
+const SHAPES='path,rect,circle,ellipse';
+function prepInk(g){
+  const lines=g.cloneNode(true);lines.removeAttribute('id');lines.classList.remove('obj');lines.classList.add('inklines');
+  $$(SHAPES,lines).forEach(el=>{
+    const stroked=el.classList.contains('tz-ink')||el.classList.contains('cloud');
+    if(!stroked||el.style.strokeDasharray){el.remove();return;}
+    el.setAttribute('class','');el.setAttribute('pathLength','1');
+    const sw=el.style.strokeWidth||'1.5';el.setAttribute('style',`fill:none;stroke:var(--ink);stroke-width:${sw};stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:1 1;stroke-dashoffset:1`);});
+  $$(SHAPES,g).forEach(el=>{if(el.classList.contains('tz-ink')||el.classList.contains('cloud'))el.style.stroke='none';});
+  g.after(lines);g.style.opacity=0;g._lines=lines;return g;}
+const OBJ={};$$('.obj').forEach(g=>OBJ[g.id]=prepInk(g));
+function inkOn(tl,id,at,dur=1.0){const g=OBJ[id],ls=$$(SHAPES,g._lines);
+  tl.fromTo(ls,{strokeDashoffset:1},{strokeDashoffset:0,duration:dur,ease:'power2.inOut',stagger:{amount:dur*.45},immediateRender:false},at);
+  tl.fromTo(g,{opacity:0},{opacity:1,duration:dur*.55,ease:'power1.out',immediateRender:false},at+dur*.6);}
+function inkReset(tl,ids,at){ids.forEach(id=>{tl.set($$(SHAPES,OBJ[id]._lines),{strokeDashoffset:1},at);tl.set(OBJ[id],{opacity:0},at);});}
+
+/* ===== الحالة: كل حاجة دالة في tl.time() ===== */
+const S={cx:2120,cy:2100,s:.235, qx:0,qy:-3600,qs:1,qr:0, px:2350,py:1500,pr:0,
+         sx:-300, wv:0, gridO:.75};
+const W=1920,H=1080;
+const rig=$('#world'),grid=$('#grid'),grain=$('#grain');
+const qm=$('#qm'),plane=$('#plane'),ship=$('#ship');
+const water=$('#water'),wave=$('#wave');
+function waveD(t,close){let d='';const y0=2360;
+  for(let x=560;x<=2760;x+=40){const y=y0+Math.sin(x*.006+t*2.1)*14+Math.sin(x*.013-t*1.3)*7;d+=(x===560?'M':'L')+x+' '+y.toFixed(1)+' ';}
+  return close?d+'L2760 3100 L560 3100 Z':d;}
+function render(t){
+  // كاميرا + نفَس خفيف (جيوب، مش random)
+  const s=S.s, bx=Math.sin(t*.47)*6/s, by=Math.cos(t*.39)*5/s, rot=Math.sin(t*.31)*.18;
+  const tx=W/2-(S.cx+bx)*s, ty=H/2-(S.cy+by)*s;
+  rig.style.transform=`translate(${tx}px,${ty}px) rotate(${rot}deg) scale(${s})`;
+  // الشبكة: parallax + نفس
+  const gs=60*(1+.12*Math.log(s/.235+1))*(1+Math.sin(t*.6)*.015);
+  grid.style.backgroundSize=`${gs}px ${gs}px`;
+  grid.style.backgroundPosition=`${(-S.cx*.06)%gs}px ${(-S.cy*.06)%gs}px`;
+  grid.style.opacity=S.gridO;
+  // حبيبات حية: تتنقل 12 مرة في الثانية
+  const k=Math.floor(t*12);grain.style.transform=`translate(${(k*37)%90-45}px,${(k*53)%90-45}px)`;
+  // الـ؟
+  qm.setAttribute('transform',`translate(${S.qx} ${S.qy}) rotate(${S.qr} 2120 2350) translate(2120 2350) scale(${S.qs}) translate(-2120 -2350)`);
+  // الطيارة: 3× من مقاسها الأصلي، حوالين نصها
+  plane.setAttribute('transform',`translate(${S.px} ${S.py+Math.sin(t*2.2)*10}) rotate(${S.pr}) scale(3) translate(-150 -60)`);
+  // البحر
+  drawWatch();water.setAttribute('d',waveD(t,true));wave.setAttribute('d',waveD(t,false));
+  const sy=2360+Math.sin(S.sx*.006+t*2.1)*14+Math.sin(S.sx*.013-t*1.3)*7;
+  ship.setAttribute('transform',`translate(${S.sx} ${sy-108*2.6+40}) rotate(${Math.sin(t*1.7)*1.2}) translate(${340*2.6} 0) scale(-2.6 2.6)`);
+}
+
+/* ===== TIMELINE ===== */
+const DURATION=35.2;
+const W0={a:0};let drawWatch=()=>{};
+const tl=gsap.timeline({paused:true});
+const SFX=[];const sfx=(name,at,o)=>tl.call(()=>playSfx(name,o),[],at);
+
+// حالة البداية
+tl.set('#bline',{attr:{'stroke-dashoffset':1}},0);
+tl.set(['#bfill','#bshadow'],{opacity:0},0);tl.set('#bshadow',{x:0,y:0},0);
+tl.set('#crown',{y:-900,opacity:0},0);
+tl.set('#inner',{opacity:1,clipPath:'none'},0);
+tl.set('#lift',{scaleY:0,opacity:0,transformOrigin:'50% 100%'},0);
+tl.set('#boxes rect',{y:-260,opacity:0},0);
+tl.set('#page',{y:0},0);tl.set('#heart',{opacity:0},0);
+tl.set(S,{cx:2120,cy:2100,s:.235,qx:0,qy:-3600,qs:1,qr:-14,px:2150,py:1500,pr:0,sx:-500},0);
+inkReset(tl,Object.keys(OBJ),0);
+tl.set(['#pageov'],{autoAlpha:0},0);tl.set('#wm,#l1,#l2,#l3,#l4',{autoAlpha:0},0);
+tl.set('#chips span',{opacity:0},0);
+tl.set('#inner',{opacity:0},0);tl.set('#inner',{opacity:1},3.05);
+tl.set('#sea',{opacity:0},0);tl.set('#sea',{opacity:1},12.25);
+tl.set('#page',{opacity:0},0);tl.set('#page',{opacity:1},19.6);
+
+/* --- 0–2.8: الـ؟ تقع وتنط، الحبر يرسم الفقاعة، التاج يتركب --- */
+tl.to(S,{qy:0,qr:0,duration:.7,ease:'bounce.out'},.35);sfx('pop',.62);sfx('pop',.86,{v:.4,f:.8});
+tl.to(S,{qs:1.04,duration:.15,yoyo:true,repeat:1,ease:'sine.inOut'},1.05);
+tl.fromTo('#bline',{attr:{'stroke-dashoffset':1}},{attr:{'stroke-dashoffset':0},duration:1.25,ease:'power2.inOut',immediateRender:false},1.0);sfx('pen',1.0,{d:1.25});
+tl.to('#bfill',{opacity:1,duration:.5},1.6);
+tl.to('#bshadow',{opacity:1,duration:.3},1.9);tl.fromTo('#bshadow',{x:0,y:0},{x:160,y:160,duration:.5,ease:'back.out(2)',immediateRender:false},1.9);
+tl.to('#crown',{y:0,opacity:1,duration:.45,ease:'back.out(2.2)'},2.2);sfx('tick',2.55);
+
+/* --- 2.9–4.2: الغطسة جوه الفقاعة؛ الـ؟ تصغر وتقعد في الركن --- */
+tl.to(S,{qs:.12,qx:1290,qy:-1180,duration:1.3,ease:'power3.inOut'},2.9);
+tl.to(S,{cx:1780,cy:1420,s:1,duration:1.35,ease:'power3.inOut'},2.95);sfx('whoosh',2.95,{d:1.1,f0:300,f1:1600});
+['cl1','cl2','cl3','cl4'].forEach((c,i)=>inkOn(tl,c,3.55+i*.18,.9));
+
+/* --- 3.9–6.4: الجملة الأولى --- */
+{const el=$('#l1'),w=splitWords(el);const T=3.95;
+ tl.set(el,{autoAlpha:1},T);
+ tl.fromTo(w,{opacity:0,y:60},{opacity:1,y:0,duration:.75,ease:'power4.out',stagger:{each:.13,from:'start'},immediateRender:false},T);
+ blurTween(tl,el,T,26,0,1.1,{ax:.1,ay:1});
+ tl.to(S,{cx:1700,cy:1440,duration:2.6,ease:'sine.inOut'},4.2);
+ tl.to(w,{opacity:0,y:-50,duration:.38,ease:'power2.in',stagger:.04},6.25);blurTween(tl,el,6.25,0,30,.5,{ease:'power2.in',ax:.1,ay:1});
+ tl.set(el,{autoAlpha:0},6.8);}
+
+/* --- 6.5–12.4: الطيارة تترسم، الرفع يزقها، وتطير والكاميرا وراها --- */
+inkOn(tl,'jet',6.5,1.3);sfx('pen',6.5,{d:1.3});
+tl.to('#lift',{scaleY:1,opacity:1,duration:.55,ease:'back.out(2)'},8.0);sfx('pop',8.0,{v:.35,f:1.4});
+tl.to(S,{s:1.18,cx:2150,cy:1430,duration:.8,ease:'power2.out'},7.9);           // قرّب على السهم
+tl.to(S,{py:1180,pr:7,duration:1.4,ease:'power2.inOut'},8.7);
+tl.to(S,{px:1050,duration:3.6,ease:'power1.in'},8.9);sfx('whoosh',9.2,{d:2.6,f0:200,f1:700,v:.35});
+tl.to(S,{cx:1500,cy:1300,s:1.08,duration:3.2,ease:'sine.inOut'},9.1);
+tl.to('#lift',{opacity:0,duration:.4},10.8);
+
+/* --- 12.3–12.8: whip لتحت على البحر --- */
+{const b=makeBlur(),o={v:0};tl.set(rig,{filter:b.url},12.25);
+ tl.to(o,{v:60,duration:.25,ease:'power2.in',yoyo:true,repeat:1,onUpdate(){b.node.setAttribute('stdDeviation',`0 ${o.v.toFixed(1)}`);}},12.25);
+ tl.set(rig,{filter:'none'},12.76);}
+tl.to(S,{cx:1640,cy:2380,s:1,duration:.5,ease:'power4.inOut'},12.25);sfx('whoosh',12.2,{d:.55,f0:1800,f1:250});
+
+/* --- 12.8–18: المركب يدخل والحاويات تترص --- */
+tl.to(S,{sx:700,duration:1.9,ease:'power2.out'},12.6);
+inkOn(tl,'hull',12.8,1.1);
+$$('#boxes rect').forEach((r,i)=>{const at=14.9+i*.13;
+  tl.to(r,{y:0,opacity:1,duration:.32,ease:'bounce.out'},at);if(i%2===0)sfx('clunk',at+.2,{v:.5});});
+tl.to(S,{cx:1720,s:1.06,duration:3,ease:'sine.inOut'},14.6);
+{const el=$('#l2'),w=splitWords(el);const T=14.5;
+ tl.set(el,{autoAlpha:1},T);
+ tl.fromTo(w,{opacity:0,x:90},{opacity:1,x:0,duration:.7,ease:'power4.out',stagger:.16,immediateRender:false},T);
+ blurTween(tl,el,T,48,0,.9);
+ tl.fromTo(w[w.length-1],{scale:.2,rotate:-30},{scale:1,rotate:0,duration:.5,ease:'back.out(3)',immediateRender:false},T+.42);
+ tl.to(w,{opacity:0,x:-90,duration:.35,ease:'power2.in',stagger:.05},17.55);blurTween(tl,el,17.55,0,50,.45,{ease:'power2.in'});
+ tl.set(el,{autoAlpha:0},18);}
+sfx('horn',16.4);
+tl.to(S,{sx:1250,duration:3.5,ease:'sine.inOut'},15.0);
+
+/* --- 17.95–18.4: whip يمين على الأوضة --- */
+{const b=makeBlur(),o={v:0};tl.set(rig,{filter:b.url},17.95);
+ tl.to(o,{v:70,duration:.22,ease:'power2.in',yoyo:true,repeat:1,onUpdate(){b.node.setAttribute('stdDeviation',`${o.v.toFixed(1)} 0`);}},17.95);
+ tl.set(rig,{filter:'none'},18.42);}
+tl.to(S,{cx:2900,cy:2400,s:1.5,duration:.45,ease:'power4.inOut'},17.95);sfx('whoosh',17.9,{d:.5,f0:400,f1:2200});
+
+/* --- 18.4–22.6: الطابعة تترسم وتطبع ورقة عليها قلب --- */
+inkOn(tl,'table',18.3,.6);inkOn(tl,'printer',18.45,1.1);sfx('pen',18.45,{d:1.1});
+tl.to('#page',{y:-430,duration:1.5,ease:'steps(9)'},19.7);sfx('printer',19.7,{d:1.5});
+tl.to('#heart',{opacity:1,duration:.3},20.9);tl.fromTo('#heart',{scale:.3,transformOrigin:'50% 50%'},{scale:1,duration:.5,ease:'back.out(3)',immediateRender:false},20.9);sfx('pop',20.95,{v:.4,f:1.2});
+tl.to(S,{cx:3010,cy:2250,s:1.76,duration:3,ease:'sine.inOut'},19.6);
+{const el=$('#l3'),w=splitWords(el);const T=20.1;
+ tl.set(el,{autoAlpha:1},T);
+ tl.fromTo(el,{clipPath:'inset(0% 0% 0% 100%)'},{clipPath:'inset(0% 0% 0% 0%)',duration:.9,ease:'power3.inOut',immediateRender:false},T);
+ tl.set(w,{opacity:1},T);tl.set(el,{clipPath:'none'},T+.9);
+ tl.to(el,{y:-20,duration:2,ease:'sine.inOut'},T+.9);
+ tl.to(w,{opacity:0,y:40,duration:.32,ease:'power2.in',stagger:.05},22.35);blurTween(tl,el,22.35,0,30,.42,{ease:'power2.in',ax:.1,ay:1});
+ tl.set(el,{autoAlpha:0},22.8);}
+
+/* --- 22.6–23.6: الكاميرا تدخل في الورقة لحد ما تملا الشاشة --- */
+tl.to(S,{cx:3140,cy:2160,s:7.4,duration:1.0,ease:'power3.in'},22.6);sfx('whoosh',22.55,{d:1.0,f0:200,f1:1400});
+tl.set('#pageov',{autoAlpha:1},23.6);tl.set('#heart',{opacity:0},23.6);
+
+/* --- 23.6–27: الساعة: دقيقة كاملة --- */
+{const ticks=$('#wticks');for(let i=0;i<12;i++){const a=i*30*Math.PI/180,r1=i%3?268:244,r2=292;
+  const l=document.createElementNS(NS,'line');l.setAttribute('x1',1310+Math.sin(a)*r1);l.setAttribute('y1',560-Math.cos(a)*r1);
+  l.setAttribute('x2',1310+Math.sin(a)*r2);l.setAttribute('y2',560-Math.cos(a)*r2);ticks.appendChild(l);}}
+tl.set('#wring',{attr:{'stroke-dashoffset':1}},0);
+tl.set(['#wface','#wticks line','#wcrown1','#wcrown2','#hand','#count'],{opacity:0},0);
+tl.set('#watch',{scale:1,transformOrigin:'1310px 560px'},0);
+tl.to('#wring',{attr:{'stroke-dashoffset':0},duration:.6,ease:'power2.inOut'},23.65);sfx('pen',23.65,{d:.6});
+tl.to('#wface',{opacity:1,duration:.3},23.95);
+tl.to('#wticks line',{opacity:1,duration:.15,stagger:.03},24.0);
+tl.fromTo(['#wcrown1','#wcrown2'],{y:-80},{y:0,opacity:1,duration:.35,ease:'back.out(2.4)',immediateRender:false},24.05);
+tl.to(['#hand','#count'],{opacity:1,duration:.2},24.2);
+{const hand=$('#hand'),cnt=$('#count'),wf=$('#wfill');
+ drawWatch=()=>{const a=W0.a;hand.setAttribute('transform',`rotate(${a*6} 1310 560)`);cnt.textContent=String(Math.round(a));
+   const r=318,rad=a*6*Math.PI/180,x=1310+Math.sin(rad)*r,y=560-Math.cos(rad)*r;
+   wf.setAttribute('d',a<=0?'':a>=59.99?`M1310 242 A318 318 0 1 1 1309.9 242 Z`:`M1310 560 L1310 242 A318 318 0 ${a*6>180?1:0} 1 ${x.toFixed(1)} ${y.toFixed(1)} Z`);};
+ tl.fromTo(W0,{a:0},{a:60,duration:2.1,ease:'power1.inOut',immediateRender:false},24.35);
+ tl.set(W0,{a:0},0);
+ for(let i=0;i<12;i++)sfx('tick',24.4+i*.17,{v:.35});}
+tl.fromTo('#watch',{scale:1},{scale:1.05,duration:3,ease:'sine.inOut',immediateRender:false},23.6);
+{const el=$('#l4'),w=splitWords(el);const T=24.65;
+ tl.set(el,{autoAlpha:1},T);
+ tl.fromTo(w,{opacity:0,scale:2.2},{opacity:1,scale:1,duration:.8,ease:'expo.out',stagger:.15,immediateRender:false},T);
+ blurTween(tl,el,T,22,0,.9,{ease:'expo.out',ax:1,ay:1});
+ tl.to(el,{opacity:0,duration:.3},26.65);tl.set(el,{autoAlpha:0},27);}
+sfx('stamp',26.45,{v:.6});
+tl.to('#watch',{opacity:0,duration:.3},26.65);
+
+/* --- 27–29.6: اللحظة الكبيرة: الكاميرا تطلع… كله كان جوه الفقاعة --- */
+tl.set('#pageov',{autoAlpha:0},27.0);
+tl.to(S,{s:.235,duration:2.4,ease:'power3.inOut'},27.0);tl.to(S,{cx:2120,cy:2060,duration:2.4,ease:'power3.in'},27.0);
+tl.to('#heart',{opacity:1,duration:.4},28.3);sfx('whoosh',27.0,{d:2.4,f0:1500,f1:150,v:.5});
+tl.to('#page',{y:-120,duration:.8,ease:'power2.inOut'},27.5);
+
+/* --- 30–31: الدنيا تتمسح والـ؟ ترجع مكانها --- */
+tl.fromTo('#inner',{clipPath:'inset(0% 0% 0% 0%)'},{clipPath:'inset(0% 0% 100% 0%)',duration:.7,ease:'power2.inOut',immediateRender:false},29.95);
+tl.to(S,{qs:1,qx:0,qy:0,duration:.75,ease:'back.out(1.5)'},30.25);sfx('pop',30.6);
+
+/* --- 30.9–32.8: الكاميرا تزق اللوجو يمين، الاسم يتكتب، التصنيفات تتختم --- */
+tl.to(S,{cx:2120-430/.2,cy:2050,s:.2,duration:1.0,ease:'power3.inOut'},30.9);
+{const el=$('#wm'),w=splitWords(el);const T=31.35;
+ tl.set(el,{autoAlpha:1},T);
+ tl.fromTo(el,{clipPath:'inset(0% 0% 0% 100%)'},{clipPath:'inset(-20% -5% -20% -5%)',duration:.85,ease:'power3.inOut',immediateRender:false},T);
+ tl.set(w,{opacity:1},T);
+ tl.fromTo(w[w.length-1],{scale:.2,rotate:30},{scale:1,rotate:0,duration:.5,ease:'back.out(3)',immediateRender:false},T+.6);
+ sfx('pen',T,{d:.85});}
+$$('#chips span').forEach((c,i)=>{const at=32.25+i*.17;
+  tl.fromTo(c,{opacity:0,scale:1.8,rotate:i%2?4:-4},{opacity:1,scale:1,rotate:0,duration:.28,ease:'power4.in',immediateRender:false},at);
+  sfx('stamp',at+.26,{v:.45});});
+tl.to(S,{s:.208,duration:2,ease:'sine.inOut'},32.9);
+
+/* --- 34.4–35.2: الحبر يتمسح → ورق فاضي = أول فريم (loop) --- */
+tl.to(['#mk','#bline','#qm'],{opacity:0,duration:.6,ease:'power2.in'},34.5);
+tl.to(['#wm','#chips span'],{opacity:0,y:-20,duration:.45,ease:'power2.in',stagger:.04},34.4);
+sfx('whoosh',34.45,{d:.7,f0:900,f1:200,v:.25});
+tl.set(['#mk','#bline','#qm'],{opacity:1},0);
+tl.to({},{duration:.01},DURATION);
+
+/* ===== الصوت: مؤثرات متولدة بـ WebAudio (من غير ملفات) ===== */
+let AC=null,NOISE=null;
+function initAudio(){if(AC)return AC;try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}
+  let s=12345;const rnd=()=>((s=(s*1103515245+12345)&0x7fffffff)/0x7fffffff)*2-1;
+  NOISE=AC.createBuffer(1,AC.sampleRate*3,AC.sampleRate);const d=NOISE.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=rnd();
+  const comp=AC.createDynamicsCompressor();comp.connect(AC.destination);AC._out=comp;return AC;}
+function env(g,t0,a,peak,d){g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(peak,t0+a);g.gain.exponentialRampToValueAtTime(0.0001,t0+a+d);}
+function noiseSrc(){const n=AC.createBufferSource();n.buffer=NOISE;n.loop=true;return n;}
+function playSfx(name,o={}){
+  if(!AC||AC.state!=='running'||tl.paused())return;
+  const t=AC.currentTime,out=AC._out,v=o.v??.6;
+  if(name==='pop'){const os=AC.createOscillator(),g=AC.createGain();const f=(o.f||1)*420;
+    os.frequency.setValueAtTime(f,t);os.frequency.exponentialRampToValueAtTime(f*.35,t+.18);env(g,t,.005,v*.7,.2);os.connect(g).connect(out);os.start(t);os.stop(t+.3);}
+  if(name==='tick'){const n=noiseSrc(),bp=AC.createBiquadFilter(),g=AC.createGain();bp.type='bandpass';bp.frequency.value=3200;bp.Q.value=6;
+    env(g,t,.001,v*.9,.04);n.connect(bp).connect(g).connect(out);n.start(t);n.stop(t+.08);}
+  if(name==='pen'){const d=o.d||1,n=noiseSrc(),bp=AC.createBiquadFilter(),g=AC.createGain(),lfo=AC.createOscillator(),lg=AC.createGain();
+    bp.type='bandpass';bp.frequency.value=2600;bp.Q.value=1.2;lfo.frequency.value=11;lg.gain.value=v*.12;lfo.connect(lg).connect(g.gain);
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*.16,t+.05);g.gain.setValueAtTime(v*.16,t+d-.1);g.gain.linearRampToValueAtTime(0,t+d);
+    n.connect(bp).connect(g).connect(out);n.start(t);n.stop(t+d+.05);lfo.start(t);lfo.stop(t+d+.05);}
+  if(name==='whoosh'){const d=o.d||.6,n=noiseSrc(),bp=AC.createBiquadFilter(),g=AC.createGain();bp.type='bandpass';bp.Q.value=1.4;
+    bp.frequency.setValueAtTime(o.f0||400,t);bp.frequency.exponentialRampToValueAtTime(o.f1||1800,t+d);
+    g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(v*.5,t+d*.6);g.gain.exponentialRampToValueAtTime(0.0001,t+d);
+    n.connect(bp).connect(g).connect(out);n.start(t);n.stop(t+d+.05);}
+  if(name==='clunk'){const os=AC.createOscillator(),g=AC.createGain();os.type='triangle';os.frequency.setValueAtTime(160,t);os.frequency.exponentialRampToValueAtTime(70,t+.12);
+    env(g,t,.003,v*.8,.16);os.connect(g).connect(out);os.start(t);os.stop(t+.25);
+    const n=noiseSrc(),lp=AC.createBiquadFilter(),g2=AC.createGain();lp.type='lowpass';lp.frequency.value=900;env(g2,t,.002,v*.3,.06);n.connect(lp).connect(g2).connect(out);n.start(t);n.stop(t+.1);}
+  if(name==='horn'){const lp=AC.createBiquadFilter(),g=AC.createGain();lp.type='lowpass';lp.frequency.value=700;
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*.28,t+.12);g.gain.setValueAtTime(v*.28,t+1.0);g.gain.linearRampToValueAtTime(0,t+1.4);
+    [110,138.6].forEach(f=>{const os=AC.createOscillator();os.type='sawtooth';os.frequency.value=f;os.connect(lp);os.start(t);os.stop(t+1.5);});lp.connect(g).connect(out);}
+  if(name==='printer'){const d=o.d||1.5;for(let i=0;i<9;i++){const tt=t+i*d/9,n=noiseSrc(),bp=AC.createBiquadFilter(),g=AC.createGain();
+    bp.type='bandpass';bp.frequency.value=1400+(i%2)*500;bp.Q.value=3;env(g,tt,.005,v*.35,d/9*.8);n.connect(bp).connect(g).connect(out);n.start(tt);n.stop(tt+d/9);}}
+  if(name==='stamp'){const os=AC.createOscillator(),g=AC.createGain();os.frequency.setValueAtTime(120,t);os.frequency.exponentialRampToValueAtTime(45,t+.15);
+    env(g,t,.002,v,.22);os.connect(g).connect(out);os.start(t);os.stop(t+.3);
+    const n=noiseSrc(),lp=AC.createBiquadFilter(),g2=AC.createGain();lp.type='lowpass';lp.frequency.value=2500;env(g2,t,.001,v*.45,.07);n.connect(lp).connect(g2).connect(out);n.start(t);n.stop(t+.1);}
+}
+
+/* ===== PEREKAT ===== */
+const stage=$('#stage');
+const fit=()=>{const s=Math.min(innerWidth/1920,innerHeight/1080);stage.style.transform=`translate(-50%,-50%) scale(${s})`;};
+addEventListener('resize',fit);fit();
+const clock=$('#clock'),scrub=$('#scrub'),btn=$('#btn-play');let scrubbing=false;
+(function frame(){const t=tl.time();render(t);clock.textContent=t.toFixed(2)+'s';
+  if(!scrubbing)scrub.value=String(t/DURATION*1000);requestAnimationFrame(frame);})();
+const toggle=()=>{if(tl.paused()||tl.progress()>=1){if(tl.progress()>=1)tl.progress(0);tl.play();btn.textContent='Pause';}else{tl.pause();btn.textContent='Play';}};
+btn.onclick=toggle;$('#btn-restart').onclick=()=>{tl.pause(0);tl.play();btn.textContent='Pause';};
+scrub.addEventListener('pointerdown',()=>{scrubbing=true;tl.pause();btn.textContent='Play';});
+addEventListener('pointerup',()=>scrubbing=false);
+scrub.addEventListener('input',()=>{tl.pause();tl.time(scrub.value/1000*DURATION,true);});
+addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();startAudio();toggle();}
+  if(/^[rR]$/.test(e.key)){startAudio();tl.pause(0);tl.play();}
+  if(/^[hH]$/.test(e.key))$('#ui').classList.toggle('on');});
+if(Q.has('debug'))$('#ui').classList.add('on');
+tl.eventCallback('onComplete',()=>{tl.play(0);});
+
+function startAudio(){const a=initAudio();if(a&&a.state!=='running')a.resume();}
+const seek=t=>{tl.pause();tl.time(t,true);if(gsap.ticker.tick)gsap.ticker.tick();render(t);};
+window.OPENER={tl,DURATION,seek,W,H,ready:false};
+document.fonts.ready.then(()=>{
+  window.OPENER.ready=true;render(0);
+  if(Q.has('clean'))return;
+  const a=initAudio();
+  const go=()=>{tl.play(0);};
+  if(a&&a.state==='running'){go();return;}
+  if(a)a.resume().then(()=>{if(a.state==='running'&&tl.time()===0&&tl.paused())go();}).catch(()=>{});
+  // الصوت اتمنع: نستنى عند أول فريم لحد أول ضغطة، وبعدين نبدأ بالصوت
+  const first=()=>{removeEventListener('pointerdown',first);removeEventListener('keydown',first);
+    startAudio();if(tl.paused()&&tl.time()===0)go();};
+  addEventListener('pointerdown',first);addEventListener('keydown',first);
+});
+</script>
+</body>
+</html>
