@@ -361,7 +361,7 @@ tl.to('#lift',{scaleY:1,opacity:1,duration:.55,ease:'back.out(2)'},8.0);sfx('pop
 tl.to(S,{s:1.18,cx:2150,cy:1430,duration:.8,ease:'power2.out'},7.9);           // قرّب على السهم
 tl.to(S,{py:1180,pr:7,duration:1.4,ease:'power2.inOut'},8.7);
 tl.to(S,{px:1050,duration:3.6,ease:'power1.in'},8.9);sfx('whoosh',9.2,{d:2.6,f0:200,f1:700,v:.35});
-tl.to(S,{cx:1500,cy:1300,s:1.08,duration:3.2,ease:'sine.inOut'},9.1);
+tl.to(S,{cx:1600,cy:1390,s:1.08,duration:3.2,ease:'sine.inOut'},9.1);
 tl.to('#lift',{opacity:0,duration:.4},10.8);
 
 /* --- 12.3–12.8: whip لتحت على البحر --- */
@@ -523,7 +523,7 @@ if(Q.has('debug'))$('#ui').classList.add('on');
 tl.eventCallback('onComplete',()=>{tl.play(0);});
 
 function startAudio(){const a=initAudio();if(a&&a.state!=='running')a.resume();}
-const seek=t=>{tl.pause();tl.time(t,true);if(gsap.ticker.tick)gsap.ticker.tick();render(t);};
+const seek=t=>{tl.pause();if(t<=0)tl.time(.02,true);tl.time(t,true);if(gsap.ticker.tick)gsap.ticker.tick();render(t);};
 window.OPENER={tl,DURATION,seek,W,H,ready:false};
 /* export: مؤثرات الصوت متريندرة offline بنفس التوقيت → WAV base64 */
 window.OPENER.renderAudio=async(sr=48000)=>{const prev=[AC,NOISE];
