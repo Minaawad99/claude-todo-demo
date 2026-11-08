@@ -17,3 +17,10 @@
 - `px-music-bed.mp3`: «Calm Ambient» by universfield (Pixabay 153275). `px-music-long.mp3` is it looped 3× with 4 s crossfades.
 - `px-swipe.mp3`: «Paper Flipping» by koiroylers (Pixabay 351981); single flips at 0.64, 1.0 and 1.17 s.
 - `px-ocean-waves.mp3`: «Ocean Waves» by Dragon Studio (Pixabay 376898).
+- `px-paper.mp3`: «Paper Slide Short» by oxidvideos (Pixabay 478835).
+- `px-space-drone.mp3`: «Industrial Pulse Drone» by freesound_community (Pixabay 27456), kept low under the globe shots.
+- `px-ding.mp3`: «Minimal Ding SFX» by virtual_vibes (Pixabay 383725), 0.1–1.5 s.
+- `px-clock-ticking.mp3`: «Clock Ticking Down» by Dragon Studio (Pixabay 376897).
+- `px-pencil-scribble.mp3`: «Pencil on Paper Scribble 2» by freesound_community (Pixabay 68772), 0.75–1.5 s.
+- `px-wind-gust.mp3`: «Wind Gust» by Dragon Studio (Pixabay 386158).
+- `px-water-rush.mp3`: «Above Rushing Water (Waterfall)» by freesound_community (Pixabay 61158), from 3 s.

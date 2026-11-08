@@ -21,54 +21,54 @@ const swipe = i => rec(L(i) - 0.08, 'swipe', 0.3, 0.6, 0.42, 1.0, 'whoosh', 0.2)
 // 0–2 · opening card: the beach. Waves the whole time, the sea rushing in and out, then wind that stops (crossed out)
 a(L(0) + 0.1, 'chime', 0.3);
 rec(L(0), 'ocean-waves', 0.45, 0.2, L(3) - L(0) + 0.6, 0.8, 'waves', 0.3);
-rec(L(1) + 0.3, 'water-rush', 0.35, 0, D(1) - 0.3, 1.0, 'slosh', 0.3);
-rec(L(2) + 0.1, 'wind-gust', 0.3, 0, 1.4, 1.0, 'wind', 0.25);
-rec(L(2) + 0.6, 'pencil-scribble', 0.4, 0, 0.6, 1.0, 'snip', 0.3);
+rec(L(1) + 0.3, 'water-rush', 0.35, 3, D(1) - 0.3, 1.0, 'slosh', 0.3);
+rec(L(2) + 0.05, 'wind-gust', 0.35, 0.25, 1.5, 1.0, 'wind', 0.25);
+rec(L(2) + 0.6, 'pencil-scribble', 0.4, 0.75, 0.7, 1.0, 'snip', 0.3);
 // 3 · bumper: the ring fills
 a(L(3) + 0.15, 'ping', 0.3); for (let k = 0; k < 5; k++) a(L(3) + 0.4 + k * 0.32, 'tick', 0.14);
 // 4 · the Moon, 384,000 km: space drone, the distance counts up, a ding on the number
-rec(L(4), 'space-drone', 0.18, 0, D(4) + 0.2, 1.2, 'hum', 0.12);
-lab(4, 0.5); rec(L(4) + 2.0, 'ding', 0.3, 0, 1.2, 1.0, 'chime', 0.3);
+rec(L(4), 'space-drone', 0.12, 0.3, D(4) + 0.2, 1.2, 'hum', 0.12);
+lab(4, 0.5); rec(L(4) + 2.0, 'ding', 0.3, 0.1, 1.4, 1.0, 'chime', 0.3);
 // 5 · the rule card is pinned
-rec(L(5) + 0.3, 'swipe', 0.3, 0.97, 0.3, 1.0, 'paper', 0.3); a(L(5) + 0.45, 'pop', 0.4);
+rec(L(5) + 0.3, 'paper', 0.4, 0, 0.5, 1.0, 'paper', 0.3); a(L(5) + 0.45, 'pop', 0.4);
 // 6, 8, 9 · balls on the strip, pull arrows
 for (const i of [6, 8, 9]) { a(L(i) + 0.1, 'pop', 0.3); a(L(i) + 0.35, 'pop', 0.3); a(L(i) + 0.6, 'pop', 0.3); a(L(i) + 0.9, 'whoosh', 0.12); lab(i, 1.2); }
 // 7 · the Earth's width counts up
-lab(7, 0.4); rec(L(7) + 1.6, 'ding', 0.28, 0, 1.2, 1.0, 'chime', 0.25);
+lab(7, 0.4); rec(L(7) + 1.6, 'ding', 0.28, 0.1, 1.4, 1.0, 'chime', 0.25);
 // 10–11 · the water stretches into two bulges
-rec(L(10) + 0.3, 'water-rush', 0.25, 0, 1.6, 1.0, 'slosh', 0.25); a(L(10) + 1.0, 'pop', 0.35);
-lab(11, 0.3); lab(11, 1.1); rec(L(11), 'space-drone', 0.15, 6, D(11), 1.2, 'hum', 0.1);
+rec(L(10) + 0.3, 'water-rush', 0.25, 3, 1.6, 1.0, 'slosh', 0.25); a(L(10) + 1.0, 'pop', 0.35);
+lab(11, 0.3); lab(11, 1.1); rec(L(11), 'space-drone', 0.1, 6, D(11), 1.2, 'hum', 0.1);
 // 12, 14 · back to the beach: waves again
 rec(L(12) - 0.2, 'ocean-waves', 0.35, 11, D(12) + 0.5, 1.0, 'waves', 0.25); a(L(12) + 0.5, 'pop', 0.4);
 a(L(13) + 0.3, 'whoosh', 0.18, 1.0);
 rec(L(14), 'ocean-waves', 0.25, 4, D(14), 1.0, 'waves', 0.2); a(L(14) + 0.3, 'pop', 0.3); lab(14, 1.4);
 // 15–16 · the 24-hour dial, then the clock running 50 minutes on
 for (let k = 0; k < 4; k++) lab(15, 0.3 + k * 0.28);
-rec(L(15) + 0.2, 'clock-ticking', 0.25, 0, D(15) + D(16) - 0.2, 1.2, null);
+rec(L(15) + 0.2, 'clock-ticking', 0.3, 0.1, Math.min(8.6, D(15) + D(16) - 0.2), 1.0, null);
 if (!has('clock-ticking')) for (let s = L(15) + 0.2; s < L(17) - 0.1; s += 0.5) a(s, 'tick', 0.16);
-rec(L(16) + 2.0, 'ding', 0.3, 0, 1.2, 1.0, 'chime', 0.3);
+rec(L(16) + 2.0, 'ding', 0.3, 0.1, 1.4, 1.0, 'chime', 0.3);
 // 17 · the Moon moves along its orbit
-rec(L(17), 'space-drone', 0.16, 12, D(17), 1.2, 'hum', 0.1); a(L(17) + 0.8, 'whoosh', 0.15, 1.5); lab(17, 1.0);
+rec(L(17), 'space-drone', 0.1, 12, D(17), 1.2, 'hum', 0.1); a(L(17) + 0.8, 'whoosh', 0.15, 1.5); lab(17, 1.0);
 // 18–20 · the Sun: a warm swell, the alignment, the weak tide
-rec(L(18), 'space-drone', 0.16, 18, D(18) + D(19) + D(20), 1.2, 'hum', 0.1);
+rec(L(18), 'space-drone', 0.12, 10, Math.min(19, D(18) + D(19) + D(20)), 1.2, 'hum', 0.1);
 a(L(18) + 0.5, 'whoosh', 0.15); a(L(18) + 1.3, 'pop', 0.4);
-a(L(19) + 0.2, 'whoosh', 0.15); a(L(19) + 1.1, 'pop', 0.35); rec(L(19) + 1.6, 'ding', 0.25, 0, 1.0, 1.0, 'ping', 0.25);
+a(L(19) + 0.2, 'whoosh', 0.15); a(L(19) + 1.1, 'pop', 0.35); rec(L(19) + 1.6, 'ding', 0.25, 0.1, 1.4, 1.0, 'ping', 0.25);
 a(L(20) + 0.2, 'whoosh', 0.12); a(L(20) + 1.1, 'pop', 0.3);
 // 21 · the myth is crossed out
-a(L(21) + 0.3, 'whoosh', 0.12); rec(L(21) + D(21) * 0.55, 'pencil-scribble', 0.45, 0, 0.7, 1.0, 'snip', 0.35);
+a(L(21) + 0.3, 'whoosh', 0.12); rec(L(21) + D(21) * 0.55, 'pencil-scribble', 0.45, 0.75, 0.75, 1.0, 'snip', 0.35);
 // 22 · the whole Earth stretches
-rec(L(22) + 0.3, 'water-rush', 0.2, 0, 1.4, 1.0, 'slosh', 0.2); lab(22, 0.9); lab(22, 1.4);
+rec(L(22) + 0.3, 'water-rush', 0.2, 3, 1.4, 1.0, 'slosh', 0.2); lab(22, 0.9); lab(22, 1.4);
 // 23 · recap labels
 lab(23, 0.3); lab(23, 0.9); lab(23, 1.4);
 // 24 · the brake and the Moon drifting away
-rec(L(24) + 0.6, 'brake-squeak', 0.2, 0, 0.8, 1.0, 'creak', 0.18); a(L(24) + 1.2, 'whoosh', 0.15, 2.0); rec(L(24) + 2.6, 'ding', 0.25, 0, 1.0, 1.0, 'chime', 0.25);
+rec(L(24) + 0.6, 'brake-squeak', 0.2, 0, 0.8, 1.0, 'creak', 0.18); a(L(24) + 1.2, 'whoosh', 0.15, 2.0); rec(L(24) + 2.6, 'ding', 0.25, 0.1, 1.4, 1.0, 'chime', 0.25);
 // 25–26 · summary card and ask box
 a(L(25) + 0.1, 'chime', 0.35); for (let k = 0; k < 5; k++) a(L(25) + 0.3 + k * 0.15, 'tick', 0.16);
-rec(L(26) + 0.1, 'swipe', 0.25, 1.14, 0.3, 1.0, 'paper', 0.25); a(L(26) + 0.3, 'pop', 0.4);
+rec(L(26) + 0.1, 'paper', 0.35, 0, 0.5, 1.0, 'paper', 0.25); a(L(26) + 0.3, 'pop', 0.4);
 
 // music: the recorded bed when it's here, otherwise sfx.py's own bed (both ~8 dB under the voice, the whole video)
 // px-music-long.mp3 = «Calm Ambient» (universfield, Pixabay) looped 3× with 4 s crossfades (ffmpeg acrossfade), 172 s
 const MUSIC = has('music-long') ? 'music-long' : 'music-bed';
 if (has(MUSIC)) rec(0, MUSIC, 0.6, 0.35, window.TIMING.duration + 2.5, 0.6);   // ~8 dB under the voice in the gaps, ducked a little more under speech
 fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: !has(MUSIC), cues: c }, null, 1));
-console.log(c.length + ' cues; recorded clips here: ' + (['ocean-waves', 'water-rush', 'wind-gust', 'swipe', 'pencil-scribble', 'clock-ticking', 'ding', 'space-drone', 'brake-squeak', 'music-long'].filter(has).join(', ') || 'none'));
+console.log(c.length + ' cues; recorded clips here: ' + (['ocean-waves', 'water-rush', 'wind-gust', 'swipe', 'paper', 'pencil-scribble', 'clock-ticking', 'ding', 'space-drone', 'brake-squeak', 'music-long'].filter(has).join(', ') || 'none'));
