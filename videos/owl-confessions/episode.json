@@ -5,14 +5,14 @@
   "host": {
    "voice": "Charon",
    "style": "[Modern Standard Arabic (fusha), neutral formal accent, no dialect; calm, curious, warm talk-show host; clear; natural pace]",
-   "speed": 1.0,
+   "speed": 1.05,
    "max_pause": 0.35,
    "max_stretch": 1.2
   },
   "guest": {
    "voice": "Algenib",
    "style": "[Modern Standard Arabic (fusha), neutral formal accent, no dialect; wise, calm, slightly mysterious owl; soft but clear; steady pace; hint of dry humor]",
-   "speed": 1.3,
+   "speed": 1.5,
    "pitch": 0.96,
    "max_pause": 0.3,
    "max_stretch": 1.4
