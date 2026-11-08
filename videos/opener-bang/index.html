@@ -315,7 +315,7 @@ function render(t){
 const DURATION=35.2;
 const W0={a:0};let drawWatch=()=>{};
 const tl=gsap.timeline({paused:true});
-const SFX=[];const sfx=(name,at,o)=>tl.call(()=>playSfx(name,o),[],at);
+const SFX=[];const sfx=(name,at,o)=>{SFX.push([name,at,o||{}]);tl.call(()=>playSfx(name,o),[],at);};
 
 // حالة البداية
 tl.set('#bline',{attr:{'stroke-dashoffset':1}},0);
@@ -470,14 +470,15 @@ tl.to({},{duration:.01},DURATION);
 /* ===== الصوت: مؤثرات متولدة بـ WebAudio (من غير ملفات) ===== */
 let AC=null,NOISE=null;
 function initAudio(){if(AC)return AC;try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}
-  let s=12345;const rnd=()=>((s=(s*1103515245+12345)&0x7fffffff)/0x7fffffff)*2-1;
+  return setupCtx(AC);}
+function setupCtx(ctx){AC=ctx;let s=12345;const rnd=()=>((s=(s*1103515245+12345)&0x7fffffff)/0x7fffffff)*2-1;
   NOISE=AC.createBuffer(1,AC.sampleRate*3,AC.sampleRate);const d=NOISE.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=rnd();
   const comp=AC.createDynamicsCompressor();comp.connect(AC.destination);AC._out=comp;return AC;}
 function env(g,t0,a,peak,d){g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(peak,t0+a);g.gain.exponentialRampToValueAtTime(0.0001,t0+a+d);}
 function noiseSrc(){const n=AC.createBufferSource();n.buffer=NOISE;n.loop=true;return n;}
-function playSfx(name,o={}){
-  if(!AC||AC.state!=='running'||tl.paused())return;
-  const t=AC.currentTime,out=AC._out,v=o.v??.6;
+function playSfx(name,o={},off=false){
+  if(!off&&(!AC||AC.state!=='running'||tl.paused()))return;
+  const t=off?o._at:AC.currentTime,out=AC._out,v=o.v??.6;
   if(name==='pop'){const os=AC.createOscillator(),g=AC.createGain();const f=(o.f||1)*420;
     os.frequency.setValueAtTime(f,t);os.frequency.exponentialRampToValueAtTime(f*.35,t+.18);env(g,t,.005,v*.7,.2);os.connect(g).connect(out);os.start(t);os.stop(t+.3);}
   if(name==='tick'){const n=noiseSrc(),bp=AC.createBiquadFilter(),g=AC.createGain();bp.type='bandpass';bp.frequency.value=3200;bp.Q.value=6;
@@ -524,6 +525,17 @@ tl.eventCallback('onComplete',()=>{tl.play(0);});
 function startAudio(){const a=initAudio();if(a&&a.state!=='running')a.resume();}
 const seek=t=>{tl.pause();tl.time(t,true);if(gsap.ticker.tick)gsap.ticker.tick();render(t);};
 window.OPENER={tl,DURATION,seek,W,H,ready:false};
+/* export: مؤثرات الصوت متريندرة offline بنفس التوقيت → WAV base64 */
+window.OPENER.renderAudio=async(sr=48000)=>{const prev=[AC,NOISE];
+  const oc=new OfflineAudioContext(2,Math.ceil(sr*DURATION),sr);setupCtx(oc);
+  SFX.forEach(([n,at,o])=>playSfx(n,{...o,_at:at},true));
+  const buf=await oc.startRendering();[AC,NOISE]=prev;
+  const L=buf.getChannelData(0),R=buf.getChannelData(1),N=L.length,dv=new DataView(new ArrayBuffer(44+N*4));
+  const ws=(o,str)=>{for(let i=0;i<str.length;i++)dv.setUint8(o+i,str.charCodeAt(i));};
+  ws(0,'RIFF');dv.setUint32(4,36+N*4,true);ws(8,'WAVE');ws(12,'fmt ');dv.setUint32(16,16,true);dv.setUint16(20,1,true);dv.setUint16(22,2,true);
+  dv.setUint32(24,sr,true);dv.setUint32(28,sr*4,true);dv.setUint16(32,4,true);dv.setUint16(34,16,true);ws(36,'data');dv.setUint32(40,N*4,true);
+  for(let i=0;i<N;i++){dv.setInt16(44+i*4,Math.max(-1,Math.min(1,L[i]))*32767,true);dv.setInt16(46+i*4,Math.max(-1,Math.min(1,R[i]))*32767,true);}
+  const u=new Uint8Array(dv.buffer);let bin='';for(let i=0;i<u.length;i+=32768)bin+=String.fromCharCode.apply(null,u.subarray(i,i+32768));return btoa(bin);};
 document.fonts.ready.then(()=>{
   window.OPENER.ready=true;render(0);
   if(Q.has('clean'))return;
