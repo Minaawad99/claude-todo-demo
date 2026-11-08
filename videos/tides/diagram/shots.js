@@ -45,7 +45,7 @@ function beach(o, zw, t, opt) {
     var wf = [[xw, 0, zw], [X1, 0, zw], [X1, 0, zs(X1)]]; for (k = 12; k >= 0; k--) { var xx = xw + (X1 - xw) * k / 12; wf.push([xx, 0, zs(xx)]); }
     s += '<g opacity=".93">' + ipoly(o, wf, SEA_SIDE, 1.8) + ipoly(o, [[X1, 0, zw], [X1, Y1, zw], [X1, Y1, zs(X1)], [X1, 0, zs(X1)]], "#5d7c90", 1.8) +
          ipoly(o, [[xw, 0, zw], [X1, 0, zw], [X1, Y1, zw], [xw, Y1, zw]], SEA_TOP, 1.8) + '</g>';
-    if (!opt.calm) for (k = 0; k < 6; k++) { var wx = X1 - ((k * 64 + t * 22) % Math.max(60, X1 - xw - 10)); if (wx < xw + 8) continue;
+    if (!opt.calm) for (k = 0; k < 6; k++) { var wx = X1 - ((k * 64 + t * 48) % Math.max(60, X1 - xw - 10)); if (wx < xw + 8) continue;
       for (var yy = 18; yy < Y1 - 30; yy += 64) s += iline(o, [wx, yy + (k % 2) * 30, zw], [wx, yy + 30 + (k % 2) * 30, zw], "#e8eef0", 2.2, ' stroke-linecap="round"'); }
     s += iline(o, [xw + 3, 4, zw], [xw + 3, Y1 - 4, zw], "#f6f3ea", 3, ' stroke-linecap="round"');
   }
@@ -98,7 +98,7 @@ function sun(x, y, r, t) {
   return s + C(x, y, r, "#d98a4a", 2.4) + '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(r * .78) + '" fill="#e2a062"/>';
 }
 // the water bulge: an ellipse round the globe stretched along angle ang (deg); k 0..1 how much
-function bulge(cx, cy, r, k, ang, col) { return '<ellipse cx="' + f(cx) + '" cy="' + f(cy) + '" rx="' + f(r * (1.04 + .42 * k)) + '" ry="' + f(r * (1.04 + .03 * k)) + '" transform="rotate(' + f(ang || 0) + ' ' + f(cx) + ' ' + f(cy) + ')" fill="' + (col || "#5f7f97") + '" stroke="' + INK + '" stroke-width="2.4"/>'; }
+function bulge(cx, cy, r, k, ang, col) { k = k * (1 + .04 * Math.sin(window.__t * 2.2)); return '<ellipse cx="' + f(cx) + '" cy="' + f(cy) + '" rx="' + f(r * (1.04 + .42 * k)) + '" ry="' + f(r * (1.04 + .03 * k)) + '" transform="rotate(' + f(ang || 0) + ' ' + f(cx) + ' ' + f(cy) + ')" fill="' + (col || "#5f7f97") + '" stroke="' + INK + '" stroke-width="2.4"/>'; }
 // a dimension line with end ticks that draws itself, and its value in serif under it
 function measure(x1, y1, x2, y2, k, text, sz) {
   k = clamp(k); if (k <= 0) return ""; var a = Math.atan2(y2 - y1, x2 - x1), nx = -Math.sin(a) * 9, ny = Math.cos(a) * 9;
@@ -113,9 +113,9 @@ function track(t, k, cols, offs, arrows, labels) {
   for (var g = 0; g <= 10; g++) { var u = g / 10; s += '<path d="M' + f(lerp(x0 - 40, x1 + 40, u)) + ' ' + f(lerp(y0 + 40, y1 + 10, u)) + ' l30 40" stroke="#cdbf9f" stroke-width="1"/>'; }
   s += moon(565, 260, 38);
   [0.12, 0.4, 0.68].forEach(function (p, i) {
-    var q = clamp(p + (offs ? offs[i] : 0)), x = lerp(x0, x1, q), y = lerp(y0, y1, q) - 6;
+    var q = clamp(p + (offs ? offs[i] : 0)), x = lerp(x0, x1, q), y = lerp(y0, y1, q) - 6 - 7 * Math.abs(Math.sin(t * 2.4 + i * 1.1));
     s += appear(at(k, i * .25, .3), '<ellipse cx="' + f(x + 6) + '" cy="' + f(y + 26) + '" rx="36" ry="11" fill="' + INK + '" opacity=".15"/>' + C(x, y, 36, cols[i], 2.4) + '<circle cx="' + f(x - 11) + '" cy="' + f(y - 12) + '" r="9" fill="#fff" opacity=".45"/>');
-    if (arrows) s += arrow(x + 30, y - 22, x + 30 + arrows[i] * .8, y - 22 - arrows[i] * .48, ORANGE, 5, at(k, .8 + i * .2, .4));
+    if (arrows) { var pl = arrows[i] * (1 + .12 * Math.sin(t * 4 + i)); s += arrow(x + 30, y - 22, x + 30 + pl * .8, y - 22 - pl * .48, ORANGE, 5, at(k, .8 + i * .2, .4)); }
     if (labels && labels[i]) s += label(x, y + 30, x + 50, y + 110, labels[i], cols[i] === OCEAN ? BLUE : OLIVE, at(k, 1 + i * .3, .5), 22);
   });
   return s;
@@ -124,10 +124,11 @@ var ALEX = [29.9, 31.2];   // the viewer's beach (Alexandria)
 function tag(text, x, y, k, sz, col) { k = pop(k == null ? 1 : k); if (k <= 0) return ""; sz = sz || 30; var w = text.length * sz * .55 + 34; return G('translate(' + f(x) + ' ' + f(y) + ') scale(' + f(k) + ')', '<rect x="' + f(-w / 2) + '" y="' + f(-sz * 1.05) + '" width="' + f(w) + '" height="' + f(sz * 1.65) + '" fill="#f4ecdb" stroke="' + INK + '" stroke-width="2"/>' + T(text, 0, sz * .3, sz, col || INK, 800)); }
 
 // ── shots (one per idea; line numbers from script.txt) ──
+window.__t = 0; (function () { var P = window.SCENE.panel; window.SCENE.panel = function (A, B, t) { window.__t = t; return P(A, B, t); }; })();
 // 4 · the Moon, 384,000 km away: Africa-facing globe on the left, the Moon on the right, the distance draws itself
 shot(4, push(330, 400, 1.08, 0.96), function (u, d, t) {
   var k = at(u, .6, 1.4);
-  return paper() + appear(at(u, 0, .4), globe(120, 400, 190, 12 + t * .35, 8)) + appear(at(u, .3, .4), moon(560, 400, 44)) +
+  return paper() + appear(at(u, 0, .4), globe(120, 400, 190, 12 + t * 1.6, 8)) + appear(at(u, .3, .4), moon(560, 400, 44)) +
     measure(320, 470, 515, 470, k, "", 0) + G("", N(count(384000, k), 420, 540, 44) + T("كيلو", 420, 582, 26, INK, 700), clamp(k * 3)) + label(560, 360, 520, 280, "القمر", OLIVE, at(u, .4, .5), 24);
 });
 // 5 · «قاعدة صغيرة»: a pinned rule card over the Moon and an empty strip
@@ -140,7 +141,7 @@ shot(6, push(320, 430, 1.05, 0.98), function (u, d, t) { return paper() + track(
 // 7 · the Earth is big: 12,742 km across
 shot(7, push(320, 380, 0.95, 1.05), function (u, d, t) {
   var k = at(u, .4, 1.2);
-  return paper() + globe(320, 360, 215, 12 + t * .35, 8) + measure(105, 640, 535, 640, k, "") + G("", N(count(12742, k), 320, 712, 46) + T("كيلو", 320, 750, 24, INK, 700), clamp(k * 3));
+  return paper() + globe(320, 360, 215, 12 + t * 1.6, 8) + measure(105, 640, 535, 640, k, "") + G("", N(count(12742, k), 320, 712, 46) + T("كيلو", 320, 750, 24, INK, 700), clamp(k * 3));
 });
 // 8 · near water (blue) is closer → pulled more than the Earth (green)
 shot(8, push(330, 420, 1.0, 1.08), function (u, d, t) { return paper() + track(t, u + 1, [OCEAN, LAND, GREY], null, [140, 95, 0], ["البحر اللي قدام", "الأرض", ""]); }, { tr: "in" });
@@ -150,12 +151,12 @@ shot(9, push(330, 420, 1.08, 1.0), function (u, d, t) {
 });
 // 10 · the result: the water stretches both ways (a bulge round the globe); thumbnail: a long watermelon
 shot(10, push(330, 400, 0.9, 1.02), function (u, d, t) {
-  var k = at(u, .3, 1.4); return paper() + bulge(300, 400, 200, k, 0) + globe(300, 400, 200, 12 + t * .35, 8) + moon(600, 400, 30) +
+  var k = at(u, .3, 1.4); return paper() + bulge(300, 400, 200, k, 0) + globe(300, 400, 200, 12 + t * 1.6, 8) + moon(600, 400, 30) +
     iconBox(80, 90, 120, '<ellipse rx="44" ry="26" fill="#6f8a4a" stroke="' + INK + '" stroke-width="2"/><path d="M-40 -6 Q0 -22 40 -6 M-42 6 Q0 -6 42 6" stroke="#3f5a2a" stroke-width="4" fill="none"/>', at(u, 1, .3));
 }, { tr: "out" });
 // 11 · two bulges: one facing the Moon, one on the back
 shot(11, push(320, 400, 1.0, 1.06), function (u, d, t) {
-  return paper() + bulge(300, 400, 200, 1, 0) + globe(300, 400, 200, 12 + t * .35, 8) + moon(605, 400, 30) +
+  return paper() + bulge(300, 400, 200, 1, 0) + globe(300, 400, 200, 12 + t * 1.6, 8) + moon(605, 400, 30) +
     label(530, 330, 470, 190, "انتفاخ", BLUE, at(u, .3, .5), 26) + label(40, 420, 90, 620, "انتفاخ تاني", BLUE, at(u, 1.1, .5), 26);
 });
 // 12 · «طب ليه البحر عندك بيعلى وينزل؟»: back to the beach, the staff, a question mark
@@ -216,13 +217,13 @@ shot(20, push(320, 420, 0.96, 1.04), function (u, d, t) {
     draw("M360 280 V170", at(u, .1, .5), ORANGE, 2.4, ' stroke-dasharray="10 8"') + draw("M220 420 H100", at(u, .1, .5), ORANGE, 2.4, ' stroke-dasharray="10 8"') + '<path d="M360 250 h-26 v26" stroke="' + ORANGE + '" stroke-width="2.4" fill="none" transform="translate(-150 144)"/>' + tag("أضعف مد", 360, 680, at(u, 1, .3), 34, BLUE);
 });
 // 21 · the myth: the Moon lifting only the water under it — crossed out
-shot(21, push(320, 400, 1.04, 1.0), function (u, d, t) {
-  var k = at(u, .2, .7); return paper() + globe(280, 420, 180, 12 + t * .35, 8) + moon(590, 420, 30) + '<path d="M455 ' + f(420 - 70 * k) + ' Q' + f(500 + 30 * k) + ' 420 455 ' + f(420 + 70 * k) + ' Z" fill="#5f7f97" stroke="' + INK + '" stroke-width="2.2"/>' +
-    arrow(470, 420, 545, 420, ORANGE, 6, k) + cross(500, 330, 1.5, at(u, d * .55, .5));
+shot(21, push(300, 420, 1.12, 0.96), function (u, d, t) {
+  var k = at(u, .2, .7); return paper() + globe(280, 420, 180, 12 + t * 1.6, 8) + moon(590, 420, 30) + '<path d="M455 ' + f(420 - 70 * k) + ' Q' + f(500 + 30 * k) + ' 420 455 ' + f(420 + 70 * k) + ' Z" fill="#5f7f97" stroke="' + INK + '" stroke-width="2.2"/>' +
+    arrow(470, 420, 545 + 12 * Math.sin(t * 3), 420, ORANGE, 6, k) + wave(470, 300, 560, 300, t, BLUE, 6, 24, k, 3) + cross(500, 330, 1.5, at(u, d * .55, .5));
 });
 // 22 · it stretches the whole Earth; the water just shows it because it flows
 shot(22, push(320, 400, 1.0, 1.06), function (u, d, t) {
-  var k = at(u, .3, 1.2); return paper() + bulge(300, 400, 190, k, 0) + '<ellipse cx="300" cy="400" rx="' + f(190 * (1 + .06 * k)) + '" ry="190" fill="none" stroke="' + ORANGE + '" stroke-width="3" stroke-dasharray="10 7"/>' + globe(300, 400, 190, 12 + t * .35, 8) + moon(605, 400, 28) +
+  var k = at(u, .3, 1.2); return paper() + bulge(300, 400, 190, k, 0) + '<ellipse cx="300" cy="400" rx="' + f(190 * (1 + .06 * k)) + '" ry="190" fill="none" stroke="' + ORANGE + '" stroke-width="3" stroke-dasharray="10 7"/>' + globe(300, 400, 190, 12 + t * 1.6, 8) + moon(605, 400, 28) +
     label(300 + 190 * (1 + .06 * k), 470, 470, 650, "الأرض نفسها", ORANGE, at(u, .8, .5), 24) + label(560, 360, 500, 210, "المية", BLUE, at(u, 1.3, .5), 24);
 }, { tr: "in" });
 // 23 · «يعني من الآخر»: everything at once, labelled
@@ -248,8 +249,8 @@ SCENE.intro = function (svg, t, li) {
 };
 SCENE.bumper = function (u, t) {
   var s = '<rect x="0" y="120" width="180" height="80" fill="' + SEA_TOP + '"/>';
-  for (var k = 0; k < 4; k++) s += '<path d="M' + f(-40 + ((k * 50 + t * 20) % 220)) + ' ' + (140 + k * 12) + ' q10 -6 20 0 t20 0" stroke="#e8eef0" stroke-width="2.5" fill="none"/>';
-  return s + moon(110, 80, 26);
+  for (var k = 0; k < 6; k++) s += '<path d="M' + f(-40 + ((k * 40 + t * 55) % 230)) + ' ' + (132 + k * 10) + ' q10 -7 20 0 t20 0" stroke="#e8eef0" stroke-width="3" fill="none"/>';
+  return s + moon(110 - 18 * Math.sin(t * .9), 82 - 10 * Math.cos(t * 1.1), 26);
 };
 SCENE.outro = function (svg, u, t) {
   var p = GEO.globe(230, 140, 92, -t * 22, 72).project(ALEX);

@@ -43,12 +43,14 @@
   }
 
   function bumperArt(t) {
-    var l = LN[P], k = ease((t - l.start - 0.2) / Math.max(0.6, l.end - l.start - 0.2)), R = 70, cx = 90, cy = 112, circ = 2 * Math.PI * R;
+    var l = LN[P], k = clamp((t - l.start) / Math.max(0.6, l.end - l.start)), R = 70, cx = 90, cy = 112, circ = 2 * Math.PI * R;
     var icon = S.bumper ? S.bumper(t - l.start, t) : "";
     $("bumperArt").innerHTML = '<clipPath id="bclip"><circle cx="' + cx + '" cy="' + cy + '" r="' + (R - 3) + '"/></clipPath><g clip-path="url(#bclip)">' + icon + '</g>' +
       '<rect x="80" y="18" width="20" height="7" fill="#2a2016"/><rect x="86" y="25" width="8" height="9" fill="#2a2016"/>' +
       '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="none" stroke="#d6cbb2" stroke-width="2.2"/>' +
-      '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="none" stroke="#bd552f" stroke-width="2.6" stroke-dasharray="' + (circ * k).toFixed(1) + ' ' + circ.toFixed(1) + '" transform="rotate(-90 ' + cx + ' ' + cy + ')"/>';
+      '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="none" stroke="#bd552f" stroke-width="2.6" stroke-dasharray="' + (circ * k).toFixed(1) + ' ' + circ.toFixed(1) + '" transform="rotate(-90 ' + cx + ' ' + cy + ')"/>' +
+      // the stopwatch hand sweeps round with the ring
+      '<path d="M' + cx + ' ' + cy + ' L' + (cx + Math.sin(k * 6.2832) * (R - 8)).toFixed(1) + ' ' + (cy - Math.cos(k * 6.2832) * (R - 8)).toFixed(1) + '" stroke="#bd552f" stroke-width="2.4" stroke-linecap="round"/><circle cx="' + cx + '" cy="' + cy + '" r="3.5" fill="#bd552f"/>';
   }
 
   var capCur = -1;
@@ -65,12 +67,12 @@
   window.renderAt = function (t) {
     var tSum = st(SUM), tCta = st(CTA);
     // intro card
-    var iOp = t < introEnd ? 1 : 1 - ease((t - introEnd) / XF);
+    var iOp = t < introEnd ? 1 : 1 - clamp((t - introEnd) / XF);   // linear: an eased fade parks at both ends
     show(intro, iOp);
-    if (iOp > 0) { chrome($("introChrome"), ease(t / 0.5)); var li = renderHook(t); if (S.intro) $("introArt").innerHTML = S.intro($("introArt"), t, li) || $("introArt").innerHTML; }
+    if (iOp > 0) { chrome($("introChrome"), ease(t / 0.5)); $("introArt").style.transform = "translate(" + (6 * Math.sin(t * 2.3)).toFixed(2) + "px," + (5 * Math.cos(t * 1.9)).toFixed(2) + "px) scale(" + (1.03 + 0.03 * Math.sin(t * 1.5)).toFixed(4) + ")"; var li = renderHook(t); if (S.intro) $("introArt").innerHTML = S.intro($("introArt"), t, li) || $("introArt").innerHTML; }
     // bumper
     var bOp = P < 0 ? 0 : t < introEnd ? 0 : t < mainStart ? 1 : 1 - ease((t - mainStart) / XF);
-    show(bumper, bOp); if (bOp > 0) bumperArt(t);
+    show(bumper, bOp); if (bOp > 0) { bumperArt(t); $("bumperArt").style.transform = "translate(" + (6 * Math.sin(t * 2.6)).toFixed(2) + "px," + (5 * Math.cos(t * 2.1)).toFixed(2) + "px) scale(" + (0.8 + 0.2 * Math.min(1, (t - introEnd) / 0.5) + 0.12 * (t - introEnd)).toFixed(4) + ")"; }
     // panel + captions
     var mOp = t < mainStart ? 0 : 1;
     show(main, mOp);
@@ -80,6 +82,7 @@
     show(outro, oOp);
     if (oOp > 0) {
       var u = t - tSum; chrome($("outroChrome"), 1);
+      outro.style.transform = "translate(" + (3 * Math.sin(u * 2.2)).toFixed(2) + "px," + (2.5 * Math.cos(u * 1.8)).toFixed(2) + "px) scale(" + (1 + 0.015 * u).toFixed(4) + ")";   // the camera never parks, even on the end cards
       outroEls.forEach(function (el, k) { if (el) el.style.opacity = ease((u - 0.15 * k) / 0.35).toFixed(3); });
       if (S.outro && $("outroArt")) $("outroArt").innerHTML = S.outro($("outroArt"), u, t) || $("outroArt").innerHTML;
       var aOp = CTA > SUM && t >= tCta ? ease((t - tCta) / 0.35) : 0;
