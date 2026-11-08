@@ -6,7 +6,7 @@
      bumper       the promise line      «إيه الحكاية؟ هشرحهالك في دقيقة.»: a ring fills orange round the subject, like a stopwatch
      panel        … summary-1           the diagram panel + one caption chunk at a time (≈1.2–2 s each)
      summary card summary … end         question, numbered diagram, legend, big number, 3 points, «معلومة زيادة»
-     ask box      cta line … end        «قولولنا… عايزين تعرفوا حكاية ___؟» with a blinking caret, over the points */
+     ask box      cta line … end        «قولولنا… عايزين تعرفوا حكاية ___؟» with a blinking caret, under the points */
 (function () {
   var LN = TIMING.lines, D = window.DATA, S = window.SCENE || {};
   function clamp(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
@@ -84,7 +84,7 @@
       if (S.outro && $("outroArt")) $("outroArt").innerHTML = S.outro($("outroArt"), u, t) || $("outroArt").innerHTML;
       var aOp = CTA > SUM && t >= tCta ? ease((t - tCta) / 0.35) : 0;
       ask.style.display = aOp > 0 ? "block" : "none"; ask.style.opacity = aOp.toFixed(3);
-      var pts = outro.querySelector(".pts"); if (pts && aOp > 0) pts.style.opacity = (1 - aOp).toFixed(3);
+      // the ask box sits under the recap points, so both stay on screen
       $("caret").style.opacity = Math.floor(t * 2.2) % 2 ? "0" : "1";
     }
   };
