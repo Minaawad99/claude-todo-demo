@@ -1,4 +1,4 @@
-# «إزاي بيحصل المد والجزر؟» — «الرسم الهندسي» style (see .claude/skills/diagram/SKILL.md)
+# «إزاي بيحصل المد والجزر؟» — the «اسكتش» reference episode (see .claude/skills/sketch/SKILL.md)
 CFG = {
     "title": "إزاي بيحصل المد والجزر؟",
     "category": "طبيعة وفضاء",

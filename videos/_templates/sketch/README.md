@@ -1,7 +1,7 @@
-# تمبلت «الرسم الهندسي» المشترك
+# تمبلت «اسكتش» المشترك
 
-ده التمبلت اللي أي حلقة «إيه الحكاية؟» بأسلوب الرسم الهندسي بتبدأ منه. اتعمل من دليل الأسلوب
-`videos/_reference/tabizzay/STYLE.md`، اللي طالع من تحليل 20 فيديو مرجع. وفيه حلقة تجريبية شغالة هي `videos/diagram-demo/`:
+ده التمبلت اللي أي حلقة «إيه الحكاية؟» بأسلوب **اسكتش** بتبدأ منه. حلقة المرجع بتاعته «المد والجزر» (`videos/tides/`). اتعمل من دليل الأسلوب
+`videos/_reference/tabizzay/STYLE.md`، اللي طالع من تحليل 20 فيديو مرجع. وفيه حلقة تجريبية شغالة هي `videos/sketch-demo/`:
 بتوري كل مرحلة وكل أداة، فانسخ منها.
 
 ## الملفات
@@ -16,9 +16,10 @@
 ## حلقة جديدة في 5 خطوات
 
 ```bash
-mkdir -p videos/<الحلقة>/diagram
-cp videos/_templates/diagram/build.py videos/<الحلقة>/diagram/
-cp videos/diagram-demo/diagram/{episode.py,shots.js} videos/<الحلقة>/diagram/   # وبعدين امسح محتواهم واكتب حلقتك
+mkdir -p videos/<الحلقة>/sketch
+cp videos/_templates/sketch/build.py videos/<الحلقة>/sketch/
+cp videos/_templates/sketch/cues.js videos/<الحلقة>/
+cp videos/tides/sketch/{episode.py,shots.js} videos/<الحلقة>/sketch/   # وبعدين امسح محتواهم واكتب حلقتك
 ```
 
 1. **`script.txt` و`timing.js`** في فولدر الحلقة. بيتعملوا بنفس طريقة الـ PLAYBOOK: الصوت، وبعدين `align_asr.py`، وبعدين `map_timing.py`.
@@ -34,7 +35,11 @@ cp videos/diagram-demo/diagram/{episode.py,shots.js} videos/<الحلقة>/diagr
    - `SPLIT`: لو عايز تقسّم الجملة بنفسك.
 3. **`shots.js`**: لكل لقطة `shot(بداية, كاميرا, رسمة, {tr})`. والحاجات اللي بتفضل ثابتة فوق اللوحة بـ `hud(من, لحد, رسمة)`. وكمان `SCENE.intro` و`SCENE.bumper` و`SCENE.outro`.
 4. **`python3 build.py`** بيطبعلك كل مرحلة بدأت عند أنهي سطر، وأي كلمة مهمة مش لاقيها.
-5. **المراجعة:** `node tools/strip.js <index.html> out.png 6 <أوقات…>` بيطلّعلك فريمات كتير في صورة واحدة. وبعدين `node render.js <index.html> voice.wav out.mp4`.
+5. **المراجعة قبل الريندر:**
+   - `node tools/strip.js <index.html> out.png 6 <أوقات…>` بيطلّعلك فريمات كتير في صورة واحدة.
+   - `node tools/stills.js <index.html> 0 <المدة>` بيطلّع أي لحظة واقفة أكتر من نص ثانية، بنفس مقياس `qa.py`، فتصلّحها قبل ريندر بياخد 20 دقيقة.
+6. **الصوت:** `cues.js` فيه الأصوات الثابتة لكل حلقة جاهزة، وإنت بتزوّد صوت أو اتنين لكل سطر. وبعدين `node cues.js` و`audio/sfx.py`.
+7. **الريندر:** `TAIL=3 node render.js <index.html> mix.wav out.mp4`، وبعدين الـ limiter و`qa.py`.
 
 ## المراحل (بتتحسب لوحدها من السكريبت)
 
@@ -69,4 +74,17 @@ cp videos/diagram-demo/diagram/{episode.py,shots.js} videos/<الحلقة>/diagr
 
 الألوان كلها مقاسة من الفيديوهات المرجع: `INK` و`PAPER` و`ORANGE` و`BLUE` و`OLIVE` و`SKIN` و`BEIGE` و`GREY` و`KHAKI` و`TAN`.
 
-**النسخة القديمة:** التمبلت الأولاني اتنقل لـ `videos/_templates/diagram-v1/`، لأن حلقة `xray-diagram` لسه مبنية عليه.
+## رسومات جاهزة من حلقة المد والجزر
+
+| الأداة | بترسم إيه |
+|---|---|
+| `globe(cx, cy, r, lon, lat, {dot})` | كرة أرضية **بالسواحل الحقيقية** (Natural Earth). المكتبة `lib/geo.min.js` بتتحمّل لوحدها. لو `lat` = 72 يبقى المنظر من فوق القطب الشمالي |
+| `moon`، `sun` | القمر بفوهاته، والشمس بأشعة بتلف |
+| `bulge(…)` | انتفاخ مية حوالين الأرض، وبيتنفس مع الوقت |
+| `measure(…)` | خط قياس بعلامات في طرفيه، بيترسم ورقمه بيظهر تحته |
+| `tag(…)` | كلمة عربي في إطار، زي «أعلى مد». أما `numBox` فللأرقام |
+| ألوان الخامات | `SAND_*` و`STRATA` و`WET` و`WOOD*` و`SEA_*` و`OCEAN` و`LAND` و`MOONC` |
+
+الشط من الجنب `beachSide()`، والقضيب اللي عليه 3 كور `track()`، والأرض من فوق القطب `polar()`: دول في `videos/tides/sketch/shots.js`. انسخهم لو الحلقة محتاجاهم.
+
+**النسخة القديمة:** تمبلت «الرسم الهندسي» الأولاني اتنقل لـ `videos/_templates/diagram-v1/`، لأن حلقة `xray-diagram` لسه مبنية عليه.

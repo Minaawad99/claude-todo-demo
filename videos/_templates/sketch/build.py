@@ -4,7 +4,7 @@ with this episode's title, category, summary card and caption data). The page lo
 
 episode.py sets:
   CFG = {"title": …, "category": …, "outro": <summary-card HTML>, "watermark": "" or "إيه الحكاية؟ | @handle"}
-        optional: "libs": ["../../lib/geo.min.js"] (extra scripts loaded before scenes.js; geo.min.js draws real globes: GEO.globe())
+        optional: "libs": extra scripts loaded before scenes.js (default ["../../lib/geo.min.js"], which globe() needs)
         optional: "intro_lines" (how many hook lines before the promise), "promise", "summary", "cta" (line indexes)
   K   = {line: {word: "o" | "b" | "g" | "u" | "gr" | "o u"}}   key words in the caption / hook:
         o orange (action, danger, heat, numbers) · b blue (water, air, cold, the technical term) · g olive (the named part)
@@ -14,7 +14,7 @@ episode.py sets:
 """
 import os, re, json, html
 HERE = os.path.dirname(os.path.abspath(__file__))
-TPL = os.path.join(HERE, "../../_templates/diagram")
+TPL = os.path.join(HERE, "../../_templates/sketch")
 CFG, K, CAPTEXT, SPLIT = {}, {}, {}, {}
 exec(open(os.path.join(HERE, "episode.py"), encoding="utf-8").read())
 lines = [l.strip() for l in open(os.path.join(HERE, "../script.txt"), encoding="utf-8") if l.strip()]
@@ -82,7 +82,7 @@ open(os.path.join(HERE, "scenes.js"), "w", encoding="utf-8").write(
 page = open(os.path.join(TPL, "template.html"), encoding="utf-8").read()
 for k, v in [("/*TITLE*/", CFG.get("title", "")), ("/*CATEGORY*/", CFG.get("category", "")), ("/*OUTRO*/", CFG.get("outro", "")),
              ("/*WATERMARK*/", html.escape(CFG.get("watermark", ""))),
-             ("/*LIBS*/", "".join('<script src="%s"></script>' % src for src in CFG.get("libs", []))), ("/*DATA*/", "window.DATA = " + json.dumps(data, ensure_ascii=False) + ";")]:
+             ("/*LIBS*/", "".join('<script src="%s"></script>' % src for src in CFG.get("libs", ["../../lib/geo.min.js"]))), ("/*DATA*/", "window.DATA = " + json.dumps(data, ensure_ascii=False) + ";")]:
     page = page.replace(k, v)
 open(os.path.join(HERE, "index.html"), "w", encoding="utf-8").write(page)
 print("built: %d lines, %d caption chunks · hook lines 0-%d · promise %d · summary %d · ask %d"
