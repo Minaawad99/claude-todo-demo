@@ -48,14 +48,15 @@ if len(V)==len(O) and '--span' not in sys.argv: pairs=list(zip(O,V)); mode="phra
 else: pairs=[([O[0][0],O[-1][1]],[V[0][0],V[-1][1]])]; mode="span"
 # Each phrase keeps a margin of our own audio around it, so soft word starts and the fading end of the last
 # syllable are never cut: up to 0.15 s before and 0.40 s after, but never into the neighbouring phrase.
-LO=[p[0] for p in pairs]; LD=dur(line)
+LO=[p[0] for p in pairs]; LD=dur(line); prev_end=0.0  # phrases never overlap: a phrase that cannot be sped up enough starts after the previous one ends
 for i,(o,v) in enumerate(pairs):
     r=(o[1]-o[0])/(v[1]-v[0]); rr=max(MINR,min(MAXR,r))
     pre=min(0.15, o[0] - (LO[i-1][1] + 0.02 if i else 0.0)); pre=max(0.0, pre)
     post=min(0.40, (LO[i+1][0] - 0.02 if i+1 < len(LO) else LD) - o[1]); post=max(0.0, post)
     a0, a1 = o[0]-pre, o[1]+post; p=f"{tmp}/p{i}.wav"
     subprocess.run(["ffmpeg","-v","error","-y","-ss",f"{a0:.3f}","-t",f"{a1-a0:.3f}","-i",line,"-af",atempo(r)+",afade=t=in:d=0.01,areverse,afade=t=in:d=0.03,areverse","-ar","48000","-ac","1",p],check=True)
-    parts.append((p,max(0.0, v[0]-pre/rr))); print(f"  {mode} {i}: ours {o[0]:.2f}-{o[1]:.2f}s (+{pre:.2f}/{post:.2f}) -> clip {v[0]:.2f}-{v[1]:.2f}s  (x{r:.2f})")
+    t=max(0.0, v[0]-pre/rr, prev_end); prev_end=t+dur(p)-0.03
+    parts.append((p,t)); print(f"  {mode} {i}: ours {o[0]:.2f}-{o[1]:.2f}s (+{pre:.2f}/{post:.2f}) -> clip {v[0]:.2f}-{v[1]:.2f}s  (x{r:.2f}, used x{rr:.2f}, starts {t:.2f}s)")
 inp=[]; fl=[]
 for i,(p,t) in enumerate(parts): inp+=["-i",p]; fl.append(f"[{i+1}]adelay={int(t*1000)}:all=1[a{i}]")
 mix="".join(f"[a{i}]" for i in range(len(parts)))+f"amix=inputs={len(parts)}:normalize=0,apad=pad_dur=0.4[aout]"

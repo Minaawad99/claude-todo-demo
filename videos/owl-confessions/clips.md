@@ -114,47 +114,47 @@ The man in the image is a talk-show host. He closes his leather folder, smiles w
 
 **K01 (صورة C، 8 ثواني):**
 ```
-The barn owl in the image is a talking animal in a film. It speaks into the brass microphone in Arabic, in a calm, wise voice: "إذا وقفت على سطح بيتك ليلاً، ظن أهل البيت أن الموت قادم. أنا لم أجلب الموت قط، جئت لأصطاد فأراً." Its beak clearly opens and closes with every syllable, perfectly synced to the speech, small slow head tilts, blinks once. Static camera, warm amber light. Keep the owl and the studio exactly the same.
+The barn owl in the image is a talking animal in a film. It speaks into the brass microphone in Arabic, in a calm, wise voice: "إذا وقفت على سطح بيتك ليلاً، ظن أهل البيت أن الموت قادم. أنا لم أجلب الموت قط، جئت لأصطاد فأراً." Its beak clearly opens and closes with every syllable, perfectly synced to the speech, small slow head tilts, blinks once. It speaks slowly and calmly, with a short pause after each sentence. Static camera, warm amber light. Keep the owl and the studio exactly the same.
 ```
 
 **K03 (صورة C، 8 ثواني):**
 ```
-The barn owl in the image is a talking animal in a film. It speaks into the brass microphone in Arabic, in a calm, wise voice: "أنا متهم بالجريمة نفسها كل ليلة. لكني أطير بصمت، فلا يسمعني الفأر قبل أن أصل." Its beak clearly opens and closes with every syllable, perfectly synced to the speech, it slightly spreads one wing on the word "أطير". Static camera, warm amber light. Keep the owl and the studio exactly the same.
+The barn owl in the image is a talking animal in a film. It speaks into the brass microphone in Arabic, in a calm, wise voice: "أنا متهم بالجريمة نفسها كل ليلة. لكني أطير بصمت، فلا يسمعني الفأر قبل أن أصل." Its beak clearly opens and closes with every syllable, perfectly synced to the speech, it slightly spreads one wing on the word "أطير". It speaks slowly and calmly, with a short pause after each sentence. Static camera, warm amber light. Keep the owl and the studio exactly the same.
 ```
 
 **K05 (صورة C، 8 ثواني):**
 ```
-The barn owl in the image is a talking animal in a film. It speaks into the brass microphone in Arabic, explaining calmly: "ريش جناحي له حواف مسننة كالمشط، وسطح مخملي يقلل الاضطراب حول الجناح، فيخف الصوت كثيراً." Its beak clearly opens and closes with every syllable, perfectly synced to the speech, small head tilts. Static camera, warm amber light. Keep the owl and the studio exactly the same.
+The barn owl in the image is a talking animal in a film. It speaks into the brass microphone in Arabic, explaining calmly: "ريش جناحي له حواف مسننة كالمشط، وسطح مخملي يقلل الاضطراب حول الجناح، فيخف الصوت كثيراً." Its beak clearly opens and closes with every syllable, perfectly synced to the speech, small head tilts. It speaks slowly and calmly, with a short pause after each sentence. Static camera, warm amber light. Keep the owl and the studio exactly the same.
 ```
 
 **K09 (صورة C، 6 ثواني):**
 ```
-The barn owl in the image is a talking animal in a film. It speaks into the brass microphone in Arabic, calmly correcting the host: "الصوت الذي تسمعونه ليس صيدي، بل صياحنا لتحديد الحدود بين أفراد النوع." Its beak clearly opens and closes with every syllable, perfectly synced to the speech, a slow side-to-side head movement. Static camera, warm amber light. Keep the owl and the studio exactly the same.
+The barn owl in the image is a talking animal in a film. It speaks into the brass microphone in Arabic, calmly correcting the host: "الصوت الذي تسمعونه ليس صيدي، بل صياحنا لتحديد الحدود بين أفراد النوع." Its beak clearly opens and closes with every syllable, perfectly synced to the speech, a slow side-to-side head movement. It speaks slowly and calmly, with a short pause after each sentence. Static camera, warm amber light. Keep the owl and the studio exactly the same.
 ```
 
 **K13 (صورة C، 8 ثواني):**
 ```
-The barn owl in the image is a talking animal in a film. It speaks into the brass microphone in Arabic: "أذناي ليستا على مستوى واحد، فإحداهما أعلى، فأدرك مصدر الصوت من أعلى ومن أسفل بدقة شديدة." Its beak clearly opens and closes with every syllable, perfectly synced to the speech, it tilts its head up and then down as if listening. Static camera, warm amber light. Keep the owl and the studio exactly the same.
+The barn owl in the image is a talking animal in a film. It speaks into the brass microphone in Arabic: "أذناي ليستا على مستوى واحد، فإحداهما أعلى، فأدرك مصدر الصوت من أعلى ومن أسفل بدقة شديدة." Its beak clearly opens and closes with every syllable, perfectly synced to the speech, it tilts its head up and then down as if listening. It speaks slowly and calmly, with a short pause after each sentence. Static camera, warm amber light. Keep the owl and the studio exactly the same.
 ```
 
 **K17 (صورة C، 4 ثواني):**
 ```
-The barn owl in the image is a talking animal in a film. It speaks into the brass microphone in Arabic, short and confident: "بالضبط. الصيد بالسمع، والتواصل بالصياح." Its beak clearly opens and closes with every syllable, perfectly synced to the speech, one slow blink at the end. Static camera, warm amber light. Keep the owl and the studio exactly the same.
+The barn owl in the image is a talking animal in a film. It speaks into the brass microphone in Arabic, short and confident: "بالضبط. الصيد بالسمع، والتواصل بالصياح." Its beak clearly opens and closes with every syllable, perfectly synced to the speech, one slow blink at the end. It speaks slowly and calmly, with a short pause after each sentence. Static camera, warm amber light. Keep the owl and the studio exactly the same.
 ```
 
 **K20 (صورة C، 4 ثواني):** (السر: النور يوطى شوية)
 ```
-The lamp light dims slightly, the barn owl leans closer to the brass microphone and speaks in Arabic, as if telling a secret: "وهنا السر الذي لم تكونوا تعرفونه." Its beak clearly opens and closes with every syllable, perfectly synced to the speech. Very slow push-in. Keep the owl and the studio exactly the same.
+The lamp light dims slightly, the barn owl leans closer to the brass microphone and speaks in Arabic, as if telling a secret: "وهنا السر الذي لم تكونوا تعرفونه." Its beak clearly opens and closes with every syllable, perfectly synced to the speech. It speaks slowly and calmly. Very slow push-in. Keep the owl and the studio exactly the same.
 ```
 
 **K21 (صورة B، 4 ثواني):** (الجملة الأولى بس، والباقي على لقطة R21)
 ```
-The barn owl in the image is a talking animal in a film. It speaks into the brass microphone in Arabic, calmly: "أنا لا أدخل البيوت. أنتظر عند الباب." Its beak clearly opens and closes with every syllable, perfectly synced to the speech, then it slowly turns its head far to one side. Static camera, warm amber light. Keep the owl and the studio exactly the same.
+The barn owl in the image is a talking animal in a film. It speaks into the brass microphone in Arabic, calmly: "أنا لا أدخل البيوت. أنتظر عند الباب." Its beak clearly opens and closes with every syllable, perfectly synced to the speech, then it slowly turns its head far to one side. It speaks slowly and calmly, with a short pause after each sentence. Static camera, warm amber light. Keep the owl and the studio exactly the same.
 ```
 
 **K25 (صورة C، 6 ثواني):** (آخر جملة، فيها خفة دم)
 ```
-The barn owl in the image is a talking animal in a film. It speaks into the brass microphone in Arabic, with dry humor: "أما الفأر الذي يسمع خطوات الليل، فهو الذي يستحق القلق." Its beak clearly opens and closes with every syllable, perfectly synced to the speech, then it stares into the lens, a glint in its eye, and blinks once slowly. Static camera. Keep the owl and the studio exactly the same.
+The barn owl in the image is a talking animal in a film. It speaks into the brass microphone in Arabic, with dry humor: "أما الفأر الذي يسمع خطوات الليل، فهو الذي يستحق القلق." Its beak clearly opens and closes with every syllable, perfectly synced to the speech, then it stares into the lens, a glint in its eye, and blinks once slowly. It speaks slowly and calmly, with a short pause after each sentence. Static camera. Keep the owl and the studio exactly the same.
 ```
 
 ---
