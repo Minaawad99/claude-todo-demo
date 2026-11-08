@@ -1,4 +1,4 @@
-/* @ds-bundle: {"format":4,"namespace":"TebEzay","components":[{"name":"SceneFrame"},{"name":"Caption"},{"name":"Callout"},{"name":"Inset"},{"name":"Counter"},{"name":"BrandMark"},{"name":"CategoryTag"},{"name":"Legend"},{"name":"AskBox"},{"name":"VideoCard"},{"name":"Iso3D"}]} */
+/* @ds-bundle: {"format":4,"namespace":"EhElhekaya","components":[{"name":"SceneFrame"},{"name":"Caption"},{"name":"Callout"},{"name":"Inset"},{"name":"Counter"},{"name":"BrandMark"},{"name":"CategoryTag"},{"name":"Legend"},{"name":"AskBox"},{"name":"VideoCard"},{"name":"Iso3D"}]} */
 (function () {
   "use strict";
 
@@ -183,7 +183,7 @@
 
 
   // ── Iso3D: every machine is drawn as a 3D isometric cutaway ─────────────
-  // TebEzay.iso(svgGroup, {scale, x, y}) returns drawing helpers in model units:
+  // EhElhekaya.iso(svgGroup, {scale, x, y}) returns drawing helpers in model units:
   // x runs right-down, y left-down, z up; the viewer sees the top, +x and +y faces.
   function iso(root, opts) {
     opts = opts || {};
@@ -255,7 +255,7 @@
     return { P: P, d: d, el: el, group: group, face: face, line: line, box: box, ring: ring, disc: disc, cyl: cyl, pipe: pipe, cutaway: cutaway, rotor: rotor, scale: K };
   }
 
-  window.TebEzay = {
+  window.EhElhekaya = {
     timing: T,
     play: play,
     stop: stop,
@@ -265,4 +265,6 @@
     countUp: countUp,
     iso: iso
   };
+  // Old name from when the show was «طب إزاي؟». Older episode pages under videos/ still call TebEzay.*
+  window.TebEzay = window.EhElhekaya;
 })();

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>طب إزاي؟</title>
+<title>إيه الحكاية؟</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="design-system/tokens.css">
 <link rel="stylesheet" href="design-system/components/bundle.css">
@@ -94,11 +94,8 @@
 <header class="site">
   <div class="wrap">
     <a class="tz-brand" href="#top" style="text-decoration:none">
-      <svg class="tz-watch" viewBox="0 0 48 54" aria-hidden="true">
-        <rect class="crown" x="20" y="0" width="8" height="3"/><rect class="crown" x="23" y="3" width="2" height="4"/>
-        <circle class="arc" cx="24" cy="30" r="20"/><circle class="core" cx="24" cy="30" r="6"/>
-      </svg>
-      <span class="tz-brand__name">طب إزاي؟</span>
+      <svg class="tz-mark" viewBox="0 0 200 200" aria-hidden="true"><rect class="crown" x="84" y="4" width="32" height="10"/><rect class="crown" x="94" y="14" width="12" height="14"/><path class="shadow" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)"/><path class="bubble" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z"/><text class="q" x="106" y="140" text-anchor="middle">؟</text></svg>
+      <span class="tz-brand__name">إيه الحكاية؟</span>
     </a>
     <nav class="links" aria-label="الأقسام">
       <a href="#library">الحلقات</a>
@@ -130,7 +127,7 @@
       <div class="player__box" id="player">
         <!-- Beat 1: intro sheet -->
         <div class="tz-frame tz-frame--sheet sheet is-on" style="margin:0">
-          <span class="tz-brand"><svg class="tz-watch" style="--watch-size:22px" viewBox="0 0 48 54" aria-hidden="true"><rect class="crown" x="20" y="0" width="8" height="3"/><rect class="crown" x="23" y="3" width="2" height="4"/><circle class="arc" cx="24" cy="30" r="20"/><circle class="core" cx="24" cy="30" r="6"/></svg><span class="tz-brand__name">طب إزاي؟</span></span>
+          <span class="tz-brand"><svg class="tz-mark" style="--mark-size:26px" viewBox="0 0 200 200" aria-hidden="true"><rect class="crown" x="84" y="4" width="32" height="10"/><rect class="crown" x="94" y="14" width="12" height="14"/><path class="shadow" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)"/><path class="bubble" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z"/><text class="q" x="106" y="140" text-anchor="middle">؟</text></svg><span class="tz-brand__name">إيه الحكاية؟</span></span>
           <span class="tz-tag" style="justify-self:center">أجهزة البيت</span>
           <h2 data-tz="type">غسالة الأطباق بتغسل كل ده... بحوالي جردل <span class="tz-k tz-k--water" data-tz="key">مية</span> بس.</h2>
           <div class="tz-counter tz-counter--water" style="--num-size:64px;justify-self:end" data-tz="fade" data-tz-at="0">
@@ -146,7 +143,7 @@
               <circle class="track" cx="24" cy="30" r="20"/>
               <circle class="arc" cx="24" cy="30" r="20" pathLength="100" transform="rotate(-90 24 30)"/>
             </svg>
-            <span style="font-size:30px;font-weight:600">طب إزاي؟</span>
+            <span style="font-size:30px;font-weight:600">إيه الحكاية؟</span>
             <span style="font-size:16px" data-tz="ink">هشرحهالك في <span class="tz-k tz-k--heat" data-tz="key">دقيقة.</span></span>
           </div>
         </div>
@@ -354,7 +351,7 @@
     </div>
     <form class="tz-ask" id="ask-form">
       <span class="tz-ask__lead">عايزين تعرفوا</span>
-      <label class="tz-ask__line" for="ask-q">طب إزاي <input id="ask-q" class="tz-ask__blank" placeholder="المكيف بيبرد" autocomplete="off" required>؟</label>
+      <label class="tz-ask__line" for="ask-q">حكاية <input id="ask-q" class="tz-ask__blank" placeholder="المكيف" autocomplete="off" required>؟</label>
       <button type="submit" class="btn" style="justify-self:center">ابعت السؤال</button>
       <p class="sent" id="sent" aria-live="polite"></p>
     </form>
@@ -363,14 +360,14 @@
 
 <footer>
   <div class="wrap">
-    <span>طب إزاي؟ · الحاجات المعقدة، مرسومة ومشروحة في دقيقة.</span>
+    <span>إيه الحكاية؟ · الحاجات المعقدة، مرسومة ومشروحة في دقيقة.</span>
     <span>الحلقات والرسومات أمثلة توضيحية للستايل.</span>
   </div>
 </footer>
 
 <script src="design-system/components/bundle.js"></script>
 <script>
-  TebEzay.patterns();
+  EhElhekaya.patterns();
 
   // Hero player: play each beat, hold, crossfade to the next, loop.
   (function () {
@@ -386,7 +383,7 @@
       clearTimeout(t);
       i = n % frames.length;
       show(i);
-      var len = TebEzay.play(frames[i]);
+      var len = EhElhekaya.play(frames[i]);
       t = setTimeout(function () { beat(i + 1); }, len + HOLD);
     }
     document.getElementById("replay").addEventListener("click", function () { beat(0); });
@@ -415,7 +412,7 @@
   document.getElementById("ask-form").addEventListener("submit", function (e) {
     e.preventDefault();
     var q = document.getElementById("ask-q");
-    document.getElementById("sent").textContent = "وصل سؤالك: طب إزاي " + q.value.trim() + "؟";
+    document.getElementById("sent").textContent = "وصل سؤالك: حكاية " + q.value.trim() + "؟";
     q.value = "";
   });
 </script>

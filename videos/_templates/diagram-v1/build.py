@@ -3,7 +3,7 @@ template with the title, the opening card, the summary card and the captions (ke
 Copy this file next to the episode's shots.js and fill in CFG and K."""
 import os, json
 HERE = os.path.dirname(os.path.abspath(__file__))
-TPL = os.path.join(HERE, "../../_templates/diagram")
+TPL = os.path.join(HERE, "../../_templates/diagram-v1")
 CFG = {"title": "", "category": "", "hook": "", "outro": ""}
 K = {}
 exec(open(os.path.join(HERE, "episode.py"), encoding="utf-8").read())   # sets CFG and K
