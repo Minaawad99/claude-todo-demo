@@ -50,7 +50,7 @@ The man in the image is a talk-show host. He looks straight into the camera with
 The man in the image is a talk-show host. He leans slightly toward the camera, lowers his voice as if asking something serious, and says in Arabic: "فهل يعني ذلك أن أحداً من أهل البيت سيموت؟" Natural lip movement, raises one eyebrow on the question, then turns his head toward his guest. Static camera, warm studio light. Keep his face exactly the same.
 ```
 
-**H02 (صورة A، 6 ثواني):**
+**H02 (صورة A، 8 ثواني):**
 ```
 The man in the image is a talk-show host. He looks at his guest and says in Arabic, calmly and curiously: "ضيفنا اليوم متهم منذ قرون بأنه يجلب الموت، فهل هذا صحيح؟" Natural lip movement, opens the leather folder on his knee, natural blinking. Static camera, warm studio light. Keep his face exactly the same.
 ```
@@ -70,7 +70,7 @@ The man in the image is a talk-show host. He narrows his eyes with a teasing smi
 The man in the image is a talk-show host. He nods slowly, impressed, then says in Arabic: "يعني صياد صامت. لكن الناس يخافون من صوتك الليلي؟" Natural lip movement, points gently toward his guest on the second sentence. Static camera, warm studio light. Keep his face exactly the same.
 ```
 
-**H10 (صورة D، 4 ثواني):**
+**H10 (صورة D، 6 ثواني):**
 ```
 The man in the image is a talk-show host. He leans forward, intrigued, and says in Arabic: "هل تستطيع أن تصطاد في الظلام التام؟" Natural lip movement, natural blinking. Static camera, warm studio light. Keep his face exactly the same.
 ```
@@ -85,12 +85,12 @@ The man in the image is a talk-show host. He touches his own ear with one finger
 The man in the image is a talk-show host. He picks up a pen over his folder and asks in Arabic: "وما مدى هذه الدقة؟" Natural lip movement, curious look at his guest. Static camera, warm studio light. Keep his face exactly the same.
 ```
 
-**H16 (صورة D، 4 ثواني):**
+**H16 (صورة D، 6 ثواني):**
 ```
 The man in the image is a talk-show host. He sits back, thinking it through, and says in Arabic: "إذن الخرافة تخيفنا من صوت لا علاقة له بالصيد؟" Natural lip movement, slow nod, hand on his chin. Static camera, warm studio light. Keep his face exactly the same.
 ```
 
-**H18 (صورة A، 4 ثواني):**
+**H18 (صورة A، 6 ثواني):**
 ```
 The man in the image is a talk-show host. He looks at his guest with a light smile and asks in Arabic: "ولماذا يقال عنك إنك تتجنب النهار؟" Natural lip movement, small hand gesture toward the window light. Static camera, warm studio light. Keep his face exactly the same.
 ```
@@ -127,7 +127,7 @@ The barn owl in the image is a talking animal in a film. It speaks into the bras
 The barn owl in the image is a talking animal in a film. It speaks into the brass microphone in Arabic, explaining calmly: "ريش جناحي له حواف مسننة كالمشط، وسطح مخملي يقلل الاضطراب حول الجناح، فيخف الصوت كثيراً." Its beak clearly opens and closes with every syllable, perfectly synced to the speech, small head tilts. It speaks slowly and calmly, with a short pause after each sentence. Static camera, warm amber light. Keep the owl and the studio exactly the same.
 ```
 
-**K09 (صورة C، 6 ثواني):**
+**K09 (صورة C، 8 ثواني):**
 ```
 The barn owl in the image is a talking animal in a film. It speaks into the brass microphone in Arabic, calmly correcting the host: "الصوت الذي تسمعونه ليس صيدي، بل صياحنا لتحديد الحدود بين أفراد النوع." Its beak clearly opens and closes with every syllable, perfectly synced to the speech, a slow side-to-side head movement. It speaks slowly and calmly, with a short pause after each sentence. Static camera, warm amber light. Keep the owl and the studio exactly the same.
 ```
@@ -137,7 +137,7 @@ The barn owl in the image is a talking animal in a film. It speaks into the bras
 The barn owl in the image is a talking animal in a film. It speaks into the brass microphone in Arabic: "أذناي ليستا على مستوى واحد، فإحداهما أعلى، فأدرك مصدر الصوت من أعلى ومن أسفل بدقة شديدة." Its beak clearly opens and closes with every syllable, perfectly synced to the speech, it tilts its head up and then down as if listening. It speaks slowly and calmly, with a short pause after each sentence. Static camera, warm amber light. Keep the owl and the studio exactly the same.
 ```
 
-**K17 (صورة C، 4 ثواني):**
+**K17 (صورة C، 6 ثواني):**
 ```
 The barn owl in the image is a talking animal in a film. It speaks into the brass microphone in Arabic, short and confident: "بالضبط. الصيد بالسمع، والتواصل بالصياح." Its beak clearly opens and closes with every syllable, perfectly synced to the speech, one slow blink at the end. It speaks slowly and calmly, with a short pause after each sentence. Static camera, warm amber light. Keep the owl and the studio exactly the same.
 ```
