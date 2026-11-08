@@ -1,6 +1,6 @@
 /**
- * طب إزاي؟ — the components are HTML + CSS classes (bundle.css).
- * bundle.js adds the motion engine on window.TebEzay.
+ * إيه الحكاية؟ — the components are HTML + CSS classes (bundle.css).
+ * bundle.js adds the motion engine on window.EhElhekaya.
  * Each <Comp>Props lists the classes and data attributes a consumer provides.
  */
 
@@ -41,10 +41,10 @@ interface AskBoxProps { lead: string[]; editable?: boolean; }
 /** a.tz-card > .tz-card__thumb(svg g.tz-card__inner + g.tz-card__shell, __play, __dur), .tz-card__meta, h3.tz-card__title > span */
 interface VideoCardProps { title: string; category: string; duration: string; published: string; href: string; }
 
-interface TebEzayTiming { fast: 200; base: 400; slow: 800; word: 110; gap: 120; count: 1400; ring: 1300; }
+interface EhElhekayaTiming { fast: 200; base: 400; slow: 800; word: 110; gap: 120; count: 1400; ring: 1300; }
 
-declare const TebEzay: {
-  timing: TebEzayTiming;
+declare const EhElhekaya: {
+  timing: EhElhekayaTiming;
   /** Play every [data-tz] under root in DOM order. Returns total length in ms. No-op under prefers-reduced-motion unless force. */
   play(root?: Element | Document, opts?: { delay?: number; force?: boolean }): number;
   /** Cancel pending beats under root. */
@@ -56,11 +56,11 @@ declare const TebEzay: {
   splitWords(el: Element): NodeListOf<Element>;
   countUp(el: Element, ms: number): void;
   /** 3D isometric cutaway helpers drawing into an SVG group. x right-down, y left-down, z up. */
-  iso(root: SVGGElement, opts?: { scale?: number; x?: number; y?: number }): TebEzayIso;
+  iso(root: SVGGElement, opts?: { scale?: number; x?: number; y?: number }): EhElhekayaIso;
 };
 
 type Pt3 = [number, number, number];
-interface TebEzayIso {
+interface EhElhekayaIso {
   scale: number;
   P(x: number, y: number, z: number): [number, number];
   d(points: Pt3[], close?: boolean): string;
@@ -78,3 +78,6 @@ interface TebEzayIso {
   /** A bar turning about z in true 3D (spray arm, fan blade). Redraw each frame. */
   rotor(g: Element, o: { x: number; y: number; z: number; length: number; width: number; thick?: number; angle: number; side?: string; sideX?: string; top?: string }): void;
 }
+
+/** Old name (the show used to be «طب إزاي؟»); kept so older episode pages keep working. */
+declare const TebEzay: typeof EhElhekaya;

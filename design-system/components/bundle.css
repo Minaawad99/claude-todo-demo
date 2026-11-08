@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&family=Noto+Serif:wght@700&display=swap");
 
 /* ─────────────────────────────────────────────────────────────
-   طب إزاي؟ — components + motion
+   إيه الحكاية؟ — components + motion
    Colours, type, spacing, radius and stroke come from tokens.css.
    Motion values live here (tokens.json has no motion family).
    ───────────────────────────────────────────────────────────── */
@@ -132,7 +132,8 @@
 .tz-counter--water .tz-counter__num { color: var(--water); }
 .tz-counter__unit { font: 600 16px / 1.5 var(--font-sans); max-width: 18ch; }
 
-/* ── Brand mark: stopwatch ring + name ───────────────────── */
+/* ── Brand mark: speech bubble with a red ؟ under the stopwatch crown, + name.
+   The full stopwatch ring (.tz-watch) stays for the opening beat «هشرحهالك في دقيقة». ── */
 .tz-brand { display: inline-flex; align-items: center; gap: var(--space-2); direction: rtl; color: var(--ink); font-family: var(--font-sans); }
 .tz-brand__name { font: 500 var(--brand-size, 14px) / 1 var(--font-sans); color: var(--ink-muted); }
 .tz-watch { width: var(--watch-size, 32px); height: auto; overflow: visible; }
@@ -140,6 +141,10 @@
 .tz-watch .track { fill: none; stroke: var(--line-soft); stroke-width: 2; opacity: .35; }
 .tz-watch .arc   { fill: none; stroke: var(--heat); stroke-width: 2; transition: stroke-dashoffset var(--tz-ring) linear; }
 .tz-watch .core  { fill: var(--heat); }
+.tz-mark { width: var(--mark-size, 30px); height: auto; overflow: visible; flex: none; }
+.tz-mark .crown, .tz-mark .shadow { fill: var(--ink); }
+.tz-mark .bubble { fill: var(--paper-raised); stroke: var(--ink); stroke-width: 9; stroke-linejoin: round; }
+.tz-mark .q { fill: var(--heat); font: 800 120px var(--font-sans); }
 
 /* ── Category tag ────────────────────────────────────────── */
 .tz-tag {
@@ -267,7 +272,7 @@ label.tz-ask__line { white-space: nowrap; }
 @keyframes tz-wave  { from { transform: translateX(0); } to { transform: translateX(-12px); } }
 @keyframes tz-caret { 50% { opacity: 0; } }
 
-/* ── Sequenced motion (TebEzay.play) ─────────────────────────
+/* ── Sequenced motion (EhElhekaya.play) ─────────────────────────
    Resting state is the final frame. play() adds .tz-armed to the
    root, which sets each verb's start state; each element gets
    .tz-on at its beat and transitions to rest.                  */
