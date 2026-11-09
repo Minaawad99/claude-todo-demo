@@ -27,7 +27,7 @@ def find(pred, default):
 EN = CFG.get("lang") == "en"   # English edition («Here's the Thing»): same drawings, LTR captions and cards
 promise = CFG.get("promise", find(lambda l: ("إيه الحكاية" in l and "هشرح" in l) or ("here's the thing" in l.lower() and "explain" in l.lower()), -1))
 intro_lines = CFG.get("intro_lines", promise if promise > 0 else 1)
-summary = CFG.get("summary", find(lambda l: l.startswith("ودي كانت") or l.startswith("وده كان") or l.startswith("And that's"), n - 2))
+summary = CFG.get("summary", find(lambda l: l.startswith("ودي كانت") or l.startswith("وده كان") or l.startswith("And that's the thing"), n - 2))
 cta = CFG.get("cta", find(lambda l: "قولولنا" in l or l.startswith("Tell us"), n - 1))
 
 def words_html(ws, keys):

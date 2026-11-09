@@ -36,7 +36,7 @@ const drone = (t, dur, from) => rec(t, 'space-drone', 0.12, from || 0.3, Math.mi
 
 // ── fixed parts of every «اسكتش» episode (phase lines as build.py prints them) ──
 const PROMISE = T.findIndex(l => (l.text.includes('إيه الحكاية') && l.text.includes('هشرح')) || /here's the thing.*explain/i.test(l.text));
-const SUMMARY = T.findIndex(l => l.text.startsWith('ودي كانت') || l.text.startsWith("And that's")), ASK = T.length - 1;
+const SUMMARY = T.findIndex(l => l.text.startsWith('ودي كانت') || l.text.startsWith("And that's the thing")), ASK = T.length - 1;
 a(L(0) + 0.1, 'chime', 0.3);                                                                            // the hook card opens
 a(L(PROMISE) + 0.15, 'ping', 0.3); for (let k = 0; k < 5; k++) a(L(PROMISE) + 0.4 + k * 0.32, 'tick', 0.14);   // bumper: the stopwatch
 for (let i = PROMISE + 1; i < SUMMARY; i++) swipe(i);                                                   // one flip per shot change
