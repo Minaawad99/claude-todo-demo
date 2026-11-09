@@ -44,29 +44,30 @@ a(L(SUMMARY) + 0.1, 'chime', 0.35); for (let k = 0; k < 5; k++) a(L(SUMMARY) + 0
 paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                                                       // ask box
 
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
-// «الطيارة بتطير إزاي؟» / How Planes Fly (same cues in both editions; line numbers match)
+// «الطيارة بتطير إزاي؟» / How Planes Fly — the four forces (same cues in both editions; line numbers match)
 a(L(0) + 0.2, 'jet', 0.1, L(3) - L(0) - 0.3);                              // the airliner cruising on the hook card
 scribble(L(1) + 0.7);                                                       // no rotor: crossed out
 rec(L(2) + 0.2, 'wind-gust', 0.16, 0.25, 2.5, 1.0, 'wind', 0.12);            // above the clouds
-paper(L(4) + 0.2);                                                          // the rule card
-a(L(5) + 0.4, 'thud', 0.25); lab(5, 0.6); lab(5, 1.4);                       // push down, push back up
-rec(L(6) + 0.2, 'wind-gust', 0.18, 0.25, 2.2, 1.0, 'wind', 0.15); a(L(6) + D(6) * 0.7, 'pop', 0.25);   // AIR
-lab(7, 0.4); lab(7, 1.8); a(L(7) + 1.2, 'tick', 0.18);                       // the curved, tilted section
-rec(L(8) + 0.2, 'wind-gust', 0.2, 0.25, D(8) - 0.2, 1.0, 'wind', 0.15); lab(8, 1.6);   // air bent down
-a(L(9) + 0.3, 'whoosh', 0.2); a(L(9) + 1.2, 'whoosh', 0.18); ding(L(9) + 1.6);           // the air shoves the wing up
-rec(L(10) + 0.2, 'wind-gust', 0.25, 0.25, D(10) - 0.2, 1.0, 'wind', 0.2);               // hand out of the car window
-rec(L(11) + 0.2, 'wind-gust', 0.16, 0.25, D(11) - 0.2, 1.0, 'wind', 0.12); for (let k = 0; k < 5; k++) a(L(11) + 1.2 + k * 0.15, 'tick', 0.14); lab(11, 2);
-for (let k = 0; k < 5; k++) a(L(12) + 0.3 + k * 0.15, 'tick', 0.14); a(L(12) + 1.3, 'whoosh', 0.16);
-a(L(13) + D(13) * 0.45, 'pop', 0.25);                                       // =
-a(L(14) + 0.2, 'jet', 0.2, D(14) - 0.2); lab(14, 0.4);                      // the engines push forward
-a(L(15) + 0.4, 'whoosh', 0.1); scribble(L(15) + D(15) * 0.6);               // no speed: the wing sinks
-a(L(16) + 0.2, 'spool', 0.22, D(16) - 0.2); ding(L(16) + D(16) - 0.6);      // takeoff run, the speed
-a(L(17) + 0.4, 'servo', 0.2, 1.6); lab(17, 1.6);                            // flaps slide out
-a(L(18) + 0.2, 'jet', 0.12, D(18) - 0.2);                                   // slow, flaps down
-paper(L(19) + 0.3); scribble(L(19) + D(19) * 0.78);                        // the myth crossed out
-a(L(20) + 0.3, 'whoosh', 0.15); a(L(20) + D(20) * 0.7, 'pop', 0.25);        // the top air gets there first
-lab(21, 0.3); a(L(21) + 1.6, 'whoosh', 0.18); a(L(21) + 3.0, 'jet', 0.1, 1.6);   // recap: down, lift, speed
-a(L(22) + 0.2, 'rev', 0.15, D(22) - 0.2); a(L(22) + 1.6, 'ping', 0.2);      // the stunt plane rolls over
+paper(L(4) + 0.2); for (let k = 0; k < 4; k++) a(L(4) + 0.4 + k * 0.2, 'tick', 0.16);   // the rule card, four arrows
+for (let k = 0; k < 4; k++) a(L(5) + 0.5 + k * 0.5, 'pop', 0.2);             // four forces appear
+for (let k = 0; k < 4; k++) a(L(6) + 0.1 + k * D(6) / 4.2, 'tick', 0.22);    // each one named
+a(L(7) + 0.3, 'thud', 0.22); a(L(7) + 0.8, 'clank', 0.12); lab(7, 0.5);      // weight, the load
+paper(L(8) + 0.2); for (let k = 0; k < 4; k++) a(L(8) + 0.3 + k * 0.45, 'tick', 0.15); ding(L(8) + 2.2); scribble(L(8) + D(8) * 0.8);   // load sheet
+a(L(9) + 0.2, 'jet', 0.28, D(9) - 0.2); lab(9, 0.6); lab(9, 1.6);           // the engine cut open
+a(L(10) + 0.3, 'jet', 0.1, 1.2); a(L(10) + 1.2, 'squeeze', 0.25, 1.6);      // the balloon letting its air out
+rec(L(11) + 0.2, 'wind-gust', 0.22, 0.25, D(11) - 0.2, 1.0, 'wind', 0.18); lab(11, 0.6);   // drag
+rec(L(12) + 0.2, 'wind-gust', 0.14, 0.25, D(12) - 0.2, 1.0, 'wind', 0.1); scribble(L(12) + D(12) * 0.4); scribble(L(12) + D(12) * 0.7);
+a(L(13) + 0.3, 'whoosh', 0.2);                                             // into the wing
+rec(L(14) + 0.2, 'wind-gust', 0.18, 0.25, D(14) - 0.2, 1.0, 'wind', 0.14); lab(14, 0.6);
+a(L(15) + 0.4, 'whoosh', 0.18); a(L(15) + D(15) * 0.45, 'pop', 0.2);        // lift, the hand
+for (let k = 0; k < 5; k++) a(L(16) + 0.3 + k * 0.12, 'tick', 0.14); for (let k = 0; k < 5; k++) a(L(16) + D(16) * 0.4 + k * 0.12, 'tick', 0.14);
+a(L(17) + 0.2, 'spool', 0.25, D(17) - 0.2);                                 // takeoff run
+a(L(18) + 0.2, 'jet', 0.25, D(18) - 0.2); ding(L(18) + D(18) - 0.5);        // rotate at 300 km/h
+a(L(19) + 0.2, 'jet', 0.1, D(19) - 0.2); a(L(19) + D(19) * 0.4, 'chime', 0.18);   // cruise, balanced
+paper(L(20) + 0.3); scribble(L(20) + D(20) * 0.8);                         // the myth crossed out
+a(L(21) + 0.3, 'whoosh', 0.16); a(L(21) + D(21) * 0.6, 'pop', 0.22);        // speed → lift
+for (let k = 0; k < 4; k++) a(L(22) + 0.3 + k * 1.0, 'tick', 0.2);          // recap: the four arrows
+rec(L(23) + 0.2, 'wind-gust', 0.18, 0.25, 4.0, 1.0, 'wind', 0.14); ding(L(23) + D(23) * 0.5);   // the silent glide
 
 const MUSIC = has('music-soft') ? 'music-soft' : null;
 if (MUSIC) rec(0, MUSIC, 0.42, 0, window.TIMING.duration + 2.5, 0.6);

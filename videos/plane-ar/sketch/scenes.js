@@ -1,4 +1,4 @@
-window.CHUNKS = [[0.0], [0.0], [0.0], [0.0, 0.4194], [0.0, 0.7647], [0.0, 0.3922], [0.0, 0.7027], [0.0, 0.2881, 0.5763], [0.0, 0.6452], [0.0, 0.6825], [0.0, 0.7333], [0.0, 0.1964, 0.8036], [0.0, 0.6], [0.0, 0.3659], [0.0, 0.5111], [0.0, 0.3043], [0.0, 0.5857], [0.0, 0.4024, 0.7561], [0.0], [0.0, 0.3472, 0.6944], [0.0, 0.6364], [0.0, 0.163, 0.4457, 0.7391], [0.0, 0.5488], [0.0], [0.0]];
+window.CHUNKS = [[0.0], [0.0], [0.0], [0.0, 0.4194], [0.0, 0.7647], [0.0, 0.5102], [0.0, 0.234, 0.4894, 0.766], [0.0, 0.2836, 0.6567], [0.0, 0.5849], [0.0, 0.1493, 0.6119], [0.0, 0.4603], [0.0, 0.1852, 0.6111], [0.0, 0.2951, 0.5738], [0.0, 0.44], [0.0, 0.4627], [0.0, 0.4], [0.0, 0.4186, 0.6395], [0.0, 0.3607, 0.7213], [0.0, 0.3472, 0.6528], [0.0, 0.4189], [0.0, 0.5185], [0.0, 0.4154], [0.0, 0.1316, 0.2807, 0.4123, 0.5351, 0.6579], [0.0, 0.3366, 0.7327], [0.0], [0.0]];
 /* «إيه الحكاية؟» — «الرسم الهندسي» drawing helpers. build.py puts this file in front of the episode's shots.js, so every
    name here is in scope for the shots. The panel world is 640×786 (portrait, the panel's own aspect); a shot's camera
    [cx, cy, zoom] picks what is in view. Everything is redrawn every frame from t, so the render is deterministic.
@@ -223,86 +223,111 @@ function hand(x, y, s, a) { return G("translate(" + f(x) + " " + f(y) + ") scale
 function speedo(x, y, r, v, max, k) { var a = Math.PI * (1 - clamp(v * ease(k) / max)); var s = '<path d="M' + (x - r) + ' ' + y + ' A' + r + ' ' + r + ' 0 0 1 ' + (x + r) + ' ' + y + '" fill="#f4ecdb" stroke="' + INK + '" stroke-width="3"/>'; for (var i = 0; i <= 6; i++) { var b = Math.PI * (1 - i / 6); s += '<path d="M' + f(x + Math.cos(b) * r * .8) + ' ' + f(y - Math.sin(b) * r * .8) + ' L' + f(x + Math.cos(b) * r * .95) + ' ' + f(y - Math.sin(b) * r * .95) + '" stroke="' + INK + '" stroke-width="3"/>'; } return s + '<path d="M' + x + ' ' + y + ' L' + f(x + Math.cos(a) * r * .8) + ' ' + f(y - Math.sin(a) * r * .8) + '" stroke="' + ORANGE + '" stroke-width="6" stroke-linecap="round"/>' + C(x, y, 9, INK, 0); }
 function sky() { return R(-40, -40, 720, 860, SKYB, 0); }
 
+// ── the four forces on a plane drawn at (x,y) scale s: o = {l, w, t, d} arrow lengths 0..1+, k = {l, w, t, d} appear 0..1, lab = show names
+var F_COL = { l: OLIVE, w: "#3d3a34", t: ORANGE, d: BLUE };
+function forces(x, y, s, o, k, lab, t) {
+  k = k || { l: 1, w: 1, t: 1, d: 1 }; var out = "", pulse = 4 * Math.sin((t || 0) * 3);
+  var A = { l: [x, y - 20 * s, x, y - 20 * s - (60 + 150 * o.l) - pulse], w: [x, y + 40 * s, x, y + 40 * s + 60 + 150 * o.w + pulse],
+            t: [x + 290 * s, y, x + 290 * s + 30 + 110 * o.t + pulse, y], d: [x - 300 * s, y, x - 300 * s - 30 - 110 * o.d - pulse, y] };
+  var N = { l: TX("الرفع", "LIFT"), w: TX("الوزن", "WEIGHT"), t: TX("الدفع", "THRUST"), d: TX("السحب", "DRAG") };
+  ["l", "w", "t", "d"].forEach(function (q) {
+    var kk = clamp(k[q] == null ? 0 : k[q]); if (kk <= 0) return; var a = A[q];
+    out += arrow(a[0], a[1], a[2], a[3], F_COL[q], 10, kk);
+    if (lab) { var tx = q === "t" || q === "d" ? a[2] + (q === "t" ? -40 : 40) : a[2] + 70, ty = q === "l" ? a[3] + 10 : q === "w" ? a[3] - 10 : a[3] + 44; out += G("", T(N[q], tx, ty, 26, F_COL[q], 800), clamp(kk * 2 - 1)); }
+  });
+  return out;
+}
+// a turbofan cut open along its axis, facing right: fan at the front, core, flame, nozzle; air in slow, out fast
+function engineCut(x, y, s, t) {
+  var b = "";
+  for (var k = 0; k < 6; k++) { var u = (t * .5 + k / 6) % 1; b += C(lerp(300, 170, u), -50 + k * 20, 6, "#9fb7c3", 1.4); }   // air drawn in, slow
+  b += '<path d="M-170 -96 C-60 -110 100 -112 170 -96 L170 -78 C100 -92 -60 -90 -150 -76 Z" fill="' + BODY_D + '" stroke="' + INK + '" stroke-width="2.4"/>' + '<path d="M-170 96 C-60 110 100 112 170 96 L170 78 C100 92 -60 90 -150 76 Z" fill="' + BODY_D + '" stroke="' + INK + '" stroke-width="2.4"/>';
+  b += R(-130, -36, 230, 72, "#d9d4c8", 2.2, 10) + '<path d="M-130 -30 L-200 0 L-130 30 Z" fill="#8f8576" stroke="' + INK + '" stroke-width="2"/>';
+  for (k = 0; k < 9; k++) b += '<path d="M' + (20 + k * 9) + ' -34 V34" stroke="' + INK + '" stroke-width="1.6" opacity=".6"/>';   // compressor stages
+  b += R(-40, -26, 50, 52, "#f2c230", 1.6, 6) + '<path d="M-36 0 C-26 ' + f(-16 - 4 * Math.sin(t * 20)) + ' -6 ' + f(-16 + 4 * Math.sin(t * 17)) + ' 6 0 C-6 ' + f(16 + 3 * Math.sin(t * 15)) + ' -26 16 -36 0 Z" fill="' + ORANGE + '"/>';   // combustor
+  for (k = 0; k < 4; k++) b += '<path d="M' + (-110 + k * 14) + ' -34 V34" stroke="' + INK + '" stroke-width="2" opacity=".7"/>';  // turbine
+  for (k = 0; k < 9; k++) { var ph = t * 9 + k * .7, yy = Math.sin(ph) * 74, w = 8 * Math.abs(Math.cos(ph)) + 2; b += '<ellipse cx="135" cy="' + f(yy) + '" rx="' + f(w) + '" ry="10" fill="' + MUTE + '" stroke="' + INK + '" stroke-width="1.2"/>'; }   // fan blades turning
+  b += C(140, 0, 16, "#3d3a34", 2);
+  for (k = 0; k < 8; k++) { var v = (t * 2.2 + k / 8) % 1; b += '<path d="M' + f(-180 - v * 260) + ' ' + (-60 + k * 17) + ' h-46" stroke="' + BLUE + '" stroke-width="4" stroke-linecap="round" opacity="' + f(1 - v) + '"/>'; }   // air out, fast
+  return G("translate(" + f(x) + " " + f(y) + ") scale(" + s + ")", b);
+}
+// a party balloon flying right, letting its air out to the left
+function balloon(x, y, s, t) { var b = '<path d="M-70 0 C-70 -60 60 -70 80 0 C60 70 -70 60 -70 0 Z" fill="' + ORANGE + '" stroke="' + INK + '" stroke-width="2.6"/><path d="M-70 -8 L-88 -12 L-88 12 L-70 8 Z" fill="' + ORANGE + '" stroke="' + INK + '" stroke-width="2"/><path d="M30 -30 C44 -24 54 -12 56 0" stroke="#fff" stroke-width="7" fill="none" opacity=".6" stroke-linecap="round"/>'; for (var k = 0; k < 5; k++) { var u = (t * 1.6 + k / 5) % 1; b += C(-100 - u * 140, (k - 2) * 10 * u, 6 + 10 * u, "#e9e4d8", 1.2); } return G("translate(" + f(x) + " " + f(y + 6 * Math.sin(t * 5)) + ") scale(" + s + ") rotate(" + f(3 * Math.sin(t * 7)) + ")", b); }
+// air lines going past a body of half-height h at (x,y): they part round the nose and curl behind (wake 0..1)
+function airPast(x, y, h, t, wake, n) {
+  var s = "";
+  for (var i = 0; i < (n || 9); i++) {
+    var y0 = (i - ((n || 9) - 1) / 2) * 34, d = "";
+    for (var px = -40; px <= 680; px += 10) { var u = (px - x) / 260, bump = Math.exp(-u * u * 3) * h * Math.exp(-Math.abs(y0) / (h * 2.2)); d += (px > -40 ? " L" : "M") + f(px) + " " + f(y + y0 + (y0 < 0 ? -bump : bump)); }
+    s += '<path d="' + d + '" stroke="' + BLUE + '" stroke-width="2.4" fill="none" stroke-dasharray="18 12" stroke-dashoffset="' + f(t * 110) + '" opacity=".75"/>';
+  }
+  for (var k = 0; k < 6 * (wake || 0); k++) { var cx = x - 300 - k * 34 - ((t * 60) % 34), cy = y + (k % 2 ? -14 : 14), a0 = t * 6 + k; s += '<path d="M' + f(cx + Math.cos(a0) * 16) + ' ' + f(cy + Math.sin(a0) * 16) + ' A16 16 0 1 1 ' + f(cx + Math.cos(a0 + 4) * 16) + ' ' + f(cy + Math.sin(a0 + 4) * 16) + '" stroke="' + BLUE + '" stroke-width="3" fill="none"/>'; }
+  return s;
+}
+// the load inside the plane: heads in the cabin, bags in the hold, fuel in the wing
+function load(x, y, s, k) { var b = R(-200, -30, 400, 26, "#f4ecdb", 1.6, 4); for (var i = 0; i < 12; i++) b += C(-186 + i * 33, -18, 9, SKIN, 1.4); b += R(-200, 2, 400, 26, "#e6dccb", 1.6, 4); for (i = 0; i < 9; i++) b += R(-190 + i * 44, 6, 34, 18, [ORANGE, OLIVE, BLUE][i % 3], 1.4, 3); return G("translate(" + f(x) + " " + f(y) + ") scale(" + s + ")", b, k); }
+function glidePath(t, k) { var s = R(-40, 640, 720, 200, "#c9c09a", 2.4); for (var i = 0; i < 9; i++) s += '<path d="M' + f(((i * 90 - t * 90) % 720 + 720) % 720 - 40) + ' 660 l18 -26 l18 26 Z" fill="' + OLIVE + '" stroke="' + INK + '" stroke-width="1.4"/>'; return s + '<path d="M60 120 L600 600" stroke="' + INK + '" stroke-width="2.4" stroke-dasharray="10 10" opacity=".5"/>'; }
+
 // ── shots (same line numbers in both editions)
 // 4 · one small rule, remember it
-shot(4, push(320, 400, 1.04, 1.0), function (u, d, t) { return paper() + R(150, 170, 340, 420, "#f4ecdb", 2.4, 8) + T(TX("قاعدة", "THE RULE"), 320, 240, 34, OLIVE, 800) + arrow(320, 330, 320, 470 + 8 * Math.sin(t * 3), ORANGE, 8) + arrow(320, 530, 320, 380 - 8 * Math.sin(t * 3), BLUE, 8); });
-// 5 · push something down and it pushes you up just as hard
-shot(5, push(320, 420, 1.0, 1.06), function (u, d, t) {
-  var k = at(u, .3, 1), sq = 10 * k + 4 * Math.sin(t * 4);
-  return paper() + R(120, 600, 400, 24, BEIGE, 2.4) + C(320, 560 - 0 + sq * .3, 40 - sq * .2, ORANGE, 2.4) + hand(330, 500 + sq * .2, 1, 0) + arrow(300, 380, 300, 470, ORANGE, 7, k) + arrow(420, 470, 420, 380 - 30 * k, BLUE, 7, at(u, .9, .6)) + label(300, 420, 160, 330, TX("زقّة لتحت", "push down"), ORANGE, at(u, .6, .5), 22) + label(420, 400, 470, 290, TX("رد لفوق", "push back up"), BLUE, at(u, 1.4, .5), 22);
+shot(4, push(320, 400, 1.04, 1.0), function (u, d, t) { return paper() + R(110, 150, 420, 460, "#f4ecdb", 2.4, 8) + T(TX("قاعدة", "THE RULE"), 320, 220, 34, OLIVE, 800) + plane(320, 400, .3, t, {}) + forces(320, 400, .3, { l: .2, w: .2, t: .1, d: .1 }, { l: at(u, .4, .3), w: at(u, .6, .3), t: at(u, .8, .3), d: at(u, 1, .3) }, false, t); });
+// 5 · four forces pulling every plane four ways
+shot(5, push(320, 400, 1.0, 1.04), function (u, d, t) { return paper() + sky() + clouds(t, 600) + plane(320, 390, .55, t, { thrust: 1 }) + forces(320, 390, .55, { l: .6, w: .6, t: .5, d: .5 }, { l: at(u, .5, .4), w: at(u, 1, .4), t: at(u, 1.5, .4), d: at(u, 2, .4) }, false, t); });
+// 6 · down weight, up lift, forward thrust, backward drag (each lights up as it is named)
+shot(6, push(320, 400, 1.04, 1.0), function (u, d, t) { var q = d / 4.2; return paper() + sky() + clouds(t, 600) + plane(320, 390, .55, t, { thrust: 1 }) + forces(320, 390, .55, { l: .6, w: .6, t: .5, d: .5 }, { w: at(u, .1, .4), l: at(u, q, .4), t: at(u, 2 * q, .4), d: at(u, 3 * q, .4) }, true, t); });
+// 7 · weight: the Earth pulls the plane down, passengers, bags and fuel
+shot(7, push(320, 400, 1.0, 1.06), function (u, d, t) { return paper() + sky() + '<path d="M-60 760 Q320 640 700 760 V840 H-60 Z" fill="' + OLIVE + '" stroke="' + INK + '" stroke-width="2.4"/>' + plane(320, 330, .9, t, {}) + load(330, 330, .62, at(u, .8, .5)) + forces(320, 330, .9, { w: .9 + .1 * Math.sin(t * 2) }, { w: at(u, .3, .6) }, true, t); }, { tr: "in" });
+// 8 · pilots work out every flight's weight before takeoff
+shot(8, push(320, 400, 1.04, 1.0), function (u, d, t) {
+  var s = paper() + R(150, 130, 340, 520, "#f7f3ea", 2.6, 6) + R(270, 112, 100, 34, "#8f8576", 2.2, 6);
+  var rows = [[TX("ركاب", "passengers"), "15,000"], [TX("شنط", "bags"), "3,000"], [TX("وقود", "fuel"), "18,000"], [TX("الطيارة", "plane"), "42,000"]];
+  rows.forEach(function (r, i) { var k = at(u, .3 + i * .45, .3); s += G("", T(r[0], 450, 230 + i * 70, 26, INK, 700, "start") + N(r[1], 200, 232 + i * 70, 28, INK, "start"), k); });
+  return s + G("", '<path d="M180 500 H460" stroke="' + INK + '" stroke-width="2.4"/>' + N("78,000 kg", 320, 560, 36, ORANGE), at(u, 2.2, .4)) + check(430, 600, .8, at(u, d * .8, .4));
 });
-// 6 · what does a plane push down? air
-shot(6, push(320, 400, 1.0, 1.08), function (u, d, t) { return paper() + sky() + flow(150, 400, 340, t, 0, 9, { op: .5 }) + foil(150, 400, 340, 6, 0) + T("؟", 320, 230, 110, ORANGE, 800) + G("", T(TX("الهوا", "AIR"), 320, 680, 40, BLUE, 800), at(u, d * .7, .4)); });
-// 7 · the wing isn't flat: curved on top, front tilted up a little
-shot(7, push(300, 400, 1.12, 1.0), function (u, d, t) {
-  var k = at(u, 1.2, 1.2);
-  return paper() + foil(130, 410, 380, 7 * k + 1.2 * Math.sin(t * 1.8), 0) + '<path d="M90 ' + f(410 + 4 * Math.sin(t)) + ' H560" stroke="' + INK + '" stroke-width="1.6" stroke-dasharray="8 6" opacity=".6"/>' +
-    label(260, 362, 340, 220, TX("مقوّس", "curved top"), OLIVE, at(u, .4, .5), 24) + draw("M180 410 A60 60 0 0 0 186 380", k, ORANGE, 3) + T("7°", 240, 386, 26, ORANGE, 800) + label(140, 398, 200, 560, TX("المقدمة مرفوعة", "front tilted up"), ORANGE, at(u, 1.8, .5), 22);
-}, { tr: "in" });
-// 8 · the air follows the curve and is bent down behind the wing
-shot(8, push(330, 420, 1.0, .94), function (u, d, t) { var k = at(u, .3, 2); return paper() + sky() + flow(120, 380, 300, t, k, 11) + foil(120, 380, 300, 7, 0) + arrow(520, 470, 560, 470 + 120 * k, ORANGE, 6, k) + label(540, 540, 420, 650, TX("لتحت", "bent down"), ORANGE, at(u, 1.6, .5), 26); });
-// 9 · the wings shove tons of air down every second, so the air shoves them up
-shot(9, push(320, 420, 1.0, 1.05), function (u, d, t) { var k = at(u, 1.2, .8); return paper() + sky() + flow(120, 420, 300, t, 1, 11) + foil(120, 420, 300, 7, 0) + arrow(500, 560, 520, 720, ORANGE, 9, at(u, .3, .6)) + arrow(250, 360, 250, 360 - 200 * k - 6 * Math.sin(t * 3), OLIVE, 12, k) + G("", T(TX("رفع", "LIFT"), 250, 120, 36, OLIVE, 800), k); });
-// 10 · like your hand out of a car window, tilted: you feel it lift
-shot(10, push(320, 420, 1.04, 1.0), function (u, d, t) {
-  var a = 14 * at(u, .6, 1), car = P("M-60 820 V560 C-60 470 20 420 120 420 H330 C380 420 400 470 420 520 V820 Z", "#b98a5e", 3) + P("M0 600 V500 C0 470 40 452 110 452 H320 C350 452 366 480 376 510 V600 Z", "#3d3a34", 2.4) + R(-60, 640, 480, 14, "#8f6a46", 0);
-  var air = ""; for (var k = 0; k < 4; k++) air += arrow(720 - ((t * 220 + k * 160) % 260), 420 + k * 48, 660 - ((t * 220 + k * 160) % 260), 420 + k * 48, BLUE, 4, 1);
-  return paper() + sky() + air + car + hand(400, 540 - 24 * at(u, 1.2, 1), 1.2, a) + arrow(450, 500, 450, 330 - 10 * Math.sin(t * 3), OLIVE, 9, at(u, 1.2, .6));
+// 9 · thrust: the engine sucks in lots of air at the front and throws it out the back very fast
+shot(9, push(330, 400, 1.0, 1.06), function (u, d, t) { return paper() + engineCut(330, 400, 1.15, t) + label(490, 400, 560, 600, TX("مروحة", "fan"), OLIVE, at(u, .6, .5), 24) + label(320, 400, 380, 220, TX("احتراق", "burner"), ORANGE, at(u, 1.6, .5), 24); }, { tr: "in" });
+// 10 · the thrown air shoves the engine forward, like a balloon letting its air out
+shot(10, push(320, 400, 1.0, 1.05), function (u, d, t) { var bg = ""; for (var k = 0; k < 6; k++) bg += '<path d="M' + f(((700 - t * 260 - k * 120) % 760 + 760) % 760 - 60) + ' ' + (150 + k * 90) + ' h60" stroke="' + MUTE + '" stroke-width="3" opacity=".5"/>'; return paper() + bg + G("", engineCut(220, 220, .55, t), dim(1, "")) + arrow(330, 220, 470, 220, ORANGE, 9, at(u, .3, .5)) + balloon(380, 520, 1.3, t) + arrow(500, 520, 600, 520, ORANGE, 8, at(u, 1.4, .5)); });
+// 11 · drag: the air rubs on the plane and stands in its way
+shot(11, push(320, 400, 1.0, 1.05), function (u, d, t) { return paper() + sky() + airPast(500, 400, 46, t, 1, 11) + plane(320, 400, .55, t, { thrust: 1 }) + forces(320, 400, .55, { d: .7 }, { d: at(u, .6, .5) }, true, t); });
+// 12 · the faster it goes the bigger the drag, so the body is smooth and pointed
+shot(12, push(320, 420, 1.04, 1.0), function (u, d, t) {
+  var box = R(180, 210, 60, 130, BODY_D, 2.4, 4), drop = '<path d="M380 590 C440 560 500 556 540 576 C552 584 552 596 540 604 C500 624 440 620 380 590 Z" fill="' + BODY + '" stroke="' + INK + '" stroke-width="2.4"/>';
+  var sw = ""; for (var k = 0; k < 5; k++) { var a0 = t * 7 + k; sw += '<path d="M' + f(160 - k * 26 + Math.cos(a0) * 14) + ' ' + f(290 + (k % 2 ? -26 : 26) + Math.sin(a0) * 14) + ' a14 14 0 1 1 6 6" stroke="' + BLUE + '" stroke-width="3" fill="none"/>'; }
+  var ln = ""; for (k = 0; k < 4; k++) ln += '<path d="M' + f(660 - ((t * 200 + k * 80) % 240)) + ' ' + (560 + k * 20) + ' h-40" stroke="' + BLUE + '" stroke-width="3" opacity=".7"/>' + '<path d="M' + f(420 - ((t * 200 + k * 80) % 240)) + ' ' + (250 + k * 24) + ' h-40" stroke="' + BLUE + '" stroke-width="3" opacity=".7"/>';
+  return paper() + ln + box + sw + cross(210, 420, 1, at(u, d * .4, .4)) + drop + check(470, 680, 1, at(u, d * .7, .4));
 });
-// 11 · pressure: the air over the top runs faster, so its pressure drops
-shot(11, push(320, 410, 1.0, 1.06), function (u, d, t) {
-  var s = paper() + sky() + flow(120, 410, 380, t, .6, 11, { fast: 190 }) + foil(120, 410, 380, 6, 0);
-  for (var k = 0; k < 5; k++) s += G("", T("−", 170 + k * 70, 300 + (k % 2) * 16, 46, ORANGE, 800), at(u, 1.2 + k * .15, .3));
-  return s + label(330, 320, 260, 160, TX("أسرع، ضغط أقل", "fast air, low pressure"), ORANGE, at(u, 2, .5), 21);
+// 13 · lift? that's the wing's job — the camera flies into the wing
+shot(13, push(330, 410, 1.0, 1.9), function (u, d, t) { return paper() + sky() + plane(320, 390, .8, t, {}) + G("", '<circle cx="320" cy="400" r="70" fill="none" stroke="' + OLIVE + '" stroke-width="5" stroke-dasharray="12 9"/>', at(u, .3, .4)); });
+// 14 · curved on top and tilted, the wing bends the air down
+shot(14, push(330, 420, 1.0, .94), function (u, d, t) { var k = at(u, .3, 2); return paper() + sky() + flow(120, 380, 300, t, k, 11) + foil(120, 380, 300, 7, 0) + arrow(520, 470, 560, 470 + 120 * k, ORANGE, 6, k) + label(260, 336, 340, 200, TX("مقوّس", "curved"), OLIVE, at(u, .6, .5), 24); }, { tr: "in" });
+// 15 · the air pushes the wing up, like your hand out of a car window
+shot(15, push(320, 420, 1.0, 1.05), function (u, d, t) { var k = at(u, .4, .8); return paper() + sky() + flow(120, 420, 300, t, 1, 11) + foil(120, 420, 300, 7, 0) + arrow(250, 360, 250, 360 - 200 * k - 6 * Math.sin(t * 3), OLIVE, 12, k) + iconBox(470, 160, 160, G("translate(-30 20) scale(.5)", P("M-60 220 V60 C-60 -10 0 -40 80 -40 H140 V220 Z", "#b98a5e", 3) + hand(150, 40, .9, 14) + arrow(170, 0, 170, -90, OLIVE, 8, 1)), at(u, d * .45, .3)); });
+// 16 · above: faster air, lower pressure; below: higher pressure. same story, another angle
+shot(16, push(320, 430, 1.04, 1.0), function (u, d, t) { var s = paper() + sky() + flow(120, 410, 380, t, .6, 11, { fast: 190 }) + foil(120, 410, 380, 6, 0); for (var k = 0; k < 5; k++) s += G("", T("−", 170 + k * 70, 300 + (k % 2) * 16, 46, ORANGE, 800), at(u, .3 + k * .12, .3)) + G("", T("+", 170 + k * 70, 520 + (k % 2) * 16, 50, BLUE, 800), at(u, d * .4 + k * .12, .3)); return s + arrow(310, 600, 310, 470 - 8 * Math.sin(t * 3), BLUE, 9, at(u, d * .55, .5)); });
+// 17 · take-off: thrust beats drag, faster and faster
+shot(17, push(320, 420, 1.0, 1.04), function (u, d, t) {
+  var k = at(u, .2, d), s = paper() + sky() + R(-40, 560, 720, 260, TARMAC, 2.4);
+  for (var i = 0; i < 6; i++) s += R(((i * 150 - t * 500 * (.2 + k)) % 900 + 900) % 900 - 120, 640, 80, 10, "#f4f1ea", 0);
+  return s + plane(330, 470, .55, t, { gear: 1, thrust: 1 }) + forces(330, 470, .55, { t: 1, d: .25 + .25 * k }, { t: at(u, .3, .4), d: at(u, .7, .4) }, true, t);
 });
-// 12 · the air underneath has higher pressure, so it pushes the wing up
-shot(12, push(320, 430, 1.06, 1.0), function (u, d, t) {
-  var s = paper() + sky() + flow(120, 410, 380, t, .6, 11, { fast: 190 }) + foil(120, 410, 380, 6, 0);
-  for (var k = 0; k < 5; k++) s += T("−", 170 + k * 70, 300 + (k % 2) * 16, 46, ORANGE, 800) + G("", T("+", 170 + k * 70, 520 + (k % 2) * 16, 50, BLUE, 800), at(u, .3 + k * .15, .3));
-  return s + arrow(310, 600, 310, 470 - 8 * Math.sin(t * 3), BLUE, 9, at(u, 1.3, .6));
+// 18 · the speed grows the lift until it beats the weight, at about 300 km/h (180 mph)
+shot(18, push(320, 420, 1.0, 1.04), function (u, d, t) {
+  var k = at(u, .2, d - .4), up = clamp((k - .7) / .3), s = paper() + sky() + R(-40, 600 + 120 * up, 720, 260, TARMAC, 2.4);
+  for (var i = 0; i < 6; i++) s += R(((i * 150 - t * 700) % 900 + 900) % 900 - 120, 670 + 120 * up, 80, 10, "#f4f1ea", 0);
+  s += plane(320, 470 - 60 * up, .5, t, { gear: 1, thrust: 1, rot: -8 * up }) + forces(320, 470 - 60 * up, .5, { l: .3 + .9 * k, w: .7 }, { l: 1, w: 1 }, true, t);
+  return s + numBox(count(EN ? 180 : 300, k), 150, 140, 1, 34) + T(TX("كم/س", "mph"), 150, 200, 24, INK, 700);
 });
-// 13 · not two reasons: the same story seen from two sides
-shot(13, push(320, 420, .98, 1.04), function (u, d, t) {
-  return paper() + sky() + flow(120, 410, 380, t, 1, 11) + foil(120, 410, 380, 6, 0) + T("−", 300, 300, 46, ORANGE, 800) + T("+", 300, 530, 50, BLUE, 800) + arrow(560, 520, 580, 650, ORANGE, 7, 1) +
-    G("", R(150, 60, 340, 70, "#f4ecdb", 2.4, 8) + T("=", 320, 112, 56, INK, 800), at(u, d * .45, .4));
-}, { tr: "out" });
-// 14 · the engines only push the plane forward
-shot(14, push(320, 400, 1.0, 1.06), function (u, d, t) { return paper() + sky() + clouds(t, 560) + plane(320, 380, 1.0, t, { thrust: 1 }) + arrow(400, 448, 560, 448, ORANGE, 8, at(u, .8, .6)) + label(400, 440, 520, 560, TX("المحرك", "engine"), OLIVE, at(u, .4, .5), 24); });
-// 15 · no speed, not enough air over the wing
-shot(15, push(320, 420, 1.04, 1.0), function (u, d, t) { var k = clamp(u / d); return paper() + sky() + flow(120, 410, 380, t * .35, .15, 5, { op: .35, fast: 40 }) + foil(120, 410 + 120 * k, 380, 6 - 4 * k + 2 * Math.sin(t * 3), 0) + arrow(310, 300 + 120 * k, 310, 420 + 150 * k, MUTE, 7, at(u, .6, .5)) + cross(320, 680, 1.1, at(u, d * .6, .4)); });
-// 16 · a big jet races down the runway to about 300 km/h (180 mph)
-shot(16, push(320, 420, 1.0, 1.04), function (u, d, t) {
-  var k = at(u, .2, d - .6), s = paper() + sky() + R(-40, 560, 720, 260, TARMAC, 2.4);
-  for (var i = 0; i < 6; i++) s += R(((i * 150 - t * 400 * (.3 + k)) % 900 + 900) % 900 - 120, 640, 80, 10, "#f4f1ea", 0);
-  s += plane(320, 470 - 20 * k, .8, t, { gear: 1, thrust: 1, rot: -3 * k });
-  return s + G("translate(320 200)", speedo(0, 0, 110, (EN ? 180 : 300) * k, EN ? 200 : 340, 1)) + numBox(count(EN ? 180 : 300, k), 320, 270, 1, 34) + T(TX("كم/س", "mph"), 320, 330, 24, INK, 700);
-});
-// 17 · for takeoff and landing, flaps slide out from the back of the wing: bigger and more curved
-shot(17, push(330, 420, 1.0, 1.08), function (u, d, t) { var k = at(u, .4, 1.6); return paper() + sky() + flow(110, 400, 360, t, .6 + .4 * k, 11) + foil(110, 400, 360, 6, k) + label(470, 450, 400, 640, TX("الفلابس", "flaps"), OLIVE, at(u, 1.6, .5), 26); });
-// 18 · so it keeps flying while slow
-shot(18, push(320, 420, 1.04, 1.0), function (u, d, t) { return paper() + sky() + clouds(t * .4, 520) + plane(320, 360, .9, t, { flap: 1, gear: 1, rot: 4 }) + R(-40, 700, 720, 120, TARMAC, 2.4); });
-// 19 · the myth: the top air must meet the bottom air at the back of the wing. no.
-shot(19, push(320, 420, 1.0, 1.04), function (u, d, t) {
-  var k = at(u, .3, d * .55), s = paper() + sky() + flow(120, 420, 400, t, .4, 9, { op: .45 }) + foil(120, 420 + 5 * Math.sin(t * 2), 400, 4, 0);
-  var px = function (q, top) { var i = Math.round(q * 40), pt = FOIL[top ? 0 : 1][Math.min(40, i)]; return [120 + pt[0] * 400, 420 - pt[1] * 400 + (top ? -16 : 16)]; };
-  var a = px(k, 1), b = px(k, 0); s += C(a[0], a[1], 16, ORANGE, 2.4) + C(b[0], b[1], 16, BLUE, 2.4);
-  s += G("", '<path d="M520 400 l16 0" stroke="' + INK + '" stroke-width="3"/>' + T(TX("يتقابلوا؟", "meet?"), 520, 320, 30, INK, 800), at(u, d * .5, .4));
-  return s + cross(520, 330, 1.2, at(u, d * .78, .4));
-});
-// 20 · the top air gets there first; nobody waits for anybody
-shot(20, push(320, 420, 1.0, 1.05), function (u, d, t) {
-  var k = at(u, .2, d * .7), s = paper() + sky() + flow(120, 420, 400, t, .4, 9, { op: .45 }) + foil(120, 420 + 5 * Math.sin(t * 2), 400, 4, 0);
-  var px = function (q, top) { var i = Math.round(clamp(q) * 40), pt = FOIL[top ? 0 : 1][i]; return [120 + pt[0] * 400 + (q > 1 ? (q - 1) * 400 : 0), 420 - pt[1] * 400 + (top ? -16 : 16)]; };
-  var a = px(k * 1.45, 1), b = px(k, 0); s += C(a[0], a[1], 16, ORANGE, 2.4) + C(b[0], b[1], 16, BLUE, 2.4);
-  return s + G("", T(TX("الأول", "first"), a[0], a[1] - 30, 26, ORANGE, 800), at(u, d * .7, .3));
-});
-// 21 · recap: the wing bends air down, the air lifts the plane, the engines give it speed
-shot(21, push(320, 420, .96, 1.02), function (u, d, t) {
-  return paper() + sky() + flow(120, 420, 340, t, 1, 11) + foil(120, 420, 340, 6, 0) + arrow(520, 520, 545, 660, ORANGE, 8, at(u, .3, .5)) + arrow(260, 360, 260, 170, OLIVE, 10, at(u, 1.6, .5)) + arrow(60, 440, 110, 440, MUTE, 8, at(u, 3, .5)) +
-    G("", T(TX("رفع", "LIFT"), 260, 140, 30, OLIVE, 800), at(u, 1.8, .3)) + G("", T(TX("سرعة", "SPEED"), 90, 500, 26, MUTE, 800), at(u, 3.2, .3));
-}, { tr: "out" });
-// 22 · the odd fact: stunt planes fly upside down, tilting the wing itself into the air
-shot(22, push(320, 400, 1.0, 1.06), function (u, d, t) { var k = at(u, .3, 1.2); return paper() + sky() + clouds(t * .6, 560) + G("rotate(" + f(-8 * k) + " 320 300)", stunt(320, 300, 1.6, t, 1)) + G("translate(0 120)", G("", flow(170, 520, 300, t, 1, 7, { op: .6 }) + foil(170, 520, 300, 6, 0, "#d9cfb6"), at(u, 1.6, .5))); });
+// 19 · up high, the four forces balance: steady speed, steady height
+shot(19, push(320, 400, 1.04, 1.0), function (u, d, t) { return paper() + sky() + clouds(t, 600) + plane(320, 390, .55, t, { thrust: 1 }) + forces(320, 390, .55, { l: .6, w: .6, t: .5, d: .5 }, { l: 1, w: 1, t: 1, d: 1 }, true, t) + G("", T("=", 470, 260, 60, INK, 800) + T("=", 170, 540, 60, INK, 800), at(u, d * .4, .4)); });
+// 20 · the myth: the engines lift the plane. no.
+shot(20, push(320, 420, 1.0, 1.05), function (u, d, t) { return paper() + sky() + plane(320, 420, .9, t, { thrust: 1 }) + arrow(355, 450, 355, 160, ORANGE, 12, at(u, .4, .6)) + cross(355, 250, 1.4, at(u, d * .8, .4)); });
+// 21 · the engines only give speed; the wing turns that speed into lift
+shot(21, push(320, 420, 1.0, 1.05), function (u, d, t) { return paper() + sky() + plane(320, 420, .9, t, { thrust: 1 }) + arrow(390, 470, 560, 470, ORANGE, 10, at(u, .3, .5)) + draw("M560 500 C620 600 380 640 330 440", at(u, d * .4, .8), MUTE, 4) + arrow(320, 420, 320, 180, OLIVE, 12, at(u, d * .6, .5)); });
+// 22 · recap: all four forces, named
+shot(22, push(320, 400, .96, 1.02), function (u, d, t) { return paper() + sky() + clouds(t, 600) + plane(320, 390, .55, t, { thrust: 1 }) + forces(320, 390, .55, { l: .8, w: .6, t: .7, d: .4 }, { w: at(u, .3, .4), l: at(u, 1.2, .4), t: at(u, 2.2, .4), d: at(u, 3.2, .4) }, true, t); }, { tr: "out" });
+// 23 · the odd fact: both engines off, it glides down like a paper plane, more than 100 km (60 miles)
+shot(23, push(320, 400, 1.0, 1.04), function (u, d, t) { var k = clamp(u / d); return paper() + sky() + clouds(t * 1.6, 260) + glidePath(t, k) + plane(lerp(140, 460, k), lerp(210, 500, k) + 6 * Math.sin(t * 2.5), .32, t, { rot: 18 + 2 * Math.sin(t * 2) }) + numBox(TX("+100 كم", "60+ mi"), 470, 160, at(u, d * .5, .3), 34) + iconBox(130, 600, 120, '<path d="M-40 10 L44 -20 L-10 30 Z M-10 30 L-4 6 L44 -20" fill="#fff" stroke="' + INK + '" stroke-width="2"/>', at(u, d * .3, .3)); });
 
 // ── opening card, bumper, summary art
 window.SCENE = window.SCENE || {};
@@ -314,6 +339,6 @@ SCENE.intro = function (svg, t, li) {
 };
 SCENE.bumper = function (u, t) { return plane(90, 112, .24, t, { thrust: 1 }); };
 SCENE.outro = function (svg, u, t) {
-  return flow(80, 150, 300, t, 1, 9, { op: .7 }) + foil(80, 150, 300, 6, 0) + arrow(440, 190, 460, 270, ORANGE, 5, 1) + arrow(200, 110, 200, 30, OLIVE, 6, 1) +
-    callout("1", 230, 175, ease(u / .3)) + callout("2", 490, 250, ease(u / .3 - .5)) + callout("3", 300, 90, ease(u / .3 - 1)) + callout("4", 40, 150, ease(u / .3 - 1.5));
+  return plane(300, 140, .4, t, { thrust: 1 }) + G("translate(300 140) scale(.55) translate(-300 -140)", forces(300, 140, .4, { l: .3, w: .3, t: .2, d: .2 }, null, false, t)) +
+    callout("1", 330, 40, ease(u / .3)) + callout("2", 330, 245, ease(u / .3 - .5)) + callout("3", 520, 165, ease(u / .3 - 1)) + callout("4", 80, 165, ease(u / .3 - 1.5));
 };

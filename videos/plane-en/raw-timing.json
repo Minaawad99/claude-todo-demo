@@ -1,178 +1,185 @@
 {
- "duration": 107.76,
+ "duration": 120.52,
  "lines": [
   {
    "i": 0,
-   "start": 0.17,
-   "end": 2.64,
+   "start": 0.3,
+   "end": 2.5,
    "text": "This plane weighs more than seventy tons…",
    "heard": "This plane weighs more than 70 tons."
   },
   {
    "i": 1,
-   "start": 3.03,
-   "end": 6.49,
+   "start": 3.17,
+   "end": 5.57,
    "text": "and there's no rotor on top lifting it like a helicopter.",
    "heard": "and there's no rotor on top lifting it like a helicopter. [static]"
   },
   {
    "i": 2,
-   "start": 7.02,
-   "end": 9.76,
+   "start": 5.88,
+   "end": 8.45,
    "text": "Yet it cruises above the clouds for hours.",
-   "heard": "yet cruises above the clouds first. hours."
+   "heard": "yet. cruises above the clouds for hours."
   },
   {
    "i": 3,
-   "start": 10.74,
-   "end": 12.35,
+   "start": 9.52,
+   "end": 11.01,
    "text": "Here's the thing. I'll explain it in a minute.",
-   "heard": "Here's the thing. I'll explain it in a"
+   "heard": "Here's the thing. I'll explain in a minute"
   },
   {
    "i": 4,
-   "start": 13.56,
-   "end": 16.57,
+   "start": 12.27,
+   "end": 15.03,
    "text": "Before we start, there's one small rule. Keep it in mind.",
    "heard": "before we start. There's one small rule. Keep it in mind."
   },
   {
    "i": 5,
-   "start": 17.23,
-   "end": 20.47,
-   "text": "If you push something down, it pushes you up just as hard.",
-   "heard": "if you push something down. pushes you up. just as hard."
+   "start": 15.51,
+   "end": 18.83,
+   "text": "Every plane in the air has four forces pulling it four different ways.",
+   "heard": "Every plane in the air has four forces pulling it four different ways."
   },
   {
    "i": 6,
-   "start": 21.19,
-   "end": 24.06,
-   "text": "So what does a plane push down? Air.",
-   "heard": "So what? does up. plane push down air."
+   "start": 19.21,
+   "end": 23.75,
+   "text": "Down is weight, up is lift, forward is thrust, and backward is drag.",
+   "heard": "down his weight? Up is lift. Forward is thrust. and backward as drag."
   },
   {
    "i": 7,
-   "start": 25.09,
-   "end": 29.49,
-   "text": "The wing isn't flat. It's curved on top, and its front edge is tilted up a little.",
-   "heard": "The wing isn't flat. It's-- curved on top. and its front edges. to the top level."
+   "start": 24.57,
+   "end": 29.88,
+   "text": "So where does weight come from? Gravity pulls the plane down, with its passengers, bags, and fuel.",
+   "heard": "So where does weight come from? gravity pulls the plane down. with its passengers, bags, and fuel. [MUSIC PLAYING"
   },
   {
    "i": 8,
-   "start": 29.92,
-   "end": 33.89,
-   "text": "So the air flowing over it follows the curve and gets bent down behind the wing.",
-   "heard": "so the air flowing over it follows the curve and gets bent down behind the wing."
+   "start": 30.17,
+   "end": 32.78,
+   "text": "That's why pilots work out the weight of every flight before takeoff.",
+   "heard": "That's why pilots work out the weight of every flight before takeoff."
   },
   {
    "i": 9,
-   "start": 34.79,
-   "end": 39.64,
-   "text": "The wings shove tons of air down every second, so the air shoves them up.",
-   "heard": "The wings shove tons of air down. every second. So... The air shoves them up."
+   "start": 33.56,
+   "end": 39.6,
+   "text": "What about thrust? The engine sucks in huge amounts of air at the front and blasts it out the back, really fast.",
+   "heard": "What about? thrust? [BLANK_ The engine sucks in huge amounts of air at the front and blasts it out the back. really fast."
   },
   {
    "i": 10,
-   "start": 40.62,
-   "end": 44.5,
-   "text": "It's like sticking your hand out of a car window and tilting it. You feel it lift.",
-   "heard": "It's like sticking your hand out of a car window and tilting it. You feel it lift."
+   "start": 40.11,
+   "end": 43.42,
+   "text": "That air shoves the engine forward, like a balloon zooming off when you let it go.",
+   "heard": "that air shoves the engine forward. like a balloon zooming off when you let it go."
   },
   {
    "i": 11,
-   "start": 45.76,
-   "end": 50.39,
-   "text": "What about pressure? The air over the top moves faster, so its pressure drops.",
-   "heard": "What about pressure? The air over the top moves faster. so its pressure drops."
+   "start": 44.2,
+   "end": 47.93,
+   "text": "And drag? The air itself rubs against the plane and gets in its way.",
+   "heard": "and drag. The air itself rubs against the plane and gets in its way."
   },
   {
    "i": 12,
-   "start": 51.22,
-   "end": 54.97,
-   "text": "The air underneath has higher pressure, so it pushes the wing up.",
-   "heard": "the air underneath has higher pressure. So it pushes the wang up."
+   "start": 48.39,
+   "end": 52.2,
+   "text": "The faster it goes, the more drag it gets. That's why it's smooth and pointy.",
+   "heard": "The faster it goes, the more drag it gets. That's why it's smooth and pointy."
   },
   {
    "i": 13,
-   "start": 55.75,
-   "end": 58.81,
-   "text": "These aren't two reasons. It's the same story from two sides.",
-   "heard": "These aren't. two reasons. It's the same story from two sides."
+   "start": 52.94,
+   "end": 54.69,
+   "text": "And lift? That's the wing's job.",
+   "heard": "and lift. That's the wings job."
   },
   {
    "i": 14,
-   "start": 60.13,
-   "end": 63.58,
-   "text": "So what do the engines do? They just push the plane forward.",
-   "heard": "So what do the engines do? They just-- push the plane forward."
+   "start": 55.28,
+   "end": 59.91,
+   "text": "The wing is curved on top and tilted a little, so it bends the air flowing over it downward.",
+   "heard": "The wing is curved on top and tilted a little. So it-- bends the air flowing over it. downward."
   },
   {
    "i": 15,
-   "start": 64.26,
-   "end": 66.95,
-   "text": "Without speed, there isn't enough air flowing over the wing.",
-   "heard": "Without speed, there isn't enough air flowing over the wing."
+   "start": 60.55,
+   "end": 64.43,
+   "text": "The air pushes back and shoves the wing up, like your hand out of a car window when you tilt it.",
+   "heard": "The air pushes back and shoves the wing up. like your hand out of a car window when you tilt"
   },
   {
    "i": 16,
-   "start": 67.62,
-   "end": 71.49,
-   "text": "That's why a big jet races down the runway at around a hundred and eighty miles an hour.",
-   "heard": "That's why a big jet races down the runway at around 180 miles an hour."
+   "start": 65.31,
+   "end": 70.88,
+   "text": "Above the wing the air moves faster with lower pressure, and below the pressure is higher. Same story, different angle.",
+   "heard": "Above the wing, the air moves faster with lower pressure. and below the pressures higher. Same story, different angle."
   },
   {
    "i": 17,
-   "start": 72.7,
-   "end": 78.57,
-   "text": "For takeoff and landing, panels slide out from the back of the wing, called flaps. They make it bigger and more curved.",
-   "heard": "for takeoff and landing, panel slide out from the back of the wing. called flaps. They make it. bake in more curve."
+   "start": 71.8,
+   "end": 75.93,
+   "text": "So when does it take off? When thrust beats drag, the plane goes faster and faster.",
+   "heard": "So when does it take off? When thrust beats drag, the plane goes faster and faster."
   },
   {
    "i": 18,
-   "start": 79.15,
-   "end": 81.03,
-   "text": "So the plane keeps flying even when it's slow.",
-   "heard": "So the plane keeps flying. even when it's slow."
+   "start": 76.54,
+   "end": 81.64,
+   "text": "That speed grows the lift until it beats the weight, at around a hundred and eighty miles an hour.",
+   "heard": "That's... speed. grows the lift? until it beats the weight. at around 180 miles an hour. a pie"
   },
   {
    "i": 19,
-   "start": 82.28,
-   "end": 86.4,
-   "text": "Lots of people think the air on top has to meet the air below at the back of the wing. Nope.",
-   "heard": "Lots of people think the air on top has to meet the air below at the back of the wing. Nope."
+   "start": 81.79,
+   "end": 86.1,
+   "text": "Up high, when all four forces balance out, the plane cruises at a steady speed and height.",
+   "heard": "when all four forces Balance out. the plane cruises at a steady speed and height."
   },
   {
    "i": 20,
-   "start": 86.97,
-   "end": 89.42,
-   "text": "The air on top gets there first. Nobody waits for anybody.",
-   "heard": "Bear on top gets there first. Nobody waits for anybody."
+   "start": 87.18,
+   "end": 90.7,
+   "text": "Lots of people think the engines are what lift the plane. Nope.",
+   "heard": "Lots of people think the... engines are what lift the plane. Nope."
   },
   {
    "i": 21,
-   "start": 90.09,
-   "end": 96.41,
-   "text": "Bottom line: the wing bends air down, the air pushes back and lifts the plane, and the engines give it speed.",
-   "heard": "Bottom line, the wing bends aired. down. the air pushes. Back and lift the plane. and the engines give it. speed."
+   "start": 91.19,
+   "end": 96.14,
+   "text": "The engines only give it speed. The wing is what turns that speed into lift.",
+   "heard": "The engines only give it speed. The wing is what turns that speed into lift."
   },
   {
    "i": 22,
-   "start": 96.86,
-   "end": 102.43,
-   "text": "And the weirdest part? Stunt planes fly upside down, because they tilt the wing itself into the air.",
-   "heard": "and the weirdest part? Stunt planes fly upside down because the [MUSIC] the wing itself. into the air."
+   "start": 97.47,
+   "end": 105.91,
+   "text": "Bottom line: weight pulls down, the wing lifts, the engines push, the air drags, and the plane flies when lift and thrust win.",
+   "heard": "Bottom line. Wait. pulls down. The wing lifts. the engines Push the air drags. and the plane flies when lift and thrust."
   },
   {
    "i": 23,
-   "start": 103.48,
-   "end": 105.19,
+   "start": 106.95,
+   "end": 114.76,
+   "text": "And the weirdest part? If both engines quit up high, the plane glides down gently like a paper plane, sometimes for more than sixty miles.",
+   "heard": "win. And the weirdest part? Both engines quit a pie? The plane glides down gently. like a paper plane. sometimes for more than 60 miles."
+  },
+  {
+   "i": 24,
+   "start": 116.01,
+   "end": 117.58,
    "text": "And that's the thing about how planes fly.",
    "heard": "And that's the thing about how planes fly."
   },
   {
-   "i": 24,
-   "start": 105.74,
-   "end": 107.46,
+   "i": 25,
+   "start": 118.51,
+   "end": 120.13,
    "text": "Tell us, what should we explain next time?",
    "heard": "Tell us. What should we explain next time?"
   }
