@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Facebook kit — إيه الحكاية؟</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* Rendered at deviceScaleFactor 2:
+     #profileA / #profileB  540×540  → 1080×1080 (Facebook crops to a circle: keep everything inside r≈230)
+     #cover                 820×428  → 1640×856  (desktop shows the middle ~312px band, phones trim ~60px each side,
+                                                  the profile picture sits over the bottom-left corner) */
+  body { margin: 0; background: #777; display: grid; gap: 20px; padding: 20px; justify-items: start; }
+  .grid-bg { background-color: var(--paper);
+    background-image: linear-gradient(to right, var(--paper-grid) 1px, transparent 1px), linear-gradient(to bottom, var(--paper-grid) 1px, transparent 1px); }
+  .ar { font-family: "Noto Sans Arabic", sans-serif; }
+
+  /* ---------- profile A: orange disc, cream bubble ---------- */
+  #profileA { width: 540px; height: 540px; position: relative; overflow: hidden; background: var(--heat);
+    background-image: radial-gradient(circle at 50% 46%, #d4673f 0, var(--heat) 62%, #a8472b 100%); }
+  #profileA svg, #profileB svg { position: absolute; inset: 0; }
+
+  /* ---------- profile B: name inside a ring ---------- */
+  #profileB { width: 540px; height: 540px; position: relative; overflow: hidden; background-size: 36px 36px; background-position: 18px 18px; }
+  #profileB .name { position: absolute; left: 0; right: 0; top: 238px; text-align: center; color: var(--ink);
+    font: 900 72px/1.2 "Noto Sans Arabic", sans-serif; letter-spacing: -1px; }
+  #profileB .name b { color: var(--heat); }
+
+  /* ---------- cover ---------- */
+  #cover { width: 820px; height: 428px; position: relative; overflow: hidden; background-size: 28px 28px; background-position: 6px 4px; color: var(--ink); }
+  #cover > svg { position: absolute; inset: 0; }
+  .words { position: absolute; right: 54px; top: 92px; width: 350px; display: grid; gap: 8px; justify-items: start; }
+  .title { display: flex; align-items: center; gap: 12px; margin: 0; font: 900 56px/1.1 "Noto Sans Arabic", sans-serif; white-space: nowrap; letter-spacing: -.5px; }
+  .title b { color: var(--heat); font-weight: 900; }
+  .title svg { width: 54px; height: 54px; flex: none; }
+  .tag { margin: 2px 0 0; font: 600 19px/1.55 "Noto Sans Arabic", sans-serif; }
+  .tag span { color: var(--water); }
+  .tag u { text-decoration: none; background: linear-gradient(transparent 62%, var(--heat-soft) 62%, var(--heat-soft) 92%, transparent 92%); }
+  .badges { display: flex; gap: 8px; margin-top: 10px; align-items: center; flex-wrap: wrap; }
+  .daily { font: 800 15px/1 "Noto Sans Arabic", sans-serif; padding: 10px 14px 11px; background: var(--ink); color: var(--paper); box-shadow: 4px 4px 0 var(--heat); display: flex; gap: 8px; align-items: center; }
+  .daily i { width: 9px; height: 9px; border-radius: 50%; background: #e0795a; display: inline-block; font-style: normal; }
+  .chip { font: 700 13px/1 "Noto Sans Arabic", sans-serif; padding: 8px 10px 9px; border: 1.5px solid var(--ink); background: var(--paper-raised); }
+
+  .phones { position: absolute; left: 66px; top: 56px; width: 330px; height: 310px; }
+  .ph { position: absolute; width: 128px; height: 228px; border: 3px solid var(--ink); border-radius: 16px; overflow: hidden; background: #111;
+    box-shadow: 6px 6px 0 var(--ink); }
+  .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ph.l { left: 6px; top: 46px; transform: rotate(-9deg); }
+  .ph.r { left: 196px; top: 46px; transform: rotate(9deg); }
+  .ph.c { left: 100px; top: 18px; width: 138px; height: 246px; z-index: 2; }
+  .play { position: absolute; z-index: 3; left: 147px; top: 118px; width: 44px; height: 44px; border-radius: 50%; background: var(--paper); border: 3px solid var(--ink); display: grid; place-items: center; box-shadow: 3px 3px 0 var(--ink); }
+  .note { position: absolute; font: 700 14px/1.2 "Noto Sans Arabic", sans-serif; color: var(--ink); white-space: nowrap; }
+  .ink { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <!-- the series mark: stopwatch crown over a speech bubble with a question mark (200×200 box) -->
+    <g id="mark">
+      <rect x="84" y="4" width="32" height="10" fill="var(--ink)"/><rect x="94" y="14" width="12" height="16" fill="var(--ink)"/>
+      <path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(9 9)" fill="var(--ink)"/>
+      <path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" fill="var(--paper-raised)" stroke="var(--ink)" stroke-width="8" stroke-linejoin="round"/>
+      <text x="106" y="138" text-anchor="middle" fill="var(--heat)" style="font: 900 118px/1 'Noto Sans Arabic', sans-serif">؟</text>
+    </g>
+  </defs>
+</svg>
+
+<!-- A · bold icon: reads at 32px in the Reels feed -->
+<div id="profileA">
+  <svg viewBox="0 0 540 540" width="540" height="540">
+    <!-- faint stopwatch ticks around the edge -->
+    <g stroke="#f2e9d6" stroke-opacity=".35" stroke-width="5" stroke-linecap="round">
+      <g id="tick"><path d="M270 62 V84"/></g>
+    </g>
+    <g id="ticks"></g>
+    <circle cx="270" cy="270" r="196" fill="none" stroke="#f2e9d6" stroke-opacity=".9" stroke-width="10" pathLength="100" stroke-dasharray="72 100" stroke-linecap="round" transform="rotate(-90 270 270)"/>
+    <circle cx="270" cy="270" r="196" fill="none" stroke="#f2e9d6" stroke-opacity=".22" stroke-width="10"/>
+    <g transform="translate(116 104) scale(1.52)"><use href="#mark"/></g>
+  </svg>
+</div>
+
+<!-- B · the name in the circle (same layout as the old «طب إزاي؟» picture) -->
+<div id="profileB" class="grid-bg">
+  <svg viewBox="0 0 540 540" width="540" height="540">
+    <circle cx="270" cy="270" r="226" fill="none" stroke="var(--heat)" stroke-width="34"/>
+    <circle cx="270" cy="270" r="200" fill="var(--paper-raised)" fill-opacity=".85" stroke="var(--ink)" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
+    <g transform="translate(205 92) scale(.66)"><use href="#mark"/></g>
+  </svg>
+  <div class="name">إيه<br>الحكاية<b>؟</b></div>
+</div>
+
+<!-- Cover -->
+<div id="cover" class="grid-bg">
+  <svg viewBox="0 0 820 428" width="820" height="428">
+    <!-- hand-drawn arrow from the phones to the words -->
+    <path class="ink" d="M392 318 C430 346 488 346 520 312" stroke-dasharray="1 7" stroke-width="3"/>
+    <path class="ink" d="M506 310 L521 311 L519 325" stroke-width="3"/>
+    <!-- doodles -->
+    <g class="ink" stroke-width="2.5" transform="translate(760 360)"><path d="M0 -14 V14 M-14 0 H14 M-10 -10 L10 10 M10 -10 L-10 10" stroke="var(--heat)"/></g>
+    <g class="ink" transform="translate(84 92)" stroke="var(--water)" stroke-width="2.5"><path d="M0 0 q8 -10 16 0 t16 0 t16 0"/><path d="M0 12 q8 -10 16 0 t16 0 t16 0"/></g>
+    <circle cx="452" cy="58" r="6" fill="var(--olive)" stroke="var(--ink)" stroke-width="2"/>
+  </svg>
+
+  <div class="phones">
+    <div class="ph l"><img src="tiktok-cover-microwave-1080x1920.png" alt=""></div>
+    <div class="ph r"><img src="tiktok-cover-sea-cables-1080x1920.png" alt=""></div>
+    <div class="ph c"><img src="tiktok-cover-touchscreen-1080x1920.png" alt=""></div>
+    <div class="play"><svg width="18" height="20" viewBox="0 0 18 20"><path d="M2 1 L17 10 L2 19 Z" fill="var(--heat)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/></svg></div>
+  </div>
+  <div class="note" style="left: 530px; top: 312px;">سؤال ← رسمة ← إجابة</div>
+
+  <div class="words">
+    <h1 class="title"><svg viewBox="0 0 200 200"><use href="#mark"/></svg><span>إيه الحكاية<b>؟</b></span></h1>
+    <p class="tag">الحاجات اللي حوالينا <u>بتشتغل إزاي</u>…<br>مرسومة ومشروحة <span>في دقيقة.</span></p>
+    <div class="badges">
+      <span class="daily"><i></i>ريل جديد كل يوم</span>
+      <span class="chip">أجهزة البيت</span><span class="chip">تكنولوجيا</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // stopwatch ticks for profile A
+  const g = document.getElementById('ticks'), t = document.querySelector('#tick path');
+  for (let i = 0; i < 60; i += 5) { const c = t.cloneNode(); c.setAttribute('transform', `rotate(${i * 6} 270 270)`); c.setAttribute('stroke', '#f2e9d6'); c.setAttribute('stroke-opacity', '.55'); c.setAttribute('stroke-width', '5'); c.setAttribute('stroke-linecap', 'round'); c.setAttribute('d', 'M270 40 V58'); g.appendChild(c); }
+  document.getElementById('tick').remove();
+</script>
+</body>
+</html>
