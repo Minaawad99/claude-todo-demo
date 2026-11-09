@@ -53,7 +53,7 @@ function skeleton(x, y, s) {
 function thermo(x, y, v, lab) { var h = 220 * clamp(v); return R(x - 16, y - 240, 32, 250, "#f6f1e6", 2.4, 16) + R(x - 8, y - h, 16, h, ORANGE, 0) + C(x, y + 16, 24, ORANGE, 2.4) + (lab ? T(lab, x + 70, y - h + 8, 28, INK, 800) : ""); }
 function stageTag(n, txt, k) { return G("", numBox(String(n), 120, 190, k, 40, true) + T(txt, 180, 202, 34, INK, 800, "end"), clamp(k)); }
 // the four-stage strip on top (HUD): which one is on
-function strip(on) { var L = [TX("هضم ذاتي", "self-digestion"), TX("انتفاخ", "bloat"), TX("تحلل", "decay"), TX("عضم", "bones")], s = ""; for (var i = 0; i < 4; i++) { var x = 110 + i * 140, a = i + 1 === on; s += '<rect x="' + (x - 62) + '" y="34" width="124" height="40" rx="6" fill="' + (a ? ORANGE : PAPER) + '" stroke="' + INK + '" stroke-width="1.8"/>' + T((i + 1) + " · " + L[i], x, 61, 17, a ? "#fff" : INK, 700); } return s; }
+function strip(on) { var L = [TX("هضم ذاتي", "self-digestion"), TX("انتفاخ", "bloat"), TX("تحلل", "decay"), TX("عضم", "bones")], s = ""; for (var i = 0; i < 4; i++) { var x = 110 + i * 140, a = i + 1 === on; s += '<rect x="' + (x - 62) + '" y="34" width="124" height="40" rx="6" fill="' + (a ? ORANGE : PAPER) + '" stroke="' + INK + '" stroke-width="1.8"/>' + T((i + 1) + " · " + L[i], x, 61, EN ? 13 : 17, a ? "#fff" : INK, 700); } return s; }
 
 
 // ── a standing body outline (front, medical-diagram plain, no face). Strokes don't scale, so it can be zoomed into.
@@ -68,7 +68,115 @@ function gutLayer() {
   return s;
 }
 // a continuous zoom from the whole body into a point (fx,fy body units) that lands on screen at (cx,cy); Z grows 1 → zmax
-function zoomBody(Z, fx, fy, cx, cy, bodyOp) { return G("translate(" + f(cx) + " " + f(cy) + ") scale(" + f(Z * .9) + ") translate(" + f(-fx) + " " + f(-fy) + ")", bodyOutline(), bodyOp); }
+function zoomBody(Z, fx, fy, cx, cy, bodyOp, org) { return G("translate(" + f(cx) + " " + f(cy) + ") scale(" + f(Z * .9) + ") translate(" + f(-fx) + " " + f(-fy) + ")", bodyOutline(org ? { organs: org, hl: "gut" } : {}), bodyOp); }
+
+// ════ realistic anatomy (replaces the first rough body): proportions of 8 heads (head 60 units, 480 tall, crotch at y 0),
+// a two-tone skin edge like the reference body (v20), faint landmarks, organs in their real places, a real muscle,
+// skin layers, a fingertip and a front-view skeleton. Strokes are non-scaling so the camera can zoom deep.
+var BLOOD = "#b8392a", SKIN_D = "#c98a70", ORG = { lung: "#e2a3a0", heart: "#b8392a", liver: "#8f3f2c", stomach: "#e7b39a", colon: "#d9a07f", small: "#ecbca6" };
+// the left half of the outline (viewer's left), neck to crotch, as cubic segments; the right half is its mirror
+var BODY_L = [[-11, -182], [-12, -166], [-30, -162, -52, -162, -62, -154], [-72, -146, -76, -130, -75, -115], [-76, -96, -77, -84, -78, -70],
+  [-79, -55, -82, -30, -84, 2], [-86, 12, -88, 30, -90, 44], [-91, 54, -84, 58, -80, 50], [-77, 40, -76, 25, -72, 10], [-70, -10, -66, -40, -64, -62],
+  [-62, -80, -60, -100, -58, -116], [-56, -100, -52, -80, -46, -56], [-42, -40, -44, -24, -50, -8], [-54, 4, -52, 20, -48, 40],
+  [-42, 75, -36, 100, -32, 115], [-30, 130, -34, 160, -30, 190], [-28, 205, -26, 215, -24, 222], [-30, 232, -34, 240, -26, 242], [-18, 242, -12, 242, -10, 242],
+  [-10, 232, -12, 222, -12, 214], [-14, 190, -18, 160, -16, 128], [-14, 116, -12, 110, -10, 100], [-8, 70, -6, 40, -3, 14], [-2, 10, -1, 8, 0, 8]];
+function bodyPath() {
+  var P = function (x, y) { return f(x) + " " + f(y); }, d = "M" + P(BODY_L[0][0], BODY_L[0][1]), i, s;
+  for (i = 1; i < BODY_L.length; i++) { s = BODY_L[i]; d += s.length === 2 ? " L" + P(s[0], s[1]) : " C" + P(s[0], s[1]) + " " + P(s[2], s[3]) + " " + P(s[4], s[5]); }
+  for (i = BODY_L.length - 1; i >= 1; i--) { s = BODY_L[i]; var prev = BODY_L[i - 1], p0 = prev.length === 2 ? prev : [prev[4], prev[5]]; d += s.length === 2 ? " L" + P(-p0[0], p0[1]) : " C" + P(-s[2], s[3]) + " " + P(-s[0], s[1]) + " " + P(-p0[0], p0[1]); }
+  return d + " Z";
+}
+var BODY_D = bodyPath(), CLIPB = 0;
+function bodyOutline(opts) {
+  opts = opts || {}; var id = "bd" + (++CLIPB), s = '<clipPath id="' + id + '"><path d="' + BODY_D + '"/><ellipse cx="0" cy="-210" rx="24" ry="30"/></clipPath>';
+  s += '<path d="' + BODY_D + '" fill="' + SKIN + '"/><ellipse cx="0" cy="-210" rx="24" ry="30" fill="' + SKIN + '"/>';
+  // shade: a darker rim inside the edge, then hatching on the right-hand side (light from the left)
+  s += '<g clip-path="url(#' + id + ')"><path d="' + BODY_D + '" fill="none" stroke="' + SKIN_D + '" stroke-width="7"/><ellipse cx="0" cy="-210" rx="24" ry="30" fill="none" stroke="' + SKIN_D + '" stroke-width="6"/>' + R(30, -250, 80, 500, "url(#hatch)", 0) + '</g>';
+  if (opts.organs) s += G("", organs(opts.hl), opts.organs);
+  // landmarks: collarbones, chest, ribs edge, navel, knees, fingers
+  var lm = ["M-8 -160 C-24 -156 -40 -158 -54 -152", "M8 -160 C24 -156 40 -158 54 -152", "M-40 -126 C-30 -112 -12 -110 -2 -116", "M40 -126 C30 -112 12 -110 2 -116",
+    "M-34 -92 C-24 -82 -12 -78 0 -84 C12 -78 24 -82 34 -92", "M-28 -4 C-16 4 -8 8 0 8 C8 8 16 4 28 -4", "M-30 108 C-26 116 -18 116 -16 108", "M30 108 C26 116 18 116 16 108",
+    "M-84 40 V54 M-80 42 V56 M84 40 V54 M80 42 V56", "M0 -150 V-90"];
+  s += lm.map(function (d) { return '<path d="' + d + '" stroke="' + INK + '" stroke-width="1.3" fill="none" opacity=".35"' + NS + '/>'; }).join("") + C(0, -40, 1.6, INK, 0);
+  s += '<path d="' + BODY_D + '" fill="none" stroke="' + INK + '" stroke-width="2.4"' + NS + '/><ellipse cx="0" cy="-210" rx="24" ry="30" fill="none" stroke="' + INK + '" stroke-width="2.4"' + NS + '/>';
+  return s + '<path d="M-6 -240 C-20 -238 -26 -226 -24 -212" stroke="' + INK + '" stroke-width="1.2" fill="none" opacity=".3"' + NS + '/>';
+}
+// organs in the torso (body units), anatomical right = viewer's left
+function organs(hl) {
+  var o = function (d, c, k) { return '<path d="' + d + '" fill="' + c + '" stroke="' + INK + '" stroke-width="1.4"' + NS + (hl && hl !== k ? ' opacity=".45"' : "") + '/>'; };
+  var s = o("M-6 -150 C-20 -152 -40 -140 -44 -110 C-46 -96 -42 -86 -30 -84 C-20 -84 -10 -90 -6 -100 Z", ORG.lung, "lung") + o("M6 -150 C20 -152 40 -140 44 -110 C46 -96 42 -86 30 -84 C22 -84 16 -88 12 -96 L6 -110 Z", ORG.lung, "lung");
+  s += o("M-4 -118 C-2 -126 10 -128 14 -120 C20 -110 16 -98 6 -92 C0 -96 -8 -104 -4 -118 Z", ORG.heart, "heart");
+  s += o("M-46 -84 C-30 -90 0 -88 12 -80 C4 -70 -14 -62 -32 -60 C-42 -60 -48 -70 -46 -84 Z", ORG.liver, "liver") + o("M10 -82 C24 -88 36 -82 36 -70 C36 -58 24 -54 14 -58 C8 -62 4 -70 10 -82 Z", ORG.stomach, "stomach");
+  s += gutLayer(hl);
+  return s;
+}
+// the gut: the colon framing the abdomen with its pouches (haustra), the small intestine coiled inside, the appendix
+function gutLayer(hl) {
+  var op = hl && hl !== "gut" ? ' opacity=".45"' : "", s = "", fr = "M-34 2 V-46 C-34 -54 -28 -58 -20 -58 H20 C28 -58 34 -54 34 -46 V-6 C34 4 24 8 12 6";
+  s += '<path d="' + fr + '" fill="none" stroke="' + INK + '" stroke-width="13" stroke-linecap="round"' + op + '/><path d="' + fr + '" fill="none" stroke="' + ORG.colon + '" stroke-width="10.4" stroke-linecap="round"' + op + '/>';
+  // haustra: little pinches across the colon
+  var pts = []; for (var y = -50; y <= -4; y += 6) pts.push([-34, y], [34, y]); for (var x = -26; x <= 26; x += 6) pts.push([x, -58]);
+  s += pts.map(function (p) { var h = p[1] === -58 && Math.abs(p[0]) < 30; return '<path d="M' + (h ? f(p[0]) + ' ' + f(p[1] - 5) + ' v10' : f(p[0] - 5) + ' ' + f(p[1]) + ' h10') + '" stroke="' + INK + '" stroke-width="1" opacity=".5"' + NS + '/>'; }).join("");
+  var sm = "M-22 -46 C-10 -52 8 -40 22 -46 C28 -38 10 -32 -4 -36 C-20 -40 -26 -28 -14 -24 C0 -20 16 -30 24 -22 C26 -12 8 -10 -6 -14 C-22 -18 -26 -6 -12 -4 C4 -2 14 -8 20 -2";
+  s += '<path d="' + sm + '" fill="none" stroke="' + INK + '" stroke-width="7.4" stroke-linecap="round"' + op + '/><path d="' + sm + '" fill="none" stroke="' + ORG.small + '" stroke-width="5.2" stroke-linecap="round"' + op + '/>';
+  return s + '<path d="M-34 4 c2 6 -2 10 -6 12" stroke="' + ORG.colon + '" stroke-width="3" stroke-linecap="round"' + op + '/>';
+}
+// a skeletal muscle (a biceps-like belly between two tendons) with a cut end showing its bundles; lock pulls it short
+function muscle(x, y, s, lock, t) {
+  var L = 1 - .12 * (lock || 0), b = "";
+  b += '<path d="M-260 -6 H' + f(-170 * L) + ' M' + f(170 * L) + ' -6 H260 M-260 6 H' + f(-170 * L) + ' M' + f(170 * L) + ' 6 H260" stroke="' + INK + '" stroke-width="2" fill="none"/>' + R(-262, -6, 262 - 170 * L, 12, BONE, 0) + R(170 * L, -6, 262 - 170 * L, 12, BONE, 0);
+  var belly = "M" + f(-180 * L) + " 0 C" + f(-120 * L) + " " + f(-70 - 10 * lock) + " " + f(60 * L) + " " + f(-74 - 10 * lock) + " " + f(180 * L) + " 0 C" + f(60 * L) + " " + f(74 + 10 * lock) + " " + f(-120 * L) + " " + f(70 + 10 * lock) + " " + f(-180 * L) + " 0 Z";
+  b += '<path d="' + belly + '" fill="#b5523f" stroke="' + INK + '" stroke-width="2.6"/>';
+  for (var k = -4; k <= 4; k++) b += '<path d="M' + f(-170 * L) + ' 0 C' + f(-110 * L) + ' ' + f(k * 15) + ' ' + f(60 * L) + ' ' + f(k * 16) + ' ' + f(170 * L) + ' 0" stroke="#8f3a2c" stroke-width="1.6" fill="none" opacity=".7"/>';
+  b += '<path d="' + belly + '" fill="none" stroke="#e08a72" stroke-width="5" opacity=".35" transform="translate(-4 -4) scale(.94)"/>';
+  // the cut end: an oval face with bundles (fascicles) wrapped in pale tissue
+  var cut = '<ellipse cx="0" cy="0" rx="48" ry="70" fill="#f0d0c0" stroke="' + INK + '" stroke-width="2.4"/>';
+  for (k = 0; k < 14; k++) { var a = hash(k) * 6.28, r = Math.sqrt(hash(k + 3)) * .78; cut += '<ellipse cx="' + f(Math.cos(a) * r * 40) + '" cy="' + f(Math.sin(a) * r * 58) + '" rx="' + f(10 + hash(k + 5) * 4) + '" ry="' + f(13 + hash(k + 6) * 5) + '" fill="#b5523f" stroke="' + INK + '" stroke-width="1.2"/>'; }
+  b += G("translate(" + f(10 * L) + " 0)", cut);
+  return G("translate(" + f(x) + " " + f(y) + ") scale(" + s + ")", b);
+}
+// one muscle fibre with its stripes (sarcomeres); lock packs the stripes tight and pins them
+function fibre(x, y, w, lock, loose, t) {
+  var c = (lock || 0) * (1 - (loose || 0)), s = R(x - w / 2, y - 26, w, 52, "#d9776a", 2.4, 26), sp = 34 - 12 * c, n = Math.floor((w - 30) / sp);
+  for (var k = 0; k <= n; k++) { var xx = x - w / 2 + 16 + k * sp; s += R(xx, y - 22, sp * .45, 44, "#8f3a2c", 0) + '<path d="M' + f(xx + sp * .72) + ' ' + (y - 22) + ' v44" stroke="' + INK + '" stroke-width="1.6"/>'; if (c > .5) s += '<path d="M' + f(xx - 4) + ' ' + (y - 30) + ' l8 8 M' + f(xx + 4) + ' ' + (y - 30) + ' l-8 8" stroke="' + ORANGE + '" stroke-width="2.2"/>'; }
+  return s;
+}
+// skin in section: epidermis, dermis with capillaries, fat; pool 0..1 settles purple blood into the lower dermis
+function skinSection(w, h, pool, t) {
+  var s = R(-w / 2, -h / 2, w, h * .16, "#e8b8a0", 0) + R(-w / 2, -h / 2 + h * .16, w, h * .44, "#e7a58f", 0) + R(-w / 2, -h / 2 + h * .6, w, h * .4, "#f2e2b0", 0);
+  for (var k = 0; k < 8; k++) s += C(-w / 2 + 16 + k * (w / 8), h * .28 + (k % 2) * 10, 11, "#f8eecb", 1.2);
+  s += '<path d="M' + (-w / 2) + ' ' + f(-h / 2 + h * .16) + ' C-40 ' + f(-h / 2 + h * .2) + ' 40 ' + f(-h / 2 + h * .12) + ' ' + (w / 2) + ' ' + f(-h / 2 + h * .16) + '" stroke="' + INK + '" stroke-width="1.4" fill="none"/>';
+  s += '<path d="M' + (-w / 2) + ' ' + f(-h / 2 + h * .32) + ' C-30 ' + f(-h / 2 + h * .26) + ' 30 ' + f(-h / 2 + h * .4) + ' ' + (w / 2) + ' ' + f(-h / 2 + h * .32) + '" stroke="' + BLOOD + '" stroke-width="4" fill="none"/>';
+  s += R(-w / 2, -h / 2 + h * .6 - h * .26 * pool, w, h * .26 * pool, PURPLE, 0) + '<path d="M' + (-w / 2) + ' ' + f(-h / 2 + h * .6) + ' H' + (w / 2) + '" stroke="' + INK + '" stroke-width="1.4"/>';
+  return s;
+}
+// a fingertip from the side: nail plate, cuticle, pad; shrink pulls the skin back from the nail
+function fingertip(x, y, s, shrink) {
+  var k = shrink || 0, b = '<path d="M-160 60 H70 C120 60 150 30 150 -6 C150 -40 120 -56 80 -56 H-160 Z" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2.6"/>';
+  b += '<path d="M-160 50 H70 C110 50 136 30 140 0" stroke="' + SKIN_D + '" stroke-width="7" fill="none" opacity=".6"/>';
+  b += '<path d="M' + f(-10 - 40 * k) + ' -56 C' + f(30 - 30 * k) + ' -66 120 -66 162 -44 C168 -40 166 -34 158 -34 C120 -48 60 -50 ' + f(-10 - 40 * k) + ' -44 Z" fill="#f4e6dc" stroke="' + INK + '" stroke-width="2.2"/>';
+  b += '<path d="M' + f(-14 - 40 * k) + ' -58 C' + f(-6 - 40 * k) + ' -48 ' + f(-6 - 40 * k) + ' -46 ' + f(-14 - 40 * k) + ' -40" stroke="' + INK + '" stroke-width="2" fill="none"/>';
+  b += '<path d="M40 30 C70 34 100 26 116 10 M30 -20 C60 -16 90 -22 104 -30" stroke="' + INK + '" stroke-width="1.2" fill="none" opacity=".35"/>';
+  return G("translate(" + f(x) + " " + f(y) + ") scale(" + s + ")", b);
+}
+// a skeleton from the front (same 8-head units as the body)
+function bone(d, w) { return '<path d="' + d + '" stroke="' + INK + '" stroke-width="' + (w + 3) + '" stroke-linecap="round" fill="none"/><path d="' + d + '" stroke="' + BONE + '" stroke-width="' + w + '" stroke-linecap="round" fill="none"/>'; }
+function skeletonFront() {
+  var s = '<path d="M-21 -214 C-22 -240 22 -240 21 -214 C21 -200 16 -192 12 -186 C8 -180 -8 -180 -12 -186 C-16 -192 -21 -200 -21 -214 Z" fill="' + BONE + '" stroke="' + INK + '" stroke-width="2"/>';
+  s += '<ellipse cx="-8" cy="-210" rx="6" ry="7" fill="' + INK + '"/><ellipse cx="8" cy="-210" rx="6" ry="7" fill="' + INK + '"/><path d="M0 -202 l-3 7 h6 Z" fill="' + INK + '"/><path d="M-9 -188 H9" stroke="' + INK + '" stroke-width="1.4" stroke-dasharray="2 2"/>';
+  for (var v = 0; v < 22; v++) { var y = -178 + v * 8.4, w = 5 + v * .3; s += R(-w, y, 2 * w, 6.4, BONE, 1.2, 2); }
+  for (var r = 0; r < 10; r++) { var ry = -154 + r * 7.5, rx = 26 + r * 2.4 - (r > 6 ? (r - 6) * 4 : 0); s += bone("M-5 " + f(ry) + " C" + f(-rx) + " " + f(ry - 6) + " " + f(-rx - 8) + " " + f(ry + 18) + " " + f(-rx + 4) + " " + f(ry + 26), 2.2) + bone("M5 " + f(ry) + " C" + f(rx) + " " + f(ry - 6) + " " + f(rx + 8) + " " + f(ry + 18) + " " + f(rx - 4) + " " + f(ry + 26), 2.2); }
+  s += R(-4, -156, 8, 52, BONE, 1.4, 3) + bone("M-6 -160 C-24 -156 -40 -158 -54 -152", 3.2) + bone("M6 -160 C24 -156 40 -158 54 -152", 3.2);
+  s += '<path d="M-6 -18 C-24 -30 -48 -26 -50 -8 C-50 6 -36 14 -20 12 C-12 10 -6 6 0 8 C6 6 12 10 20 12 C36 14 50 6 50 -8 C48 -26 24 -30 6 -18 Z" fill="' + BONE + '" stroke="' + INK + '" stroke-width="2"/><circle cx="-14" cy="2" r="5" fill="' + PAPER + '" stroke="' + INK + '" stroke-width="1.2"/><circle cx="14" cy="2" r="5" fill="' + PAPER + '" stroke="' + INK + '" stroke-width="1.2"/>';
+  [-1, 1].forEach(function (m) {
+    s += bone("M" + (m * 58) + " -148 L" + (m * 72) + " -68", 4.2) + bone("M" + (m * 70) + " -64 L" + (m * 82) + " 2", 2.6) + bone("M" + (m * 75) + " -64 L" + (m * 86) + " 2", 2.2);
+    for (var fg = 0; fg < 5; fg++) s += bone("M" + f(m * (80 + fg * 2)) + " 8 L" + f(m * (78 + fg * 3.5)) + " " + (40 + (fg === 2 ? 6 : 0)), 1.6);
+    s += bone("M" + (m * 32) + " 6 L" + (m * 26) + " 108", 5.2) + C(m * 34, 2, 6, BONE, 1.6) + C(m * 24, 114, 5, BONE, 1.4) + bone("M" + (m * 24) + " 122 L" + (m * 20) + " 214", 4) + bone("M" + (m * 30) + " 124 L" + (m * 27) + " 212", 2);
+    s += bone("M" + (m * 20) + " 222 L" + (m * 34) + " 240", 3) + bone("M" + (m * 16) + " 224 L" + (m * 24) + " 242", 2.2);
+  });
+  return s;
+}
+function skeleton(x, y, s) { return G("translate(" + f(x) + " " + f(y) + ") rotate(-90) scale(" + f(s * .9) + ")", skeletonFront()); }
 
 // ── shots (same line numbers in both editions)
 // 4 · one small rule: the camera goes from the whole body into the chest, the tissue, and one cell with its blood supply
@@ -90,18 +198,17 @@ shot(8, push(320, 420, 1.06, 1.0), function (u, d, t) { return paper() + cell(30
 // 9 · meanwhile the body cools about one degree an hour (1.5 °F)
 shot(9, push(320, 420, 1.0, 1.05), function (u, d, t) { var k = at(u, .2, d - .3); return paper() + thermo(220, 600, .95 - .5 * k, EN ? count(98.6 - 6 * k, 1, 1) + "°F" : count(37 - 4 * k, 1, 1) + "°") + numBox(TX("−1° / ساعة", "−1.5°F / hr"), 430, 300, at(u, .8, .3), 34); });
 // 10 · the blood settles with gravity, purple patches on the lower side
-shot(10, push(320, 420, 1.0, 1.06), function (u, d, t) { var k = at(u, .4, d - .6); return paper() + table(320, 470, 560) + sheet(320, 470, 1.05, t, 0) + arrow(560, 250, 560, 380, MUTE, 6, at(u, .3, .5)) + inset(330, 620, 110, R(-120, -110, 240, 220, SKIN, 0) + R(-120, 110 - 80 * k, 240, 80 * k, PURPLE, 0, 0) + '<path d="M-120 110 H120" stroke="' + INK + '" stroke-width="3"/>', at(u, .6, .3)); });
-// 11 · muscles stiffen as their energy runs out, then loosen a day or two later
-shot(11, push(320, 420, 1.0, 1.04), function (u, d, t) { var lock = at(u, .3, 1.2), loose = at(u, d * .65, 1); return paper() + fibres(300, 470, t, lock, loose) + battery(540, 200, 1 - lock) + G("", T(TX("يوم أو اتنين", "1–2 days"), 300, 700, 30, OLIVE, 800), loose); });
+shot(10, push(320, 420, 1.0, 1.06), function (u, d, t) { var k = at(u, .4, d - .6); return paper() + table(320, 470, 560) + sheet(320, 470, 1.05, t, 0) + arrow(560, 250, 560, 380, MUTE, 6, at(u, .3, .5)) + inset(330, 620, 120, skinSection(260, 240, k, t), at(u, .6, .3)); });
+// 11 · muscles stiffen as their energy runs out, then loosen a day or two later: a real muscle, and one of its fibres
+shot(11, push(320, 420, 1.0, 1.04), function (u, d, t) { var lock = at(u, .3, 1.2), loose = at(u, d * .65, 1); return paper() + muscle(310, 320, 1.12, lock * (1 - loose), t) + fibre(310, 580, 560, lock, loose, t) + label(300, 554, 220, 690, TX("ليفة عضلية", "muscle fibre"), OLIVE, at(u, .6, .5), 22) + battery(560, 150, 1 - lock) + G("", T(TX("يوم أو اتنين", "1–2 days"), 300, 720, 30, OLIVE, 800), loose); });
 // 12 · second stage: bloat
 shot(12, push(320, 420, 1.04, 1.0), function (u, d, t) { return paper() + stageTag(2, TX("الانتفاخ", "bloat"), at(u, .2, .3)) + table(320, 520, 560) + sheet(320, 520, 1.05, t, .3); });
 hud(12, 18, function (u, t) { var on = t < LN[16].start ? 2 : t < LN[17].start ? 3 : 4; return strip(on); });
 hud(6, 12, function (u, t) { return strip(1); });
 // 13 · trillions of gut bacteria: from the whole body into the belly, the gut, and the bacteria multiplying inside
 shot(13, push(320, 430, 1.0, 1.0), function (u, d, t) {
-  var k = ease(clamp((u - .1) / (d * .5))), Z = Math.exp(Math.log(9) * k), s = paper();
-  s += zoomBody(Z, 0, 14, 320, 430, 1);
-  s += G("translate(320 430) scale(" + f(Z * .9) + ") translate(0 -14)", gutLayer(), clamp((Z - 1.5) / 2));
+  var k = ease(clamp((u - .1) / (d * .5))), Z = Math.exp(Math.log(6.5) * k), s = paper();
+  s += zoomBody(Z, 0, -28, 320, 430, 1, clamp((Z - 1.3) / 1.5));
   var n = Math.round(46 * clamp((u - d * .45) / (d * .45)));
   for (var j = 0; j < n; j++) s += bact(140 + hash(j) * 360 + 6 * Math.sin(t * 2 + j), 260 + hash(j + 9) * 330 + 6 * Math.cos(t * 2 + j), hash(j + 4) * 180 + t * 20, .9);
   return s + G("", '<rect x="230" y="680" width="180" height="40" rx="6" fill="#f4ecdb" stroke="' + INK + '" stroke-width="2"/>' + T(TX("مناعة: ✗", "immune: ✗"), 320, 708, 22, ORANGE, 800), at(u, d * .7, .3));
@@ -123,9 +230,9 @@ shot(19, push(320, 420, 1.0, 1.04), function (u, d, t) {
   return s;
 });
 // 20 · the myth: hair and nails keep growing after death. no.
-shot(20, push(320, 420, 1.04, 1.0), function (u, d, t) { return paper() + R(150, 250, 220, 420, SKIN, 2.6, 90) + R(180, 230, 160, 120, "#f4ecdb", 2.4, 60) + arrow(400, 300, 400, 180 - 6 * Math.sin(t * 3), ORANGE, 8, at(u, .4, .5)) + T("؟", 480, 260, 90, ORANGE, 800) + cross(420, 520, 1.3, at(u, d * .8, .4)); });
+shot(20, push(320, 420, 1.04, 1.0), function (u, d, t) { return paper() + fingertip(300, 440, 1.6, 0) + arrow(420, 280, 540, 280 - 0 * Math.sin(t * 3), ORANGE, 8, at(u, .4, .5)) + T("؟", 560, 220, 90, ORANGE, 800) + cross(420, 620, 1.3, at(u, d * .8, .4)); });
 // 21 · the skin dries and shrinks back, so they look longer
-shot(21, push(320, 420, 1.0, 1.06), function (u, d, t) { var k = at(u, .3, d - .5); return paper() + R(180, 230, 160, 160 + 40 * k, "#f4ecdb", 2.4, 50) + R(150, 290 + 50 * k, 220, 420, SKIN, 2.6, 90) + measure(400, 230, 400, 290 + 50 * k, 1, "") + label(260, 300 + 50 * k, 470, 560, TX("الجلد بينكمش", "skin shrinks"), OLIVE, at(u, d * .5, .5), 24); });
+shot(21, push(320, 420, 1.0, 1.06), function (u, d, t) { var k = at(u, .3, d - .5); return paper() + fingertip(300, 440, 1.6, k) + measure(300 - 16 * 1.6 - 64 * k * 1.6, 300, 300 + 162 * 1.6, 300, 1, "") + label(300 - 14 * 1.6 - 64 * k * 1.6, 360, 330, 620, TX("الجلد بينكمش", "skin shrinks"), OLIVE, at(u, d * .5, .5), 24); });
 // 22 · recap: cells digest themselves, bacteria bloat, insects finish, bones remain
 shot(22, push(320, 420, .88, 1.06), function (u, d, t) { var s = paper(), q = d / 4.4; var bb = function (i) { return f(16 * Math.sin(t * 2.4 + i * 1.3)); };
   s += G("translate(170 " + (300 + +bb(0)) + ") scale(.8)", cell(0, 0, 160, t, 1, .4), at(u, .1, .3)) + G("translate(470 " + (320 + +bb(1)) + ") scale(.55)", sheet(0, 0, 1, t, 1), at(u, q, .3)) + G("", fly(170 + 30 * Math.sin(t * 1.7), 600 + +bb(2), t, 4), at(u, 2 * q, .3)) + G("translate(470 " + (600 + +bb(3)) + ") scale(.62)", skeleton(0, 0, 1), at(u, 3 * q, .3)); for (var i = 0; i < 4; i++) s += callout(String(i + 1), [60, 360, 60, 360][i], [150, 150, 470, 470][i], at(u, .1 + i * q, .3), 20); return s; }, { tr: "out" });
