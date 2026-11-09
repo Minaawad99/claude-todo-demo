@@ -176,7 +176,7 @@ shot(12, push(320, 400, 1.0, 1.06), function (u, d, t) {
 // 13 · like someone sitting in your bus seat who won't get up
 shot(13, push(320, 400, 1.04, 1.0), function (u, d, t) { return paper() + R(-40, 0, 720, 800, "#f0d2c4", 0) + rbc(260, 430, 170, ["CO", "CO", "CO", "O2"], t, Math.sin(t * .8) * .05) + iconBox(520, 160, 170, busSeat(0, 30, 1, 1), at(u, .3, .3)); });
 // 14 · sponsor: noon, Saudi Arabia and the UAE, code Awad11
-shot(14, push(320, 400, 1.0, 1.05), function (u, d, t) { return paper() + tag("إعلان", 110, 90, 1, 22, MUTE) + G("rotate(" + f(-3 + Math.sin(t * 1.4) * 1.5) + " 320 380)", coupon(320, 380, at(u, .3, .4))) + T("السعودية · الإمارات", 320, 580, 30, INK, 800) + appear(at(u, 2.6, .4), T("خصم على طلبك", 320, 640, 26, ORANGE, 800)); });
+shot(14, push(320, 400, 1.0, 1.05), function (u, d, t) { return paper() + tag("إعلان", 110, 90, 1, 22, MUTE) + G("rotate(" + f(-3 + Math.sin(t * 1.4) * 1.5) + " 320 380)", coupon(320, 380, at(u, .3, .4))) + T("السعودية · الإمارات", 320, 580, 30, INK, 800) + appear(at(u, 2.6, .4), T("خصم لحد", 360, 660, 28, INK, 800) + N("10%", 230, 668, 52, ORANGE)); });
 // 15 · back to the bathroom: the brain and the heart starve first
 shot(15, push(320, 400, 1.0, .96), function (u, d, t) { return paper() + bodyFront(t, at(u, .6, 1.6)) + label(320, 155, 500, 110, "المخ", ORANGE, at(u, 1.2, .5), 24) + label(300, 455, 470, 380, "القلب", ORANGE, at(u, 1.9, .5), 24); });
 hud(15, 17, function (u, t) { var k = clamp((t - LN[15].start) / (LN[17].start - LN[15].start)); return o2bar(.4 - .3 * k, "الأكسجين في الجسم"); });
