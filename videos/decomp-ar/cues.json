@@ -568,14 +568,6 @@
    "t": 106.36,
    "fx": "pop",
    "gain": 0.2
-  },
-  {
-   "t": 0,
-   "file": "../_templates/sketch/sfx/px-music-soft.mp3",
-   "gain": 0.42,
-   "from": 0,
-   "dur": 116.17,
-   "duck": 0.6
   }
  ]
 }

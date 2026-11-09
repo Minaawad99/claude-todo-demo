@@ -158,7 +158,9 @@ clip still has a synthesized stand-in.
 | px-wind-gust | Wind Gust (Dragon Studio 386158) | 0.25–4.76 s | wind |
 | px-music-box (source) → px-music-soft (used) | **Mysterious Music Box – The Midnight Hour** (the series music) | whole | bed |
 
-**Music.** The user approved this music and its level. `px-music-soft.mp3` in the kit is already made this way:
+**Music: off by default (the user's request, Nov 2026).** Episodes carry no music bed; the narrator and the sound effects carry the video. `cues.js` has `USE_MUSIC = false` and writes `bed: false`. Without the bed the mix comes out around -18 LUFS, so add about +4–5 dB before the limiter (`volume=5dB,alimiter=…`) and check qa.py. Only if the user asks for music again, set `USE_MUSIC = true`, which uses the settings below.
+
+**The music the user approved (only if switched back on).** The user approved this music and its level. `px-music-soft.mp3` in the kit is already made this way:
 - **Soften the ring:**
   `ffmpeg -i px-music-box.mp3 -af "highshelf=f=3000:g=-5,volume='if(lt(t,12),0.6+0.4*t/12,1)':eval=frame" px-music-soft.mp3`
   This takes down the music-box ring, which the user found too much at the start.

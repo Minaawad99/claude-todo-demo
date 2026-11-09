@@ -68,7 +68,8 @@ lab(21, D(21) * 0.5);                                                       // t
 for (let k = 0; k < 4; k++) a(L(22) + 0.1 + k * D(22) / 4.4, 'tick', 0.2);  // recap, four stages
 rec(L(23) + 0.3, 'wind-gust', 0.12, 0.25, 2.2, 1.0, 'wind', 0.1); a(L(23) + D(23) * 0.55, 'pop', 0.2);   // the research farm
 
-const MUSIC = has('music-soft') ? 'music-soft' : null;
+const USE_MUSIC = false;   // the user asked (Nov 2026): no music bed; the video's own sound effects carry it. Set true to bring the music back.
+const MUSIC = USE_MUSIC && has('music-soft') ? 'music-soft' : null;
 if (MUSIC) rec(0, MUSIC, 0.42, 0, window.TIMING.duration + 2.5, 0.6);
-fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: !MUSIC, cues: c }, null, 1));
+fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: c }, null, 1));
 console.log(c.length + ' cues; kit clips here: ' + (['swipe', 'paper', 'pencil-scribble', 'ding', 'clock-ticking', 'space-drone', 'ocean-waves', 'water-rush', 'wind-gust', 'music-soft'].filter(has).join(', ') || 'none'));
