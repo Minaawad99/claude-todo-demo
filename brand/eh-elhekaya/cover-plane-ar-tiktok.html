@@ -6,17 +6,17 @@
      dark sea at the bottom, one warm glow behind the plane. The drawing is the episode's own (videos/plane-ar/sketch):
      the airliner from the side with its four force arrows: lift, weight, thrust, drag.
      Everything that matters stays inside the 3:4 crop (y 120–840) and away from TikTok's right-hand buttons. */
-  body { margin: 0; background: #000; }
-  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #000; }
+  body { margin: 0; background: #eee5d0; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #eee5d0; }
   #art { position: absolute; inset: 0; width: 540px; height: 960px; }
-  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 10px rgba(0,0,0,.7); }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center;  }
 </style></head><body>
 <div class="cover">
   <svg id="art" viewBox="0 0 540 960"></svg>
-  <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
-  <p class="t" style="top:154px;font:900 42px/1.2 'Noto Sans Arabic';color:#fff">70 طن… وبتطير!</p>
-  <p class="t" style="top:214px;font:800 24px/1.3 'Noto Sans Arabic';color:#f2c230">4 قوى بتشد كل طيارة في الجو</p>
-  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff"><span style="color:#f2c230">الجناح</span> بيرفع و<span style="color:#f2c230">المحرك</span> بيزق<br><span style="font-size:24px;color:#d9d4c8">والطيارة بتطير لما الاتنين يكسبوا</span></p>
+  <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#6f6556">إيه الحكاية؟</p>
+  <p class="t" style="top:154px;font:900 42px/1.2 'Noto Sans Arabic';color:#2a2016">70 طن… وبتطير!</p>
+  <p class="t" style="top:214px;font:800 24px/1.3 'Noto Sans Arabic';color:#bd552f">4 قوى بتشد كل طيارة في الجو</p>
+  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#2a2016"><span style="color:#bd552f">الجناح</span> بيرفع و<span style="color:#bd552f">المحرك</span> بيزق<br><span style="font-size:24px;color:#6f6556">والطيارة بتطير لما الاتنين يكسبوا</span></p>
 </div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
   <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".15"/></pattern>
@@ -35,15 +35,15 @@
 <script src="../../videos/plane-ar/sketch/scenes.js"></script>
 <script>
   (function () {
-    var s = '<rect width="540" height="960" fill="url(#sky)"/>', t = 1.3;
-    for (var i = 0; i < 70; i++) { var x = hash(i) * 540, y = hash(i + 99) * 960, r = .5 + hash(i + 7) * 1.2; s += '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(r) + '" fill="#fff" opacity="' + f(.15 + hash(i + 3) * .45) + '"/>'; }
-    s += '<circle cx="240" cy="470" r="280" fill="url(#warm)"/>';
-    // night clouds low down, the airliner in the glow, its four force arrows named in the episode's colours
-    for (var k = 0; k < 4; k++) s += '<g opacity=".55">' + cloud(60 + k * 140, 640 + (k % 2) * 26, 1.1) + '</g>';
-    s += plane(240, 470, .5, t, { thrust: 1 }) + forces(240, 470, .5, { l: .55, w: .5, t: .35, d: .35 }, null, false, t);
+    var s = '<rect width="540" height="960" fill="#eee5d0"/><rect width="540" height="960" fill="url(#grid)"/>', t = 1.3;
+    // the shot panel as in the video: light sky, white clouds, an ink frame
+    s += '<rect x="22" y="290" width="496" height="420" fill="#cfe0e8" stroke="#2a2016" stroke-width="2.4"/>';
+    s += '<clipPath id="pan"><rect x="22" y="290" width="496" height="420"/></clipPath><g clip-path="url(#pan)">';
+    for (var k = 0; k < 4; k++) s += cloud(70 + k * 135, 650 + (k % 2) * 22, 1.05);
+    s += plane(270, 500, .44, t, { thrust: 1 }) + forces(270, 500, .44, { l: .35, w: .3, t: .2, d: .2 }, null, false, t) + '</g>';
     var tagc = function (txt, x, y, c, rot) { return '<g transform="translate(' + x + ' ' + y + ') rotate(' + rot + ')"><rect x="-58" y="-20" width="116" height="34" rx="6" fill="' + c + '" stroke="#2a2016" stroke-width="2"/><text x="0" y="5" text-anchor="middle" style="font:800 19px Noto Sans, Noto Sans Arabic;fill:#fff">' + txt + '</text></g>'; };
-    s += tagc(TX("الرفع", "LIFT"), 320, 330, OLIVE, -4) + tagc(TX("الوزن", "WEIGHT"), 320, 600, "#3d3a34", 3) + tagc(TX("الدفع", "THRUST"), 410, 520, ORANGE, -3) + tagc(TX("السحب", "DRAG"), 80, 520, BLUE, 3);
-    s += '<rect width="540" height="320" fill="url(#fadeT)"/><rect y="690" width="540" height="270" fill="url(#fadeB)"/><rect width="540" height="960" filter="url(#grain)"/>';
+    s += tagc(TX("الرفع", "LIFT"), 350, 345, OLIVE, -4) + tagc(TX("الوزن", "WEIGHT"), 350, 655, "#3d3a34", 3) + tagc(TX("الدفع", "THRUST"), 430, 550, ORANGE, -3) + tagc(TX("السحب", "DRAG"), 104, 550, BLUE, 3);
+    s += '<rect width="540" height="960" filter="url(#grain)" opacity=".5"/>';
     document.getElementById("art").innerHTML = s;
   })();
 </script>
