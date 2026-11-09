@@ -14,7 +14,7 @@ CFG = {
 }
 CAPTEXT = {9: "Meanwhile, the body cools by about 1.5°F an hour."}
 K = {
-    0: {"heart": "o"}, 1: {"eating": "o", "itself": "o"}, 2: {"first": "u"}, 4: {"rule.": "g"}, 5: {"oxygen.": "b", "apart.": "o"},
+    0: {"dies?": "o"}, 1: {"heart": "o", "eating": "o", "itself": "o"}, 2: {"first": "u"}, 4: {"rule.": "g"}, 5: {"oxygen.": "b", "apart.": "o"},
     6: {"autolysis,": "o", "self-digestion.": "o"}, 7: {"enzymes": "o", "burst.": "o"}, 8: {"digest": "o", "stomach": "u"}, 9: {"cools": "b", "1.5°F": "o"},
     10: {"gravity": "u", "purple": "o"}, 11: {"stiffen": "o", "loosen": "g"}, 12: {"Bloat.": "o"}, 13: {"trillions": "o", "bacteria,": "g", "immune": "u"},
     14: {"gas,": "o", "balloon": "u"}, 15: {"flies": "u"}, 16: {"active": "o", "decay.": "o", "mass.": "u"}, 17: {"skeleton": "g", "centuries.": "o"},

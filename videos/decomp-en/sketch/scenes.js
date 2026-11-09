@@ -1,4 +1,4 @@
-window.CHUNKS = [[0.0], [0.0], [0.0, 0.5741], [0.0, 0.3913], [0.0, 0.2982, 0.7193], [0.0, 0.2526, 0.5684, 0.7368], [0.0, 0.4154], [0.0, 0.2235, 0.6118, 0.8], [0.0, 0.325, 0.625], [0.0, 0.5918], [0.0, 0.3699, 0.6849], [0.0, 0.188, 0.4444, 0.6838], [0.0], [0.0, 0.4773, 0.7727], [0.0, 0.2447, 0.5106, 0.7234], [0.0, 0.3623, 0.7101], [0.0, 0.3021, 0.4792, 0.625], [0.0, 0.2105, 0.4632, 0.6947], [0.0, 0.2277, 0.5644, 0.7723], [0.0, 0.2952, 0.5524, 0.819], [0.0, 0.4478], [0.0, 0.5968], [0.0, 0.1204, 0.3519, 0.5833, 0.8056], [0.0, 0.2296, 0.4222, 0.6667, 0.8222], [0.0, 0.551], [0.0, 0.2143]];
+window.CHUNKS = [[0.0], [0.0, 0.4026], [0.0, 0.5741], [0.0, 0.3913], [0.0, 0.2982, 0.7193], [0.0, 0.2526, 0.5684, 0.7368], [0.0, 0.4154], [0.0, 0.2235, 0.6118, 0.8], [0.0, 0.325, 0.625], [0.0, 0.5918], [0.0, 0.3699, 0.6849], [0.0, 0.188, 0.4444, 0.6838], [0.0], [0.0, 0.4773, 0.7727], [0.0, 0.2447, 0.5106, 0.7234], [0.0, 0.3623, 0.7101], [0.0, 0.3021, 0.4792, 0.625], [0.0, 0.2105, 0.4632, 0.6947], [0.0, 0.2277, 0.5644, 0.7723], [0.0, 0.2952, 0.5524, 0.819], [0.0, 0.4478], [0.0, 0.5968], [0.0, 0.1204, 0.3519, 0.5833, 0.8056], [0.0, 0.2296, 0.4222, 0.6667, 0.8222], [0.0, 0.551], [0.0, 0.2143]];
 /* «إيه الحكاية؟» — «الرسم الهندسي» drawing helpers. build.py puts this file in front of the episode's shots.js, so every
    name here is in scope for the shots. The panel world is 640×786 (portrait, the panel's own aspect); a shot's camera
    [cx, cy, zoom] picks what is in view. Everything is redrawn every frame from t, so the render is deterministic.
@@ -217,9 +217,30 @@ function stageTag(n, txt, k) { return G("", numBox(String(n), 120, 190, k, 40, t
 // the four-stage strip on top (HUD): which one is on
 function strip(on) { var L = [TX("هضم ذاتي", "self-digestion"), TX("انتفاخ", "bloat"), TX("تحلل", "decay"), TX("عضم", "bones")], s = ""; for (var i = 0; i < 4; i++) { var x = 110 + i * 140, a = i + 1 === on; s += '<rect x="' + (x - 62) + '" y="34" width="124" height="40" rx="6" fill="' + (a ? ORANGE : PAPER) + '" stroke="' + INK + '" stroke-width="1.8"/>' + T((i + 1) + " · " + L[i], x, 61, 17, a ? "#fff" : INK, 700); } return s; }
 
+
+// ── a standing body outline (front, medical-diagram plain, no face). Strokes don't scale, so it can be zoomed into.
+var NS = ' vector-effect="non-scaling-stroke"';
+function bodyOutline() {
+  return '<path d="M-20 -190 L-20 -170 C-70 -165 -100 -150 -110 -120 L-150 40 C-155 60 -135 66 -128 46 L-95 -70 L-90 40 L-80 250 C-80 266 -50 266 -48 250 L-20 70 L20 70 L48 250 C50 266 80 266 80 250 L90 40 L95 -70 L128 46 C135 66 155 60 150 40 L110 -120 C100 -150 70 -165 20 -170 L20 -190 Z" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2.6"' + NS + '/><circle cx="0" cy="-228" r="40" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2.6"' + NS + '/>';
+}
+// the gut inside the belly (body units, around 0,20): the colon framing the small intestine coils
+function gutLayer() {
+  var s = '<path d="M-44 52 V-12 C-44 -22 -36 -26 -26 -26 H26 C36 -26 44 -22 44 -12 V52" fill="none" stroke="#c98a74" stroke-width="18" stroke-linecap="round"/><path d="M-44 52 V-12 C-44 -22 -36 -26 -26 -26 H26 C36 -26 44 -22 44 -12 V52" fill="none" stroke="' + INK + '" stroke-width="1.6"' + NS + ' opacity=".7"/>';
+  s += '<path d="M-28 -8 C-10 -16 10 -2 28 -8 C34 4 10 10 -6 4 C-24 0 -34 14 -20 20 C0 26 20 14 30 22 C30 34 6 40 -12 34 C-28 30 -32 44 -16 48 C4 52 20 44 28 48" fill="none" stroke="#e0a08c" stroke-width="9" stroke-linecap="round"/><path d="M-28 -8 C-10 -16 10 -2 28 -8 C34 4 10 10 -6 4 C-24 0 -34 14 -20 20 C0 26 20 14 30 22 C30 34 6 40 -12 34 C-28 30 -32 44 -16 48 C4 52 20 44 28 48" fill="none" stroke="' + INK + '" stroke-width="1.4"' + NS + ' opacity=".6"/>';
+  return s;
+}
+// a continuous zoom from the whole body into a point (fx,fy body units) that lands on screen at (cx,cy); Z grows 1 → zmax
+function zoomBody(Z, fx, fy, cx, cy, bodyOp) { return G("translate(" + f(cx) + " " + f(cy) + ") scale(" + f(Z * .9) + ") translate(" + f(-fx) + " " + f(-fy) + ")", bodyOutline(), bodyOp); }
+
 // ── shots (same line numbers in both editions)
-// 4 · one small rule, remember it
-shot(4, push(320, 400, 1.04, 1.0), function (u, d, t) { return paper() + R(150, 150, 340, 460, "#f4ecdb", 2.4, 8) + T(TX("قاعدة", "THE RULE"), 320, 220, 34, OLIVE, 800) + cell(340, 420, 90, t, 0, 0) + o2in(250, 420, t, 1); });
+// 4 · one small rule: the camera goes from the whole body into the chest, the tissue, and one cell with its blood supply
+shot(4, push(330, 420, 1.0, 1.0), function (u, d, t) {
+  var k = ease(clamp((u - .2) / (d - .5))), Z = Math.exp(Math.log(46) * k), fx = -50, fy = -110, cx = 360, cy = 420, s = paper();
+  s += zoomBody(Z, fx, fy, cx, cy, 1 - clamp((Z - 4) / 6));
+  var tk = clamp((Z - 3) / 5); if (tk > 0) { var rt = 3.6 * Z * .9, sp = 8 * Z * .9; for (var i = -5; i <= 5; i++) for (var j = -5; j <= 5; j++) { var px = cx + i * sp + (j % 2 ? sp / 2 : 0), py = cy + j * sp * .86; if (px < -rt || px > 640 + rt || py < -rt || py > 800 + rt) continue; s += G("", cell(px, py, rt, t + i + j, 0, 0), tk); } }
+  s += G("", o2in(cx - 150, cy, t, 1), clamp((k - .85) / .15));
+  return s + tag(TX("قاعدة", "THE RULE"), 320, 140, clamp((k - .8) / .2), 34, OLIVE);
+});
 // 5 · a cell lives while the blood brings oxygen; cut it and the cell falls apart
 shot(5, push(330, 420, 1.0, 1.08), function (u, d, t) { var k = at(u, d * .45, d * .5); return paper() + cell(360, 420, 150, t, 0, k) + o2in(210, 420, t, 1 - at(u, d * .3, .6)) + cross(110, 300, .9, at(u, d * .35, .4)); }, { tr: "in" });
 // 6 · first stage: self-digestion
@@ -238,8 +259,15 @@ shot(11, push(320, 420, 1.0, 1.04), function (u, d, t) { var lock = at(u, .3, 1.
 shot(12, push(320, 420, 1.04, 1.0), function (u, d, t) { return paper() + stageTag(2, TX("الانتفاخ", "bloat"), at(u, .2, .3)) + table(320, 520, 560) + sheet(320, 520, 1.05, t, .3); });
 hud(12, 18, function (u, t) { var on = t < LN[16].start ? 2 : t < LN[17].start ? 3 : 4; return strip(on); });
 hud(6, 12, function (u, t) { return strip(1); });
-// 13 · trillions of gut bacteria, no immune system to stop them now
-shot(13, push(320, 430, 1.0, 1.1), function (u, d, t) { var n = Math.round(6 + 34 * at(u, .3, d - .4)), s = paper() + '<path d="M60 300 C160 200 300 360 420 260 C520 180 600 300 600 420 C600 560 440 520 360 620 C280 720 120 640 80 540 C40 440 120 400 60 300 Z" fill="#e7b7a6" stroke="' + INK + '" stroke-width="3"/>'; for (var k = 0; k < n; k++) s += bact(140 + hash(k) * 380 + 6 * Math.sin(t * 2 + k), 320 + hash(k + 9) * 260 + 6 * Math.cos(t * 2 + k), hash(k + 4) * 180 + t * 20, .9); return s + G("", '<rect x="230" y="660" width="180" height="40" rx="6" fill="#f4ecdb" stroke="' + INK + '" stroke-width="2"/>' + T(TX("مناعة: ✗", "immune: ✗"), 320, 688, 22, ORANGE, 800), at(u, d * .55, .3)); }, { tr: "in" });
+// 13 · trillions of gut bacteria: from the whole body into the belly, the gut, and the bacteria multiplying inside
+shot(13, push(320, 430, 1.0, 1.0), function (u, d, t) {
+  var k = ease(clamp((u - .1) / (d * .5))), Z = Math.exp(Math.log(9) * k), s = paper();
+  s += zoomBody(Z, 0, 14, 320, 430, 1);
+  s += G("translate(320 430) scale(" + f(Z * .9) + ") translate(0 -14)", gutLayer(), clamp((Z - 1.5) / 2));
+  var n = Math.round(46 * clamp((u - d * .45) / (d * .45)));
+  for (var j = 0; j < n; j++) s += bact(140 + hash(j) * 360 + 6 * Math.sin(t * 2 + j), 260 + hash(j + 9) * 330 + 6 * Math.cos(t * 2 + j), hash(j + 4) * 180 + t * 20, .9);
+  return s + G("", '<rect x="230" y="680" width="180" height="40" rx="6" fill="#f4ecdb" stroke="' + INK + '" stroke-width="2"/>' + T(TX("مناعة: ✗", "immune: ✗"), 320, 708, 22, ORANGE, 800), at(u, d * .7, .3));
+});
 // 14 · they make gas and the body swells like a balloon in a few days
 shot(14, push(320, 430, 1.0, 1.06), function (u, d, t) { var k = at(u, .3, d - .5), s = paper() + table(320, 520, 560) + sheet(320, 520, 1.05, t, k); for (var j = 0; j < 6; j++) { var v = (t * .5 + j / 6) % 1; s += C(260 + j * 30, 470 - v * 60 * k, 6 + 6 * v, "#d8e6c8", 1.2); } return s + numBox(TX("أيام", "days"), 500, 250, at(u, d * .6, .3), 32); });
 // 15 · the gases smell awful and call in flies from far away
