@@ -35,8 +35,8 @@ const sea = (t, dur, g) => rec(t, 'ocean-waves', g || 0.35, 0.2, dur, 1.0, 'wave
 const drone = (t, dur, from) => rec(t, 'space-drone', 0.12, from || 0.3, Math.min(29, dur), 1.2, 'hum', 0.1);
 
 // ── fixed parts of every «اسكتش» episode (phase lines as build.py prints them) ──
-const PROMISE = T.findIndex(l => l.text.includes('إيه الحكاية') && l.text.includes('هشرح'));
-const SUMMARY = T.findIndex(l => l.text.startsWith('ودي كانت')), ASK = T.length - 1;
+const PROMISE = T.findIndex(l => (l.text.includes('إيه الحكاية') && l.text.includes('هشرح')) || /here's the thing.*explain/i.test(l.text));
+const SUMMARY = T.findIndex(l => l.text.startsWith('ودي كانت') || l.text.startsWith("And that's the thing")), ASK = T.length - 1;
 a(L(0) + 0.1, 'chime', 0.3);                                                                            // the hook card opens
 a(L(PROMISE) + 0.15, 'ping', 0.3); for (let k = 0; k < 5; k++) a(L(PROMISE) + 0.4 + k * 0.32, 'tick', 0.14);   // bumper: the stopwatch
 for (let i = PROMISE + 1; i < SUMMARY; i++) swipe(i);                                                   // one flip per shot change
@@ -46,7 +46,8 @@ paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                               
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
 // e.g. lab(5, 0.4); ding(L(6) + 1.6); scribble(L(9) + 1.2); sea(L(0), L(PROMISE) - L(0) + 0.6, 0.45);
 
-const MUSIC = has('music-soft') ? 'music-soft' : null;
+const USE_MUSIC = false;   // the user asked (Nov 2026): no music bed; the video's own sound effects carry it. Set true to bring the music back.
+const MUSIC = USE_MUSIC && has('music-soft') ? 'music-soft' : null;
 if (MUSIC) rec(0, MUSIC, 0.42, 0, window.TIMING.duration + 2.5, 0.6);
-fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: !MUSIC, cues: c }, null, 1));
+fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: c }, null, 1));
 console.log(c.length + ' cues; kit clips here: ' + (['swipe', 'paper', 'pencil-scribble', 'ding', 'clock-ticking', 'space-drone', 'ocean-waves', 'water-rush', 'wind-gust', 'music-soft'].filter(has).join(', ') || 'none'));

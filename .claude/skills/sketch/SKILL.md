@@ -1,19 +1,22 @@
 ---
 name: sketch
 description: >
-  Make an «إيه الحكاية؟» explainer video in the user's «اسكتش» style, end to end: script, voice, real-shape drawings, sound
-  kit and music, 1080×1920 60 fps render that passes qa.py. Cream graph-paper card, close-up technical drawings (real
+  Make an «إيه الحكاية؟» explainer video in the user's «اسكتش» style, end to end: script, voice, realistic drawings, sound
+  effects, 1080×1920 60 fps render that passes qa.py, then paper-style covers and titles. Arabic, and an English edition
+  («Here's the Thing») from the same drawings. Cream graph-paper card, close-up technical drawings (real
   coastline globes, side cuts, isometric machines) with leader-line labels, one short caption chunk at a time under a rule,
   no hard cuts, a word-by-word hook card, a stopwatch bumper, a summary card and ask box. The reference episode is
   «المد والجزر» (videos/tides). Built on videos/_templates/sketch. Use when the user says "اسكتش", "بأسلوب الاسكتش",
-  "زي فيديو المد والجزر", "بالرسم الهندسي", "زي طب إزاي" or "sketch style".
+  "زي فيديو المد والجزر", "بالرسم الهندسي", "زي طب إزاي" or "sketch style", or asks for a new «إيه الحكاية؟» episode
+  in this hand-drawn paper style. Self-contained: scripts/setup_workspace.sh sets up the template, tools, sound kit and a
+  full reference episode in any project.
 ---
 
 # «إيه الحكاية؟» — the «اسكتش» style
 
 **The user named this style «اسكتش»** and locked it after «المد والجزر». Use the same drawings, narration, sounds and
 music in every episode. It copies the look, pacing and narration of the «طب إزاي؟» series: 20 reference videos, measured in
-`videos/_reference/tabizzay/STYLE.md`, with contact sheets, motion strips and transcripts. We make it under our own name.
+`references/STYLE.md` (also copied to `videos/_reference/tabizzay/` by setup), with contact sheets, motion strips and transcripts. We make it under our own name.
 
 **The reference episode is `videos/tides/`.** Start every new episode from a copy of these files:
 - `script.txt` and `style.txt`;
@@ -22,9 +25,29 @@ music in every episode. It copies the look, pacing and narration of the «طب �
 
 The shared parts are in `videos/_templates/sketch/` (its README lists every helper). Talk to the user in Egyptian Arabic.
 
+## Setup (first time in a project)
+
+This skill carries everything with it, so it works in any project and on any Claude account:
+
+- `scripts/setup_workspace.sh <project-dir>`: run it once. It puts `videos/` in place with the shared template, the
+  tools, the sound kit and music, the globe library, and the reference episode «المد والجزر» (`videos/tides/`). It
+  never overwrites anything, and it reports missing tools: ffmpeg, node with playwright, python3 with numpy, and
+  sherpa-onnx for alignment.
+- `references/STYLE.md`: the rules measured from the 20 reference videos.
+- `references/REFERENCE-INDEX.md`: which video draws what.
+- `assets/reference/sheets/vNN.jpg`: contact sheets, a frame every 2.5 s.
+- `assets/reference/frames/`: motion strips.
+- `assets/reference/transcripts.txt`: the transcripts.
+- The 20 small reference videos come as a separate download, `sketch-reference-videos.zip`. Unzip it into
+  `videos/_reference/tabizzay/` to pull frames from them with ffmpeg.
+- `references/HISTORY.md`: **read it first in a new account.** It has every decision and preference from the session
+  that built this style (names, music level, the side-view rule, voice workflow, QA lessons).
+
+All the paths below are inside the project's `videos/` after setup.
+
 ## 0. First question (every new topic)
 
-Ask in one question: quick mode or full review (as in `.claude/skills/animation/SKILL.md`). For the tides episode the user
+Ask the mode and the language together (§7): quick mode or full review (as in `.claude/skills/animation/SKILL.md`). For the tides episode the user
 chose full review, because the drawings must look real. With full review you look at reference photos and frame strips,
 and fix them.
 
@@ -86,7 +109,7 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
 ## 3. Drawings: real shapes, the reference's hand
 
 - **Research first.** Look at real photos of the objects (Wikimedia Commons, one request at a time, User-Agent with the
-  repo URL). Look at the matching reference sheet in `videos/_reference/tabizzay/sheets/` as well. Note the sources in
+  repo URL). Look at the matching reference sheet as well: `assets/reference/sheets/` (see `references/REFERENCE-INDEX.md` for which video draws what). Note the sources in
   `refs/SOURCES.md`.
 - **Globes use real coastlines.** `globe(cx, cy, r, lon, lat, {dot})` projects Natural Earth through `lib/geo.min.js`, which
   loads by default. It draws:
@@ -140,7 +163,7 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
 
 ## 5. Sound
 
-**The kit is in the repo:** `videos/_templates/sketch/sfx/` (committed at the user's request, about 11 MB). `cues.js` finds
+**The kit comes with this skill:** setup puts it in `videos/_templates/sketch/sfx/` (about 11 MB). `cues.js` finds
 a clip in the episode's own `sfx/` first and then in the kit, so a new episode needs nothing copied. Ask the user only for
 sounds the kit doesn't have, with Pixabay search terms. Those one-off clips go in `<episode>/sfx/` (gitignored). Every
 clip still has a synthesized stand-in.
@@ -158,7 +181,9 @@ clip still has a synthesized stand-in.
 | px-wind-gust | Wind Gust (Dragon Studio 386158) | 0.25–4.76 s | wind |
 | px-music-box (source) → px-music-soft (used) | **Mysterious Music Box – The Midnight Hour** (the series music) | whole | bed |
 
-**Music.** The user approved this music and its level. `px-music-soft.mp3` in the kit is already made this way:
+**Music: off by default (the user's request, Nov 2026).** Episodes carry no music bed; the narrator and the sound effects carry the video. `cues.js` has `USE_MUSIC = false` and writes `bed: false`. Without the bed the mix comes out around -18 LUFS, so add about +4–5 dB before the limiter (`volume=5dB,alimiter=…`) and check qa.py. Only if the user asks for music again, set `USE_MUSIC = true`, which uses the settings below.
+
+**The music the user approved (only if switched back on).** The user approved this music and its level. `px-music-soft.mp3` in the kit is already made this way:
 - **Soften the ring:**
   `ffmpeg -i px-music-box.mp3 -af "highshelf=f=3000:g=-5,volume='if(lt(t,12),0.6+0.4*t/12,1)':eval=frame" px-music-soft.mp3`
   This takes down the music-box ring, which the user found too much at the start.
@@ -192,5 +217,86 @@ python3 qa.py <fixed.mp4>
 - **Code:** commit and push it. Keep the mp4 and the mix in the scratchpad.
 - **A sound-only change** doesn't need a render: remux the new mix onto the video with the same audio chain.
 - **Cover and titles:** follow the animation skill (section 9) when the user asks.
+
+## 7. What the user settled after the tides episode (follow these in every new episode)
+
+**Before anything:** check that `videos/<slug>/` doesn't exist already (`ls videos/`). An older episode was once
+overwritten because a new one took the same folder name. Pick a new slug if it exists.
+
+**First question (add to §0):** ask the mode (quick / full review) and the language in the same question: Arabic only, or
+Arabic and English. In full review the user approves the script before any voice is recorded.
+
+**Script**
+- **The hook's first line is the topic's question**, in the viewer's words («إيه اللي بيحصل للجسم بعد ما يموت؟»,
+  «إزاي عربية وزنها طن ونص توقفها دوسة رجل؟»). The hook card stays 3 lines.
+- **Cover the whole subject, not one part.** The first planes script spent half its time on the wing; the user asked for
+  the four forces, each with how it is made. Give every part its own shot, and never hold one frame for many lines.
+- **Sponsor read, only when the user asks:** one line in the middle, after a step ends and before the next begins
+  («وعلى فكرة، الحلقة دي برعاية …»), then «نرجع لـ…». Its shot is a coupon card marked «إعلان». Remind the user to turn
+  on the platform's paid-partnership label.
+- **Sensitive topics** (death, illness): calm forensic or medical drawings, nothing gory, and titles that stay on the
+  science.
+
+**Two editions, one set of drawings**
+- Arabic is «إيه الحكاية؟». English is **«Here's the Thing»** (American English, the user's choice). Its fixed lines:
+  - promise: "Here's the thing. I'll explain it in a minute.";
+  - sign-off: "And that's the thing about …";
+  - ask: "Tell us, what should we explain next time?".
+  No other line may start with "And that's the thing".
+- Use US units in the English script (mph, feet, °F) and digits in captions through `CAPTEXT`.
+- Folders `videos/<slug>-ar/` and `videos/<slug>-en/`, the same number of lines in both scripts.
+- `shots.js` lives in the Arabic folder with `var EN = !!window.EN_ED; function TX(ar, en)` for every label. The English
+  folder has `sketch/make.sh`, which writes its `shots.js` as `window.EN_ED = true;` plus the Arabic file and builds.
+- `"lang": "en"` in the English `episode.py` switches the template to left-to-right captions and cards, a Latin font and
+  the English fixed lines. `cues.js` finds the English phase lines by itself.
+- Reference pairs: `videos/plane-ar` + `plane-en` (machines, forces) and `videos/decomp-ar` + `decomp-en` (anatomy).
+
+**Voice**
+- Gemini sometimes invents sentences or reads the style text aloud (it did with a one-line script). Always transcribe
+  the take with large-v3-turbo and compare with the script. If whisper seems to skip a stretch, transcribe that stretch
+  alone before deciding.
+- **To change one line, don't redo the take.** Record only that line (or let the user record it), cut it clean with
+  `silenceremove`, match its level to the take with `volumedetect`, splice it in with `atrim` + `concat`, then run
+  tighten / align / map again. Check both joins with whisper.
+- The free TTS quota is about 10 requests a day. On 429, give the user the line and the style for AI Studio.
+
+**Drawings: realistic, not a rough sketch** (the user rejected a simple body outline)
+- **People and anatomy:**
+  - 8-head proportions, a two-tone edge and hatching on one side (as reference v20), faint landmarks;
+  - organs in their real places;
+  - real tissue layers in sections;
+  - muscles with tendons, bundles and striated fibres;
+  - a real skeleton.
+  `videos/decomp-ar/sketch/shots.js` has all of these ready to reuse: `bodyOutline`, `organs`, `gutLayer`, `muscle`,
+  `fibre`, `skinSection`, `fingertip`, `skeletonFront`.
+- **Machines:** real profiles and cut-aways. `videos/plane-ar/sketch/shots.js` has the airliner, a NACA 4412 wing section
+  with moving air lines, a turbofan cut-away and the force arrows.
+- **Arrive at a detail by zooming, don't cut to it.** When a shot is about something inside the body (a cell, the gut),
+  start on the whole body and zoom continuously into it: `zoomBody()` in the decomposition episode scales the body with
+  non-scaling strokes while the inner layers fade in at their own size.
+- A label's text grows toward the side it points to. Keep `lx` far enough from the panel edge, or the text is cut off.
+- Sparse shots fail the still-frame check. Fill the panel (large drawings), keep something moving in every shot, and run
+  `tools/stills.js` on both editions.
+
+**Sound**
+- No music (see §5). Sound effects carry the video, so ask the user for real clips when the kit lacks one.
+- Without music the English voice comes out quieter. Raise the gain before the limiter until qa.py reads about
+  -13 to -15 LUFS.
+
+**Covers and titles** (when the user asks)
+- **The cover uses the video's own look**, not the old night palette:
+  - cream paper `#eee5d0` with the grid;
+  - the art inside an ink-framed panel (x 22–518, y 290–710 on a 540×960 page);
+  - the title in ink 900 weight at top 154;
+  - the sub-title in orange `#bd552f` at top 214;
+  - the punch line at top 722 with one or two words in orange, and a grey second line.
+  Keep each title on one line (shrink the font or shorten the text). Start from
+  `brand/eh-elhekaya/cover-decomp-ar-tiktok.html` (and `-en`), and shoot with `node videos/tools/cover.js <html> <png>`.
+- **Titles file** `videos/<slug>/titles.md`:
+  - Arabic: three TikTok titles to choose from, a description with hashtags, a Facebook title and description, and a
+    YouTube Shorts title and description;
+  - English: US TikTok titles, a caption that asks a question, about 10 hashtags, and a pinned-comment idea.
+- For Instagram cross-posted to Facebook: one caption with the hook as its first line, the points as a short numbered
+  list, an ask, then five hashtags. Tell the user to turn on the AI label, because the voice is AI-made.
 
 The older «الرسم الهندسي» build (`videos/_templates/diagram-v1/`, `videos/xray-diagram/`) stays only for the X-ray video.

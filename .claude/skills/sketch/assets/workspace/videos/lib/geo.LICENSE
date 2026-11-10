@@ -1,0 +1,2 @@
+geo.min.js bundles d3-geo 3.1.1 and topojson-client 3.1.0 (ISC, Mike Bostock) with world-atlas 2.0.2 land-110m
+(ISC; data from Natural Earth, public domain). Built with esbuild from a 12-line entry exposing window.GEO.globe().
