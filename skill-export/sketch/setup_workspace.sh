@@ -6,6 +6,7 @@ set -e
 HERE="$(cd "$(dirname "$0")/.." && pwd)"; DEST="${1:-.}"
 mkdir -p "$DEST"
 cp -rn "$HERE/assets/workspace/videos" "$DEST/" 2>/dev/null || cp -r --update=none "$HERE/assets/workspace/videos" "$DEST/"
+[ -d "$HERE/assets/workspace/brand" ] && { cp -rn "$HERE/assets/workspace/brand" "$DEST/" 2>/dev/null || cp -r --update=none "$HERE/assets/workspace/brand" "$DEST/"; }
 mkdir -p "$DEST/videos/_reference/tabizzay"
 cp -rn "$HERE/assets/reference/." "$DEST/videos/_reference/tabizzay/" 2>/dev/null || true
 cp -n "$HERE/references/STYLE.md" "$DEST/videos/_reference/tabizzay/STYLE.md" 2>/dev/null || true

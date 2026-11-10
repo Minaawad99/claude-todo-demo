@@ -113,3 +113,35 @@ frame, and the measured rules are in `STYLE.md`. The headlines:
 - **Sounds:** from Pixabay, downloaded by the user (Pixabay blocks bots). Check the kit first and ask only for what's
   missing, with search terms.
 - **Before rendering:** show the work and ask before long renders when something is uncertain. Report QA honestly.
+
+## 7. After the tides episode (same session, later)
+
+- **Episodes made:**
+  - pregnancy («الحمل من جوه»);
+  - the washer-dryer;
+  - the gas heater and carbon monoxide (`heater-co`, with a mid-roll sponsor read for noon, code Awad11, marked «إعلان»);
+  - how planes fly (`plane-ar` / `plane-en`);
+  - what happens to the body after death (`decomp-ar` / `decomp-en`).
+- **English edition:** the user wanted versions for a US audience and chose the name **«Here's the Thing»** with an
+  American Gemini voice. The template got `"lang": "en"`. Both editions share one `shots.js`.
+- **Planes, the user's correction:** the first cut spent half the video on the wing and held the wing frame. The user
+  asked for the four forces (weight, lift, thrust, drag), each with how it is made. It was rebuilt that way.
+- **Music off:** the user asked to drop the music they had sent and to rely on the video's own sound effects. It is now
+  off by default (`USE_MUSIC = false`). They offered to send effects; a list of Pixabay searches was given (room tone,
+  heart monitor, fly buzz, bubbles, drip, balloon, jet engine, pop, creak, gas ignition).
+- **Decomposition, the user's corrections:**
+  1. The hook must open with the question itself: «إيه اللي بيحصل للجسم بعد ما يموت؟».
+  2. The camera must start on the body and zoom in until it reaches the cell, and the same for the belly.
+  3. The body and its anatomy must be drawn realistically, "not just a sketch". It was redrawn with real proportions,
+     shading, organs, muscle, skin layers and skeleton.
+- **Covers:** the user asked for the cover background to match the video (cream paper with the grid) instead of the dark
+  night palette. The planes and decomposition covers use it; earlier covers still use the night look.
+- **A mistake to avoid:** a new episode was written into an existing folder (`videos/gas-heater`, an older cartoon-style
+  episode) and overwrote its files. They were restored from git and the new episode moved to `videos/heater-co`. Always
+  check the folder name first.
+- **GitHub:** the user's account was suspended mid-session (flagged by abuse detection). They filed a reinstatement
+  request and support asked how they use GitHub; a reply was drafted. Until it is back, work is committed locally and
+  backed up with `git bundle`. Stop-hook reminders to push can't be satisfied until then; say so briefly and don't retry.
+- **In review now:** the brakes episode («إزاي عربية وزنها طن ونص توقفها دوسة رجل؟»), full review, Arabic and English.
+  The Arabic script is waiting for the user's approval.
+
