@@ -84,7 +84,9 @@ lab(22, 0.3); lab(22, 1.2); lab(22, 2.4);
 // 23–24 · darkness hormone; the rat awake at night
 drone(L(23), D(23) + D(24), 6); paper(L(23) + 1.4); a(L(24) + 0.8, 'pop', 0.3); lab(24, 0.4);
 
-const MUSIC = has('music-soft') ? 'music-soft' : null;
+// music: OFF unless the user says yes for this episode (their rule: ask every time). No synthesized bed in its place either.
+const WITH_MUSIC = false;
+const MUSIC = WITH_MUSIC && has('music-soft') ? 'music-soft' : null;
 if (MUSIC) rec(0, MUSIC, 0.42, 0, window.TIMING.duration + 2.5, 0.6);
-fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: !MUSIC, cues: c }, null, 1));
+fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: c }, null, 1));
 console.log(c.length + ' cues; kit clips here: ' + (['swipe', 'paper', 'pencil-scribble', 'ding', 'clock-ticking', 'space-drone', 'ocean-waves', 'water-rush', 'wind-gust', 'music-soft'].filter(has).join(', ') || 'none'));

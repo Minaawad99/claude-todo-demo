@@ -4,6 +4,9 @@
 - **New videos are made in the «اسكتش» style unless the user names another:** `.claude/skills/sketch/SKILL.md`.
   The reference episode is «المد والجزر» (`videos/tides/`), the shared template `videos/_templates/sketch/`
   (its README lists the drawing helpers), the sound kit and series music `videos/_templates/sketch/sfx/`.
+- **No background music unless the user says yes:** ask them about it for every video. The sound is the narrator plus the
+  clips the user sent (the kit in `videos/_templates/sketch/sfx/`). If an episode needs an effect the kit doesn't have, tell
+  the user what it is and when it plays, with Pixabay search words, and they'll bring it.
 - **The 20 reference videos the style comes from are in the repo**, so never ask the user to upload them again:
   `videos/_reference/tabizzay/`. Start with its `README.md` (an index of what each video draws), then open the
   matching `sheets/vNN.jpg`, or pull frames and motion strips from `videos/vNN.mp4` with ffmpeg. `STYLE.md` has the

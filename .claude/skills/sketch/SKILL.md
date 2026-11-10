@@ -158,7 +158,16 @@ clip still has a synthesized stand-in.
 | px-wind-gust | Wind Gust (Dragon Studio 386158) | 0.25–4.76 s | wind |
 | px-music-box (source) → px-music-soft (used) | **Mysterious Music Box – The Midnight Hour** (the series music) | whole | bed |
 
-**Music.** The user approved this music and its level. `px-music-soft.mp3` in the kit is already made this way:
+**Music: off by default. Ask the user every time** (their rule since «أوعى تمسك الموبايل في السرير»). Before the mix, ask
+in one question whether this episode gets the series music. Until they say yes, `WITH_MUSIC = false` in `cues.js`, and the
+cues write `bed: false`, so sfx.py adds no synthesized bed either. The sound is the narrator plus the clips the user
+sent. Without music the mix comes out about 2–3 dB quieter, so add `volume=3dB,` before the alimiter to reach -14/-15 LUFS.
+
+**Effects the kit doesn't have: ask the user for them.** Name each sound, what it's for, the second it plays and
+Pixabay search words. The user fetches the clips. Don't stand in a synthesized effect for a missing clip in the final
+mix without saying so.
+
+If the user says yes to the music, it is this one at this level. `px-music-soft.mp3` in the kit is already made this way:
 - **Soften the ring:**
   `ffmpeg -i px-music-box.mp3 -af "highshelf=f=3000:g=-5,volume='if(lt(t,12),0.6+0.4*t/12,1)':eval=frame" px-music-soft.mp3`
   This takes down the music-box ring, which the user found too much at the start.
@@ -171,7 +180,7 @@ clip still has a synthesized stand-in.
 - a flip for every shot change;
 - the summary-card build;
 - the ask box;
-- the music.
+- the music, only when `WITH_MUSIC = true` (the user said yes for this episode).
 
 Add one or two sounds per line matched to what moves (`lab`, `ding`, `scribble`, `paper`, `sea`, `drone`; see
 `videos/tides/cues.js`), then:
@@ -183,7 +192,7 @@ Credit every clip in `refs/SOURCES.md`.
 
 ```
 TAIL=3 node render.js $PWD/<slug>/sketch/index.html <mix.wav> <scratchpad>/<slug>.mp4
-ffmpeg -y -i <mp4> -c:v copy -af "alimiter=limit=0.6:level=false:attack=1:release=60" -c:a aac -b:a 192k -ar 48000 <fixed.mp4>
+ffmpeg -y -i <mp4> -c:v copy -af "volume=3dB,alimiter=limit=0.6:level=false:attack=1:release=60" -c:a aac -b:a 192k -ar 48000 <fixed.mp4>
 python3 qa.py <fixed.mp4>
 ```
 
