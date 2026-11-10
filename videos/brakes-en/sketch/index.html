@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en" dir="rtl"><head><meta charset="utf-8"><title>How Do Brakes Stop a Car? — Here's the Thing</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800;900&family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&family=Noto+Serif:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* «Here's the Thing» — the «الرسم الهندسي» look, measured from 20 reference videos (videos/_reference/tabizzay/STYLE.md).
+     360×640 canvas (render.js SCALE 3 → 1080×1920). Reference sizes are at 720 wide, so here they are halved.
+     Phases, all driven by TIMING: intro card (hook lines) → bumper (promise line) → panel + captions → summary card → ask box. */
+  :root { --paper: #eee5d0; --ink: #2a2016; --mute: #8f8576; --orange: #bd552f; --blue: #4a6f8a; --olive: #5e653a; --tan: #ddd2b8; }
+  html, body { margin: 0; background: var(--paper); }
+  .canvas { position: relative; width: 360px; height: 640px; background: var(--paper); overflow: hidden; font-family: "Noto Sans", "Noto Sans Arabic", sans-serif; color: var(--ink); }
+  .layer { position: absolute; inset: 0; }
+  /* the main card: one 1px frame 14px in, the panel fills its top, a rule, the caption */
+  #frame { position: absolute; left: 14px; top: 14px; width: 332px; height: 612px; box-sizing: border-box; border: 1.1px solid var(--ink); }
+  .panel { position: absolute; left: 15px; top: 15px; width: 330px; height: 405px; overflow: hidden; }
+  .panel svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #rule { position: absolute; left: 32px; right: 32px; top: 431px; border-top: .6px solid var(--ink); }
+  #wm { position: absolute; left: 0; right: 0; top: 440px; text-align: center; font: 500 8.5px "Noto Sans", "Noto Sans Arabic"; color: #b3a995; }
+  #cap { position: absolute; left: 30px; right: 30px; top: 458px; text-align: center; font: 700 14px/1.75 "Noto Sans", "Noto Sans Arabic", sans-serif; }
+  .k-o { color: var(--orange); } .k-b { color: var(--blue); } .k-g { color: var(--olive); } .k-gr { color: var(--mute); }
+  .k-u { text-decoration: underline; text-decoration-thickness: 1.2px; text-underline-offset: 4px; }
+  /* cards (intro + summary): paper, double frame drawn as SVG so it can draw itself in, crop marks outside the corners */
+  .card { position: absolute; inset: 0; background: var(--paper); display: none; }
+  .card .chrome { position: absolute; inset: 0; width: 360px; height: 640px; }
+  .logo { position: absolute; right: 30px; top: 28px; display: flex; align-items: center; gap: 4px; font: 500 8px "Noto Sans", "Noto Sans Arabic"; color: #6f6556; }
+  .logo svg { width: 11px; height: 11px; }
+  #intro .cat { position: absolute; left: 0; right: 0; top: 100px; text-align: center; font: 600 8px "Noto Sans", "Noto Sans Arabic"; color: var(--orange); }
+  #intro .r { position: absolute; left: 157px; width: 46px; border-top: .6px solid var(--ink); }
+  #intro .hook { position: absolute; left: 26px; right: 26px; top: 124px; min-height: 80px; text-align: center; font: 800 17px/1.6 "Noto Sans", "Noto Sans Arabic"; }
+  #intro .hook span { transition: none; }
+  #introArt { position: absolute; left: 28px; top: 236px; width: 304px; height: 330px; }
+  #bumper { position: absolute; inset: 0; display: none; background: var(--paper); }
+  #bumper svg { position: absolute; left: 90px; top: 98px; width: 180px; height: 200px; }
+  #bumper .name { position: absolute; left: 0; right: 0; top: 310px; text-align: center; font: 700 22px "Noto Sans", "Noto Sans Arabic"; }
+  #bumper .sub { position: absolute; left: 0; right: 0; top: 352px; text-align: center; font: 600 9.5px "Noto Sans", "Noto Sans Arabic"; }
+  /* summary card */
+  #outro .q { position: absolute; left: 28px; right: 28px; top: 50px; font: 800 12.5px/1.55 "Noto Sans", "Noto Sans Arabic"; }
+  #outro .art { position: absolute; left: 28px; right: 28px; top: 98px; height: 140px; background: var(--tan); overflow: hidden; }
+  #outro .art svg { width: 100%; height: 100%; display: block; }
+  #outro .leg { position: absolute; left: 28px; right: 28px; top: 246px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font: 600 7.5px "Noto Sans", "Noto Sans Arabic"; }
+  #outro .leg b { display: inline-grid; place-items: center; width: 10px; height: 10px; border: .8px solid var(--ink); border-radius: 50%; font: 700 6px "Noto Serif"; margin-left: 4px; vertical-align: -2px; }
+  #outro .stat { position: absolute; left: 28px; right: 28px; top: 290px; display: flex; align-items: center; gap: 9px; }
+  #outro .stat .n { font: 800 34px/1 "Noto Serif", serif; color: var(--orange); direction: ltr; white-space: nowrap; }
+  #outro .stat .t { font: 700 8px/1.55 "Noto Sans", "Noto Sans Arabic"; }
+  #outro .pts { position: absolute; left: 28px; right: 28px; top: 342px; border-top: .6px solid var(--ink); padding-top: 7px; font: 600 7.5px/1.75 "Noto Sans", "Noto Sans Arabic"; }
+  #outro .more { margin-top: 5px; font: 500 6.8px/1.6 "Noto Sans", "Noto Sans Arabic"; color: var(--mute); }
+  #outro .ask { position: absolute; left: 34px; right: 34px; top: 448px; height: 120px; border: 1px solid var(--ink); text-align: center; display: none; }
+  #outro .ask::after { content: ""; position: absolute; inset: 3px; border: .5px solid var(--ink); }
+  #outro .ask .l1 { margin-top: 20px; font: 600 9px "Noto Sans", "Noto Sans Arabic"; }
+  #outro .ask .l2 { margin-top: 6px; font: 700 12px "Noto Sans", "Noto Sans Arabic"; }
+  #outro .ask .l3 { margin-top: 8px; font: 700 13px "Noto Sans", "Noto Sans Arabic"; color: var(--orange); }
+  #outro .ask .blank { display: inline-block; width: 64px; border-bottom: 1.2px solid var(--orange); margin: 0 4px; position: relative; height: 14px; vertical-align: -2px; }
+  #outro .ask .caret { position: absolute; left: 4px; bottom: 2px; width: 1.4px; height: 13px; background: var(--ink); }
+  #cap, #intro .hook, #intro .cat, #bumper .name, #bumper .sub, #outro .q, #outro .leg, #outro .stat, #outro .pts, #outro .ask, .logo { direction: ltr; }
+</style></head>
+<body>
+<div class="canvas">
+  <div class="layer" id="main">
+    <div class="panel"><svg id="panelA" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg><svg id="panelB" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg></div>
+    <div id="frame"></div><div id="rule"></div><div id="wm"></div><div id="cap"></div>
+  </div>
+  <div class="card" id="intro"><svg class="chrome" id="introChrome"></svg>
+    <div class="logo"><span>Here's the Thing</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="cat">CARS</div><div class="r" style="top:118px"></div><div class="hook" id="hook"></div><div class="r" id="hookRule" style="top:214px"></div>
+    <svg id="introArt" viewBox="0 0 608 660"></svg></div>
+  <div id="bumper"><svg id="bumperArt" viewBox="0 0 180 200"></svg><div class="name">Here's the Thing</div><div class="sub">I'll explain it in a <span class="k-o">minute.</span></div></div>
+  <div class="card" id="outro"><svg class="chrome" id="outroChrome"></svg>
+    <div class="logo"><span>Here's the Thing</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="q">How does a tap of your foot stop a ton and a half of car?</div><div class="art"><svg id="outroArt" viewBox="0 0 600 280"></svg></div><div class="leg"><span><b>1</b>Pedal and booster</span><span><b>2</b>Fluid and pistons</span><span><b>3</b>Pads and disc</span><span><b>4</b>Tires on the road</span></div><div class="stat"><div class="n">1+</div><div class="t">ton of clamping force,<br>from a push of about 70 pounds</div></div><div class="pts">1. The pedal is a lever; the booster and pistons multiply your push dozens of times.<br>2. Pads squeeze the disc, and friction turns motion energy into heat.<br>3. The tires stop the car, and ABS keeps the wheels from locking and sliding.<div class="more">Bonus fact: electric cars brake with the motor and send part of that energy back to the battery.</div></div>
+    <div class="ask" id="ask"><div class="l1">Tell us…</div><div class="l2">what should we explain</div><div class="l3">next<span class="blank"><span class="caret" id="caret"></span></span>?</div></div>
+  </div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="mark"><rect x="84" y="4" width="32" height="10" fill="#2a2016"/><rect x="94" y="14" width="12" height="14" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" fill="#f4ecdb" stroke="#2a2016" stroke-width="9" stroke-linejoin="round"/><text x="106" y="140" text-anchor="middle" style="font:800 120px Noto Sans Arabic;fill:#bd552f">?</text></g>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".15"/></pattern>
+  <pattern id="hatchW" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#fff" stroke-width="1" opacity=".25"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#e1d5ba" stroke-width="1.3" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .05 0"/></filter>
+</defs></svg>
+<script src="../timing.js"></script>
+<script>window.DATA = {"caps": [[{"f": 0.0, "h": "How does a tap of your"}, {"f": 0.3382, "h": "foot stop a car that weighs"}, {"f": 0.75, "h": "a <span class=\"k-o\">ton</span> and a <span class=\"k-o\">half?</span>"}], [{"f": 0.0, "h": "It&#x27;s doing <span class=\"k-o\">60</span> miles an hour,"}, {"f": 0.4833, "h": "and it stops in about <span class=\"k-o\">130</span> feet."}], [{"f": 0.0, "h": "And all your foot did"}, {"f": 0.4889, "h": "was push a small <span class=\"k-u\">pedal.</span>"}], [{"f": 0.0, "h": "Here&#x27;s the thing."}, {"f": 0.3913, "h": "I&#x27;ll explain it in a minute."}], [{"f": 0.0, "h": "Before we start,"}, {"f": 0.2982, "h": "there&#x27;s one small <span class=\"k-g\">rule.</span>"}, {"f": 0.7193, "h": "Keep it in mind."}], [{"f": 0.0, "h": "Energy never <span class=\"k-o\">disappears.</span>"}, {"f": 0.2632, "h": "It just changes form."}, {"f": 0.4947, "h": "And a moving car carries"}, {"f": 0.7579, "h": "a lot of <span class=\"k-b\">motion</span> energy."}], [{"f": 0.0, "h": "So what do brakes do? They"}, {"f": 0.4426, "h": "turn that motion energy into <span class=\"k-o\">heat.</span>"}], [{"f": 0.0, "h": "Step one:"}, {"f": 0.119, "h": "the pedal itself is a <span class=\"k-g\">lever.</span>"}, {"f": 0.4643, "h": "It multiplies your foot&#x27;s push about <span class=\"k-o\">4</span> times."}], [{"f": 0.0, "h": "Behind it sits a can"}, {"f": 0.2059, "h": "called the brake <span class=\"k-g\">booster.</span>"}, {"f": 0.4608, "h": "It uses the engine&#x27;s <span class=\"k-b\">vacuum</span>"}, {"f": 0.7353, "h": "to multiply the push again."}], [{"f": 0.0, "h": "Then the push reaches a small <span class=\"k-g\">piston,</span>"}, {"f": 0.4691, "h": "which squeezes brake <span class=\"k-o\">fluid</span> into thin pipes."}], [{"f": 0.0, "h": "Fluid can&#x27;t be <span class=\"k-o\">squashed,</span>"}, {"f": 0.2941, "h": "so the pressure reaches all <span class=\"k-u\">four</span>"}, {"f": 0.6824, "h": "wheels at the same instant."}], [{"f": 0.0, "h": "At each wheel there&#x27;s a <span class=\"k-g\">bigger</span> piston,"}, {"f": 0.3611, "h": "so the force grows again."}, {"f": 0.6019, "h": "Like a <span class=\"k-u\">jack</span> that lifts"}, {"f": 0.8148, "h": "a car with one hand."}], [{"f": 0.0, "h": "So your foot pushed with about <span class=\"k-o\">70</span> pounds,"}, {"f": 0.4884, "h": "and the brakes clamped with"}, {"f": 0.814, "h": "more than a <span class=\"k-o\">ton.</span>"}], [{"f": 0.0, "h": "And what do they clamp? A steel"}, {"f": 0.5079, "h": "<span class=\"k-g\">disc</span> that spins with the wheel."}], [{"f": 0.0, "h": "Two <span class=\"k-g\">pads</span> <span class=\"k-o\">squeeze</span> the disc from both sides,"}, {"f": 0.4674, "h": "like pinching a spinning plate with your fingers."}], [{"f": 0.0, "h": "That friction turns motion into <span class=\"k-o\">heat,</span>"}, {"f": 0.4634, "h": "and in hard braking the"}, {"f": 0.7561, "h": "disc can pass <span class=\"k-o\">900°F.</span>"}], [{"f": 0.0, "h": "That&#x27;s why the disc is <span class=\"k-g\">hollow</span> inside."}, {"f": 0.4935, "h": "Air flows through it and <span class=\"k-b\">cools</span> it down."}], [{"f": 0.0, "h": "But what finally stops the car is"}, {"f": 0.5484, "h": "the tires&#x27; <span class=\"k-o\">grip</span> on the road."}], [{"f": 0.0, "h": "Lots of people think that"}, {"f": 0.3421, "h": "if the wheels <span class=\"k-u\">lock</span> up,"}, {"f": 0.6447, "h": "the car stops faster. <span class=\"k-o\">Nope.</span>"}], [{"f": 0.0, "h": "A locked wheel just <span class=\"k-o\">slides,</span>"}, {"f": 0.5, "h": "and you can&#x27;t steer the car."}], [{"f": 0.0, "h": "That&#x27;s why there&#x27;s <span class=\"k-o\">ABS.</span>"}, {"f": 0.2963, "h": "It releases and grabs the brakes"}, {"f": 0.7037, "h": "up to <span class=\"k-o\">15</span> times a second."}], [{"f": 0.0, "h": "So the wheels keep turning just a little,"}, {"f": 0.5316, "h": "and the tires keep <span class=\"k-g\">gripping</span> the road."}], [{"f": 0.0, "h": "Bottom line:"}, {"f": 0.114, "h": "your foot <span class=\"k-u\">pushes,</span>"}, {"f": 0.2719, "h": "the fluid multiplies the <span class=\"k-o\">force,</span>"}, {"f": 0.5526, "h": "the pads squeeze the <span class=\"k-g\">disc,</span>"}, {"f": 0.7895, "h": "and motion becomes <span class=\"k-o\">heat.</span>"}], [{"f": 0.0, "h": "And the weirdest part? <span class=\"k-b\">Electric</span> cars"}, {"f": 0.2701, "h": "brake with the motor itself,"}, {"f": 0.4818, "h": "and send that energy back"}, {"f": 0.6715, "h": "to the <span class=\"k-g\">battery</span> instead of"}, {"f": 0.8613, "h": "wasting it as heat."}], [{"f": 0.0, "h": "And that&#x27;s the thing about brakes."}], [{"f": 0.0, "h": "Tell us,"}, {"f": 0.2143, "h": "what should we explain next time?"}]], "hook": [[{"w": "How", "c": "", "f": 0.0}, {"w": "does", "c": "", "f": 0.0588}, {"w": "a", "c": "", "f": 0.1324}, {"w": "tap", "c": "", "f": 0.1618}, {"w": "of", "c": "", "f": 0.2206}, {"w": "your", "c": "", "f": 0.2647}, {"w": "foot", "c": "", "f": 0.3382}, {"w": "stop", "c": "", "f": 0.4118}, {"w": "a", "c": "", "f": 0.4853}, {"w": "car", "c": "", "f": 0.5147}, {"w": "that", "c": "", "f": 0.5735}, {"w": "weighs", "c": "", "f": 0.6471}, {"w": "a", "c": "", "f": 0.75}, {"w": "ton", "c": "k-o", "f": 0.7794}, {"w": "and", "c": "", "f": 0.8382}, {"w": "a", "c": "", "f": 0.8971}, {"w": "half?", "c": "k-o", "f": 0.9265}], [{"w": "It&#x27;s", "c": "", "f": 0.0}, {"w": "doing", "c": "", "f": 0.0625}, {"w": "sixty", "c": "", "f": 0.1375}, {"w": "miles", "c": "", "f": 0.2125}, {"w": "an", "c": "", "f": 0.2875}, {"w": "hour,", "c": "", "f": 0.325}, {"w": "and", "c": "", "f": 0.4}, {"w": "it", "c": "", "f": 0.45}, {"w": "stops", "c": "", "f": 0.4875}, {"w": "in", "c": "", "f": 0.5625}, {"w": "about", "c": "", "f": 0.6}, {"w": "a", "c": "", "f": 0.675}, {"w": "hundred", "c": "", "f": 0.7}, {"w": "and", "c": "", "f": 0.8}, {"w": "thirty", "c": "", "f": 0.85}, {"w": "feet.", "c": "", "f": 0.9375}], [{"w": "And", "c": "", "f": 0.0}, {"w": "all", "c": "", "f": 0.0889}, {"w": "your", "c": "", "f": 0.1778}, {"w": "foot", "c": "", "f": 0.2889}, {"w": "did", "c": "", "f": 0.4}, {"w": "was", "c": "", "f": 0.4889}, {"w": "push", "c": "", "f": 0.5778}, {"w": "a", "c": "", "f": 0.6889}, {"w": "small", "c": "", "f": 0.7333}, {"w": "pedal.", "c": "k-u", "f": 0.8667}]], "introLines": 3, "promise": 3, "summary": 24, "cta": 25, "watermark": ""};</script>
+<script src="../../lib/geo.min.js"></script>
+<script src="scenes.js"></script>
+<script src="../../_templates/sketch/engine.js"></script>
+</body></html>
