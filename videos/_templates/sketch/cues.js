@@ -12,6 +12,13 @@
 //   ocean-waves     «Ocean Waves» (Dragon Studio 376898)            0.2–22 s                    → sea, beach
 //   water-rush      «Above Rushing Water» (61158)                   from 3 s                    → water moving
 //   wind-gust       «Wind Gust» (Dragon Studio 386158)              0.25–4.76 s                 → wind
+//   ui-pop          «Soft UI Pop Light Minimal Click» (humordome 451232)  0–0.25 s       → replaces the synthesized pop
+//   swish           «Soft Swishes» (79890)                          one swish 3.92–4.24 s       → replaces the synthesized whoosh
+//   chime           «Celestial Chime Soft Short» (gigidelaromusic 450958)  0.1–2.3 s       → replaces the synthesized chime / ping
+//   click           «Single Mouse Click Sound HD» (virtual_vibes 379373)  0.13–0.32 s     → replaces the synthesized tick; a light switch
+//   notification    «New Notification 051» (universfield 494246)    0.08–1.22 s                 → a phone notification
+//   alarm-beep      «Alarm Beep Electronic» (91914)                 beeps from 0.31 s, 1 s apart → an alarm clock
+//   mouse-squeak    «Mouse Squeaks» (68287)                         20.6–21.6 s                 → a rat or mouse
 //   music-soft      «Mysterious Music Box – The Midnight Hour»      the series' music (the user's pick): make it with
 //                   ffmpeg -i px-music-box.mp3 -af "highshelf=f=3000:g=-5,volume='if(lt(t,12),0.6+0.4*t/12,1)':eval=frame" px-music-soft.mp3
 //                   and keep gain 0.42 (≈22 dB under the narrator while he speaks; the user approved this level)
@@ -21,7 +28,11 @@ const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration :
 // a clip lives in the episode's sfx/ (gitignored, one-off sounds) or in the shared «اسكتش» kit (committed)
 const KIT = '../_templates/sketch/sfx/', where = n => fs.existsSync(__dirname + '/sfx/px-' + n + '.mp3') ? 'sfx/px-' + n + '.mp3' : fs.existsSync(__dirname + '/' + KIT + 'px-' + n + '.mp3') ? KIT + 'px-' + n + '.mp3' : null;
 const has = n => !!where(n);
-const a = (t, fx, gain, dur) => c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), fx, gain }, dur ? { dur: +dur.toFixed(2) } : {}));
+// the user's rule: the sound comes from the clips they sent. A synthesized fx is used only when its clip is missing.
+const REAL = { pop: ['ui-pop', 0, 0.25, 1.0], whoosh: ['swish', 3.92, 0.32, 1.2], chime: ['chime', 0.1, 2.2, 1.0], ping: ['chime', 0.1, 1.4, 1.0], tick: ['click', 0.13, 0.19, 0.8] };
+const a = (t, fx, gain, dur) => REAL[fx] && has(REAL[fx][0])
+  ? c.push({ t: +Math.max(0, t).toFixed(2), file: where(REAL[fx][0]), gain: +(gain * REAL[fx][3]).toFixed(2), from: REAL[fx][1], dur: REAL[fx][2], duck: 1.0 })
+  : c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), fx, gain }, dur ? { dur: +dur.toFixed(2) } : {}));
 const rec = (t, file, gain, from, dur, duck, alt, altGain) => has(file)
   ? c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), file: where(file), gain: +gain.toFixed(2), from: from || 0 }, dur ? { dur: +dur.toFixed(2) } : {}, duck != null ? { duck } : {}))
   : alt && a(t, alt, altGain == null ? gain : altGain, dur);
