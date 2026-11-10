@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>الفرامل بتوقف العربية إزاي؟ — إيه الحكاية؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&family=Noto+Serif:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* «إيه الحكاية؟» — the «الرسم الهندسي» look, measured from 20 reference videos (videos/_reference/tabizzay/STYLE.md).
+     360×640 canvas (render.js SCALE 3 → 1080×1920). Reference sizes are at 720 wide, so here they are halved.
+     Phases, all driven by TIMING: intro card (hook lines) → bumper (promise line) → panel + captions → summary card → ask box. */
+  :root { --paper: #eee5d0; --ink: #2a2016; --mute: #8f8576; --orange: #bd552f; --blue: #4a6f8a; --olive: #5e653a; --tan: #ddd2b8; }
+  html, body { margin: 0; background: var(--paper); }
+  .canvas { position: relative; width: 360px; height: 640px; background: var(--paper); overflow: hidden; font-family: "Noto Sans Arabic", sans-serif; color: var(--ink); }
+  .layer { position: absolute; inset: 0; }
+  /* the main card: one 1px frame 14px in, the panel fills its top, a rule, the caption */
+  #frame { position: absolute; left: 14px; top: 14px; width: 332px; height: 612px; box-sizing: border-box; border: 1.1px solid var(--ink); }
+  .panel { position: absolute; left: 15px; top: 15px; width: 330px; height: 405px; overflow: hidden; }
+  .panel svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #rule { position: absolute; left: 32px; right: 32px; top: 431px; border-top: .6px solid var(--ink); }
+  #wm { position: absolute; left: 0; right: 0; top: 440px; text-align: center; font: 500 8.5px "Noto Sans Arabic"; color: #b3a995; }
+  #cap { position: absolute; left: 30px; right: 30px; top: 458px; text-align: center; font: 700 14px/1.75 "Noto Sans Arabic", sans-serif; }
+  .k-o { color: var(--orange); } .k-b { color: var(--blue); } .k-g { color: var(--olive); } .k-gr { color: var(--mute); }
+  .k-u { text-decoration: underline; text-decoration-thickness: 1.2px; text-underline-offset: 4px; }
+  /* cards (intro + summary): paper, double frame drawn as SVG so it can draw itself in, crop marks outside the corners */
+  .card { position: absolute; inset: 0; background: var(--paper); display: none; }
+  .card .chrome { position: absolute; inset: 0; width: 360px; height: 640px; }
+  .logo { position: absolute; right: 30px; top: 28px; display: flex; align-items: center; gap: 4px; font: 500 8px "Noto Sans Arabic"; color: #6f6556; }
+  .logo svg { width: 11px; height: 11px; }
+  #intro .cat { position: absolute; left: 0; right: 0; top: 100px; text-align: center; font: 600 8px "Noto Sans Arabic"; color: var(--orange); }
+  #intro .r { position: absolute; left: 157px; width: 46px; border-top: .6px solid var(--ink); }
+  #intro .hook { position: absolute; left: 26px; right: 26px; top: 124px; min-height: 80px; text-align: center; font: 800 17px/1.6 "Noto Sans Arabic"; }
+  #intro .hook span { transition: none; }
+  #introArt { position: absolute; left: 28px; top: 236px; width: 304px; height: 330px; }
+  #bumper { position: absolute; inset: 0; display: none; background: var(--paper); }
+  #bumper svg { position: absolute; left: 90px; top: 98px; width: 180px; height: 200px; }
+  #bumper .name { position: absolute; left: 0; right: 0; top: 310px; text-align: center; font: 700 22px "Noto Sans Arabic"; }
+  #bumper .sub { position: absolute; left: 0; right: 0; top: 352px; text-align: center; font: 600 9.5px "Noto Sans Arabic"; }
+  /* summary card */
+  #outro .q { position: absolute; left: 28px; right: 28px; top: 50px; font: 800 12.5px/1.55 "Noto Sans Arabic"; }
+  #outro .art { position: absolute; left: 28px; right: 28px; top: 98px; height: 140px; background: var(--tan); overflow: hidden; }
+  #outro .art svg { width: 100%; height: 100%; display: block; }
+  #outro .leg { position: absolute; left: 28px; right: 28px; top: 246px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font: 600 7.5px "Noto Sans Arabic"; }
+  #outro .leg b { display: inline-grid; place-items: center; width: 10px; height: 10px; border: .8px solid var(--ink); border-radius: 50%; font: 700 6px "Noto Serif"; margin-left: 4px; vertical-align: -2px; }
+  #outro .stat { position: absolute; left: 28px; right: 28px; top: 290px; display: flex; align-items: center; gap: 9px; }
+  #outro .stat .n { font: 800 34px/1 "Noto Serif", serif; color: var(--orange); direction: ltr; white-space: nowrap; }
+  #outro .stat .t { font: 700 8px/1.55 "Noto Sans Arabic"; }
+  #outro .pts { position: absolute; left: 28px; right: 28px; top: 342px; border-top: .6px solid var(--ink); padding-top: 7px; font: 600 7.5px/1.75 "Noto Sans Arabic"; }
+  #outro .more { margin-top: 5px; font: 500 6.8px/1.6 "Noto Sans Arabic"; color: var(--mute); }
+  #outro .ask { position: absolute; left: 34px; right: 34px; top: 448px; height: 120px; border: 1px solid var(--ink); text-align: center; display: none; }
+  #outro .ask::after { content: ""; position: absolute; inset: 3px; border: .5px solid var(--ink); }
+  #outro .ask .l1 { margin-top: 20px; font: 600 9px "Noto Sans Arabic"; }
+  #outro .ask .l2 { margin-top: 6px; font: 700 12px "Noto Sans Arabic"; }
+  #outro .ask .l3 { margin-top: 8px; font: 700 13px "Noto Sans Arabic"; color: var(--orange); }
+  #outro .ask .blank { display: inline-block; width: 64px; border-bottom: 1.2px solid var(--orange); margin: 0 4px; position: relative; height: 14px; vertical-align: -2px; }
+  #outro .ask .caret { position: absolute; left: 4px; bottom: 2px; width: 1.4px; height: 13px; background: var(--ink); }
+</style></head>
+<body>
+<div class="canvas">
+  <div class="layer" id="main">
+    <div class="panel"><svg id="panelA" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg><svg id="panelB" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg></div>
+    <div id="frame"></div><div id="rule"></div><div id="wm"></div><div id="cap"></div>
+  </div>
+  <div class="card" id="intro"><svg class="chrome" id="introChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="cat">عربيات</div><div class="r" style="top:118px"></div><div class="hook" id="hook"></div><div class="r" id="hookRule" style="top:214px"></div>
+    <svg id="introArt" viewBox="0 0 608 660"></svg></div>
+  <div id="bumper"><svg id="bumperArt" viewBox="0 0 180 200"></svg><div class="name">إيه الحكاية؟</div><div class="sub">هشرحهالك في <span class="k-o">دقيقة.</span></div></div>
+  <div class="card" id="outro"><svg class="chrome" id="outroChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="q">إزاي دوسة رجل بتوقف عربية طن ونص؟</div><div class="art"><svg id="outroArt" viewBox="0 0 600 280"></svg></div><div class="leg"><span><b>1</b>البدال والسيرفو: بيكبّروا القوة</span><span><b>2</b>الزيت: بينقل الضغط</span><span><b>3</b>الكماشة: بتقفل التيل على الطارة</span><span><b>4</b>الـ ABS: بيمنع العجل يقفل</span></div><div class="stat"><div class="n">+1000</div><div class="t">كيلو قوة عند العجلة،<br>من دوسة 20 كيلو بس</div></div><div class="pts">1. البدال عتلة بتكبّر قوة رجلك حوالي 4 مرات، والسيرفو بيكبّرها تاني.<br>2. الزيت ما بيتضغطش، فبينقل الضغط لمكبس أوسع عند كل عجلة.<br>3. الكماشة بتقفل التيل على الطارة، وحركة العربية بتتحول لسخونة.<div class="more">معلومة زيادة: لو سرعتك اتضاعفت، مسافة الفرملة بتبقى 4 مرات.</div></div>
+    <div class="ask" id="ask"><div class="l1">قولولنا…</div><div class="l2">عايزين تعرفوا</div><div class="l3">حكاية<span class="blank"><span class="caret" id="caret"></span></span>؟</div></div>
+  </div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="mark"><rect x="84" y="4" width="32" height="10" fill="#2a2016"/><rect x="94" y="14" width="12" height="14" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" fill="#f4ecdb" stroke="#2a2016" stroke-width="9" stroke-linejoin="round"/><text x="106" y="140" text-anchor="middle" style="font:800 120px Noto Sans Arabic;fill:#bd552f">؟</text></g>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".15"/></pattern>
+  <pattern id="hatchW" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#fff" stroke-width="1" opacity=".25"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#e1d5ba" stroke-width="1.3" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .05 0"/></filter>
+</defs></svg>
+<script src="../timing.js"></script>
+<script>window.DATA = {"caps": [[{"f": 0.0, "h": "إزاي عربية وزنها <span class=\"k-o\">طن</span> <span class=\"k-o\">ونص</span> توقفها <span class=\"k-u\">دوسة</span> رجل؟"}], [{"f": 0.0, "h": "إنت بتدوس بكام <span class=\"k-u\">كيلو</span> بس…"}], [{"f": 0.0, "h": "والفرامل نفسها حتة <span class=\"k-g\">تيل</span> أصغر من كف إيدك."}], [{"f": 0.0, "h": "إيه الحكاية؟"}, {"f": 0.4194, "h": "هشرحهالك في دقيقة."}], [{"f": 0.0, "h": "قبل ما نشرح محتاجين نوضّح <span class=\"k-g\">قاعدة</span> صغيرة…"}, {"f": 0.7647, "h": "خليك فاكرها."}], [{"f": 0.0, "h": "<span class=\"k-b\">السايل</span> ما <span class=\"k-o\">بيتضغطش،</span>"}, {"f": 0.2639, "h": "ولو زقيته من ناحية،"}, {"f": 0.5417, "h": "<span class=\"k-b\">الضغط</span> بيوصل زي ما هو لكل حتة فيه."}], [{"f": 0.0, "h": "طب الدوسة بتبدأ إزاي؟"}, {"f": 0.3188, "h": "<span class=\"k-g\">البدال</span> نفسه <span class=\"k-g\">عتلة،</span>"}, {"f": 0.5797, "h": "بتكبّر قوة رجلك حوالي <span class=\"k-o\">4</span> مرات."}], [{"f": 0.0, "h": "ووراه علبة اسمها <span class=\"k-g\">السيرفو،</span>"}, {"f": 0.3824, "h": "بتستعمل <span class=\"k-b\">شفط</span> المحرك وتكبّر القوة مرة تانية."}], [{"f": 0.0, "h": "طب القوة دي بتروح فين؟"}, {"f": 0.2421, "h": "بتزق <span class=\"k-g\">مكبس</span> صغير في أسطوانة <span class=\"k-b\">زيت،</span>"}, {"f": 0.5684, "h": "والزيت بيجري في <span class=\"k-b\">مواسير</span> لحد العجل الأربعة."}], [{"f": 0.0, "h": "وعند كل عجلة مكبس <span class=\"k-g\">أوسع</span> بكتير،"}, {"f": 0.4286, "h": "ونفس <span class=\"k-b\">الضغط</span> على مساحة أكبر يعني قوة <span class=\"k-o\">أكبر.</span>"}], [{"f": 0.0, "h": "زي <span class=\"k-u\">الكوريك</span> اللي بترفع بيه العربية بإيد واحدة."}], [{"f": 0.0, "h": "يعني دوسة بـ <span class=\"k-o\">20</span> كيلو بتوصل"}, {"f": 0.5, "h": "عند العجلة لقوة أكتر من <span class=\"k-o\">طن.</span>"}], [{"f": 0.0, "h": "طب القوة دي بتعمل إيه؟"}, {"f": 0.3594, "h": "بتقفل <span class=\"k-o\">كماشة</span> على <span class=\"k-g\">طارة</span> حديد بتلف مع العجلة."}], [{"f": 0.0, "h": "وجوه الكماشة <span class=\"k-g\">التيل،</span>"}, {"f": 0.2326, "h": "<span class=\"k-o\">بيحك</span> في الطارة من الناحيتين،"}, {"f": 0.5698, "h": "زي فرامل <span class=\"k-u\">البسكلتة</span> لما تقفل على الجنط."}], [{"f": 0.0, "h": "طب وسرعة العربية راحت فين؟"}, {"f": 0.6585, "h": "اتحولت <span class=\"k-o\">لسخونة.</span>"}], [{"f": 0.0, "h": "وقفة واحدة من سرعة <span class=\"k-o\">100،</span>"}, {"f": 0.4364, "h": "سخونتها تكفي تغلّي <span class=\"k-b\">لتر</span> <span class=\"k-b\">ونص</span> مية."}], [{"f": 0.0, "h": "عشان كده الطارة <span class=\"k-g\">مفرّغة</span> من جوه،"}, {"f": 0.5254, "h": "<span class=\"k-b\">والهوا</span> بيعدّي فيها ويبرّدها."}], [{"f": 0.0, "h": "وناس كتير فاكرة إن الفرامل"}, {"f": 0.5094, "h": "هي اللي بتوقف العربية. <span class=\"k-o\">لأ.</span>"}], [{"f": 0.0, "h": "الفرامل بتوقف <span class=\"k-u\">العجل</span> بس،"}, {"f": 0.338, "h": "واللي بيوقف العربية هو مسكة <span class=\"k-g\">الكاوتش</span> في الأسفلت."}], [{"f": 0.0, "h": "ولو دوست جامد والعجل قفل خالص،"}, {"f": 0.4559, "h": "العربية <span class=\"k-o\">بتتزحلق</span> والدريكسيون ما بيردش."}], [{"f": 0.0, "h": "طب الـ <span class=\"k-o\">ABS</span> بيعمل إيه؟"}, {"f": 0.4151, "h": "عند كل عجلة <span class=\"k-g\">حساس</span> بيعدّ لفّاتها."}], [{"f": 0.0, "h": "وأول ما عجلة تقرّب تقف،"}, {"f": 0.2963, "h": "<span class=\"k-g\">الكمبيوتر</span> <span class=\"k-b\">بيخفف</span> ضغط الزيت عليها،"}, {"f": 0.7037, "h": "ولما ترجع تلف <span class=\"k-b\">يضغط</span> تاني."}], [{"f": 0.0, "h": "وده بيتكرر حوالي <span class=\"k-o\">15</span> مرة في الثانية،"}, {"f": 0.4932, "h": "عشان كده بتحس بالبدال <span class=\"k-u\">بيرعش</span> تحت رجلك."}], [{"f": 0.0, "h": "يعني من الآخر:"}, {"f": 0.1376, "h": "<span class=\"k-g\">البدال</span> بيكبّر القوة،"}, {"f": 0.3303, "h": "<span class=\"k-b\">والزيت</span> بينقلها،"}, {"f": 0.4771, "h": "<span class=\"k-o\">والكماشة</span> بتحوّل الحركة لسخونة،"}, {"f": 0.7615, "h": "والـ <span class=\"k-o\">ABS</span> بيمنع العجل يقفل."}], [{"f": 0.0, "h": "والأغرب إن لو سرعتك اتضاعفت،"}, {"f": 0.5179, "h": "مسافة الفرملة بتبقى <span class=\"k-o\">4</span> <span class=\"k-o\">مرات.</span>"}], [{"f": 0.0, "h": "ودي كانت حكاية الفرامل."}], [{"f": 0.0, "h": "قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟"}]], "hook": [[{"w": "إزاي", "c": "", "f": 0.0}, {"w": "عربية", "c": "", "f": 0.125}, {"w": "وزنها", "c": "", "f": 0.275}, {"w": "طن", "c": "k-o", "f": 0.425}, {"w": "ونص", "c": "k-o", "f": 0.5}, {"w": "توقفها", "c": "", "f": 0.6}, {"w": "دوسة", "c": "k-u", "f": 0.775}, {"w": "رجل؟", "c": "", "f": 0.9}], [{"w": "إنت", "c": "", "f": 0.0}, {"w": "بتدوس", "c": "", "f": 0.1739}, {"w": "بكام", "c": "", "f": 0.4348}, {"w": "كيلو", "c": "k-u", "f": 0.6522}, {"w": "بس…", "c": "", "f": 0.8696}], [{"w": "والفرامل", "c": "", "f": 0.0}, {"w": "نفسها", "c": "", "f": 0.2308}, {"w": "حتة", "c": "", "f": 0.3846}, {"w": "تيل", "c": "k-g", "f": 0.4872}, {"w": "أصغر", "c": "", "f": 0.5897}, {"w": "من", "c": "", "f": 0.7179}, {"w": "كف", "c": "", "f": 0.7949}, {"w": "إيدك.", "c": "", "f": 0.8718}]], "introLines": 3, "promise": 3, "summary": 25, "cta": 26, "watermark": ""};</script>
+<script src="../../lib/geo.min.js"></script>
+<script src="scenes.js"></script>
+<script src="../../_templates/sketch/engine.js"></script>
+</body></html>
