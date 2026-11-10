@@ -43,8 +43,30 @@ for (let i = PROMISE + 1; i < SUMMARY; i++) swipe(i);                           
 a(L(SUMMARY) + 0.1, 'chime', 0.35); for (let k = 0; k < 5; k++) a(L(SUMMARY) + 0.3 + k * 0.15, 'tick', 0.16);   // summary card builds
 paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                                                       // ask box
 
-// ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
-// e.g. lab(5, 0.4); ding(L(6) + 1.6); scribble(L(9) + 1.2); sea(L(0), L(PROMISE) - L(0) + 0.6, 0.45);
+// ── this episode: «الفرامل» / How Brakes Stop a Car (same cues in both editions; no music)
+a(L(0) + 0.2, 'idle', 0.16, L(1) - L(0));                                    // the car cruising on the hook card
+a(L(1) + 0.3, 'rev', 0.12, 1.0); a(L(1) + 1.0, 'squeeze', 0.3, 1.6); ding(L(1) + 2.6);   // braking to a stop in 40 m
+a(L(2) + 0.4, 'thud', 0.2);                                                 // the foot on the pedal
+paper(L(4) + 0.2);                                                          // the rule card
+a(L(5) + 0.2, 'idle', 0.14, D(5) - 0.2); a(L(5) + D(5) * 0.5, 'pop', 0.2);  // motion energy
+a(L(6) + 0.3, 'sizzle', 0.2, D(6) - 0.5);                                   // motion into heat
+a(L(7) + 0.4, 'creak', 0.2); a(L(7) + 0.9, 'thud', 0.18); lab(7, 0.8); ding(L(7) + D(7) * 0.6);   // the lever, ×4
+for (let k = 0; k < 2; k++) a(L(8) + 0.5 + k * 1.4, 'vac', 0.16, 1.0); lab(8, 0.4);   // the booster's vacuum
+for (let k = 0; k < 2; k++) a(L(9) + 0.4 + k * 1.4, 'squeeze', 0.2, 0.8); lab(9, 0.5); lab(9, 1.3);   // piston and fluid
+a(L(10) + 0.6, 'coolant', 0.2, 1.6); for (let k = 0; k < 4; k++) a(L(10) + 1.2, 'tick', 0.2); a(L(10) + D(10) * 0.55, 'pop', 0.2);   // pressure to four wheels
+a(L(11) + 0.4, 'squeeze', 0.2, 1.0); lab(11, 0.4); lab(11, 1.2); a(L(11) + D(11) * 0.55, 'creak', 0.2);   // bigger piston, the jack
+a(L(12) + 0.3, 'pop', 0.2); a(L(12) + D(12) * 0.45, 'whoosh', 0.2); ding(L(12) + D(12) * 0.45 + 0.9);   // 30 kg → 1+ ton
+a(L(13) + 0.2, 'whoosh', 0.2, 1.4); lab(13, D(13) * 0.7);                   // into the wheel
+a(L(14) + 0.5, 'squeeze', 0.3, 1.4); lab(14, 0.4); lab(14, 0.8); lab(14, 1.4);   // pads squeeze the disc
+a(L(15) + 0.3, 'sizzle', 0.3, D(15) - 0.6); ding(L(15) + D(15) - 0.7);      // 500 °C
+rec(L(16) + 0.4, 'wind-gust', 0.22, 0.25, D(16) - 0.4, 1.0, 'wind', 0.18); lab(16, 0.6);   // air through the vanes
+a(L(17) + 0.3, 'idle', 0.1, 1.5); lab(17, 1.0);                             // tyre on the road
+a(L(18) + 0.3, 'squeeze', 0.35, 2.0); scribble(L(18) + D(18) * 0.78);       // locked wheels skid: crossed out
+a(L(19) + 0.2, 'squeeze', 0.3, 1.8); scribble(L(19) + D(19) * 0.65);        // can't steer
+for (let k = 0; k < 14; k++) a(L(20) + 0.6 + k * 0.22, 'tick', 0.22); ding(L(20) + 2.0);   // ABS pulses
+a(L(21) + 0.3, 'idle', 0.12, D(21) - 0.3); scribble(L(21) + D(21) * 0.6);   // steers round the cone
+for (let k = 0; k < 4; k++) a(L(22) + 0.1 + k * D(22) / 4.4, 'tick', 0.2);  // recap
+a(L(23) + 0.3, 'spool', 0.14, D(23) - 0.6); a(L(23) + D(23) * 0.6, 'chime', 0.18);   // regenerative braking
 
 const USE_MUSIC = false;   // the user asked (Nov 2026): no music bed; the video's own sound effects carry it. Set true to bring the music back.
 const MUSIC = USE_MUSIC && has('music-soft') ? 'music-soft' : null;
