@@ -156,11 +156,11 @@ shot(20, push(320, 420, 1.0, 1.04), function (u, d, t) {
 // 21 · the wheels keep turning a little and the tyres keep gripping
 shot(21, push(320, 420, 1.0, 1.04), function (u, d, t) { var k = clamp(u / d); return paper() + R(-40, -40, 720, 560, SKYB, 0) + road(520, t, 200) + '<path d="M470 520 l24 -60 l24 60 Z" fill="' + ORANGE + '" stroke="' + INK + '" stroke-width="2"/><rect x="462" y="516" width="64" height="10" fill="' + ORANGE + '" stroke="' + INK + '" stroke-width="1.6"/>' + car(lerp(120, 300, k), 480 - 60 * Math.sin(k * 3.14), .8, { ang: t * 5, dive: 2, brake: 1 }) + check(320, 230, 1.4, at(u, d * .6, .4)); });
 // 22 · recap: foot pushes, fluid multiplies, pads squeeze, motion becomes heat
-shot(22, push(320, 420, .9, 1.04), function (u, d, t) {
-  var q = d / 4.4, bb = function (i) { return 10 * Math.sin(t * 2.4 + i * 1.3); }, s = paper();
-  s += G("translate(170 " + f(290 + bb(0)) + ")", shoe(0, 0, .7), at(u, .1, .3)) + G("translate(" + f(470) + " " + f(300 + bb(1)) + ") scale(.5)", pascal(0, 0, .5 + .5 * Math.sin(t * 2), t), at(u, q, .3));
-  s += G("", caliperCut(170, 600 + bb(2), .42, .5 + .5 * Math.sin(t * 2), t, 1, 0), at(u, 2 * q, .3)) + G("", discFace(470, 600 + bb(3), 100, t * 4, 1), at(u, 3 * q, .3));
-  for (var i = 0; i < 4; i++) s += callout(String(i + 1), [60, 360, 60, 360][i], [170, 170, 470, 470][i], at(u, .1 + i * q, .3), 20);
+shot(22, push(320, 420, .88, 1.06), function (u, d, t) {
+  var q = d / 5, bb = function (i) { return 16 * Math.sin(t * 2.6 + i * 1.3); }, s = paper();
+  s += G("translate(" + f(190 + 14 * Math.sin(t * 1.9)) + " " + f(300 + bb(0)) + ")", shoe(0, 0, 1.05), at(u, .05, .3)) + G("translate(470 " + f(300 + bb(1)) + ") scale(.62)", pascal(0, 0, .5 + .5 * Math.sin(t * 3), t), at(u, q, .3));
+  s += G("", caliperCut(180, 610 + bb(2), .56, .5 + .5 * Math.sin(t * 3), t, 1, 0), at(u, 2 * q, .3)) + G("", discFace(470, 610 + bb(3), 125, t * 5, .6 + .4 * Math.sin(t * 2)), at(u, 3 * q, .3));
+  for (var i = 0; i < 4; i++) s += callout(String(i + 1), [50, 330, 50, 330][i], [170, 170, 470, 470][i], at(u, .05 + i * q, .3), 20);
   return s;
 }, { tr: "out" });
 // 23 · the odd fact: electric cars brake with the motor and send the energy back to the battery
