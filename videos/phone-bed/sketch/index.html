@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>أوعى تمسك الموبايل في السرير — إيه الحكاية؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&family=Noto+Serif:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* «إيه الحكاية؟» — the «الرسم الهندسي» look, measured from 20 reference videos (videos/_reference/tabizzay/STYLE.md).
+     360×640 canvas (render.js SCALE 3 → 1080×1920). Reference sizes are at 720 wide, so here they are halved.
+     Phases, all driven by TIMING: intro card (hook lines) → bumper (promise line) → panel + captions → summary card → ask box. */
+  :root { --paper: #eee5d0; --ink: #2a2016; --mute: #8f8576; --orange: #bd552f; --blue: #4a6f8a; --olive: #5e653a; --tan: #ddd2b8; }
+  html, body { margin: 0; background: var(--paper); }
+  .canvas { position: relative; width: 360px; height: 640px; background: var(--paper); overflow: hidden; font-family: "Noto Sans Arabic", sans-serif; color: var(--ink); }
+  .layer { position: absolute; inset: 0; }
+  /* the main card: one 1px frame 14px in, the panel fills its top, a rule, the caption */
+  #frame { position: absolute; left: 14px; top: 14px; width: 332px; height: 612px; box-sizing: border-box; border: 1.1px solid var(--ink); }
+  .panel { position: absolute; left: 15px; top: 15px; width: 330px; height: 405px; overflow: hidden; }
+  .panel svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #rule { position: absolute; left: 32px; right: 32px; top: 431px; border-top: .6px solid var(--ink); }
+  #wm { position: absolute; left: 0; right: 0; top: 440px; text-align: center; font: 500 8.5px "Noto Sans Arabic"; color: #b3a995; }
+  #cap { position: absolute; left: 30px; right: 30px; top: 458px; text-align: center; font: 700 14px/1.75 "Noto Sans Arabic", sans-serif; }
+  .k-o { color: var(--orange); } .k-b { color: var(--blue); } .k-g { color: var(--olive); } .k-gr { color: var(--mute); }
+  .k-u { text-decoration: underline; text-decoration-thickness: 1.2px; text-underline-offset: 4px; }
+  /* cards (intro + summary): paper, double frame drawn as SVG so it can draw itself in, crop marks outside the corners */
+  .card { position: absolute; inset: 0; background: var(--paper); display: none; }
+  .card .chrome { position: absolute; inset: 0; width: 360px; height: 640px; }
+  .logo { position: absolute; right: 30px; top: 28px; display: flex; align-items: center; gap: 4px; font: 500 8px "Noto Sans Arabic"; color: #6f6556; }
+  .logo svg { width: 11px; height: 11px; }
+  #intro .cat { position: absolute; left: 0; right: 0; top: 100px; text-align: center; font: 600 8px "Noto Sans Arabic"; color: var(--orange); }
+  #intro .r { position: absolute; left: 157px; width: 46px; border-top: .6px solid var(--ink); }
+  #intro .hook { position: absolute; left: 26px; right: 26px; top: 124px; min-height: 80px; text-align: center; font: 800 17px/1.6 "Noto Sans Arabic"; }
+  #intro .hook span { transition: none; }
+  #introArt { position: absolute; left: 28px; top: 236px; width: 304px; height: 330px; }
+  #bumper { position: absolute; inset: 0; display: none; background: var(--paper); }
+  #bumper svg { position: absolute; left: 90px; top: 98px; width: 180px; height: 200px; }
+  #bumper .name { position: absolute; left: 0; right: 0; top: 310px; text-align: center; font: 700 22px "Noto Sans Arabic"; }
+  #bumper .sub { position: absolute; left: 0; right: 0; top: 352px; text-align: center; font: 600 9.5px "Noto Sans Arabic"; }
+  /* summary card */
+  #outro .q { position: absolute; left: 28px; right: 28px; top: 50px; font: 800 12.5px/1.55 "Noto Sans Arabic"; }
+  #outro .art { position: absolute; left: 28px; right: 28px; top: 98px; height: 140px; background: var(--tan); overflow: hidden; }
+  #outro .art svg { width: 100%; height: 100%; display: block; }
+  #outro .leg { position: absolute; left: 28px; right: 28px; top: 246px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font: 600 7.5px "Noto Sans Arabic"; }
+  #outro .leg b { display: inline-grid; place-items: center; width: 10px; height: 10px; border: .8px solid var(--ink); border-radius: 50%; font: 700 6px "Noto Serif"; margin-left: 4px; vertical-align: -2px; }
+  #outro .stat { position: absolute; left: 28px; right: 28px; top: 290px; display: flex; align-items: center; gap: 9px; }
+  #outro .stat .n { font: 800 34px/1 "Noto Serif", serif; color: var(--orange); direction: ltr; white-space: nowrap; }
+  #outro .stat .t { font: 700 8px/1.55 "Noto Sans Arabic"; }
+  #outro .pts { position: absolute; left: 28px; right: 28px; top: 342px; border-top: .6px solid var(--ink); padding-top: 7px; font: 600 7.5px/1.75 "Noto Sans Arabic"; }
+  #outro .more { margin-top: 5px; font: 500 6.8px/1.6 "Noto Sans Arabic"; color: var(--mute); }
+  #outro .ask { position: absolute; left: 34px; right: 34px; top: 448px; height: 120px; border: 1px solid var(--ink); text-align: center; display: none; }
+  #outro .ask::after { content: ""; position: absolute; inset: 3px; border: .5px solid var(--ink); }
+  #outro .ask .l1 { margin-top: 20px; font: 600 9px "Noto Sans Arabic"; }
+  #outro .ask .l2 { margin-top: 6px; font: 700 12px "Noto Sans Arabic"; }
+  #outro .ask .l3 { margin-top: 8px; font: 700 13px "Noto Sans Arabic"; color: var(--orange); }
+  #outro .ask .blank { display: inline-block; width: 64px; border-bottom: 1.2px solid var(--orange); margin: 0 4px; position: relative; height: 14px; vertical-align: -2px; }
+  #outro .ask .caret { position: absolute; left: 4px; bottom: 2px; width: 1.4px; height: 13px; background: var(--ink); }
+</style></head>
+<body>
+<div class="canvas">
+  <div class="layer" id="main">
+    <div class="panel"><svg id="panelA" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg><svg id="panelB" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg></div>
+    <div id="frame"></div><div id="rule"></div><div id="wm"></div><div id="cap"></div>
+  </div>
+  <div class="card" id="intro"><svg class="chrome" id="introChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="cat">سلسلة أوعى</div><div class="r" style="top:118px"></div><div class="hook" id="hook"></div><div class="r" id="hookRule" style="top:214px"></div>
+    <svg id="introArt" viewBox="0 0 608 660"></svg></div>
+  <div id="bumper"><svg id="bumperArt" viewBox="0 0 180 200"></svg><div class="name">إيه الحكاية؟</div><div class="sub">هشرحهالك في <span class="k-o">دقيقة.</span></div></div>
+  <div class="card" id="outro"><svg class="chrome" id="outroChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="q">ليه الموبايل في السرير بيبوّظ نومك؟</div><div class="art"><svg id="outroArt" viewBox="0 0 600 280"></svg></div><div class="leg"><span><b>1</b>النور الأزرق</span><span><b>2</b>خلايا العين</span><span><b>3</b>ساعة المخ</span><span><b>4</b>الغدة الصنوبرية</span></div><div class="stat"><div class="n">1.5</div><div class="t">ساعة اتأخرها الميلاتونين<br>عند اللي قروا على شاشة قبل النوم</div></div><div class="pts">1. خلايا في عينك بتقيس النور، وأكتر حاجة بتحس بيها النور الأزرق.<br>2. النور بيقول لساعة مخك إنه لسه نهار، فالغدة الصنوبرية ما تفرزش الميلاتونين.<br>3. سيب الموبايل قبل النوم بنص ساعة، وحطه بعيد عن السرير.<div class="more">معلومة زيادة: الميلاتونين هرمون ضلمة، بيعلى بالليل حتى عند الحيوانات اللي بتصحى بالليل.</div></div>
+    <div class="ask" id="ask"><div class="l1">قولولنا…</div><div class="l2">عايزين تعرفوا</div><div class="l3">حكاية<span class="blank"><span class="caret" id="caret"></span></span>؟</div></div>
+  </div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="mark"><rect x="84" y="4" width="32" height="10" fill="#2a2016"/><rect x="94" y="14" width="12" height="14" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" fill="#f4ecdb" stroke="#2a2016" stroke-width="9" stroke-linejoin="round"/><text x="106" y="140" text-anchor="middle" style="font:800 120px Noto Sans Arabic;fill:#bd552f">؟</text></g>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".15"/></pattern>
+  <pattern id="hatchW" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#fff" stroke-width="1" opacity=".25"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#e1d5ba" stroke-width="1.3" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .05 0"/></filter>
+</defs></svg>
+<script src="../timing.js"></script>
+<script>window.DATA = {"caps": [[{"f": 0.0, "h": "<span class=\"k-o\">أوعى</span> تمسك <span class=\"k-b\">الموبايل</span> في السرير وتقول:"}, {"f": 0.72, "h": "5 دقايق وأنام…"}], [{"f": 0.0, "h": "عشان هتبص تلاقي الساعة بقت <span class=\"k-o\">2،</span>"}, {"f": 0.6383, "h": "وعينك لسه <span class=\"k-u\">مفتّحة.</span>"}], [{"f": 0.0, "h": "وتصحى <span class=\"k-o\">مكسّر،</span>"}, {"f": 0.3611, "h": "حتى لو نمت ساعات كفاية."}], [{"f": 0.0, "h": "إيه الحكاية؟"}, {"f": 0.4194, "h": "هشرحهالك في دقيقة."}], [{"f": 0.0, "h": "قبل ما نشرح محتاجين نوضّح <span class=\"k-u\">قاعدة</span> صغيرة…"}, {"f": 0.7647, "h": "خليك فاكرها."}], [{"f": 0.0, "h": "جسمك مش بيعرف إن الدنيا ليل من الساعة،"}, {"f": 0.5652, "h": "بيعرف من <span class=\"k-o\">النور</span> اللي داخل <span class=\"k-b\">عينك.</span>"}], [{"f": 0.0, "h": "طب إزاي؟"}, {"f": 0.1364, "h": "في عينك <span class=\"k-g\">خلايا</span> <span class=\"k-g\">مخصوصة</span> مش بتشوف صور،"}, {"f": 0.6667, "h": "شغلتها تقيس <span class=\"k-o\">النور</span> وبس."}], [{"f": 0.0, "h": "وأكتر نور بتحس بيه هو النور <span class=\"k-b\">الأزرق،</span>"}, {"f": 0.6545, "h": "زي لون <span class=\"k-b\">السما</span> الصبح."}], [{"f": 0.0, "h": "والخلايا دي بتبعت إشارة <span class=\"k-o\">لساعة</span>"}, {"f": 0.6522, "h": "صغيرة في نص <span class=\"k-o\">مخك.</span>"}], [{"f": 0.0, "h": "طب والساعة دي بتعمل إيه <span class=\"k-u\">بالليل؟</span>"}, {"f": 0.3441, "h": "أول ما النور يقل،"}, {"f": 0.5376, "h": "بتدّي أمر لغدة صغيرة اسمها <span class=\"k-g\">الغدة</span> <span class=\"k-g\">الصنوبرية.</span>"}], [{"f": 0.0, "h": "فالغدة تبدأ تفرز هرمون اسمه <span class=\"k-g\">الميلاتونين،</span>"}, {"f": 0.4767, "h": "وده اللي بيقول لجسمك:"}, {"f": 0.7326, "h": "الدنيا <span class=\"k-b\">ضلمت،</span>"}, {"f": 0.8837, "h": "جهّز نفسك."}], [{"f": 0.0, "h": "حرارتك <span class=\"k-b\">تنزل</span> شوية،"}, {"f": 0.4186, "h": "ونَفَسك <span class=\"k-b\">يهدى،</span>"}, {"f": 0.7442, "h": "وعينك <span class=\"k-b\">تتقل.</span>"}], [{"f": 0.0, "h": "طب <span class=\"k-u\">والموبايل؟</span>"}, {"f": 0.2692, "h": "شاشته <span class=\"k-o\">لازقة</span> في عينك،"}, {"f": 0.6731, "h": "ومليانة نور <span class=\"k-b\">أزرق.</span>"}], [{"f": 0.0, "h": "فالخلايا تفتكر إن <span class=\"k-o\">الشمس</span> لسه طالعة،"}, {"f": 0.5738, "h": "والساعة <span class=\"k-o\">توقّف</span> <span class=\"k-g\">الميلاتونين.</span>"}], [{"f": 0.0, "h": "زي ما تكون <span class=\"k-u\">بتطفي</span> نور الأوضة عشان تنام،"}, {"f": 0.6724, "h": "وحد <span class=\"k-o\">يولّعه</span> كل شوية."}], [{"f": 0.0, "h": "وفي تجربة في <span class=\"k-u\">هارفارد،</span>"}, {"f": 0.2933, "h": "ناس قروا على شاشة <span class=\"k-o\">4</span> ساعات قبل النوم،"}, {"f": 0.7867, "h": "<span class=\"k-o\">5</span> ليالي ورا بعض."}], [{"f": 0.0, "h": "الميلاتونين عندهم <span class=\"k-o\">اتأخر</span> حوالي <span class=\"k-o\">ساعة</span> <span class=\"k-o\">ونص،</span>"}, {"f": 0.4444, "h": "وناموا أبطأ،"}, {"f": 0.5889, "h": "وصحيوا أتقل من اللي قروا في كتاب <span class=\"k-g\">ورق.</span>"}], [{"f": 0.0, "h": "وكمان اللي بتتفرج عليه نفسه <span class=\"k-o\">بيصحّيك:</span>"}, {"f": 0.4568, "h": "كل فيديو جديد وكل إشعار"}, {"f": 0.7531, "h": "بيدّي مخك جرعة <span class=\"k-o\">حماس.</span>"}], [{"f": 0.0, "h": "فتقول فيديو <span class=\"k-o\">كمان…</span>"}, {"f": 0.4, "h": "والوقت يعدّي من غير ما تحس."}], [{"f": 0.0, "h": "وناس كتير فاكرة إن <span class=\"k-b\">الوضع</span> <span class=\"k-b\">الليلي</span>"}, {"f": 0.4706, "h": "اللي بيصفّر الشاشة بيحل المشكلة. <span class=\"k-o\">لأ.</span>"}], [{"f": 0.0, "h": "هو بيقلل الأزرق <span class=\"k-b\">شوية،</span>"}, {"f": 0.3099, "h": "بس النور <span class=\"k-o\">لسه</span> في عينك،"}, {"f": 0.6197, "h": "والفيديوهات <span class=\"k-o\">لسه</span> مصحّية مخك."}], [{"f": 0.0, "h": "والحل؟ سيب الموبايل قبل النوم"}, {"f": 0.4286, "h": "<span class=\"k-o\">بنص</span> <span class=\"k-o\">ساعة</span> على الأقل،"}, {"f": 0.7143, "h": "وحطه <span class=\"k-g\">بعيد</span> عن السرير."}], [{"f": 0.0, "h": "يعني من الآخر:"}, {"f": 0.1705, "h": "نور الشاشة <span class=\"k-o\">بيضحك</span> على ساعة مخك،"}, {"f": 0.5227, "h": "فالميلاتونين <span class=\"k-g\">يتأخر،</span>"}, {"f": 0.75, "h": "ونومك يتأخر ويبقى <span class=\"k-b\">أخف.</span>"}], [{"f": 0.0, "h": "والأغرب إن الميلاتونين مش هرمون نوم أصلًا،"}, {"f": 0.7544, "h": "ده هرمون <span class=\"k-b\">ضلمة.</span>"}], [{"f": 0.0, "h": "حتى الحيوانات اللي بتصحى <span class=\"k-b\">بالليل،</span>"}, {"f": 0.4074, "h": "زي <span class=\"k-g\">الفيران،</span>"}, {"f": 0.5556, "h": "الميلاتونين عندها <span class=\"k-g\">بيعلى</span> بالليل برضه."}], [{"f": 0.0, "h": "ودي كانت حكاية الموبايل في السرير."}], [{"f": 0.0, "h": "قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟"}]], "hook": [[{"w": "أوعى", "c": "k-o", "f": 0.0}, {"w": "تمسك", "c": "", "f": 0.0962}, {"w": "الموبايل", "c": "k-b", "f": 0.1923}, {"w": "في", "c": "", "f": 0.3654}, {"w": "السرير", "c": "", "f": 0.4231}, {"w": "وتقول:", "c": "", "f": 0.5577}, {"w": "خمس", "c": "", "f": 0.6923}, {"w": "دقايق", "c": "", "f": 0.7692}, {"w": "وأنام…", "c": "", "f": 0.8846}], [{"w": "عشان", "c": "", "f": 0.0}, {"w": "هتبص", "c": "", "f": 0.098}, {"w": "تلاقي", "c": "", "f": 0.1961}, {"w": "الساعة", "c": "", "f": 0.3137}, {"w": "بقت", "c": "", "f": 0.451}, {"w": "اتنين،", "c": "", "f": 0.5294}, {"w": "وعينك", "c": "", "f": 0.6667}, {"w": "لسه", "c": "", "f": 0.7843}, {"w": "مفتّحة.", "c": "k-u", "f": 0.8627}], [{"w": "وتصحى", "c": "", "f": 0.0}, {"w": "مكسّر،", "c": "k-o", "f": 0.1667}, {"w": "حتى", "c": "", "f": 0.3611}, {"w": "لو", "c": "", "f": 0.4722}, {"w": "نمت", "c": "", "f": 0.5556}, {"w": "ساعات", "c": "", "f": 0.6667}, {"w": "كفاية.", "c": "", "f": 0.8333}]], "introLines": 3, "promise": 3, "summary": 25, "cta": 26, "watermark": ""};</script>
+
+<script src="scenes.js"></script>
+<script src="../../_templates/sketch/engine.js"></script>
+</body></html>
