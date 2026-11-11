@@ -1,0 +1,22 @@
+/* «ابنيها بنفسك» — المفاعل: sound cues (JavaScript-synthesised effects, no music), from the same events as the picture. */
+const fs = require("fs"), vm = require("vm"), path = require("path");
+const ctx = { window: {} }; vm.runInNewContext(fs.readFileSync(path.join(__dirname, "timing.js"), "utf8"), ctx);
+vm.runInNewContext(fs.readFileSync(path.join(__dirname, "build/scene.js"), "utf8"), ctx);
+const TIMING = ctx.window.TIMING, ev = ctx.window.EV, SFX = require("../_templates/ebniha/sfx.js");
+const L = i => TIMING.lines[i].start, C = [], q = (t, fx, gain, o) => C.push(Object.assign({ t, fx, gain }, o || {}));
+for (let i = 1; i < TIMING.lines.length; i++) if (![18, 21].includes(i)) q(L(i) - 0.5, "whoosh", 0.16);
+q(0.3, "splash", 0.5); q(0.5, "bubble", 0.35); q(ev.yay0, "party", 0.8); q(ev.cold, "buzz", 0.3); for (let k = 0; k < 6; k++) q(ev.cold + .2 + k * .1, "tick", .25);
+q(ev.purify, "zap", 0.4); q(ev.purify + .5, "ding", 0.3); q(ev.pellets, "pop", 0.45); q(ev.coal, "thud", 0.5); q(ev.coal + .1, "rustle", 0.3, { dur: .6 });
+q(ev.tubes, "clank", 0.4, { f: 620 }); for (let k = 0; k < 5; k++) q(ev.tubes + .3 + k * .15, "clank", 0.2, { f: 700 + k * 40 }); q(ev.rodsTag - .1, "pop", 0.4);
+for (let k = 0; k < 8; k++) q(ev.split + k * .3, "pop", 0.22); q(ev.hot, "fill" in SFX.FX ? "fill" : "pump", 0.2, { dur: 1.5 }); q(ev.over, "buzz", 0.45); q(ev.over + .5, "buzz", 0.35);
+q(ev.ctrl, "clank", 0.45, { f: 300 }); q(ev.ctrlTag - .1, "pop", 0.4); q(ev.down, "suck", 0.3, { dur: .7 }); q(ev.up, "whoosh", 0.25);
+q(ev.boil, "bubble", 0.45); q(ev.fly, "spray", 0.35, { dur: 1.6 }); q(ev.vessel, "thud", 0.6); q(ev.vessel + .3, "clank", 0.4, { f: 260 }); for (let k = 0; k < 10; k++) q(ev.bar + k * .1, "tick", .25); q(ev.vesTag - .1, "pop", 0.4);
+q(ev.radio, "buzz", 0.4); q(ev.sg, "clank", 0.4, { f: 480 }); q(ev.sg + .2, "pump", 0.14, { dur: 6 }); q(ev.steam, "spray", 0.3, { dur: 1.4 });
+q(ev.turb, "jet", 0.2, { dur: 4 }); q(ev.gen, "zap", 0.35); q(ev.power, "zap", 0.3); q(ev.power + .2, "ding", 0.3);
+q(ev.sea, "pour", 0.45, { dur: 2 }); q(ev.sea + .3, "splash", 0.35);
+q(ev.quake, "crumble", 0.75); q(ev.quake + .3, "buzz", 0.4); q(ev.hit + .9, "crack", 0.7); q(ev.hit + 1, "thud", 0.6);
+q(ev.dome, "thud", 0.5); q(ev.dome + .4, "clank", 0.35, { f: 220 }); q(ev.meter - .2, "pop", 0.4);
+q(ev.card, "whoosh", 0.4, { dur: .6 }); q(ev.glow, "zap", 0.25); q(ev.glow + .4, "ding", 0.35);
+q(ev.pool, "pour", 0.35, { dur: .8 }); q(ev.pool + .1, "pop", 0.4); q(ev.diesel, "pump", 0.25, { dur: 1 }); q(ev.diesel + .1, "pop", 0.4); for (let k = 0; k < 5; k++) q(ev.fence + k * .15, "clank", 0.2, { f: 800 });
+q(ev.yay, "party", 0.85); q(ev.vote, "whoosh", 0.4); for (let k = 0; k < 4; k++) q(ev.vote + .25 + k * .18, "pop", 0.35); for (let k = 0; k < 18; k++) q(ev.vote + 1 + k * .17, "tick", 0.2);
+const out = process.argv[2] || "sfx.wav"; SFX.render(C, TIMING.duration + 2, out); console.log(out, C.length, "cues");
