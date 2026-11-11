@@ -2,7 +2,7 @@
 alpha (so the drawings sit on the template's own graph paper), trim, and save as webp. python3 prep.py"""
 import cv2, numpy as np, os
 H = os.path.dirname(os.path.abspath(__file__))
-for n in range(1, 13):
+for n in range(1, 15):
     im = cv2.imread(f"{H}/src/{n:02d}.jpg")
     if n == 7:   # the English words on the two red cells
         g = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY); m = np.zeros(g.shape, np.uint8)

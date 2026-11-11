@@ -293,7 +293,7 @@ function stopwatchIso(o, k, t) {
 
 // ════ the channel's illustrations (img/NN.webp, made from the user's style reference: an ink-and-wash technical cutaway).
 // Defined once in the page's <defs> so that the panel, rebuilt every frame, only points at them (no reload, no flicker).
-var SZ = { 1: [669, 1158], 2: [693, 933], 3: [693, 1138], 4: [654, 1067], 5: [718, 1233], 6: [661, 782], 7: [728, 491], 8: [662, 693], 9: [533, 1063], 10: [702, 649], 11: [620, 729], 12: [706, 1108] };
+var SZ = { 1: [669, 1158], 2: [693, 933], 3: [693, 1138], 4: [654, 1067], 5: [718, 1233], 6: [661, 782], 7: [728, 491], 8: [662, 693], 9: [533, 1063], 10: [702, 649], 11: [620, 729], 12: [706, 1108], 13: [568, 981], 14: [710, 717] };
 (function () {
   var defs = document.querySelector("svg defs"), NS = "http://www.w3.org/2000/svg";
   Object.keys(SZ).forEach(function (n) {
@@ -327,7 +327,7 @@ function mapPts(L, a) { return a.map(function (q) { return L.p(q[0], q[1]); }); 
 // layouts (world 640 × 786)
 var MOM = PL(1, 320, 400, 430), MOMZ = PL(1, 330, 430, 560), WMB = PL(2, 320, 420, 560), FET = PL(3, 320, 410, 480), PBK = PL(4, 320, 400, 470),
     VIL = PL(5, 320, 400, 470), CRD = PL(6, 320, 400, 560), RBC = PL(7, 320, 380, 600), CEL = PL(8, 320, 400, 500), TEA = PL(9, 320, 410, 380),
-    MAG = PL(10, 320, 400, 560), EVR = PL(11, 320, 290, 400);
+    MAG = PL(10, 320, 400, 560), EVR = PL(11, 320, 290, 400), CYL = PL(13, 320, 370, 330), ROOM = PL(14, 320, 330, 560);
 
 // ════ shots (one per idea; line numbers from script.txt) ════
 // 4 · every cell burns oxygen and gives off CO2; breathing swaps the two
@@ -402,15 +402,13 @@ shot(14, push(320, 430, 1.05, .98), function (u, d, t) {
   for (i = 0; i < 6; i++) { var a = i / 6 * 6.28 + t * .4; s += '<ellipse cx="' + f(c[0] + Math.cos(a) * 30) + '" cy="' + f(c[1] + Math.sin(a) * 20) + '" rx="40" ry="26" fill="#c46a4a" opacity="' + f(.05 + .04 * Math.sin(t * 1.5 + i)) + '"/>'; }
   return s + box(TEA.p(300, 800), 540, 640, "الطعم", ORANGE, at(u, 1, .5), 26) + box(TEA.p(270, 560), 540, 400, "الورق", OLIVE, at(u, 2.2, .5), 26);
 }, { tr: "out" });
-// 15 · unfold all the villi: about 12 m², a room's floor (ink-line room, the tiles fill in)
-shot(15, push(320, 400, 1.0, 1.06), function (u, d, t) {
-  var s = paper(), k = at(u, .4, 2.6), o = { ox: 230, oy: 400, s: .95 }, i, j, n = 0;
-  s += ibox(o, -20, -20, -20, 360, 280, 20, "#e3d8c0", "#cdbf9f", "#c2b392");
-  s += ibox(o, -20, -20, 0, 20, 280, 180, "#d8ccae", "#e6dcc5", "#cfc2a2") + ibox(o, 0, -20, 0, 340, 20, 180, "#d8ccae", "#d9ccb0", "#cfc2a2");
-  s += ipoly(o, [[60, 0, 120], [140, 0, 120], [140, 0, 60], [60, 0, 60]], "#b9c9cc", 1.6);
-  for (i = 0; i < 4; i++) for (j = 0; j < 3; j++) { var on = n++ / 12 < k, wv = on ? 2 * Math.sin(t * 3 + i + j) : 0; s += ipoly(o, [[i * 80 + 4, j * 80 + 4, wv], [i * 80 + 76, j * 80 + 4, wv], [i * 80 + 76, j * 80 + 76, wv], [i * 80 + 4, j * 80 + 76, wv]], on ? "#e2b9b0" : "#ece2cc", 1.2) +
-      (on ? (function () { var c = IP(o, i * 80 + 40, j * 80 + 40, wv); return '<path d="M' + f(c[0] - 26) + ' ' + f(c[1]) + ' q13 -10 26 0 t26 0" stroke="' + OXY + '" stroke-width="2" fill="none"/>'; })() : ""); }
-  return s + G("", N(count(12, k), 320, 640, 84, ORANGE) + T("متر مربع", 320, 690, 32, INK, 800), at(u, .4, .4));
+// 15 · unfold all the villi: about 12 m², a room's floor (the channel's room; the floor fills in with villus pink)
+var FLOOR = [[405, 275], [590, 425], [380, 640], [115, 500]];
+shot(15, push(320, 380, 1.0, 1.06), function (u, d, t) {
+  var k = at(u, .4, 2.6), P = mapPts(ROOM, FLOOR), id = "fl" + (++CLIPN), xs = P.map(function (q) { return q[0]; }), x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs);
+  var poly = '<path d="M' + P.map(function (q) { return f(q[0]) + " " + f(q[1]); }).join(" L") + ' Z" fill="#d9846a" opacity="' + f(.32 + .05 * Math.sin(t * 3)) + '"/>';
+  return paper() + pic(ROOM) + '<clipPath id="' + id + '"><rect x="' + f(x0) + '" y="0" width="' + f((x1 - x0) * k) + '" height="786"/></clipPath><g clip-path="url(#' + id + ')">' + poly + '</g>' +
+    G("", N(count(12, k), 320, 660, 84, ORANGE) + T("متر مربع", 320, 712, 32, INK, 800), at(u, .4, .4));
 });
 // 16 · the oxygen reaches the baby through the umbilical cord: oxygen running down the cord to the belly
 var CORDPATH = [[590, 380], [510, 410], [450, 340], [425, 380], [440, 470], [515, 525], [470, 580], [370, 555], [305, 600]];
@@ -429,10 +427,9 @@ function tube(o, x, y, h, k, col, name, kk) {
   var r = 46, s = cylZ(o, x, y, 0, r, h * clamp(k), col, "", 2) + cylZ(o, x, y, 0, r, h, "#e8eeee", "", 2.4, true);
   var B = IP(o, x, y, 0); return appear(kk == null ? 1 : kk, s + T(name, B[0], B[1] + 60, 26, INK, 800));
 }
-shot(18, push(320, 420, 1.04, .98), function (u, d, t) {
-  var w = .03 * Math.sin(t * 2.5), o = { ox: 320, oy: 560, s: 1 };
-  return paper() + tube(o, -140, 60, 330, .95 + w, OXY, "الأم", at(u, .1, .4)) + tube(o, 120, -60, 330, .62 + w, "#d6875f", "الطفل", at(u, .5, .4)) +
-    T("أكسجين", 320, 120, 30, INK, 800) + G("", T("؟", 540, 260, 110, ORANGE, 800), at(u, 1.6, .3));
+shot(18, push(320, 410, 1.04, .98), function (u, d, t) {
+  return paper() + pic(CYL) + box(CYL.p(130, 600), 150, 720, "الأم", ORANGE, at(u, .2, .5), 26) + box(CYL.p(440, 600), 490, 720, "الطفل", ORANGE, at(u, .6, .5), 26) +
+    T("أكسجين", 320, 60, 30, INK, 800) + G("", T("؟", 560, 300, 110, ORANGE, 800), at(u, 1.6, .3));
 }, { tr: "out" });
 // 19 · fetal haemoglobin grabs oxygen harder: oxygen hops from the mother's red cell to the baby's
 shot(19, push(320, 400, 1.0, 1.08), function (u, d, t) {
@@ -470,9 +467,12 @@ shot(23, push(320, 400, .95, 1.02), function (u, d, t) {
 shot(24, push(320, 420, 1.04, .97), function (u, d, t) {
   var s = paper() + pic(EVR), k = at(u, .3, 1.2), fl = EVR.p(345, 30);
   s += N("8,849 m", 130, 110, 30, INK) + box(fl, 520, 80, "إفرست", ORANGE, at(u, .2, .5), 26);
-  var g = { ox: 320, oy: 700, s: .85 };
-  s += tube(g, -150, 60, 130, .45 + .02 * Math.sin(t * 2), "#d6875f", "الطفل", k) + tube(g, 110, -90, 130, .42 + .02 * Math.cos(t * 2), "#d6875f", "فوق إفرست", at(u, .8, .4));
-  return s + G("", T("≈", 320, 640, 70, ORANGE, 800), at(u, 1.6, .3));
+  // the baby's cylinder from the gauge drawing, twice: the same level (crop of its right-hand cylinder)
+  [[150, "الطفل", k], [490, "فوق إفرست", at(u, .8, .4)]].forEach(function (g) {
+    var L = PL(13, g[0] - 66, 600, 120), id = "cy" + (++CLIPN), a0 = L.p(284, 0), a1 = L.p(568, 981);
+    s += appear(g[2], '<clipPath id="' + id + '"><rect x="' + f(a0[0]) + '" y="' + f(a0[1]) + '" width="' + f(a1[0] - a0[0]) + '" height="' + f(a1[1] - a0[1]) + '"/></clipPath><g clip-path="url(#' + id + ')">' + pic(L) + '</g>' + T(g[1], g[0], 760, 24, INK, 800));
+  });
+  return s + G("", T("≈", 320, 620, 70, ORANGE, 800), at(u, 1.6, .3));
 });
 
 // ── opening card, bumper and summary art ──
