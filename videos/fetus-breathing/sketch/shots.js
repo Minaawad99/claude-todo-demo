@@ -169,12 +169,16 @@ function gauge(x, y, h, k, col, name, kk) {
 // ════ isometric toolkit («اسكتش» isometric, like the reference's cut-away rooms and machines) ════
 // world axes: x → down-right, y → down-left, z → up. The visible faces are +x (right), +y (left/front) and +z (top).
 var CI = 0.866, SI = 0.5;
-function IP(o, x, y, z) { return [o.ox + (x - y) * CI * o.s, o.oy + (x + y) * SI * o.s - z * o.s]; }
+// projection: "front" = the drawing faces you square-on and its depth runs back up-right (what the user picked over the
+// 30° isometric, which made the anatomy look tilted); "iso" = true isometric
+var PROJ = window.PROJ || "front";
+var AX = PROJ === "iso" ? [CI, SI] : [1, 0], AY = PROJ === "iso" ? [-CI, SI] : [-.42, .3], AZ = [0, -1];
+function IP(o, x, y, z) { return [o.ox + (x * AX[0] + y * AY[0] + z * AZ[0]) * o.s, o.oy + (x * AX[1] + y * AY[1] + z * AZ[1]) * o.s]; }
 function mtx(a, b, c, d, e, g) { return "matrix(" + [a, b, c, d, e, g].map(function (v) { return (+v).toFixed(4); }).join(" ") + ")"; }
 // put a 2D drawing (u right, v down, origin at the given point) onto a face plane
-function onL(o, x0, y0, z0, inner) { var P = IP(o, x0, y0, z0), s = o.s; return '<g transform="' + mtx(CI * s, SI * s, 0, s, P[0], P[1]) + '">' + inner + '</g>'; }   // plane y = y0 (front-left face): u → +x, v → −z
-function onR(o, x0, y0, z0, inner) { var P = IP(o, x0, y0, z0), s = o.s; return '<g transform="' + mtx(CI * s, -SI * s, 0, s, P[0], P[1]) + '">' + inner + '</g>'; }  // plane x = x0 (front-right face): u → −y, v → −z
-function onT(o, x0, y0, z0, inner) { var P = IP(o, x0, y0, z0), s = o.s; return '<g transform="' + mtx(CI * s, SI * s, -CI * s, SI * s, P[0], P[1]) + '">' + inner + '</g>'; } // plane z = z0 (top): u → +x, v → +y
+function onL(o, x0, y0, z0, inner) { var P = IP(o, x0, y0, z0), s = o.s; return '<g transform="' + mtx(AX[0] * s, AX[1] * s, -AZ[0] * s, -AZ[1] * s, P[0], P[1]) + '">' + inner + '</g>'; }   // plane y = y0 (the front): u → +x, v → −z
+function onR(o, x0, y0, z0, inner) { var P = IP(o, x0, y0, z0), s = o.s; return '<g transform="' + mtx(-AY[0] * s, -AY[1] * s, -AZ[0] * s, -AZ[1] * s, P[0], P[1]) + '">' + inner + '</g>'; }  // plane x = x0 (the right side): u → −y, v → −z
+function onT(o, x0, y0, z0, inner) { var P = IP(o, x0, y0, z0), s = o.s; return '<g transform="' + mtx(AX[0] * s, AX[1] * s, AY[0] * s, AY[1] * s, P[0], P[1]) + '">' + inner + '</g>'; }   // plane z = z0 (the top): u → +x, v → +y
 function ipoly(o, pts, fill, sw, ex) { return '<path d="' + pts.map(function (p, i) { var q = IP(o, p[0], p[1], p[2]); return (i ? "L" : "M") + f(q[0]) + " " + f(q[1]); }).join(" ") + ' Z" fill="' + fill + '" stroke="' + INK + '" stroke-width="' + (sw == null ? 1.8 : sw) + '" stroke-linejoin="round"' + (ex || "") + '/>'; }
 // an upright box from (x, y, z) of size w × d × h, three visible faces
 function ibox(o, x, y, z, w, d, h, top, left, right, sw) {
@@ -191,31 +195,66 @@ function slabL(o, x0, y0, z0, depth, d, front, side, inner, part, sw) {
   if (part !== "sides") s += onL(o, x0, y0, z0, '<path d="' + d + '" fill="' + front + '" fill-rule="evenodd" stroke="' + INK + '" stroke-width="' + sw + '" stroke-linejoin="round"/>' + (inner || ""));
   return s;
 }
-// a vertical cylinder: base centre (x, y, z), radius r, height h; screen ellipses rx = 1.2247 r, ry = .7071 r. cap: SVG drawn on the top face
+// a vertical cylinder: base centre (x, y, z), radius r, height h. cap: SVG drawn on the top face
+function ringPts(o, x, y, z, r, n) { var p = [], i; for (i = 0; i < n; i++) { var a = i / n * Math.PI * 2; p.push(IP(o, x + r * Math.cos(a), y + r * Math.sin(a), z)); } return p; }
 function cylZ(o, x, y, z, r, h, col, cap, sw, glass) {
-  var B = IP(o, x, y, z), Tp = IP(o, x, y, z + h), rx = 1.2247 * r * o.s, ry = .7071 * r * o.s; sw = sw || 2.2;
-  var body = '<path d="M' + f(B[0] - rx) + ' ' + f(Tp[1]) + ' L' + f(B[0] - rx) + ' ' + f(B[1]) + ' A' + f(rx) + ' ' + f(ry) + ' 0 0 0 ' + f(B[0] + rx) + ' ' + f(B[1]) + ' L' + f(B[0] + rx) + ' ' + f(Tp[1]) + ' Z" fill="' + col + '" stroke="' + INK + '" stroke-width="' + sw + '"' + (glass ? ' fill-opacity=".45"' : "") + '/>';
-  return body + '<ellipse cx="' + f(Tp[0]) + '" cy="' + f(Tp[1]) + '" rx="' + f(rx) + '" ry="' + f(ry) + '" fill="' + col + '" stroke="' + INK + '" stroke-width="' + sw + '"' + (glass ? ' fill-opacity=".35"' : "") + '/>' + (cap ? onT(o, x, y, z + h, cap) : "");
+  var n = 72, B = ringPts(o, x, y, z, r, n), Tp = ringPts(o, x, y, z + h, r, n), iL = 0, iR = 0, i; sw = sw || 2.2;
+  for (i = 0; i < n; i++) { if (B[i][0] < B[iL][0]) iL = i; if (B[i][0] > B[iR][0]) iR = i; }
+  // the lower arc of the base, from the left extreme to the right extreme
+  var arcA = [], arcB = [];
+  for (i = iL; ; i = (i + 1) % n) { arcA.push(B[i]); if (i === iR) break; }
+  for (i = iL; ; i = (i - 1 + n) % n) { arcB.push(B[i]); if (i === iR) break; }
+  var mid = function (a) { return a[Math.floor(a.length / 2)][1]; }, arc = mid(arcA) > mid(arcB) ? arcA : arcB;
+  var d = "M" + f(Tp[iL][0]) + " " + f(Tp[iL][1]) + arc.map(function (p) { return " L" + f(p[0]) + " " + f(p[1]); }).join("") + " L" + f(Tp[iR][0]) + " " + f(Tp[iR][1]) + " Z";
+  var top = "M" + Tp.map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + " Z";
+  return '<path d="' + d + '" fill="' + col + '" stroke="' + INK + '" stroke-width="' + sw + '"' + (glass ? ' fill-opacity=".45"' : "") + ' stroke-linejoin="round"/>' +
+    '<path d="' + top + '" fill="' + col + '" stroke="' + INK + '" stroke-width="' + sw + '"' + (glass ? ' fill-opacity=".35"' : "") + '/>' + (cap ? onT(o, x, y, z + h, cap) : "");
 }
 // a cylinder lying along x from x0 to x1 at (y, z), radius r. Its +x end is cut: cap = SVG on that end (centred at 0,0).
-// stripes: [{col, w, ph}] wind round it as a helix (only the visible half is drawn), turns = how many turns over the length
+// stripes: [{col, w, ph}] wind round it as a helix (the far half faint), turns = how many turns over the length
 function cylX(o, x0, x1, y, z, r, col, cap, stripes, turns, t, sw) {
-  var A = IP(o, x0, y, z), Bp = IP(o, x1, y, z), s = "", sc = o.s; sw = sw || 2.4;
-  function pe(a) { return [CI * r * Math.cos(a) * sc, (-SI * r * Math.cos(a) + r * Math.sin(a)) * sc]; }   // end-circle point (screen offset)
-  var p1 = pe(-Math.PI / 4), p2 = pe(3 * Math.PI / 4);
+  var A = IP(o, x0, y, z), Bp = IP(o, x1, y, z), s = "", sc = o.s, i; sw = sw || 2.4;
+  function pe(a) { var u = r * Math.cos(a), v = r * Math.sin(a); return [(-AY[0] * u - AZ[0] * v) * sc, (-AY[1] * u - AZ[1] * v) * sc]; }
+  var ax = Bp[0] - A[0], ay = Bp[1] - A[1], L = Math.hypot(ax, ay) || 1, nx = -ay / L, ny = ax / L, best = -1e9, worst = 1e9, a1 = 0, a2 = 0;
+  for (i = 0; i < 180; i++) { var a = i / 180 * Math.PI * 2, p = pe(a), q = p[0] * nx + p[1] * ny; if (q > best) { best = q; a1 = a; } if (q < worst) { worst = q; a2 = a; } }
+  var p1 = pe(a1), p2 = pe(a2);
   s += onR(o, x0, y, z, '<circle r="' + r + '" fill="' + col + '" stroke="' + INK + '" stroke-width="' + sw + '"/>');
   s += '<path d="M' + f(A[0] + p1[0]) + ' ' + f(A[1] + p1[1]) + ' L' + f(Bp[0] + p1[0]) + ' ' + f(Bp[1] + p1[1]) + ' L' + f(Bp[0] + p2[0]) + ' ' + f(Bp[1] + p2[1]) + ' L' + f(A[0] + p2[0]) + ' ' + f(A[1] + p2[1]) + ' Z" fill="' + col + '"/>';
   s += '<path d="M' + f(A[0] + p1[0]) + ' ' + f(A[1] + p1[1]) + ' L' + f(Bp[0] + p1[0]) + ' ' + f(Bp[1] + p1[1]) + ' M' + f(A[0] + p2[0]) + ' ' + f(A[1] + p2[1]) + ' L' + f(Bp[0] + p2[0]) + ' ' + f(Bp[1] + p2[1]) + '" stroke="' + INK + '" stroke-width="' + sw + '"/>';
+  // which half faces you: world normal (0, −cos a, −sin a) against the view direction
+  var V = PROJ === "iso" ? [1, 1] : [1, .75];
   (stripes || []).forEach(function (st) {
-    var d = "", dh = "", on = false, onh = false, n = 200, i;
+    var d = "", dh = "", on = false, onh = false, n = 200;
     for (i = 0; i <= n; i++) {
-      var u = i / n, a = u * turns * Math.PI * 2 + st.ph + (t || 0) * 1.2, vis = -Math.cos(a) - Math.sin(a) > -.05, p = pe(a), X = lerp(A[0], Bp[0], u) + p[0] * .8, Y = lerp(A[1], Bp[1], u) + p[1] * .8;
+      var u = i / n, a = u * turns * Math.PI * 2 + st.ph + (t || 0) * 1.2, vis = -V[0] * Math.cos(a) - V[1] * Math.sin(a) > -.05, p = pe(a), X = lerp(A[0], Bp[0], u) + p[0] * .8, Y = lerp(A[1], Bp[1], u) + p[1] * .8;
       if (vis) { d += (on ? " L" : " M") + f(X) + " " + f(Y); on = true; onh = false; } else { dh += (onh ? " L" : " M") + f(X) + " " + f(Y); onh = true; on = false; }
     }
     s += '<path d="' + dh + '" fill="none" stroke="' + st.col + '" stroke-width="' + f(st.w * .7) + '" stroke-linecap="round" opacity=".35"/>';
     s += '<path d="' + d + '" fill="none" stroke="' + INK + '" stroke-width="' + f(st.w + 3) + '" stroke-linecap="round"/><path d="' + d + '" fill="none" stroke="' + st.col + '" stroke-width="' + st.w + '" stroke-linecap="round"/>';
   });
   return s + onR(o, x1, y, z, '<circle r="' + r + '" fill="' + col + '" stroke="' + INK + '" stroke-width="' + sw + '"/>' + (cap || ""));
+}
+
+// a cylinder pointing at you along y, from y0 (far) to y1 (near) at (x, z), radius r: the near end is the cut face (cap, a full circle)
+function cylY(o, x, z, y0, y1, r, col, cap, stripes, turns, t, sw) {
+  var A = IP(o, x, y0, z), Bp = IP(o, x, y1, z), s = "", sc = o.s, i; sw = sw || 2.4;
+  function pe(a) { var u = r * Math.cos(a), v = r * Math.sin(a); return [(AX[0] * u - AZ[0] * v) * sc, (AX[1] * u - AZ[1] * v) * sc]; }
+  var ax = Bp[0] - A[0], ay = Bp[1] - A[1], L = Math.hypot(ax, ay) || 1, nx = -ay / L, ny = ax / L, best = -1e9, worst = 1e9, a1 = 0, a2 = 0;
+  for (i = 0; i < 180; i++) { var a = i / 180 * Math.PI * 2, p = pe(a), q = p[0] * nx + p[1] * ny; if (q > best) { best = q; a1 = a; } if (q < worst) { worst = q; a2 = a; } }
+  var p1 = pe(a1), p2 = pe(a2);
+  s += onL(o, x, y0, z, '<circle r="' + r + '" fill="' + col + '" stroke="' + INK + '" stroke-width="' + sw + '"/>');
+  s += '<path d="M' + f(A[0] + p1[0]) + ' ' + f(A[1] + p1[1]) + ' L' + f(Bp[0] + p1[0]) + ' ' + f(Bp[1] + p1[1]) + ' L' + f(Bp[0] + p2[0]) + ' ' + f(Bp[1] + p2[1]) + ' L' + f(A[0] + p2[0]) + ' ' + f(A[1] + p2[1]) + ' Z" fill="' + col + '"/>';
+  s += '<path d="M' + f(A[0] + p1[0]) + ' ' + f(A[1] + p1[1]) + ' L' + f(Bp[0] + p1[0]) + ' ' + f(Bp[1] + p1[1]) + ' M' + f(A[0] + p2[0]) + ' ' + f(A[1] + p2[1]) + ' L' + f(Bp[0] + p2[0]) + ' ' + f(Bp[1] + p2[1]) + '" stroke="' + INK + '" stroke-width="' + sw + '"/>';
+  var back = [A[0] - Bp[0], A[1] - Bp[1]];   // the body shows on the side the far end lies toward
+  (stripes || []).forEach(function (st) {
+    var d = "", on = false, n = 240;
+    for (i = 0; i <= n; i++) {
+      var u = i / n, a = u * turns * Math.PI * 2 + st.ph + (t || 0) * 1.2, p = pe(a), vis = p[0] * back[0] + p[1] * back[1] > 0, X = lerp(A[0], Bp[0], u) + p[0] * .8, Y = lerp(A[1], Bp[1], u) + p[1] * .8;
+      if (vis) { d += (on ? " L" : " M") + f(X) + " " + f(Y); on = true; } else on = false;
+    }
+    s += '<path d="' + d + '" fill="none" stroke="' + INK + '" stroke-width="' + f(st.w + 3) + '" stroke-linecap="round"/><path d="' + d + '" fill="none" stroke="' + st.col + '" stroke-width="' + st.w + '" stroke-linecap="round"/>';
+  });
+  return s + onL(o, x, y1, z, '<circle r="' + r + '" fill="' + col + '" stroke="' + INK + '" stroke-width="' + sw + '"/>' + (cap || ""));
 }
 
 // ── the uterus cut open, isometric: the wall as a thick shell sliced through, the fluid inside, the placenta on the upper wall,
@@ -287,11 +326,11 @@ shot(8, push(440, 280, 1.45, 1.58), function (u, d, t) {
 function cellsCap(r, col, t) { var q = '<circle r="' + r + '" fill="#e8c3b3"/>'; for (var i = 0; i < 6; i++) { var a = i / 6 * 6.28 + t * .3, rr = r * .55; q += rbc(Math.cos(a) * rr, Math.sin(a) * rr, r * .22, col, i * 30); } return q + rbc(0, 0, r * .22, col, 0); }
 shot(9, push(320, 400, 1.0, 1.05), function (u, d, t) {
   var s = paper(), o = { ox: 0, oy: 150, s: 1 };
-  s += cylX(o, -60, 420, -110, 0, 70, MBLOOD, cellsCap(70, "#d27a5e", t), [], 0, t);
-  s += cylX(o, 140, 620, 150, -40, 70, "#8fa3b0", cellsCap(70, "#c48a72", -t), [], 0, t);
-  s += arrow(150, 250, 290, 330, "#fff", 4, at(u, .2, .5)) + arrow(150, 500, 290, 580, "#fff", 4, at(u, .2, .5));
-  s += label(400, 300, 520, 190, "دم الأم", ORANGE, at(u, .3, .5), 26) + label(470, 640, 380, 730, "دم الطفل", BLUE, at(u, .7, .5), 26);
-  return s + appear(at(u, 1.2, .3), C(320, 470, 44, PAPER, 2.4) + T("؟", 320, 494, 58, ORANGE, 800)) + cross(320, 470, 1.15, at(u, 2, .5));
+  o = { ox: 320, oy: 420, s: 1 };
+  s += cylY(o, -150, 120, -700, 0, 95, MBLOOD, cellsCap(95, "#d27a5e", t), [], 0, t);
+  s += cylY(o, 150, -140, -700, 0, 95, "#8fa3b0", cellsCap(95, "#c48a72", -t), [], 0, t);
+  s += label(170, 300, 120, 180, "دم الأم", ORANGE, at(u, .3, .5), 26) + label(470, 560, 450, 700, "دم الطفل", BLUE, at(u, .7, .5), 26);
+  return s + appear(at(u, 1.2, .3), C(320, 420, 44, PAPER, 2.4) + T("؟", 320, 444, 58, ORANGE, 800)) + cross(320, 420, 1.15, at(u, 2, .5));
 });
 // 10–11 · the placenta as a cut block (after Gray's fig. 39): the section on the front face, the chorionic plate with the
 // cord vessels on top, the cord rising out of it. lake: the mother's blood filling the spaces
@@ -314,7 +353,7 @@ function placentaBlock(o, t, opt) {
   s += cylZ(o, W * .5, Dp * .5, H, 34, 230, JELLY, '<circle cx="-8" cy="4" r="14" fill="' + OXY + '" stroke="' + INK + '" stroke-width="1.6"/><circle cx="14" cy="-10" r="8" fill="' + POOR + '" stroke="' + INK + '" stroke-width="1.4"/><circle cx="12" cy="16" r="8" fill="' + POOR + '" stroke="' + INK + '" stroke-width="1.4"/>');
   return s;
 }
-var PBO = { ox: 233, oy: 470, s: .62 };
+var PBO = { ox: 90, oy: 640, s: .72 };
 shot(10, push(320, 393, .98, 1.04), function (u, d, t) {
   return paper() + appear(at(u, 0, .5), placentaBlock(PBO, t, { lake: 0, hi: at(u, .8, .6) })) +
     label(IP(PBO, 120, 200, 380)[0], IP(PBO, 120, 200, 380)[1], 120, 300, "فروع", OLIVE, at(u, 1, .5), 26) + label(IP(PBO, 260, 100, 700)[0] + 20, IP(PBO, 260, 100, 700)[1], 470, 60, "الحبل السري", OLIVE, at(u, 1.2, .5), 20) +
@@ -335,13 +374,13 @@ function barrierBlock(o, t, opt) {
   s += onT(o, 0, 0, H, '<clipPath id="' + cid + '"><rect width="' + W + '" height="' + Dp + '"/></clipPath><g clip-path="url(#' + cid + ')">' + top + '</g><rect width="' + W + '" height="' + Dp + '" fill="none" stroke="' + INK + '" stroke-width="2.4"/>');
   return s;
 }
-var BBO = { ox: 230, oy: 420, s: .8 };
+var BBO = { ox: 95, oy: 480, s: .8 };
 shot(12, push(320, 400, .98, 1.05), function (u, d, t) {
   var o = BBO, k = at(u, .6, .6);
   var s = paper() + barrierBlock(o, t, {});
   // the hair: a dark cylinder lying in front, its cut end 20× the wall
-  s += G("", cylX(BBO, 0, 380, 290, 0, 40, "#3d3229", '<circle r="40" fill="#5a4a3c" stroke="' + INK + '" stroke-width="2"/><circle r="18" fill="#2f261f"/>', [], 0, t), k);
-  return s + label(IP(BBO, 120, 230, 212)[0], IP(BBO, 120, 230, 212)[1], 130, 330, "الجدار", OLIVE, at(u, .3, .5), 26) + G("", T("شعرة", 520, 720, 28, INK, 800), k) + numBox("÷20", 120, 720, at(u, 1.2, .3), 40);
+  s += G("", cylY(BBO, 300, -120, 0, 330, 40, "#3d3229", '<circle r="40" fill="#5a4a3c" stroke="' + INK + '" stroke-width="2"/><circle r="18" fill="#2f261f"/>', [], 0, t), k);
+  return s + label(IP(BBO, 120, 230, 212)[0], IP(BBO, 120, 230, 212)[1], 130, 330, "الجدار", OLIVE, at(u, .3, .5), 26) + G("", T("شعرة", 470, 640, 28, INK, 800), k) + numBox("÷20", 140, 660, at(u, 1.2, .3), 40);
 }, { tr: "in" });
 shot(13, push(300, 400, 1.06, 1.0), function (u, d, t) {
   return paper() + barrierBlock(BBO, t, { o2: at(u, .2, .5), co2: at(u, 2.2, .5) }) +
@@ -352,9 +391,9 @@ shot(14, push(320, 430, 1.04, .97), function (u, d, t) {
   var o = { ox: 320, oy: 450, s: 1 }, s = paper(), k = at(u, .2, 3), i, r = 150;
   s += cylZ(o, 0, 0, -200, r, 420, "#dfe8e8", "", 2.6, true);
   var W = IP(o, 0, 0, 150), B = IP(o, 0, 0, -200);
-  s += '<path d="M' + f(B[0] - 1.2247 * r) + ' ' + f(W[1]) + ' L' + f(B[0] - 1.2247 * r) + ' ' + f(B[1]) + ' A' + f(1.2247 * r) + ' ' + f(.7071 * r) + ' 0 0 0 ' + f(B[0] + 1.2247 * r) + ' ' + f(B[1]) + ' L' + f(B[0] + 1.2247 * r) + ' ' + f(W[1]) + ' Z" fill="#c9d8d8" opacity=".8"/>';
+  s += cylZ(o, 0, 0, -200, r - 3, 350, "#c9d8d8", "", 1, true);
   for (i = 0; i < 9; i++) { var a = i / 9 * 6.28 + t * .3, rr = 20 + k * (60 + 25 * Math.sin(t + i)); s += '<ellipse cx="' + f(W[0] + Math.cos(a) * rr * 1.2) + '" cy="' + f(W[1] + 120 + Math.sin(a) * rr * .8) + '" rx="' + f(30 + k * 45) + '" ry="' + f(20 + k * 30) + '" fill="#a66a3a" opacity="' + f(.1 + .06 * k) + '"/>'; }
-  s += '<ellipse cx="' + f(W[0]) + '" cy="' + f(W[1]) + '" rx="' + f(1.2247 * r) + '" ry="' + f(.7071 * r) + '" fill="#d3e0e0" opacity=".85" stroke="' + INK + '" stroke-width="1.6"/>';
+
   var bob = 6 * Math.sin(t * 1.6);
   s += '<path d="M' + f(W[0]) + ' ' + f(W[1] - 300) + ' L' + f(W[0]) + ' ' + f(W[1] + 60 + bob) + '" stroke="' + INK + '" stroke-width="1.6"/>' + R(W[0] - 20, W[1] - 320, 40, 28, "#e6d0a0", 1.6);
   s += slabL({ ox: W[0] - 20, oy: W[1] + 120 + bob, s: 1 }, -55, 0, 60, 26, "M0 0 L110 0 L110 124 L0 124 Z", "#f2e8d4", "#d8cbb0", (function () { var m = ""; for (var j = 0; j < 26; j++) m += '<path d="M' + f(12 + hash(j) * 86) + ' ' + f(12 + hash(j + 5) * 100) + ' l8 -3" stroke="#4f3a22" stroke-width="4" stroke-linecap="round"/>'; return m; })());
@@ -362,7 +401,7 @@ shot(14, push(320, 430, 1.04, .97), function (u, d, t) {
 }, { tr: "out" });
 // 15 · unfold all the villi: about 12 m², a room's floor. An isometric room with thick cut walls; the floor tiles fill in
 shot(15, push(320, 400, 1.0, 1.06), function (u, d, t) {
-  var s = paper(), k = at(u, .4, 2.6), o = { ox: 320, oy: 200, s: .95 }, i, j, n = 0;
+  var s = paper(), k = at(u, .4, 2.6), o = { ox: 230, oy: 400, s: .95 }, i, j, n = 0;
   s += ibox(o, -20, -20, -20, 360, 280, 20, "#e3d8c0", "#cdbf9f", "#c2b392");
   s += ibox(o, -20, -20, 0, 20, 280, 180, "#d8ccae", "#e6dcc5", "#cfc2a2") + ibox(o, 0, -20, 0, 340, 20, 180, "#d8ccae", "#d9ccb0", "#cfc2a2");
   s += ipoly(o, [[60, 0, 120], [140, 0, 120], [140, 0, 60], [60, 0, 60]], "#b9c9cc", 1.6);   // a window in the back wall
@@ -377,11 +416,10 @@ shot(16, push(300, 400, .98, 1.08), function (u, d, t) {
 // 17 · one vein brings blood rich in oxygen, two arteries take the CO2 blood back: a length of cord cut across
 function cordCap(r) { return '<circle r="' + r + '" fill="' + JELLY + '"/><circle r="' + r + '" fill="url(#hatch)" opacity=".25"/>' + C(-r * .2, r * .08, r * .36, OXY, 2.6) + C(-r * .2, r * .08, r * .18, "#e7b39a", 1.6) + C(r * .45, -r * .36, r * .2, POOR, 2.4) + C(r * .45, -r * .36, r * .09, "#b9c8d0", 1.2) + C(r * .48, r * .46, r * .2, POOR, 2.4) + C(r * .48, r * .46, r * .09, "#b9c8d0", 1.2); }
 shot(17, push(320, 400, 1.04, .97), function (u, d, t) {
-  var o = { ox: 40, oy: 250, s: 1 }, s = paper();
-  s += cylX(o, -40, 430, 0, 0, 120, JELLY, cordCap(120), [{ col: OXY, w: 20, ph: 0 }, { col: POOR, w: 12, ph: 2.1 }, { col: POOR, w: 12, ph: 4.2 }], 1.4, t);
-  s += G("", arrow(120, 520, 250, 595, OXY, 6) + T("للطفل", 250, 640, 24, OXY, 800) + arrow(470, 300, 340, 225, POOR, 6) + T("للمشيمة", 450, 250, 24, POOR, 800), at(u, 1, .4));
-  var E = IP(o, 430, 0, 0);
-  s += label(E[0] - 20, E[1] + 10, 520, 560, "وريد", ORANGE, at(u, .6, .5), 28) + label(E[0] + 60, E[1] - 30, 480, 110, "شريانين", BLUE, at(u, 2.6, .5), 26) + label(E[0] + 40, E[1] + 85, 480, 110, "", BLUE, at(u, 2.8, .5), 26);
+  var o = { ox: 230, oy: 540, s: 1 }, s = paper(), r = 150;
+  s += cylY(o, 0, 0, -620, 0, r, JELLY, cordCap(r), [{ col: OXY, w: 20, ph: 0 }, { col: POOR, w: 12, ph: 2.1 }, { col: POOR, w: 12, ph: 4.2 }], 2.2, t);
+  s += G("", arrow(160, 690, 70, 750, OXY, 6) + T("للطفل", 160, 770, 24, OXY, 800) + arrow(470, 600, 560, 530, POOR, 6) + T("للمشيمة", 520, 640, 24, POOR, 800), at(u, 1, .4));
+  s += label(230 - r * .2, 540 + r * .08, 120, 400, "وريد", ORANGE, at(u, .6, .5), 28) + label(230 + r * .45, 540 - r * .36, 460, 400, "شريانين", BLUE, at(u, 2.6, .5), 26) + label(230 + r * .48, 540 + r * .46, 460, 400, "", BLUE, at(u, 2.8, .5), 26);
   return s;
 });
 // 18 · the mother's blood holds more oxygen: how does the baby get its share? two glass gauges
@@ -397,7 +435,7 @@ shot(18, push(320, 420, 1.04, .98), function (u, d, t) {
 // 19 · fetal haemoglobin grabs oxygen harder: oxygen hops from the mother's red cell to the baby's (thick iso discs)
 function rbcIso(o, x, y, r, col) { return cylZ(o, x, y, 0, r, 26, col, '<circle r="' + f(r * .55) + '" fill="#000" opacity=".14"/>', 2.4); }
 shot(19, push(320, 400, 1.0, 1.08), function (u, d, t) {
-  var o = { ox: 320, oy: 400, s: 1 }, s = paper() + rbcIso(o, -120, 60, 105, "#d27a5e") + rbcIso(o, 110, -110, 105, "#c9694c"), i;
+  var o = { ox: 270, oy: 470, s: 1.1 }, s = paper() + rbcIso(o, -120, 60, 105, "#d27a5e") + rbcIso(o, 110, -110, 105, "#c9694c"), i;
   var A = IP(o, -120, 60, 26), Bp = IP(o, 110, -110, 26);
   for (i = 0; i < 6; i++) { var ph = (t * .5 + i / 6) % 1, x = lerp(A[0] + 30, Bp[0] - 10, ease(ph)), y = lerp(A[1], Bp[1], ease(ph)) - Math.sin(ph * Math.PI) * 90 + i * 6; s += G("", o2dot(x, y, 12), at(u, .6, .4)); }
   for (i = 0; i < 5; i++) s += o2dot(Bp[0] - 30 + (i % 3) * 30, Bp[1] - 6 + Math.floor(i / 3) * 30, 12);
@@ -408,7 +446,7 @@ var HSHOE = "M-60 -70 L-60 20 A60 60 0 0 0 60 20 L60 -70 L28 -70 L28 20 A28 28 0
 shot(20, push(320, 420, 1.02, .97), function (u, d, t) {
   var k = at(u, .6, 1.2), nx = lerp(150, 330, k) + 3 * Math.sin(t * 9) * (1 - k), o = { ox: 140, oy: 300, s: 1 };
   var s = paper() + slabL({ ox: 150, oy: 410, s: .8 }, 0, 0, 0, 40, HSHOE, "#8fa3b0", "#6f8594", '<rect x="-60" y="-90" width="32" height="22" fill="#e9e3d6" stroke="' + INK + '" stroke-width="2"/><rect x="28" y="-90" width="32" height="22" fill="#e9e3d6" stroke="' + INK + '" stroke-width="2"/>');
-  s += cylX({ ox: 0, oy: 0, s: 1 }, nx / CI * .5 - 60, nx / CI * .5 + 60, -nx / CI * .5, -470 + 0, 7, "#b8b8b0", "", [], 0, t);
+  s += cylX({ ox: nx, oy: 410, s: 1 }, -60, 60, 0, 0, 7, "#b8b8b0", "", [], 0, t);
   s += slabL({ ox: 480, oy: 520, s: 1.25 }, 0, 0, 0, 44, HSHOE, ORANGE, "#8f3f22", '<rect x="-60" y="-90" width="32" height="22" fill="#e9e3d6" stroke="' + INK + '" stroke-width="2"/><rect x="28" y="-90" width="32" height="22" fill="#e9e3d6" stroke="' + INK + '" stroke-width="2"/>');
   return s + label(150, 450, 120, 600, "أضعف", BLUE, at(u, .3, .5), 26) + label(480, 560, 500, 700, "أقوى", ORANGE, at(u, .3, .5), 26);
 });
@@ -434,7 +472,7 @@ shot(23, push(330, 420, .9, .97), function (u, d, t) {
 // 24 · the odd fact: the baby's blood oxygen is close to yours on top of Everest (8,849 m). An isometric mountain block
 var EVEREST = "M0 380 L80 250 L130 280 L210 150 L250 175 L290 60 L330 120 L380 95 L440 210 L500 190 L560 380 Z", SNOW = "M210 150 L250 175 L290 60 L330 120 L380 95 L402 136 L370 140 L330 160 L290 120 L250 210 Z";
 shot(24, push(320, 420, 1.04, .97), function (u, d, t) {
-  var s = paper(), k = at(u, .3, 1.2), fl = 4 * Math.sin(t * 4), o = { ox: 70, oy: 110, s: .8 };
+  var s = paper(), k = at(u, .3, 1.2), fl = 4 * Math.sin(t * 4), o = { ox: 40, oy: 140, s: 1 };
   s += slabL(o, 0, 0, 0, 160, EVEREST, "#b9b2a2", "#9a927f", '<path d="' + SNOW + '" fill="#f6f3ea" stroke="' + INK + '" stroke-width="2"/><path d="M0 380 L560 380" stroke="' + INK + '" stroke-width="2"/>' +
     '<path d="M290 60 L290 0" stroke="' + INK + '" stroke-width="3"/><path d="M290 2 L' + f(330 + fl) + ' 14 L290 26 Z" fill="' + ORANGE + '" stroke="' + INK + '" stroke-width="1.6"/>');
   s += N("8,849 m", 170, 130, 30, INK) + tag("إفرست", 470, 130, at(u, .2, .3), 30, ORANGE);
