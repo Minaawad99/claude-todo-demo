@@ -117,6 +117,9 @@ references use. Use 3D (three.js) only if the user asks.
 - **One build that grows.** Draw the thing once as a function of the parts built so far, like `pipeShelter` in
   `videos/nuclear-shelter/cartoon/`. Each fix turns on one part; earlier parts stay. Show the inside with a see-through
   skin when it matters.
+- **Keep the camera back (the user's note after the pool).** Do not push in as tight as the pool video did: frame the
+  whole build (or most of it) most of the time, zoom ≈ 1.0–1.4, and make the parts themselves bigger and more detailed
+  so they read without a close-up. Use a close-up only for a part too small to see otherwise, and pull back right after.
 - **One continuous take.** The build stays centred. The camera holds 2–4 s, then eases in to the new part or back out
   as the build gets bigger. Hard cuts only for a cutaway (macro, molecule, night).
 - **Something new every 2–4 s.** Parts drop, stack, slide or pop in with a small overshoot.
