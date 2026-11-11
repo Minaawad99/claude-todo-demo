@@ -1,5 +1,15 @@
 # «إزاي الطفل بيتنفس في بطن أمه؟»: visual references and facts
 
+## Illustrations
+
+The drawings are illustrations the channel made in Google AI Studio (Nano Banana Pro) from prompts written for this
+episode, in the style of a technical cutaway reference image the user chose (ink outlines, colour wash, 3D volume):
+`sketch/img/src/01–12.jpg`. `sketch/img/prep.py` removes stray English words from 07 (inpainting), keys out the paper
+background to alpha and writes `sketch/img/NN.webp`. The video adds the Arabic labels, arrows, moving oxygen and blood,
+and the camera. 01 mother, 02 uterus with fetus head down, 03 fetus with cord, 04 placenta block, 05 villus close-up,
+06 umbilical cord cut across, 07 red cells, 08 cell, 09 tea bag, 10 magnets, 11 Everest block, 12 heart (unused).
+The room (12 m²) and the gauges are still drawn in code.
+
 - **Hand and layout:** the «طب إزاي؟» reference video v17 (`videos/_reference/tabizzay/sheets/v17.jpg`): the fetus inside a
   thick red uterus ring, pale amniotic fluid, a striped twisted cord. Looked at only; our script and drawings are new
   (v17 is about the first breath after birth; this episode is about the placenta before birth).
