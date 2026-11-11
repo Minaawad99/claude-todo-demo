@@ -11,8 +11,8 @@ description: >
 
 # «إيه الحكاية؟» — the «اسكتش» style
 
-**The user named this style «اسكتش»** and locked it after «المد والجزر». Use the same drawings, narration, sounds and
-music in every episode. It copies the look, pacing and narration of the «طب إزاي؟» series: 20 reference videos, measured in
+**The user named this style «اسكتش»** and locked it after «المد والجزر». Use the same drawings, narration and sounds in
+every episode. **No music unless the user asks for it** (see Music below). It copies the look, pacing and narration of the «طب إزاي؟» series: 20 reference videos, measured in
 `videos/_reference/tabizzay/STYLE.md`, with contact sheets, motion strips and transcripts. We make it under our own name.
 
 **The reference episode is `videos/tides/`.** Start every new episode from a copy of these files:
@@ -158,7 +158,12 @@ clip still has a synthesized stand-in.
 | px-wind-gust | Wind Gust (Dragon Studio 386158) | 0.25–4.76 s | wind |
 | px-music-box (source) → px-music-soft (used) | **Mysterious Music Box – The Midnight Hour** (the series music) | whole | bed |
 
-**Music.** The user approved this music and its level. `px-music-soft.mp3` in the kit is already made this way:
+**Music: never by default.** The user's standing rule: don't put the series music (or any music bed) under an
+episode unless they ask for it for that episode. Ask before adding it. `cues.js` adds it only when run as `MUSIC=1 node cues.js`,
+and never falls back to sfx.py's synthesized bed (`bed: false`). Without music the mix comes out about 3–4 dB quiet, so
+add `volume=4.2dB,` before `alimiter` in the render step to reach -14/-15 LUFS.
+
+When the user does ask for it: they approved this music and its level. `px-music-soft.mp3` in the kit is already made this way:
 - **Soften the ring:**
   `ffmpeg -i px-music-box.mp3 -af "highshelf=f=3000:g=-5,volume='if(lt(t,12),0.6+0.4*t/12,1)':eval=frame" px-music-soft.mp3`
   This takes down the music-box ring, which the user found too much at the start.
@@ -170,8 +175,9 @@ clip still has a synthesized stand-in.
 - the bumper ticks;
 - a flip for every shot change;
 - the summary-card build;
-- the ask box;
-- the music.
+- the ask box.
+
+The music stays off unless the user asked for it (`MUSIC=1`).
 
 Add one or two sounds per line matched to what moves (`lab`, `ding`, `scribble`, `paper`, `sea`, `drone`; see
 `videos/tides/cues.js`), then:
@@ -183,7 +189,7 @@ Credit every clip in `refs/SOURCES.md`.
 
 ```
 TAIL=3 node render.js $PWD/<slug>/sketch/index.html <mix.wav> <scratchpad>/<slug>.mp4
-ffmpeg -y -i <mp4> -c:v copy -af "alimiter=limit=0.6:level=false:attack=1:release=60" -c:a aac -b:a 192k -ar 48000 <fixed.mp4>
+ffmpeg -y -i <mp4> -c:v copy -af "volume=4.2dB,alimiter=limit=0.6:level=false:attack=1:release=60" -c:a aac -b:a 192k -ar 48000 <fixed.mp4>
 python3 qa.py <fixed.mp4>
 ```
 

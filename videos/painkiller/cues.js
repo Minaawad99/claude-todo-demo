@@ -83,7 +83,8 @@ a(L(22) + 0.3, 'pop', 0.3); a(L(22) + 1.4, 'pop', 0.3); a(L(22) + 2.8, 'pop', 0.
 // 23 · aspirin, the timeline fills, 72 years
 lab(23, 0.4); a(L(23) + 0.8, 'pop', 0.25); for (let k = 0; k < 8; k++) a(L(23) + 1.2 + k * 0.32, 'tick', 0.13); ding(L(23) + 3.7);
 
-const MUSIC = has('music-soft') ? 'music-soft' : null;
+// No music unless the user asks for it for this episode (their standing rule): run with MUSIC=1 only after they said yes.
+const MUSIC = process.env.MUSIC === '1' && has('music-soft') ? 'music-soft' : null;
 if (MUSIC) rec(0, MUSIC, 0.42, 0, window.TIMING.duration + 2.5, 0.6);
-fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: !MUSIC, cues: c }, null, 1));
+fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: c }, null, 1));
 console.log(c.length + ' cues; kit clips here: ' + (['swipe', 'paper', 'pencil-scribble', 'ding', 'clock-ticking', 'space-drone', 'ocean-waves', 'water-rush', 'wind-gust', 'music-soft'].filter(has).join(', ') || 'none'));
