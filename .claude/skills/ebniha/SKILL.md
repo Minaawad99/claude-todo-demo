@@ -40,7 +40,7 @@ say so and offer the «اسكتش» or animation style.
 
 | # | beat | عامية مصرية | فصحى |
 |---|---|---|---|
-| 1 | hook, line 0 | «لو <عملت الحاجة البسيطة>، يبقى عندك <الحاجة> بدائي!» | «لو <فعلتَ كذا>، لصار عندك <الشيء> بدائيًّا!» |
+| 1 | hook, line 0 (fake win) | «لو <عملت الحاجة البسيطة>… مبروك، بقى عندك <الحاجة>!» | «لو <فعلتَ كذا>… مبروك، صار عندك <الشيء>!» |
 | 2 | first problem, line 1 | «بس المشكلة إن…» | «لكنّ المشكلة أنّ…» |
 | 3 | fix | «عشان كده بتـ…» / «فبتـ…» | «لذلك…» / «فـ…» |
 | 4 | part's real name | «وده اسمه…» / «وده بيسمّوه…» | «ويُسمّى هذا…» |
@@ -52,6 +52,9 @@ say so and offer the «اسكتش» or animation style.
 
 **Rules:**
 - No greeting, no series name, no «هشرحهالك في دقيقة». Line 0 is the hook.
+- **The hook is a fake win (the user asked for it).** Line 0 congratulates the viewer on the crude version, with
+  confetti on screen, and line 1 breaks it with «بس المشكلة…». The real «ومبروك» at the end answers it. «بدائي» may be
+  used in the tag instead of the line.
 - The first problem lands by second 5. Then 5–7 problem → fix rounds. A round is 2–3 lines: the failure, the fix, and
   often the part's name.
 - Every fix adds exactly one part the viewer can see. If a line adds nothing to the picture, cut it.
