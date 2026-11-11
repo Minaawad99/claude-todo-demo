@@ -1,7 +1,7 @@
 /* «ابنيها بنفسك» — sound effects synthesised in JavaScript (no music, no recorded clips).
    const SFX = require("../_templates/ebniha/sfx.js");
    SFX.render([{t: 1.2, fx: "dig", gain: 1, dur: 1.5}, ...], durationSeconds, "out.wav")   → 48 kHz mono 16-bit WAV
-   Effects: dig, pour, splash, party, crumble, crack, clank, spray, pump, suck, buzz, zap, pop, whoosh, ding, rustle,
+   Effects: prop, jet, wind, dig, pour, splash, party, crumble, crack, clank, spray, pump, suck, buzz, zap, pop, whoosh, ding, rustle,
             shower, eww, tick, thud, bubble. Each takes {dur} where it makes sense; all are deterministic (seeded). */
 const fs = require("fs");
 const SR = 48000;
@@ -66,6 +66,9 @@ const FX = {
   zap() { const n = N(.7); const a = mul(tone(n, 120, 120, "sq"), env(n, .01, .3, .2)); gain(a, .3); for (let k = 0; k < 30; k++) add(a, mul(biquad(noise(N(.008)), "hp", 3000), env(N(.008), .0003, .002)), rnd() * .6, .8); return norm(biquad(a, "lp", 6000), .6); },
   rustle(o) { const d = (o && o.dur) || 1.2, out = new Float32Array(N(d)); for (let k = 0; k < d * 40; k++) { const n = N(.04); add(out, mul(biquad(noise(n), "bp", 2500 + rnd() * 3500, 1.5), env(n, .004, .012)), rnd() * (d - .05), .4 + rnd() * .6); } return norm(out, .45); },
   shower(o) { const d = (o && o.dur) || 1.8, n = N(d); const a = biquad(biquad(noise(n), "hp", 2500), "lp", 9000); fade(a, .1, .3); for (let k = 0; k < d * 30; k++) add(a, mul(tone(N(.02), 900 + rnd() * 900, 1600), env(N(.02), .001, .005)), rnd() * d, .3); return norm(a, .45); },
+  prop(o) { const d = (o && o.dur) || 3, n = N(d); const a = biquad(tone(n, 95, 95, "saw"), "lp", 900); for (let i = 0; i < n; i++) a[i] *= .55 + .45 * Math.abs(Math.sin(i / SR * Math.PI * 38)); add(a, biquad(noise(n), "bp", 700, 1), 0, .15); fade(a, .3, .5); return norm(a, .5); },
+  jet(o) { const d = (o && o.dur) || 3, n = N(d); const a = biquad(noise(n), "lp", 900); add(a, biquad(noise(n), "bp", 2600, 2), 0, .25); add(a, tone(n, 55, 70, "saw"), 0, .12); for (let i = 0; i < n; i++) a[i] *= Math.min(1, i / SR / .8); fade(a, .05, .7); return norm(a, .55); },
+  wind(o) { const d = (o && o.dur) || 3, n = N(d); const a = sweepBP(noise(n), 0, 0, 1.5, u => 400 + 300 * Math.sin(u * 9) + 200 * Math.sin(u * 23)); fade(a, .5, .8); return norm(a, .4); },
   eww() { const n = N(.7); const a = mul(biquad(tone(n, 330, 170, "saw"), "lp", 1400), env(n, .02, .3, .25)); for (let i = 0; i < n; i++) a[i] *= 1 + .3 * Math.sin(i / SR * 2 * Math.PI * 14); return norm(a, .5); },
 };
 
