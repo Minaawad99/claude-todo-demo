@@ -21,10 +21,17 @@ const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration :
 // a clip lives in the episode's sfx/ (gitignored, one-off sounds) or in the shared «اسكتش» kit (committed)
 const KIT = '../_templates/sketch/sfx/', where = n => fs.existsSync(__dirname + '/sfx/px-' + n + '.mp3') ? 'sfx/px-' + n + '.mp3' : fs.existsSync(__dirname + '/' + KIT + 'px-' + n + '.mp3') ? KIT + 'px-' + n + '.mp3' : null;
 const has = n => !!where(n);
-const a = (t, fx, gain, dur) => c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), fx, gain }, dur ? { dur: +dur.toFixed(2) } : {}));
-const rec = (t, file, gain, from, dur, duck, alt, altGain) => has(file)
-  ? c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), file: where(file), gain: +gain.toFixed(2), from: from || 0 }, dur ? { dur: +dur.toFixed(2) } : {}, duck != null ? { duck } : {}))
-  : alt && a(t, alt, altGain == null ? gain : altGain, dur);
+// Every sound in this episode is synthesized in Java (no recorded clips), as the user asked:
+//   javac -d <tmp> ../_templates/sketch/javasfx/SfxSynth.java && java -cp <tmp> SfxSynth sfx-java
+// a(t, name, gain, dur) plays sfx-java/<name>.wav, levelled by peak; dur trims a long one (flow, rain, clock, fizz…).
+const JBOOST = 5;   // peak-levelled synth sounds sit ~14 dB under the old RMS-levelled clips; this brings them to the same place
+const JAVA = { fill: 'flow', spray: 'rain', hum: 'servo', waves: 'slosh' };
+const a = (t, fx, gain, dur) => { const n = JAVA[fx] || fx; if (!fs.existsSync(__dirname + '/sfx-java/' + n + '.wav')) throw new Error('no Java sound ' + n);
+  c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), file: 'sfx-java/' + n + '.wav', peak: true, gain: +(gain * JBOOST).toFixed(2) }, dur ? { dur: +dur.toFixed(2) } : {})); };
+// the kit names, mapped to their Java versions (the recorded clips are not used)
+const KITMAP = { swipe: ['swipe', 1.6], paper: ['paper', 1.2], 'pencil-scribble': ['scribble', 1.0], ding: ['ding', 1.0], 'clock-ticking': ['clock', 1.0],
+  'water-rush': ['rain', 1.0], 'ocean-waves': ['slosh', 1.0], 'space-drone': ['servo', .6], 'wind-gust': ['whoosh', 1.0] };
+const rec = (t, file, gain, from, dur) => { const m = KITMAP[file]; if (m) a(t, m[0], gain * m[1], m[0] === 'swipe' || m[0] === 'paper' || m[0] === 'scribble' || m[0] === 'ding' ? 0 : dur); };
 // the kit as one-liners
 const lab = (i, dt) => a(L(i) + dt, 'tick', 0.2);                                                      // a label draws in
 const swipe = i => rec(L(i) - 0.08, 'swipe', 0.3, 0.6, 0.42, 1.0, 'whoosh', 0.2);                      // shot change

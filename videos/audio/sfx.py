@@ -319,7 +319,8 @@ def mix(voice, cues, use_bed=True, bed_db=-18.0, fx_db=-10.0, duck_db=-8.0, tail
         f = clip(c) if "file" in c else FX[c["fx"]](c.get("dur", None) or FX[c["fx"]].__defaults__[0], **({"f": c["f"]} if "f" in c else {})); s = int(c["t"] * SR)
         # recorded clips are levelled by loudness (RMS) against the voice, rec_db above it at gain 1, so a jet roar can stand up
         # to the narrator; synthesized fx are levelled by peak, well under it. "duck": 0..1 scales how much the clip is ducked (false = not at all).
-        if "file" in c: f = f / (rms_lin(f) + 1e-9) * 10 ** ((speech_rms + rec_db) / 20) * c.get("gain", 1.0)
+        # "peak": true marks a synthesized file (e.g. the Java kit): levelled by peak like the built-in fx, not by loudness
+        if "file" in c and not c.get("peak"): f = f / (rms_lin(f) + 1e-9) * 10 ** ((speech_rms + rec_db) / 20) * c.get("gain", 1.0)
         else: f = f / (np.max(np.abs(f)) + 1e-9) * 10 ** ((speech_rms + 3 + fx_db) / 20) * c.get("gain", 1.0)
         e = min(n, s + len(f)); dk = c.get("duck", 1.0); dk = 0.0 if dk is False else float(dk)   # 0 = never ducked, 0.5 = half the ducking
         out[s:e] += f[: e - s] * gain[s:e] ** dk
