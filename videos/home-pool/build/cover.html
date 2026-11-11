@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>ابنِ مسبحك بنفسك — ابنيها بنفسك</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* «ابنيها بنفسك»: full bleed, no frame, no title. One word of caption at a time, white with a thick dark outline. */
+  html, body { margin: 0; background: #000; width: 540px; height: 960px; overflow: hidden; }
+  .canvas { position: absolute !important; left: 0; top: 0; transform: scale(1.5); transform-origin: 0 0; }
+  .ov { position: absolute; left: 0; right: 0; text-align: center; font-family: "Noto Sans Arabic", sans-serif; font-weight: 900; direction: rtl; }
+  .t1 { top: 86px; font-size: 44px; line-height: 1.2; color: #fff; -webkit-text-stroke: 9px #121212; paint-order: stroke fill; }
+  .t1 b { color: #ffd23f; }
+  .t2 { top: 462px; } .t2 span { white-space: nowrap; display: inline-block; background: #1b1a1f; color: #ffd23f; font-size: 15px; padding: 5px 14px; border-radius: 22px; border: 2px solid #121212; }
+  .t3 { top: 510px; } .t3 span { white-space: nowrap; display: inline-block; background: #ff5a4e; color: #fff; font-size: 15px; padding: 5px 14px; border-radius: 20px; border: 2px solid #121212; }
+  .canvas { position: relative; width: 360px; height: 640px; overflow: hidden; background: #8fc8ea; }
+  svg { direction: ltr; display: block; position: absolute; left: 0; top: 0; width: 360px; height: 640px; }
+  .tg { font: 800 15px "Noto Sans Arabic", sans-serif; }
+  .sm { font: 800 12px "Noto Sans Arabic", sans-serif; }
+  .big { font: 900 24px "Noto Sans Arabic", sans-serif; }
+  .hd { font: 900 22px "Noto Sans Arabic", sans-serif; }
+  .cap { font: 900 36px "Noto Sans Arabic", sans-serif; fill: #fff; stroke: #121212; stroke-width: 8px; stroke-linejoin: round; paint-order: stroke; }
+</style></head>
+<body>
+<div class="canvas">
+  <svg id="v" viewBox="0 0 360 640"></svg>
+  <svg id="c" viewBox="0 0 360 640"></svg>
+  <div class="ov t1">ابنِ <b>مسبحك</b><br>بنفسك!</div>
+  <div class="ov t2"><span>من حفرة في الحديقة… إلى مسبح حقيقي</span></div>
+  <div class="ov t3"><span>رائحة الكلور القوية = ماء غير نظيف!</span></div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+  <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5fb0e8"/><stop offset=".7" stop-color="#a9d8f2"/><stop offset="1" stop-color="#e9f3ea"/></linearGradient>
+  <linearGradient id="gWall" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f1dfbd"/><stop offset="1" stop-color="#dcc39a"/></linearGradient>
+  <linearGradient id="gSoil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9764a"/><stop offset=".5" stop-color="#8a5c38"/><stop offset="1" stop-color="#5f3e25"/></linearGradient>
+  <linearGradient id="gConc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfcbc3"/><stop offset="1" stop-color="#97938b"/></linearGradient>
+  <clipPath id="cpPool"><path d="M46 330 V388 H128 L182 424 H262 V330 Z"/></clipPath>
+  <clipPath id="cpShell"><path d="M39 330 V395 H126 L180 431 H269 V330 H262 V424 H182 L128 388 H46 V330 Z"/></clipPath>
+  <marker id="arr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#1d1b19"/></marker>
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .45  0 0 0 0 .4  0 0 0 .07 0"/></filter>
+</defs></svg>
+<script src="../timing.js"></script>
+<script src="events.js"></script>
+<script src="scene.js"></script>
+<script>
+  (function () {
+    var LN = TIMING.lines, v = document.getElementById("v"), cv = document.getElementById("c");
+    window.VIDEO_END = TIMING.duration;
+    function word(t) {                       // the one word on screen now (by character share of the line, like events.js)
+      var i = 0; while (i < LN.length - 1 && LN[i + 1].start - 0.05 <= t) i++;
+      var l = LN[i]; if (t > l.end + 0.35) return null;
+      var ws = l.text.split(" "), tot = ws.join("").length, acc = 0, k = 0, at = l.start;
+      for (var j = 0; j < ws.length; j++) { var a = l.start + (l.end - l.start) * acc / tot - 0.04; if (t >= a) { k = j; at = a; } acc += ws[j].length; }
+      return { w: ws[k].replace(/[.،!؟:…]+$/, function (m) { return m.indexOf("؟") >= 0 ? "؟" : m.indexOf("!") >= 0 ? "!" : ""; }), at: at };
+    }
+    window.renderAt = function (t) {
+      v.innerHTML = window.__frame(t).replace(/>([^<]*[\u0600-\u06FF][^<]*)</g, '>\u200F$1\u200F<') + '<rect width="360" height="640" filter="url(#grain)" opacity=".6"/>';
+      var w = word(t), s = "";
+      if (w && !(t > EV.vote + 0.4)) { var u = t - w.at, sc = u < 0.09 ? 0.7 + 0.45 * (u / 0.09) : u < 0.16 ? 1.15 - 0.15 * ((u - 0.09) / 0.07) : 1;
+        s = '<g transform="translate(180 168) scale(' + sc.toFixed(3) + ')"><text class="cap" text-anchor="middle" y="12">\u200F' + w.w + '\u200F</text></g>'; }
+      cv.innerHTML = s;
+    };
+    window.__cam = [186, 316, 1.06]; renderAt(EV.yay + 0.75); document.getElementById("c").innerHTML = "";
+  })();
+</script>
+</body></html>

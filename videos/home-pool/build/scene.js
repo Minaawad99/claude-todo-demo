@@ -338,7 +338,7 @@
 
   // ── the frame ─────────────────────────────────────
   window.__frame = function (t) {
-    var ev = EV, c = cam(t);
+    var ev = EV, c = window.__cam || cam(t);   // window.__cam: fixed framing for the cover
     var holeK = after(t, ev.dig, 1.7), soakK = after(t, ev.soak, 2.6), mudK = after(t, ev.mud, 1.4);
     var stage = t < ev.shell ? "dirt" : t < ev.rebar ? "conc1" : t < ev.sprayEnd ? "spray" : "conc";
     var crackK = t < ev.rebar ? after(t, ev.crack, .7) : 0, rebarK = after(t, ev.rebar, .6), sprayK = after(t, ev.spray, ev.sprayEnd - ev.spray);
