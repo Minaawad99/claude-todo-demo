@@ -140,6 +140,12 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
 
 ## 5. Sound
 
+**Ask the user every episode, before the mix** (their standing rule), in one question:
+- **music:** none (the default) or the series music;
+- **sound effects:** the recorded Pixabay kit below, or every effect synthesized in Java
+  (`videos/_templates/sketch/javasfx/SfxSynth.java`: `javac -d <tmp> SfxSynth.java && java -cp <tmp> SfxSynth <episode>/sfx-java`;
+  wire it into cues.js like `videos/painkiller/cues.js`, whose `a()` plays `sfx-java/<name>.wav` with `"peak": true` and `JBOOST = 5`).
+
 **The kit is in the repo:** `videos/_templates/sketch/sfx/` (committed at the user's request, about 11 MB). `cues.js` finds
 a clip in the episode's own `sfx/` first and then in the kit, so a new episode needs nothing copied. Ask the user only for
 sounds the kit doesn't have, with Pixabay search terms. Those one-off clips go in `<episode>/sfx/` (gitignored). Every
