@@ -86,16 +86,18 @@ phrases, and the last sentence removed.
 between sentences trimmed to 0.20–0.30 s, one gap of about 1 s kept before the odd fact and before «ومبروك», final mix at
 −17 LUFS. If the take is slower than 2.4 words/s, regenerate before tightening.
 
-## 4. Sound
+## 4. Sound: no music, effects made in JavaScript
 
-- **Music:** made in code with `videos/_templates/ebniha/music.py` (sites with music are blocked here). The user found the
-  punchy presets tense, so start from `calm` or `light`, mixed at about −33 LUFS under a −17 LUFS voice. Otherwise:
-  one upbeat electronic / synth-pop loop with a steady 4/4 beat, from frame 0 to the end, constant level,
-  clearly under the voice (set it by ear against a reference video). The «اسكتش» music box does not fit. For the first episode pick a Pixabay track with the
-  user, save it as `videos/_templates/ebniha/sfx/px-music-upbeat.mp3` and record it in a `SOURCES.md` beside it; reuse it
-  in every later episode.
-- **Effects:** one short real-world sound on each part as it lands (digging, metal clank, motor, water, hiss, beep), a
-  crash or buzzer on each failure, a soft pop on each tag, a party pop on «ومبروك». Under the voice, never over a word.
+**The user does not want music** (every music bed felt tense to them). The sound is the voice plus effects only, and the
+effects are synthesised in JavaScript, the user's choice: `videos/_templates/ebniha/sfx.js` (dig, pour, splash, party,
+crumble, crack, clank, spray, pump, suck, buzz, zap, pop, whoosh, ding, rustle, shower, eww, tick, thud, bubble).
+
+- `videos/<slug>/cues.js` builds the cue list from the same `build/events.js` the picture uses, so every sound lands on
+  its part: a soft whoosh on each camera move, one real-world sound per part as it lands, a buzzer/crack on each failure,
+  a pop on each tag, a party pop on both «مبروك», ticks on counters and on the vote card.
+- `node cues.js <scratch>/sfx.wav`, then mix: voice resampled with soxr and set to −17 LUFS, effects −9 dB, `amix normalize=0`.
+- Keep long beds (pump hum) quiet (gain ≈ 0.12). Add a new effect to `sfx.js` rather than a recorded clip.
+- `music.py` stays in the template only in case the user asks for music again.
 
 ## 5. Picture
 
@@ -123,8 +125,9 @@ references use. Use 3D (three.js) only if the user asks.
   ask line, dim the scene and show a speech-bubble card «اكتب فكرتك!» with four next-build rows and heart counters
   ticking up. End 1–2 s after the last word.
 
-There is no template yet. The first episode builds it in `videos/_templates/ebniha/` (frame, camera, tags, captions,
-odd-fact card, vote card, confetti) and later episodes start from a copy.
+The first episode is `videos/home-pool/` (the pool): `build/index.html` (page, one-word captions, RTL fix for SVG text),
+`build/events.js` (when each part lands, from word times), `build/scene.js` (the growing build, camera, tags, gauges,
+odd-fact card, vote card, confetti) and `cues.js`. Start a new episode from a copy of those files and redraw the build.
 
 ## 6. Check before render
 
