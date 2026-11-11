@@ -62,6 +62,9 @@ say so and offer the «اسكتش» or animation style.
   there is one.
 - Speak to the viewer as the builder: «بتحفر، بتركّب، بتصبّ» / «تحفر، تركّب، تصبّ». Present tense, short sentences, one
   everyday comparison every few lines («زي مسمار قلاووظ عملاق»).
+- **Plain words, no science terms (the user's rule).** Say what a thing does in everyday words: «سخونة» not a physics
+  term, «رصاصات صغيرة» not «نيوترونات», «بتنقّيه» not «تخصيب». Keep only the part names the viewer will meet in real life
+  (قضبان التحكم، وعاء الضغط، الفلابس) and explain each in the same breath.
 - Write numbers as words when the voice must say them.
 - Verify every fact and list the sources in `refs/SOURCES.md`. Tell the user which facts are surprising and that they
   were checked.
