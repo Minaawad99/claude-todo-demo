@@ -105,6 +105,12 @@ Full-bleed 1080×1920 at 60 fps. No black frame, no panel, no title, no logo. Th
 animation style. Default render: flat 2D vector (gradients, light grain, dark outlines), which is what 13 of the 20
 references use. Use 3D (three.js) only if the user asks.
 
+- **Projection: 2.5D, not flat (the user asked for it after the first pool cut).** One-point perspective seen from the
+  front and a little from above: the front is a cut through the soil (shell thickness with a red dotted rebar line,
+  pipes, machines), and behind the cut the floor, slope, back wall and side walls recede in depth to the lawn and a
+  straight-on house. `P(x, h, z)` in `videos/home-pool/build/scene.js` does it (vanishing point above the frame); build
+  every part in x/h/z. Water = a translucent surface plane + the cut face (opacity ≈ .65) so what is under it shows.
+  Captions sit at y ≈ 26% (over the house), as in the reference.
 - **Layout:** side view. Ground line at about 60–70% of the height; below it soil in cross-section, used for foundations,
   pipes, cables and tunnels, never left empty. Sky blue, sand and one or two accent colours. An Egyptian setting by
   default (local street, buildings and people), drawn from reference photos as in the animation skill.
