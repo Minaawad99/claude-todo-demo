@@ -44,7 +44,7 @@ say so and offer the «اسكتش» or animation style.
 | 2 | first problem, line 1 | «بس المشكلة إن…» | «لكنّ المشكلة أنّ…» |
 | 3 | fix | «عشان كده بتـ…» / «فبتـ…» | «لذلك…» / «فـ…» |
 | 4 | part's real name | «وده اسمه…» / «وده بيسمّوه…» | «ويُسمّى هذا…» |
-| 5 | later problems | «بس…» / «لكن…» | «لكن…» / «غير أنّ…» |
+| 5 | later problems: **vary the opener, never two in a row** (the user heard the repeated «لكن») | «بس…» / «لكن…» / «وهنا مشكلة تانية…» / «أمّا…» / «وخلّي بالك…» | «وهنا مشكلةٌ ثانية…» / «أمّا…» / «غير أنّ…» / «ويبقى خطرٌ…» / «وانتبه…» |
 | 6 | odd fact, about two thirds in | «وتعرف إيه الغريب؟» | «وهل تعلم ما الغريب؟» |
 | 7 | finishing touches | «فاضل تركّب … و… و…» | «بقي أن تركّب … و… و…» |
 | 8 | payoff | «ومبروك عليك، بنيت <الحاجة> بنفسك!» | «ومبروك، لقد بنيتَ <الشيء> بنفسك!» |
@@ -88,7 +88,9 @@ between sentences trimmed to 0.20–0.30 s, one gap of about 1 s kept before the
 
 ## 4. Sound
 
-- **Music:** one upbeat electronic / synth-pop loop with a steady 4/4 beat, from frame 0 to the end, constant level,
+- **Music:** made in code with `videos/_templates/ebniha/music.py` (sites with music are blocked here). The user found the
+  punchy presets tense, so start from `calm` or `light`, mixed at about −33 LUFS under a −17 LUFS voice. Otherwise:
+  one upbeat electronic / synth-pop loop with a steady 4/4 beat, from frame 0 to the end, constant level,
   clearly under the voice (set it by ear against a reference video). The «اسكتش» music box does not fit. For the first episode pick a Pixabay track with the
   user, save it as `videos/_templates/ebniha/sfx/px-music-upbeat.mp3` and record it in a `SOURCES.md` beside it; reuse it
   in every later episode.
