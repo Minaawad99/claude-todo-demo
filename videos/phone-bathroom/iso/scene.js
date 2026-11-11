@@ -199,6 +199,7 @@
   var CAMNOW = [180, 320, 1];
   function proj(x, y) { var c = CAMNOW; return [180 + (x - c[0]) * c[2], 320 + (y - c[1]) * c[2]]; }
   function tag(w2, text, t0, t, o) {
+    if (window.__noTags) return "";
     o = o || {}; var u = t - t0, dur = o.dur || 2.6; if (u < 0 || u > dur) return "";
     var p = proj(w2[0], w2[1]), sc = pop(u) * clamp((dur - u) / .25), w = text.length * 8.6 + 26, col = o.red ? "#ff5a4e" : (o.col || "#ffd23f");
     var x = Math.max(w / 2 + 8, Math.min(352 - w / 2, p[0])), y = Math.max(214, Math.min(600, p[1] - 22));
@@ -229,8 +230,8 @@
 
   // ── the frame ─────────────────────────────────────
   window.__frame = function (t) {
-    var c = cam(t), i = line(t), u = t - L(i), s = "", T = ""; CAMNOW = c;
-    var dark = i >= 16 && i <= 17 ? .8 : i === 14 ? .25 * after(t, L(14), 2) : i === 18 ? .3 : 0;
+    var c = window.__cam || cam(t), i = line(t), u = t - L(i), s = "", T = ""; CAMNOW = c;
+    var dark = window.__noDark ? 0 : i >= 16 && i <= 17 ? .8 : i === 14 ? .25 * after(t, L(14), 2) : i === 18 ? .3 : 0;
     if (i === 20) s += diningRoom(t, { phoneOn: u > 1, germs: 5 }) + man([P(90, 165, 46)[0], P(90, 165, 46)[1]], { torso: 10, head: 14, sh: 60 + 30 * Math.sin(t * 2), el: 70 + 40 * Math.max(0, Math.sin(t * 2)), sh2: 30, el2: 60, th: 62, kn: 62, th2: 58, kn2: 58 }, t, { flip: true, phone: u < 1 });
     else {
       s += room(t, { clock: i <= 5 ? 10 + (i >= 4 ? (t - L(4)) * (i === 5 ? 25 : 8) : 0) : (i >= 23 ? 10 + 25 * after(t, L(23), 3) : null) });
