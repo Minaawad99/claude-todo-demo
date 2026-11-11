@@ -73,6 +73,12 @@ keywords, the «إيه الحكاية؟» brand at the bottom). Start from a cop
   through the door, people sweating. Use a red ✗ or a shocked character on what fails.
 - **Fix shots («عشان كده…»)** push in on the new part as it appears, with a brush tag naming it and the number.
 - **The payoff shot** pulls back to show the whole build at once, every part in place, the people inside happy.
+- **Wide camera, rich drawings (the user's note after the shelter video):** the camera there sat too close and hid the
+  house and the setting behind the build. Keep most shots wide (zoom about 0.7–1.0), push in only briefly on a new part,
+  then pull back so the setting stays readable. Put real effort into every drawing: a detailed setting (for a plane: the
+  terminal, control tower, hangars, jet bridges, ground vehicles; for a house: windows, doors, fence, trees, neighbours)
+  and a detailed build (panel lines, doors, lights, small real parts). The user is happy to send reference photos: ask
+  for the exact views you need when Commons is blocked.
 - Motion and QA rules as in the animation skill.
 
 ## 5. Cover
