@@ -16,27 +16,32 @@
   var RX = 210, RY = 200, RH = 250;
   function room(t, o) {
     o = o || {}; var s = "";
-    s += quad([[0, 0, 0], [0, RY, 0], [0, RY, RH], [0, 0, RH]], "#cfdde4") + quad([[0, 0, 0], [RX, 0, 0], [RX, 0, RH], [0, 0, RH]], "#dbe7ec");
-    s += quad([[0, 0, 140], [0, RY, 140], [0, RY, RH], [0, 0, RH]], "#efe6d6") + quad([[0, 0, 140], [RX, 0, 140], [RX, 0, RH], [0, 0, RH]], "#f6eedf");
-    for (var z = 20; z < 140; z += 20) { s += line3([0, 0, z], [0, RY, z], "#a9bcc6") + line3([0, 0, z], [RX, 0, z], "#a9bcc6"); }
-    for (var a = 20; a < RY; a += 20) s += line3([0, a, 0], [0, a, 140], "#a9bcc6");
-    for (var b = 20; b < RX; b += 20) s += line3([b, 0, 0], [b, 0, 140], "#a9bcc6");
-    s += line3([0, 0, 140], [0, RY, 140], "#5a8ea6", 3) + line3([0, 0, 140], [RX, 0, 140], "#5a8ea6", 3);
-    s += quad([[0, 0, 0], [RX, 0, 0], [RX, RY, 0], [0, RY, 0]], "#b9b0a2");
-    for (var fx = 30; fx < RX; fx += 30) s += line3([fx, 0, 0], [fx, RY, 0], "#9b9284");
-    for (var fy = 30; fy < RY; fy += 30) s += line3([0, fy, 0], [RX, fy, 0], "#9b9284");
-    // the cut edges of the walls (thickness 12 cm) so it reads as a cut-open model
-    s += quad([[0, RY, 0], [-12, RY, 0], [-12, RY, RH], [0, RY, RH]], "#e3d7c3") + quad([[RX, 0, 0], [RX, -12, 0], [RX, -12, RH], [RX, 0, RH]], "#d8ccb8");
-    s += quad([[-12, -12, RH], [RX, -12, RH], [RX, 0, RH], [0, 0, RH], [0, RY, RH], [-12, RY, RH]], "#c9bca6");
-    // door on the left wall (85 × 210), a little open
-    s += quad([[0.5, 108, 0], [0.5, 193, 0], [0.5, 193, 210], [0.5, 108, 210]], "#a8774c") + quad([[0.5, 114, 120], [0.5, 187, 120], [0.5, 187, 200], [0.5, 114, 200]], "#9a6a40", { w: 1 });
-    var hd = P(0.5, 118, 100); s += '<circle cx="' + f(hd[0]) + '" cy="' + f(hd[1]) + '" r="2.6" fill="#d9c79a" stroke="' + INK + '" stroke-width="1"/>';
-    // sink on the left wall: basin top 85 cm, pedestal, mirror, tap
-    s += box(0, 34, 0, 18, 18, 66, "#f2f4f6", "#e6e9ec", "#d6dade") + box(0, 22, 66, 46, 42, 18, "#ffffff", "#eef1f4", "#dfe3e7");
-    s += flatEll(24, 43, 84.5, 16, 14, "#cfd8de", { w: 1 }) + box(2, 40, 84, 6, 6, 14, "#c9ced4", "#b9bfc6", "#a9b0b8", { w: 1 });
-    s += quad([[0.6, 26, 112], [0.6, 60, 112], [0.6, 60, 172], [0.6, 26, 172]], "#cfe6f2") + line3([0.6, 32, 160], [0.6, 46, 124], "#fff", 2.4, .7);
-    // towel on the right wall
-    s += quad([[22, 0.5, 118], [54, 0.5, 118], [54, 0.5, 70], [22, 0.5, 70]], "#e8742e") + line3([18, 0.5, 120], [58, 0.5, 120], "#9aa4ad", 3);
+    // walls: large marble-grey tiles (60 × 30 cm) floor to ceiling, as in the reference bathroom photo
+    s += quad([[0, 0, 0], [0, RY, 0], [0, RY, RH], [0, 0, RH]], "#dfe2e3") + quad([[0, 0, 0], [RX, 0, 0], [RX, 0, RH], [0, 0, RH]], "#e9ebec");
+    for (var z = 30; z < RH; z += 30) { s += line3([0, 0, z], [0, RY, z], "#c3c8ca") + line3([0, 0, z], [RX, 0, z], "#c3c8ca"); }
+    for (var r = 0; r * 30 < RH; r++) { var off = r % 2 ? 30 : 0;
+      for (var a = 60 - off; a < RY; a += 60) s += line3([0, a, r * 30], [0, a, r * 30 + 30], "#c3c8ca");
+      for (var b = 60 - off; b < RX; b += 60) s += line3([b, 0, r * 30], [b, 0, r * 30 + 30], "#c3c8ca"); }
+    for (var v = 0; v < 26; v++) { var vz = hash(v) * RH, vy = hash(v + 3) * RY, vx = hash(v + 7) * RX;   // faint marble veins
+      s += line3([0.3, vy, vz], [0.3, vy + 12 + hash(v + 1) * 18, vz + 4 + hash(v + 2) * 8], "#b9c0c4", .8, .7) + line3([vx, 0.3, vz], [vx + 14 + hash(v + 5) * 16, 0.3, vz + 3 + hash(v + 6) * 8], "#b9c0c4", .8, .7); }
+    s += quad([[0, 0, 0], [RX, 0, 0], [RX, RY, 0], [0, RY, 0]], "#d3d6d8");
+    for (var fx = 60; fx < RX; fx += 60) s += line3([fx, 0, 0], [fx, RY, 0], "#b6babd");
+    for (var fy = 60; fy < RY; fy += 60) s += line3([0, fy, 0], [RX, fy, 0], "#b6babd");
+    s += quad([[0, RY, 0], [-12, RY, 0], [-12, RY, RH], [0, RY, RH]], "#cfd3d5") + quad([[RX, 0, 0], [RX, -12, 0], [RX, -12, RH], [RX, 0, RH]], "#c6cacc");
+    s += quad([[-12, -12, RH], [RX, -12, RH], [RX, 0, RH], [0, 0, RH], [0, RY, RH], [-12, RY, RH]], "#b9bec1");
+    // door (85 × 210) on the left wall
+    s += quad([[0.5, 118, 0], [0.5, 198, 0], [0.5, 198, 210], [0.5, 118, 210]], "#f4f4f2") + quad([[0.5, 124, 8], [0.5, 192, 8], [0.5, 192, 202], [0.5, 124, 202]], "#ecebe8", { w: .8 });
+    var hd = P(0.5, 128, 100); s += '<rect x="' + f(hd[0] - 1) + '" y="' + f(hd[1] - 1) + '" width="9" height="3" rx="1.5" fill="#b9a27a" stroke="' + INK + '" stroke-width=".8"/>';
+    // vanity against the left wall: drawers, marble top at 85 cm, vessel basin, tap from the wall, pill-shaped mirror
+    s += box(0, 10, 8, 50, 90, 72, "#ffffff", "#f2f3f4", "#eceeef");
+    s += line3([50, 10, 44], [50, 100, 44], "#c9cdd0", 1.2) + line3([50, 55, 8], [50, 55, 80], "#c9cdd0", 1.2);
+    s += box(0, 8, 80, 52, 94, 5, "#e6e8e9", "#d9dcde", "#cfd3d5");
+    s += flatEll(28, 52, 85, 17, 15, "#f7f8f9") + flatEll(28, 52, 96, 18, 16, "#ffffff") + flatEll(28, 52, 96.3, 14, 12, "#e2e6e9", { w: .8 });
+    var tp1 = P(2, 52, 112), tp2 = P(18, 52, 112), tp3 = P(20, 52, 104); s += '<path d="M' + pt(tp1) + ' L' + pt(tp2) + ' Q' + f(tp2[0] + 3) + ' ' + f(tp2[1]) + ' ' + pt(tp3) + '" stroke="#b9a27a" stroke-width="3" fill="none" stroke-linecap="round"/>';
+    var md = ""; for (var k = 0; k <= 16; k++) { var aa = Math.PI * k / 16; md += (k ? " L" : "M") + pt(P(0.6, 52 + Math.cos(aa) * 26, 190 + Math.sin(aa) * 26)); }
+    md += " L" + pt(P(0.6, 26, 120)) + " L" + pt(P(0.6, 78, 120)) + " Z"; s += '<path d="' + md + '" fill="#d6e6ee" stroke="' + INK + '" stroke-width="1.4"/>' + line3([0.6, 38, 180], [0.6, 56, 140], "#fff", 2.4, .7);
+    // toilet-roll holder (chrome) on the right wall
+    s += line3([182, 0.5, 72], [196, 0.5, 72], "#9aa4ad", 2.4) + flatEll(189, 5, 66, 6, 5, "#ffffff", { w: 1 });
     if (o.clock != null) s += wallClock(78, 186, o.clock);
     return s;
   }
@@ -52,12 +57,13 @@
   function toilet(t, o) {
     o = o || {}; var s = "", x0 = TXc - 19, press = o.press || 0;
     s += box(x0, 1, 42, 38, 17, 38, "#ffffff", "#eef1f4", "#dfe3e7") + box(x0 - 1, 0, 80, 40, 19, 3, "#f7f8fa", "#e9ecef", "#d9dde2");
-    s += box(TXc - 4, 7, 83 - press, 8, 5, 1.6, "#c9ced4", "#b9bfc6", "#a9b0b8", { w: 1 });
-    s += box(TXc - 9, 18, 0, 18, 30, 26, "#f4f6f8", "#e9ecef", "#d5dae0");                       // pedestal
-    s += flatEll(TXc, 44, 26, 15, 22, "#eef1f4") + flatEll(TXc, 44, 40, 19, 27, "#f4f6f8");          // bowl body
-    s += flatEll(TXc, 44, 42.5, 19, 27, "#ffffff") + flatEll(TXc, 46, 42.6, 12, 18, o.dark ? "#2a3a44" : "#cfe2ec", { w: 1 });   // seat ring + water
-    if (o.lid === "closed") s += flatEll(TXc, 44, 45, 19, 27, "#f1f3f6");
-    else s += quad([[TXc - 18, 19, 43], [TXc + 18, 19, 43], [TXc + 18, 21, 86], [TXc - 18, 21, 86]], "#f1f3f6");
+    s += flatEll(TXc, 9.5, 83 - press * 1.2, 4.6, 4.6, "#d6dbe0") + line3([TXc, 5, 83.1 - press * 1.2], [TXc, 14, 83.1 - press * 1.2], "#8a929c", 1);   // round dual-flush button
+    s += box(TXc - 9, 18, 0, 18, 28, 24, "#f4f6f8", "#e9ecef", "#d5dae0");                               // pedestal
+    var tw = [P(TXc + 9, 26, 6), P(TXc + 9, 34, 14), P(TXc + 9, 26, 20)]; s += '<path d="M' + pt(tw[0]) + ' Q' + pt(tw[1]) + ' ' + pt(tw[2]) + '" stroke="#c3c9cf" stroke-width="1.6" fill="none"/>';   // the trapway seen on the side
+    s += flatEll(TXc, 44, 24, 14, 22, "#eef1f4") + flatEll(TXc, 45, 40, 19, 28, "#f4f6f8");
+    s += flatEll(TXc, 45, 42.5, 19, 28, "#ffffff") + flatEll(TXc, 47, 42.6, 12, 19, o.dark ? "#2a3a44" : "#cfe2ec", { w: 1 });
+    if (o.lid === "closed") s += flatEll(TXc, 45, 45, 19, 28, "#f1f3f6");
+    else s += quad([[TXc - 18, 19, 43], [TXc + 18, 19, 43], [TXc + 16, 9, 92], [TXc - 16, 9, 92]], "#f1f3f6") + quad([[TXc - 12, 18, 50], [TXc + 12, 18, 50], [TXc + 11, 11, 86], [TXc - 11, 11, 86]], "#e3e7eb", { w: .8 });
     return s;
   }
   // the plume after a flush: fine droplets up to 150 cm in 8 s (Crimaldi et al. 2022); laser = the green light sheet
@@ -76,6 +82,9 @@
     s += quad([[0.6, 40, 110], [0.6, 120, 110], [0.6, 120, 170], [0.6, 40, 170]], "#9fc8de") + line3([0.6, 80, 110], [0.6, 80, 170], "#fff", 2);
     [[70, 60], [150, 60], [70, 130], [150, 130]].forEach(function (q) { s += box(q[0] - 3, q[1] - 3, 0, 6, 6, 72, "#6b4224", "#7a4e2c", "#5e3a1e"); });
     s += box(64, 54, 72, 92, 82, 4, "#a8774c", "#8a5a34", "#7a4e2c");
+    for (var pl = 1; pl < 5; pl++) s += line3([64 + pl * 18.4, 54, 76.1], [64 + pl * 18.4, 136, 76.1], "#8a5a34", 1);
+    s += flatEll(132, 118, 76.5, 16, 16, "#f4f4f2") + flatEll(132, 118, 77, 10, 10, "#7fb04a", { w: .6 });
+    var gl = P(145, 70, 77); s += '<path d="M' + f(gl[0] - 4) + ' ' + f(gl[1]) + ' l1 -14 h6 l1 14 z" fill="#e9f3f7" stroke="' + INK + '" stroke-width="1" opacity=".9"/><rect x="' + f(gl[0] - 3.2) + '" y="' + f(gl[1] - 8) + '" width="6.4" height="7" fill="#f2a93b" opacity=".8"/>';
     s += flatEll(110, 95, 76.5, 22, 22, "#f4f4f2") + flatEll(110, 95, 77, 15, 15, "#e9e4da", { w: .8 });
     for (var k = 0; k < 4; k++) { var p = P(102 + k * 6, 90 + (k % 2) * 8, 80); s += '<circle cx="' + f(p[0]) + '" cy="' + f(p[1]) + '" r="4" fill="#8a5a24" stroke="' + INK + '" stroke-width="1"/>'; }
     var br = P(122, 100, 79); s += '<ellipse cx="' + f(br[0]) + '" cy="' + f(br[1]) + '" rx="10" ry="5" fill="#e8c27a" stroke="' + INK + '" stroke-width="1.2"/>';
@@ -91,8 +100,8 @@
   // ── the man in the room ─────────────────────────────
   // seated on the toilet facing +y (screen: left and 30° down), so his profile faces left and the thighs point 60° from vertical
   var SEAT = P(TXc, 40, 46);
-  var SIT = { torso: 22, head: 26, sh: 40, el: 95, sh2: 30, el2: 80, th: 62, kn: 62, th2: 58, kn2: 58 };
-  function sitter(t, o) { return man([SEAT[0], SEAT[1]], Object.assign({}, SIT, (o && o.pose) || {}), t, Object.assign({ pantsDown: true, phone: true, phoneAng: -60, flip: true }, o || {})); }
+  var SIT = { torso: 14, head: 34, sh: 22, el: 82, sh2: 26, el2: 76, th: 62, kn: 60, th2: 58, kn2: 56 };
+  function sitter(t, o) { return man([SEAT[0], SEAT[1]], Object.assign({}, SIT, (o && o.pose) || {}), t, Object.assign({ pantsDown: true, phone: true, phoneAng: -72, flip: true }, o || {})); }
   function walkPose(t) { var w = Math.sin(t * 6); return { torso: 4, head: 14, sh: 40 + w * 4, el: 90, sh2: -w * 20, el2: 20, th: w * 22, kn: Math.max(0, -w) * 30, th2: -w * 22, kn2: Math.max(0, w) * 30 }; }
   function walker(x, y, t, o) { var p = P(x, y, 92); return man([p[0], p[1]], walkPose(t), t, Object.assign({ phone: true, phoneAng: -40 }, o || {})); }
 
@@ -117,7 +126,7 @@
   // ── camera per line ─────────────────────────────────
   var SHOTS = [[0, [150, 300, 1.25]], [1, [250, 300, 1.75]], [2, [232, 262, 3.0]], [3, [200, 300, 1.15]], [4, [235, 230, 1.6]], [5, [235, 220, 1.7]],
     [8, [262, 330, 2.0]], [9, [262, 340, 2.2]], [13, [235, 360, 1.9]], [14, [262, 320, 1.7]], [15, [270, 290, 1.7]], [16, [262, 270, 1.4]],
-    [17, [262, 250, 1.35]], [18, [238, 268, 2.4]], [20, [200, 330, 1.35]], [23, [150, 300, 1.25]], [24, [190, 300, 1.15]]];
+    [17, [262, 250, 1.35]], [18, [238, 268, 2.4]], [20, [170, 330, 1.25]], [23, [150, 300, 1.25]], [24, [190, 300, 1.15]]];
   function cam(t) {
     var i = 0; while (i < SHOTS.length - 1 && L(SHOTS[i + 1][0]) - .45 <= t) i++;
     var a = i ? SHOTS[i - 1][1] : [190, 300, 1.05], b = SHOTS[i][1], k = ease((t - (L(SHOTS[i][0]) - .45)) / 1.1);
