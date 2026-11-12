@@ -475,6 +475,16 @@ shot(24, push(320, 420, 1.04, .97), function (u, d, t) {
   return s + G("", T("≈", 320, 620, 70, ORANGE, 800), at(u, 1.6, .3));
 });
 
+// two lungs seen through the baby's chest, filled with water: translucent outline, blue water up to level lv (0..1), bubbles
+function lungsFull(t, lv) {
+  var L = "M-6 -46 C-30 -46 -48 -14 -48 18 C-48 44 -32 50 -12 44 C-6 34 -6 12 -6 -46 Z", Rr = "M6 -46 C30 -46 48 -14 48 18 C48 44 32 50 12 44 C6 34 6 12 6 -46 Z", id = "lg" + (++CLIPN), top = 50 - 96 * lv, q = "", i;
+  q += '<clipPath id="' + id + '"><path d="' + L + ' ' + Rr + '"/></clipPath>';
+  q += '<path d="' + L + ' ' + Rr + '" fill="#f3e1d6" opacity=".55"/>';
+  q += '<g clip-path="url(#' + id + ')"><path d="M-60 ' + f(top) + ' Q-30 ' + f(top - 4 + 3 * Math.sin(t * 3)) + ' 0 ' + f(top) + ' T60 ' + f(top) + ' V60 H-60 Z" fill="#7fa6bf" opacity=".75"/>';
+  for (i = 0; i < 8; i++) { var ph = (t * .35 + hash(i)) % 1, x = (i % 2 ? 1 : -1) * (14 + hash(i + 3) * 22), y = 44 - ph * 80; if (y > top) q += '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(2 + hash(i + 5) * 2.5) + '" fill="none" stroke="#eef4f6" stroke-width="1.4"/>'; }
+  q += '</g><path d="' + L + ' ' + Rr + '" fill="none" stroke="' + INK + '" stroke-width="2"/><path d="M0 -62 V-40 M0 -40 L-10 -26 M0 -40 L10 -26" stroke="' + INK + '" stroke-width="2" fill="none"/>';
+  return q;
+}
 // ── opening card, bumper and summary art ──
 window.SCENE = window.SCENE || {};
 var IN_CHEST = PL(1, 260, 470, 560), IN_WMB = PL(2, 304, 330, 470);
@@ -487,8 +497,16 @@ SCENE.intro = function (svg, t, li) {
   } else {
     s += pic(IN_WMB);
     if (li >= 1) s += tag("9 شهور", 510, 50, ease((t - LN[1].start) / .4), 28, ORANGE);
-    if (li >= 2) { var u = t - LN[2].start, M = IN_WMB.p(285, 505);
-      s += G("", '<path d="M' + f(M[0] - 90) + ' ' + f(M[1] - 20) + ' l40 20 l-40 20 M' + f(M[0] - 120) + ' ' + f(M[1] - 20) + ' l40 20 l-40 20" stroke="' + BLUE + '" stroke-width="5" fill="none" stroke-linecap="round"/>', ease(u / .3)) + cross(M[0] - 85, M[1], 1, ease((u - .4) / .4)); }
+    if (li >= 2) {
+      var u = t - LN[2].start, l2 = LN[2], c2 = window.CHUNKS[2], tl = l2.start + (l2.end - l2.start) * (c2[1] || .5);
+      if (t < tl) { var M = IN_WMB.p(285, 505);
+        s += G("", '<path d="M' + f(M[0] - 90) + ' ' + f(M[1] - 20) + ' l40 20 l-40 20 M' + f(M[0] - 120) + ' ' + f(M[1] - 20) + ' l40 20 l-40 20" stroke="' + BLUE + '" stroke-width="5" fill="none" stroke-linecap="round"/>', ease(u / .3)) + cross(M[0] - 85, M[1], 1, ease((u - .4) / .4));
+      } else {   // «ده حتى رئتيه مليانين مية!»: the baby, its two lungs seen through the chest, full of water
+        var v = t - tl, F = PL(3, 304, 330, 400), C0 = F.p(205, 470), k = ease(v / .4), lv = 1 - .06 * Math.sin(t * 2.4);
+        s = pic(F) + G("translate(" + f(C0[0] + 4) + " " + f(C0[1] - 4) + ") scale(.85)", lungsFull(t, lv), k) + tag("مية", C0[0] - 150, C0[1] - 40, ease((v - .5) / .3), 26, BLUE) +
+          G("", draw("M" + f(C0[0] - 110) + " " + f(C0[1] - 40) + " L" + f(C0[0] - 40) + " " + f(C0[1] - 10), 1, INK, 2), ease((v - .5) / .3));
+      }
+    }
   }
   return s;
 };
