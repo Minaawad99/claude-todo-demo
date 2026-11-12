@@ -333,6 +333,13 @@ function about(L, px, py, sc, rot, dx, dy) { var c = L.p(px, py); return "transl
 function clipOf(L, d, inv) { var id = "pt" + (++CLIPN); return { id: id, def: '<clipPath id="' + id + '"><path ' + (inv ? 'clip-rule="evenodd" ' : "") + 'd="' + (inv ? "M-4000 -4000 H6000 V6000 H-4000 Z " : "") + d + '" transform="translate(' + f(L.x) + ' ' + f(L.y) + ') scale(' + L.k.toFixed(4) + ')"/></clipPath>' }; }
 // part: the region d of picture L, moved by transform tr. fixed = the cut stays put and only the content inside moves
 function part(L, d, tr, fixed) { var c = clipOf(L, d); return fixed ? c.def + '<g clip-path="url(#' + c.id + ')"><g transform="' + tr + '">' + pic(L) + '</g></g>' : '<g transform="' + tr + '">' + c.def + '<g clip-path="url(#' + c.id + ')">' + pic(L) + '</g></g>'; }
+// partSoft: the region inside ellipse (cx, cy, rx, ry) of picture L moved by tr, its edge fading into the still picture
+// (a soft mask), so a bigger movement shows no seam
+function partSoft(L, cx, cy, rx, ry, tr) {
+  var id = "ps" + (++CLIPN), c = L.p(cx, cy);
+  return '<radialGradient id="' + id + 'g"><stop offset=".72" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient><mask id="' + id + '" maskUnits="userSpaceOnUse" x="-2000" y="-2000" width="5000" height="5000"><ellipse cx="' + f(c[0]) + '" cy="' + f(c[1]) + '" rx="' + f(rx * L.k) + '" ry="' + f(ry * L.k) + '" fill="url(#' + id + 'g)"/></mask>' +
+    '<g mask="url(#' + id + ')"><g transform="' + tr + '">' + pic(L) + '</g></g>';
+}
 function picBut(L, d) { var c = clipOf(L, d, true); return c.def + '<g clip-path="url(#' + c.id + ')">' + pic(L) + '</g>'; }   // the picture without region d
 function ip(L, a) { return L.p(a[0], a[1]); }
 function breath(t) { return .5 + .5 * Math.sin(t * 1.7); }
@@ -342,15 +349,15 @@ var VESSEL = [[440, 120], [420, 300], [385, 480], [355, 640], [365, 800], [410, 
 function live(L, t, o) {
   o = o || {}; var n = L.n, s = "", b = breath(t), i, k = L.k;
   if (n === 1) {   // the mother: lungs breathe, heart beats, the baby sways
-    s = pic(L) + part(L, ell(200, 760, 135, 165), about(L, 200, 760, 1, .9 * Math.sin(t * .9)), true);
+    s = pic(L) + partSoft(L, 200, 760, 150, 180, about(L, 200, 760, 1, 2.6 * Math.sin(t * .9), 2.5 * Math.sin(t * .7), 3 * Math.cos(t * .8)));
     s += part(L, ell(212, 315, 92, 135), about(L, 230, 300, 1 + .03 * b)) + part(L, ell(432, 315, 82, 135), about(L, 415, 300, 1 + .03 * b));
     s += part(L, ell(318, 360, 70, 72), about(L, 318, 360, 1 + .045 * beat(t)));
     return s;
   }
-  if (n === 2) return pic(L) + part(L, ell(395, 430, 245, 300), about(L, 395, 430, 1.004, .8 * Math.sin(t * .8), 1.5 * Math.sin(t * .6), 2 * Math.cos(t * .7)), true);
+  if (n === 2) return pic(L) + partSoft(L, 395, 430, 260, 315, about(L, 395, 430, 1, 2.6 * Math.sin(t * .8), 5 * Math.sin(t * .6), 6 * Math.cos(t * .7)));
   if (n === 3) {
-    s = pic(L) + part(L, ell(300, 450, 265, 380), about(L, 300, 450, 1.004, .7 * Math.sin(t * .8), 0, 2 * Math.sin(t * .6)), true);
-    if (o.chest) s += part(L, ell(190, 480, 95, 85), about(L, 190, 480, 1 + .04 * (.5 + .5 * Math.sin(t * 3.2))));
+    s = pic(L) + partSoft(L, 300, 450, 285, 400, about(L, 300, 450, 1, 2.4 * Math.sin(t * .8), 4 * Math.cos(t * .5), 7 * Math.sin(t * .6)));
+    if (o.chest) s += partSoft(L, 190, 480, 120, 110, about(L, 190, 480, 1 + .08 * (.5 + .5 * Math.sin(t * 3.2)), 0, 0, 7 * Math.sin(t * .6)));
     return s;
   }
   if (n === 4) {   // the placenta block: the lakes shimmer, the cord twists a little
@@ -454,7 +461,7 @@ shot(11, push(320, 480, 1.1, 1.22), function (u, d, t) {
 var WALLPT = VIL.p(293, 640);
 shot(12, push(WALLPT[0] + 50, WALLPT[1] + 20, 1.6, 1.75), function (u, d, t) {
   var k = at(u, .6, .6), hx = WALLPT[0] + 120, hy = WALLPT[1] - 110;
-  return paper() + live(VIL, t) + box(WALLPT, WALLPT[0] - 60, WALLPT[1] - 130, "الجدار", OLIVE, at(u, .3, .5), 20) +
+  return paper() + live(VIL, t) + box(WALLPT, WALLPT[0] - 60, WALLPT[1] - 130, "الحيطة", OLIVE, at(u, .3, .5), 20) +
     G("", (function () { var hd = 'M' + f(hx) + ' ' + f(hy) + ' C' + f(hx + 20) + ' ' + f(hy + 60) + ' ' + f(hx - 10) + ' ' + f(hy + 130) + ' ' + f(hx + 15) + ' ' + f(hy + 220); return '<path d="' + hd + '" stroke="' + INK + '" stroke-width="42" fill="none" stroke-linecap="round"/><path d="' + hd + '" stroke="#6b5240" stroke-width="38" fill="none" stroke-linecap="round"/><path d="' + hd + '" stroke="#8d6e55" stroke-width="12" fill="none" stroke-linecap="round" transform="translate(-8 0)"/><path d="' + hd + '" stroke="#a88a70" stroke-width="3" fill="none" transform="translate(-12 0)"/>'; })() + T("شعرة", hx - 70, hy + 10, 22, INK, 800), k) +
     numBox("÷20", WALLPT[0] - 50, WALLPT[1] + 130, at(u, 1.2, .3), 24);
 }, { tr: "in" });

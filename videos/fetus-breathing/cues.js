@@ -20,7 +20,10 @@ global.window = {}; eval(fs.readFileSync(__dirname + '/timing.js', 'utf8'));
 const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration : T[i].start, D = i => L(i + 1) - L(i), c = [];
 // a clip lives in the episode's sfx/ (gitignored, one-off sounds) or in the shared «اسكتش» kit (committed)
 const KIT = '../_templates/sketch/sfx/', where = n => fs.existsSync(__dirname + '/sfx/px-' + n + '.mp3') ? 'sfx/px-' + n + '.mp3' : fs.existsSync(__dirname + '/' + KIT + 'px-' + n + '.mp3') ? KIT + 'px-' + n + '.mp3' : null;
-const has = n => !!where(n);
+// the user asked for no recorded clips (background sounds, recorded music) unless they ask: only sfx.py's synthesized
+// effects and its generated music bed. Set RECORDED = true only when the user asks for the kit clips.
+const RECORDED = false;
+const has = n => RECORDED && !!where(n);
 const a = (t, fx, gain, dur) => c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), fx, gain }, dur ? { dur: +dur.toFixed(2) } : {}));
 const rec = (t, file, gain, from, dur, duck, alt, altGain) => has(file)
   ? c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), file: where(file), gain: +gain.toFixed(2), from: from || 0 }, dur ? { dur: +dur.toFixed(2) } : {}, duck != null ? { duck } : {}))
