@@ -145,7 +145,7 @@
   }
 
   // ── camera: stays back; travels along the plant ─────────
-  var SHOTS = [[0, [262, 300, 1.55]], [2, [262, 300, 1.5]], [3, [300, 296, 1.35]], [4, [262, 280, 1.3]], [7, [262, 226, 1.15]], [10, [262, 228, 1.1]],
+  var SHOTS = [[0, [262, 300, 1.55]], [2, [262, 300, 1.5]], [3, [272, 300, 1.22]], [4, [262, 280, 1.3]], [7, [262, 226, 1.15]], [10, [262, 228, 1.1]],
     [13, [350, 212, 1.0]], [14, [800, 270, 1.0]], [15, [820, 352, .8]], [16, [380, 230, .78]], [17, [380, 200, .74]], [19, [380, 230, .5]], [20, [450, 220, .4]]];
   function cam(t) {
     var i = 0; while (i < SHOTS.length - 1 && L(SHOTS[i + 1][0]) - .45 <= t) i++;
@@ -199,7 +199,7 @@
       if (t < ev.purify) for (var w = 0; w < 2; w++) { var su = (t * .6 + w / 2) % 1; s += '<path d="M' + f(rp[0] - 8 + w * 16) + ' ' + f(rp[1] - 16 - su * 26) + ' q-5 -7 0 -14" stroke="#fff" stroke-width="2.4" fill="none" opacity="' + f(.7 * (1 - su)) + '"/>'; }
       s += '</g>';
       if (t >= ev.pellets) { var pp = O(VX - 78, 0, CZ - 50), pk = pop(after(t, ev.pellets, .9)); s += '<g transform="translate(' + f(pp[0]) + ' ' + f(pp[1] - 14) + ') scale(' + f(pk * 1.6) + ')"><rect x="-6" y="-8" width="12" height="16" rx="3" fill="url(#gAtom)"' + ln(1.2) + '/><ellipse cx="0" cy="-8" rx="6" ry="2" fill="#c9f0a0"' + ln(1) + '/></g>'; }
-      if (t >= ev.coal) { var tk = pop(after(t, ev.coal, .9)), tp = O(VX + 118, 0, CZ - 40); s += '<g transform="translate(' + f(tp[0]) + ' ' + f(tp[1]) + ') scale(' + f(tk) + ')"><path d="M-60 -10 h96 v-26 h-96 z" fill="#d9452e"' + ln(1.6) + '/><path d="M36 -10 h24 v-22 l-8 -10 h-16 z" fill="#e8742e"' + ln(1.6) + '/><path d="M-58 -36 Q-30 -66 -2 -58 Q20 -70 34 -36 Z" fill="#26292d"' + ln(1.4) + '/><circle cx="-40" cy="-6" r="8" fill="#26292d"/><circle cx="40" cy="-6" r="8" fill="#26292d"/><text x="-12" y="-17" text-anchor="middle" class="sm" fill="#fff">1 طن</text></g>'; }
+      if (t >= ev.coal) { var tk = pop(after(t, ev.coal, .9)), tp = O(VX + 108, 0, CZ - 40); s += '<g transform="translate(' + f(tp[0]) + ' ' + f(tp[1]) + ') scale(' + f(tk) + ')"><path d="M-60 -10 h96 v-26 h-96 z" fill="#d9452e"' + ln(1.6) + '/><path d="M36 -10 h24 v-22 l-8 -10 h-16 z" fill="#e8742e"' + ln(1.6) + '/><path d="M-58 -36 Q-30 -66 -2 -58 Q20 -70 34 -36 Z" fill="#26292d"' + ln(1.4) + '/><circle cx="-40" cy="-6" r="8" fill="#26292d"/><circle cx="40" cy="-6" r="8" fill="#26292d"/><text x="-12" y="-17" text-anchor="middle" class="sm" fill="#fff">1 طن</text></g>'; }
     } else {
       var tankK = t < ev.vessel + .5 ? 1 - after(t, ev.vessel, .5) : 0;
       s += openTank(t, tankK * after(t, ev.tubes, .8), after(t, ev.boil, .8));
@@ -226,7 +226,7 @@
     T += tag(c, P2(VX, 90, CZ - 30), "بالكاد بتدفى", ev.cold, t, { red: true });
     T += tag(c, P2(VX, 90, CZ - 30), "يورانيوم منقّى", ev.purify + .5, t, { col: GRN });
     T += tag(c, P2(VX - 78, 30, CZ - 50), "حباية", ev.pellets + .1, t, { col: CREAM, dur: 1.6 });
-    T += tag(c, P2(VX + 118, 70, CZ - 40), "قد طن فحم!", ev.coal + .2, t);
+    T += tag(c, P2(VX + 108, 70, CZ - 40), "قد طن فحم!", ev.coal + .2, t);
     T += tag(c, P2(VX, 140, CZ), "قضبان الوقود", ev.rodsTag - .1, t);
     T += tag(c, P2(VX, 150, CZ), "سخونة!", ev.over, t, { red: true });
     T += tag(c, P2(VX, 300, CZ), "قضبان التحكم", ev.ctrlTag - .1, t);
