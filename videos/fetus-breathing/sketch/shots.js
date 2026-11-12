@@ -155,7 +155,7 @@ function barrier(t, opt) {
 }
 function rbc(x, y, r, col, tilt) { return G("translate(" + f(x) + " " + f(y) + ") rotate(" + f(tilt || 0) + ")", '<ellipse rx="' + f(r) + '" ry="' + f(r * .82) + '" fill="' + col + '" stroke="' + INK + '" stroke-width="2.4"/><ellipse rx="' + f(r * .5) + '" ry="' + f(r * .38) + '" fill="#000" opacity=".12"/>'); }
 function o2dot(x, y, r) { return '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(r || 10) + '" fill="' + OXY + '" stroke="' + INK + '" stroke-width="1.6"/>'; }
-function stopwatch(x, y, r, k, t) {
+function stopwatch_ep(x, y, r, k, t) {
   var a = -Math.PI / 2 + k * Math.PI * 2, s = '<rect x="' + f(x - 10) + '" y="' + f(y - r - 22) + '" width="20" height="14" fill="' + INK + '"/>' + C(x, y, r, "#f4ecdb", 3);
   if (k > 0) s += '<path d="M' + f(x) + ' ' + f(y) + ' L' + f(x) + ' ' + f(y - r + 8) + ' A' + f(r - 8) + ' ' + f(r - 8) + ' 0 ' + (k > .5 ? 1 : 0) + ' 1 ' + f(x + Math.cos(a) * (r - 8)) + ' ' + f(y + Math.sin(a) * (r - 8)) + ' Z" fill="' + ORANGE + '" opacity=".35"/>';
   for (var i = 0; i < 12; i++) { var b = i / 12 * Math.PI * 2; s += '<path d="M' + f(x + Math.cos(b) * (r - 4)) + ' ' + f(y + Math.sin(b) * (r - 4)) + ' L' + f(x + Math.cos(b) * (r - 14)) + ' ' + f(y + Math.sin(b) * (r - 14)) + '" stroke="' + INK + '" stroke-width="2"/>'; }

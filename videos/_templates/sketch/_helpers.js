@@ -223,3 +223,34 @@ function inkIn(k, inner, x0, x1) {
   return '<linearGradient id="' + id + 'g" gradientUnits="userSpaceOnUse" x1="' + f(e) + '" y1="120" x2="' + f(e + 240) + '" y2="0"><stop offset="0" stop-color="#000"/><stop offset="1" stop-color="#fff"/></linearGradient>' +
     '<mask id="' + id + '" maskUnits="userSpaceOnUse" x="-2000" y="-2000" width="5000" height="5000"><rect x="-2000" y="-2000" width="5000" height="5000" fill="url(#' + id + 'g)"/></mask><g mask="url(#' + id + ')">' + inner + '</g>';
 }
+
+// ── light: glow(x, y, r, colour, strength) adds light on top of a picture (screen blend), for a flame, a hot weld, a
+// pulse of blood, calcium setting. sparks(x, y, t, n, len, ang, spread) throws short bright streaks from a point.
+function glow(x, y, r, col, a) {
+  a = clamp(a == null ? 1 : a); if (a <= 0) return ""; var id = "gl" + (++CLIPN);
+  return '<radialGradient id="' + id + '"><stop offset="0" stop-color="' + (col || "#ffcf7a") + '" stop-opacity="' + f(a) + '"/><stop offset=".35" stop-color="' + (col || "#ffcf7a") + '" stop-opacity="' + f(a * .45) + '"/><stop offset="1" stop-color="' + (col || "#ffcf7a") + '" stop-opacity="0"/></radialGradient>' +
+    '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(r) + '" fill="url(#' + id + ')" style="mix-blend-mode:screen"/>';
+}
+function sparks(x, y, t, n, len, ang, spread, col) {
+  var s = "", i; n = n || 14; len = len || 70; ang = ang == null ? -90 : ang; spread = spread || 160;
+  for (i = 0; i < n; i++) {
+    var ph = (t * 2.2 + hash(i * 3.1)) % 1, a = (ang + (hash(i + 7) - .5) * spread) * Math.PI / 180, d = ph * len * (.6 + .8 * hash(i + 2)), g = ph * ph * 40,
+        x1 = x + Math.cos(a) * d, y1 = y + Math.sin(a) * d + g, x0 = x + Math.cos(a) * Math.max(0, d - 10), y0 = y + Math.sin(a) * Math.max(0, d - 10) + g * .8;
+    s += '<path d="M' + f(x0) + ' ' + f(y0) + ' L' + f(x1) + ' ' + f(y1) + '" stroke="' + (col || "#ffd27a") + '" stroke-width="' + f(2.4 * (1 - ph) + .6) + '" stroke-linecap="round" opacity="' + f(1 - ph) + '" style="mix-blend-mode:screen"/>';
+  }
+  return s;
+}
+// rotate-and-move a point of picture L the same way about(L, px, py, sc, rot, dx, dy) moves a part (world coords out)
+function movedPt(L, x, y, px, py, sc, rot, dx, dy) {
+  var c = L.p(px, py), q = L.p(x, y), a = (rot || 0) * Math.PI / 180, vx = (q[0] - c[0]) * (sc || 1), vy = (q[1] - c[1]) * (sc || 1);
+  return [c[0] + (dx || 0) + vx * Math.cos(a) - vy * Math.sin(a), c[1] + (dy || 0) + vx * Math.sin(a) + vy * Math.cos(a)];
+}
+function stopwatch(x, y, r, k, t) {
+  var a = -Math.PI / 2 + k * Math.PI * 2, s = '<rect x="' + f(x - 10) + '" y="' + f(y - r - 22) + '" width="20" height="14" fill="' + INK + '"/>' + C(x, y, r, "#f4ecdb", 3);
+  if (k > 0) s += '<path d="M' + f(x) + ' ' + f(y) + ' L' + f(x) + ' ' + f(y - r + 8) + ' A' + f(r - 8) + ' ' + f(r - 8) + ' 0 ' + (k > .5 ? 1 : 0) + ' 1 ' + f(x + Math.cos(a) * (r - 8)) + ' ' + f(y + Math.sin(a) * (r - 8)) + ' Z" fill="' + ORANGE + '" opacity=".35"/>';
+  for (var i = 0; i < 12; i++) { var b = i / 12 * Math.PI * 2; s += '<path d="M' + f(x + Math.cos(b) * (r - 4)) + ' ' + f(y + Math.sin(b) * (r - 4)) + ' L' + f(x + Math.cos(b) * (r - 14)) + ' ' + f(y + Math.sin(b) * (r - 14)) + '" stroke="' + INK + '" stroke-width="2"/>'; }
+  return s + '<path d="M' + f(x) + ' ' + f(y) + ' L' + f(x + Math.cos(a) * (r - 14)) + ' ' + f(y + Math.sin(a) * (r - 14)) + '" stroke="' + INK + '" stroke-width="4" stroke-linecap="round"/>' + C(x, y, 5, INK, 0);
+}
+function stopwatchIso(o, k, t) {
+  return slabL(o, 0, 0, 0, 34, "M-120 0 A120 120 0 1 0 120 0 A120 120 0 1 0 -120 0 Z M-12 -122 L-12 -146 L12 -146 L12 -122 Z", "#f4ecdb", KHAKI, stopwatch(0, 0, 112, k, t));
+}
