@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — bone healing</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;700;800;900&family=Noto+Serif:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* full-bleed reel cover, 1080×1920 (540×960 at 2x), in the tunnel-cover palette: near-black top and bottom, one warm
+     glow behind the subject. The subject is drawn with the episode's own «اسكتش» drawings (videos/bone/sketch/scenes.js):
+     the forearm X-ray with the broken radius, and a magnifier on the break showing the bone cut lengthwise with its callus. */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #000; }
+  #art { position: absolute; inset: 0; width: 540px; height: 960px; }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 10px rgba(0,0,0,.6); }
+</style></head><body>
+<div class="cover">
+  <svg id="art" viewBox="0 0 540 960"></svg>
+  <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
+  <p class="t" style="top:154px;font:900 42px/1.2 'Noto Sans Arabic';color:#fff">العضم بيلحم نفسه؟!</p>
+  <p class="t" style="top:214px;font:800 24px/1.3 'Noto Sans Arabic';color:#f2c230">من غير غرا ولا دوا!</p>
+  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff">في <span style="color:#f2c230">6</span> أسابيع بس<br><span style="font-size:24px;color:#d9d4c8">ومن غير ما يسيب ندبة!</span></p>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".15"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#e1d5ba" stroke-width="1.3" fill="none"/></pattern>
+  <filter id="soft" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="28"/></filter>
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .45  0 0 0 0 .4  0 0 0 .08 0"/></filter>
+  <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity=".6"/></filter>
+</defs></svg>
+<script src="../../videos/bone/timing.js"></script>
+<script src="../../videos/bone/sketch/scenes.js"></script>
+<script>
+  (function () {
+    var t = 40, s = "";
+    function brushTag(text, x, y, rot, sz, bg) {   // a hand-cut paper tag: warm yellow, dark ink text
+      var w = text.length * sz * .56 + 34, h = sz * 1.7;
+      return '<g transform="translate(' + x + ' ' + y + ') rotate(' + rot + ')" filter="url(#shadow)"><path d="M' + (-w / 2) + ' ' + (-h / 2 + 3) + ' L' + (w / 2 - 2) + ' ' + (-h / 2) + ' L' + (w / 2 + 3) + ' ' + (h / 2 - 2) + ' L' + (-w / 2 + 2) + ' ' + (h / 2 + 1) + ' Z" fill="' + (bg || "#f2c230") + '" stroke="#2a2016" stroke-width="2.4"/>' +
+             '<text x="0" y="' + (sz * .36) + '" text-anchor="middle" style="font:800 ' + sz + 'px Noto Sans Arabic;fill:#2a2016">' + text + '</text></g>';
+    }
+    // night background, a warm glow behind the break
+    s += '<rect width="540" height="960" fill="#17130f"/><rect width="540" height="960" fill="url(#grid)" opacity=".06"/>';
+    s += '<circle cx="230" cy="470" r="170" fill="#f2a83a" opacity=".55" filter="url(#soft)"/><circle cx="230" cy="470" r="70" fill="#ffd27a" opacity=".35" filter="url(#soft)"/>';
+    // the forearm X-ray, the broken radius at (262, 450) in arm units → about (205, 470) on the cover
+    s += '<g transform="translate(-74 16) scale(1.06)">' + arm({ xray: true }) + '<path d="M246 446 l7 6 l7 -7 l7 8 l7 -6 l7 7 l5 -4" stroke="#17130f" stroke-width="5" fill="none" stroke-linejoin="round"/>' + '</g>';
+    // the magnifier: the bone cut lengthwise at the break, cartilage turning into bone
+    var lx = 392, ly = 512, r = 118;
+    s += '<path d="M236 482 L' + (lx - r * .92) + ' ' + (ly - r * .4) + ' M222 514 L' + (lx - r * .7) + ' ' + (ly + r * .72) + '" stroke="#f2c230" stroke-width="2.4" stroke-dasharray="7 5"/>';
+    s += '<circle cx="208" cy="490" r="30" fill="none" stroke="#f2c230" stroke-width="3.5"/>';
+    s += '<g filter="url(#shadow)"><clipPath id="lens"><circle cx="' + lx + '" cy="' + ly + '" r="' + r + '"/></clipPath><circle cx="' + lx + '" cy="' + ly + '" r="' + (r + 9) + '" fill="#f2c230" stroke="#2a2016" stroke-width="3"/>' +
+         '<g clip-path="url(#lens)"><rect x="' + (lx - r) + '" y="' + (ly - r) + '" width="' + (2 * r) + '" height="' + (2 * r) + '" fill="#eee5d0"/><g transform="translate(' + (lx - CX * .56) + ' ' + (ly - CY * .56) + ') scale(.56)">' + boneCut(t, { frac: 1, gap: 14, soft: 1, hard: .55 }) + '</g></g>' +
+         '<circle cx="' + lx + '" cy="' + ly + '" r="' + r + '" fill="none" stroke="#2a2016" stroke-width="3.5"/></g>';
+    s += brushTag("كالس", 470, 404, 6, 22) + brushTag("كسر!", 120, 560, -6, 24, "#f07a4a");
+    s += '<defs><linearGradient id="fadeT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".95"/><stop offset=".75" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>' +
+         '<linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset=".3" stop-color="#000" stop-opacity=".7"/><stop offset="1" stop-color="#000" stop-opacity=".95"/></linearGradient></defs>';
+    s += '<rect width="540" height="300" fill="url(#fadeT)"/><rect y="680" width="540" height="280" fill="url(#fadeB)"/>';
+    document.getElementById("art").innerHTML = s + '<rect width="540" height="960" filter="url(#grain)"/>';
+  })();
+</script>
+</body></html>
