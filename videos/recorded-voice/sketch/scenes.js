@@ -381,7 +381,7 @@ var IN_HEAD = PL(1, 304, 330, 440), IN_PHN = PL(6, 304, 300, 520), IN_DUO = PL(4
 SCENE.intro = function (svg, t, li) {
   var s = "";
   if (li === 0) { var m = IN_HEAD.p(MOUTH1[0], MOUTH1[1]); s += live(IN_HEAD, t) + rings(m[0] + 10, m[1], 0, t, AIR, 5, 35, 120); }
-  else if (li === 1) { var u = t - LN[1].start; s += live(IN_PHN, t) + tag("ده مش أنا!", 304, 600, ease((u - .8) / .3), 34, ORANGE); }
+  else if (li === 1) { var l1 = LN[1], c1 = window.CHUNKS[1], tq = l1.start + (l1.end - l1.start) * (c1[c1.length - 1] || .6); s += live(IN_PHN, t) + tag("ده مش أنا!", 304, 600, ease((t - tq) / .3), 34, ORANGE); }
   else { var u2 = t - LN[2].start, P = mapPts(IN_DUO, [DUO_MOUTH, [280, 385], [390, 380], DUO_EAR]); s += live(IN_DUO, t) + runDots(P, t, AIR, 5, 8, 100) + check(470, 600, 1.2, ease((u2 - .6) / .4), OLIVE); }
   return s;
 };
