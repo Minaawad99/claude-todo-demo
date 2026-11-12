@@ -55,7 +55,7 @@ const buzz = (t, d, g) => a(t, 'hum', g || 0.12, d || 1.2);
 // 0 · your own voice: a soft hum while the head speaks, rings opening
 buzz(L(0) + 0.3, D(0) - 0.4, 0.1); a(L(0) + 0.6, 'whoosh', 0.1, 1.2);
 // 1 · the voice note: the record beep, then «ده مش أنا!» lands
-rec(L(1) + 0.15, 'rec-beep', 0.35, 0, 0.8, 1.0, 'ping', 0.25); a(L(1) + 1.3, 'pop', 0.4);
+rec(L(1) + 0.15, 'rec-beep', 0.3, 0, 0.5, 1.0, 'ping', 0.25); a(L(1) + 1.3, 'pop', 0.4);
 // 2 · your friends: air to the ear, the tick
 a(L(2) + 0.3, 'whoosh', 0.1, 1.0); scribble(L(2) + 0.9);
 // 4 · the vocal cords tremble, air rises
@@ -74,9 +74,9 @@ buzz(L(11) + 0.5, 2.2, 0.12); a(L(11) + 2.0, 'whoosh', 0.08, 1.0);
 // 12 · deeper: a low hum swells
 buzz(L(12) + 0.2, D(12) - 0.3, 0.16); paper(L(12) + 0.6);
 // 13 · crisps: the crunch (recorded if the user sent it), loud inside
-rec(L(13) + 0.25, 'crunch', 0.45, 0, 0.9, 1.0, 'snip', 0.35); rec(L(13) + 1.4, 'crunch', 0.3, 0, 0.7, 1.0, 'snip', 0.25); lab(13, 0.4);
+rec(L(13) + 0.25, 'crunch', 0.45, 0, 0.9, 1.0, 'snip', 0.35); rec(L(13) + 1.4, 'crunch', 0.3, 1.2, 0.7, 1.0, 'snip', 0.25); lab(13, 0.4);
 // 14 · fingers in the ears: the world goes muffled, the voice inside stays
-scribble(L(14) + 0.5); rec(L(14) + 0.9, 'muffled', 0.3, 0, Math.min(2.5, D(14) - 1), 1.0, 'hum', 0.12); lab(14, 1.4); paper(L(14) + 2.6);
+scribble(L(14) + 0.5); rec(L(14) + 0.9, 'muffled', 0.22, 1.09, Math.min(2.5, D(14) - 1), 1.0, 'hum', 0.12); lab(14, 1.4); paper(L(14) + 2.6);
 // 15 · the tiny muscle pulls
 a(L(15) + 0.4, 'creak', 0.12, 0.6); lab(15, 0.5);
 // 16–17 · the phone's mic: air only; the thick part drops out
@@ -91,7 +91,7 @@ paper(L(20) + 0.4); lab(21, 0.3); lab(21, 1.0);
 // 22 · recap
 lab(22, 0.3); lab(22, 1.0); a(L(22) + 2.6, 'pop', 0.3);
 // 23 · Beethoven: a piano note (recorded if sent), the rod hums into the bone
-rec(L(23) + 0.2, 'piano', 0.4, 0, 3.0, 1.0, 'chime', 0.25); lab(23, 1.2); a(L(23) + 1.6, 'thud', 0.14); lab(23, 2.6);
+rec(L(23) + 0.2, 'piano', 0.35, 0.03, 2.4, 1.0, 'chime', 0.25); lab(23, 1.2); a(L(23) + 1.6, 'thud', 0.14); lab(23, 2.6);
 
 const MUSIC = has('music-soft') ? 'music-soft' : null;
 if (MUSIC) rec(0, MUSIC, 0.42, 0, window.TIMING.duration + 2.5, 0.6);
