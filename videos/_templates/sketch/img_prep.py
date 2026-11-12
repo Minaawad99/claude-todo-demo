@@ -25,13 +25,15 @@ for src in sorted(glob.glob(os.path.join(a.dir, "src", "*.*"))):
         mk = cv2.dilate(mk, np.ones((5, 5), np.uint8), 2); im = cv2.inpaint(im, mk, 9, cv2.INPAINT_TELEA)
     lab = cv2.cvtColor(im, cv2.COLOR_BGR2LAB).astype(np.float32); h, w = lab.shape[:2]
     border = np.concatenate([lab[:12].reshape(-1, 3), lab[-12:].reshape(-1, 3), lab[:, :12].reshape(-1, 3), lab[:, -12:].reshape(-1, 3)])
+    # the paper only: border pixels near the border's main colour (a drawing that touches the edge must not count as paper)
+    med = np.median(border, axis=0); border = border[np.linalg.norm(border - med, axis=1) < 18]
     refs = np.unique((border / 4).round() * 4, axis=0)
     if len(refs) > 40: refs = refs[np.random.default_rng(0).choice(len(refs), 40, replace=False)]
     dist = np.full((h, w), 1e9, np.float32)
     for r in refs: dist = np.minimum(dist, np.linalg.norm(lab - r, axis=2))
     k = np.clip((dist - 6) / 10, 0, 1)
     ff = (k < .5).astype(np.uint8)
-    for p in [(0, 0), (w - 1, 0), (0, h - 1), (w - 1, h - 1), (w // 2, 0), (w // 2, h - 1)]:
+    for p in [(0, 0), (w - 1, 0), (0, h - 1), (w - 1, h - 1), (w // 2, 0), (w // 2, h - 1), (0, h // 2), (w - 1, h // 2)]:
         if ff[p[1], p[0]] == 1: cv2.floodFill(ff, np.zeros((h + 2, w + 2), np.uint8), p, 2)
     out = cv2.GaussianBlur((ff == 2).astype(np.float32), (0, 0), 1.2); alpha = 1 - out * (1 - k)
     rgba = cv2.cvtColor(im, cv2.COLOR_BGR2BGRA); rgba[..., 3] = (alpha * 255).astype(np.uint8)
