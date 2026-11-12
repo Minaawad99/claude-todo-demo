@@ -1,0 +1,26 @@
+/* «ابنيها بنفسك» — بيت في الصحرا: sound cues (JavaScript-synthesised effects, no music), from the same events as the picture. */
+const fs = require("fs"), vm = require("vm"), path = require("path");
+const ctx = { window: {} }; vm.runInNewContext(fs.readFileSync(path.join(__dirname, "timing.js"), "utf8"), ctx);
+vm.runInNewContext(fs.readFileSync(path.join(__dirname, "build/scene.js"), "utf8"), ctx);
+const TIMING = ctx.window.TIMING, ev = ctx.window.EV, SFX = require("../_templates/ebniha/sfx.js");
+const L = i => TIMING.lines[i].start, C = [], q = (t, fx, gain, o) => C.push(Object.assign({ t, fx, gain }, o || {}));
+for (let i = 1; i < TIMING.lines.length; i++) if (![15, 16].includes(i)) q(L(i) - 0.5, "whoosh", 0.15);
+q(0.2, "wind", 0.18, { dur: 2.5 }); q(0.4, "rustle", 0.35, { dur: .6 }); q(ev.yay0, "party", 0.8);
+for (let k = 0; k < 8; k++) q(ev.heat + k * .15, "tick", .22); q(ev.oven, "buzz", 0.4);
+q(ev.mud, "pour", 0.4, { dur: 1 }); q(ev.mud + .3, "splash", 0.3); q(ev.straw, "rustle", 0.35, { dur: .6 }); q(ev.straw + .4, "bubble", 0.25);
+q(ev.mold, "thud", 0.5); q(ev.mold + .3, "clank", 0.25, { f: 240 });
+for (let k = 0; k < 24; k += 2) q(ev.dry + k * .1, "pop", 0.14); for (let k = 0; k < 14; k++) q(ev.dry + .3 + k * .11, "tick", .2); q(ev.adobe - .2, "pop", 0.4);
+for (let k = 0; k < 6; k++) q(ev.thin - .2 + k * .22, "thud", 0.3); q(ev.hot, "buzz", 0.4);
+for (let k = 0; k < 4; k++) q(ev.thick + k * .3, "thud", 0.38); q(ev.thick + .3, "pop", 0.4); q(ev.night, "ding", 0.3);
+q(ev.wood, "thud", 0.5); q(ev.wood + .2, "buzz", 0.35);
+q(ev.dome, "pop", 0.4); for (let k = 0; k < 14; k++) q(ev.lean + k * ((ev.strong - ev.lean) / 14), "thud", 0.22); q(ev.course, "pour", 0.2, { dur: .6 });
+q(ev.push, "clank", 0.3, { f: 300 }); q(ev.push + .1, "pop", 0.35); q(ev.load, "thud", 0.45);
+q(ev.stale, "buzz", 0.35); q(ev.tower, "thud", 0.45); q(ev.tower + .3, "pop", 0.3); q(ev.catchW, "wind", 0.3, { dur: 3 }); q(ev.malqaf - .1, "pop", 0.4);
+q(ev.windows, "clank", 0.3, { f: 520 }); q(ev.windows + .2, "clank", 0.25, { f: 560 }); q(ev.mash, "rustle", 0.3, { dur: .5 }); q(ev.mash + .1, "pop", 0.35);
+q(ev.court, "whoosh", 0.3); q(ev.court + .3, "thud", 0.4);
+q(ev.flood, "pour", 0.55, { dur: 2 }); q(ev.flood + .2, "splash", 0.4); q(ev.flood + .3, "buzz", 0.35); q(ev.base, "thud", 0.6); q(ev.base + .3, "clank", 0.3, { f: 200 });
+q(ev.card, "whoosh", 0.4, { dur: .6 }); q(ev.card + .3, "pop", 0.4); q(ev.pot, "thud", 0.4); q(ev.pot + .5, "pour", 0.3, { dur: .8 }); q(ev.evap, "spray", 0.25, { dur: 1.4 }); q(ev.evap + 1.2, "ding", 0.35);
+q(ev.paint, "spray", 0.35, { dur: 1.2 }); q(ev.well, "pump", 0.2, { dur: .9 }); q(ev.well + .4, "splash", 0.3); q(ev.palms, "pop", 0.35); q(ev.palms + .2, "pop", 0.35);
+q(ev.yay, "party", 0.85); q(ev.vote, "whoosh", 0.4); for (let k = 0; k < 4; k++) q(ev.vote + .25 + k * .18, "pop", 0.35); for (let k = 0; k < 18; k++) q(ev.vote + 1 + k * .17, "tick", 0.2);
+const bad = C.filter(c => !(c.fx in SFX.FX) || !isFinite(c.t)); if (bad.length) throw new Error("bad cues " + JSON.stringify(bad.slice(0, 3)));
+const out = process.argv[2] || "sfx.wav"; SFX.render(C, TIMING.duration + 2, out); console.log(out, C.length, "cues");

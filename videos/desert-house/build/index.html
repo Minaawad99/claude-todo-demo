@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>ابنِ بيت في الصحرا بنفسك — ابنيها بنفسك</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* «ابنيها بنفسك»: full bleed, no frame, no title. One word of caption at a time, white with a thick dark outline. */
+  html, body { margin: 0; background: #000; }
+  .canvas { position: relative; width: 360px; height: 640px; overflow: hidden; background: #8fc8ea; }
+  svg { direction: ltr; display: block; position: absolute; left: 0; top: 0; width: 360px; height: 640px; }
+  .tg { font: 800 15px "Noto Sans Arabic", sans-serif; }
+  .sm { font: 800 12px "Noto Sans Arabic", sans-serif; }
+  .big { font: 900 24px "Noto Sans Arabic", sans-serif; }
+  .hd { font: 900 22px "Noto Sans Arabic", sans-serif; }
+  .cap { font: 900 36px "Noto Sans Arabic", sans-serif; fill: #fff; stroke: #121212; stroke-width: 8px; stroke-linejoin: round; paint-order: stroke; }
+</style></head>
+<body>
+<div class="canvas">
+  <svg id="v" viewBox="0 0 360 640"></svg>
+  <svg id="c" viewBox="0 0 360 640"></svg>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+  <marker id="arr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#1d1b19"/></marker>
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .45  0 0 0 0 .4  0 0 0 .07 0"/></filter>
+  <linearGradient id="gSkyHaze" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fa8c9"/><stop offset=".55" stop-color="#c9d3d0"/><stop offset="1" stop-color="#ecd9b4"/></linearGradient>
+  <linearGradient id="gSoilR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a6a42"/><stop offset="1" stop-color="#6e4a2c"/></linearGradient>
+  <linearGradient id="gSteel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8a929c"/><stop offset=".45" stop-color="#c9ced4"/><stop offset="1" stop-color="#6f7680"/></linearGradient>
+  <linearGradient id="gConcR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfcbc3"/><stop offset="1" stop-color="#a9a49b"/></linearGradient>
+  <linearGradient id="gWaterR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9d3ea"/><stop offset="1" stop-color="#6fb1d6"/></linearGradient>
+  <linearGradient id="gSkyClear" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f9be3"/><stop offset=".7" stop-color="#9fd2f2"/><stop offset="1" stop-color="#e6f4f7"/></linearGradient>
+  <linearGradient id="gSea" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3fc1c9"/><stop offset="1" stop-color="#1f7fb8"/></linearGradient>
+  <linearGradient id="gSandCut" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3cf9f"/><stop offset=".25" stop-color="#d4b97f"/><stop offset="1" stop-color="#b89a62"/></linearGradient>
+  <linearGradient id="gSteelH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6dbe0"/><stop offset=".5" stop-color="#aeb6bf"/><stop offset="1" stop-color="#7a828c"/></linearGradient>
+  <linearGradient id="gSkyDesert" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f86d6"/><stop offset=".6" stop-color="#8cc8ee"/><stop offset="1" stop-color="#f3e6c4"/></linearGradient>
+  <linearGradient id="gStone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a8a39a"/><stop offset="1" stop-color="#7d786f"/></linearGradient>
+  <radialGradient id="gAtom" cx=".35" cy=".35" r=".7"><stop offset="0" stop-color="#e6ffb0"/><stop offset=".6" stop-color="#8fd16a"/><stop offset="1" stop-color="#4f8a3a"/></radialGradient>
+</defs></svg>
+<script src="../timing.js"></script>
+<script src="scene.js"></script>
+<script>
+  (function () {
+    var LN = TIMING.lines, v = document.getElementById("v"), cv = document.getElementById("c");
+    window.VIDEO_END = TIMING.duration;
+    function word(t) {                       // the one word on screen now (by character share of the line, like events.js)
+      var i = 0; while (i < LN.length - 1 && LN[i + 1].start - 0.05 <= t) i++;
+      var l = LN[i]; if (t > l.end + 0.35) return null;
+      var ws = l.text.split(" "), tot = ws.join("").length, acc = 0, k = 0, at = l.start;
+      for (var j = 0; j < ws.length; j++) { var a = l.start + (l.end - l.start) * acc / tot - 0.04; if (t >= a) { k = j; at = a; } acc += ws[j].length; }
+      return { w: ws[k].replace(/[.،!؟:…]+$/, function (m) { return m.indexOf("؟") >= 0 ? "؟" : m.indexOf("!") >= 0 ? "!" : ""; }), at: at };
+    }
+    window.renderAt = function (t) {
+      v.innerHTML = window.__frame(t).replace(/>([^<]*[\u0600-\u06FF][^<]*)</g, '>\u200F$1\u200F<') + '<rect width="360" height="640" filter="url(#grain)" opacity=".6"/>';
+      var w = word(t), s = "";
+      if (w && !(t > EV.vote + 0.4)) { var u = t - w.at, sc = u < 0.09 ? 0.7 + 0.45 * (u / 0.09) : u < 0.16 ? 1.15 - 0.15 * ((u - 0.09) / 0.07) : 1;
+        s = '<g transform="translate(180 168) scale(' + sc.toFixed(3) + ')"><text class="cap" text-anchor="middle" y="12">\u200F' + w.w + '\u200F</text></g>'; }
+      cv.innerHTML = s;
+    };
+    renderAt(3.7);
+  })();
+</script>
+</body></html>
