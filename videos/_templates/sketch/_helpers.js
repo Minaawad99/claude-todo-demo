@@ -212,3 +212,14 @@ function ip(L, a) { return L.p(a[0], a[1]); }
 function breath(t) { return .5 + .5 * Math.sin(t * 1.7); }
 function beat(t) { return Math.pow(Math.max(0, Math.sin(t * 7.2)), 3); }
 function cellSprite(x, y, r, col, rot) { return G("translate(" + f(x) + " " + f(y) + ") rotate(" + f(rot) + ")", '<ellipse rx="' + f(r) + '" ry="' + f(r * .78) + '" fill="' + col + '" stroke="' + INK + '" stroke-width="1.1"/><ellipse rx="' + f(r * .5) + '" ry="' + f(r * .36) + '" fill="#000" opacity=".16"/>'); }
+
+// ── the narrator's voice as motion: VOX(t) is 0 in silence … 1 on loud syllables (env.js from tools/envelope.py, listed
+// in the episode's CFG libs as "../env.js"). Use it for a jaw that talks, vocal folds that buzz, rings that swell.
+function VOX(t) { var E = window.VOXENV; if (!E) return .5 + .5 * Math.sin(t * 6); var i = t * E.fps, a = Math.floor(i); if (a < 0 || a >= E.v.length - 1) return 0; return lerp(E.v[a], E.v[a + 1], i - a); }
+// inkIn: a picture drawn in by a soft wipe from right to left (the way Arabic reads) as a shot opens (k 0 → 1)
+function inkIn(k, inner, x0, x1) {
+  k = clamp(k); if (k >= 1) return inner; x0 = x0 == null ? -60 : x0; x1 = x1 == null ? 700 : x1;
+  var id = "ink" + (++CLIPN), e = lerp(x1 - 120, x0 - 240, ease(.15 + .85 * k));
+  return '<linearGradient id="' + id + 'g" gradientUnits="userSpaceOnUse" x1="' + f(e) + '" y1="120" x2="' + f(e + 240) + '" y2="0"><stop offset="0" stop-color="#000"/><stop offset="1" stop-color="#fff"/></linearGradient>' +
+    '<mask id="' + id + '" maskUnits="userSpaceOnUse" x="-2000" y="-2000" width="5000" height="5000"><rect x="-2000" y="-2000" width="5000" height="5000" fill="url(#' + id + 'g)"/></mask><g mask="url(#' + id + ')">' + inner + '</g>';
+}

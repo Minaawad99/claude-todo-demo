@@ -214,6 +214,17 @@ function breath(t) { return .5 + .5 * Math.sin(t * 1.7); }
 function beat(t) { return Math.pow(Math.max(0, Math.sin(t * 7.2)), 3); }
 function cellSprite(x, y, r, col, rot) { return G("translate(" + f(x) + " " + f(y) + ") rotate(" + f(rot) + ")", '<ellipse rx="' + f(r) + '" ry="' + f(r * .78) + '" fill="' + col + '" stroke="' + INK + '" stroke-width="1.1"/><ellipse rx="' + f(r * .5) + '" ry="' + f(r * .36) + '" fill="#000" opacity=".16"/>'); }
 
+// ── the narrator's voice as motion: VOX(t) is 0 in silence … 1 on loud syllables (env.js from tools/envelope.py, listed
+// in the episode's CFG libs as "../env.js"). Use it for a jaw that talks, vocal folds that buzz, rings that swell.
+function VOX(t) { var E = window.VOXENV; if (!E) return .5 + .5 * Math.sin(t * 6); var i = t * E.fps, a = Math.floor(i); if (a < 0 || a >= E.v.length - 1) return 0; return lerp(E.v[a], E.v[a + 1], i - a); }
+// inkIn: a picture drawn in by a soft wipe from right to left (the way Arabic reads) as a shot opens (k 0 → 1)
+function inkIn(k, inner, x0, x1) {
+  k = clamp(k); if (k >= 1) return inner; x0 = x0 == null ? -60 : x0; x1 = x1 == null ? 700 : x1;
+  var id = "ink" + (++CLIPN), e = lerp(x1 - 120, x0 - 240, ease(.15 + .85 * k));
+  return '<linearGradient id="' + id + 'g" gradientUnits="userSpaceOnUse" x1="' + f(e) + '" y1="120" x2="' + f(e + 240) + '" y2="0"><stop offset="0" stop-color="#000"/><stop offset="1" stop-color="#fff"/></linearGradient>' +
+    '<mask id="' + id + '" maskUnits="userSpaceOnUse" x="-2000" y="-2000" width="5000" height="5000"><rect x="-2000" y="-2000" width="5000" height="5000" fill="url(#' + id + 'g)"/></mask><g mask="url(#' + id + ')">' + inner + '</g>';
+}
+
 // ── «ليه صوتك غريب لما تسمعه متسجّل؟» — shots over the channel's ink-and-wash cutaways (img/NN.webp, refs/SOURCES.md).
 // Colours: slate blue = sound through the air, orange = sound through bone (the inside path).
 pics({ 1: [728, 1008], 2: [531, 962], 3: [696, 668], 4: [768, 783], 5: [687, 882], 6: [721, 755], 7: [757, 1033], 8: [728, 939], 9: [722, 812], 10: [730, 908] });
@@ -222,7 +233,7 @@ var AIR = BLUE, BONE = ORANGE;
 // sound as rings opening from (x, y) toward angle ang (deg), moving with t
 function rings(x, y, ang, t, col, n, spread, sz) {
   var s = "", i; n = n || 5; sz = sz || 120;
-  for (i = 0; i < n; i++) { var ph = (t * .9 + i / n) % 1, r = 12 + ph * sz; s += '<path d="M' + f(x + r * Math.cos((ang - (spread || 35)) * Math.PI / 180)) + ' ' + f(y + r * Math.sin((ang - (spread || 35)) * Math.PI / 180)) + ' A' + f(r) + ' ' + f(r) + ' 0 0 1 ' + f(x + r * Math.cos((ang + (spread || 35)) * Math.PI / 180)) + ' ' + f(y + r * Math.sin((ang + (spread || 35)) * Math.PI / 180)) + '" fill="none" stroke="' + (col || AIR) + '" stroke-width="3" stroke-linecap="round" opacity="' + f(1 - ph) + '"/>'; }
+  for (i = 0; i < n; i++) { var ph = (t * .9 + i / n) % 1, r = 12 + ph * sz; s += '<path d="M' + f(x + r * Math.cos((ang - (spread || 35)) * Math.PI / 180)) + ' ' + f(y + r * Math.sin((ang - (spread || 35)) * Math.PI / 180)) + ' A' + f(r) + ' ' + f(r) + ' 0 0 1 ' + f(x + r * Math.cos((ang + (spread || 35)) * Math.PI / 180)) + ' ' + f(y + r * Math.sin((ang + (spread || 35)) * Math.PI / 180)) + '" fill="none" stroke="' + (col || AIR) + '" stroke-width="3" stroke-linecap="round" opacity="' + f((1 - ph) * (.35 + .65 * VOX(window.__t || t))) + '"/>'; }
   return s;
 }
 // a framed strip with the two parts of a voice: a thick low wave and a thin high one (k* = how much of each is heard)
@@ -240,13 +251,13 @@ var BONEPATH1 = [[292, 720], [300, 600], [330, 470], [300, 360], [292, 262]];
 function live(L, t, o) {
   o = o || {}; var n = L.n, s = "", i, k = L.k;
   if (n === 1) {   // the head: the throat buzzes while he talks, the cochlea answers
-    s = G(about(L, 360, 1000, 1, .8 * Math.sin(t * .7)), pic(L) + part(L, ell(292, 720, 60, 90), about(L, 292, 720, 1 + .02 * Math.abs(Math.sin(t * 24)))) + part(L, ell(292, 262, 34, 30), about(L, 292, 262, 1 + .05 * Math.abs(Math.sin(t * 9)))));
+    var v = VOX(t); s = G(about(L, 360, 1000, 1, .8 * Math.sin(t * .7)), pic(L) + partSoft(L, 450, 640, 105, 80, about(L, 330, 470, 1, 3.2 * v)) + part(L, ell(292, 720, 60, 90), about(L, 292, 720, 1 + .03 * v * Math.abs(Math.sin(t * 24)))) + part(L, ell(292, 262, 34, 30), about(L, 292, 262, 1 + .06 * v * Math.abs(Math.sin(t * 9)))));
     return s;
   }
   if (n === 2) {   // the vocal folds vibrate, air rising between them
     s = pic(L);
-    s += part(L, poly([[175, 380], [258, 380], [258, 690], [175, 690]]), "translate(" + f(3 * Math.sin(t * 30) * k) + " 0)");
-    s += part(L, poly([[262, 380], [345, 380], [345, 690], [262, 690]]), "translate(" + f(-3 * Math.sin(t * 30) * k) + " 0)");
+    s += part(L, poly([[175, 380], [258, 380], [258, 690], [175, 690]]), "translate(" + f(4 * VOX(t) * Math.sin(t * 30) * k) + " 0)");
+    s += part(L, poly([[262, 380], [345, 380], [345, 690], [262, 690]]), "translate(" + f(-4 * VOX(t) * Math.sin(t * 30) * k) + " 0)");
     s += runDots(mapPts(L, [[262, 900], [262, 700], [262, 560], [262, 300], [262, 120]]), t, "#dfe9ef", 4, 10, 120);
     return s;
   }
@@ -256,10 +267,10 @@ function live(L, t, o) {
     s += part(L, ell(555, 375, 75, 75), about(L, 555, 375, 1 + .025 * Math.abs(Math.sin(t * 9))));
     return s;
   }
-  if (n === 4) return pic(L) + part(L, poly([[0, 0], [215, 0], [215, 520], [0, 520]]), about(L, 120, 520, 1, 1.4 * Math.sin(t * 1.3), 0, 2 * Math.sin(t * 2.6)));
+  if (n === 4) return pic(L) + part(L, poly([[0, 0], [215, 0], [215, 520], [0, 520]]), about(L, 120, 520, 1, 1.4 * Math.sin(t * 1.3), 0, 2 * Math.sin(t * 2.6))) + partSoft(L, 165, 440, 70, 55, about(L, 110, 330, 1, 4 * VOX(t)));
   if (n === 5) {   // the skull talks: the jaw opens and closes
     var jaw = poly([[100, 640], [330, 560], [470, 470], [520, 560], [430, 880], [100, 882]]);
-    return picBut(L, jaw) + part(L, jaw, about(L, 470, 480, 1, 3.5 * (.5 + .5 * Math.sin(t * 5))));
+    return picBut(L, jaw) + part(L, jaw, about(L, 470, 480, 1, 1 + 5 * VOX(t)));
   }
   if (n === 6) return G("translate(0 " + f(4 * Math.sin(t * 1.1)) + ")", pic(L));
   if (n === 7) {   // chewing: the jaw bites, crumbs fly
@@ -285,16 +296,16 @@ var DUO_MOUTH = [190, 390], DUO_EAR = [470, 370], DUO_COCH = [615, 335];
 // ════ shots ════
 // 4 · sound is a tremble: the vocal cords shake, the air carries it
 shot(4, push(320, 420, 1.0, 1.08), function (u, d, t) {
-  return paper() + appear(at(u, 0, .4), live(LAR, t)) + box(LAR.p(220, 560), 110, 140, "الأحبال الصوتية", OLIVE, at(u, .6, .5), 22) + box(LAR.p(262, 250), 520, 120, "الهوا", AIR, at(u, 2.4, .5), 24);
+  return paper() + inkIn(at(u, 0, .75), live(LAR, t)) + box(LAR.p(220, 560), 110, 140, "الأحبال الصوتية", OLIVE, at(u, .6, .5), 22) + box(LAR.p(262, 250), 520, 120, "الهوا", AIR, at(u, 2.4, .5), 24);
 });
 // 5 · in the ear, the snail-shaped cochlea turns the tremble into a signal for the brain
 shot(5, push(330, 400, 1.0, 1.1), function (u, d, t) {
-  return paper() + live(EAR, t) + runDots(mapPts(EAR, [[60, 330], [200, 330], [360, 330], [430, 330], [520, 360]]), t, AIR, 5, 7, 90) + box(EAR.p(555, 375), 500, 640, "القوقعة", OLIVE, at(u, .5, .5), 26) +
+  return paper() + inkIn(at(u, 0, .75), live(EAR, t)) + runDots(mapPts(EAR, [[60, 330], [200, 330], [360, 330], [430, 330], [520, 360]]), t, AIR, 5, 7, 90) + box(EAR.p(555, 375), 500, 640, "القوقعة", OLIVE, at(u, .5, .5), 26) +
     G("", draw("M" + f(EAR.p(620, 400)[0]) + " " + f(EAR.p(620, 400)[1]) + " q60 -40 120 -120", at(u, 2, .8), ORANGE, 3) + T("للمخ", 600, 160, 24, ORANGE, 800), at(u, 2, .3));
 }, { tr: "in" });
 // 6–7 · your friend hears you one way only: through the air, mouth to ear
 shot(6, push(320, 380, .98, 1.05), function (u, d, t) {
-  return paper() + live(DUO, t) + G("", rings(DUO.p(DUO_MOUTH[0], DUO_MOUTH[1])[0], DUO.p(DUO_MOUTH[0], DUO_MOUTH[1])[1], 0, t, AIR, 6, 30, 150), at(u, .3, .4)) + tag("طريق واحد", 320, 100, at(u, 1.6, .3), 26, AIR);
+  return paper() + inkIn(at(u, 0, .75), live(DUO, t)) + G("", rings(DUO.p(DUO_MOUTH[0], DUO_MOUTH[1])[0], DUO.p(DUO_MOUTH[0], DUO_MOUTH[1])[1], 0, t, AIR, 6, 30, 150), at(u, .3, .4)) + tag("طريق واحد", 320, 100, at(u, 1.6, .3), 26, AIR);
 });
 shot(7, push(420, 360, 1.3, 1.45), function (u, d, t) {
   var P = mapPts(DUO, [DUO_MOUTH, [280, 385], [390, 380], DUO_EAR, [540, 360], DUO_COCH]);
@@ -310,7 +321,7 @@ shot(9, push(330, 410, 1.0, 1.08), function (u, d, t) {
 });
 // 10 · the tremble runs through the bone straight to the cochlea (the skull talking)
 shot(10, push(330, 410, 1.0, 1.1), function (u, d, t) {
-  return paper() + live(SKL, t) + runDots(mapPts(SKL, [[200, 690], [330, 610], [420, 500], [470, 400]]), t, BONE, 6, 8, 80) + box(SKL.p(300, 150), 140, 100, "العضم", BONE, at(u, .4, .5), 26) + box(SKL.p(470, 390), 520, 700, "القوقعة", OLIVE, at(u, 1.2, .5), 24);
+  return paper() + inkIn(at(u, 0, .75), live(SKL, t)) + runDots(mapPts(SKL, [[200, 690], [330, 610], [420, 500], [470, 400]]), t, BONE, 6, 8, 80) + box(SKL.p(300, 150), 140, 100, "العضم", BONE, at(u, .4, .5), 26) + box(SKL.p(470, 390), 520, 700, "القوقعة", OLIVE, at(u, 1.2, .5), 24);
 }, { tr: "in" });
 // 11 · why it changes the sound: bone carries the thick (low) part better than the thin (high) part
 shot(11, push(320, 380, 1.0, 1.04), function (u, d, t) {
@@ -324,13 +335,13 @@ shot(12, push(310, 380, 1.15, 1.25), function (u, d, t) {
 // 13 · like crisps: the crunch is loud inside your head and your friend barely hears it
 shot(13, push(320, 400, 1.02, .96), function (u, d, t) {
   var P = mapPts(CHP, [[330, 470], [430, 470], [480, 400], [515, 320]]), c = CHP.p(515, 320);
-  return paper() + live(CHP, t) + runDots(P, t, BONE, 6, 6, 90) + rings(c[0], c[1], 0, t * 1.4, BONE, 4, 180, 60) + box(CHP.p(245, 500), 120, 700, "القرمشة", ORANGE, at(u, .4, .5), 24) +
+  return paper() + inkIn(at(u, 0, .75), live(CHP, t)) + runDots(P, t, BONE, 6, 6, 90) + rings(c[0], c[1], 0, t * 1.4, BONE, 4, 180, 60) + box(CHP.p(245, 500), 120, 700, "القرمشة", ORANGE, at(u, .4, .5), 24) +
     iconBox(540, 110, 140, '<circle cx="-10" cy="-20" r="20" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2"/><path d="M-36 40 Q-10 0 16 40" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2"/>' + T("…؟", 34, -12, 26, AIR, 800), at(u, 2.4, .3));
 });
 // 14 · try it: fingers in your ears and talk — you still hear yourself, deeper
 shot(14, push(330, 400, 1.0, 1.08), function (u, d, t) {
   var P = mapPts(FNG, [[600, 560], [560, 470], [560, 380], [555, 330]]), e = FNG.p(240, 430);
-  return paper() + live(FNG, t) + cross(e[0] - 60, e[1] - 30, .8, at(u, .5, .5)) + runDots(P, t, BONE, 6, 6, 70) + box(FNG.p(555, 330), 540, 120, "من جوه", BONE, at(u, 1.4, .5), 24) + tag("أتقل", 520, 690, at(u, 2.6, .3), 28, ORANGE);
+  return paper() + inkIn(at(u, 0, .75), live(FNG, t)) + cross(e[0] - 60, e[1] - 30, .8, at(u, .5, .5)) + runDots(P, t, BONE, 6, 6, 70) + box(FNG.p(555, 330), 540, 120, "من جوه", BONE, at(u, 1.4, .5), 24) + tag("أتقل", 520, 690, at(u, 2.6, .3), 28, ORANGE);
 });
 // 15 · a tiny muscle in your ear pulls while you talk so your own voice doesn't startle you
 var STAP = [600, 320];
@@ -340,7 +351,7 @@ shot(15, push(EAR.p(STAP[0], STAP[1])[0] - 30, EAR.p(STAP[0], STAP[1])[1] + 10, 
 // 16 · and the phone? its mic hears you through the air only, just like your friend
 shot(16, push(330, 380, 1.0, 1.08), function (u, d, t) {
   var m = PHN.p(370, 490), P = mapPts(PHN, [[700, 740], [600, 650], [470, 560], [370, 490]]);
-  return paper() + live(PHN, t) + runDots(P, t, AIR, 6, 8, 100) + box(m, 160, 640, "المايك", OLIVE, at(u, .5, .5), 24) + tag("الهوا بس", 470, 700, at(u, 1.6, .3), 26, AIR);
+  return paper() + inkIn(at(u, 0, .75), live(PHN, t)) + runDots(P, t, AIR, 6, 8, 100) + box(m, 160, 640, "المايك", OLIVE, at(u, .5, .5), 24) + tag("الهوا بس", 470, 700, at(u, 1.6, .3), 26, AIR);
 }, { tr: "out" });
 // 17 · so the recording loses the thick part you're used to and sounds thinner
 shot(17, push(320, 380, 1.0, 1.04), function (u, d, t) {
@@ -361,7 +372,7 @@ shot(20, push(320, 400, 1.02, .96), function (u, d, t) {
 }, { tr: "out" });
 // 21 · like your face in a photo: not the one you see in the mirror
 shot(21, push(380, 300, 1.05, 1.15), function (u, d, t) {
-  return paper() + live(MIR, t) + box(MIR.p(470, 170), 330, 80, "المراية", OLIVE, at(u, .3, .5), 22) + box(MIR.p(650, 170), 560, 470, "الصورة", OLIVE, at(u, 1, .5), 22);
+  return paper() + inkIn(at(u, 0, .75), live(MIR, t)) + box(MIR.p(470, 170), 330, 80, "المراية", OLIVE, at(u, .3, .5), 22) + box(MIR.p(650, 170), 560, 470, "الصورة", OLIVE, at(u, 1, .5), 22);
 });
 // 22 · in short: you hear yourself through air and bone, people and the recording through air only
 shot(22, push(320, 400, .95, 1.02), function (u, d, t) {
@@ -372,7 +383,7 @@ shot(22, push(320, 400, .95, 1.02), function (u, d, t) {
 // 23 · the odd fact: Beethoven, going deaf, is said to have bitten a rod resting on the piano to hear through his jawbone
 shot(23, push(320, 400, 1.0, 1.08), function (u, d, t) {
   var P = mapPts(BTH, [[330, 245], [250, 225], [175, 205], [110, 140]]);
-  return paper() + live(BTH, t) + runDots(P, t, BONE, 6, 6, 70) + box(BTH.p(250, 225), 470, 110, "عصاية", ORANGE, at(u, 1.2, .5), 24) + box(BTH.p(100, 130), 120, 640, "عضم راسه", BONE, at(u, 2.6, .5), 22);
+  return paper() + inkIn(at(u, 0, .75), live(BTH, t)) + runDots(P, t, BONE, 6, 6, 70) + box(BTH.p(250, 225), 470, 110, "عصاية", ORANGE, at(u, 1.2, .5), 24) + box(BTH.p(100, 130), 120, 640, "عضم راسه", BONE, at(u, 2.6, .5), 22);
 });
 
 // ── opening card, bumper and summary art ──

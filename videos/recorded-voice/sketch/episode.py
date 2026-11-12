@@ -2,7 +2,7 @@
 CFG = {
     "title": "ليه صوتك غريب لما تسمعه متسجّل؟",
     "category": "جسم الإنسان",
-    "libs": [],
+    "libs": ["../env.js"],
     "outro": '<div class="q">ليه صوتك غريب لما تسمعه متسجّل؟</div><div class="art"><svg id="outroArt" viewBox="0 0 600 280"></svg></div>'
              '<div class="leg"><span><b>1</b>الأحبال الصوتية</span><span><b>2</b>الطريق من الهوا</span><span><b>3</b>الطريق من العضم</span><span><b>4</b>القوقعة</span></div>'
              '<div class="stat"><div class="n">2</div><div class="t">طريق بيوصلولك صوتك منهم،<br>والناس والموبايل بيسمعوك من طريق واحد</div></div>'
