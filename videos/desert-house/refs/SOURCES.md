@@ -13,3 +13,6 @@
 | solar-powered pumps for desert wells | common practice in Egypt's new desert reclamation |
 | Hassan Fathy designed New Gourna near Luxor, 1945–1948: sun-dried mud brick, thick walls, domes and vaults (more than 70 years ago) | [Wikipedia: Hassan Fathy](https://wikipedia.com/wiki/Hassan_Fathy); [Senses Atlas](https://www.sensesatlas.com/hassan-fathy-building-with-the-people-in-new-gourna/) |
 | white walls reflect the sun | basic physics (albedo) |
+| mud brick (adobe): clay-rich mud + sand + straw + water, trodden, moulded in wooden forms, sun-dried ~1–3 weeks, not fired; straw stops cracking and holds the brick together | [Wikipedia: Mudbrick](https://en.wikipedia.org/wiki/Mudbrick); Hassan Fathy, *Architecture for the Poor* |
+| thicker earth walls delay and soften the heat more (more mass = longer time lag) | AramcoWorld; ASHRAE 2020 (above) |
+| Nubian vault: courses of bricks laid leaning against an end wall, each stuck to the last with mud mortar, no timber support; the arch keeps every brick pressing on its neighbours and carries the weight down to the walls | [Wikipedia: Nubian vault](https://en.wikipedia.org/wiki/Nubian_vault) |
