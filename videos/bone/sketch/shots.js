@@ -164,15 +164,16 @@ function surface(u, t) {
   // new layer laid by the builders (olive), growing with time
   var nl = 26 * clamp((u - .6) / 2.5) + 4 * Math.sin(t * 1.5);
   s += '<path d="M-100 420 H300 V' + f(420 - nl) + ' H-100 Z" fill="#e8dcb8" stroke="' + INK + '" stroke-width="1.6"/>';
-  for (k = 0; k < 7; k++) s += osteoblast(-60 + k * 50, 404 - nl, at(u, .3 + k * .08, .3));
+  for (k = 0; k < 7; k++) s += big(-60 + k * 50, 410 - nl, 1.8, osteoblast(-60 + k * 50, 410 - nl, at(u, .3 + k * .08, .3)));
   // the pit dug by the eater
-  var pit = 18 + 14 * clamp((u - .6) / 2.5);
+  var pit = 26 + 18 * clamp((u - .6) / 2.5);
   s += '<path d="M380 420 C420 420 420 ' + f(420 + pit) + ' 480 ' + f(420 + pit) + ' C540 ' + f(420 + pit) + ' 540 420 580 420" fill="' + PAPER + '" stroke="' + INK + '" stroke-width="2"/>';
-  s += osteoclast(480, 410 + pit * .6, at(u, .5, .4), t);
+  s += big(480, 420 + pit * .3, 1.7, osteoclast(480, 420 + pit * .3, at(u, .5, .4), t));
   for (k = 0; k < 6; k++) { var a = (t * .8 + k / 6) % 1; s += '<circle cx="' + f(470 + 20 * Math.sin(k * 2)) + '" cy="' + f(400 - a * 90) + '" r="3" fill="' + ORANGE + '" opacity="' + f(1 - a) + '"/>'; }
   return s;
 }
 
+function big(x, y, k, inner) { return G('translate(' + f(x) + ' ' + f(y) + ') scale(' + k + ') translate(' + f(-x) + ' ' + f(-y) + ')', inner); }
 // ── analogy icons (drawn round 0,0 for iconBox) ──
 function icoScaffold() { var s = ""; [-30, 0, 30].forEach(function (x) { s += '<path d="M' + x + ' -38 V38" stroke="' + INK + '" stroke-width="4"/>'; }); [-24, 4, 32].forEach(function (y) { s += '<path d="M-38 ' + y + ' H38" stroke="' + ORANGE + '" stroke-width="4"/>'; }); return s + '<path d="M-30 32 L0 4 M0 32 L30 4 M-30 4 L0 -24" stroke="' + INK + '" stroke-width="2"/>'; }
 function icoTrowel() { return '<path d="M-36 24 C-30 6 30 6 38 24 Z" fill="#a9a59a" stroke="' + INK + '" stroke-width="2"/><path d="M-8 -6 L22 -30 L32 -20 L4 4 Z" fill="#c9cfd2" stroke="' + INK + '" stroke-width="2"/><path d="M22 -30 l10 -10" stroke="' + WOOD_D + '" stroke-width="7" stroke-linecap="round"/>' + '<path d="M-20 14 q6 -6 12 0 q6 6 12 0" stroke="' + INK + '" stroke-width="1.5" fill="none"/>'; }
@@ -188,12 +189,12 @@ shot(4, push(320, 420, 1.0, 1.08), function (u, d, t) {
     T("العضم", 320, 232, 40, OLIVE, 800) + T("عايش", 320, 284, 38, INK, 800) + C(320, 178, 9, ORANGE, 2), at(u, .3, .4));
 });
 // 5 · builders and eaters, always at work
-shot(5, push(260, 420, 1.15, 1.25), function (u, d, t) {
-  return paper() + surface(u, t) + label(40, 395, 90, 250, "خلايا بتبني", OLIVE, at(u, 1.2, .5), 26) + label(500, 395, 520, 250, "خلايا بتهد", ORANGE, at(u, 2.4, .5), 26);
+shot(5, push(290, 430, 1.15, 1.25), function (u, d, t) {
+  return paper() + surface(u, t) + label(90, 390, 150, 260, "خلايا بتبني", OLIVE, at(u, 1.2, .5), 26) + label(470, 450, 400, 600, "خلايا بتهد", ORANGE, at(u, 2.4, .5), 26);
 }, { tr: "in" });
 // 6 · the forearm, the radius inside, then the crack
 shot(6, push(300, 470, 0.9, 1.05), function (u, d, t) {
-  var k = at(u, 1.2, .3);
+  var k = at(u, .35, .3);
   return paper() + arm({ xray: false, bones: true, skin: 1 }) + G("", arm({ skin: 0, bones: true, frac: k }), 1) + label(252, 600, 140, 680, "العضم", OLIVE, at(u, .4, .5), 26) +
     (k > 0 ? '<path d="M210 450 l-20 -10 M300 446 l22 -12 M216 460 l-18 12" stroke="' + ORANGE + '" stroke-width="4" stroke-linecap="round" opacity="' + f(k * (1 - at(u, 2, .6))) + '"/>' : "");
 });

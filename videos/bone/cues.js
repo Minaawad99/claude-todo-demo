@@ -43,8 +43,50 @@ for (let i = PROMISE + 1; i < SUMMARY; i++) swipe(i);                           
 a(L(SUMMARY) + 0.1, 'chime', 0.35); for (let k = 0; k < 5; k++) a(L(SUMMARY) + 0.3 + k * 0.15, 'tick', 0.16);   // summary card builds
 paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                                                       // ask box
 
-// ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
-// e.g. lab(5, 0.4); ding(L(6) + 1.6); scribble(L(9) + 1.2); sea(L(0), L(PROMISE) - L(0) + 0.6, 0.45);
+// ── this episode: «إزاي العضم بيلتئم بعد الكسر؟» ──
+// sub-shots that start on a caption chunk ([line, chunk] in shots.js) get their own page flip
+const CH = JSON.parse(fs.readFileSync(__dirname + '/sketch/scenes.js', 'utf8').match(/window\.CHUNKS = (.*?);\n/)[1]);
+const C = (i, k) => L(i) + (T[i].end - T[i].start) * CH[i][k];
+const swipeAt = t => rec(t - 0.08, 'swipe', 0.3, 0.6, 0.42, 1.0, 'whoosh', 0.2);
+const snap = t => { rec(t, 'bone-snap', 0.45, 0, 0.6, 1.0, null); if (!has('bone-snap')) { a(t, 'snip', 0.45); a(t + 0.02, 'thud', 0.35); } };
+// 0–2 · hook: the cast is wrapped, the 6-week calendar, glue and pill crossed out, the X-ray
+a(L(0) + 0.4, 'wipe', 0.18, 0.6); a(L(0) + 1.0, 'wipe', 0.15, 0.5); paper(L(0) + 1.2);
+paper(L(1) + 0.05); scribble(L(1) + 0.6); paper(L(1) + 0.4); scribble(L(1) + 1.0);
+a(L(2) + 0.1, 'whoosh', 0.15); scribble(L(2) + 0.8);
+// 4–5 · the rule card; builders and an eater at work
+paper(L(4) + 0.3); a(L(4) + 0.45, 'pop', 0.35);
+for (let k = 0; k < 7; k++) a(L(5) + 0.3 + k * 0.08, 'pop', 0.16); lab(5, 1.2); lab(5, 2.4);
+// 6 · the crack
+snap(L(6) + 0.35); swipeAt(C(6, 1)); snap(C(6, 1) + 0.25);
+// 7 · torn vessels bleed, the clot grows; the swelling
+for (let k = 0; k < 4; k++) a(L(7) + 0.5 + k * 0.35, 'drip', 0.2); lab(7, 0.2); lab(7, 1.6);
+swipeAt(C(7, 2)); lab(7, C(7, 2) - L(7) + 0.7);
+// 8 · scaffold; clean-up cells eat the chips
+a(L(8) + 0.5, 'pop', 0.35); for (let k = 0; k < 7; k++) a(L(8) + 1.6 + k * 0.25, 'pop', 0.14);
+// 9, 12, 16 · the questions
+a(L(9) + 0.2, 'pop', 0.3); a(L(12) + 0.2, 'pop', 0.3); a(L(16) + 0.3, 'pop', 0.3);
+// 10 · a week later; cells move in, the cartilage bridge grows
+paper(L(10) + 0.2); lab(10, 0.6); a(L(10) + 1.2, 'fill', 0.12, 3); lab(10, 2.4);
+// 11 · soft callus: the tag, the trowel, the weight, ✗
+paper(L(11) + 0.2); a(L(11) + 0.9, 'pop', 0.3); a(L(11) + 1.9, 'thud', 0.3); scribble(L(11) + 2.4);
+// 13 · calcium falls in, woven bone; the X-ray
+paper(L(13) + 0.4); for (let k = 0; k < 6; k++) a(L(13) + 0.8 + k * 0.3, 'tick', 0.14); lab(13, 2);
+swipeAt(C(13, 2)); lab(13, C(13, 2) - L(13) + 1);
+// 14 · concrete; the eight weeks tick by
+a(L(14) + 0.2, 'pop', 0.3); for (let k = 0; k < 8; k++) a(L(14) + 1.4 + k * 0.12, 'tick', 0.2); ding(L(14) + 2.5);
+// 15 · the cast, then the ends wobble and the bridge cracks
+a(L(15) + 0.1, 'wipe', 0.15, 0.6); lab(15, 0.6); a(L(15) + 1.9, 'creak', 0.18, 1.0); snap(L(15) + 2.7); scribble(L(15) + 3.0);
+// 17–18 · the eaters take the bulge back; sanding; «سنين»
+for (let k = 0; k < 8; k++) a(L(17) + 0.2 + k * 0.15, 'pop', 0.14); lab(17, 0.5); lab(17, 1.4);
+a(L(18) + 0.3, 'wipe', 0.15, 1.2); a(L(18) + 1.0, 'wipe', 0.15, 1.2); paper(L(18) + 1.8);
+// 19 · the speed bars, the vitamin note
+lab(19, 0.2); lab(19, 0.7); lab(19, 1.3); paper(L(19) + 2.8); scribble(L(19) + 3.2);
+// 20 · the myth crossed out
+paper(L(20) + 0.3); scribble(L(20) + D(20) * 0.6);
+// 21 · the graph draws; 22 · the recap boxes; 23 · scar ✗, bone ✓
+a(L(21) + 0.4, 'whoosh', 0.12, 2); lab(21, 1.2); lab(21, D(21) - 1.2);
+for (let k = 0; k < 4; k++) a(L(22) + 0.2 + k * Math.max(.5, (D(22) - 1) / 4), 'pop', 0.3);
+lab(23, 0.9); scribble(L(23) + 1.3); paper(L(23) + 1.6); scribble(L(23) + 2.4);
 
 const MUSIC = has('music-soft') ? 'music-soft' : null;
 if (MUSIC) rec(0, MUSIC, 0.42, 0, window.TIMING.duration + 2.5, 0.6);
