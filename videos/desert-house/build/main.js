@@ -106,6 +106,30 @@
   function flood(t, k) { if (k <= 0) return ""; var s = "", w = O(-300, 0, 60), w2 = O(700, 0, 60); s += '<path d="M' + f(w[0]) + ' ' + f(w[1] - 26 * k) + ' Q' + f(200) + ' ' + f(w[1] - 36 * k + Math.sin(t * 4) * 3) + ' ' + f(w2[0]) + ' ' + f(w2[1] - 26 * k) + ' L' + f(w2[0]) + ' ' + f(w2[1] + 6) + ' L' + f(w[0]) + ' ' + f(w[1] + 6) + ' Z" fill="#7d5a3a" stroke="#efe2c4" stroke-width="2.4" opacity="' + f(.85 * k) + '"/>';
     for (var r = 0; r < 8; r++) { var u = (t * 1.2 + r / 8) % 1, rp = O(-280 + u * 960, 6, 60); s += '<path d="M' + pt(rp) + ' q8 -5 16 0" stroke="#e9d9b8" stroke-width="2" fill="none" opacity="' + f(k * (1 - u)) + '"/>'; } return s; }
 
+
+  // ── the builder: a man in a galabiya and a white turban, ~1.75 m (70 units; the wall is 110 ≈ 2.8 m) ─────
+  function person(t, ev) {
+    var WP = [[0, 300, 95], [ev.brick - .3, 318, 112], [ev.thin - .4, 328, 52]], i = 0;
+    while (i < WP.length - 1 && t >= WP[i + 1][0]) i++;
+    var a = WP[Math.max(0, i - 1)], b = WP[i], mk = i ? clamp((t - b[0]) / 1.2) : 1, mv = mk > 0 && mk < 1;
+    var x = lerp(a[1], b[1], ease(mk)), z = lerp(a[2], b[2], ease(mk)), p = O(x, 0, z), sw = mv ? Math.sin(t * 12) * 5 : 0;
+    var carry = t >= ev.thin && t < ev.strong, wave = t >= ev.yay0 - .1 && t < ev.yay0 + 1.6 || t >= ev.yay - .1 && t < ev.vote, mix = t >= ev.mud && t < ev.mold;
+    var bob = mv ? Math.abs(Math.sin(t * 12)) * 1.5 : 0, s = '<g transform="translate(' + f(p[0]) + ' ' + f(p[1] - bob) + ')">';
+    s += '<ellipse cx="4" cy="1" rx="13" ry="3" fill="#000" opacity=".18"/>';
+    s += '<path d="M-3 -16 L' + f(-4 - sw) + ' 0 M3 -16 L' + f(4 + sw) + ' 0" stroke="#7a4e30" stroke-width="3.4" stroke-linecap="round"/><path d="M' + f(-8 - sw) + ' 0 h6 M' + f(2 + sw) + ' 0 h6" stroke="#3a2a1a" stroke-width="2.6" stroke-linecap="round"/>';
+    // galabiya
+    s += '<path d="M-7 -54 Q-10 -30 -12 -12 L12 -12 Q10 -30 7 -54 Q0 -57 -7 -54 Z" fill="#e9eef2"' + ln(1.4) + '/><path d="M0 -54 v12" stroke="#b7c3cc" stroke-width="1.2"/>';
+    // arms
+    var la = wave ? 'M-6 -50 L-14 -62 L' + f(-12 + Math.sin(t * 14) * 4) + ' -74' : mix ? 'M-6 -50 L-12 -38 L-8 ' + f(-28 + Math.sin(t * 9) * 3) : carry ? 'M-6 -50 L-10 -40 L-2 -36' : 'M-6 -50 L-9 -38 L' + f(-9 + sw * .6) + ' -28';
+    var ra = carry ? 'M6 -50 L10 -40 L6 -36' : mix ? 'M6 -50 L10 -38 L6 ' + f(-28 - Math.sin(t * 9) * 3) : 'M6 -50 L9 -38 L' + f(9 - sw * .6) + ' -28';
+    s += '<path d="' + la + '" stroke="#e9eef2" stroke-width="5" stroke-linecap="round" fill="none"/><path d="' + la + '" stroke="' + INKL + '" stroke-width="1" fill="none" opacity=".5"/><path d="' + ra + '" stroke="#e9eef2" stroke-width="5" stroke-linecap="round" fill="none"/><path d="' + ra + '" stroke="' + INKL + '" stroke-width="1" fill="none" opacity=".5"/>';
+    if (mix) s += '<path d="M-8 ' + f(-28 + Math.sin(t * 9) * 3) + ' L-4 -6" stroke="#8a5a34" stroke-width="2.4" stroke-linecap="round"/>';
+    if (carry) s += '<rect x="-8" y="-42" width="16" height="7" rx="1.2" fill="#c99a62"' + ln(1) + '/>';
+    // head: face, moustache, white turban
+    s += '<rect x="-2.4" y="-58" width="4.8" height="5" fill="#b07a50"/><circle cx="0" cy="-63" r="6.4" fill="#b07a50"' + ln(1.3) + '/><path d="M-2.6 -60 q2.6 -1.4 5.2 0" stroke="#2a1a10" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="-2.2" cy="-64" r=".9" fill="#1d1b19"/><circle cx="2.2" cy="-64" r=".9" fill="#1d1b19"/>';
+    s += '<path d="M-7 -65 Q-7.5 -73 0 -73.5 Q7.5 -73 7 -65 Q0 -67 -7 -65 Z" fill="#f7f7f2"' + ln(1.2) + '/><path d="M-6 -68.5 Q0 -71 6 -68.5" stroke="#cfd3cc" stroke-width="1" fill="none"/>';
+    return s + '</g>';
+  }
   // ── camera ─────────────────────────────────────────
   var SHOTS = [[0, [262, 300, 1.45]], [2, [420, 330, 1.35]], [4, [262, 290, 1.2]], [6, [262, 270, 1.15]], [7, [262, 250, 1.2]], [10, [262, 250, 1.15]],
     [13, [185, 265, 1.0]], [14, [230, 290, .9]], [17, [300, 250, .9]], [18, [300, 240, .78]]];
@@ -150,7 +174,9 @@
     s += courtyard(t, after(t, ev.court, 1.2)) + well(t, after(t, ev.well, .9));
     s += tent(t, 1 - after(t, ev.brick - .2, .6));
     if (t >= ev.thin - .2) s += house(t, st);
+    if (t < ev.thin - .4) s += person(t, ev);
     s += brickYard(t, ev);
+    if (t >= ev.thin - .4) s += person(t, ev);
     s += flood(t, after(t, ev.flood, 1) * (1 - after(t, ev.card, .6)));
     // heat arrows from the sun into the walls (thin: through; thick: stopped inside the wall)
     if (t >= ev.thin && t < ev.wood) for (var a = 0; a < 5; a++) { var u = (t * .9 + a / 5) % 1, x0 = 330, x1 = t < ev.thick + .8 ? 240 : 292, hp = O(lerp(x0 + 60, x1, u), 60 + a * 9, 120); s += '<path d="M' + f(hp[0]) + ' ' + f(hp[1]) + ' h-14 m5 -5 l-5 5 l5 5" stroke="' + RED + '" stroke-width="3" fill="none" opacity="' + f(Math.sin(u * 3.14)) + '"/>'; }
