@@ -8,105 +8,122 @@
 var BONE = "#ece2c8", OSTEON = "#d3c39c", PERI = "#c98a72", MARROW = "#e6c06a", FAT = "#d6ab52", BLOOD = "#9e3327", BLOOD_D = "#74241b",
     CART = "#b9c8c5", CART_D = "#8fa6a3", WOVEN = "#e0cfa2", WOVEN_D = "#c9b27c", MUS = "#e6cbbb", MUS_L = "#d3ab97", CAST = "#f2eee4", CAST_L = "#d9d2c1", XR = "#24211d";
 
-// ── the long bone cut lengthwise, centred on (CX, CY), running off both panel edges ──
-var CX = 320, CY = 400, HO = 100, HI = 56;   // half-heights: outer surface, marrow cavity
-var FR = [[-14, -116], [-4, -82], [-17, -50], [6, -16], [-6, 20], [15, 56], [3, 88], [17, 116]];   // the jagged fracture line
-function frPath(dx) { return FR.map(function (p, i) { return (i ? "L" : "M") + f(CX + p[0] + dx) + " " + f(CY + p[1]); }).join(" "); }
-function clipSide(side, dx, inner) {   // keep only the part of `inner` left (side -1) or right (+1) of the fracture line
+// ── the long bone, cut lengthwise and seen a little from above (a half-cylinder, like the SEER cut-away in refs/):
+// the flat cut face in front (periosteum, cortex, marrow) and the round outer surface of the back half above it ──
+var CX = 320, CY = 400, HO = 100, HI = 56, E = 44;   // half-heights: outer surface, marrow cavity; E = depth of the round top
+var FR = [[-22, -HO - E - 6], [-14, -116], [-4, -82], [-17, -50], [6, -16], [-6, 20], [15, 56], [3, 88], [17, 116]];   // the jagged break
+function frPath(dx, dy) { return FR.map(function (p, i) { return (i ? "L" : "M") + f(CX + p[0] + dx) + " " + f(CY + p[1] + (dy || 0)); }).join(" "); }
+function clipSide(side, dx, inner) {   // keep only the part of `inner` left (side -1) or right (+1) of the break
   var id = "fr" + (++CLIPN), far = side < 0 ? -2000 : 2600, pts = FR.map(function (p) { return f(CX + p[0] + dx) + " " + f(CY + p[1]); });
-  var d = "M" + far + " " + f(CY - 116) + " L" + pts.join(" L") + " L" + far + " " + f(CY + 116) + " Z";
+  var d = "M" + far + " " + f(CY - HO - E - 6) + " L" + pts.join(" L") + " L" + far + " " + f(CY + 116) + " Z";
   return '<clipPath id="' + id + '"><path d="' + d + '"/></clipPath><g clip-path="url(#' + id + ')">' + inner + '</g>';
 }
-// the bone tissue itself (whole, unbroken): periosteum, cortex, marrow, artery
-function boneBody(t, o) {
+var AP = (function () { var d = ""; for (var x = -400; x <= 1100; x += 10) d += (x > -400 ? " L" : "M") + x + " " + f(CY + 14 + 7 * Math.sin(x * .02)); return d; })();
+function artY(x) { return CY + 14 + 7 * Math.sin(x * .02); }
+// the round top of the back half: periosteum in three flat tones (lit edge, mid, shade with hatching) and surface vessels
+function boneTop(t) {
+  var X0 = -700, W = 2000, y0 = CY - HO - E, s = "";
+  s += R(X0, y0, W, E, "#a96d58", 0) + R(X0, y0 + E * .3, W, E * .7, PERI, 0) + R(X0, y0 + E * .72, W, E * .28, "#dfa58d", 0);
+  s += '<g opacity=".55">' + hatch("M" + X0 + " " + y0 + " h" + W + " v" + f(E * .3) + " h" + (-W) + " Z") + '</g>';
+  for (var k = 0; k < 9; k++) { var x = -260 + k * 150, d = "M" + x + " " + f(y0 + E - 2); for (var j = 1; j <= 6; j++) d += " L" + f(x + j * 22 + 6 * Math.sin(j * 2 + k)) + " " + f(y0 + E - 2 - j * E / 6.5); s += '<path d="' + d + '" stroke="#b5452f" stroke-width="2" fill="none" opacity=".8"/>'; }
+  s += '<path d="M' + X0 + ' ' + f(y0 + E - 5) + ' H1300" stroke="#f1cbb8" stroke-width="2.5" opacity=".8"/>';   // highlight along the lit edge
+  return s + '<path d="M' + X0 + ' ' + y0 + ' H1300" stroke="' + INK + '" stroke-width="2.4"/>';
+}
+// the flat cut face (whole, unbroken): periosteum, cortex with osteons, marrow with fat cells, the nutrient artery
+function boneFace(t, o) {
   o = o || {}; var X0 = -700, W = 2000, s = "", k;
-  s += R(X0, CY - HO, W, HO * 2, PERI, 0);                       // periosteum (the thin skin round the bone)
-  s += R(X0, CY - HO + 6, W, HO * 2 - 12, BONE, 0);               // compact cortex
-  for (k = 0; k < 5; k++) {                                       // osteon lines along the cortex
-    var y1 = CY - HO + 12 + k * 7, y2 = CY + HI + 6 + k * 7;
-    s += '<path d="M' + X0 + ' ' + y1 + ' H1300 M' + X0 + ' ' + y2 + ' H1300" stroke="' + OSTEON + '" stroke-width="1.4" stroke-dasharray="' + (30 + k * 7) + ' 6"/>';
-  }
+  s += R(X0, CY - HO, W, HO * 2, PERI, 0) + R(X0, CY - HO + 6, W, HO * 2 - 12, BONE, 0);
+  s += R(X0, CY + HO - 26, W, 20, "#ddd0b0", 0);                                    // the lower cortex a shade darker (it faces down)
+  for (k = 0; k < 5; k++) { var y1 = CY - HO + 12 + k * 7, y2 = CY + HI + 6 + k * 7;
+    s += '<path d="M' + X0 + ' ' + y1 + ' H1300 M' + X0 + ' ' + y2 + ' H1300" stroke="' + OSTEON + '" stroke-width="1.4" stroke-dasharray="' + (30 + k * 7) + ' 6"/>'; }
   for (k = 0; k < 70; k++) { var lx = -300 + hash(k) * 1250, ly = (k % 2 ? CY - HO + 10 : CY + HI + 4) + hash(k + 7) * 34; s += '<ellipse cx="' + f(lx) + '" cy="' + f(ly) + '" rx="2.6" ry="1.3" fill="#b9a678"/>'; }
-  s += R(X0, CY - HI, W, HI * 2, MARROW, 0);                      // yellow marrow
-  for (k = 0; k < 60; k++) { var mx = -300 + hash(k + 90) * 1250, my = CY - HI + 8 + hash(k + 33) * (HI * 2 - 16); s += '<circle cx="' + f(mx) + '" cy="' + f(my) + '" r="' + f(4 + hash(k + 5) * 6) + '" fill="none" stroke="' + FAT + '" stroke-width="1.3"/>'; }
-  if (!o.noVessel) {                                              // the nutrient artery along the marrow, with branches into the cortex
-    var d = ""; for (var x = -400; x <= 1100; x += 10) d += (x > -400 ? " L" : "M") + x + " " + f(CY + 14 + 7 * Math.sin(x * .02));
-    s += '<path d="' + d + '" stroke="' + INK + '" stroke-width="7.5" fill="none"/><path d="' + d + '" stroke="#b5452f" stroke-width="4.5" fill="none"/>';
-    [[-60, -1], [120, 1], [470, -1], [640, 1]].forEach(function (b) { var bx = b[0], by = CY + 14 + 7 * Math.sin(bx * .02);
+  s += R(X0, CY - HI, W, HI * 2, MARROW, 0) + R(X0, CY - HI, W, 12, "#c99f45", 0);   // marrow; shade under the upper cortex = it is a hollow
+  for (k = 0; k < 60; k++) { var mx = -300 + hash(k + 90) * 1250, my = CY - HI + 14 + hash(k + 33) * (HI * 2 - 22), r = 4 + hash(k + 5) * 6;
+    s += '<circle cx="' + f(mx) + '" cy="' + f(my) + '" r="' + f(r) + '" fill="#efd28c" stroke="' + FAT + '" stroke-width="1.3"/><circle cx="' + f(mx - r * .3) + '" cy="' + f(my - r * .3) + '" r="' + f(r * .3) + '" fill="#f8e7b8"/>'; }
+  if (!o.noVessel) {   // the artery: it pulses with the heartbeat and red cells run along it
+    var beat = 1 + .25 * Math.max(0, Math.sin(t * 7.5)) * (Math.sin(t * 3.75) > 0 ? 1 : 0);
+    s += '<path d="' + AP + '" stroke="' + INK + '" stroke-width="' + f(8 * beat) + '" fill="none"/><path d="' + AP + '" stroke="#b5452f" stroke-width="' + f(5 * beat) + '" fill="none"/><path d="' + AP + '" stroke="#d9806a" stroke-width="1.5" fill="none" transform="translate(0 -1.5)"/>';
+    for (k = 0; k < 40; k++) { var cx = -300 + ((k * 38 + t * 70) % 1300); s += '<ellipse cx="' + f(cx) + '" cy="' + f(artY(cx)) + '" rx="3.2" ry="1.8" fill="#7a2219"/>'; }
+    [[-60, -1], [120, 1], [470, -1], [640, 1]].forEach(function (b) { var bx = b[0], by = artY(bx);
       s += '<path d="M' + bx + ' ' + f(by) + ' Q' + (bx + 26) + ' ' + f(by + b[1] * 30) + ' ' + (bx + 34) + ' ' + f(CY + b[1] * (HO - 4)) + '" stroke="#b5452f" stroke-width="3" fill="none"/>'; });
   }
   s += '<path d="M' + X0 + ' ' + (CY - HO) + ' H1300 M' + X0 + ' ' + (CY + HO) + ' H1300" stroke="' + INK + '" stroke-width="2.4"/>';
   s += '<path d="M' + X0 + ' ' + (CY - HO + 6) + ' H1300 M' + X0 + ' ' + (CY + HO - 6) + ' H1300" stroke="' + INK + '" stroke-width="1"/>';
-  s += '<path d="M' + X0 + ' ' + (CY - HI) + ' H1300 M' + X0 + ' ' + (CY + HI) + ' H1300" stroke="' + INK + '" stroke-width="1.8"/>';
-  return s;
+  return s + '<path d="M' + X0 + ' ' + (CY - HI) + ' H1300 M' + X0 + ' ' + (CY + HI) + ' H1300" stroke="' + INK + '" stroke-width="1.8"/>';
 }
-// muscle around the bone (context: we are inside the forearm)
+function boneBody(t, o) { return boneTop(t) + boneFace(t, o); }
+// muscle round the bone: rounded bundles along the arm, each lit on top and shaded underneath; they swell a little in turn
 function muscle(t) {
-  var s = R(-700, -400, 2000, 1600, MUS, 0), k;
-  for (k = 0; k < 40; k++) { var y = -380 + k * 40 + 6 * Math.sin(k); if (Math.abs(y - CY) < HO + 14) continue; s += '<path d="M-700 ' + f(y) + ' Q320 ' + f(y + 10 * Math.sin(k * 1.7)) + ' 1300 ' + f(y) + '" stroke="' + MUS_L + '" stroke-width="1.6" fill="none" opacity=".7"/>'; }
-  return s;
+  var s = R(-700, -400, 2000, 1600, "#d3a594", 0), k;
+  for (k = 0; k < 22; k++) {
+    var yc = -330 + k * 64, h = 60 + 4 * Math.sin(t * 1.3 + k);
+    if (yc > CY - HO - E - 40 && yc < CY + HO + 30) continue;
+    s += '<path d="M-700 ' + f(yc - h / 2) + ' Q320 ' + f(yc - h / 2 - 8 * Math.sin(k)) + ' 1300 ' + f(yc - h / 2) + ' L1300 ' + f(yc + h / 2) + ' Q320 ' + f(yc + h / 2 - 8 * Math.sin(k)) + ' -700 ' + f(yc + h / 2) + ' Z" fill="' + MUS + '" stroke="' + MUS_L + '" stroke-width="1.6"/>';
+    s += '<path d="M-700 ' + f(yc - h / 2 + 7) + ' Q320 ' + f(yc - h / 2 + 7 - 8 * Math.sin(k)) + ' 1300 ' + f(yc - h / 2 + 7) + '" stroke="#f1dccf" stroke-width="3" fill="none"/>';
+    s += '<path d="M-700 ' + f(yc + h / 2 - 9) + ' Q320 ' + f(yc + h / 2 - 9 - 8 * Math.sin(k)) + ' 1300 ' + f(yc + h / 2 - 9) + ' L1300 ' + f(yc + h / 2) + ' Q320 ' + f(yc + h / 2 - 8 * Math.sin(k)) + ' -700 ' + f(yc + h / 2) + ' Z" fill="#cf9f8c"/>';
+  }
+  return s + R(-700, CY + HO, 2000, 26, INK, 0, 0, ' opacity=".18"');   // the bone's shadow on the muscle under it
 }
-// the collar of callus outside the bone (behind the cortex, so it shows above, below and in the gap). b = bulge height
-function collar(dx, b, fill) {
-  var x0 = CX - 170, x1 = CX + 170 + dx, m = CX + dx / 2, top = CY - HO + 4, bot = CY + HO - 4;
-  var d = "M" + x0 + " " + top + " C" + (x0 + 70) + " " + top + " " + (m - 60) + " " + f(top - b) + " " + m + " " + f(top - b) + " C" + (m + 60) + " " + f(top - b) + " " + (x1 - 70) + " " + top + " " + x1 + " " + top +
-          " L" + x1 + " " + bot + " C" + (x1 - 70) + " " + bot + " " + (m + 60) + " " + f(bot + b) + " " + m + " " + f(bot + b) + " C" + (m - 60) + " " + f(bot + b) + " " + (x0 + 70) + " " + bot + " " + x0 + " " + bot + " Z";
-  return d;
+// the callus collar round the bone (its cut section above and below the face, its back half over the round top). b = bulge
+function collar(dx, b, lift) {
+  var x0 = CX - 170, x1 = CX + 170 + dx, m = CX + dx / 2, top = CY - HO + 4 - (lift || 0), bot = CY + HO - 4;
+  return "M" + x0 + " " + top + " C" + (x0 + 70) + " " + top + " " + (m - 60) + " " + f(top - b) + " " + m + " " + f(top - b) + " C" + (m + 60) + " " + f(top - b) + " " + (x1 - 70) + " " + top + " " + x1 + " " + top +
+         " L" + x1 + " " + bot + " C" + (x1 - 70) + " " + bot + " " + (m + 60) + " " + f(bot + b) + " " + m + " " + f(bot + b) + " C" + (m - 60) + " " + f(bot + b) + " " + (x0 + 70) + " " + bot + " " + x0 + " " + bot + " Z";
 }
-function texCart(x, y, w, h) { var s = "", k; for (k = 0; k < 90; k++) { var cx = x + hash(k + 300) * w, cy = y + hash(k + 400) * h; s += '<ellipse cx="' + f(cx) + '" cy="' + f(cy) + '" rx="4.5" ry="3" fill="#e4ecea" stroke="' + CART_D + '" stroke-width="1.1"/><circle cx="' + f(cx) + '" cy="' + f(cy) + '" r="1.3" fill="' + CART_D + '"/>'; } return s; }
+// the collar's outer surface over the round top: a dome from the face edge up over the back
+function dome(dx, b) { var x0 = CX - 175, x1 = CX + 175 + dx, m = CX + dx / 2, y = CY - HO + 2, pk = CY - HO - E - b * .95;
+  return "M" + x0 + " " + y + " C" + (x0 + 60) + " " + y + " " + (m - 90) + " " + f(pk) + " " + m + " " + f(pk) + " C" + (m + 90) + " " + f(pk) + " " + (x1 - 60) + " " + y + " " + x1 + " " + y + " Z"; }
+// k: how many of the texture's cells are there yet (they multiply as the callus grows)
+function texCart(x, y, w, h, k) { var s = "", n = Math.round(90 * (k == null ? 1 : clamp(k))), j; for (j = 0; j < n; j++) { var cx = x + hash(j + 300) * w, cy = y + hash(j + 400) * h; s += '<ellipse cx="' + f(cx) + '" cy="' + f(cy) + '" rx="4.5" ry="3" fill="#e4ecea" stroke="' + CART_D + '" stroke-width="1.1"/><circle cx="' + f(cx) + '" cy="' + f(cy) + '" r="1.3" fill="' + CART_D + '"/>'; } return s; }
 function texWoven(x, y, w, h) { var s = "", k; for (k = 0; k < 80; k++) { var cx = x + hash(k + 500) * w, cy = y + hash(k + 600) * h; s += '<ellipse cx="' + f(cx) + '" cy="' + f(cy) + '" rx="' + f(4 + hash(k) * 6) + '" ry="' + f(3 + hash(k + 1) * 4) + '" transform="rotate(' + f(hash(k + 2) * 180) + ' ' + f(cx) + ' ' + f(cy) + ')" fill="' + WOVEN_D + '" stroke="' + INK + '" stroke-width=".8"/>'; } return s; }
 function clipTo(d, inner) { var id = "cp" + (++CLIPN); return '<clipPath id="' + id + '"><path d="' + d + '"/></clipPath><g clip-path="url(#' + id + ')">' + inner + '</g>'; }
-// the haematoma: a dark clot filling the gap and bulging out under the torn periosteum. k grows 0..1
+function clotPath(m, k, t, sx, sy) { var d = "", n = 28, i; for (i = 0; i <= n; i++) { var a = i / n * Math.PI * 2, r = 1 + .1 * Math.sin(a * 5 + 1) + .03 * Math.sin(t * 2 + a * 3), rx = (40 + 70 * k) * r, ry = (60 + 75 * k) * r; d += (i ? " L" : "M") + f(m + sx + Math.cos(a) * rx) + " " + f(CY + sy + Math.sin(a) * ry); } return d + " Z"; }
+// the haematoma: a dark clot filling the gap and bulging out under the torn periosteum, with depth (a darker back copy)
 function clot(dx, k, t) {
-  if (k <= 0) return ""; var m = CX + dx / 2, d = "", n = 28, i;
-  for (i = 0; i <= n; i++) { var a = i / n * Math.PI * 2, r = 1 + .1 * Math.sin(a * 5 + 1) + .03 * Math.sin(t * 2 + a * 3), rx = (40 + 70 * k) * r, ry = (60 + 75 * k) * r; d += (i ? " L" : "M") + f(m + Math.cos(a) * rx) + " " + f(CY + Math.sin(a) * ry); }
-  d += " Z"; var s = P(d, BLOOD, 2.2);
+  if (k <= 0) return ""; var m = CX + dx / 2, d = clotPath(m, k, t, 0, 0), s = P(clotPath(m, k * .92, t, 8, -E * .7), BLOOD_D, 2) + P(d, BLOOD, 2.2);
   s += clipTo(d, (function () { var r = "", j; for (j = 0; j < 26; j++) { var x = m - 110 + hash(j + 70) * 220, y = CY - 140 + hash(j + 80) * 280; r += '<path d="M' + f(x) + ' ' + f(y) + ' l' + f(30 - hash(j) * 60) + ' ' + f(20 - hash(j + 3) * 40) + '" stroke="#d27a66" stroke-width="1.3"/>'; }
-    for (j = 0; j < 30; j++) r += '<ellipse cx="' + f(m - 110 + hash(j + 170) * 220) + '" cy="' + f(CY - 140 + hash(j + 180) * 280) + '" rx="5" ry="3.4" fill="#b84a3a" stroke="' + BLOOD_D + '" stroke-width="1"/>'; return r + hatch("M-2000 -2000 H2600 V2600 H-2000 Z"); })());
-  return s;
+    for (j = 0; j < 30; j++) r += '<ellipse cx="' + f(m - 110 + hash(j + 170) * 220 + 3 * Math.sin(t + j)) + '" cy="' + f(CY - 140 + hash(j + 180) * 280) + '" rx="5" ry="3.4" fill="#b84a3a" stroke="' + BLOOD_D + '" stroke-width="1"/>'; return r; })());
+  return s + '<ellipse cx="' + f(m - 30 * k) + '" cy="' + f(CY - 60 * k) + '" rx="' + f(16 * k) + '" ry="' + f(9 * k) + '" fill="#d77d6a" opacity=".7"/>';
 }
 // o: {frac 0..1 (crack appears), gap px, clot 0..1, soft 0..1, hard 0..1, remodel 0..1, healed 0..1, noMuscle}
 function boneCut(t, o) {
-  o = o || {}; var gap = o.gap || 0, s = o.noMuscle ? "" : muscle(t), b, cd;
-  // callus outside the bone
-  var bulge = 58 * (o.soft || 0) * (1 - .85 * (o.remodel || 0));
-  var cOut = "";
+  o = o || {}; var gap = o.gap || 0, s = o.noMuscle ? "" : muscle(t), cd, callus = "";
+  var bulge = 58 * clamp(o.soft || 0) * (1 - .85 * (o.remodel || 0)), hk = clamp(o.hard || 0);
   if (o.soft > 0) {
-    cd = collar(gap, bulge, CART);
-    cOut += P(cd, CART, 2.2) + clipTo(cd, texCart(CX - 180, CY - 170, 380 + gap, 340));
-    if (o.hard > 0) {   // ossification runs from both ends of the collar towards the gap
-      var k = clamp(o.hard), wL = 170 * k, x0 = CX - 170, x1 = CX + 170 + gap;
-      var inner = '<path d="' + cd + '" fill="' + WOVEN + '"/>' + clipTo(cd, texWoven(CX - 180, CY - 170, 380 + gap, 340)) + '<path d="' + cd + '" fill="none" stroke="' + INK + '" stroke-width="2.2"/>';
-      cOut += sweep(x0 - 2, CY - 200, wL + 2, 400, 1, "r", inner) + sweep(x1 - wL, CY - 200, wL + 2, 400, 1, "r", inner);
-    }
-    s += G("", cOut, 1 - clamp(o.healed || 0));
+    var one = function (lift, back) {   // one layer of the collar: the back half (lifted, darker) or the cut section in front
+      var d = back ? dome(gap, bulge) : collar(gap, bulge, 0), r = P(d, back ? CART_D : CART, 2.2) + (back ? clipTo(d, R(CX - 200, CY - HO - E - 120, 420 + gap, E * .6 + 120, "#a3b8b5", 0) + '<g opacity=".4">' + hatch("M-2000 -2000 H2600 V" + (CY - HO - E * .6) + " H-2000 Z") + '</g>') : "") + (back ? "" : clipTo(d, texCart(CX - 180, CY - 220, 380 + gap, 390, o.soft)));
+      if (hk > 0) { var wL = 170 * hk, x0 = CX - 170, x1 = CX + 170 + gap, inn = '<path d="' + d + '" fill="' + (back ? WOVEN_D : WOVEN) + '"/>' + (back ? "" : clipTo(d, texWoven(CX - 180, CY - 220, 380 + gap, 390))) + '<path d="' + d + '" fill="none" stroke="' + INK + '" stroke-width="2.2"/>';
+        r += sweep(x0 - 2, CY - 260, wL + 2, 480, 1, "r", inn) + sweep(x1 - wL, CY - 260, wL + 2, 480, 1, "r", inn); }
+      return r;
+    };
+    callus = one(0, true) + one(0, false);
+    s += G("", callus, 1 - clamp(o.healed || 0));
   }
-  s += clot(gap, (o.clot || 0) * (1 - (o.soft || 0)), t);
-  // the two pieces
+  s += clot(gap, (o.clot || 0) * (1 - clamp(o.soft || 0)), t);
   var body = boneBody(t, o);
   if (o.frac > 0) {
     s += clipSide(-1, 0, body) + G("translate(" + f(gap) + " 0)", clipSide(1, 0, body));
-    var edge = draw(frPath(0), o.frac, INK, 2.6) + (gap > .5 ? draw(frPath(gap), o.frac, INK, 2.6) : "");
-    s += edge;
-    // internal callus inside the marrow cavity, across the gap
+    s += draw(frPath(0), o.frac, INK, 2.6) + (gap > .5 ? draw(frPath(gap), o.frac, INK, 2.6) : "");
     if (o.soft > 0) { var mc = CX + gap / 2, ic = "M" + f(mc - 90) + " " + CY + " C" + f(mc - 60) + " " + (CY - HI - 4) + " " + f(mc + 60) + " " + (CY - HI - 4) + " " + f(mc + 90) + " " + CY + " C" + f(mc + 60) + " " + (CY + HI + 4) + " " + f(mc - 60) + " " + (CY + HI + 4) + " " + f(mc - 90) + " " + CY + " Z";
-      s += G("", clipTo(ic, '<rect x="' + (CX - 100) + '" y="' + (CY - HI) + '" width="' + (200 + gap) + '" height="' + (2 * HI) + '" fill="' + (o.hard > .6 ? WOVEN : CART) + '"/>' + (o.hard > .6 ? texWoven(CX - 80, CY - HI, 160 + gap, 2 * HI) : texCart(CX - 80, CY - HI, 160 + gap, 2 * HI))) + '<path d="' + ic + '" fill="none" stroke="' + INK + '" stroke-width="1.4" stroke-dasharray="5 4"/>', clamp(o.soft * 1.5) * (1 - (o.remodel || 0))); }
+      s += G("", clipTo(ic, '<rect x="' + (CX - 100) + '" y="' + (CY - HI) + '" width="' + (200 + gap) + '" height="' + (2 * HI) + '" fill="' + (hk > .6 ? WOVEN : CART) + '"/>' + (hk > .6 ? texWoven(CX - 80, CY - HI, 160 + gap, 2 * HI) : texCart(CX - 80, CY - HI, 160 + gap, 2 * HI, o.soft))) + '<path d="' + ic + '" fill="none" stroke="' + INK + '" stroke-width="1.4" stroke-dasharray="5 4"/>', clamp(o.soft * 1.5) * (1 - (o.remodel || 0))); }
+    // the collar's parts that wrap over the top and bottom of the bone stay in front of it
+    if (callus) s += G("", clipTo("M-2000 -2000 H2600 V" + (CY - HO) + " H-2000 Z M-2000 " + (CY + HO) + " H2600 V2600 H-2000 Z", callus), 1 - clamp(o.healed || 0));
   } else s += body;
   if (o.healed > 0) s += G("", boneBody(t, o), clamp(o.healed));
   return s;
 }
 
 // ── cells ──
-function osteoblast(x, y, k, rot) { if (k <= 0) return ""; return G("translate(" + f(x) + " " + f(y) + ") rotate(" + (rot || 0) + ") scale(" + f(pop(k)) + ")", '<rect x="-9" y="-7" width="18" height="14" rx="4" fill="#8f9a5a" stroke="' + INK + '" stroke-width="1.4"/><circle cx="1" cy="-1" r="3.4" fill="' + INK + '"/>'); }
+function osteoblast(x, y, k, rot) { if (k <= 0) return ""; return G("translate(" + f(x) + " " + f(y) + ") rotate(" + (rot || 0) + ") scale(" + f(pop(k)) + ")", '<ellipse cx="2" cy="8" rx="10" ry="3" fill="' + INK + '" opacity=".2"/><rect x="-9" y="-7" width="18" height="14" rx="4" fill="#8f9a5a" stroke="' + INK + '" stroke-width="1.4"/><rect x="-6" y="-5" width="9" height="3" rx="1.5" fill="#bcc68a"/><circle cx="1" cy="0" r="3.4" fill="' + INK + '"/>'); }
 function osteoclast(x, y, k, t) {
   if (k <= 0) return ""; var w = 1 + .05 * Math.sin(t * 3 + x);
   return G("translate(" + f(x) + " " + f(y) + ") scale(" + f(pop(k) * w) + " " + f(pop(k) / w) + ")",
-    '<path d="M-34 6 C-38 -14 -18 -26 0 -24 C20 -26 38 -14 34 6 L30 6 l-4 5 l-4 -5 l-4 5 l-4 -5 l-4 5 l-4 -5 l-4 5 l-4 -5 l-4 5 l-4 -5 l-4 5 l-4 -5 l-4 5 l-4 -5 l-4 5 Z" fill="#c9704b" stroke="' + INK + '" stroke-width="1.6"/>' +
-    [-17, -4, 9, 20].map(function (nx, i) { return '<ellipse cx="' + nx + '" cy="' + (-10 + (i % 2) * 6) + '" rx="5" ry="4" fill="#f0d6c4" stroke="' + INK + '" stroke-width="1"/>'; }).join(""));
+    '<ellipse cx="3" cy="12" rx="36" ry="5" fill="' + INK + '" opacity=".2"/><path d="M-34 6 C-38 -14 -18 -26 0 -24 C20 -26 38 -14 34 6 L30 6 l-4 5 l-4 -5 l-4 5 l-4 -5 l-4 5 l-4 -5 l-4 5 l-4 -5 l-4 5 l-4 -5 l-4 5 l-4 -5 l-4 5 l-4 -5 l-4 5 Z" fill="#c9704b" stroke="' + INK + '" stroke-width="1.6"/>' +
+    '<path d="M-26 -12 C-20 -20 -6 -22 6 -21" stroke="#e8a383" stroke-width="4" fill="none" stroke-linecap="round"/>' + [-17, -4, 9, 20].map(function (nx, i) { return '<ellipse cx="' + nx + '" cy="' + (-10 + (i % 2) * 6) + '" rx="5" ry="4" fill="#f0d6c4" stroke="' + INK + '" stroke-width="1"/>'; }).join(""));
 }
 function macrophage(x, y, k, t, i) {
   if (k <= 0) return ""; var d = "", n = 14, j; for (j = 0; j <= n; j++) { var a = j / n * Math.PI * 2, r = 15 + 4 * Math.sin(a * 3 + t * 3 + (i || 0)); d += (j ? " L" : "M") + f(Math.cos(a) * r) + " " + f(Math.sin(a) * r); }
-  return G("translate(" + f(x) + " " + f(y) + ") scale(" + f(pop(k)) + ")", P(d + " Z", "#e6d8bd", 1.6) + '<path d="M-5 -4 q6 -6 10 0 q-2 6 -10 4 z" fill="' + BLUE + '" stroke="' + INK + '" stroke-width="1"/>');
+  return G("translate(" + f(x) + " " + f(y) + ") scale(" + f(pop(k)) + ")", '<ellipse cx="3" cy="17" rx="16" ry="4" fill="' + INK + '" opacity=".18"/>' + P(d + " Z", "#e6d8bd", 1.6) + '<ellipse cx="-5" cy="-7" rx="6" ry="3" fill="#fbf4e6"/><path d="M-5 -4 q6 -6 10 0 q-2 6 -10 4 z" fill="' + BLUE + '" stroke="' + INK + '" stroke-width="1"/>');
 }
 function chip(x, y, r, k) { if (k <= 0) return ""; return G("translate(" + f(x) + " " + f(y) + ")", '<path d="M' + -r + ' 0 L' + f(-r * .3) + ' ' + f(-r * .8) + ' L' + r + ' ' + f(-r * .2) + ' L' + f(r * .5) + ' ' + f(r * .7) + ' Z" fill="' + BONE + '" stroke="' + INK + '" stroke-width="1.4"/>', clamp(k)); }
 
@@ -131,13 +148,13 @@ function arm(o) {   // o: {skin 0..1, xray, cast 0..1, swell 0..1, frac 0..1 (ra
     // the forearm as one tapered shape (wider near the elbow), swelling on the thumb side over the break when sw > 0
     var fa = "M190 920 C196 760 204 600 " + f(214 - 52 * sw) + " " + f(470) + " C" + f(218 - 46 * sw) + " 420 222 392 228 360 L388 360 C390 392 " + f(394 + 10 * sw) + " 420 " + f(398 + 12 * sw) + " 470 C404 600 412 760 420 920 Z";
     var sk = '<path d="' + PALM + '" fill="' + INK + '" stroke="' + INK + '" stroke-width="5" stroke-linejoin="round"/>' + caps(fingers, 4, INK) + '<path d="' + fa + '" fill="' + INK + '" stroke="' + INK + '" stroke-width="5" stroke-linejoin="round"/>' +
-             '<path d="' + PALM + '" fill="' + SKIN + '"/>' + caps(fingers, 0, SKIN) + '<path d="' + fa + '" fill="' + SKIN + '"/>';
+             '<path d="' + PALM + '" fill="' + SKIN + '"/>' + caps(fingers, 0, SKIN) + '<path d="' + fa + '" fill="' + SKIN + '"/>' + shade3d(fingers, sw);
     if (sw > 0) sk += '<ellipse cx="236" cy="450" rx="' + f(30 * sw) + '" ry="' + f(46 * sw) + '" fill="#a77a8a" opacity=".35"/><path d="M' + f(206 - 30 * sw) + ' 430 q-6 40 6 80" stroke="' + INK + '" stroke-width="1.4" fill="none" opacity="' + f(sw) + '"/>';
     s += G("", sk, o.xray ? .28 : 1);
   }
   if (o.xray || o.bones) {
     var col = o.xray ? "#f1eee6" : BONE, list = BONES.slice();
-    var bs = caps(list, 3, o.xray ? "#9c978c" : INK) + caps(list, 0, col);
+    var bs = caps(list, 3, o.xray ? "#9c978c" : INK) + caps(list, 0, col) + (o.xray ? caps(list.map(function (b) { return [b[0] + b[4] * .18, b[1], b[2] + b[4] * .18, b[3], b[4] * .3]; }), 0, "#cfcabd") : caps(list.map(function (b) { return [b[0] + b[4] * .2, b[1], b[2] + b[4] * .2, b[3], b[4] * .32]; }), 0, OSTEON));
     if (o.frac > 0) {   // a break across the radius, 70 px above the wrist
       var fy = 450, g = 4 * o.frac;
       bs += '<path d="M228 ' + (fy - 6) + ' l10 8 l9 -10 l10 12 l9 -8 l10 10 l9 -6 l8 6" stroke="' + (o.xray ? XR : INK) + '" stroke-width="' + f(3 + g) + '" fill="none" opacity="' + f(o.frac) + '"/>';
@@ -148,17 +165,28 @@ function arm(o) {   // o: {skin 0..1, xray, cast 0..1, swell 0..1, frac 0..1 (ra
   if (o.cast > 0) {   // a short arm cast: from below the elbow to the palm crease, thumb out through a hole
     var cs = '<path d="M196 920 L204 420 C206 360 214 310 236 260 L392 230 C398 300 404 360 412 420 L420 920 Z" fill="' + CAST + '" stroke="' + INK + '" stroke-width="2.6" stroke-linejoin="round"/>';
     for (var k = 0; k < 18; k++) { var y = 900 - k * 36; cs += '<path d="M' + (200 + k * .2) + ' ' + y + ' L' + (416 - k * .6) + ' ' + (y - 22) + '" stroke="' + CAST_L + '" stroke-width="2"/>'; }
+    cs += '<path d="M350 920 L346 420 C344 360 354 300 384 236 L392 232 C398 300 404 360 412 420 L420 920 Z" fill="' + CAST_L + '" opacity=".8"/><path d="M214 900 L218 430 C220 370 230 320 250 272" stroke="#fffdf6" stroke-width="7" fill="none" stroke-linecap="round"/>';
     cs += '<path d="M236 260 C232 250 240 236 254 234 L388 222 C398 222 398 232 392 240" fill="#e5ddca" stroke="' + INK + '" stroke-width="2"/>';
     cs += '<ellipse cx="236" cy="268" rx="26" ry="18" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2"/>';   // thumb hole
     s += sweep(150, 200, 320, 760, o.cast, "u", cs) + (o.cast >= 1 ? caps(fingers.slice(0, 3), 4, INK) + caps(fingers.slice(0, 3), 0, SKIN) : "");
   }
   return s;
 }
+// skin in the round: a shade stripe down the right side of every finger and the forearm, nails, knuckle creases
+function shade3d(fingers, sw) {
+  var s = caps(fingers.map(function (b) { return [b[0] + b[4] * .27, b[1], b[2] + b[4] * .27, b[3], b[4] * .3]; }), 0, SKIN2);
+  s += '<path d="M352 920 C350 760 352 600 ' + f(360 + 10 * sw) + ' 470 C358 420 358 392 360 360 L388 360 C390 392 ' + f(394 + 10 * sw) + ' 420 ' + f(398 + 12 * sw) + ' 470 C404 600 412 760 420 920 Z" fill="' + SKIN2 + '"/>';
+  s += '<path d="M226 900 C230 700 236 560 242 430" stroke="#ecc3ad" stroke-width="8" fill="none" stroke-linecap="round"/>';
+  [3, 7, 11, 15].forEach(function (i) { var b = fingers[i]; s += '<path d="M' + f(b[2] - 5) + ' ' + f(b[3] + 6) + ' q5 -5 10 0" fill="#f1d3c3" stroke="' + INK + '" stroke-width="1.2"/>'; });   // nails at the tips
+  [1, 5, 9, 13].forEach(function (i) { var b = fingers[i]; s += '<path d="M' + f(b[0] - 7) + ' ' + f(b[1] + 2) + ' q7 4 14 0" stroke="' + BROWN + '" stroke-width="1.4" fill="none"/>'; });   // knuckle creases
+  return s;
+}
 function xrayPlate(x, y, w, h) { return R(x, y, w, h, XR, 2.4) + '<rect x="' + (x + 8) + '" y="' + (y + 8) + '" width="' + (w - 16) + '" height="' + (h - 16) + '" fill="none" stroke="#5e653a" stroke-width="5"/>'; }
 
 // ── the bone surface up close (rule shot): builders lay down new bone on the left, an eater digs a pit on the right ──
 function surface(u, t) {
-  var s = R(-100, 420, 860, 500, BONE, 2.4), k;
+  var s = '<path d="M-100 420 L-40 360 H820 L760 420 Z" fill="#f4ecd8" stroke="' + INK + '" stroke-width="2.4"/>' + R(-100, 420, 860, 500, BONE, 2.4) + R(-100, 420, 860, 14, "#ddd0b0", 0), k;
+  for (k = 0; k < 14; k++) s += '<path d="M' + (-60 + k * 64) + ' 380 l40 0" stroke="' + OSTEON + '" stroke-width="2"/>';
   for (k = 0; k < 9; k++) s += '<path d="M-100 ' + (450 + k * 30) + ' H760" stroke="' + OSTEON + '" stroke-width="2" stroke-dasharray="' + (40 + k * 9) + ' 8"/>';
   for (k = 0; k < 40; k++) s += '<ellipse cx="' + f(-80 + hash(k + 5) * 820) + '" cy="' + f(440 + hash(k + 15) * 330) + '" rx="5" ry="2.4" fill="#b9a678"/>';
   // new layer laid by the builders (olive), growing with time
@@ -315,7 +343,7 @@ function D22(d) { return Math.max(.5, (d - 1) / 4); }
 shot(23, push(320, 400, 1.0, 1.05), function (u, d, t) {
   var s = paper();
   // skin cut-away: three layers, a scar band of different tissue across them
-  var sk = R(40, 200, 560, 50, "#d99a84", 2) + R(40, 250, 560, 90, "#e7bfae", 2) + R(40, 340, 560, 60, "#efdcae", 2) + '<path d="M300 200 L310 340 L330 340 L338 200 Z" fill="#f1e6dc" stroke="' + INK + '" stroke-width="2"/>' + '<path d="M304 220 h30 M306 250 h28 M307 280 h26 M308 310 h24" stroke="#cbb6a6" stroke-width="2"/>';
+  var sk = '<path d="M40 200 L76 166 H636 L600 200 Z" fill="#e7b39f" stroke="' + INK + '" stroke-width="2"/><path d="M600 200 L636 166 V366 L600 400 Z" fill="#c98f7a" stroke="' + INK + '" stroke-width="2"/><path d="M306 200 L342 166 L362 166 L330 200 Z" fill="#f1e6dc" stroke="' + INK + '" stroke-width="1.6"/>' + R(40, 200, 560, 50, "#d99a84", 2) + R(40, 250, 560, 90, "#e7bfae", 2) + R(40, 340, 560, 60, "#efdcae", 2) + '<path d="M300 200 L310 340 L330 340 L338 200 Z" fill="#f1e6dc" stroke="' + INK + '" stroke-width="2"/>' + '<path d="M304 220 h30 M306 250 h28 M307 280 h26 M308 310 h24" stroke="#cbb6a6" stroke-width="2"/>';
   s += appear(at(u, .2, .4), sk) + label(320, 270, 470, 150, "ندبة", ORANGE, at(u, .9, .5), 28) + G("", T("الجلد", 90, 180, 24, INK, 800), at(u, .4, .3));
   s += G("", '<clipPath id="od23"><rect x="40" y="460" width="560" height="200"/></clipPath><g clip-path="url(#od23)"><g transform="translate(0 160) scale(1 .9)">' + boneCut(t, { frac: 1, gap: 14, soft: 1, hard: 1, remodel: 1, healed: 1, noMuscle: true }) + '</g></g>' + R(40, 460, 560, 200, "none", 2.4), at(u, 1.6, .4)) + G("", T("العضم", 90, 450, 24, INK, 800), at(u, 1.8, .3)) + check(520, 560, 1.2, at(u, 2.4, .4), OLIVE);
   return s + cross(470, 280, .8, at(u, 1.3, .4));
