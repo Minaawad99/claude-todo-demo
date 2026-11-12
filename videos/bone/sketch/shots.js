@@ -107,6 +107,7 @@ function boneCut(t, o) {
     if (o.soft > 0) { var mc = CX + gap / 2, ic = "M" + f(mc - 90) + " " + CY + " C" + f(mc - 60) + " " + (CY - HI - 4) + " " + f(mc + 60) + " " + (CY - HI - 4) + " " + f(mc + 90) + " " + CY + " C" + f(mc + 60) + " " + (CY + HI + 4) + " " + f(mc - 60) + " " + (CY + HI + 4) + " " + f(mc - 90) + " " + CY + " Z";
       s += G("", clipTo(ic, '<rect x="' + (CX - 100) + '" y="' + (CY - HI) + '" width="' + (200 + gap) + '" height="' + (2 * HI) + '" fill="' + (hk > .6 ? WOVEN : CART) + '"/>' + (hk > .6 ? texWoven(CX - 80, CY - HI, 160 + gap, 2 * HI) : texCart(CX - 80, CY - HI, 160 + gap, 2 * HI, o.soft))) + '<path d="' + ic + '" fill="none" stroke="' + INK + '" stroke-width="1.4" stroke-dasharray="5 4"/>', clamp(o.soft * 1.5) * (1 - (o.remodel || 0))); }
     // the collar's parts that wrap over the top and bottom of the bone stay in front of it
+    var ck = (o.clot || 0) * (1 - clamp(o.soft || 0)); if (ck > 0) s += clipTo("M-2000 -2000 H2600 V" + (CY - HO) + " H-2000 Z M-2000 " + (CY + HO) + " H2600 V2600 H-2000 Z", clot(gap, ck, t));
     if (callus) s += G("", clipTo("M-2000 -2000 H2600 V" + (CY - HO) + " H-2000 Z M-2000 " + (CY + HO) + " H2600 V2600 H-2000 Z", callus), 1 - clamp(o.healed || 0));
   } else s += body;
   if (o.healed > 0) s += G("", boneBody(t, o), clamp(o.healed));
