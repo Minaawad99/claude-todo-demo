@@ -159,6 +159,61 @@ function measure(x1, y1, x2, y2, k, text, sz) {
 // an Arabic word in a framed box (numBox is for digits in serif; tag is for words like «أعلى مد»)
 function tag(text, x, y, k, sz, col) { k = pop(k == null ? 1 : k); if (k <= 0) return ""; sz = sz || 30; var w = text.length * sz * .55 + 34; return G('translate(' + f(x) + ' ' + f(y) + ') scale(' + f(k) + ')', '<rect x="' + f(-w / 2) + '" y="' + f(-sz * 1.05) + '" width="' + f(w) + '" height="' + f(sz * 1.65) + '" fill="#f4ecdb" stroke="' + INK + '" stroke-width="2"/>' + T(text, 0, sz * .3, sz, col || INK, 800)); }
 
+// ── pictures: the «اسكتش» illustrations (ink-and-wash technical cutaways made in Google AI Studio from the series prompts,
+// keyed to alpha by img_prep.py → <episode>/sketch/img/NN.webp). pics({n: [w, h]}) registers them once in the page's
+// <defs>; the panel, rebuilt every frame, only points at them with <use>, so they never reload or flicker.
+var SZ = {};
+function pics(sizes) {
+  Object.keys(sizes).forEach(function (n) { SZ[n] = sizes[n]; });
+  var defs = document.querySelector("svg defs"), NS = "http://www.w3.org/2000/svg";
+  Object.keys(SZ).forEach(function (n) {
+    var id = "pic" + n; if (document.getElementById(id)) return;
+    var im = document.createElementNS(NS, "image"); im.setAttribute("id", id); im.setAttribute("href", "img/" + (n < 10 ? "0" : "") + n + ".webp");
+    im.setAttribute("width", SZ[n][0]); im.setAttribute("height", SZ[n][1]); defs.appendChild(im);
+  });
+}
+function PL(n, cx, cy, w) { var k = w / SZ[n][0], h = SZ[n][1] * k, x = cx - w / 2, y = cy - h / 2; return { n: n, x: x, y: y, w: w, h: h, k: k, p: function (px, py) { return [x + px * k, y + py * k]; } }; }
+function pic(L, op) { return '<use href="#pic' + L.n + '" transform="translate(' + f(L.x) + ' ' + f(L.y) + ') scale(' + L.k.toFixed(4) + ')"' + (op != null && op < 1 ? ' opacity="' + f(op) + '"' : "") + '/>'; }
+// a boxed callout with a curved arrow to the part, like the reference's engine labels. (px,py) the part, (bx,by) the box centre
+function box(pt, bx, by, text, col, k, sz) {
+  k = clamp(k == null ? 1 : k); if (k <= 0) return ""; sz = sz || 24; var w = text.length * sz * .56 + 28, h = sz * 1.7, px = pt[0], py = pt[1];
+  var ex = bx + (px > bx ? w / 2 : px < bx - w / 2 ? -w / 2 : 0), ey = by + (Math.abs(px - bx) < w / 2 ? (py > by ? h / 2 : -h / 2) : 0);
+  var mx = (ex + px) / 2 + (py - ey) * .25, my = (ey + py) / 2 - (px - ex) * .25, d = "M" + f(ex) + " " + f(ey) + " Q" + f(mx) + " " + f(my) + " " + f(px) + " " + f(py);
+  var a = Math.atan2(py - my, px - mx), hs = 11, s = draw(d, clamp(k * 1.7 - .2), INK, 2);
+  if (k > .6) s += '<path d="M' + f(px) + ' ' + f(py) + ' L' + f(px - Math.cos(a - .45) * hs) + ' ' + f(py - Math.sin(a - .45) * hs) + ' L' + f(px - Math.cos(a + .45) * hs) + ' ' + f(py - Math.sin(a + .45) * hs) + ' Z" fill="' + INK + '"/>';
+  return G("", '<rect x="' + f(bx - w / 2) + '" y="' + f(by - h / 2) + '" width="' + f(w) + '" height="' + f(h) + '" rx="6" fill="#f6efdf" stroke="' + INK + '" stroke-width="2"/>' + T(text, bx, by + sz * .36, sz, col || INK, 800), Math.min(1, k * 2.5)) + s;
+}
+// dots running along a polyline of world points (blood or gas moving)
+function runDots(pts, t, col, r, n, speed) {
+  var L = [0], i, s = ""; for (i = 1; i < pts.length; i++) L.push(L[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+  var tot = L[L.length - 1]; n = n || 8;
+  for (var j = 0; j < n; j++) { var d = ((j / n) * tot + t * (speed || 60)) % tot, q = 1; while (q < L.length - 1 && L[q] < d) q++; var u = (d - L[q - 1]) / Math.max(1e-6, L[q] - L[q - 1]), x = lerp(pts[q - 1][0], pts[q][0], u), y = lerp(pts[q - 1][1], pts[q][1], u);
+    s += '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + (r || 6) + '" fill="' + col + '" stroke="' + INK + '" stroke-width="1.4"/>'; }
+  return s;
+}
+function mapPts(L, a) { return a.map(function (q) { return L.p(q[0], q[1]); }); }
+
+// ── living pictures: parts of an illustration cut out (clip paths in the picture's own pixels) and moved on their own:
+// lungs breathe, the heart beats, the baby sways in its fluid, blood runs in the vessels, the nail is pulled, the flag flies.
+function ell(cx, cy, rx, ry) { return "M" + (cx - rx) + " " + cy + " a" + rx + " " + ry + " 0 1 0 " + 2 * rx + " 0 a" + rx + " " + ry + " 0 1 0 " + -2 * rx + " 0 Z"; }
+function poly(a) { return "M" + a.map(function (q) { return q[0] + " " + q[1]; }).join(" L") + " Z"; }
+function about(L, px, py, sc, rot, dx, dy) { var c = L.p(px, py); return "translate(" + f(c[0] + (dx || 0)) + " " + f(c[1] + (dy || 0)) + ") rotate(" + f(rot || 0) + ") scale(" + (sc || 1).toFixed(4) + ") translate(" + f(-c[0]) + " " + f(-c[1]) + ")"; }
+function clipOf(L, d, inv) { var id = "pt" + (++CLIPN); return { id: id, def: '<clipPath id="' + id + '"><path ' + (inv ? 'clip-rule="evenodd" ' : "") + 'd="' + (inv ? "M-4000 -4000 H6000 V6000 H-4000 Z " : "") + d + '" transform="translate(' + f(L.x) + ' ' + f(L.y) + ') scale(' + L.k.toFixed(4) + ')"/></clipPath>' }; }
+// part: the region d of picture L, moved by transform tr. fixed = the cut stays put and only the content inside moves
+function part(L, d, tr, fixed) { var c = clipOf(L, d); return fixed ? c.def + '<g clip-path="url(#' + c.id + ')"><g transform="' + tr + '">' + pic(L) + '</g></g>' : '<g transform="' + tr + '">' + c.def + '<g clip-path="url(#' + c.id + ')">' + pic(L) + '</g></g>'; }
+// partSoft: the region inside ellipse (cx, cy, rx, ry) of picture L moved by tr, its edge fading into the still picture
+// (a soft mask), so a bigger movement shows no seam
+function partSoft(L, cx, cy, rx, ry, tr) {
+  var id = "ps" + (++CLIPN), c = L.p(cx, cy);
+  return '<radialGradient id="' + id + 'g"><stop offset=".72" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient><mask id="' + id + '" maskUnits="userSpaceOnUse" x="-2000" y="-2000" width="5000" height="5000"><ellipse cx="' + f(c[0]) + '" cy="' + f(c[1]) + '" rx="' + f(rx * L.k) + '" ry="' + f(ry * L.k) + '" fill="url(#' + id + 'g)"/></mask>' +
+    '<g mask="url(#' + id + ')"><g transform="' + tr + '">' + pic(L) + '</g></g>';
+}
+function picBut(L, d) { var c = clipOf(L, d, true); return c.def + '<g clip-path="url(#' + c.id + ')">' + pic(L) + '</g>'; }   // the picture without region d
+function ip(L, a) { return L.p(a[0], a[1]); }
+function breath(t) { return .5 + .5 * Math.sin(t * 1.7); }
+function beat(t) { return Math.pow(Math.max(0, Math.sin(t * 7.2)), 3); }
+function cellSprite(x, y, r, col, rot) { return G("translate(" + f(x) + " " + f(y) + ") rotate(" + f(rot) + ")", '<ellipse rx="' + f(r) + '" ry="' + f(r * .78) + '" fill="' + col + '" stroke="' + INK + '" stroke-width="1.1"/><ellipse rx="' + f(r * .5) + '" ry="' + f(r * .36) + '" fill="#000" opacity=".16"/>'); }
+
 // ── «إزاي بيحصل المد والجزر؟» — drawings. Shapes follow the «طب إزاي؟» reference (sheet v14) and real references
 // (refs/SOURCES.md): globes are projected from real coastlines (Natural Earth 110m via ../../lib/geo.min.js);
 // the beach is an isometric cut-away block with a sloping sand bed, a wooden pier on posts and a tide staff.
