@@ -1,196 +1,170 @@
 ---
 name: sketch
-description: >
-  Make an «إيه الحكاية؟» explainer video in the user's «اسكتش» style, end to end: script, voice, real-shape drawings, sound
-  kit and music, 1080×1920 60 fps render that passes qa.py. Cream graph-paper card, close-up technical drawings (real
-  coastline globes, side cuts, isometric machines) with leader-line labels, one short caption chunk at a time under a rule,
-  no hard cuts, a word-by-word hook card, a stopwatch bumper, a summary card and ask box. The reference episode is
-  «المد والجزر» (videos/tides). Built on videos/_templates/sketch. Use when the user says "اسكتش", "بأسلوب الاسكتش",
-  "زي فيديو المد والجزر", "بالرسم الهندسي", "زي طب إزاي" or "sketch style".
+description: Make an «إيه الحكاية؟» explainer video in the user's «اسكتش» style, end to end: script, a steady Egyptian narrator made in short chunks, ink-and-wash technical cutaway illustrations (made in Google AI Studio from the series prompts) that move on screen, boxed Arabic callouts with curved arrows, generated music and effects only, 1080×1920 60 fps render that passes qa.py. Cream graph-paper card, one short caption chunk at a time under a rule, a word-by-word hook card, a stopwatch bumper, a summary card and ask box. The reference episode is «نفس الطفل في بطن أمه» (videos/fetus-breathing). Use when the user says "اسكتش", "بأسلوب الاسكتش", "زي فيديو نفس الطفل", "زي فيديو المد والجزر", "بالرسم الهندسي", "زي طب إزاي" or "sketch style", or asks for a new «إيه الحكاية؟» video without naming another style.
 ---
 
 # «إيه الحكاية؟» — the «اسكتش» style
 
-**The user named this style «اسكتش»** and locked it after «المد والجزر». Use the same drawings, narration, sounds and
-music in every episode. It copies the look, pacing and narration of the «طب إزاي؟» series: 20 reference videos, measured in
-`videos/_reference/tabizzay/STYLE.md`, with contact sheets, motion strips and transcripts. We make it under our own name.
+The user locked this method after «نفس الطفل في بطن أمه» (`videos/fetus-breathing/`): the narration, layout and pacing of
+the «طب إزاي؟» series (20 reference videos measured in `videos/_reference/tabizzay/STYLE.md`, when that folder exists),
+drawn with **ink-and-wash technical cutaway illustrations** that **move**, labelled with **boxed callouts and curved
+arrows**, under **one steady narrator**, with **generated music and effects only**. Talk to the user in Egyptian Arabic.
 
-**The reference episode is `videos/tides/`.** Start every new episode from a copy of these files:
-- `script.txt` and `style.txt`;
-- `sketch/episode.py` and `sketch/shots.js`;
-- `cues.js` and `refs/SOURCES.md`.
+## 0. Setup and the first question
 
-The shared parts are in `videos/_templates/sketch/` (its README lists every helper). Talk to the user in Egyptian Arabic.
+**Files.** Everything the method needs lives in the repo under `videos/` (template, tools, reference episode). If this
+skill runs somewhere those files are missing (another cloud, a fresh project), copy them from the skill's own `kit/`
+folder into the working directory first: `cp -r <this skill's folder>/kit/. .` That gives:
 
-## 0. First question (every new topic)
+- `videos/_templates/sketch/`: the page template, engine, build script, drawing + picture helpers, `cues.js`, `img_prep.py`;
+- `videos/tools/`: `tts.py` (Gemini TTS), `stills.js`, `strip.js`;
+- `videos/{render.js, qa.py, align_gemini.py, align_asr.py, map_timing.py}`, `videos/audio/{tighten.py, sfx.py}`, `videos/lib/`;
+- `videos/fetus-breathing/`: the reference episode, complete (script, voice, timing, pictures, shots, cues).
 
-Ask in one question: quick mode or full review (as in `.claude/skills/animation/SKILL.md`). For the tides episode the user
-chose full review, because the drawings must look real. With full review you look at reference photos and frame strips,
-and fix them.
+Needs: node with `playwright` (Chromium), python3 with `numpy` and `opencv-python-headless`, ffmpeg, and a Gemini API
+key reachable as `generativelanguage.googleapis.com` (the environment's proxy adds it; `tts.py` never stores a key).
+
+**First question** (every new topic, one question): quick mode, or full review (strips of frames checked and fixed
+before the render). Full review is the default when the user doesn't mind.
 
 ## 1. Script → `videos/<slug>/script.txt`
 
-**Length:** about 25–27 lines and 260–280 words. The voice comes out about 1:55, and about 1:45 after tightening.
+**Length:** about 27 lines and 270–290 words; the voice comes out about 1:55–2:00 after tightening.
 
 **The fixed spine:**
-1. **Hook:** a fact from the viewer's own life, then its contradiction, spoken to «you», over 2–3 lines. These lines are
-   the hook card. Example: «لو قعدت على شط البحر من الصبح لحد بالليل… / هتلاقي المية بتعلى… / ومن غير ريح ولا موج.»
+1. **Hook:** a fact from the viewer's own life, then its contradiction, spoken to «you», over 3 lines, ending on the
+   most surprising fact (e.g. «ومن غير ولا نَفَس هوا واحد… ده حتى رئتيه مليانين مية!»). These lines are the hook card.
 2. **Promise:** «إيه الحكاية؟ هشرحهالك في دقيقة.»
-3. **Optional rule:** «قبل ما نشرح محتاجين نوضّح قاعدة صغيرة… خليك فاكرها.», with one law.
+3. **Optional rule:** «قبل ما نشرح محتاجين نوضّح قاعدة صغيرة… خليك فاكرها.»
 4. **The steps:** each opens with a «طب…؟» question, then the answer, then a home analogy «زي…».
-5. **«ونتيجة لإيه»:** what else drives it, and what changes it.
-6. **The myth:** «وناس كتير فاكرة إن… لأ.»
-7. **The recap:** «يعني من الآخر…» in 3–4 short clauses.
-8. **The odd fact:** «والأغرب…»
-9. **Sign-off:** «ودي كانت حكاية …»
-10. **Last line:** «قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟»
+5. **The myth:** «وناس كتير فاكرة إن… لأ.»
+6. **The recap:** «يعني من الآخر…» in 3–4 short clauses.
+7. **The odd fact:** «والأغرب…»
+8. **Sign-off:** «ودي كانت حكاية …»
+9. **Last line:** «قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟»
 
 **Wording:**
-- Numbers are words in the script and digits in the caption, set with `CAPTEXT` in `episode.py`.
-- Short phrases; the template splits each line into caption chunks of about 5 words.
-- Check every fact. Tell the user which ones are surprising and that they were checked.
-- Run the script through the `humanizer` skill. Keep the series devices above word for word.
+- Short phrases; numbers as words in the script, digits in the caption (`CAPTEXT` in `episode.py`).
+- **Words the voice mispronounces:** use the Egyptian word (حيطة, not جدار) or add tashkeel (طَبَق); keep the caption
+  plain with `CAPTEXT`.
+- Check every fact; tell the user which surprising ones you checked. Note them in `refs/SOURCES.md`.
+- Run the script through the `humanizer` skill, keeping the series devices word for word.
 - Give the script in one copy-ready code block, then commit it.
 
-## 2. Voice
+## 2. Voice: one steady narrator
 
-**Settings:** Puck, model `gemini-3.8-flash-tts`, temperature 1:
-
-```
-python3 ../tools/tts.py script.txt style.txt voice-raw.wav --voice Puck --model gemini-3.8-flash-tts
-```
-
-**When the free quota is gone** (HTTP 429, it resets about 10:00 Cairo time): don't retry. Give the user the script and
-the style in two code blocks for Google AI Studio. Settings: Single-speaker, Puck, Temperature 1, WAV. The tides voice was
-made this way. The style text, with the topic and key words filled in:
+**Never one long take:** a long Gemini take drifts to another speaker partway through. Generate **chunks of 5–7 lines**:
 
 ```
-Speak in casual Egyptian Arabic (Cairo dialect), like a calm, confident teacher explaining to a friend <topic>. Warm and clear, more teacher than hype, with quiet amazement on the surprising facts and numbers. Natural, relaxed conversational speed, not rushed. Take a short natural breath between sentences, and don't stop at commas. Emphasize key words like <word>, <word>, <word>. Make the opening line intriguing and the question "إيه الحكاية؟" playful. Never use Modern Standard Arabic pronunciation; pronounce ق as a glottal stop like Cairenes.
+python3 ../tools/tts.py script.txt style.txt <scratch>/c0-4.wav --voice Puck --model gemini-3.8-flash-tts --lines 0-4
 ```
 
-**Timing.** The whisper-small model for `align_asr.py` comes from Hugging Face; GitHub releases often answer 504 here.
+- `style.txt` = the series style text (below) ending with «Keep exactly the same single male narrator, voice, pitch and
+  Cairo accent from the first word to the last.»
+- **Measure every chunk:** median pitch (autocorrelation F0 over voiced frames) and a timbre fingerprint (log energy in
+  12 spectral bands). Chunks of one speaker sit within about ±8 Hz and a timbre distance under about 0.6 of each other.
+  Regenerate a chunk that stands out; a slightly higher pitch with the same timbre is just livelier intonation.
+- **Level-match** every chunk to −19.5 LUFS (ffmpeg `ebur128`, then `volume`) before joining them with 0.4 s gaps.
+- **Quota:** the free tier allows about 10 TTS requests a day and 3 a minute (it resets at 10:00 Cairo). When it runs
+  out, don't switch models (that changes the voice). Give the user the style and each chunk in code blocks for Google
+  AI Studio (Single-speaker, Puck, Temperature 1, WAV, one chunk per request), and use what they send after the same checks.
+
+Style text (fill in the topic and key words):
 
 ```
-M=<scratchpad>/asr/sherpa-onnx-whisper-small   # small-encoder.int8.onnx, small-decoder.int8.onnx, small-tokens.txt from huggingface.co/csukuangfj/sherpa-onnx-whisper-small
+Speak in casual Egyptian Arabic (Cairo dialect), like a calm, confident teacher explaining to a friend <topic>. Warm and clear, more teacher than hype, with quiet amazement on the surprising facts and numbers. Natural, relaxed conversational speed, not rushed. Take a short natural breath between sentences, and don't stop at commas. Emphasize key words like <word>, <word>, <word>. Make the opening line intriguing and the question "إيه الحكاية؟" playful. Never use Modern Standard Arabic pronunciation; pronounce ق as a glottal stop like Cairenes. Keep exactly the same single male narrator, voice, pitch and Cairo accent from the first word to the last.
+```
+
+**Timing:**
+
+```
 python3 ../audio/tighten.py voice-raw.wav voice.wav --max 0.3
-python3 ../align_asr.py voice-raw.wav script.txt raw-timing.json --model $M --gap 0.08 --db -34
+python3 ../align_gemini.py voice-raw.wav script.txt raw-timing.json --gap 0.08 --db -34 --model gemini-3.1-flash-lite
 python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max 0.3 --tempo 1.0
 ```
 
-- **Check the whole take with the stronger model** to catch invented sentences and misread numbers:
-  `~/.cache/hyperframes/whisper/whisper.cpp/build/bin/whisper-cli -m ~/.cache/hyperframes/whisper/models/ggml-large-v3-turbo.bin -l ar` (16 kHz mono).
-- **Fix line boundaries by hand** in `raw-timing.json` where whisper-small drifts. Tides: line 23 started 0.7 s early.
-- **Never speed the voice up.** Tightening the pauses is all.
-- Tell the user any second that needs their ear (tides: «4 سنتي» heard as «4 سنة»).
+- `align_gemini.py` transcribes each pause-split clip with Gemini and matches clips to lines. On short breath clips it
+  sometimes invents words (e.g. «أنا عايزة أروح البيت»): check the whole take with one full transcription before
+  believing the voice said them. `align_asr.py` (whisper-small) is the alternative where Hugging Face is reachable.
+- **Never speed the voice up**; tightening the pauses is all.
+- Tell the user any word that needs their ear, and where the chunks join.
 
-## 3. Drawings: real shapes, the reference's hand
+## 3. Pictures: ink-and-wash cutaways that move
 
-- **Research first.** Look at real photos of the objects (Wikimedia Commons, one request at a time, User-Agent with the
-  repo URL). Look at the matching reference sheet in `videos/_reference/tabizzay/sheets/` as well. Note the sources in
-  `refs/SOURCES.md`.
-- **Globes use real coastlines.** `globe(cx, cy, r, lon, lat, {dot})` projects Natural Earth through `lib/geo.min.js`, which
-  loads by default. It draws:
-  - pale blue ocean, olive land and a graticule;
-  - a hatched night side and a thin atmosphere ring.
+**Make them.** Write one prompt per idea (usually 10–14 pictures) from `prompts.md` in this skill: the subject, the
+cut, what must show inside, plus the fixed style block. The user makes them in AI Studio (the free API tier can't make
+images) and sends them. Check each one (anatomy or mechanism right, no text), say which to redo, use the rest.
 
-  `lat ≈ 72` is the view from above the North Pole. Use it whenever the Earth turns.
-- **Choose the view that shows the change** (the user's rule):
-  - a level going up and down (sea, water in a tank, a fill) is drawn **from the side, at eye level**, as a cut through
-    the ground. Not from above, where it doesn't show. Tides: `beachSide()` has the sand bed with layers, the sea climbing
-    the slope, wet sand, a pier in profile, a tide staff and a boat aground or afloat;
-  - machines, rooms and cities are **isometric or three-quarter**;
-  - things with insides are **cut-aways**;
-  - waves and graphs are **flat side views**.
-- **The look.** All of it is in the template and the helpers.
-  - **Colours:**
-    - paper `#eee5d0` with a faint grid, ink `#2a2016`;
-    - accents only on what is being said: orange `#bd552f` for action, heat or the key number; olive `#5e653a` for the
-      named part; slate blue `#4a6f8a` for water, air or the term;
-    - muted body colours.
-  - **Lines and fills:** ink lines 1.5–2 px, flat fills, light hatching, no gradients, no cartoon faces.
-  - **Framing:** close-ups that the panel edge crops.
-  - **Marks:**
-    - leader-line labels (`label`);
-    - a framed analogy thumbnail in a corner (`iconBox`);
-    - ✗ / ✓ (`cross`, `check`);
-    - big serif numbers that count up (`count`, `bigNum`, `numBox`);
-    - Arabic words in a box (`tag`);
-    - dimension lines (`measure`).
-- **Shots:** one `shot()` per idea, usually per line, sometimes per caption chunk (`[line, chunk]`).
-  - Transitions: `tr: "fade"`, or `"in"` / `"out"` when the camera flies into a detail or pulls back. There are no hard cuts.
-  - `hud(from, to, draw)` holds a dial, chip or checklist over several shots.
-
-## 4. Motion (qa.py must PASS)
-
-- **The template's built-in motion** is tuned so that calm shots still pass qa.py:
-  - the camera drift;
-  - the intro-art sway and the bumper push-in with its sweeping stopwatch hand;
-  - the end-card drift and the linear card crossfades.
-
-  Don't weaken it.
-- **Sparse shots need their own life.** The tides fixes, any of which works:
-  - balls bob and arrows pulse;
-  - globes turn about 1.6°/s, or 22°/s for the polar spin;
-  - bulges breathe;
-  - waves run at about 48–70 px/s;
-  - a moving wave line goes over a static arrow.
-- **Before every render** run `node tools/stills.js <abs index.html> 0 <duration>`. It uses qa.py's own metric over the full
-  frame. Fix every run until none is over 0.5 s. A failed 20-minute render costs far more.
-- Check frames with `node tools/strip.js <abs index.html> out.png 6 <times…>` and look at them (full review).
-
-## 5. Sound
-
-**The kit is in the repo:** `videos/_templates/sketch/sfx/` (committed at the user's request, about 11 MB). `cues.js` finds
-a clip in the episode's own `sfx/` first and then in the kit, so a new episode needs nothing copied. Ask the user only for
-sounds the kit doesn't have, with Pixabay search terms. Those one-off clips go in `<episode>/sfx/` (gitignored). Every
-clip still has a synthesized stand-in.
-
-| file | Pixabay title (the one the user picked) | slice | use |
-|---|---|---|---|
-| px-swipe | Paper Flipping (koiroylers 351981) | 0.60–1.02 s | every shot change |
-| px-paper | Paper Slide Short (oxidvideos 478835) | 0–0.5 s | a card laid down, the ask box |
-| px-pencil-scribble | Pencil on Paper Scribble 2 (68772) | 0.75–1.5 s | ✗ / ✓ |
-| px-ding | Minimal Ding SFX (virtual_vibes 383725) | 0.1–1.5 s | a key number lands |
-| px-clock-ticking | Clock Ticking Down (Dragon Studio 376897) | ≤ 8.6 s | time |
-| px-space-drone | Industrial Pulse Drone (27456) | very low | globes, space |
-| px-ocean-waves | Ocean Waves (Dragon Studio 376898) | 0.2–22 s | sea |
-| px-water-rush | Above Rushing Water (61158) | from 3 s | water moving |
-| px-wind-gust | Wind Gust (Dragon Studio 386158) | 0.25–4.76 s | wind |
-| px-music-box (source) → px-music-soft (used) | **Mysterious Music Box – The Midnight Hour** (the series music) | whole | bed |
-
-**Music.** The user approved this music and its level. `px-music-soft.mp3` in the kit is already made this way:
-- **Soften the ring:**
-  `ffmpeg -i px-music-box.mp3 -af "highshelf=f=3000:g=-5,volume='if(lt(t,12),0.6+0.4*t/12,1)':eval=frame" px-music-soft.mp3`
-  This takes down the music-box ring, which the user found too much at the start.
-- **Level:** play it at gain 0.42, which sfx.py reports as about 22 dB under the narrator while he speaks. It is 153 s long,
-  so no loop is needed under about 2:30.
-
-**Cues.** Start from `videos/_templates/sketch/cues.js`. It already places these:
-- the hook chime;
-- the bumper ticks;
-- a flip for every shot change;
-- the summary-card build;
-- the ask box;
-- the music.
-
-Add one or two sounds per line matched to what moves (`lab`, `ding`, `scribble`, `paper`, `sea`, `drone`; see
-`videos/tides/cues.js`), then:
-`node cues.js && python3 ../audio/sfx.py voice.wav cues.json <scratchpad>/<slug>-mix.wav`.
-
-Credit every clip in `refs/SOURCES.md`.
-
-## 6. Render and QA (in the background, about 20 minutes for a 106 s video)
+**Prepare them.**
 
 ```
-TAIL=3 node render.js $PWD/<slug>/sketch/index.html <mix.wav> <scratchpad>/<slug>.mp4
+cp <uploads> <episode>/sketch/img/src/NN.jpg
+python3 ../_templates/sketch/img_prep.py <episode>/sketch/img [--text N:x0,y0,x1,y1]
+```
+
+It keys the paper to alpha, trims, writes `img/NN.webp` and prints the `pics({...})` line for `shots.js`. To place
+labels and paths, draw a 100 px grid with coordinates over each webp (PIL) and read positions in picture pixels.
+
+**Place them** (helpers in `_templates/sketch/_helpers.js`, world 640 × 786):
+- `pics({n: [w, h]})` once at the top of `shots.js`;
+- `var MOM = PL(1, cx, cy, width)` places picture 1 by its centre; `MOM.p(px, py)` maps a picture pixel to the world;
+- `pic(L)` draws it (a `<use>` of a `<defs>` image, so the per-frame panel never reloads it);
+- `box(MOM.p(px, py), bx, by, "النص", colour, k, size)`: a boxed callout with a curved arrow, like the style reference.
+
+**Make them move** (the user's rule: the drawings themselves must move, not just what is drawn over them). Write a
+`live(L, t, opt)` in the episode that returns the picture with moving parts. The template's helpers do the work:
+- `part(L, path, transform, fixed)`: a region cut out and moved (lungs breathing: `about(L, x, y, 1 + .03 * breath(t))`;
+  the heart: `1 + .045 * beat(t)`);
+- `partSoft(L, cx, cy, rx, ry, transform)`: a region moved with a soft-edged mask, for big moves inside a scene with no
+  seam (the baby swaying about 2.5° and floating 5–7 px in its fluid);
+- `picBut(L, path)` + `part`: lift an object out and move it (a nail pulled to a magnet, a tea bag bobbing, a flag);
+- separate objects on transparent paper move freely (two cells floating);
+- drawn over the picture: blood cells running along a vessel (`cellSprite` along a polyline), gas dots crossing a wall,
+  oxygen running along a path (`runDots`), bubbles rising, snow blowing, ripples on liquid.
+Keep the moves visible: the user found under 1° too small.
+
+**Code-drawn pieces** stay for what pictures can't carry: the stopwatch, numbers that count up (`count`, `numBox`),
+✗ / ✓, tags (`tag`), analogy thumbnails (`iconBox`), a floor filling in.
+
+**Shots:** one `shot()` per idea, usually per line. Transitions `fade`, `in`, `out`; no hard cuts. Push or pan the camera
+into the detail being talked about (the placenta, the wall beside a hair).
+
+**Colours:** paper `#eee5d0`, ink `#2a2016`; orange `#bd552f` for action, heat or the key number; olive `#5e653a` for the
+named part; slate blue `#4a6f8a` for water, air or the term. Callout text takes the colour of its caption key word.
+
+## 4. Motion check (qa.py must PASS)
+
+- The template's camera drift and card motion stay as they are.
+- Before every render: `node tools/stills.js <abs index.html> 0 <duration>` until it prints no still run over 0.5 s.
+- Look at frames: `node tools/strip.js <abs index.html> out.png 6 <times…>`; for motion, frames 0.3–0.6 s apart.
+
+## 5. Sound: generated only
+
+**No recorded clips unless the user asks**: no background sounds, no recorded music. `cues.js` (from the template) has
+`RECORDED = false`, so every cue plays `sfx.py`'s synthesized stand-in and the music is `sfx.py`'s own generated bed.
+Add one or two cues per line matched to what moves (`pop`, `tick`, `whoosh`, `chime`, `thud` heartbeat, `drip`, `slosh`,
+`clink`, `wind`…; see `videos/fetus-breathing/cues.js`), then:
+
+```
+node cues.js && python3 ../audio/sfx.py voice.wav cues.json <scratch>/<slug>-mix.wav
+```
+
+## 6. Render and QA (in the background, about 20 minutes for 2 minutes)
+
+```
+TAIL=3 node render.js $PWD/<slug>/sketch/index.html <mix.wav> <scratch>/<slug>.mp4
 ffmpeg -y -i <mp4> -c:v copy -af "alimiter=limit=0.6:level=false:attack=1:release=60" -c:a aac -b:a 192k -ar 48000 <fixed.mp4>
 python3 qa.py <fixed.mp4>
 ```
 
-- **QA must say PASS:** no still over 0.75 s, frozen total inside the budget, loudness about -14/-15 LUFS.
-- **Send the video** with SendUserFile under an Arabic name, e.g. `<الموضوع>-إيه-الحكاية.mp4`.
-- **Code:** commit and push it. Keep the mp4 and the mix in the scratchpad.
-- **A sound-only change** doesn't need a render: remux the new mix onto the video with the same audio chain.
-- **Cover and titles:** follow the animation skill (section 9) when the user asks.
+- QA must say PASS: no still over 0.75 s, frozen total inside the budget, loudness about −14/−15 LUFS.
+- Send the video with SendUserFile under an Arabic name (`<الموضوع>-إيه-الحكاية.mp4`); commit and push the code and
+  pictures; keep the mp4 and the mix in the scratchpad.
+- A sound-only change needs no render: remux the new mix with the same audio chain.
+- Cover and titles: follow the `animation` skill (section 9) when the user asks.
 
-The older «الرسم الهندسي» build (`videos/_templates/diagram-v1/`, `videos/xray-diagram/`) stays only for the X-ray video.
+## The older builds
+
+`videos/tides/` («المد والجزر») is the first «اسكتش» episode, drawn entirely in code (globes from real coastlines, a
+beach in section); its drawing helpers are still in the template. `videos/_templates/diagram-v1/` stays only for the
+X-ray video.

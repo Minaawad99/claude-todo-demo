@@ -2,8 +2,9 @@
 
 - Talk to the user in Egyptian Arabic.
 - **New videos are made in the «اسكتش» style unless the user names another:** `.claude/skills/sketch/SKILL.md`.
-  The reference episode is «المد والجزر» (`videos/tides/`), the shared template `videos/_templates/sketch/`
-  (its README lists the drawing helpers), the sound kit and series music `videos/_templates/sketch/sfx/`.
+  The reference episode is «نفس الطفل في بطن أمه» (`videos/fetus-breathing/`): ink-and-wash cutaway illustrations the
+  user makes in AI Studio from `.claude/skills/sketch/prompts.md`, moving on screen, boxed callouts. The shared template
+  is `videos/_templates/sketch/` (its README lists the helpers); «المد والجزر» (`videos/tides/`) is the older code-drawn episode.
 - **The 20 reference videos the style comes from are in the repo**, so never ask the user to upload them again:
   `videos/_reference/tabizzay/`. Start with its `README.md` (an index of what each video draws), then open the
   matching `sheets/vNN.jpg`, or pull frames and motion strips from `videos/vNN.mp4` with ffmpeg. `STYLE.md` has the
