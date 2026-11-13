@@ -232,20 +232,6 @@
    "gain": 0.1
   },
   {
-   "t": 0,
-   "file": "../_templates/sketch/sfx/px-music-soft.mp3",
-   "gain": 0.5,
-   "from": 0,
-   "dur": 124.79
-  },
-  {
-   "t": 183.49,
-   "file": "../_templates/sketch/sfx/px-music-soft.mp3",
-   "gain": 0.5,
-   "from": 30,
-   "dur": 53.55
-  },
-  {
    "t": 0.1,
    "fx": "waves",
    "gain": 0.18,
