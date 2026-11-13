@@ -1,7 +1,7 @@
 # Real clips for «ليه بنتاوب؟»
 
 Sent by the channel (not committed: `*.mp4` is ignored here). The render leaves each clip's frame green; `../clips.sh`
-lays the clip under it and keys the green out, so what is drawn over a frame (arrows, blood, labels) stays on top.
+lays each clip over its frame; for the man in profile the drawing inside that frame is keyed back on top, so the air and blood drawn over him stay visible.
 
 | file | what | used part | where |
 |---|---|---|---|

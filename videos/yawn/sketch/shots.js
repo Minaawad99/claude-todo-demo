@@ -210,9 +210,9 @@ function clipXY(cx, cy) { return [CLIP_M[0] + cx * CLIP_M[2] / 720, CLIP_M[1] + 
 shot(12, push(320, 400, 1.0, 1.04), function (u, d, t) { return paper(); });
 hud(12, 13, function (u, t) {
   var op = yawnK(u, .6, 4.2), m = clipXY(515, 600), c0 = clipXY(335, 700), c1 = clipXY(300, 940), s = clipFrame(CLIP_M, u), k;
-  for (k = 0; k < 6; k++) { var q = ((t * 1.3 + k / 6) % 1), ax = lerp(640, m[0] + 8, q), ay = lerp(m[1] + (k % 3 - 1) * 40, m[1], q); s += '<path d="M' + f(ax + 12) + ' ' + f(ay - 11) + ' L' + f(ax) + ' ' + f(ay) + ' L' + f(ax + 12) + ' ' + f(ay + 11) + '" stroke="' + BLUE + '" stroke-width="5" fill="none" stroke-linecap="round" opacity="' + f(clamp(op * 1.5) * (1 - q * .3)) + '"/>'; }
+  for (k = 0; k < 6; k++) { var q = ((t * 1.3 + k / 6) % 1), ax = lerp(640, m[0] + 8, q), ay = lerp(m[1] + (k % 3 - 1) * 40, m[1], q), ch = 'M' + f(ax + 12) + ' ' + f(ay - 11) + ' L' + f(ax) + ' ' + f(ay) + ' L' + f(ax + 12) + ' ' + f(ay + 11); if (op > .15) s += '<path d="' + ch + '" stroke="' + INK + '" stroke-width="9" fill="none" stroke-linecap="round"/><path d="' + ch + '" stroke="#8fc0e0" stroke-width="5" fill="none" stroke-linecap="round"/>'; }
   var art = "M" + f(c1[0]) + " " + f(c1[1]) + " C" + f(c1[0] + 6) + " " + f(c1[1] - 40) + " " + f(c0[0] + 4) + " " + f(c0[1] + 30) + " " + f(c0[0]) + " " + f(c0[1]) + " C" + f(c0[0] - 6) + " " + f(c0[1] - 50) + " " + f(c0[0] - 30) + " " + f(c0[1] - 110) + " " + f(c0[0] - 30) + " " + f(c0[1] - 170);
-  s += G("", '<path d="' + art + '" stroke="' + BLOOD + '" stroke-width="8" fill="none" stroke-linecap="round" opacity=".85"/><path d="' + art + '" stroke="#f6c2b4" stroke-width="3.4" fill="none" stroke-dasharray="9 12" stroke-dashoffset="' + f(t * (50 + 170 * op)) + '"/>', clamp((u - 2.4) / .4));
+  if (u > 2.4) s += '<path d="' + art + '" stroke="' + INK + '" stroke-width="12" fill="none" stroke-linecap="round"/><path d="' + art + '" stroke="' + BLOOD + '" stroke-width="8" fill="none" stroke-linecap="round"/><path d="' + art + '" stroke="#f6c2b4" stroke-width="3.4" fill="none" stroke-dasharray="9 12" stroke-dashoffset="' + f(t * (50 + 170 * op)) + '"/>';
   return s + tag("هوا أبرد", 560, 210, at(u, .9, .3), 26, BLUE) + tag("دم أكتر", 150, 640, at(u, 3, .3), 26, ORANGE);
 }); HUD[HUD.length - 1].hard = true;
 // 13 · warm blood leaves, cooler blood comes in, like opening a window in a stuffy room (thumbnail: the window swings open)
@@ -297,7 +297,10 @@ SCENE.intro = function (svg, t, li) {
   // the real clip of two people (clips/two-people.mp4: he yawns, she catches it) plays from 0.8 s to 8.8 s in a frame;
   // after it the drawn pair takes over. Under the frame: the word, then the «؟».
   var s = "", INTRO_CLIP = [55, 10, 497, 540];
-  if (t >= .8 && t < 8.8) s += '<rect x="43" y="-2" width="521" height="564" fill="#f4ecdb" stroke="' + INK + '" stroke-width="2.4"/><rect x="55" y="10" width="497" height="540" fill="#00ff00"/><rect x="264" y="-14" width="80" height="24" fill="#d9cfae" opacity=".85" transform="rotate(-4 304 -2)"/>';
+  if (t >= .8 && t < 8.8) {   // the engine sways the card (translate 6·sin 2.3t, 5·cos 1.9t px, scale 1.03 + .03·sin 1.5t about the centre): undo it so the frame holds still over the clip
+    var sc = 1.03 + .03 * Math.sin(t * 1.5), tx = 6 * Math.sin(t * 2.3) * 2, ty = 5 * Math.cos(t * 1.9) * 2;
+    s += G('translate(304 330) scale(' + (1 / sc).toFixed(5) + ') translate(' + f(-304 - tx) + ' ' + f(-330 - ty) + ')', '<rect x="43" y="-2" width="521" height="564" fill="#f4ecdb" stroke="' + INK + '" stroke-width="2.4"/><rect x="55" y="10" width="497" height="540" fill="#00ff00"/><rect x="264" y="-14" width="80" height="24" fill="#d9cfae" opacity=".85" transform="rotate(-4 304 -2)"/>');
+  }
   else { var u0 = t - 8.8; s += headP(150, 300, .95, yawnK(u0, .1, 2), t, {}) + headP(460, 300, .95, yawnK(u0, .7, 2), t, { flip: true, shirt: "#9a8a6a", hairCol: "#2a2016" }); }
   if (li >= 1) { var u1 = t - LN[1].start; s += tag("تاوباية", 260, 612, ease(u1 / .3), 34, ORANGE); }
   if (li >= 2) { var u2 = t - LN[2].start; s += G("translate(430 572)", T("؟", 0, 60, 90, ORANGE, 800), ease(u2 / .3)); }
