@@ -44,28 +44,37 @@ a(L(SUMMARY) + 0.1, 'chime', 0.35); for (let k = 0; k < 5; k++) a(L(SUMMARY) + 0
 paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                                                       // ask box
 
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
-const breath = (t, g) => a(t, 'whoosh', g || 0.12);                                  // the long breath of a yawn
-breath(L(0) + 0.5); breath(L(0) + 1.8); paper(L(1) + 0.1); a(L(2) + 0.2, 'ping', 0.25);  // hook: the two yawns, the word, the «؟»
-breath(L(4) + 0.4, 0.16); rec(L(4) + 0.2, 'clock-ticking', 0.16, 0, 5.4, 1.0, 'tick'); lab(4, 2.4); lab(4, 3.6);
-ding(L(5) + 2.4); breath(L(5) + 0.8);
-breath(L(6) + 0.3); scribble(L(6) + D(6) - 0.8);                                          // «لأ»
-rec(L(7) + 0.2, 'water-rush', 0.08, 3, D(7) - 0.4, 1.0, 'hum'); ding(L(7) + 1.8); ding(L(7) + 5.0);   // gas in the tube, the equal counters
-paper(L(8) + 0.2);
-lab(9, 3); a(L(9) + 0.5, 'tick', 0.12); a(L(9) + 1.5, 'tick', 0.12); a(L(9) + 3, 'tick', 0.1);  // the gear slowing
-rec(L(11) + 0.2, 'wind-gust', 0.16, 0.25, 2.5, 1.0, 'whoosh'); paper(L(11) + 1.0);       // the fan
-breath(L(12) + 0.4, 0.16); lab(12, 0.8); lab(12, 3);
-lab(13, 0.4); rec(L(13) + 2.1, 'wind-gust', 0.14, 0.25, 2, 1.0, 'whoosh');                // the window opens
-breath(L(14) + 0.5); breath(L(14) + 2.2);
-lab(15, 0.4); ding(L(15) + 3.8);
-lab(16, 0.6); lab(16, 1.8); lab(16, 3.0); ding(L(16) + 1.0);
-breath(L(17) + 0.1); paper(L(18) + 0.6);
-for (let k = 0; k < 4; k++) a(L(19) + 0.4 + k * 0.9, 'tick', 0.12);
-ding(L(20) + 0.8); scribble(L(20) + 2.2);
-paper(L(21) + 1.4); breath(L(21) + 0.4); breath(L(21) + 1.6);
+// no music in this episode (the channel's choice): the sound is all effects, matched to what moves
+const inhale = (t, g, d) => a(t, 'intake', g || 0.3, d || 1.3);                       // the long breath in of a yawn
+const exhale = (t, g) => a(t, 'whoosh', g || 0.12, 0.8);                               // the sigh out
+const yawn = (t, g) => { inhale(t, g); exhale(t + 1.6, (g || 0.3) * 0.45); };
+const beat = (t, n, g) => { for (let k = 0; k < n; k++) { a(t + k * 0.85, 'thud', g || 0.22, 0.3); a(t + k * 0.85 + 0.22, 'thud', (g || 0.22) * 0.6, 0.3); } };   // a heartbeat
+yawn(L(0) + 0.35); yawn(L(0) + 1.65, 0.26); paper(L(1) + 0.1); a(L(1) + 0.2, 'pop', 0.3); a(L(2) + 0.2, 'ping', 0.25);
+yawn(L(4) + 0.4, 0.34); rec(L(4) + 0.2, 'clock-ticking', 0.18, 0, 5.4, 1.0, 'tick'); lab(4, 2.0); lab(4, 3.4); lab(4, 4.4);
+for (let k = 0; k < 4; k++) a(L(5) + 0.3 + k * 1.0, 'beep', 0.1, 0.15);                 // the scan monitor
+yawn(L(5) + 0.6, 0.18); ding(L(5) + 2.4); paper(L(5) + 0.4);
+yawn(L(6) + 0.2, 0.28); for (let k = 0; k < 4; k++) a(L(6) + 0.3 + k * 0.6, 'drip', 0.14); scribble(L(6) + D(6) - 0.8);
+a(L(7) + 0.2, 'steam', 0.14, D(7) - 0.6); for (let k = 0; k < 8; k++) a(L(7) + 0.5 + k * 0.7, 'fizz', 0.08, 0.4);   // gas in the tube
+ding(L(7) + 1.8); ding(L(7) + 5.0); yawn(L(7) + 1.0, 0.16);
+paper(L(8) + 0.2); a(L(8) + 0.5, 'pop', 0.25);
+for (const [dt, g] of [[0.4, .3], [1.3, .26], [2.4, .22], [3.7, .18]]) a(L(9) + dt, 'gear', g);   // the gear slowing as the brain warms
+a(L(9) + 1.0, 'sizzle', 0.1, 3.5); a(L(9) + 0.3, 'spin', 0.12, 1.4);
+yawn(L(10) + 0.1, 0.22); a(L(10) + 0.2, 'sizzle', 0.1, 1.2);
+a(L(11) + 0.1, 'windmill', 0.35, D(11) - 0.2); rec(L(11) + 0.2, 'wind-gust', 0.18, 0.25, 2.5, 1.0, 'wind'); yawn(L(11) + 0.15, 0.24); paper(L(11) + 1.0);
+yawn(L(12) + 0.3, 0.34); beat(L(12) + 2.4, 4, 0.24); lab(12, 0.8); lab(12, 3);
+yawn(L(13) + 0.3, 0.2); beat(L(13) + 0.2, 3, 0.18); lab(13, 0.4); a(L(13) + 2.1, 'creak', 0.25, 0.9); rec(L(13) + 2.4, 'wind-gust', 0.18, 0.25, 2, 1.0, 'wind');
+yawn(L(14) + 0.4, 0.22); yawn(L(14) + 2.1, 0.2); a(L(14) + 0.2, 'chime', 0.12);
+a(L(15) + 0.4, 'squeeze', 0.2); lab(15, 0.4); a(L(15) + 1.7, 'fill', 0.2, 2.2); ding(L(15) + 3.8);
+yawn(L(16) + 0.4, 0.22); lab(16, 0.6); lab(16, 1.8); lab(16, 3.0); a(L(16) + 1.0, 'fill', 0.16, 1.2);
+yawn(L(17) + 0.0, 0.26); yawn(L(17) + 0.6, 0.22);
+paper(L(18) + 0.6); a(L(18) + 0.2, 'whoosh', 0.14);
+for (let k = 0; k < 4; k++) a(L(19) + 0.4 + k * 0.9, 'tick', 0.14); yawn(L(19) + 0.5, 0.16);
+ding(L(20) + 0.8); scribble(L(20) + 2.2); yawn(L(20) + 0.3, 0.2);
+a(L(21) + 0.1, 'sizzle', 0.14, D(21) - 0.3); for (let k = 0; k < 7; k++) a(L(21) + 0.3 + k * 0.6, 'spark', 0.07, 0.2);   // the fire
+for (let k = 0; k < 4; k++) inhale(L(21) + 0.3 + k * 0.6, 0.12, 0.9); paper(L(21) + 1.4);
 paper(L(22) + 0.3); paper(L(22) + 2.2); paper(L(22) + 4.4);
-breath(L(23) + 0.2); lab(23, 0.4); breath(L(23) + 1.3, 0.16);
-
-const MUSIC = has('music-soft') ? 'music-soft' : null;
+yawn(L(23) + 0.1, 0.3); lab(23, 0.3); a(L(23) + 0.6, 'whoosh', 0.14); inhale(L(23) + 1.2, 0.26, 1.5);
+const MUSIC = null;   // no music in this episode
 if (MUSIC) rec(0, MUSIC, 0.42, 0, window.TIMING.duration + 2.5, 0.6);
-fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: !MUSIC, cues: c }, null, 1));
+fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: c }, null, 1));
 console.log(c.length + ' cues; kit clips here: ' + (['swipe', 'paper', 'pencil-scribble', 'ding', 'clock-ticking', 'space-drone', 'ocean-waves', 'water-rush', 'wind-gust', 'music-soft'].filter(has).join(', ') || 'none'));
