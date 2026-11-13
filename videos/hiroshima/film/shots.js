@@ -151,7 +151,9 @@
   shot(15, push([200, 330], [200, 320], 1.0, 1.08), function (u, d, t) {
     var k = clamp((u - d * .72) / .25), s = cityWide(t);
     if (u < d * .72) s += '<circle cx="200" cy="' + f(lerp(120, 205, u / (d * .72))) + '" r="2.4" fill="' + INK + '"/>' + '<path d="M200 300 V215" stroke="#fff" stroke-dasharray="3 4" stroke-width="1" opacity=".6"/>' + label("600 م", 240, 260, u, .6, 16, "#fff");
-    else s += '<circle cx="200" cy="205" r="' + f(4 + k * 60) + '" fill="#fff"/>' + R(-200, -200, 760, 1040, "#fff", { s: 0, op: k });
+    else { var e = u - d * .72; s += '<circle cx="200" cy="205" r="' + f(4 + k * 60) + '" fill="#fff"/>' + R(-200, -200, 760, 1040, "#fff8e8", { s: 0, op: k * .88 }) + fireball(200, 205, 20 + e * 40, t);
+      for (var q = 0; q < 3; q++) { var rr = ((e * 220 + q * 90) % 300); s += '<circle cx="200" cy="205" r="' + f(rr) + '" fill="none" stroke="#ffe2a0" stroke-width="' + f(6 - rr / 60) + '" opacity="' + f2(1 - rr / 300) + '"/>'; }
+      s += rays(t * 3, 200, 205, t * .8, 12, 500, .7) + dust(t * 4, 40, "#ffcf7a", .9, 5); }
     return s;
   });
   // 16 — a white light stronger than the sun, and heat on the ground of thousands of degrees
@@ -165,7 +167,8 @@
   shot(17, push([180, 340], [180, 330], 1.05, 1.15), function (u, d, t) {
     var k = clamp(u / (d * .8)), s = R(-200, -200, 760, 1040, "#f6e6c4", { s: 0 }) + rays(t, 180, -60, 1.57, 9, 900, .8);
     for (var i = 0; i < 7; i++) { var x = 50 + i * 44, kk = clamp(k * 1.4 - i * .06); s += silhouette(x, 470, 1.6, "#2a201a", { op: 1 - kk }) + '<circle cx="' + x + '" cy="420" r="' + f(kk * 40) + '" fill="#fff" opacity="' + f2(kk * (1 - kk) * 2) + '" filter="url(#soft2)"/>'; }
-    return s + dust(t, 40, "#fff", .8) + R(-200, -200, 760, 1040, "#fff", { s: 0, op: .2 + .1 * Math.sin(t * 3) });
+    for (var j = 0; j < 4; j++) { var rr = ((u * 160 + j * 80) % 320); s += '<circle cx="180" cy="300" r="' + f(rr) + '" fill="none" stroke="#ffcf7a" stroke-width="3" opacity="' + f2(.6 * (1 - rr / 320)) + '"/>'; }
+    return s + dust(t * 3, 50, "#c98a4a", .9, 2) + R(-200, -200, 760, 1040, "#fff", { s: 0, op: .12 + .1 * Math.sin(t * 5) });
   });
   // 18 — a man sitting on a bank's steps waiting for it to open: only his shadow, burnt into the stone, was left
   shot(18, push([180, 360], [180, 380], 1.0, 1.2), function (u, d, t) {
