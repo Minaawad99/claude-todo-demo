@@ -40,32 +40,71 @@
   };
   function setTOD(s, k) { var p = TOD[k]; s.skyM.uniforms.top.value.setHex(p[0]); s.skyM.uniforms.mid.value.setHex(p[1]); s.skyM.uniforms.bot.value.setHex(p[2]); s.fog.color.setHex(p[3]); s.sun.color.setHex(p[4]); s.sun.intensity = p[5]; s.sun.position.set(p[6][0], p[6][1], p[6][2]); s.hemi.intensity = p[7]; }
 
-  // ── bean people (the reference's round heads, our design): uniforms, helmets, caps, moods ──
-  var SKINS = [0xd9a57a, 0xc98f66, 0xb98058, 0xe0b48c];
+  // ── people with real proportions (about 7 heads), solid limbs and joints, toon-shaded: soldiers in desert camouflage
+  //    with a steel helmet, belt and boots; officers in plain khaki with a peaked cap; a woman in a dress; dam workers.
+  //    Built at 2.1 units and scaled ×1.85 so they replace the old characters at the same framing. ──
+  var SKINS = [0xc98f66, 0xb98058, 0xd9a57a, 0xa87048];
+  var camoC = document.createElement("canvas"); camoC.width = camoC.height = 128; var cc = camoC.getContext("2d"); cc.fillStyle = "#c4ae7c"; cc.fillRect(0, 0, 128, 128);
+  [["#8f7a4c", 26], ["#6e6c42", 18], ["#4f4a32", 12]].forEach(function (p, j) { cc.fillStyle = p[0]; for (var i = 0; i < p[1]; i++) { var x = hash(i * 7 + j * 31) * 128, y = hash(i * 13 + j * 17) * 128, r = 5 + hash(i + j * 5) * 9; cc.beginPath(); cc.ellipse(x, y, r * 1.6, r * .8, hash(i * 3 + j) * 3, 0, 7); cc.fill(); cc.beginPath(); cc.ellipse((x + 64) % 128, y, r * 1.6, r * .8, hash(i * 3 + j) * 3, 0, 7); cc.fill(); } });
+  var camoT = new T3.CanvasTexture(camoC); camoT.wrapS = camoT.wrapT = T3.RepeatWrapping; camoT.repeat.set(1.5, 1.5);
+  var MAT = { camo: toon(0xffffff, { map: camoT }), khaki: toon(0xb3a272), dress: toon(0x34405a), work: toon(0x3a5a8a), boot: toon(0x2a221c), belt: toon(0x4a3a22), olive: toon(0x5f6040), ink: toon(0x16171b) };
+  function limb(r, len, m) { var g = new T3.Group(); var c = inked(new T3.CapsuleGeometry(r, len, 4, 10), m, .06); c.position.y = -len / 2 - r * .3; g.add(c); return g; }
   function bean(o) {
-    o = o || {}; var g = new T3.Group(), skin = toon(o.skin || SKINS[(o.k || 0) % 4]), stick = toon(0x1b1d22);
-    var bd = inked(new T3.CapsuleGeometry(.62, 1.1, 6, 14), toon(o.body || 0xb8a274), .05); bd.position.y = 1.55; g.add(bd);
-    var head = new T3.Group(); head.position.y = 3.15; g.add(head); g.head = head;
-    head.add(inked(new T3.SphereGeometry(.95, 28, 18), skin, .04));
-    if (o.helmet) { var hm = inked(new T3.SphereGeometry(1.06, 24, 12, 0, Math.PI * 2, 0, Math.PI * .5), toon(o.helmet), .03); hm.position.y = .12; head.add(hm); var rim = new T3.Mesh(new T3.CylinderGeometry(1.18, 1.18, .08, 24), toon(o.helmet)); rim.position.y = .12; head.add(rim); }
-    else if (o.cap) { var hr0 = inked(new T3.SphereGeometry(.99, 24, 12, 0, Math.PI * 2, 0, Math.PI * .4), toon(o.hair || 0x15110e), .03); hr0.rotation.x = -.3; head.add(hr0);
-      var cp = inked(new T3.CylinderGeometry(.92, 1.0, .5, 24), toon(o.cap), .03); cp.position.y = .72; cp.rotation.x = -.12; head.add(cp); var vz = new T3.Mesh(new T3.BoxGeometry(1.1, .08, .6), toon(0x15171c)); vz.position.set(0, .5, .85); head.add(vz); }
-    else { var hr = inked(new T3.SphereGeometry(.99, 24, 12, 0, Math.PI * 2, 0, Math.PI * (o.bob ? .62 : .42)), toon(o.hair || 0x15110e), .03); hr.rotation.x = o.bob ? -.25 : -.35; head.add(hr);
-      if (o.bun) { var bn = inked(new T3.SphereGeometry(.38, 14, 10), toon(o.hair || 0x15110e), .05); bn.position.set(0, .7, -.6); head.add(bn); } }
-    if (o.glasses) { [-.32, .32].forEach(function (ex) { var gl = new T3.Mesh(new T3.TorusGeometry(.2, .035, 6, 16), stick); gl.position.set(ex, .06, .93); head.add(gl); }); }
-    if (o.mustache) { var ms = new T3.Mesh(new T3.BoxGeometry(.5, .1, .1), toon(o.hair || 0x15110e)); ms.position.set(0, -.18, .92); head.add(ms); }
-    var eyeG = new T3.SphereGeometry(.09, 10, 8); g.eyes = [];
-    [-.3, .3].forEach(function (ex) { var ey = new T3.Mesh(eyeG, stick); ey.position.set(ex, .05, .9); ey.scale.set(1, 1.5, .5); head.add(ey); g.eyes.push(ey); });
-    g.smile = new T3.Mesh(new T3.TorusGeometry(.18, .03, 6, 14, Math.PI), stick); g.smile.position.set(0, -.34, .88); g.smile.rotation.z = Math.PI; head.add(g.smile);
-    g.frown = new T3.Mesh(new T3.TorusGeometry(.16, .03, 6, 14, Math.PI), stick); g.frown.position.set(0, -.44, .86); head.add(g.frown);
-    g.flat = new T3.Mesh(new T3.BoxGeometry(.32, .05, .05), stick); g.flat.position.set(0, -.36, .9); head.add(g.flat);
+    o = o || {}; var g = new T3.Group(), body = new T3.Group(); body.scale.setScalar(1.85); g.add(body);
+    var skin = toon(o.skin || SKINS[(o.k || 0) % 4]), cloth = o.helmet === 0xf2c230 ? MAT.work : o.helmet ? MAT.camo : o.cap ? MAT.khaki : o.bun ? MAT.dress : toon(o.body || 0xb8a274);
+    var pants = o.bun ? MAT.dress : cloth;
+    // legs: hip → knee → foot
+    function leg(x) { var hip = new T3.Group(); hip.position.set(x, 1.05, 0); var th = limb(.105, .34, pants); hip.add(th); var knee = new T3.Group(); knee.position.y = -.5; hip.add(knee); var sh = limb(.085, .34, pants); knee.add(sh);
+      var bt = inked(new T3.BoxGeometry(.2, .14, .34), o.bun ? MAT.ink : MAT.boot, .05); bt.position.set(0, -.5, .07); knee.add(bt); body.add(hip); return { hip: hip, knee: knee }; }
+    g.L = leg(-.1); g.R = leg(.1);
+    if (o.bun) { var sk = inked(new T3.CylinderGeometry(.2, .34, .62, 14), MAT.dress, .04); sk.position.y = .82; body.add(sk); }
+    var pel = inked(new T3.BoxGeometry(.36, .2, .22), pants, .04); pel.position.y = 1.08; body.add(pel);
+    var torso = new T3.Group(); torso.position.y = 1.12; body.add(torso); g.torso = torso;
+    var ch = inked(new T3.CylinderGeometry(.21, .17, .56, 14), cloth, .04); ch.scale.z = .68; ch.position.y = .3; torso.add(ch);
+    var sh2 = inked(new T3.SphereGeometry(.21, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2), cloth, .04); sh2.scale.set(1, .35, .68); sh2.position.y = .58; torso.add(sh2);
+    if (o.helmet || o.cap) { var bl = new T3.Mesh(new T3.CylinderGeometry(.185, .185, .06, 14), MAT.belt); bl.scale.z = .7; bl.position.y = .04; torso.add(bl);
+      var bk = new T3.Mesh(new T3.BoxGeometry(.06, .05, .02), toon(0xc9a860)); bk.position.set(0, .04, .13); torso.add(bk); }
+    if (o.helmet && o.helmet !== 0xf2c230) { var st = new T3.Mesh(new T3.BoxGeometry(.05, .6, .02), MAT.belt); st.position.set(.06, .32, .145); st.rotation.z = .5; torso.add(st);
+      var pk = inked(new T3.BoxGeometry(.3, .32, .14), MAT.olive, .05); pk.position.set(0, .32, -.17); torso.add(pk); }
+    // arms: shoulder → elbow; rotation.z on the shoulder raises the arm sideways (same meaning as before: ±.5 rest, ±2.6 up)
+    function arm(x, sgn) { var sh = new T3.Group(); sh.position.set(x * 1.85, (1.12 + .55) * 1.85, 0); var up = limb(.07, .24, cloth); up.scale.setScalar(1.85); sh.add(up);
+      var el = new T3.Group(); el.position.y = -.38 * 1.85; sh.add(el); var fo = limb(.06, .22, o.cap || o.helmet ? cloth : skin); fo.scale.setScalar(1.85); el.add(fo);
+      var hd = inked(new T3.SphereGeometry(.065, 10, 8), skin, .06); hd.position.y = -.36 * 1.85; hd.scale.setScalar(1.85); el.add(hd); g.add(sh); sh.rotation.z = sgn * .12; sh.elbow = el; return sh; }
+    g.armL = arm(-.25, -1); g.armR = arm(.25, 1);
+    // neck, head, face
+    var nk = new T3.Mesh(new T3.CylinderGeometry(.055, .065, .1, 10), skin); nk.position.y = 1.76; body.add(nk);
+    var head = new T3.Group(); head.position.y = 1.93 * 1.85; g.add(head); g.head = head; var hs = 1.85;
+    var hb = inked(new T3.SphereGeometry(.135 * hs, 20, 14), skin, .04); hb.scale.set(.92, 1.05, 1); head.add(hb);
+    var jaw = new T3.Mesh(new T3.SphereGeometry(.1 * hs, 14, 10), skin); jaw.position.set(0, -.07 * hs, .03 * hs); jaw.scale.set(1, .8, .9); head.add(jaw);
+    [-1, 1].forEach(function (sd) { var ear = new T3.Mesh(new T3.SphereGeometry(.03 * hs, 8, 6), skin); ear.position.set(sd * .125 * hs, 0, 0); ear.scale.z = .6; head.add(ear); });
+    var nose = new T3.Mesh(new T3.ConeGeometry(.02 * hs, .05 * hs, 6), skin); nose.rotation.x = Math.PI / 2; nose.position.set(0, -.015 * hs, .135 * hs); head.add(nose);
+    g.eyes = []; [-.045, .045].forEach(function (ex) { var ey = new T3.Mesh(new T3.SphereGeometry(.016 * hs, 8, 6), MAT.ink); ey.position.set(ex * hs, .02 * hs, .118 * hs); ey.scale.set(1, 1.3, .5); head.add(ey); g.eyes.push(ey);
+      var br = new T3.Mesh(new T3.BoxGeometry(.05 * hs, .012 * hs, .01 * hs), toon(o.hair || 0x1a1410)); br.position.set(ex * hs, .055 * hs, .124 * hs); br.rotation.z = ex > 0 ? -.12 : .12; head.add(br); });
+    var mw = .035 * hs; g.smile = new T3.Mesh(new T3.TorusGeometry(mw, .006 * hs, 4, 10, Math.PI), MAT.ink); g.smile.position.set(0, -.06 * hs, .128 * hs); g.smile.rotation.z = Math.PI; head.add(g.smile);
+    g.frown = new T3.Mesh(new T3.TorusGeometry(mw, .006 * hs, 4, 10, Math.PI), MAT.ink); g.frown.position.set(0, -.085 * hs, .126 * hs); head.add(g.frown);
+    g.flat = new T3.Mesh(new T3.BoxGeometry(mw * 1.8, .01 * hs, .01 * hs), MAT.ink); g.flat.position.set(0, -.07 * hs, .13 * hs); head.add(g.flat);
+    if (o.mustache) { var ms = new T3.Mesh(new T3.BoxGeometry(.08 * hs, .018 * hs, .02 * hs), toon(o.hair || 0x1a1410)); ms.position.set(0, -.045 * hs, .13 * hs); head.add(ms); }
+    if (o.glasses) [-.045, .045].forEach(function (ex) { var gl = new T3.Mesh(new T3.TorusGeometry(.026 * hs, .004 * hs, 4, 12), MAT.ink); gl.position.set(ex * hs, .02 * hs, .13 * hs); head.add(gl); });
+    // headgear / hair
+    if (o.helmet) { var hm = inked(new T3.SphereGeometry(.165 * hs, 18, 10, 0, Math.PI * 2, 0, Math.PI * .5), toon(o.helmet === 0xf2c230 ? 0xf2c230 : 0x5a5c3c), .04); hm.position.y = .03 * hs; hm.scale.y = .9; head.add(hm);
+      var rm = inked(new T3.CylinderGeometry(.19 * hs, .19 * hs, .018 * hs, 20), toon(o.helmet === 0xf2c230 ? 0xe0b020 : 0x4f5034), .05); rm.position.y = .03 * hs; head.add(rm); }
+    else if (o.cap) { var hr0 = inked(new T3.SphereGeometry(.14 * hs, 16, 8, 0, Math.PI * 2, 0, Math.PI * .45), toon(o.hair || 0x1a1410), .03); hr0.rotation.x = -.3; head.add(hr0);
+      var cp = inked(new T3.CylinderGeometry(.15 * hs, .14 * hs, .08 * hs, 18), toon(o.cap), .04); cp.position.y = .12 * hs; cp.rotation.x = -.1; head.add(cp); var vz = new T3.Mesh(new T3.BoxGeometry(.18 * hs, .012 * hs, .09 * hs), MAT.ink); vz.position.set(0, .085 * hs, .14 * hs); head.add(vz); }
+    else { var hr = inked(new T3.SphereGeometry(.142 * hs, 16, 8, 0, Math.PI * 2, 0, Math.PI * (o.bob ? .62 : .44)), toon(o.hair || 0x1a1410), .03); hr.rotation.x = -.3; head.add(hr);
+      if (o.bun) { var bn = inked(new T3.SphereGeometry(.06 * hs, 10, 8), toon(o.hair || 0x1a1410), .05); bn.position.set(0, .1 * hs, -.12 * hs); head.add(bn); } }
     g.mood = function (m) { g.smile.visible = m === "smile"; g.frown.visible = m === "sad"; g.flat.visible = m === "flat" || !m; };
     g.mood(o.mood || "flat");
-    var limb = new T3.CylinderGeometry(.05, .05, 1.0, 6);
-    g.legL = new T3.Mesh(limb, stick); g.legL.position.set(-.3, .5, 0); g.legR = new T3.Mesh(limb, stick); g.legR.position.set(.3, .5, 0); g.add(g.legL, g.legR);
-    g.armL = new T3.Group(); g.armL.position.set(-.62, 2.1, 0); var al = new T3.Mesh(limb, stick); al.position.y = -.5; g.armL.add(al); g.armL.rotation.z = -.5;
-    g.armR = new T3.Group(); g.armR.position.set(.62, 2.1, 0); var ar = new T3.Mesh(limb, stick); ar.position.y = -.5; g.armR.add(ar); g.armR.rotation.z = .5; g.add(g.armL, g.armR);
-    g.ph = hash(o.k || 0) * 6;
+    g.legL = g.L.hip; g.legR = g.R.hip; g.ph = hash(o.k || 0) * 6;
+    g.pose = function (p, t) {   // stand | sit | paddle | climb | walk
+      var w = Math.sin((t || 0) * 3 + g.ph);
+      g.L.hip.rotation.x = g.R.hip.rotation.x = 0; g.L.knee.rotation.x = g.R.knee.rotation.x = 0; g.armL.elbow.rotation.x = g.armR.elbow.rotation.x = 0; g.armL.rotation.x = g.armR.rotation.x = 0; body.position.y = 0;
+      if (p === "sit" || p === "paddle") { g.L.hip.rotation.x = g.R.hip.rotation.x = -1.45; g.L.knee.rotation.x = g.R.knee.rotation.x = 1.5; body.position.y = -.45; g.head.position.y = 1.93 * 1.85 - .45 * 1.85; g.armL.position.y = g.armR.position.y = (1.12 + .55 - .45) * 1.85;
+        if (p === "paddle") { g.armL.rotation.x = g.armR.rotation.x = -.9 + w * .5; g.armL.elbow.rotation.x = g.armR.elbow.rotation.x = -.6; } }
+      else { g.head.position.y = 1.93 * 1.85; g.armL.position.y = g.armR.position.y = (1.12 + .55) * 1.85; }
+      if (p === "climb") { g.L.hip.rotation.x = -.8 - w * .5; g.L.knee.rotation.x = 1 + w * .4; g.R.hip.rotation.x = -.8 + w * .5; g.R.knee.rotation.x = 1 - w * .4; g.armL.rotation.x = -2.6 + w * .3; g.armR.rotation.x = -2.6 - w * .3; }
+      if (p === "walk") { g.L.hip.rotation.x = w * .5; g.R.hip.rotation.x = -w * .5; g.L.knee.rotation.x = Math.max(0, -w) * .6; g.R.knee.rotation.x = Math.max(0, w) * .6; g.armL.rotation.x = -w * .4; g.armR.rotation.x = w * .4; }
+    };
+    g.pose("stand", 0);
     return g;
   }
   function live(b, t, o) { o = o || {}; var bl = ((t + b.ph) % 3.3) < .12; b.eyes.forEach(function (e) { e.scale.y = bl ? .15 : 1.5; }); b.head.rotation.z = Math.sin(t * .9 + b.ph) * .05; if (o.cheer) { var w = Math.sin(t * 6 + b.ph); b.armL.rotation.z = -2.6 - w * .2; b.armR.rotation.z = 2.6 + w * .2; } }
@@ -80,27 +119,36 @@
   var wbank = new T3.Mesh(new T3.PlaneGeometry(14, 6000), toon(SAND2)); wbank.rotation.y = Math.PI / 2; wbank.rotation.x = 0; wbank.position.set(-95, -1, 0); wbank.rotation.set(0, Math.PI / 2, 0); W.add(wbank);
   // foam streaks drifting on the water
   var foam = new T3.InstancedMesh(new T3.BoxGeometry(6, .05, .5), basic(0xd8f0f8, { transparent: true, opacity: .6 }), 160); foam.frustumCulled = false; W.add(foam);
+  // clouds: puffy toon clusters high over the desert, drifting slowly
+  var clouds = new T3.Group(); W.add(clouds); var cloudM = toon(0xffffff, { fog: false }), cloudS = toon(0xdfe4ea, { fog: false });
+  for (var cq = 0; cq < 34; cq++) { var cg = new T3.Group(), n0 = 5 + Math.floor(rnd() * 5);
+    for (var cp2 = 0; cp2 < n0; cp2++) { var r0 = 34 + rnd() * 40, pm = new T3.Mesh(new T3.SphereGeometry(r0, 14, 10), cp2 % 3 ? cloudM : cloudS); pm.position.set((cp2 - n0 / 2) * 26 + rnd() * 10, rnd() * 18 - (cp2 % 2) * 6, rnd() * 24); pm.scale.y = .62; cg.add(pm); }
+    var ang = rnd() * Math.PI * 2, rad = 700 + rnd() * 1800; cg.position.set(Math.cos(ang) * rad, 220 + rnd() * 320, Math.sin(ang) * rad); cg.userData.v = 3 + rnd() * 4; clouds.add(cg); }
+  function driftClouds(t) { clouds.children.forEach(function (c, i) { c.position.z += 0; c.rotation.y = 0; c.position.x = c.userData.x0 == null ? (c.userData.x0 = c.position.x) : c.userData.x0 + t * c.userData.v; }); }
   // the rampart: a strip mesh along Z with a sand profile; breaches cut notches into it
   var ZN = 520, Z0 = -1950, Z1 = 1950, PX = [88, 96, 104, 110, 116, 124, 132, 140, 152, 168], PH = [-.5, 7, 15, 21, 24, 24, 22, 14, 7, 3];
   var rg = new T3.BufferGeometry(), rpos = new Float32Array(ZN * PX.length * 3), ridx = [];
-  for (var zi = 0; zi < ZN; zi++) for (var xi = 0; xi < PX.length; xi++) { var k3 = (zi * PX.length + xi) * 3; rpos[k3] = PX[xi]; rpos[k3 + 1] = PH[xi]; rpos[k3 + 2] = Z0 + (Z1 - Z0) * zi / (ZN - 1); }
+  var PH0 = PH.slice(), rnoise = function (zi, xi) { return (Math.sin(zi * .37) * .6 + Math.sin(zi * 1.7 + xi) * .35 + (hash(zi * 13 + xi) - .5) * .9) * (xi > 0 && xi < PX.length - 1 ? 1 : 0); };
+  var rcol = new Float32Array(ZN * PX.length * 3);
+  for (var zi = 0; zi < ZN; zi++) for (var xi = 0; xi < PX.length; xi++) { var k3 = (zi * PX.length + xi) * 3; rpos[k3] = PX[xi] + (xi > 0 && xi < 4 ? Math.sin(zi * 2.3 + xi) * .8 : 0); rpos[k3 + 1] = PH[xi] + rnoise(zi, xi); rpos[k3 + 2] = Z0 + (Z1 - Z0) * zi / (ZN - 1);
+    var sh = xi < 4 ? .78 + .08 * Math.sin(zi * 2.3) : xi < 7 ? 1.0 : .9; rcol[k3] = sh; rcol[k3 + 1] = sh * .97; rcol[k3 + 2] = sh * .92; }
   for (var zj = 0; zj < ZN - 1; zj++) for (var xj = 0; xj < PX.length - 1; xj++) { var a0 = zj * PX.length + xj, b0 = a0 + 1, c0 = a0 + PX.length, d0 = c0 + 1; ridx.push(a0, c0, b0, b0, c0, d0); }
   var ruv = new Float32Array(ZN * PX.length * 2); for (var zu = 0; zu < ZN; zu++) for (var xu = 0; xu < PX.length; xu++) { var ku = (zu * PX.length + xu) * 2; ruv[ku] = zu / 6; ruv[ku + 1] = xu / (PX.length - 1); }
-  rg.setAttribute("position", new T3.BufferAttribute(rpos, 3)); rg.setAttribute("uv", new T3.BufferAttribute(ruv, 2)); rg.setIndex(ridx); rg.computeVertexNormals();
+  rg.setAttribute("position", new T3.BufferAttribute(rpos, 3)); rg.setAttribute("uv", new T3.BufferAttribute(ruv, 2)); rg.setAttribute("color", new T3.BufferAttribute(rcol, 3)); rg.setIndex(ridx); rg.computeVertexNormals();
   var sandC = document.createElement("canvas"); sandC.width = 256; sandC.height = 256; var sc2 = sandC.getContext("2d"); sc2.fillStyle = "#e2c48a"; sc2.fillRect(0, 0, 256, 256);
   for (var st = 0; st < 26; st++) { sc2.fillStyle = st % 2 ? "rgba(150,110,60,.18)" : "rgba(255,240,200,.25)"; sc2.fillRect(0, st * 10 + (st % 3) * 2, 256, 2 + (st % 4)); }
   for (var dt = 0; dt < 900; dt++) { sc2.fillStyle = dt % 3 ? "rgba(120,90,50,.35)" : "rgba(255,250,230,.4)"; sc2.fillRect(hash(dt) * 256, hash(dt + 1) * 256, 1.5 + hash(dt + 2) * 2, 1.5); }
   for (var gl2 = 0; gl2 < 14; gl2++) { sc2.strokeStyle = "rgba(110,80,40,.35)"; sc2.lineWidth = 1.5; sc2.beginPath(); var gx = hash(gl2 + 50) * 256; sc2.moveTo(gx, 0); sc2.lineTo(gx + (hash(gl2) - .5) * 30, 256); sc2.stroke(); }
   var sandT = new T3.CanvasTexture(sandC); sandT.wrapS = sandT.wrapT = T3.RepeatWrapping;
-  var rampart = new T3.Mesh(rg, toon(0xffffff, { map: sandT })); W.add(rampart);
+  var rampart = new T3.Mesh(rg, toon(0xffffff, { map: sandT, vertexColors: true })); W.add(rampart);
   var rampInk = new T3.Mesh(rg, basic(0x1b1d22, { side: T3.BackSide })); rampInk.scale.set(1.004, 1.02, 1); W.add(rampInk);
   var BREACH = []; for (var bi = 0; bi < 64; bi++) BREACH.push({ z: -1800 + bi * 57 + (hash(bi) - .5) * 20, p: 0, w: 9 + hash(bi + 3) * 4 });
-  var lastSig = "";
+  var lastSig = "init";
   function cutRampart() {
     var sig = BREACH.map(function (b) { return b.p.toFixed(2); }).join(""); if (sig === lastSig) return; lastSig = sig;
     for (var zi2 = 0; zi2 < ZN; zi2++) { var z = Z0 + (Z1 - Z0) * zi2 / (ZN - 1), cut = 0;
       for (var q = 0; q < BREACH.length; q++) { var b = BREACH[q]; if (b.p <= 0) continue; var dz = (z - b.z) / b.w; if (Math.abs(dz) < 3) cut = Math.max(cut, b.p * Math.exp(-dz * dz * .7)); }
-      for (var xi2 = 0; xi2 < PX.length; xi2++) { var k4 = (zi2 * PX.length + xi2) * 3, hh = PH[xi2]; rpos[k4 + 1] = hh <= 3 ? hh : lerp(hh, xi2 === 0 ? -.5 : 1.5, cut); } }
+      for (var xi2 = 0; xi2 < PX.length; xi2++) { var k4 = (zi2 * PX.length + xi2) * 3, hh = PH[xi2] + rnoise(zi2, xi2); rpos[k4 + 1] = PH[xi2] <= 3 ? hh : lerp(hh, xi2 === 0 ? -.5 : 1.5, cut); } }
     rg.attributes.position.needsUpdate = true; rg.computeVertexNormals();
   }
   // strongpoints on top: low concrete bunkers with slits, sandbag rings
@@ -130,7 +178,7 @@
   // rubber boats with soldiers and paddles
   function boat(n, k) { var g = new T3.Group(); var ring = inked(new T3.TorusGeometry(2.2, .55, 8, 22), toon(0x3a3e3a), .05); ring.rotation.x = Math.PI / 2; ring.scale.set(1.7, 1, 1); g.add(ring);
     var fl = new T3.Mesh(new T3.CircleGeometry(2.2, 18), toon(0x2a2c2a)); fl.rotation.x = -Math.PI / 2; fl.scale.set(1.7, 1, 1); fl.position.y = -.2; g.add(fl); g.men = [];
-    for (var i = 0; i < n; i++) { var b = bean({ helmet: 0x7a7a50, body: 0xb8a274, k: k * 5 + i }); b.scale.setScalar(.5); b.position.set(-2.2 + i * 1.5, -.3, (i % 2 ? .6 : -.6)); b.rotation.y = -Math.PI / 2; g.add(b); g.men.push(b);
+    for (var i = 0; i < n; i++) { var b = bean({ helmet: 0x7a7a50, body: 0xb8a274, k: k * 5 + i }); b.scale.setScalar(.5); b.pose("sit"); b.position.set(-2.2 + i * 1.5, .2, (i % 2 ? .7 : -.7)); b.rotation.y = Math.PI / 2; g.add(b); g.men.push(b);
       var pd = new T3.Mesh(new T3.BoxGeometry(.12, .12, 3), toon(0x8a6a44)); pd.position.set(-2.2 + i * 1.5, .9, (i % 2 ? 1.6 : -1.6)); pd.rotation.x = .5 * (i % 2 ? 1 : -1); g.add(pd); }
     if (k % 3 === 0) { var ld = ladder(9); ld.rotation.z = Math.PI / 2; ld.position.set(0, .9, 0); ld.scale.setScalar(.6); g.add(ld); }
     return g; }
@@ -140,10 +188,10 @@
   function pumpBoat(k) { var g = new T3.Group(); var hull = inked(new T3.BoxGeometry(7, 1.6, 3), toon(0x7a5a3a), .04); hull.position.y = .3; g.add(hull);
     var pump = inked(new T3.BoxGeometry(2.4, 1.8, 1.8), toon(0x9aa0a6), .05); pump.position.set(-1, 2, 0); g.add(pump); var fly = inked(new T3.CylinderGeometry(.7, .7, .4, 14), toon(0xc23a26), .06); fly.rotation.x = Math.PI / 2; fly.position.set(-1, 2, 1.1); g.add(fly); g.fly = fly;
     var noz = inked(new T3.CylinderGeometry(.18, .3, 2.4, 8), toon(0xc9a860), .06); noz.rotation.z = -1.1; noz.position.set(2.4, 2.4, 0); g.add(noz);
-    for (var i = 0; i < 2; i++) { var b = bean({ helmet: 0x7a7a50, body: 0xb8a274, k: 80 + k * 2 + i }); b.scale.setScalar(.5); b.position.set(1.2 + i * .8, .9, i ? .8 : -.8); b.rotation.y = Math.PI / 2; g.add(b); }
+    for (var i = 0; i < 2; i++) { var b = bean({ helmet: 0x7a7a50, body: 0xb8a274, k: 80 + k * 2 + i }); b.scale.setScalar(.5); b.position.set(1.4 + i * 1.4, 1.1, i ? .9 : -.9); b.rotation.y = Math.PI / 2; g.add(b); }
     return g; }
   var pumps = []; for (var pb = 0; pb < 8; pb++) { var pbb = pumpBoat(pb); W.add(pbb); pumps.push(pbb); }
-  var DROPS = 70, jets = new T3.InstancedMesh(new T3.SphereGeometry(.5, 6, 5), basic(0xe6f6ff), 8 * DROPS); jets.frustumCulled = false; W.add(jets);
+  var DROPS = 120, jets = new T3.InstancedMesh(new T3.SphereGeometry(.5, 6, 5), basic(0xe6f6ff), 8 * DROPS); jets.frustumCulled = false; W.add(jets);
   var mud = new T3.InstancedMesh(new T3.SphereGeometry(.7, 6, 5), toon(0x8a6a44), 8 * 40); mud.frustumCulled = false; W.add(mud);
   var ladders = []; for (var li = 0; li < 8; li++) { var ll = ladder(22); ll.rotation.z = .78; W.add(ll); ladders.push(ll); }
   // jets of the opening strike: swept-wing fighters, sand camouflage
@@ -226,7 +274,7 @@
 
   // ── animated pieces ──
   var dm = new T3.Matrix4(), dv = new T3.Vector3(), ds = new T3.Vector3(), dq = new T3.Quaternion();
-  function stream(inst, base, n, from, to, arc, t, sp, sz) { for (var i = 0; i < n; i++) { var u = ((t * (sp || 1.2) + i / n) % 1); dv.set(lerp(from.x, to.x, u), lerp(from.y, to.y, u) + Math.sin(u * Math.PI) * arc, lerp(from.z, to.z, u) + Math.sin(i * 7.1) * .4); ds.setScalar((sz || 1) * (.6 + .6 * u)); dm.compose(dv, dq, ds); inst.setMatrixAt(base + i, dm); } inst.instanceMatrix.needsUpdate = true; }
+  function stream(inst, base, n, from, to, arc, t, sp, sz) { for (var i = 0; i < n; i++) { var u = ((t * (sp || 1.2) + i / n) % 1); dv.set(lerp(from.x, to.x, u), lerp(from.y, to.y, u) + Math.sin(u * Math.PI) * arc + Math.sin(i * 3.3) * u * .8, lerp(from.z, to.z, u) + Math.sin(i * 7.1) * (.2 + u * 1.4)); ds.setScalar((sz || 1) * (.35 + .9 * u * u)); dm.compose(dv, dq, ds); inst.setMatrixAt(base + i, dm); } inst.instanceMatrix.needsUpdate = true; }
   function hideInst(inst, a, b) { ds.setScalar(0); dm.compose(dv.set(0, -999, 0), dq, ds); for (var i = a; i < b; i++) inst.setMatrixAt(i, dm); inst.instanceMatrix.needsUpdate = true; }
   function foamAnim(t) { for (var i = 0; i < 160; i++) { dv.set(-80 + hash(i) * 170, .1, ((hash(i + 3) * 3000 + t * (4 + hash(i) * 3)) % 3000) - 1500); ds.set(1, 1, 1); dm.compose(dv, dq, ds); foam.setMatrixAt(i, dm); } foam.instanceMatrix.needsUpdate = true; }
   function hideAll() {
@@ -240,16 +288,19 @@
   function setBreach(p, n) { BREACH.forEach(function (b, i) { b.p = i < (n == null ? 64 : n) ? clamp(p * (1 + hash(i) * .3) - hash(i + 9) * .25) : 0; }); cutRampart(); }
   var TGT = new T3.Vector3(), V1 = new T3.Vector3(), V2 = new T3.Vector3(), UP = new T3.Vector3(0, 1, 0);
   function camLook(px, py, pz, lx, ly, lz) { cam.position.set(px, py, pz); TGT.set(lx, ly, lz); cam.lookAt(TGT); }
+  function groundAt(x, z) { if (x < -95) return 3; if (x < PX[0]) return 0; if (x > PX[PX.length - 1]) return 3; var j = 0; while (j < PX.length - 2 && PX[j + 1] < x) j++;
+    var h = lerp(PH[j], PH[j + 1], (x - PX[j]) / (PX[j + 1] - PX[j])), cut = 0; for (var q = 0; q < BREACH.length; q++) { var b = BREACH[q]; if (b.p > 0) { var dz = (z - b.z) / b.w; cut = Math.max(cut, b.p * Math.exp(-dz * dz * .7)); } } return lerp(h, 1.5, cut); }
+  function clampCam() { var g = groundAt(cam.position.x, cam.position.z) + 1.4; if (cam.position.y < g) { cam.position.y = g; cam.lookAt(TGT); } }
   // a slow handheld float + push-in applied after every shot, scaled to the distance, so no frame ever settles
   function breathe(t, u) { V1.subVectors(TGT, cam.position); var dist = V1.length(); V1.normalize(); V2.crossVectors(V1, UP).normalize();
-    var a = dist * .09; cam.position.addScaledVector(V2, Math.sin(t * .85) * a + Math.sin(t * 1.9) * a * .3).addScaledVector(UP, Math.cos(t * .7) * a * .6).addScaledVector(V1, Math.min(u, 8) * dist * .018); TGT.addScaledVector(V2, Math.sin(t * .6 + 1) * dist * .07).addScaledVector(UP, Math.sin(t * .45) * dist * .035); cam.lookAt(TGT); }
+    var a = dist * .09; cam.position.addScaledVector(V2, Math.sin(t * .85) * a + Math.sin(t * 1.9) * a * .3).addScaledVector(UP, Math.cos(t * .7) * a * .6).addScaledVector(V1, Math.min(u, 8) * dist * (dist < 25 ? .008 : .018)); TGT.addScaledVector(V2, Math.sin(t * .6 + 1) * dist * .07).addScaledVector(UP, Math.sin(t * .45) * dist * .035); cam.lookAt(TGT); }
   function drift(t, a) { a = a || 1; cam.position.x += Math.sin(t * .7) * .6 * a; cam.position.y += Math.cos(t * .5) * .4 * a; }
   function barrage(t, k, onWall) { puffs.forEach(function (pf, i) { var ph = ((t * .8 + hash(i)) % 1); pf.visible = k > 0; var z = -260 + hash(i + 4) * 520 + Math.floor(t * .8 + hash(i)) * 37 % 200; pf.position.set(onWall ? 118 + hash(i + 8) * 20 : 140 + hash(i) * 60, 22 + ph * 18, z); pf.scale.setScalar(.4 + ph * 1.4); pf.fire.visible = ph < .3; pf.children[0].main && (pf.children[0].main.material.opacity = 1 - ph * .6); }); }
   function gunsFire(t) { guns.forEach(function (g, i) { var ph = (t * 1.3 + hash(i) * 3) % 1; g.flash.visible = ph < .12; g.barrel.rotation.x = .5 - (ph < .12 ? .05 : 0); }); }
   function flyFighters(t, k, n, x0, x1, alt) { for (var i = 0; i < 18; i++) { var f = fighters[i]; f.visible = i < n; if (!f.visible) continue; var row = i % 6, col = Math.floor(i / 6); f.position.set(lerp(x0, x1, k) - col * 40 - row * 8, alt + row * 6 + Math.sin(t * 2 + i) * .5, -120 + row * 50 + col * 18); f.rotation.set(0, Math.PI / 2, Math.sin(t + i) * .05); } }
-  function boatsCross(t, k, n, z0) { for (var i = 0; i < boats.length; i++) { var b = boats[i]; b.visible = i < n; if (!b.visible) continue; var lag = hash(i) * .25, kk = clamp((k - lag) / (1 - lag)); b.position.set(lerp(-85, 78, kk), .3 + Math.sin(t * 2 + i) * .15, z0 + (i - n / 2) * 16 + hash(i + 2) * 6); b.rotation.y = Math.sin(t + i) * .05; b.men.forEach(function (m, j) { live(m, t + j); m.position.y = -.3 + Math.abs(Math.sin(t * 3 + j)) * .05; }); } }
-  function pumpsWork(t, k, n, base) { for (var i = 0; i < 8; i++) { var pb = pumps[i]; pb.visible = i < n; if (!pb.visible) { hideInst(jets, i * DROPS, (i + 1) * DROPS); hideInst(mud, i * 40, (i + 1) * 40); continue; } var z = BREACH[base + i].z; pb.position.set(66, .2 + Math.sin(t * 1.6 + i) * .15, z); pb.fly.rotation.y = t * 20;
-      if (k > 0) { var bz2 = z; stream(jets, i * DROPS, DROPS, { x: 69, y: 3.6, z: z }, { x: 100, y: lerp(14, 4, k), z: bz2 }, 6, t + i * .3, 1.4, 1); stream(mud, i * 40, 40, { x: 100, y: lerp(12, 3, k), z: z }, { x: 86, y: -.5, z: z + 2 }, 1.5, t + i, .5, 1.1); }
+  function boatsCross(t, k, n, z0) { for (var i = 0; i < boats.length; i++) { var b = boats[i]; b.visible = i < n; if (!b.visible) continue; var lag = hash(i) * .25, kk = clamp((k - lag) / (1 - lag)); b.position.set(lerp(-85, 78, kk), .3 + Math.sin(t * 2 + i) * .15, z0 + (i - n / 2) * 16 + hash(i + 2) * 6); b.rotation.y = Math.sin(t + i) * .05; b.men.forEach(function (m, j) { live(m, t + j); m.pose(kk < 1 ? "paddle" : "sit", t + j * .4); m.position.y = .2 + Math.abs(Math.sin(t * 3 + j)) * .03; }); } }
+  function pumpsWork(t, k, n, base) { for (var i = 0; i < 8; i++) { var pb = pumps[i]; pb.visible = i < n; if (!pb.visible) { hideInst(jets, i * DROPS, (i + 1) * DROPS); hideInst(mud, i * 40, (i + 1) * 40); continue; } var z = BREACH[base + i].z; pb.position.set(60, .2 + Math.sin(t * 1.6 + i) * .15, z); pb.fly.rotation.y = t * 20;
+      if (k > 0) { var bz2 = z; stream(jets, i * DROPS, DROPS, { x: 63.5, y: 3.8, z: z }, { x: 100, y: lerp(14, 4, k), z: bz2 }, 6, t + i * .3, 1.6, 1.4); stream(mud, i * 40, 40, { x: 100, y: lerp(12, 3, k), z: z }, { x: 86, y: -.5, z: z + 2 }, 1.5, t + i, .5, 1.1); }
       else { hideInst(jets, i * DROPS, (i + 1) * DROPS); hideInst(mud, i * 40, (i + 1) * 40); } } }
 
   // ═════════ shots: one per line ═════════
@@ -257,7 +308,7 @@
   var OV = document.getElementById("ov"), OVS = document.getElementById("ovs"), OVB = document.getElementById("ovbox");
   var ovSet = { txt: "", sub: "" }, BINO = document.getElementById("bino");
   function over(u, txt, sub, at, col) { var k = clamp((u - (at || .3)) / .5); OVB.style.opacity = k; if (ovSet.txt !== txt) { OV.textContent = txt; ovSet.txt = txt; } if (ovSet.sub !== (sub || "")) { OVS.textContent = sub || ""; ovSet.sub = sub || ""; } OV.style.color = col || "#fff"; }
-  function W0(tod) { setTOD(W, tod); hideAll(); return W; }
+  function W0(tod) { setTOD(W, tod); hideAll(); setBreach(0); return W; }
 
   // 0 — 6 October 1973, 10 Ramadan: the canal from high up, noon
   shot(0, function (u, d, t) { var k = ease(u / d); W0("noon"); setBreach(0); camLook(lerp(-420, -260, k), lerp(260, 170, k), lerp(380, 200, k), 40, 0, -200); drift(t); over(u, "6 أكتوبر 1973", "10 رمضان", .4); return W; });
@@ -276,11 +327,11 @@
   shot(6, function (u, d, t) { var k = ease(u / d); W0("night"); camLook(lerp(-300, -200, k), 80, 300, 40, 0, -100); drift(t); over(u, "قبل الفجر", "", .6); return W; });
   // 7 — 3 a.m., soldiers eat suhoor in the trenches; nobody knows today is the day
   shot(7, function (u, d, t) { var k = ease(u / d); W0("night"); lantern.visible = true; lanternL.intensity = 1.6 + Math.sin(t * 9) * .2;
-    crew.slice(0, 4).forEach(function (c, i) { c.visible = true; c.position.set(-108 + (i % 2 ? 1.6 : -1.6), 3, -1 + i * 1.6); c.rotation.y = i % 2 ? -Math.PI / 2 : Math.PI / 2; c.mood(i === 1 ? "smile" : "flat"); live(c, t + i); c.armR.rotation.z = .5 + Math.max(0, Math.sin(t * 2 + i)) * 1.2; });
-    camLook(lerp(-96, -99, k), lerp(7, 6, k), lerp(10, 7, k), -108, 4, 2); over(u, "3:00", "السحور", .3, "#f2c230"); return W; });
+    crew.slice(0, 4).forEach(function (c, i) { c.visible = true; c.position.set(-108 + (i % 2 ? 1.6 : -1.6), 3, -1 + i * 1.6); c.rotation.y = i % 2 ? -Math.PI / 2 : Math.PI / 2; c.mood(i === 1 ? "smile" : "flat"); live(c, t + i); c.pose("stand", t); c.position.y = 3; c.scale.setScalar(.85); c.armR.rotation.x = -.4 - Math.max(0, Math.sin(t * 2 + i)) * .9; c.armR.elbow.rotation.x = -1.5; });
+    camLook(lerp(-99, -100, k), 10.5, lerp(12, 10, k), -108, 5, 1.5); over(u, "3:00", "السحور", .3, "#f2c230"); return W; });
   // 8 — most learned only hours before, so the secret wouldn't leak
   shot(8, function (u, d, t) { W0("night"); lantern.visible = true; lanternL.intensity = 1.5; var a = crew[0], b = crew[1]; [a, b].forEach(function (c, i) { c.visible = true; c.position.set(-108 + (i ? .9 : -.9), 3, 2); c.rotation.y = i ? -1.2 : 1.2; c.mood("flat"); live(c, t); c.head.rotation.z = (i ? -1 : 1) * .25; });
-    camLook(-104 + Math.sin(t * .4), 6.5, 9, -108, 5.4, 2); over(u, "سرّ", "", .5); return W; });
+    camLook(-101 + Math.sin(t * .4) * .5, 9.5, 8, -108, 6, 2); over(u, "سرّ", "", .5); return W; });
   // 9 — after dawn, on the bank, a strange scene
   shot(9, function (u, d, t) { var k = ease(u / d); W0("dawn"); camLook(lerp(-40, -20, k), 30, 160, -130, 4, 0); drift(t); return W; });
   // 10 — soldiers sucking sugarcane, swimming in the canal, washing clothes
@@ -336,19 +387,23 @@
   // 30 — 2:20, the first rubber boats go into the water
   shot(30, function (u, d, t) { var k = u / d; W0("smoke"); setBreach(0); boatsCross(t, k * .55, 16, 0); camLook(lerp(-150, -130, k), 28, 120, 0, 0, 0); drift(t, .5); over(u, "14:20", "", .3, "#f2c230"); return W; });
   // 31 — imagine you're sitting in that boat, fasting, holding your rifle and a wooden ladder…
-  shot(31, function (u, d, t) { var k = u / d; W0("smoke"); var b = boats[3]; b.visible = true; b.position.set(lerp(-40, 0, k), .3 + Math.sin(t * 2) * .15, 0); b.rotation.y = 0; b.men.forEach(function (m, j) { live(m, t + j); m.mood("flat"); }); boatsCross(t, .3 + k * .4, 10, 40); boats[3].visible = true; b.position.set(lerp(-40, 0, k), .3, 0);
-    camLook(b.position.x - 4.5, 2.4 + Math.sin(t * 2) * .2, -1.2, 100, 12, 0); return W; });
+  shot(31, function (u, d, t) { var k = u / d; W0("smoke"); var b = boats[4]; b.visible = true; b.position.set(lerp(-40, 0, k), .3 + Math.sin(t * 2) * .15, 0); b.rotation.y = 0; b.men.forEach(function (m, j) { live(m, t + j); m.mood("flat"); }); boatsCross(t, .3 + k * .4, 10, 60); b.visible = true; b.position.set(lerp(-40, 0, k), .3, 0); b.men.forEach(function (m, j) { m.pose("paddle", t + j * .4); });
+    camLook(b.position.x - 6.5, 3.6 + Math.sin(t * 2) * .15, .3, 100, 10, 0); return W; });
   // 32 — and ahead of you a mountain of sand taller than a seven-storey building
-  shot(32, function (u, d, t) { var k = ease(u / d); W0("smoke"); boatsCross(t, .75, 10, 0); camLook(30, 3, 40, 100, lerp(8, 24, k), 0); over(u, "7 أدوار", "", .8, "#f2c230"); return W; });
+  shot(32, function (u, d, t) { var k = ease(u / d); W0("smoke"); boatsCross(t, .88, 10, 0); camLook(30, 3, 40, 100, lerp(8, 24, k), 0); over(u, "7 أدوار", "", .8, "#f2c230"); return W; });
   // 33 — and you hear the thousands around you say together: Allahu Akbar
   shot(33, function (u, d, t) { var k = ease(u / d); W0("smoke"); boatsCross(t, .95, 14, 0); boats.forEach(function (b) { b.men.forEach(function (m, j) { live(m, t + j, { cheer: true }); m.mood("smile"); }); }); camLook(lerp(50, 44, k), 9, 40, 80, 3, 0); drift(t, .4); over(u, "الله أكبر", "", 1.2, "#fff"); return W; });
   // 34 — they climb the wall on ladders, and behind them the engineers lower the pumps into the water
-  shot(34, function (u, d, t) { var k = u / d; W0("smoke"); boatsCross(t, 1, 10, 0); ladders.forEach(function (l, i) { l.visible = i < 6; l.position.set(90, 0, -50 + i * 20); }); crew.forEach(function (c, i) { c.visible = i < 6; var kk = clamp(k * 1.3 - i * .08); c.position.set(lerp(92, 112, kk), lerp(1, 23, kk), -50 + i * 20 + .8); c.rotation.y = Math.PI / 2; c.scale.setScalar(.5); live(c, t + i); });
-    pumpsWork(t, 0, 4, 30); pumps.forEach(function (pb, i) { if (i < 4) pb.position.x = lerp(-80, 66, clamp(k * 1.2)); }); camLook(30, 20, 70, 100, 12, 0); drift(t, .5); return W; });
+  shot(34, function (u, d, t) { var k = u / d; W0("smoke");
+    ladders.forEach(function (l, i) { l.visible = i < 4; l.position.set(90, 0, BREACH[30 + i].z + 28); });
+    boats.forEach(function (b, i) { b.visible = i < 4; if (!b.visible) return; b.position.set(84, .3 + Math.sin(t * 2 + i) * .1, BREACH[30 + i].z + 22); b.rotation.y = 0; b.men.forEach(function (m, j) { m.visible = j > 1; m.pose("sit", t); live(m, t + j); }); });
+    crew.forEach(function (c, i) { c.visible = i < 8; var li = i % 4, kk = clamp(k * 1.25 - Math.floor(i / 4) * .35); c.position.set(lerp(91.5, 111, kk), lerp(1.2, 23.5, kk), BREACH[30 + li].z + 28 + .9); c.rotation.y = Math.PI / 2; c.scale.setScalar(.55); c.pose(kk < 1 ? "climb" : "stand", t + i); live(c, t + i); });
+    pumpsWork(t, 0, 4, 30); pumps.forEach(function (pb, i) { if (i < 4) pb.position.x = lerp(-60, 60, ease(clamp(k * 1.3 - i * .1))); });
+    camLook(20, 22, BREACH[31].z + 120, 96, 12, BREACH[31].z + 30); return W; });
   // 35 — the hoses turn on the sand… and the mountain begins to melt
-  shot(35, function (u, d, t) { var k = u / d; W0("smoke"); setBreach(.15 * k, 64); pumpsWork(t, .1 + .2 * k, 3, 31); camLook(58, 6, BREACH[32].z + 22, 98, 10, BREACH[32].z); drift(t, .2); return W; });
+  shot(35, function (u, d, t) { var k = u / d; W0("smoke"); setBreach(.15 * k, 64); pumpsWork(t, .1 + .2 * k, 3, 31); camLook(36, 12, BREACH[32].z + 48, 84, 8, BREACH[32].z); return W; });
   // 36 — the sand turns to mud, the mud slides into the canal, the gap widens minute by minute
-  shot(36, function (u, d, t) { var k = u / d; W0("smoke"); setBreach(.15 + .5 * k, 64); pumpsWork(t, .3 + .5 * k, 3, 31); camLook(lerp(70, 64, k), lerp(14, 10, k), BREACH[32].z - 24, 100, 6, BREACH[32].z); drift(t, .3); over(u, "رملة ← طين", "", .6, "#d8b070"); return W; });
+  shot(36, function (u, d, t) { var k = u / d; W0("smoke"); setBreach(.15 + .5 * k, 64); pumpsWork(t, .3 + .5 * k, 3, 31); camLook(lerp(40, 46, k), 14, BREACH[32].z - 46, 88, 7, BREACH[32].z); over(u, "رملة ← طين", "", .6, "#d8b070"); return W; });
   // 37 — in about four hours, more than sixty breaches were open in the wall
   shot(37, function (u, d, t) { var k = ease(u / d); W0("day"); setBreach(.6 + .4 * k, Math.round(lerp(6, 64, k))); camLook(lerp(-60, -140, k), lerp(140, 320, k), lerp(-300, -500, k), 100, 0, 300); flyGulls(t * 1.6, cam.position.x + 40, cam.position.y - 30, cam.position.z + 80); drift(t); over(u, "أكتر من 60 ثغرة", "في حوالي 4 ساعات", .4, "#f2c230"); return W; });
   // 38 — the mountain they said needed an atomic bomb… the canal's water opened it
@@ -359,8 +414,8 @@
   // 40 — by night the bridges are laid across the canal and the tanks start to cross
   shot(40, function (u, d, t) { var k = u / d; W0("night"); setBreach(1, 64); bridge.visible = true; tanks.forEach(function (tt, i) { tt.visible = true; var kk = ((k * .6 + i / 6) % 1); tt.position.set(lerp(-110, 130, kk), 2.4 + (kk > .9 ? 2 : 0), 300); tt.rotation.y = 0; }); camLook(lerp(-60, -40, k), 30, 380, 40, 0, 300); drift(t, .4); return W; });
   // 41 — Baqi was there with his division, watching his idea happen before his eyes
-  shot(41, function (u, d, t) { var k = ease(u / d); W0("night"); setBreach(1, 64); bridge.visible = true; tanks.forEach(function (tt, i) { tt.visible = true; var kk = ((t * .04 + i / 6) % 1); tt.position.set(lerp(-110, 130, kk), 2.4, 300); }); baqi.visible = true; baqi.position.set(-104, 3, 286); baqi.rotation.y = 1.0; baqi.mood("smile"); live(baqi, t);
-    camLook(lerp(-112, -110, k), 7.2, lerp(276, 278, k), -96, 5, 300); over(u, "باقي زكي يوسف", "", .8, "#f2c230"); return W; });
+  shot(41, function (u, d, t) { var k = ease(u / d); W0("night"); setBreach(1, 64); bridge.visible = true; tanks.forEach(function (tt, i) { tt.visible = true; var kk = ((t * .04 + i / 6) % 1); tt.position.set(lerp(-110, 130, kk), 2.4, 300); }); baqi.visible = true; baqi.position.set(-104, 3, 268); baqi.rotation.y = .5; baqi.mood("smile"); live(baqi, t);
+    camLook(lerp(-113, -112, k), 7.6, lerp(257, 258, k), -104, 5.6, 268); over(u, "باقي زكي يوسف", "", .8, "#f2c230"); return W; });
   // 42 — an idea that came from an ordinary workday at the High Dam
   shot(42, function (u, d, t) { var k = ease(u / d); setTOD(DM, "sunset"); dyoung.visible = true; live(dyoung, t); dyoung.mood("smile"); monitors.forEach(function (m, i) { stream(djets, i * DROPS, DROPS, { x: -52, y: 4, z: m.position.z }, { x: -18, y: 7, z: m.position.z * .6 }, 7, t + i * .3, 1.3, 1.2); }); camLook(lerp(-82, -80, k), 6, lerp(20, 22, k), -74, 3.6, 12); return DM; });
   // 43 — two years after the war, the Suez Canal reopened to ships
@@ -384,9 +439,9 @@
     var i = 0; while (i < LN.length - 1 && LN[i + 1].start - .25 <= t) i++;
     var u = t - (L(i) - .25), d = Math.max(.6, L(i + 1) - L(i));
     cam.fov = 42; OVB.style.opacity = 0; BINO.style.opacity = 0;
-    foamAnim(t);
+    foamAnim(t); driftClouds(t); clouds.visible = true;
     var sc = SH[i](u, d, t);
-    breathe(t, u); cam.updateProjectionMatrix();
+    breathe(t, u); if (sc === W) clampCam(); cam.updateProjectionMatrix();
     R.render(sc, cam);
     var fd = document.getElementById("fade"); fd.style.opacity = (u < .3 && i > 0) ? (1 - u / .3) * .85 : 0;
     window.__cap && window.__cap(t);
