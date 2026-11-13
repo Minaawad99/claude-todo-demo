@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — antibiotics (sketch)</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;700;800;900&family=Noto+Serif:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* the reel cover for the «اسكتش» antibiotics video, full bleed at 1080×1920 (540×960 at 2x). The tunnel-cover layout:
+     near-black at the top and bottom, one warm glow behind the subject, titles on the fades. The subject is drawn with the
+     video's own sketch drawings (videos/antibiotics/sketch/scenes.js) on the cream graph paper of the video.
+     Everything that matters stays inside the 3:4 profile-grid crop (y 120–840) and away from the right-hand buttons. */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #000; }
+  #art { position: absolute; inset: 0; width: 540px; height: 960px; }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 10px rgba(0,0,0,.6); }
+</style></head><body>
+<div class="cover">
+  <svg id="art" viewBox="0 0 540 960"></svg>
+  <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
+  <p class="t" style="top:156px;white-space:nowrap;font:900 34px/1.2 'Noto Sans Arabic';color:#fff">مضاد حيوي من غير دكتور؟</p>
+  <p class="t" style="top:214px;font:800 24px/1.3 'Noto Sans Arabic';color:#f2c230">ممكن يكون أذاك وإنت مش واخد بالك!</p>
+  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff"><span style="color:#f2c230">16</span> مليون بكتيريا أقوى<br><span style="font-size:24px;color:#d9d4c8">من واحدة بس في 8 ساعات!</span></p>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".15"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#e1d5ba" stroke-width="1.3" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="18"/></filter>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .06 0"/></filter>
+  <radialGradient id="glowY" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffd27a" stop-opacity=".95"/><stop offset=".6" stop-color="#f2b24a" stop-opacity=".35"/><stop offset="1" stop-color="#f2b24a" stop-opacity="0"/></radialGradient>
+  <radialGradient id="vig" cx=".5" cy=".5" r=".72"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".75"/></radialGradient>
+  <linearGradient id="fadeT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b0a08" stop-opacity=".97"/><stop offset=".75" stop-color="#0b0a08" stop-opacity=".6"/><stop offset="1" stop-color="#0b0a08" stop-opacity="0"/></linearGradient>
+  <linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b0a08" stop-opacity="0"/><stop offset=".3" stop-color="#0b0a08" stop-opacity=".75"/><stop offset="1" stop-color="#0b0a08" stop-opacity=".97"/></linearGradient>
+</defs></svg>
+<script src="../../videos/antibiotics/timing.js"></script>
+<script>window.CHUNKS = [];</script>
+<script src="../../videos/antibiotics/sketch/scenes.js"></script>
+<script>
+  (function () {
+    var t = 3.2, s = "";
+    // graph paper, a dark slate wash over it so the top and bottom read as night, one warm glow behind the subject
+    s += '<rect width="540" height="960" fill="' + PAPER + '"/><rect width="540" height="960" fill="url(#grid)"/>';
+    s += '<rect width="540" height="960" fill="#2a3442" opacity=".55"/><circle cx="270" cy="490" r="260" fill="url(#glowY)"/>';
+    // the weak bacteria bursting round the edge, the drug coming in, and the one that survived, big, in its shield
+    s += rod(95, 380, 150, 60, 25, BAC, t, { burst: .45 }) + rod(450, 640, 150, 60, -20, BAC, t, { burst: .3 }) + rod(80, 640, 130, 52, -35, BAC, t, { burst: .7 });
+    s += rod(455, 395, 120, 48, 160, BAC, t);
+    s += pen(150, 470, 1.8, 20) + pen(400, 520, 1.6, -30) + pen(330, 360, 1.4, 50) + pen(190, 610, 1.5, 10);
+    s += pill(390, 320, 150, 32);
+    s += rod(270, 500, 300, 120, -8, RES, t, { shield: true });
+    s += tag("مقاومة!", 270, 630, 1, 32, ORANGE);
+    s += '<rect width="540" height="960" fill="url(#vig)"/><rect width="540" height="300" fill="url(#fadeT)"/><rect y="680" width="540" height="280" fill="url(#fadeB)"/>';
+    document.getElementById("art").innerHTML = s + '<rect width="540" height="960" filter="url(#paperN)"/>';
+  })();
+</script>
+</body></html>
