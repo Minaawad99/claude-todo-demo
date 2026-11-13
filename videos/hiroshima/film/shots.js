@@ -59,7 +59,7 @@
     for (var i = 0; i < 9; i++) s += house(-60 + i * 56, 300, 52, 80, i);
     s += R(-300, 300, 960, 120, "#9a8f78", { s: 0 }) + '<path d="M-300 352 H700 M-300 362 H700" stroke="#5a5446" stroke-width="2"/>' + '<path d="M-300 140 H700" stroke="' + INK + '" stroke-width="1"/>';
     s += tramSide(((t * 40) % 760) - 200, 356, .7, t, { dir: 1, speed: 1, people: true });
-    return s + crowd(t, 420, 9, 1.1) + rays(t, -20, 60, .7, 4, 600, .35) + dust(t, 14);
+    return s + crowd(t, 505, 7, 2.3) + rays(t, -20, 60, .7, 4, 600, .35) + dust(t, 14);
   });
   // 3 — what's the story? let me tell you from the beginning (title card: the Dome in the morning sun)
   shot(3, push([180, 300], [180, 310], 1.12, 1.0), function (u, d, t) {
@@ -83,14 +83,14 @@
     s += R(-300, 300, 960, 200, "#8f8670", { s: 0 }) + '<path d="M-300 392 H700 M-300 402 H700" stroke="#4a4436" stroke-width="2"/>';
     for (var p = 0; p < 6; p++) { var px = -60 + p * 110 - (t * 6 % 110); s += R(px, 160, 5, 232, "#3a3026", { w: 1 }); } s += '<path d="M-300 176 H700" stroke="' + INK + '" stroke-width="1"/>';
     s += tramSide(lerp(-60, 300, clamp(u / d)), 396, .9, t, { dir: 1, speed: 1.5, people: true, num: "651" });
-    return s + crowd(t, 460, 6, 1.2) + dust(t, 12);
+    return s + crowd(t, 500, 5, 2.0) + dust(t, 12);
   });
   // 6 — the odd thing: the tram drivers were young girls, 14 and 15 years old
   shot(6, push([180, 340], [180, 360], 1.0, 1.1), function (u, d, t) { return tramInterior(t) + label("14 · 15 سنة", 180, 165, u, 1.0, 28, "#f2c230"); });
   // 7 — the men were at war, so the tram company opened a school and taught the girls to drive (triptych)
   shot(7, still, function (u, d, t) {
     return tri(t, u, d,
-      function (t) { var s = R(-100, -100, 560, 400, "#d9cfb6", { s: 0 }) + R(0, 0, 360, 60, "#b5a37f", { s: 0 }) + R(140, 10, 80, 44, "#2f3a34", { w: 1.4 }) + txt("家政女学校", 180, 40, 13, "#f2f0ea", { font: "Noto Serif", wt: 700 }); for (var i = 0; i < 7; i++) s += person(40 + i * 46, 124, 1.3, t, { hair: "bob", top: "#f0ede4", pants: "#2a3446", cap: i % 2 ? null : null }); return s + rays(t, 0, 0, .6, 3, 400, .35); },
+      function (t) { var s = R(-100, -100, 560, 400, "#d9cfb6", { s: 0 }) + R(0, 0, 360, 60, "#b5a37f", { s: 0 }) + R(140, 10, 80, 44, "#2f3a34", { w: 1.4 }) + txt("家政女学校", 180, 40, 13, "#f2f0ea", { font: "Noto Serif", wt: 700 }); for (var i = 0; i < 6; i++) s += person(40 + i * 56, 150, 1.75, t, { hair: "bob", top: "#f0ede4", pants: "#2a3446", monpe: true, ph: i, skin: ["#c98f66", "#d9a07a", "#b98058"][i % 3] }); return s + rays(t, 0, 0, .6, 3, 400, .35); },
       function (t) { var s = R(-100, -100, 560, 400, "#2b2e33", { s: 0 }) + R(120, 30, 120, 100, "#c9a860", { w: 2 }) + '<circle cx="180" cy="70" r="30" fill="#8a7a5a" stroke="' + INK + '" stroke-width="1.6"/>'; s += G('rotate(' + f(-30 + Math.sin(t * 1.2) * 25) + ' 180 70)', R(176, 26, 8, 46, "#1c1c1c", { w: 1 }) + '<circle cx="180" cy="24" r="8" fill="#1c1c1c"/>'); return s + P('M200 140 Q190 60 180 30 Q196 22 206 36 Q214 70 230 140 Z', "#e0b48c", {}) + P('M180 140 L186 110 Q204 100 236 112 L240 140 Z', "#f0ede4", {}); },
       function (t) { return R(-100, -100, 560, 400, "#9fc4d6", { s: 0 }) + mountains(70, ["#8aa8b8", "#7090a0", "#5a7a88"]) + R(-100, 100, 560, 100, "#8f8670", { s: 0 }) + tramFront(180 + Math.sin(t * .6) * 6, 118, .62, t, { driver: true, num: "651" }); });
   });
@@ -99,7 +99,7 @@
     var s = sky("skyMorning") + cloudBank(t, 140, 4, 4, "#fff", .5) + mountains(320) + R(-300, 380, 960, 400, "#a59a82", { s: 0 });
     for (var i = 0; i < 8; i++) s += house(-40 + i * 56, 380, 52, 80, i);
     s += siren(90, 230, .8, t, true) + b29side(lerp(420, -60, clamp(u / d)), 110, .18, t, { flip: true });
-    for (var j = 0; j < 5; j++) s += person(160 + j * 36, 470, 1.2, t, { look: "up", hair: j % 2 ? "bob" : null, top: ["#f0ede4", "#6a7a8a", "#e8d9b8"][j % 3] });
+    for (var j = 0; j < 4; j++) s += person(130 + j * 62, 540 + (j % 2) * 14, 2.6, t, { look: "up", ph: j, hair: ["bob", "cap", "bun", null][j], cap: j === 1 ? "#1c2230" : null, monpe: j % 2 === 0, top: ["#f0ede4", "#6a7a8a", "#8a5a5a", "#e8d9b8"][j], skin: ["#c98f66", "#d9a07a", "#b98058"][j % 3] });
     return s + label("7:09", 280, 210, u, .4, 26, "#f2c230") + dust(t, 10);
   });
   // 9 — but the plane turned and left, the alarm was called off, and people said: thank God, it's over
@@ -107,14 +107,14 @@
     var s = sky("skyMorning") + cloudBank(t, 140, 5, 5, "#fff", .6) + mountains(320) + R(-300, 380, 960, 400, "#a59a82", { s: 0 });
     for (var i = 0; i < 8; i++) s += house(-40 + i * 56, 380, 52, 80, i);
     s += siren(90, 230, .8, t, false) + b29side(lerp(80, -80, clamp(u / d)), 100, .1, t, { flip: true });
-    s += crowd(t, 470, 8, 1.2);
+    s += crowd(t, 520, 6, 2.3);
     return s + rays(t, 320, 40, 2.2, 5, 600, .4) + label("7:31 · الأمان", 260, 210, u, .5, 22, "#bfe8b8") + dust(t, 12);
   });
   // 10 — everyone went back to work: schoolchildren in the streets, mothers in the kitchens, the tram packed (triptych)
   shot(10, still, function (u, d, t) {
     return tri(t, u, d,
-      function (t) { var s = sky("skyMorning") + R(-100, 70, 560, 100, "#a59a82", { s: 0 }); for (var i = 0; i < 6; i++) s += house(-20 + i * 70, 80, 64, 70, i); for (var j = 0; j < 8; j++) s += person(((j * 50 + t * 12) % 420) - 30, 118, 1.0, t, { walk: true, ph: j, cap: "#2f3542", top: "#f0ede4", pants: "#3a4252", bag: true }); return s; },
-      function (t) { var s = R(-100, -100, 560, 400, "#4a3a2a", { s: 0 }) + R(40, 70, 280, 60, "#6a5040", { w: 1.4 }) + '<ellipse cx="220" cy="66" rx="40" ry="12" fill="#2a2a2a" stroke="' + INK + '"/>' + flames(t, 196, 244, 76, 14, 5, .9) + R(196, 40, 48, 26, "#3a3a3a", { w: 1.4 }); for (var k = 0; k < 4; k++) { var uu = (t * .4 + k / 4) % 1; s += '<circle cx="' + f(220 + Math.sin(t + k) * 10) + '" cy="' + f(36 - uu * 50) + '" r="' + f(8 + uu * 14) + '" fill="#e8e4dc" opacity="' + f2(.5 * (1 - uu)) + '"/>'; } return s + person(120, 122, 1.4, t, { top: "#8a5a5a", pants: "#3a3030", hair: "bob" }) + rays(t, 0, 0, .7, 3, 400, .4); },
+      function (t) { var s = sky("skyMorning") + R(-100, 70, 560, 100, "#a59a82", { s: 0 }); for (var i = 0; i < 6; i++) s += house(-20 + i * 70, 80, 64, 70, i); for (var j = 0; j < 8; j++) s += person(((j * 60 + t * 14) % 480) - 60, 140, 1.5, t, { walk: true, ph: j, cap: "#1c2230", top: "#f0ede4", pants: "#3a4252", bag: true }); return s; },
+      function (t) { var s = R(-100, -100, 560, 400, "#4a3a2a", { s: 0 }) + R(40, 70, 280, 60, "#6a5040", { w: 1.4 }) + '<ellipse cx="220" cy="66" rx="40" ry="12" fill="#2a2a2a" stroke="' + INK + '"/>' + flames(t, 196, 244, 76, 14, 5, .9) + R(196, 40, 48, 26, "#3a3a3a", { w: 1.4 }); for (var k = 0; k < 4; k++) { var uu = (t * .4 + k / 4) % 1; s += '<circle cx="' + f(220 + Math.sin(t + k) * 10) + '" cy="' + f(36 - uu * 50) + '" r="' + f(8 + uu * 14) + '" fill="#e8e4dc" opacity="' + f2(.5 * (1 - uu)) + '"/>'; } return s + person(120, 160, 1.9, t, { top: "#8a5a5a", pants: "#3a3030", hair: "bun", monpe: true }) + rays(t, 0, 0, .7, 3, 400, .4); },
       function (t) { var s = R(-100, -100, 560, 400, "#8f8670", { s: 0 }) + tramSide(180 + Math.sin(t) * 3, 124, .9, t, { dir: 1, people: true }); for (var p = 0; p < 4; p++) s += person(250 + p * 9, 104 + (p % 2) * 4, .8, t, { top: ["#f0ede4", "#6a7a8a"][p % 2] }); return s; });
   });
   // 11 — but above the clouds, at 9.5 km, there was another plane: «Enola Gay»
@@ -198,7 +198,7 @@
   // 22 — and on the survivors a strange rain fell… black rain
   shot(22, push([180, 330], [180, 350], 1.0, 1.15), function (u, d, t) {
     var s = sky("skyAsh") + R(-300, 380, 960, 400, "#2f2822", { s: 0 }) + dome(250, 392, .5, { ruin: true, night: true });
-    s += P('M150 520 L148 420 Q150 380 170 376 Q190 380 192 420 L196 520 Z', "#4a4440", {}) + '<circle cx="170" cy="360" r="15" fill="#3a3430" stroke="' + INK + '" stroke-width="1.4"/>' + P('M190 400 L236 384 L238 392 L192 412 Z', "#4a4440", { w: 1.4 });
+    s += person(170, 560, 2.6, t, { back: true, hair: "bob", top: "#8a847a", pants: "#3a3530", monpe: true, wave: false });
     for (var i = 0; i < 90; i++) { var x = hash(i) * 460 - 50, y = ((t * 380 + hash(i + 7) * 700) % 700) - 60; s += '<path d="M' + f(x) + ' ' + f(y) + ' l-3 16" stroke="#0e0c0a" stroke-width="1.6" opacity=".75"/>'; }
     for (var j = 0; j < 6; j++) { var uu = (t * 1.5 + j / 6) % 1; s += '<ellipse cx="' + f(60 + j * 50) + '" cy="' + f(470 + (j % 3) * 20) + '" rx="' + f(uu * 14) + '" ry="' + f(uu * 4) + '" fill="none" stroke="#5a5048" opacity="' + f2(1 - uu) + '"/>'; }
     return s + label("مطر إسود", 180, 170, u, .9, 30, "#fff");
@@ -225,24 +225,24 @@
   // 26 — one story never forgotten: Sadako, two years old on the day of the bomb
   shot(26, push([180, 340], [180, 320], 1.05, 1.15), function (u, d, t) {
     var s = R(-200, -200, 760, 1040, "#2a2420", { s: 0 }) + '<circle cx="180" cy="320" r="200" fill="url(#warm)" opacity=".35"/>' + R(80, 170, 200, 250, "#e8dcc0", { w: 2 }) + R(92, 182, 176, 200, "#b8a888", { w: 1.2 });
-    s += P('M120 382 Q122 300 180 296 Q238 300 240 382 Z', "#c9a8a0", { w: 1.6 }) + '<circle cx="180" cy="262" r="38" fill="#e0b48c" stroke="' + INK + '" stroke-width="1.6"/>' + P('M142 258 Q140 218 180 216 Q220 218 218 258 Q206 240 180 240 Q154 240 142 258 Z', "#16130f", {}) + '<circle cx="166" cy="266" r="2.6" fill="' + INK + '"/><circle cx="194" cy="266" r="2.6" fill="' + INK + '"/><path d="M172 282 Q180 287 188 282" stroke="' + INK + '" stroke-width="1.6" fill="none"/>';
+    s += '<svg x="92" y="182" width="176" height="200" viewBox="92 182 176 200">' + R(92, 182, 176, 200, "#b8a888", { s: 0 }) + portrait(180, 310, 1.3, t, { hair: "bob", top: "#c9a8a0", skin: "#d9a07a", child: true }) + '</svg>';
     s += P('M80 170 h200 v250 h-200 Z', "#5a4a3a", { s: 0, op: .15 + .05 * Math.sin(t) });
     return s + crane(285, 410, .9, "#e8443a", t, { flap: 2 }) + dust(t, 16, "#ffd98a", .5) + label("ساداكو ساساكي", 180, 150, u, .5, 24, "#fff") + label("سنتين", 180, 450, u, 1.2, 20, "#f2c230");
   });
   // 27 — when she turned twelve she got leukaemia from the radiation
   shot(27, push([180, 330], [190, 340], 1.0, 1.12), function (u, d, t) {
     var s = R(-200, -200, 760, 1040, "#d9d4c8", { s: 0 }) + R(200, 110, 130, 180, "#bfe0f0", { w: 2 }) + '<path d="M265 110 V290 M200 200 H330" stroke="#d9cfb6" stroke-width="5"/>' + rays(t, 210, 130, 2.5, 5, 400, .5);
-    s += R(30, 360, 260, 40, "#f0ede4", { w: 2 }) + R(30, 400, 8, 80, "#6a6a6a", { w: 1 }) + R(282, 400, 8, 80, "#6a6a6a", { w: 1 }) + R(30, 330, 10, 70, "#8a8a8a", { w: 1 });
-    s += '<ellipse cx="80" cy="356" rx="30" ry="12" fill="#fff" stroke="' + INK + '" stroke-width="1.2"/>' + '<circle cx="84" cy="340" r="17" fill="#e0b48c" stroke="' + INK + '" stroke-width="1.4"/>' + P('M68 338 Q66 320 84 320 Q102 320 100 338 Q92 330 84 330 Q76 330 68 338 Z', "#16130f", {});
-    s += P('M100 362 Q190 ' + f(344 + Math.sin(t * 1.1) * 2) + ' 286 362 Z', "#c9d6e0", { w: 1.4 });
+    s += R(10, 400, 300, 50, "#f0ede4", { w: 2 }) + R(10, 450, 8, 60, "#6a6a6a", { w: 1 }) + R(302, 450, 8, 60, "#6a6a6a", { w: 1 }) + R(10, 330, 10, 120, "#8a8a8a", { w: 1 });
+    s += portrait(150, 330, 1.35, t, { hair: "bob", top: "#dfe6ea", skin: "#d9a07a" });
+    s += P('M30 420 Q160 ' + f(392 + Math.sin(t * 1.1) * 2) + ' 306 420 L306 452 H30 Z', "#c9d6e0", { w: 1.6 });
     return s + dust(t, 14, "#fff6dc", .5) + label("12 سنة", 180, 160, u, .4, 26, "#f2c230") + label("سرطان الدم", 180, 196, u, 1.0, 20, "#fff");
   });
   // 28 — she believed that if she folded a thousand paper cranes, her wish would come true and she'd get well
   shot(28, push([180, 320], [180, 300], 1.15, 1.0), function (u, d, t) {
     var s = R(-200, -200, 760, 1040, "#3a3026", { s: 0 }) + '<circle cx="180" cy="300" r="220" fill="url(#warm)" opacity=".3"/>', n = Math.floor(clamp(u / d) * 60), cols = ["#e8443a", "#f2c230", "#5fa3d9", "#7ac27a", "#e88ac0", "#f0ede4"];
-    for (var i = 0; i < 6; i++) { s += '<path d="M' + (40 + i * 56) + ' 60 V' + 260 + '" stroke="#d9cfb6" stroke-width="1"/>'; for (var j = 0; j < 10; j++) { var idx = i * 10 + j; if (idx > n) continue; s += crane(40 + i * 56 + Math.sin(t + idx) * 2, 80 + j * 20, .32, cols[(i + j) % 6], t, { ph: idx, flap: 1.5 }); } }
-    s += P('M90 470 Q120 400 170 392 L190 392 Q240 400 270 470 Z', "#e0b48c", {}) + crane(180, 380, 1.1, "#e8443a", t, { flap: 3 });
-    return s + bigNum(String(Math.round(n * 1000 / 60)), 180, 330, u, .1, 34, "#f2c230") + label("ألف كركي", 180, 296, u, 1.2, 18, "#fff");
+    for (var i = 0; i < 6; i++) { s += '<path d="M' + (40 + i * 56) + ' 40 V' + 200 + '" stroke="#d9cfb6" stroke-width="1"/>'; for (var j = 0; j < 10; j++) { var idx = i * 10 + j; if (idx > n) continue; s += crane(40 + i * 56 + Math.sin(t + idx) * 2, 56 + j * 15, .28, cols[(i + j) % 6], t, { ph: idx, flap: 1.5 }); } }
+    s += portrait(180, 360, 1.5, t, { hair: "bob", top: "#dfe6ea", skin: "#d9a07a" }) + P('M120 470 Q150 440 172 446 L188 446 Q210 440 240 470 Z', "#d9a07a", { w: 1.4 }) + crane(180, 448, 1.0, "#e8443a", t, { flap: 3 });
+    return s + bigNum(String(Math.round(n * 1000 / 60)), 180, 252, u, .1, 34, "#f2c230") + label("ألف كركي", 180, 222, u, 1.2, 18, "#fff");
   });
   // 29 — she kept folding paper on her hospital bed until the last day of her life (the empty bed, cranes in the breeze)
   shot(29, push([180, 320], [180, 330], 1.0, 1.12), function (u, d, t) {
@@ -252,14 +252,20 @@
     for (var i = 0; i < 9; i++) { var x = 30 + i * 36, sw = Math.sin(t * 1.3 + i) * 6; s += '<path d="M' + x + ' 40 L' + f(x + sw) + ' ' + (110 + (i % 3) * 30) + '" stroke="#d9cfb6" stroke-width="1"/>' + crane(x + sw, 120 + (i % 3) * 30, .4, cols[i % 5], t, { ph: i, rot: sw * 2 }); }
     return s + dust(t, 20, "#fff6dc", .6) + label("1955", 180, 250, u, 1.0, 26, "#5a4a3a");
   });
-  // 30 — remember the girl tram drivers?
-  shot(30, push([180, 340], [180, 360], 1.1, 1.0), function (u, d, t) { return tramInterior(t, { dark: true, ash: true, speed: 0 }) + R(-200, -200, 760, 1040, "#3a3026", { s: 0, op: .25 }); });
+  // 30 — remember the girl tram drivers? (a close portrait, motion-streaked window behind her, like the user's middle panel)
+  shot(30, push([180, 320], [180, 310], 1.08, 1.0), function (u, d, t) {
+    var s = R(-200, -200, 760, 1040, "#3a4a6a", { s: 0 }) + R(-200, 150, 760, 200, "#c9d6dc", { s: 0, op: .9 });
+    for (var i = 0; i < 14; i++) { var y = 140 + i * 16, x = ((t * 500 + hash(i) * 700) % 900) - 300; s += '<rect x="' + f(x) + '" y="' + y + '" width="' + f(140 + hash(i + 2) * 200) + '" height="' + f(3 + hash(i) * 6) + '" fill="' + ["#e8f4fa", "#9ab0c0", "#6a8aa0"][i % 3] + '" opacity=".7" filter="url(#blurX)"/>'; }
+    s += rays(t, 380, 60, 2.6, 6, 600, .55) + portrait(180, 330, 2.1, t, { rim: true, cap: "#26304a", hair: "bob", top: "#f0ede4" });
+    for (var p = 0; p < 4; p++) { var k = (t * .12 + p / 4) % 1; s += G('translate(' + f(lerp(-40, 400, k)) + ' ' + f([120, 150, 430, 460][p] + Math.sin(t + p) * 14) + ') rotate(' + f(t * 40 + p * 90) + ')', R(-12, -8, 24, 16, "#f6f2e8", { w: 1, op: .9 })); }
+    return s + R(-200, -200, 760, 1040, "#3a3026", { s: 0, op: .18 }) + dust(t, 16, "#fff6dc", .5);
+  });
   // 31 — just three days after the bomb the tram ran again in Hiroshima, and some of the girls drove it
   shot(31, push([180, 340], [180, 330], 1.0, 1.1), function (u, d, t) {
     var s = sky("skyAsh") + R(-300, 330, 960, 400, "#4a4036", { s: 0 }) + dome(300, 330, .5, { ruin: true, night: true });
     for (var i = 0; i < 16; i++) s += P('M' + (-40 + i * 28) + ' 340 l' + f(6 + hash(i) * 10) + ' ' + f(-6 - hash(i + 1) * 14) + ' l' + f(8 + hash(i + 2) * 10) + ' ' + f(8 + hash(i) * 8) + ' Z', "#2a221c", { w: 1 });
     s += '<path d="M-300 420 H700 M-300 430 H700" stroke="#2a2420" stroke-width="2"/>' + tramFront(lerp(140, 190, clamp(u / d)), 430, lerp(.8, 1.15, clamp(u / d)), t, { driver: true });
-    for (var j = 0; j < 4; j++) s += person(40 + j * 22 + (j > 1 ? 210 : 0), 500, 1.3, t, { top: "#9a968c", pants: "#3a3530", flip: j > 1 });
+    for (var j = 0; j < 4; j++) s += person(30 + j * 40 + (j > 1 ? 200 : 0), 540, 2.2, t, { top: "#9a968c", pants: "#3a3530", hair: ["bob", null, "bun", "cap"][j], monpe: j % 2 === 0, wave: j === 1, ph: j });
     return s + smoke(t, -40, 400, 330, 8, "#5a5048", .3) + rays(t, 330, 40, 2.1, 4, 600, .35) + label("9 أغسطس", 180, 150, u, .5, 26, "#f2c230");
   });
   // 32 — to this day, trams that lived through the bomb still run in the city's streets (green-cream 651 passing the Dome today)
@@ -268,7 +274,7 @@
     for (var b = 0; b < 7; b++) s += R(-80 + b * 70, 140 + hash(b) * 60, 56, 220, ["#c9ccd0", "#b0b8c0", "#d9d4c8"][b % 3], { w: 1.4 });
     s += dome(110, 340, .55, { ruin: true }) + R(-300, 340, 960, 200, "#8a8a86", { s: 0 }) + '<path d="M-300 410 H700 M-300 420 H700" stroke="#3a3a3a" stroke-width="2"/>';
     s += tramSide(lerp(420, 0, clamp(u / d)), 414, .9, t, { dir: -1, speed: 1.4, people: true, num: "651" });
-    return s + crowd(t, 476, 5, 1.1) + label("لسه ماشية", 270, 160, u, 1.2, 24, "#fff");
+    return s + crowd(t, 520, 5, 2.0) + label("لسه ماشية", 270, 160, u, 1.2, 24, "#fff");
   });
   // 33 — every year at 8:15 on 6 August, all Hiroshima falls silent for a minute (lanterns on the river by the Dome)
   shot(33, push([180, 320], [180, 340], 1.12, 1.0), function (u, d, t) {
@@ -282,7 +288,7 @@
     return R(-200, -200, 760, 1040, "#0e0d10", { s: 0 }) + '<circle cx="180" cy="300" r="160" fill="url(#warm)" opacity=".3"/>' + crane(180, 300 + Math.sin(t) * 6, 2.2, "#e8443a", t, { flap: 4 }) + dust(t, 20, "#ffd98a", .5) + label("قولولنا!", 180, 170, u, .3, 30, "#fff");
   });
 
-  window.__parts = { dome: dome, tramSide: tramSide, tramFront: tramFront, b29side: b29side, littleBoy: littleBoy, crane: crane, watch: watch, mushroom: mushroom, cityWide: cityWide, lantern: lantern };
+  window.__parts = { person: person, portrait: portrait, crowd: crowd, dome: dome, tramSide: tramSide, tramFront: tramFront, b29side: b29side, littleBoy: littleBoy, crane: crane, watch: watch, mushroom: mushroom, cityWide: cityWide, lantern: lantern };
   window.__chip = function (t) { var i = 0; while (i < LN.length - 1 && LN[i + 1].start - .05 <= t) i++; return (i >= 4 && i <= 10) ? .9 : 0; };
   function drawShot(sh, t, next) { var u = t - sh.a, d = Math.max(.6, next - sh.a), c = sh.cam(u, d), cx = c[0] + 5 * Math.sin(t * .9), cy = c[1] + 4 * Math.cos(t * .7), z = c[2] * (1 + .012 * Math.sin(t * .6)); return '<g transform="translate(180 320) rotate(' + f(.5 * Math.sin(t * .5)) + ') scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g>'; }
   window.__panel = function (svg, t) {
