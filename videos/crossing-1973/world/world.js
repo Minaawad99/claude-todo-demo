@@ -366,8 +366,8 @@
   // 43 — two years after the war, the Suez Canal reopened to ships
   shot(43, function (u, d, t) { var k = u / d; W0("day"); setBreach(1, 64); ships.forEach(function (s, i) { s.visible = true; s.position.set(0, 0, lerp(-600, 400, (k * .5 + i * .33) % 1)); }); camLook(-220, 60, lerp(-80, 40, k), 0, 6, 0); drift(t); over(u, "1975", "القناة اتفتحت من تاني", .4, "#f2c230"); return W; });
   // 44 — General Baqi kept telling the story until he died in 2018
-  shot(44, function (u, d, t) { var k = ease(u / d); W0("sunset"); baqi.visible = true; baqi.position.set(-100, 3, 0); baqi.rotation.y = -.4; baqi.mood("smile"); live(baqi, t); ships[0].visible = true; ships[0].position.set(0, 0, lerp(-200, -100, k));
-    camLook(-92 - u * 1.1, 6 + u * .1, 10 - u * .9, -100, 5, 0); over(u, "2018", "", 1.2, "#f2c230"); return W; });
+  shot(44, function (u, d, t) { var k = ease(u / d); W0("sunset"); baqi.visible = true; baqi.position.set(-100, 3, 100); baqi.rotation.y = -1.0; baqi.mood("smile"); live(baqi, t); ships[0].visible = true; ships[0].position.set(0, 0, -100 + u * 30); flyGulls(t * 1.5, -110, 14, 90); baqi.head.rotation.y = Math.sin(t * .8) * .3;
+    camLook(-110 + u * 1.0, 6 + u * .1, 109 - u * .7, -100, 5, 100); over(u, "2018", "", 1.2, "#f2c230"); return W; });
   // gulls over the water for the ending
   var gulls = []; for (var gq = 0; gq < 14; gq++) { var gw = new T3.Group(); var gb2 = new T3.Mesh(new T3.SphereGeometry(.5, 8, 6), toon(0xf4f0e8)); gb2.scale.set(1.6, .7, .7); gw.add(gb2);
     [-1, 1].forEach(function (sd) { var wg2 = new T3.Mesh(new T3.BoxGeometry(.3, .08, 2.6), toon(0xe8e4dc)); wg2.position.z = sd * 1.3; gw.add(wg2); gw["w" + sd] = wg2; }); gw.visible = false; W.add(gw); gulls.push(gw); }
