@@ -9,4 +9,4 @@
   matching `sheets/vNN.jpg`, or pull frames and motion strips from `videos/vNN.mp4` with ffmpeg. `STYLE.md` has the
   measured rules (narration, layout, colours, fonts, motion, sound). They are references to look at: draw in the
   same hand, with real shapes from reference photos, and never copy a drawing or a script.
-- Other styles only when named: `animation` (cartoon panel), `law` («لو»), the old `diagram-v1` build for the X-ray video.
+- Other styles only when named: `animation` (cartoon panel), `law` («لو»), `story` («القصة»: a true story hour by hour in 3D, `.claude/skills/story/SKILL.md`), the old `diagram-v1` build for the X-ray video.
