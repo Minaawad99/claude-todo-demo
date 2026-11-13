@@ -230,7 +230,7 @@
   function hideInst(inst, a, b) { ds.setScalar(0); dm.compose(dv.set(0, -999, 0), dq, ds); for (var i = a; i < b; i++) inst.setMatrixAt(i, dm); inst.instanceMatrix.needsUpdate = true; }
   function foamAnim(t) { for (var i = 0; i < 160; i++) { dv.set(-80 + hash(i) * 170, .1, ((hash(i + 3) * 3000 + t * (4 + hash(i) * 3)) % 3000) - 1500); ds.set(1, 1, 1); dm.compose(dv, dq, ds); foam.setMatrixAt(i, dm); } foam.instanceMatrix.needsUpdate = true; }
   function hideAll() {
-    boats.forEach(function (b) { b.visible = false; }); pumps.forEach(function (b) { b.visible = false; }); ladders.forEach(function (b) { b.visible = false; });
+    boats.forEach(function (b) { b.visible = false; }); if (typeof gulls !== "undefined") gulls.forEach(function (g) { g.visible = false; }); pumps.forEach(function (b) { b.visible = false; }); ladders.forEach(function (b) { b.visible = false; });
     fighters.forEach(function (b) { b.visible = false; }); tanks.forEach(function (b) { b.visible = false; }); ships.forEach(function (b) { b.visible = false; }); puffs.forEach(function (b) { b.visible = false; });
     crew.forEach(function (b) { b.visible = false; }); swim.forEach(function (b) { b.visible = false; }); iftar.forEach(function (b) { b.visible = false; });
     guns.forEach(function (g) { g.flash.visible = false; }); bridge.visible = false; cane.visible = false; line.visible = false; baqi.visible = false; lantern.visible = false; lanternL.intensity = 0;
@@ -363,11 +363,16 @@
   shot(43, function (u, d, t) { var k = u / d; W0("day"); setBreach(1, 64); ships.forEach(function (s, i) { s.visible = true; s.position.set(0, 0, lerp(-600, 400, (k * .5 + i * .33) % 1)); }); camLook(-220, 60, lerp(-80, 40, k), 0, 6, 0); drift(t); over(u, "1975", "القناة اتفتحت من تاني", .4, "#f2c230"); return W; });
   // 44 — General Baqi kept telling the story until he died in 2018
   shot(44, function (u, d, t) { var k = ease(u / d); W0("sunset"); baqi.visible = true; baqi.position.set(-100, 3, 0); baqi.rotation.y = -.4; baqi.mood("smile"); live(baqi, t); ships[0].visible = true; ships[0].position.set(0, 0, lerp(-200, -100, k));
-    camLook(lerp(-92, -94, k), 6, lerp(10, 8, k), -100, 5, 0); over(u, "2018", "", 1.2, "#f2c230"); return W; });
+    camLook(-92 - u * 1.1, 6 + u * .1, 10 - u * .9, -100, 5, 0); over(u, "2018", "", 1.2, "#f2c230"); return W; });
+  // gulls over the water for the ending
+  var gulls = []; for (var gq = 0; gq < 14; gq++) { var gw = new T3.Group(); var gb2 = new T3.Mesh(new T3.SphereGeometry(.5, 8, 6), toon(0xf4f0e8)); gb2.scale.set(1.6, .7, .7); gw.add(gb2);
+    [-1, 1].forEach(function (sd) { var wg2 = new T3.Mesh(new T3.BoxGeometry(.3, .08, 2.6), toon(0xe8e4dc)); wg2.position.z = sd * 1.3; gw.add(wg2); gw["w" + sd] = wg2; }); gw.visible = false; W.add(gw); gulls.push(gw); }
+  function flyGulls(t, cx, cy, cz) { gulls.forEach(function (g, i) { g.visible = true; var a = t * .25 + i * .45; g.position.set(cx + Math.cos(a) * (30 + i * 3), cy + Math.sin(t * .8 + i) * 4 + i, cz + Math.sin(a) * (30 + i * 3)); g.rotation.y = -a; var f = Math.sin(t * 7 + i) * .5; g.w1.rotation.x = f; g["w-1"].rotation.x = -f; }); }
   // 45 — sometimes the solution is simple… it just needs someone to look at it differently
-  shot(45, function (u, d, t) { var k = ease(u / d); W0("sunset"); setBreach(1, 64); camLook(lerp(-40, -160, k), lerp(40, 220, k), lerp(60, 260, k), 100, 0, -100); drift(t); return W; });
+  shot(45, function (u, d, t) { W0("sunset"); setBreach(1, 64); gulls.forEach(function (g) { g.visible = false; }); flyGulls(t, -30, 40, 40); ships[0].visible = true; ships[0].position.set(0, 0, -120 + u * 16);
+    var an2 = 2.0 + u * .06; camLook(Math.cos(an2) * (90 + u * 14), 40 + u * 14, -60 + Math.sin(an2) * (90 + u * 14), 40, 0, -60); return W; });
   // 46 — tell us: which story next time?
-  shot(46, function (u, d, t) { var k = ease(u / d); W0("sunset"); setBreach(1, 64); ships.forEach(function (s, i) { s.visible = i === 0; }); ships[0].position.set(0, 0, lerp(-300, -200, k)); camLook(-180, 80, 220 - k * 20, 0, 0, -100); drift(t); over(u, "قولولنا!", "", .3); return W; });
+  shot(46, function (u, d, t) { W0("sunset"); setBreach(1, 64); flyGulls(t, -20, 60, -120); ships.forEach(function (s, i) { s.visible = i === 0; }); ships[0].position.set(0, 0, -260 + u * 18); var an = 2.3 + u * .07; camLook(Math.cos(an) * 240, 70 + u * 4, -100 + Math.sin(an) * 240, 0, 0, -100); over(u, "قولولنا!", "", .3); return W; });
 
   window.VIDEO_END = END;
   var cur = -1;
@@ -379,7 +384,7 @@
     var sc = SH[i](u, d, t);
     cam.updateProjectionMatrix();
     R.render(sc, cam);
-    var fd = document.getElementById("fade"); fd.style.opacity = u < .3 ? (1 - u / .3) * .85 : 0;
+    var fd = document.getElementById("fade"); fd.style.opacity = (u < .3 && i > 0) ? (1 - u / .3) * .85 : 0;
     window.__cap && window.__cap(t);
   };
   window.__parts = { W: W, setBreach: setBreach, pumpsWork: pumpsWork, boatsCross: boatsCross, cam: cam, R: R, setTOD: setTOD, fighters: fighters };
