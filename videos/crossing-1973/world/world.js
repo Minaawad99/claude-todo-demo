@@ -238,7 +238,11 @@
   }
   function setOne(ids, p) { BREACH.forEach(function (b, i) { b.p = ids.indexOf(i) >= 0 ? clamp(p) : 0; }); cutRampart(); }
   function setBreach(p, n) { BREACH.forEach(function (b, i) { b.p = i < (n == null ? 64 : n) ? clamp(p * (1 + hash(i) * .3) - hash(i + 9) * .25) : 0; }); cutRampart(); }
-  function camLook(px, py, pz, lx, ly, lz) { cam.position.set(px, py, pz); cam.lookAt(lx, ly, lz); }
+  var TGT = new T3.Vector3(), V1 = new T3.Vector3(), V2 = new T3.Vector3(), UP = new T3.Vector3(0, 1, 0);
+  function camLook(px, py, pz, lx, ly, lz) { cam.position.set(px, py, pz); TGT.set(lx, ly, lz); cam.lookAt(TGT); }
+  // a slow handheld float + push-in applied after every shot, scaled to the distance, so no frame ever settles
+  function breathe(t, u) { V1.subVectors(TGT, cam.position); var dist = V1.length(); V1.normalize(); V2.crossVectors(V1, UP).normalize();
+    var a = dist * .06; cam.position.addScaledVector(V2, Math.sin(t * .55) * a + Math.sin(t * 1.3) * a * .25).addScaledVector(UP, Math.cos(t * .45) * a * .6).addScaledVector(V1, Math.min(u, 8) * dist * .018); TGT.addScaledVector(V2, Math.sin(t * .37 + 1) * dist * .05).addScaledVector(UP, Math.sin(t * .29) * dist * .025); cam.lookAt(TGT); }
   function drift(t, a) { a = a || 1; cam.position.x += Math.sin(t * .7) * .6 * a; cam.position.y += Math.cos(t * .5) * .4 * a; }
   function barrage(t, k, onWall) { puffs.forEach(function (pf, i) { var ph = ((t * .8 + hash(i)) % 1); pf.visible = k > 0; var z = -260 + hash(i + 4) * 520 + Math.floor(t * .8 + hash(i)) * 37 % 200; pf.position.set(onWall ? 118 + hash(i + 8) * 20 : 140 + hash(i) * 60, 22 + ph * 18, z); pf.scale.setScalar(.4 + ph * 1.4); pf.fire.visible = ph < .3; pf.children[0].main && (pf.children[0].main.material.opacity = 1 - ph * .6); }); }
   function gunsFire(t) { guns.forEach(function (g, i) { var ph = (t * 1.3 + hash(i) * 3) % 1; g.flash.visible = ph < .12; g.barrel.rotation.x = .5 - (ph < .12 ? .05 : 0); }); }
@@ -261,13 +265,13 @@
   shot(1, function (u, d, t) { var k = ease(u / d); W0("noon"); crew.slice(0, 4).forEach(function (c, i) { c.visible = true; c.position.set(-128 - i * 3.2, 3, 10 + i * 2); c.rotation.y = 1.2; c.mood("flat"); live(c, t); });
     camLook(lerp(-110, -115, k), 6, lerp(26, 22, k), -130, 5, 10); drift(t, .3); over(u, "صايمين", "", 9); return W; });
   // 2 — on the other bank, a sand mountain more than 20 m high along the canal
-  shot(2, function (u, d, t) { var k = ease(u / d); W0("noon"); camLook(lerp(-60, 10, k), lerp(8, 14, k), lerp(60, 40, k), 110, lerp(12, 18, k), -60); drift(t, .5); over(u, "أكتر من 20 متر", "الساتر الترابي", 1.2, "#f2c230"); return W; });
+  shot(2, function (u, d, t) { var k = ease(u / d); W0("noon"); camLook(lerp(-60, 10, k), lerp(8, 14, k), lerp(60, 40, k), 110, lerp(12, 18, k), -60); flyGulls(t, 40, 30, -20); drift(t, .5); over(u, "أكتر من 20 متر", "الساتر الترابي", 1.2, "#f2c230"); return W; });
   // 3 — it was said it would take an atomic bomb to open it
-  shot(3, function (u, d, t) { var k = ease(u / d); W0("noon"); camLook(lerp(40, 70, k), lerp(10, 16, k), 30, 120, 20, 0); drift(t, .4); over(u, "قنبلة ذرية؟", "", .6); return W; });
+  shot(3, function (u, d, t) { var k = ease(u / d); W0("noon"); camLook(lerp(40, 70, k), lerp(10, 16, k), 30, 120, 20, 0); flyGulls(t, 90, 34, -10); drift(t, .4); over(u, "قنبلة ذرية؟", "", .6); return W; });
   // 4 — so how did it open in hours… with the canal's own water?
   shot(4, function (u, d, t) { var k = ease(u / d); W0("noon"); setOne([32, 33], .15 + .55 * k); pumpsWork(t, .3 + .6 * k, 2, 32); camLook(40, 9, BREACH[32].z + 40, 96, 9, BREACH[32].z + 20); drift(t, .4); over(u, "بالمية؟", "", .8); return W; });
   // 5 — and why did it start at 2 in the afternoon, not at dawn?
-  shot(5, function (u, d, t) { var k = ease(u / d); W0("noon"); setBreach(0); camLook(lerp(-200, -150, k), 40, 120, 0, 60, -400); drift(t); over(u, "14:00", "مش مع الفجر؟", .3, "#f2c230"); return W; });
+  shot(5, function (u, d, t) { var k = ease(u / d); W0("noon"); setBreach(0); camLook(lerp(-200, -150, k), 40, 120, 0, 60, -400); flyGulls(t, -120, 60, 20); drift(t); over(u, "14:00", "مش مع الفجر؟", .3, "#f2c230"); return W; });
   // 6 — the story of that day, hour by hour; we start before dawn
   shot(6, function (u, d, t) { var k = ease(u / d); W0("night"); camLook(lerp(-300, -200, k), 80, 300, 40, 0, -100); drift(t); over(u, "قبل الفجر", "", .6); return W; });
   // 7 — 3 a.m., soldiers eat suhoor in the trenches; nobody knows today is the day
@@ -326,7 +330,7 @@
   // 27 — five minutes later about 2,000 guns fire at once, for 53 minutes
   shot(27, function (u, d, t) { var k = ease(u / d); W0("smoke"); setBreach(0); gunsFire(t); barrage(t, 1, true); camLook(lerp(-300, -280, k), 30, lerp(-120, -60, k), 120, 20, 0); drift(t, 1.5); over(u, "2000 مدفع", "53 دقيقة", .3, "#f2c230"); return W; });
   // 28 — the answer: at 2 the sun is behind the Egyptian soldiers… and in the eyes of those facing them
-  shot(28, function (u, d, t) { var k = ease(u / d); W0("noon"); W.sun.position.set(-500, 260, 0); W.sun.intensity = 1.0; camLook(124, 28, 20, -400, 120, -40); drift(t, .3); over(u, "☀", "الشمس في عينهم", .3, "#ffd060"); return W; });
+  shot(28, function (u, d, t) { var k = ease(u / d); W0("noon"); W.sun.position.set(-500, 260, 0); W.sun.intensity = 1.0; barrage(t, 1, false); gunsFire(t); flyFighters(t, (u / d) * 1.2, 12, 300, -500, 70); fighters.forEach(function (f) { f.rotation.y = -Math.PI / 2; }); camLook(124, 28, 20, -400, 120, -40); drift(t, .3); over(u, "☀", "الشمس في عينهم", .3, "#ffd060"); return W; });
   // 29 — Tel Aviv was waiting for 6 p.m.; the war began four hours early
   shot(29, function (u, d, t) { setClock(14, Math.min(59, u * 4)); camLook(6, 9, -7 + Math.sin(t * .3) * .3, 6, 9, -14.8); over(u, "\u206618:00 ≠ 14:00\u2069", "قبل ميعادهم بـ4 ساعات", .4, "#f2c230"); return RM; });
   // 30 — 2:20, the first rubber boats go into the water
@@ -346,7 +350,7 @@
   // 36 — the sand turns to mud, the mud slides into the canal, the gap widens minute by minute
   shot(36, function (u, d, t) { var k = u / d; W0("smoke"); setBreach(.15 + .5 * k, 64); pumpsWork(t, .3 + .5 * k, 3, 31); camLook(lerp(70, 64, k), lerp(14, 10, k), BREACH[32].z - 24, 100, 6, BREACH[32].z); drift(t, .3); over(u, "رملة ← طين", "", .6, "#d8b070"); return W; });
   // 37 — in about four hours, more than sixty breaches were open in the wall
-  shot(37, function (u, d, t) { var k = ease(u / d); W0("day"); setBreach(.6 + .4 * k, Math.round(lerp(6, 64, k))); camLook(lerp(-60, -140, k), lerp(140, 320, k), lerp(-300, -500, k), 100, 0, 300); drift(t); over(u, "أكتر من 60 ثغرة", "في حوالي 4 ساعات", .4, "#f2c230"); return W; });
+  shot(37, function (u, d, t) { var k = ease(u / d); W0("day"); setBreach(.6 + .4 * k, Math.round(lerp(6, 64, k))); camLook(lerp(-60, -140, k), lerp(140, 320, k), lerp(-300, -500, k), 100, 0, 300); flyGulls(t * 1.6, cam.position.x + 40, cam.position.y - 30, cam.position.z + 80); drift(t); over(u, "أكتر من 60 ثغرة", "في حوالي 4 ساعات", .4, "#f2c230"); return W; });
   // 38 — the mountain they said needed an atomic bomb… the canal's water opened it
   shot(38, function (u, d, t) { var k = ease(u / d); W0("day"); setBreach(1, 64); tanks.forEach(function (tt, i) { tt.visible = i < 2; tt.position.set(lerp(80, 160, clamp(k * 1.2 - i * .3)), 1.5, BREACH[32].z + (i ? 2 : -2)); }); camLook(lerp(60, 84, k), 8, BREACH[32].z + 4, 160, 8, BREACH[32].z); over(u, "مية القناة", "", 1.4, "#7ad0f0"); return W; });
   // 39 — at sunset many soldiers broke their fast on the other bank
@@ -382,7 +386,7 @@
     cam.fov = 42; OVB.style.opacity = 0; BINO.style.opacity = 0;
     foamAnim(t);
     var sc = SH[i](u, d, t);
-    cam.updateProjectionMatrix();
+    breathe(t, u); cam.updateProjectionMatrix();
     R.render(sc, cam);
     var fd = document.getElementById("fade"); fd.style.opacity = (u < .3 && i > 0) ? (1 - u / .3) * .85 : 0;
     window.__cap && window.__cap(t);
