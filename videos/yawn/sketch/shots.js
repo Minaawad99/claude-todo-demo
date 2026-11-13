@@ -146,17 +146,30 @@ function tank(x, y, label, col, t) {
 function counter(x, y, n, k) { return R(x - 50, y - 30, 100, 56, "#f4ecdb", 2) + N(String(Math.round(n * clamp(k))), x, y + 12, 34, INK); }
 
 // ── shots (line numbers from script.txt) ──
-// 4 · a yawn: about 6 seconds — mouth wide open, a long breath in, the jaw stretching (skull inside), a stopwatch runs
-shot(4, push(330, 420, 1.0, 1.06), function (u, d, t) {
-  var op = yawnK(u, .2, 5.2);
-  return paper() + headP(280, 380, 1.55, op, t, { skull: true, air: true }) + stopwatch(530, 130, 60, Math.min(6, u * 1.1) * 10, 1) + N(f(Math.min(6, u * 1.1)) + " s", 530, 230, 30, ORANGE) +
-    label(450, 520, 480, 640, "الفك بيتمط", OLIVE, at(u, 3.6, .5), 24) + label(500, 500, 540, 400, "نفس طويل", BLUE, at(u, 2.4, .5), 22) + label(470, 470, 380, 690, "", INK, 0);
+// 4 · a yawn: about 6 seconds. A real clip of a woman yawning (clips/README: composited by ../clips.sh into the frame drawn
+// here, which is a hud so it stays put), a stopwatch running beside it, the three parts tagged one by one, and the skull
+// below whose jaw opens in step.
+var CLIP_W = [30, 110, 330, 504], CLIP_D = [40, 300, 560, 386], CLIP_F = [370, 40, 240, 194];   // x, y, w, h in panel units (clips.sh reads these numbers)
+function clipFrame(r, u) {
+  var x = r[0], y = r[1], w = r[2], h = r[3];
+  return '<rect x="' + (x - 12) + '" y="' + (y - 12) + '" width="' + (w + 24) + '" height="' + (h + 24) + '" fill="#f4ecdb" stroke="' + INK + '" stroke-width="2.4" transform="rotate(0)"/>' +
+    '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" fill="#2a2620"/>' +
+    '<rect x="' + (x + w / 2 - 40) + '" y="' + (y - 24) + '" width="80" height="24" fill="#d9cfae" opacity=".85" transform="rotate(-4 ' + (x + w / 2) + ' ' + (y - 12) + ')"/>';
+}
+shot(4, push(500, 420, 1.0, 1.04), function (u, d, t) {
+  return paper() + G("translate(500 620) scale(.5)", headP(0, 0, 1, yawnK(u, .2, 5.2), t, { skull: true, air: true }).replace(/<path d="M-150 300[^>]*>/, ""));
+});
+hud(4, 5, function (u, t) {
+  return clipFrame(CLIP_W, u) + stopwatch(510, 180, 58, Math.min(6, u * 1.1) * 10, 1) + N(f(Math.min(6, u * 1.1)) + " s", 510, 278, 30, ORANGE) +
+    tag("بق مفتوح", 500, 345, at(u, 2.0, .3), 24, OLIVE) + tag("نفس طويل", 500, 405, at(u, 3.4, .3), 24, BLUE) + tag("فك بيتمط", 500, 465, at(u, 4.4, .3), 24, OLIVE);
 });
 // 5 · it starts early: an ultrasound fan, the fetus opening its mouth, week 11
 shot(5, push(320, 400, 1.04, 1.0), function (u, d, t) {
-  return paper() + R(70, 120, 500, 520, "#d9d4c8", 2.4, 14) + scan(320, 140, 470, yawnK(u, .6, 3), t) + numBox("11", 500, 590, at(u, 2.4, .3), 40) + G("", T("أسبوع", 500, 650, 22, INK, 800), at(u, 2.6, .3)) +
-    tag("الجنين", 170, 600, at(u, .6, .3), 28, OLIVE);
+  return paper() + R(30, 290, 440, 440, "#d9d4c8", 2.4, 14) + scan(250, 300, 420, yawnK(u, .6, 3), t) + numBox("11", 550, 470, at(u, 2.4, .3), 40) + G("", T("أسبوع", 550, 530, 22, INK, 800), at(u, 2.6, .3)) +
+    tag("الجنين", 140, 690, at(u, .6, .3), 28, OLIVE);
 }, { tr: "out" });
+// 5 · beside the drawing, a real 4D scan of a fetus's face (a later scan, not week 11 and not yawning; labelled as real), composited by ../clips.sh
+hud(5, 6, function (u, t) { return clipFrame(CLIP_F, u) + tag("سونار حقيقي", 490, 272, at(u, .4, .3), 22, INK); });
 // 6 · the myth: «we yawn for oxygen» — O₂ balls float to the yawning head, then ✗
 shot(6, push(300, 420, 1.0, 1.06), function (u, d, t) {
   var s = paper() + headP(240, 400, 1.4, yawnK(u, .2, 2.6), t, { air: true });
@@ -265,10 +278,13 @@ shot(22, push(320, 400, 0.98, 1.03), function (u, d, t) {
   s += appear(at(u, 4.4, .4), T("؟", 320, 640, 110, ORANGE, 800));
   return s;
 }, { tr: "out" });
-// 23 · the oddest: a dog yawns when it sees its owner yawn
-shot(23, push(320, 430, 1.0, 1.06), function (u, d, t) {
-  return paper() + headP(170, 360, 1.1, yawnK(u, .1, 2), t, {}) + dog(470, 470, 1.25, yawnK(u, 1.2, 2.2), t) + draw("M260 280 Q380 220 450 380", at(u, .8, .5), ORANGE, 3, ' stroke-dasharray="8 6"') + label(470, 470, 380, 700, "الكلب", OLIVE, at(u, .4, .5), 24);
+// 23 · the oddest: a dog yawns when it sees its owner yawn. The drawn owner yawns above; the real clip of a dog yawning
+// sits in the frame below (composited by ../clips.sh).
+shot(23, push(320, 400, 1.0, 1.05), function (u, d, t) {
+  return paper() + G("translate(170 150) scale(.5)", headP(0, 0, 1, yawnK(u, .1, 1.8), t, {}).replace(/<path d="M-150 300[^>]*>/, "")) + label(230, 160, 330, 90, "صاحبه", ORANGE, at(u, .3, .4), 24) +
+    draw("M250 210 Q330 230 360 280", at(u, .6, .4), ORANGE, 3, ' stroke-dasharray="8 6"') + arrow(350, 262, 362, 286, ORANGE, 3, at(u, 1, .2));
 });
+hud(23, 24, function (u, t) { return clipFrame(CLIP_D, u) + tag("الكلب", 320, 735, at(u, .8, .3), 28, OLIVE); });
 
 // ── opening card, bumper and summary art ──
 SCENE.intro = function (svg, t, li) {
