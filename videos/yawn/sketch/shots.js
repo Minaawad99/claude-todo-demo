@@ -15,23 +15,22 @@ function loopYawn(t, per, ph) { var x = ((t + (ph || 0)) % per) / per; return ya
 // ── the human head in profile, facing right. op 0..1 how open; o: {skull, brain (0 cool … 1 warm), air, blood, hair, shirt, cold}
 var PIV = [14, 48];   // the jaw hinge (condyle), just in front of the ear
 function headP(x, y, s, op, t, o) {
-  o = o || {}; op = clamp(op); var a = op * 26, sh = op * 6, s1 = "";
+  o = o || {}; op = clamp(op); var a = op * 20, sh = op * 3, s1 = "";
   function J(px, py) { var p = rotP(px, py, PIV[0], PIV[1], a); return f(p[0] + sh) + " " + f(p[1] + sh * .3); }
   var skinOp = o.skull ? .42 : 1;
   // shoulders and neck (fixed)
   s1 += P("M-150 300 C-140 236 -90 214 -46 210 L60 210 C110 214 170 236 180 300 Z", o.shirt || "#8f9a7a", 2);
   s1 += '<g opacity="' + skinOp + '">' + P("M-52 214 L-62 118 L34 104 C42 150 52 186 62 214 Z", o.skin || SKIN, 2) + '<path d="M-40 150 C-20 170 20 172 40 150" stroke="' + SKIN2 + '" stroke-width="3" fill="none"/>' + '</g>';
-  // the mouth inside: dark cavity between the upper lip and the turned jaw, the tongue, the teeth
-  if (op > .02) {
-    s1 += '<path d="M128 80 L64 80 L' + J(64, 84) + ' L' + J(126, 84) + ' Z" fill="' + MOUTH + '" stroke="' + INK + '" stroke-width="1.6"/>';
-    s1 += '<ellipse cx="0" cy="0" rx="26" ry="9" fill="' + TONGUE + '" transform="translate(' + J(96, 96).replace(" ", " ") + ') rotate(' + f(a) + ')"/>';
+  // the head as ONE outline: skull, forehead, nose, upper lip, then the lower lip, chin and jaw turned about the hinge, so the
+  // cheek stretches with the jaw (no seam). The mouth is a tall rounded opening drawn on top, as in a real yawn.
+  var face = "M-62 118 C-112 84 -128 14 -122 -40 C-116 -120 -50 -165 25 -158 C90 -150 122 -100 120 -45 C119 -25 116 -8 126 8 L156 52 C160 60 152 66 140 64 L132 66 C134 72 132 78 127 80" +
+    " C" + J(132, 84) + " " + J(130, 98) + " " + J(122, 104) + " C" + J(128, 114) + " " + J(124, 126) + " " + J(116, 132) + " C" + J(104, 150) + " " + J(84, 156) + " " + J(62, 154) + " C" + J(40, 150) + " " + J(22, 138) + " " + J(10, 122) + " L-30 118 Z";
+  s1 += '<g opacity="' + skinOp + '">' + P(face, o.skin || SKIN, 2.2) + '</g>';
+  if (op > .04) {
+    var lo = J(124, 88).split(" "), mx = (128 + +lo[0]) / 2 - 8, my = (80 + +lo[1]) / 2, hh = (+lo[1] - 80) / 2 + 2, ww = 12 + 6 * op;
+    s1 += '<ellipse cx="' + f(mx) + '" cy="' + f(my) + '" rx="' + f(ww) + '" ry="' + f(hh) + '" fill="' + MOUTH + '" stroke="' + INK + '" stroke-width="2" transform="rotate(' + f(a * .5) + ' ' + f(mx) + ' ' + f(my) + ')"/>';
+    if (hh > 8) s1 += '<ellipse cx="' + f(mx - 2) + '" cy="' + f(my + hh * .55) + '" rx="' + f(ww * .7) + '" ry="' + f(hh * .35) + '" fill="' + TONGUE + '"/>' + '<path d="M' + f(mx - ww * .7) + ' ' + f(my - hh + 3) + ' Q' + f(mx) + ' ' + f(my - hh + 7) + ' ' + f(mx + ww * .7) + ' ' + f(my - hh + 3) + '" stroke="#fff" stroke-width="3" fill="none"/>';
   }
-  // the head: cranium + face down to the upper lip (fixed) …
-  var up = "M-62 118 C-112 84 -128 14 -122 -40 C-116 -120 -50 -165 25 -158 C90 -150 122 -100 120 -45 C119 -25 116 -8 126 8 L156 52 C160 60 152 66 140 64 L132 66 C134 72 132 78 126 80 L64 80 L" + PIV[0] + " " + PIV[1] + " Z";
-  // … and the jaw with the lower lip and chin, turned about the hinge
-  var jaw = "M" + J(126, 84) + " C" + J(130, 94) + " " + J(126, 102) + " " + J(120, 106) + " C" + J(126, 114) + " " + J(124, 124) + " " + J(116, 130) + " C" + J(106, 148) + " " + J(86, 156) + " " + J(64, 154) + " C" + J(42, 152) + " " + J(24, 142) + " " + J(10, 122) + " L" + J(PIV[0], PIV[1]) + " L" + J(64, 84) + " Z";
-  s1 += '<g opacity="' + skinOp + '">' + P(jaw, o.skin || SKIN, 2.2) + P(up, o.skin || SKIN, 2.2) + '</g>';
-  if (op > .02) s1 += '<path d="M120 80 H84 V85 H120 Z" fill="#fff" stroke="' + INK + '" stroke-width="1"/>' + '<path d="M' + J(118, 84) + ' L' + J(84, 84) + ' L' + J(84, 89) + ' L' + J(118, 89) + ' Z" fill="#fff" stroke="' + INK + '" stroke-width="1"/>';
   // the skeleton inside (skull mode): cranium, upper jaw with teeth, the mandible turning with the jaw, the brain
   if (o.skull) {
     s1 += P("M-104 30 C-118 -20 -110 -110 -40 -140 C20 -160 90 -140 106 -70 C110 -40 108 -10 116 10 L134 46 L126 62 L70 66 L30 52 L-10 60 C-40 64 -80 60 -104 30 Z", BONE, 2);
@@ -153,23 +152,23 @@ var CLIP_W = [30, 110, 330, 504], CLIP_D = [40, 300, 560, 386], CLIP_F = [370, 4
 function clipFrame(r, u) {
   var x = r[0], y = r[1], w = r[2], h = r[3];
   return '<rect x="' + (x - 12) + '" y="' + (y - 12) + '" width="' + (w + 24) + '" height="' + (h + 24) + '" fill="#f4ecdb" stroke="' + INK + '" stroke-width="2.4" transform="rotate(0)"/>' +
-    '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" fill="#2a2620"/>' +
+    '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" fill="#00ff00"/>' +
     '<rect x="' + (x + w / 2 - 40) + '" y="' + (y - 24) + '" width="80" height="24" fill="#d9cfae" opacity=".85" transform="rotate(-4 ' + (x + w / 2) + ' ' + (y - 12) + ')"/>';
 }
 shot(4, push(500, 420, 1.0, 1.04), function (u, d, t) {
-  return paper() + G("translate(500 620) scale(.5)", headP(0, 0, 1, yawnK(u, .2, 5.2), t, { skull: true, air: true }).replace(/<path d="M-150 300[^>]*>/, ""));
+  return paper();
 });
 hud(4, 5, function (u, t) {
   return clipFrame(CLIP_W, u) + stopwatch(510, 180, 58, Math.min(6, u * 1.1) * 10, 1) + N(f(Math.min(6, u * 1.1)) + " s", 510, 278, 30, ORANGE) +
     tag("بق مفتوح", 500, 345, at(u, 2.0, .3), 24, OLIVE) + tag("نفس طويل", 500, 405, at(u, 3.4, .3), 24, BLUE) + tag("فك بيتمط", 500, 465, at(u, 4.4, .3), 24, OLIVE);
-});
+}); HUD[HUD.length - 1].hard = true;
 // 5 · it starts early: an ultrasound fan, the fetus opening its mouth, week 11
 shot(5, push(320, 400, 1.04, 1.0), function (u, d, t) {
   return paper() + R(30, 290, 440, 440, "#d9d4c8", 2.4, 14) + scan(250, 300, 420, yawnK(u, .6, 3), t) + numBox("11", 550, 470, at(u, 2.4, .3), 40) + G("", T("أسبوع", 550, 530, 22, INK, 800), at(u, 2.6, .3)) +
     tag("الجنين", 140, 690, at(u, .6, .3), 28, OLIVE);
 }, { tr: "out" });
 // 5 · beside the drawing, a real 4D scan of a fetus's face (a later scan, not week 11 and not yawning; labelled as real), composited by ../clips.sh
-hud(5, 6, function (u, t) { return clipFrame(CLIP_F, u) + tag("سونار حقيقي", 490, 272, at(u, .4, .3), 22, INK); });
+hud(5, 6, function (u, t) { return clipFrame(CLIP_F, u) + tag("سونار حقيقي", 490, 272, at(u, .4, .3), 22, INK); }); HUD[HUD.length - 1].hard = true;
 // 6 · the myth: «we yawn for oxygen» — O₂ balls float to the yawning head, then ✗
 shot(6, push(300, 420, 1.0, 1.06), function (u, d, t) {
   var s = paper() + headP(240, 400, 1.4, yawnK(u, .2, 2.6), t, { air: true });
@@ -203,12 +202,19 @@ shot(10, push(320, 420, 1.0, 1.08), function (u, d, t) { return paper() + headP(
 shot(11, push(300, 400, 1.06, 1.0), function (u, d, t) {
   return paper() + headP(280, 440, 1.5, yawnK(u, .1, 3), t, { brain: lerp(.8, .3, clamp(u / 3)), skull: true, air: true }) + fan(250, 290, 60, t * 7) + tag("مروحة للمخ", 320, 660, at(u, 1, .3), 32, BLUE);
 }, { tr: "in" });
-// 12 · the long breath brings cooler air; the stretching jaw pushes more blood up to the head
-shot(12, push(320, 430, 1.0, 1.06), function (u, d, t) {
-  var op = yawnK(u, .2, 5.4);
-  return paper() + headP(270, 400, 1.5, op, t, { skull: true, air: true, blood: 1, brain: lerp(.8, .4, clamp(u / 5)) }) +
-    label(470, 520, 520, 660, "هوا أبرد", BLUE, at(u, .8, .5), 24) + label(310, 580, 160, 700, "دم أكتر", ORANGE, at(u, 3, .5), 24);
-});
+// 12 · the long breath brings cooler air; the stretching jaw pushes more blood up to the head. A real man yawning in profile
+// (clips/man-profile.mp4) fills the frame; the air and the blood are drawn on top of him, at his mouth and along his neck
+// (positions measured on the clip: mouth ≈ (510, 600), carotid ≈ (330, 720) → (300, 920) in its 720×1280 pixels).
+var CLIP_M = [130, 50, 380, 528];
+function clipXY(cx, cy) { return [CLIP_M[0] + cx * CLIP_M[2] / 720, CLIP_M[1] + (cy - 80) * CLIP_M[3] / 1000]; }
+shot(12, push(320, 400, 1.0, 1.04), function (u, d, t) { return paper(); });
+hud(12, 13, function (u, t) {
+  var op = yawnK(u, .6, 4.2), m = clipXY(515, 600), c0 = clipXY(335, 700), c1 = clipXY(300, 940), s = clipFrame(CLIP_M, u), k;
+  for (k = 0; k < 6; k++) { var q = ((t * 1.3 + k / 6) % 1), ax = lerp(640, m[0] + 8, q), ay = lerp(m[1] + (k % 3 - 1) * 40, m[1], q); s += '<path d="M' + f(ax + 12) + ' ' + f(ay - 11) + ' L' + f(ax) + ' ' + f(ay) + ' L' + f(ax + 12) + ' ' + f(ay + 11) + '" stroke="' + BLUE + '" stroke-width="5" fill="none" stroke-linecap="round" opacity="' + f(clamp(op * 1.5) * (1 - q * .3)) + '"/>'; }
+  var art = "M" + f(c1[0]) + " " + f(c1[1]) + " C" + f(c1[0] + 6) + " " + f(c1[1] - 40) + " " + f(c0[0] + 4) + " " + f(c0[1] + 30) + " " + f(c0[0]) + " " + f(c0[1]) + " C" + f(c0[0] - 6) + " " + f(c0[1] - 50) + " " + f(c0[0] - 30) + " " + f(c0[1] - 110) + " " + f(c0[0] - 30) + " " + f(c0[1] - 170);
+  s += G("", '<path d="' + art + '" stroke="' + BLOOD + '" stroke-width="8" fill="none" stroke-linecap="round" opacity=".85"/><path d="' + art + '" stroke="#f6c2b4" stroke-width="3.4" fill="none" stroke-dasharray="9 12" stroke-dashoffset="' + f(t * (50 + 170 * op)) + '"/>', clamp((u - 2.4) / .4));
+  return s + tag("هوا أبرد", 560, 210, at(u, .9, .3), 26, BLUE) + tag("دم أكتر", 150, 640, at(u, 3, .3), 26, ORANGE);
+}); HUD[HUD.length - 1].hard = true;
 // 13 · warm blood leaves, cooler blood comes in, like opening a window in a stuffy room (thumbnail: the window swings open)
 shot(13, push(300, 420, 1.06, 1.0), function (u, d, t) {
   var s = paper() + headP(260, 420, 1.5, yawnK(u, .3, 4.4), t, { skull: true, blood: 2, brain: lerp(.75, .25, clamp(u / 4.5)) });
@@ -284,15 +290,17 @@ shot(23, push(320, 400, 1.0, 1.05), function (u, d, t) {
   return paper() + G("translate(170 150) scale(.5)", headP(0, 0, 1, yawnK(u, .1, 1.8), t, {}).replace(/<path d="M-150 300[^>]*>/, "")) + label(230, 160, 330, 90, "صاحبه", ORANGE, at(u, .3, .4), 24) +
     draw("M250 210 Q330 230 360 280", at(u, .6, .4), ORANGE, 3, ' stroke-dasharray="8 6"') + arrow(350, 262, 362, 286, ORANGE, 3, at(u, 1, .2));
 });
-hud(23, 24, function (u, t) { return clipFrame(CLIP_D, u) + tag("الكلب", 320, 735, at(u, .8, .3), 28, OLIVE); });
+hud(23, 24, function (u, t) { return clipFrame(CLIP_D, u) + tag("الكلب", 320, 735, at(u, .8, .3), 28, OLIVE); }); HUD[HUD.length - 1].hard = true;
 
 // ── opening card, bumper and summary art ──
 SCENE.intro = function (svg, t, li) {
-  // line 0: one person yawns, the one facing them catches it. line 1: the word itself. line 2: scientists don't agree (two crossed notes)
-  var u0 = t - LN[0].start, s = "";
-  s += headP(150, 330, .95, yawnK(u0, .3, 3), t, {}) + headP(460, 330, .95, yawnK(u0, 1.6, 3), t, { flip: true, shirt: "#9a8a6a", hairCol: "#2a2016" });
-  if (li >= 1) { var u1 = t - LN[1].start; s += tag("تاوباية", 300, 590, ease(u1 / .3), 34, ORANGE); }
-  if (li >= 2) { var u2 = t - LN[2].start; s += G("translate(300 70)", T("؟", 0, 40, 100, ORANGE, 800), ease(u2 / .3)); }
+  // the real clip of two people (clips/two-people.mp4: he yawns, she catches it) plays from 0.8 s to 8.8 s in a frame;
+  // after it the drawn pair takes over. Under the frame: the word, then the «؟».
+  var s = "", INTRO_CLIP = [55, 10, 497, 540];
+  if (t >= .8 && t < 8.8) s += '<rect x="43" y="-2" width="521" height="564" fill="#f4ecdb" stroke="' + INK + '" stroke-width="2.4"/><rect x="55" y="10" width="497" height="540" fill="#00ff00"/><rect x="264" y="-14" width="80" height="24" fill="#d9cfae" opacity=".85" transform="rotate(-4 304 -2)"/>';
+  else { var u0 = t - 8.8; s += headP(150, 300, .95, yawnK(u0, .1, 2), t, {}) + headP(460, 300, .95, yawnK(u0, .7, 2), t, { flip: true, shirt: "#9a8a6a", hairCol: "#2a2016" }); }
+  if (li >= 1) { var u1 = t - LN[1].start; s += tag("تاوباية", 260, 612, ease(u1 / .3), 34, ORANGE); }
+  if (li >= 2) { var u2 = t - LN[2].start; s += G("translate(430 572)", T("؟", 0, 60, 90, ORANGE, 800), ease(u2 / .3)); }
   return s;
 };
 SCENE.bumper = function (u, t) { return G("translate(70 140) scale(.42)", headP(0, 0, 1, loopYawn(t, 2.6), t, {}).replace(/<path d="M-150 300[^>]*>/, "")); };
@@ -300,3 +308,16 @@ SCENE.outro = function (svg, u, t) {
   return G("translate(250 150) scale(.62)", headP(0, 0, 1, loopYawn(t, 3), t, { skull: true, air: true, blood: 1, brain: .4 }).replace(/<path d="M-150 300[^>]*>/, "")) +
     callout("1", 300, 230, ease(u / .3)) + callout("2", 400, 110, ease(u / .3 - .5)) + callout("3", 240, 260, ease(u / .3 - 1)) + callout("4", 230, 80, ease(u / .3 - 1.5));
 };
+
+// ── the template's panel renderer, with one change: a hud marked .hard (the clip frames, whose green inside clips.sh keys
+// out) shows at full strength at once instead of fading, so the key never sees a half-green frame.
+(function () {
+  var base = window.SCENE.panel;
+  window.SCENE.panel = function (A, B, t) {
+    var keep = HUD.slice(), soft = HUD.filter(function (q) { return !q.hard; }), hard = HUD.filter(function (q) { return q.hard && t >= q.a && t < q.b; });
+    HUD.length = 0; soft.forEach(function (q) { HUD.push(q); });
+    base(A, B, t);
+    HUD.length = 0; keep.forEach(function (q) { HUD.push(q); });
+    if (hard.length) { var h = ""; hard.forEach(function (q) { h += q.draw(t - q.a, t); }); B.innerHTML = B.innerHTML.replace(/<rect x="0" y="0" width="640" height="786" filter="url\(#paperN\)"[^>]*\/>$/, "") + h; }
+  };
+})();
