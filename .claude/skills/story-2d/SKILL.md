@@ -70,13 +70,13 @@ Audio pipeline as in the animation skill (section 4) with longer pauses kept: `t
 Build with `python3 build.py`, look at a contact sheet of full frames, fix, and send the user a preview sheet before
 the render.
 
-## 4. Sound (`videos/<slug>/cues.js`, `{"bed": false}`)
+## 4. Sound (`videos/<slug>/cues.js`, `{"bed": false}`) — effects only, no music
 
-The series music box (`../_templates/sketch/sfx/px-music-soft.mp3`, referenced by path) under the calm parts and again
-for the aftermath to the end; a ticking clock that stops on the hook; real details (tram bell = `bell`, a siren made
-with ffmpeg into `sfx/siren.wav`); a low drone (`px-space-drone.mp3`) and ticks during the countdown; boom + thud + wind
-gust and near-silence at the turning point; paper sounds, a low `bell` with `f: 220` for remembrance. Soft whooshes
-(gain ~0.12) between lines. See `videos/hiroshima/cues.js`.
+**No background music unless the user asks for it** (the user's rule). The mix is the voice plus effects made for the
+story: a ticking clock that stops on the hook, real details (tram bell = `bell`, a siren made with ffmpeg into
+`sfx/siren.wav`), a low drone (`px-space-drone.mp3`) and ticks during a countdown, boom + thud + wind gust and
+near-silence at the turning point, paper sounds, a low `bell` with `f: 220` for remembrance, soft whooshes (gain ~0.12)
+between lines. Leave out the `px-music-*` clips.
 
 ## 5. Render and QA (background, about 30 minutes for 3 minutes)
 

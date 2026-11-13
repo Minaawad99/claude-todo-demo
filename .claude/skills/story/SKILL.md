@@ -86,12 +86,13 @@ canvas (`<canvas id="gl">`, so `render.js` uses SwiftShader) under the captions.
 
 Show the user a short test clip of the first scenes before building everything.
 
-## 4. Sound
+## 4. Sound — effects only, no music
 
-Same tools as the animation skill (`cues.js` → `audio/sfx.py`), quiet and cinematic: the series music box
-`videos/_templates/sketch/sfx/px-music-soft.mp3` under the calm parts (reference it by path, don't copy it), a low drone
-(`px-space-drone.mp3`) before the turning point, clock ticks under countdowns, a boom + wind gust and near-silence at the
-turning point, real-sounding details (tram bell = `bell`, a siren synthesized with ffmpeg into `sfx/`). `{"bed": false}`.
+**No background music unless the user asks for it** (the user's rule). The mix is the voice plus sound effects made
+for the story: `cues.js` → `audio/sfx.py`, `{"bed": false}`, and no `px-music-*` clips. Build the effects from what is
+on screen: wind and water for places, a low drone (`px-space-drone.mp3`) and clock ticks for countdowns, `jet`, `boom`,
+`spray`, `motor`, `splash`, `clank`, `bell` and the rest of `sfx.py`, plus sounds synthesized with ffmpeg into
+`videos/<slug>/sfx/` when nothing fits (a phone ring, a siren, a crowd roar, a ship's horn: see `videos/crossing-1973/`).
 
 ## 5. Render and QA (in the background: ~0.45 s a frame, about 2 hours for 4 minutes)
 

@@ -1,5 +1,5 @@
 // Sound cues for «العبور» from the line timings: node cues.js → cues.json
-// Calm music box under the morning and the flashback, a drone and clock as two o'clock nears, the jets, the barrage,
+// Effects only (no music, the user's rule): a drone and clock as two o'clock nears, the jets, the barrage,
 // paddles and water jets during the crossing, the music back for the evening and the ending. Synthesized here:
 // the phone ring, the crowd roar and the ship horn (sfx/); the rest are sfx.py voices and the series kit.
 global.window = {}; eval(require('fs').readFileSync(__dirname + '/timing.js', 'utf8'));
@@ -8,9 +8,7 @@ const a = (t, fx, gain, dur, o) => c.push(Object.assign({ t: +t.toFixed(2), fx, 
 const r = (t, file, gain, from, dur) => c.push({ t: +t.toFixed(2), file, gain, from: from || 0, dur: +dur.toFixed(2) });
 const K = '../_templates/sketch/sfx/';
 for (let i = 1; i < T.length; i++) a(L(i) - 0.1, 'whoosh', 0.1);
-// music
-r(0, K + 'px-music-soft.mp3', 0.5, 0, L(25) + 0.4);
-r(L(37) - 0.3, K + 'px-music-soft.mp3', 0.5, 30, END - L(37) + 2.5);
+// no music: the user wants sound effects only unless they ask for music
 // the canal at noon
 a(0.1, 'waves', 0.18, L(6)); a(0.1, 'wind', 0.12, L(6));
 a(L(4) + 0.3, 'spray', 0.3, D(4) - 0.4); a(L(4) + 0.2, 'motor', 0.15, D(4) - 0.3);
