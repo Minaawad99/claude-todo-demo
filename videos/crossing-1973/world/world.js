@@ -176,33 +176,91 @@
   var puffs = []; var puffM = toon(0x6a625a, { transparent: true, opacity: .9 }), fireM = basic(0xffa040);
   for (var pp = 0; pp < 40; pp++) { var pf = new T3.Group(); var sm = inked(new T3.IcosahedronGeometry(4, 1), puffM, .03); pf.add(sm); var fi = new T3.Mesh(new T3.IcosahedronGeometry(2.6, 1), fireM); pf.add(fi); pf.fire = fi; pf.visible = false; W.add(pf); puffs.push(pf); }
   // rubber boats with soldiers and paddles
-  function boat(n, k) { var g = new T3.Group(); var ring = inked(new T3.TorusGeometry(2.2, .55, 8, 22), toon(0x3a3e3a), .05); ring.rotation.x = Math.PI / 2; ring.scale.set(1.7, 1, 1); g.add(ring);
-    var fl = new T3.Mesh(new T3.CircleGeometry(2.2, 18), toon(0x2a2c2a)); fl.rotation.x = -Math.PI / 2; fl.scale.set(1.7, 1, 1); fl.position.y = -.2; g.add(fl); g.men = [];
-    for (var i = 0; i < n; i++) { var b = bean({ helmet: 0x7a7a50, body: 0xb8a274, k: k * 5 + i }); b.scale.setScalar(.5); b.pose("sit"); b.position.set(-2.2 + i * 1.5, .2, (i % 2 ? .7 : -.7)); b.rotation.y = Math.PI / 2; g.add(b); g.men.push(b);
-      var pd = new T3.Mesh(new T3.BoxGeometry(.12, .12, 3), toon(0x8a6a44)); pd.position.set(-2.2 + i * 1.5, .9, (i % 2 ? 1.6 : -1.6)); pd.rotation.x = .5 * (i % 2 ? 1 : -1); g.add(pd); }
-    if (k % 3 === 0) { var ld = ladder(9); ld.rotation.z = Math.PI / 2; ld.position.set(0, .9, 0); ld.scale.setScalar(.6); g.add(ld); }
+  // the assault boats of the crossing: black inflatable boats — a U-shaped tube with a pointed bow, a flat wooden
+  //    transom at the stern, a rope lifeline round the tube; soldiers sit on the side tubes with wooden paddles
+  function boat(n, k) { var g = new T3.Group(), rub = toon(0x2e3236), wood = toon(0x8a6a44);
+    var pts = [[-3.6, -1.3], [-1, -1.36], [1.5, -1.35], [3.3, -1], [4.4, 0], [3.3, 1], [1.5, 1.35], [-1, 1.36], [-3.6, 1.3]].map(function (p) { return new T3.Vector3(p[0], 0, p[1]); });
+    var curve = new T3.CatmullRomCurve3(pts); var tube = inked(new T3.TubeGeometry(curve, 48, .46, 10, false), rub, .04); g.add(tube);
+    [pts[0], pts[8]].forEach(function (p) { var c = new T3.Mesh(new T3.SphereGeometry(.46, 10, 8), rub); c.position.copy(p); g.add(c); });
+    var rope = new T3.Mesh(new T3.TubeGeometry(new T3.CatmullRomCurve3(pts.map(function (p) { return new T3.Vector3(p.x * 1.03, .3, p.z * 1.28); })), 48, .04, 4, false), toon(0x9a9480)); g.add(rope);
+    var tr = inked(new T3.BoxGeometry(.18, .8, 2.7), wood, .05); tr.position.set(-3.65, .05, 0); g.add(tr);
+    var fs = new T3.Shape(); fs.moveTo(-3.6, -1.1); fs.lineTo(1.5, -1.12); fs.lineTo(3.2, -.8); fs.lineTo(4.1, 0); fs.lineTo(3.2, .8); fs.lineTo(1.5, 1.12); fs.lineTo(-3.6, 1.1); fs.closePath();
+    var fl = new T3.Mesh(new T3.ShapeGeometry(fs), toon(0x24272a)); fl.rotation.x = Math.PI / 2; fl.position.y = -.25; g.add(fl);
+    g.men = []; g.paddles = [];
+    for (var i = 0; i < n; i++) { var side = i % 2 ? 1 : -1, x = -2.6 + i * 1.45; var b = bean({ helmet: 0x7a7a50, body: 0xb8a274, k: k * 5 + i }); b.scale.setScalar(.5); b.pose("sit"); b.position.set(x, .45, side * .95); b.rotation.y = Math.PI / 2; g.add(b); g.men.push(b);
+      var pd = new T3.Group(); pd.position.set(x + .3, 1.2, side * 1.5); var sh = new T3.Mesh(new T3.CylinderGeometry(.05, .05, 2.6, 6), wood); sh.position.y = -.9; pd.add(sh); var bl = inked(new T3.BoxGeometry(.06, .7, .3), wood, .08); bl.position.y = -2.2; pd.add(bl); pd.rotation.x = side * .45; pd.side = side; g.add(pd); g.paddles.push(pd); }
+    if (k % 3 === 0) { var ld = ladder(9); ld.rotation.z = Math.PI / 2; ld.position.set(-1, .55, 0); ld.scale.setScalar(.55); g.add(ld); }
     return g; }
   function ladder(h) { var g = new T3.Group(), wd = toon(0x9a7448); [-.6, .6].forEach(function (x) { var r = inked(new T3.BoxGeometry(.18, h, .18), wd, .06); r.position.set(x, h / 2, 0); g.add(r); }); for (var i = 1; i < h; i += 1.2) { var rr = new T3.Mesh(new T3.BoxGeometry(1.2, .12, .12), wd); rr.position.y = i; g.add(rr); } return g; }
   var boats = []; for (var bo = 0; bo < 22; bo++) { var bb = boat(4, bo); W.add(bb); boats.push(bb); }
-  // pump boats: a small wooden boat, a grey pump on a frame, a fire hose and nozzle; the jet is a stream of water drops
-  function pumpBoat(k) { var g = new T3.Group(); var hull = inked(new T3.BoxGeometry(7, 1.6, 3), toon(0x7a5a3a), .04); hull.position.y = .3; g.add(hull);
-    var pump = inked(new T3.BoxGeometry(2.4, 1.8, 1.8), toon(0x9aa0a6), .05); pump.position.set(-1, 2, 0); g.add(pump); var fly = inked(new T3.CylinderGeometry(.7, .7, .4, 14), toon(0xc23a26), .06); fly.rotation.x = Math.PI / 2; fly.position.set(-1, 2, 1.1); g.add(fly); g.fly = fly;
-    var noz = inked(new T3.CylinderGeometry(.18, .3, 2.4, 8), toon(0xc9a860), .06); noz.rotation.z = -1.1; noz.position.set(2.4, 2.4, 0); g.add(noz);
-    for (var i = 0; i < 2; i++) { var b = bean({ helmet: 0x7a7a50, body: 0xb8a274, k: 80 + k * 2 + i }); b.scale.setScalar(.5); b.position.set(1.4 + i * 1.4, 1.1, i ? .9 : -.9); b.rotation.y = Math.PI / 2; g.add(b); }
+  // the water-cannon boats: a flat grey-green metal boat carrying a petrol pump set (engine block on skids, fuel tank,
+  //    spinning flywheel, centrifugal pump volute); a black suction hose over the side into the canal, a canvas delivery
+  //    hose to a brass nozzle held by a soldier at the bow, a second soldier bracing the hose
+  function pumpBoat(k) { var g = new T3.Group(), hullM = toon(0x6e7468), olive = toon(0x5f6040);
+    var hs = new T3.Shape(); hs.moveTo(-3.6, -1.4); hs.lineTo(2.6, -1.4); hs.lineTo(3.9, -.6); hs.lineTo(3.9, .6); hs.lineTo(2.6, 1.4); hs.lineTo(-3.6, 1.4); hs.closePath();
+    var hull = inked(new T3.ExtrudeGeometry(hs, { depth: 1.0, bevelEnabled: false }), hullM, .03); hull.rotation.x = Math.PI / 2; hull.position.y = .7; g.add(hull);
+    var deck = new T3.Mesh(new T3.ShapeGeometry(hs), toon(0x4e5450)); deck.rotation.x = -Math.PI / 2; deck.scale.setScalar(.92); deck.position.y = .45; g.add(deck);
+    [-.5, .5].forEach(function (z) { var sk = new T3.Mesh(new T3.BoxGeometry(2.4, .15, .15), toon(0x3a3a30)); sk.position.set(-1.4, .55, z); g.add(sk); });
+    var eng = inked(new T3.BoxGeometry(1.5, 1.0, 1.1), olive, .05); eng.position.set(-1.8, 1.15, 0); g.add(eng);
+    var tank = inked(new T3.CylinderGeometry(.3, .3, 1.0, 12), toon(0xb8322a), .06); tank.rotation.x = Math.PI / 2; tank.position.set(-1.8, 1.9, 0); g.add(tank);
+    var fly = inked(new T3.CylinderGeometry(.42, .42, .16, 16), toon(0x2a2a2a), .06); fly.rotation.x = Math.PI / 2; fly.position.set(-2.1, 1.2, .62); g.add(fly); g.fly = fly;
+    var spk = new T3.Mesh(new T3.BoxGeometry(.7, .08, .05), toon(0xc9c9c0)); spk.position.z = .1; fly.add(spk);
+    var vol = inked(new T3.CylinderGeometry(.5, .5, .5, 16), toon(0x8a9098), .05); vol.rotation.x = Math.PI / 2; vol.position.set(-.7, 1.05, 0); g.add(vol);
+    var suc = new T3.Mesh(new T3.TubeGeometry(new T3.CatmullRomCurve3([new T3.Vector3(-.7, 1.05, -.3), new T3.Vector3(-.7, 1.3, -1.2), new T3.Vector3(-.6, .9, -1.9), new T3.Vector3(-.4, -1.2, -2.2)]), 16, .14, 8, false), toon(0x1a1a1a)); g.add(suc);
+    var hose = new T3.Mesh(new T3.TubeGeometry(new T3.CatmullRomCurve3([new T3.Vector3(-.4, 1.2, .25), new T3.Vector3(.6, .6, .5), new T3.Vector3(1.8, .6, .2), new T3.Vector3(2.7, 1.4, 0), new T3.Vector3(3.3, 2.1, 0)]), 24, .12, 8, false), toon(0xc8b48a)); g.add(hose);
+    var noz = inked(new T3.CylinderGeometry(.07, .16, .9, 10), toon(0xc9a040), .07); noz.position.set(3.65, 2.32, 0); noz.rotation.z = -1.05; g.add(noz);
+    var a1 = bean({ helmet: 0x7a7a50, body: 0xb8a274, k: 80 + k * 2 }); a1.scale.setScalar(.5); a1.position.set(2.9, .5, -.45); a1.rotation.y = Math.PI / 2; a1.armL.rotation.x = a1.armR.rotation.x = -1.2; a1.armL.elbow.rotation.x = a1.armR.elbow.rotation.x = -.4; g.add(a1);
+    var a2 = bean({ helmet: 0x7a7a50, body: 0xb8a274, k: 81 + k * 2 }); a2.scale.setScalar(.5); a2.position.set(1.6, .5, .55); a2.rotation.y = Math.PI / 2; a2.pose("sit"); a2.position.y = .75; a2.armL.rotation.x = a2.armR.rotation.x = -.8; g.add(a2);
     return g; }
   var pumps = []; for (var pb = 0; pb < 8; pb++) { var pbb = pumpBoat(pb); W.add(pbb); pumps.push(pbb); }
   var DROPS = 120, jets = new T3.InstancedMesh(new T3.SphereGeometry(.5, 6, 5), basic(0xe6f6ff), 8 * DROPS); jets.frustumCulled = false; W.add(jets);
-  var mud = new T3.InstancedMesh(new T3.SphereGeometry(.7, 6, 5), toon(0x8a6a44), 8 * 40); mud.frustumCulled = false; W.add(mud);
+  // mud: for each water cannon a sheet of liquid sand that hugs the rampart face from where the jet hits down into the
+  //    canal (its streaked texture scrolls downhill), a brown plume spreading on the water, and white spray at the impact
+  var mudC = document.createElement("canvas"); mudC.width = 64; mudC.height = 128; var mcx = mudC.getContext("2d"); mcx.fillStyle = "#8a6238"; mcx.fillRect(0, 0, 64, 128);
+  for (var mi = 0; mi < 26; mi++) { mcx.strokeStyle = mi % 2 ? "rgba(70,45,24,.35)" : "rgba(190,150,100,.45)"; mcx.lineWidth = 2 + hash(mi + 2) * 4; mcx.beginPath(); var mx0 = hash(mi) * 64; mcx.moveTo(mx0, 0); for (var my = 0; my <= 128; my += 16) mcx.lineTo(mx0 + Math.sin(my * .08 + mi) * 5, my); mcx.stroke(); }
+  for (var mb = 0; mb < 30; mb++) { mcx.fillStyle = "rgba(230,200,150,.5)"; mcx.beginPath(); mcx.ellipse(hash(mb + 70) * 64, hash(mb + 90) * 128, 1.5, 3, 0, 0, 7); mcx.fill(); }
+  var mudT = new T3.CanvasTexture(mudC); mudT.wrapS = mudT.wrapT = T3.RepeatWrapping; mudT.repeat.set(1, 2);
+  var MUD = []; for (var mq = 0; mq < 8; mq++) { var mg = new T3.PlaneGeometry(1, 1, 4, 14), mm = new T3.Mesh(mg, toon(0xffffff, { map: mudT, side: T3.DoubleSide, transparent: true, opacity: .96 })); mm.frustumCulled = false; mm.visible = false; W.add(mm);
+    var plume = new T3.Mesh(new T3.CircleGeometry(1, 24), basic(0x7a5a3a, { transparent: true, opacity: .55 })); plume.rotation.x = -Math.PI / 2; plume.visible = false; W.add(plume);
+    var mist = new T3.Group(); for (var mz = 0; mz < 6; mz++) { var ms2 = new T3.Mesh(new T3.SphereGeometry(1, 10, 8), basic(0xf2f8fc, { transparent: true, opacity: .55 })); mist.add(ms2); } mist.visible = false; W.add(mist);
+    MUD.push({ m: mm, g: mg, plume: plume, mist: mist }); }
+  function mudFlow(i, z, yImp, k, t) { var M = MUD[i], pos = M.g.attributes.position, xTop = 100, wTop = 4 + k * 5;
+    for (var v = 0; v < pos.count; v++) { var col = v % 5, row = Math.floor(v / 5), u = row / 14, x = lerp(xTop, 84, u), wz = (col / 4 - .5) * wTop * (1 + u * 1.4), y = x < 88.5 ? .08 : groundAt(x, z + wz) + .28;
+      pos.setXYZ(v, x, Math.min(y, lerp(yImp, .08, u) + .4), z + wz + Math.sin(u * 6 + t * 2) * .3); }
+    pos.needsUpdate = true; M.g.computeVertexNormals(); M.m.visible = true; mudT.offset.y = -t * .8;
+    M.plume.visible = true; var pr = 4 + k * 8 + Math.sin(t * 2 + i) * .6; M.plume.position.set(83 - pr * .3, .07, z); M.plume.scale.set(pr * .9, pr, 1);
+    M.mist.visible = true; M.mist.children.forEach(function (c, j) { var ph = ((t * 1.3 + j / 6) % 1); c.position.set(99 - ph * 3, yImp + ph * 2.5, z + (j - 2.5) * .9 * (1 + ph)); c.scale.setScalar(.6 + ph * 1.6); c.material.opacity = .5 * (1 - ph); }); }
+  function hideMud(i) { MUD[i].m.visible = MUD[i].plume.visible = MUD[i].mist.visible = false; }
   var ladders = []; for (var li = 0; li < 8; li++) { var ll = ladder(22); ll.rotation.z = .78; W.add(ll); ladders.push(ll); }
-  // jets of the opening strike: swept-wing fighters, sand camouflage
-  function fighter() { var g = new T3.Group(), cam0 = toon(0xc9b98a); var f = inked(new T3.CylinderGeometry(.6, .9, 14, 10), cam0, .05); f.rotation.x = Math.PI / 2; g.add(f);
-    var n = inked(new T3.ConeGeometry(.6, 3, 10), cam0, .05); n.rotation.x = Math.PI / 2; n.position.z = 8.5; g.add(n);
-    var sh = new T3.Shape(); sh.moveTo(0, 3); sh.lineTo(6.5, -2.5); sh.lineTo(6.5, -3.5); sh.lineTo(0, -2); sh.lineTo(-6.5, -3.5); sh.lineTo(-6.5, -2.5); sh.closePath();
-    var wg = inked(new T3.ExtrudeGeometry(sh, { depth: .25, bevelEnabled: false }), toon(0xb8a874), .05); wg.rotation.x = -Math.PI / 2; wg.position.y = -.2; g.add(wg);
-    var fin = inked(new T3.BoxGeometry(.2, 2.6, 2.4), cam0, .06); fin.position.set(0, 1.4, -5.6); fin.rotation.x = -.4; g.add(fin);
-    var ck = new T3.Mesh(new T3.SphereGeometry(.55, 10, 8), toon(0x6aa0c0)); ck.scale.set(1, .8, 2.2); ck.position.set(0, .55, 4); g.add(ck);
-    var fl = new T3.Mesh(new T3.ConeGeometry(.5, 3, 8), basic(0xffb050)); fl.rotation.x = -Math.PI / 2; fl.position.z = -8.5; g.add(fl); return g; }
-  var fighters = []; for (var fj = 0; fj < 18; fj++) { var fgt = fighter(); W.add(fgt); fighters.push(fgt); }
+  // the opening strike: MiG-21 (clipped delta wing, round nose intake with a shock cone, bubble canopy, dorsal spine,
+  //    big swept fin, drop tank) and Su-7 (sharply swept wing, longer fuselage), Egyptian sand-and-brown camouflage,
+  //    the red-white-black roundel on the wings and the flag stripes on the fin. Nose points +Z.
+  var jcC = document.createElement("canvas"); jcC.width = jcC.height = 128; var jc = jcC.getContext("2d"); jc.fillStyle = "#c8b07a"; jc.fillRect(0, 0, 128, 128);
+  [["#8a6a3e", 14], ["#6a6e44", 10]].forEach(function (p, j) { jc.fillStyle = p[0]; for (var i = 0; i < p[1]; i++) { jc.beginPath(); jc.ellipse(hash(i + j * 40) * 128, hash(i * 3 + j) * 128, 10 + hash(i + 7) * 14, 6 + hash(i + 9) * 8, hash(i) * 3, 0, 7); jc.fill(); } });
+  var jetT = new T3.CanvasTexture(jcC); jetT.wrapS = jetT.wrapT = T3.RepeatWrapping; var jetM = toon(0xffffff, { map: jetT }), metal = toon(0x8a9098), glass = toon(0x6aa0c0);
+  function flat(shape, depth, m, w) { return inked(new T3.ExtrudeGeometry(shape, { depth: depth, bevelEnabled: false }), m, w || .04); }
+  function shp(pts) { var s2 = new T3.Shape(); s2.moveTo(pts[0][0], pts[0][1]); for (var i = 1; i < pts.length; i++) s2.lineTo(pts[i][0], pts[i][1]); s2.closePath(); return s2; }
+  function roundel(r) { var g = new T3.Group(); [[r, 0xc22a2a], [r * .66, 0xffffff], [r * .33, 0x161616]].forEach(function (c, i) { var m = new T3.Mesh(new T3.CircleGeometry(c[0], 20), basic(c[1])); m.position.y = i * .01; m.rotation.x = -Math.PI / 2; g.add(m); }); return g; }
+  function fighter(kind) {
+    var g = new T3.Group(), su = kind === "su7", L = su ? 15 : 12.5;
+    var fus = inked(new T3.CylinderGeometry(.72, .62, L, 14), jetM, .04); fus.rotation.x = Math.PI / 2; g.add(fus);
+    var nose = inked(new T3.CylinderGeometry(.62, .72, 1.6, 14, 1, true), jetM, .05); nose.rotation.x = Math.PI / 2; nose.position.z = L / 2 + .8; g.add(nose);
+    var lip = new T3.Mesh(new T3.TorusGeometry(.6, .07, 6, 18), metal); lip.position.z = L / 2 + 1.6; g.add(lip);
+    var cone = inked(new T3.ConeGeometry(.32, 1.1, 12), metal, .06); cone.rotation.x = Math.PI / 2; cone.position.z = L / 2 + 1.9; g.add(cone);
+    var dark = new T3.Mesh(new T3.CircleGeometry(.55, 16), basic(0x111111)); dark.position.z = L / 2 + 1.55; g.add(dark);
+    var can = inked(new T3.SphereGeometry(.42, 14, 10), glass, .05); can.scale.set(1, .85, 2.3); can.position.set(0, .62, L / 2 - 1.2); g.add(can);
+    var spine = inked(new T3.BoxGeometry(.38, .4, L * .45), jetM, .05); spine.position.set(0, .66, L * .05 - .6); g.add(spine);
+    var wing = su ? shp([[0, 2.2], [4.4, -2.6], [4.4, -3.4], [0, -2.6], [-4.4, -3.4], [-4.4, -2.6]]) : shp([[0, 3.0], [3.7, -2.9], [3.7, -3.6], [0, -4.0], [-3.7, -3.6], [-3.7, -2.9]]);
+    var wg = flat(wing, .14, jetM); wg.rotation.x = Math.PI / 2; wg.position.y = -.12; g.add(wg);
+    var tp = flat(shp([[0, -L / 2 + 1.6], [2.1, -L / 2 - .2], [2.1, -L / 2 - .7], [0, -L / 2 + .2], [-2.1, -L / 2 - .7], [-2.1, -L / 2 - .2]]), .1, jetM); tp.rotation.x = Math.PI / 2; g.add(tp);
+    var fin = flat(shp([[-L / 2 + 3.4, .55], [-L / 2 + .3, 3.4], [-L / 2 - .5, 3.4], [-L / 2 + .2, .55]]), .12, jetM); fin.rotation.y = -Math.PI / 2; fin.position.x = .06; g.add(fin);
+    [[0xc22a2a, 0], [0xffffff, 1], [0x161616, 2]].forEach(function (c) { var st = new T3.Mesh(new T3.PlaneGeometry(.55, .5), basic(c[0], { side: T3.DoubleSide })); st.rotation.y = Math.PI / 2; st.position.set(.14, 2.5 - c[1] * .5, -L / 2 + .2); g.add(st); });
+    [-1, 1].forEach(function (sd) { var r = roundel(.55); r.position.set(sd * (su ? 2.8 : 2.3), .05, su ? -1.6 : -1.7); g.add(r); });
+    var noz = new T3.Mesh(new T3.CylinderGeometry(.55, .6, .8, 14, 1, true), metal); noz.rotation.x = Math.PI / 2; noz.position.z = -L / 2 - .3; g.add(noz);
+    var fl = new T3.Mesh(new T3.ConeGeometry(.45, 2.4, 10), basic(0xffb050, { transparent: true, opacity: .85 })); fl.rotation.x = -Math.PI / 2; fl.position.z = -L / 2 - 1.6; g.add(fl);
+    if (!su) { var dt = inked(new T3.CapsuleGeometry(.32, 2.6, 4, 10), toon(0xb8a070), .05); dt.rotation.x = Math.PI / 2; dt.position.set(0, -.95, -.6); g.add(dt); }
+    return g; }
+  var fighters = []; for (var fj = 0; fj < 18; fj++) { var fgt = fighter(fj % 2 ? "su7" : "mig21"); W.add(fgt); fighters.push(fgt); }
   var runway = new T3.Mesh(new T3.PlaneGeometry(40, 900), toon(0x4a4844)); runway.rotation.x = -Math.PI / 2; runway.position.set(-1600, 3.1, 0); W.add(runway);
   // pontoon bridge + tanks
   var bridge = new T3.Group(); W.add(bridge); for (var bs = 0; bs < 20; bs++) { var sg = inked(new T3.BoxGeometry(9.6, 1.6, 12), toon(0x5a6048), .03); sg.position.set(-91 + bs * 9.8, .5, 300); bridge.add(sg); }
@@ -282,7 +340,7 @@
     fighters.forEach(function (b) { b.visible = false; }); tanks.forEach(function (b) { b.visible = false; }); ships.forEach(function (b) { b.visible = false; }); puffs.forEach(function (b) { b.visible = false; });
     crew.forEach(function (b) { b.visible = false; }); swim.forEach(function (b) { b.visible = false; }); iftar.forEach(function (b) { b.visible = false; });
     guns.forEach(function (g) { g.flash.visible = false; }); bridge.visible = false; cane.visible = false; line.visible = false; baqi.visible = false; lantern.visible = false; lanternL.intensity = 0;
-    hideInst(jets, 0, 8 * DROPS); hideInst(mud, 0, 320);
+    hideInst(jets, 0, 8 * DROPS); for (var hm2 = 0; hm2 < 8; hm2++) hideMud(hm2);
   }
   function setOne(ids, p) { BREACH.forEach(function (b, i) { b.p = ids.indexOf(i) >= 0 ? clamp(p) : 0; }); cutRampart(); }
   function setBreach(p, n) { BREACH.forEach(function (b, i) { b.p = i < (n == null ? 64 : n) ? clamp(p * (1 + hash(i) * .3) - hash(i + 9) * .25) : 0; }); cutRampart(); }
@@ -298,10 +356,10 @@
   function barrage(t, k, onWall) { puffs.forEach(function (pf, i) { var ph = ((t * .8 + hash(i)) % 1); pf.visible = k > 0; var z = -260 + hash(i + 4) * 520 + Math.floor(t * .8 + hash(i)) * 37 % 200; pf.position.set(onWall ? 118 + hash(i + 8) * 20 : 140 + hash(i) * 60, 22 + ph * 18, z); pf.scale.setScalar(.4 + ph * 1.4); pf.fire.visible = ph < .3; pf.children[0].main && (pf.children[0].main.material.opacity = 1 - ph * .6); }); }
   function gunsFire(t) { guns.forEach(function (g, i) { var ph = (t * 1.3 + hash(i) * 3) % 1; g.flash.visible = ph < .12; g.barrel.rotation.x = .5 - (ph < .12 ? .05 : 0); }); }
   function flyFighters(t, k, n, x0, x1, alt) { for (var i = 0; i < 18; i++) { var f = fighters[i]; f.visible = i < n; if (!f.visible) continue; var row = i % 6, col = Math.floor(i / 6); f.position.set(lerp(x0, x1, k) - col * 40 - row * 8, alt + row * 6 + Math.sin(t * 2 + i) * .5, -120 + row * 50 + col * 18); f.rotation.set(0, Math.PI / 2, Math.sin(t + i) * .05); } }
-  function boatsCross(t, k, n, z0) { for (var i = 0; i < boats.length; i++) { var b = boats[i]; b.visible = i < n; if (!b.visible) continue; var lag = hash(i) * .25, kk = clamp((k - lag) / (1 - lag)); b.position.set(lerp(-85, 78, kk), .3 + Math.sin(t * 2 + i) * .15, z0 + (i - n / 2) * 16 + hash(i + 2) * 6); b.rotation.y = Math.sin(t + i) * .05; b.men.forEach(function (m, j) { live(m, t + j); m.pose(kk < 1 ? "paddle" : "sit", t + j * .4); m.position.y = .2 + Math.abs(Math.sin(t * 3 + j)) * .03; }); } }
-  function pumpsWork(t, k, n, base) { for (var i = 0; i < 8; i++) { var pb = pumps[i]; pb.visible = i < n; if (!pb.visible) { hideInst(jets, i * DROPS, (i + 1) * DROPS); hideInst(mud, i * 40, (i + 1) * 40); continue; } var z = BREACH[base + i].z; pb.position.set(60, .2 + Math.sin(t * 1.6 + i) * .15, z); pb.fly.rotation.y = t * 20;
-      if (k > 0) { var bz2 = z; stream(jets, i * DROPS, DROPS, { x: 63.5, y: 3.8, z: z }, { x: 100, y: lerp(14, 4, k), z: bz2 }, 6, t + i * .3, 1.6, 1.4); stream(mud, i * 40, 40, { x: 100, y: lerp(12, 3, k), z: z }, { x: 86, y: -.5, z: z + 2 }, 1.5, t + i, .5, 1.1); }
-      else { hideInst(jets, i * DROPS, (i + 1) * DROPS); hideInst(mud, i * 40, (i + 1) * 40); } } }
+  function boatsCross(t, k, n, z0) { for (var i = 0; i < boats.length; i++) { var b = boats[i]; b.visible = i < n; if (!b.visible) continue; var lag = hash(i) * .25, kk = clamp((k - lag) / (1 - lag)); b.position.set(lerp(-85, 78, kk), .3 + Math.sin(t * 2 + i) * .15, z0 + (i - n / 2) * 16 + hash(i + 2) * 6); b.rotation.y = Math.sin(t + i) * .05; b.men.forEach(function (m, j) { live(m, t + j); m.pose(kk < 1 ? "paddle" : "sit", t + j * .4); m.position.y = .45 + Math.abs(Math.sin(t * 3 + j)) * .03; }); b.paddles.forEach(function (p, j) { var w = Math.sin(t * 3 + b.men[j].ph + j * .4); p.rotation.z = kk < 1 ? w * .6 : .2; p.rotation.x = p.side * (.45 + (kk < 1 ? Math.max(0, w) * .25 : .6)); }); } }
+  function pumpsWork(t, k, n, base) { for (var i = 0; i < 8; i++) { var pb = pumps[i]; pb.visible = i < n; if (!pb.visible) { hideInst(jets, i * DROPS, (i + 1) * DROPS); hideMud(i); continue; } var z = BREACH[base + i].z; pb.position.set(60, .2 + Math.sin(t * 1.6 + i) * .15, z); pb.fly.rotation.z = t * 25;
+      if (k > 0) { var yI = lerp(14, 4, k); stream(jets, i * DROPS, DROPS, { x: 64, y: 3.0, z: z }, { x: 99, y: yI, z: z }, 4, t + i * .3, 1.6, 2.2); mudFlow(i, z, yI, k, t + i); }
+      else { hideInst(jets, i * DROPS, (i + 1) * DROPS); hideMud(i); } } }
 
   // ═════════ shots: one per line ═════════
   var SH = {}; function shot(i, f) { SH[i] = f; }
@@ -446,5 +504,6 @@
     var fd = document.getElementById("fade"); fd.style.opacity = (u < .3 && i > 0) ? (1 - u / .3) * .85 : 0;
     window.__cap && window.__cap(t);
   };
+  window.__look = function (t, what, i, off) { renderAt(t); var o = what === "f" ? fighters[i] : what === "b" ? boats[i] : pumps[i]; o.visible = true; o.updateMatrixWorld(); var p = new T3.Vector3(); o.getWorldPosition(p); cam.position.set(p.x + off[0], p.y + off[1], p.z + off[2]); cam.lookAt(p); cam.fov = 42; cam.updateProjectionMatrix(); R.render(W, cam); };
   window.__parts = { W: W, setBreach: setBreach, pumpsWork: pumpsWork, boatsCross: boatsCross, cam: cam, R: R, setTOD: setTOD, fighters: fighters };
 })();
