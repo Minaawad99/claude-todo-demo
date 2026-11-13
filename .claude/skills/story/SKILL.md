@@ -11,7 +11,7 @@ description: |
 
 # «إيه الحكاية؟» — the «القصة» style
 
-A separate style from `animation`, `sketch` and `law`: use it only when the user names it. Talk to the user in Egyptian
+A separate style from `animation`, `sketch`, `law` and `story-2d` («القصة 2D», the cinematic 2D version): use it only when the user names it. Talk to the user in Egyptian
 Arabic. Work in this order and show the user each stage before the next (the user's rule: "اعمله واعرضه عليا الأول").
 
 ## 1. Script → `videos/<slug>/script.txt`
