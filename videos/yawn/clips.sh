@@ -14,15 +14,19 @@ pp() { py "round((15 + $1 * 330 / 640) * 3)"; }                # panel unit → 
 ps() { py "round($1 * 330 / 640 * 3 / 2) * 2"; }                # panel size → even output px
 # i file start crop w h a b x y
 CL=(); add() { CL+=("$*"); }
-add 1 clips/two-people.mp4 0   720:782:0:330  746 810 0.8 8.8 166 723
+add 1 clips/two-people.mp4 1.0 720:782:0:330  746 810 0.8 8.8 166 723
 add 2 clips/woman-yawn.mp4 3.8 720:1100:0:0   $(ps 330) $(ps 504) $(L 4) $(L 5) $(pp 30) $(pp 110)
 add 3 clips/fetus-4d.mp4   2.0 720:580:0:0    $(ps 240) $(ps 194) $(L 5) $(L 6) $(pp 370) $(pp 40)
 add 4 clips/man-profile.mp4 1.2 720:1000:0:80 $(ps 380) $(ps 528) $(L 12) $(L 13) $(pp 130) $(pp 50)
 add 5 clips/dog-yawn.mp4   18.6 1045:720:60:0 $(ps 560) $(ps 386) $(L 23) $(L 24) $(pp 40) $(pp 300)
 INS=(-i "$IN"); F=""; prev="0:v"
 for c in "${CL[@]}"; do read -r i file ss crop w h a b x y <<<"$c"; INS+=(-i "$file"); d=$(py "$b-$a")
-  F+="[$i:v]trim=start=$ss:duration=$d,setpts=PTS-STARTPTS+$a/TB,crop=$crop,scale=$w:$h,setsar=1[c$i];"
-  F+="[$prev][c$i]overlay=$x:$y:enable='between(t,$a,$b)':eof_action=pass[b$i];"; prev="b$i"; done
+  # a clip shorter than its window from $ss (the hook clip) plays a touch slower to fill it; every clip is enlarged 6 % and
+  # drifts slowly across its window so the picture never stands still; it covers its frame 2 px past each side (no green left at the edges)
+  avail=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$file"); k=$(py "max(1.0, $d / ($avail - $ss - 0.05))")
+  W=$((w + 4)); H=$((h + 4))
+  F+="[$i:v]trim=start=$ss,setpts=(PTS-STARTPTS)*$k+$a/TB,trim=end=$b,crop=$crop,scale=$(( (W * 106 / 100) / 2 * 2 )):$(( (H * 106 / 100) / 2 * 2 )),crop=$W:$H:x='(iw-ow)*(t-$a)/$d':y='(ih-oh)*(0.5+0.5*sin((t-$a)*0.8))',setsar=1[c$i];"
+  F+="[$prev][c$i]overlay=$((x - 2)):$((y - 2)):enable='between(t,$a,$b)':eof_action=pass[b$i];"; prev="b$i"; done
 # the man in profile has the air and the blood drawn over him: put the render's inside of that frame (inset 4 px, green
 # keyed out) back on top of his clip for that line only
 read -r _ _ _ _ w h a b x y <<<"${CL[3]}"
