@@ -291,7 +291,7 @@
     return R(-200, -200, 760, 1040, "#0e0d10", { s: 0 }) + '<circle cx="180" cy="300" r="160" fill="url(#warm)" opacity=".3"/>' + crane(180, 300 + Math.sin(t) * 6, 2.2, "#e8443a", t, { flap: 4 }) + dust(t, 20, "#ffd98a", .5) + label("قولولنا!", 180, 170, u, .3, 30, "#fff");
   });
 
-  window.__parts = { person: person, portrait: portrait, crowd: crowd, dome: dome, tramSide: tramSide, tramFront: tramFront, b29side: b29side, littleBoy: littleBoy, crane: crane, watch: watch, mushroom: mushroom, cityWide: cityWide, lantern: lantern };
+  window.__parts = { person: person, portrait: portrait, crowd: crowd, houses: houses, house: house, mountains: mountains, flames: flames, smoke: smoke, rays: rays, dust: dust, silhouette: silhouette, fireball: fireball, dome: dome, tramSide: tramSide, tramFront: tramFront, b29side: b29side, littleBoy: littleBoy, crane: crane, watch: watch, mushroom: mushroom, cityWide: cityWide, lantern: lantern };
   window.__chip = function (t) { var i = 0; while (i < LN.length - 1 && LN[i + 1].start - .05 <= t) i++; return (i >= 4 && i <= 10) ? .9 : 0; };
   function drawShot(sh, t, next) { var u = t - sh.a, d = Math.max(.6, next - sh.a), c = sh.cam(u, d), cx = c[0] + 5 * Math.sin(t * .9), cy = c[1] + 4 * Math.cos(t * .7), z = c[2] * (1 + .012 * Math.sin(t * .6)); return '<g transform="translate(180 320) rotate(' + f(.5 * Math.sin(t * .5)) + ') scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g>'; }
   window.__panel = function (svg, t) {

@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — Hiroshima</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;800;900&family=Noto+Serif:wght@700&display=swap" rel="stylesheet">
+<style>
+  /* the reel cover, full bleed at 1080×1920 (540×960 at 2x), drawn with the video's own pieces: the cloud rising over the
+     city at 8:15, seen from the tram tracks by a girl driver from behind. Text stays inside the 3:4 crop (y 120–840),
+     away from TikTok's right-hand buttons. */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #000; }
+  #art { position: absolute; inset: 0; width: 540px; height: 960px; }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 12px rgba(0,0,0,.75); }
+</style></head><body>
+<div class="cover">
+  <svg id="art" viewBox="0 0 540 960"></svg>
+  <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
+  <p class="t" style="top:150px;font:900 46px/1.2 'Noto Sans Arabic';color:#fff">هيروشيما</p>
+  <p class="t" style="top:214px;font:800 24px/1.2 'Noto Sans Arabic';color:#f2c230">الساعة تمانية وربع الصبح</p>
+  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff">في <span style="color:#f2c230">ثانية واحدة</span><br><span style="font-size:24px;color:#d9d4c8">مدينة كاملة اختفت</span></p>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="soft2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.5"/></filter>
+  <filter id="blur14" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="14"/></filter>
+  <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4"/></filter>
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .48  0 0 0 0 .45  0 0 0 .1 0"/></filter>
+  <linearGradient id="ray" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff6dc" stop-opacity="0"/><stop offset=".5" stop-color="#fff6dc" stop-opacity=".55"/><stop offset="1" stop-color="#fff6dc" stop-opacity="0"/></linearGradient>
+  <radialGradient id="warm" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffd98a" stop-opacity=".9"/><stop offset="1" stop-color="#ffd98a" stop-opacity="0"/></radialGradient>
+  <radialGradient id="fireball" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffffff"/><stop offset=".35" stop-color="#fff2b0"/><stop offset=".7" stop-color="#ff9a2a"/><stop offset="1" stop-color="#c2361a"/></radialGradient>
+  <linearGradient id="skyC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#07080d"/><stop offset=".28" stop-color="#1c1a26"/><stop offset=".55" stop-color="#5a3428"/><stop offset=".72" stop-color="#c2622c"/><stop offset=".8" stop-color="#e8a050"/><stop offset="1" stop-color="#3a2216"/></linearGradient>
+  <radialGradient id="billow" cx=".4" cy=".35" r=".75"><stop offset="0" stop-color="#e8cfb0"/><stop offset=".5" stop-color="#a98270"/><stop offset=".85" stop-color="#5e4446"/><stop offset="1" stop-color="#3a2a30"/></radialGradient>
+  <radialGradient id="billowHot" cx=".5" cy=".7" r=".7"><stop offset="0" stop-color="#ffe9b0"/><stop offset=".4" stop-color="#ff9a3a"/><stop offset="1" stop-color="#7a2a1a"/></radialGradient>
+  <linearGradient id="stem" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4a3634"/><stop offset=".35" stop-color="#c99a76"/><stop offset=".6" stop-color="#8a6250"/><stop offset="1" stop-color="#3a2a2a"/></linearGradient>
+  <linearGradient id="fadeT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".85"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>
+  <linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".92"/></linearGradient>
+  <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6a4632"/><stop offset="1" stop-color="#1a120e"/></linearGradient>
+</defs></svg>
+<script src="../../videos/hiroshima/timing.js"></script>
+<script src="../../videos/hiroshima/film/scenes.js"></script>
+<script>
+(function () {
+  var P = window.__parts, INK = "#121419";
+  function h(i) { var x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+  function f(n) { return (+n).toFixed(1); }
+  var s = '<rect width="540" height="960" fill="url(#skyC)"/>';
+  // the glow of the fire on the horizon, behind everything
+  s += '<ellipse cx="300" cy="610" rx="420" ry="160" fill="#ff8a3a" opacity=".45" filter="url(#blur14)"/>';
+  // the mushroom cloud, built like the real photographs: a tall rough stem, a skirt ring, a huge boiling cap lit from the fire below
+  var cx = 300, top = 300, base = 612;
+  // a dark smoke pall spreading behind the cap
+  s += '<g filter="url(#blur14)" opacity=".7">'; for (var k = 0; k < 14; k++) s += '<ellipse cx="' + f(cx - 230 + h(k) * 460) + '" cy="' + f(top + 30 + h(k + 3) * 90) + '" rx="' + f(70 + h(k + 7) * 60) + '" ry="' + f(30 + h(k + 8) * 30) + '" fill="#2a1e22"/>'; s += '</g>';
+  // billows: many small rolling puffs, lit warm from the fire below and cool from the sky above
+  function puff(x, y, r, hot) { var id = hot > .6 ? "billowHot" : "billow"; return '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(r) + '" fill="url(#' + id + ')" stroke="' + INK + '" stroke-width=".9" stroke-opacity=".55"/>'; }
+  s += '<path d="M' + (cx - 30) + ' ' + base + ' C' + (cx - 36) + ' 540 ' + (cx - 46) + ' 470 ' + (cx - 34) + ' 410 L' + (cx + 34) + ' 410 C' + (cx + 46) + ' 470 ' + (cx + 40) + ' 540 ' + (cx + 36) + ' ' + base + ' Z" fill="url(#stem)"/>';
+  var pts = [];
+  // the stem: a rough column, narrow at the waist, wider at the ground
+  for (var j = 0; j < 90; j++) { var v = h(j + 300), y = 400 + v * (base - 400), w = 26 + Math.pow(v, 3) * 60 + (1 - v) * 10; pts.push([cx + (h(j + 310) - .5) * 2 * w, y, 9 + h(j + 320) * 12, .2 + v * .3]); }
+  // the skirt ring around the stem
+  for (var q = 0; q < 26; q++) { var aq = q / 26 * Math.PI * 2; pts.push([cx + Math.cos(aq) * 80, 440 + Math.sin(aq) * 12, 11 + h(q + 500) * 6, .3]); }
+  // the cap: an irregular flattened dome with a rolling hot underside
+  for (var i = 0; i < 220; i++) { var a = h(i + 10) * Math.PI, rr = Math.sqrt(h(i + 20)), x = cx + Math.cos(a) * 165 * rr * (1 + .12 * Math.sin(i)), y = top + 150 - Math.sin(a) * 150 * rr - h(i + 30) * 12; pts.push([x, y, 12 + h(i + 40) * 22, rr * Math.max(0, 1 - Math.sin(a) * 1.6) + (y > top + 140 && h(i + 50) > .4 ? .7 : 0)]); }
+  for (var u = 0; u < 24; u++) pts.push([cx - 130 + u * 11 + h(u + 600) * 8, top + 152 + h(u + 610) * 12, 12 + h(u + 620) * 9, h(u + 630) > .45 ? .9 : .3]);
+  pts.sort(function (p1, p2) { return p1[1] - p2[1]; });
+  pts.forEach(function (p) { s += puff(p[0], p[1], p[2], p[3]); });
+  s += '<ellipse cx="' + cx + '" cy="' + (top + 158) + '" rx="150" ry="22" fill="#ffb05a" opacity=".35" filter="url(#soft)"/>';
+  // ground: the base surge, the burning city and the Dome's ruin in silhouette
+  s += '<ellipse cx="' + cx + '" cy="' + (base + 6) + '" rx="300" ry="40" fill="#7a4a36" opacity=".9" filter="url(#soft2)"/>';
+  s += '<rect x="0" y="620" width="540" height="340" fill="url(#ground)"/>';
+  s += '<g transform="scale(1.5)">' + P.dome(250, 420, .62, { ruin: true, night: true }).replace(/#6b6a74/g, "#2a1e1c").replace(/#4a4a55/g, "#1e1614") + P.flames(0, -20, 380, 424, 16, 26, .7) + '</g>';
+  for (var b = 0; b < 30; b++) { var x = b * 19 - 10, hh = 6 + h(b) * 18; s += '<path d="M' + f(x) + ' 640 l4 ' + f(-hh) + ' l6 ' + f(hh * .5) + ' l5 ' + f(-hh * .7) + ' l5 ' + f(hh * 1.2) + ' Z" fill="#160e0c"/>'; }
+  // the tram rails running to the cloud
+  s += '<path d="M120 960 L292 640 M250 960 L304 640 M330 960 L316 640 M460 960 L328 640" stroke="#2a1a14" stroke-width="5"/><path d="M120 960 L292 640 M460 960 L328 640" stroke="#e8a050" stroke-width="1.4" opacity=".55"/>';
+  for (var r = 0; r < 12; r++) { var yy2 = 650 + r * r * 2.4, ww = 30 + r * r * .9; s += '<path d="M' + f(310 - ww) + ' ' + f(yy2) + ' H' + f(310 + ww) + '" stroke="#24160f" stroke-width="' + f(2 + r * .6) + '"/>'; }
+  // the girl tram driver from behind, rim-lit by the fire: cap, bob, white blouse, monpe trousers
+  s += '<g transform="translate(96 960) scale(1.12)">' + P.person(0, 0, 3.4, 0, { back: true, hair: "bob", cap: "#26304a", top: "#e8dcc8", pants: "#2a2c38", monpe: true }) + '</g>';
+  s += '<path d="M121 672 Q137 724 134 790" stroke="#ffb05a" stroke-width="3" fill="none" opacity=".7"/>';
+  // the stopped watch at 8:15, small, bottom right
+  s += '<g transform="translate(430 640) rotate(-8)">' + P.watch(0, 0, 34, 0, { h: 8.25, sec: 0, crack: true, burnt: true }) + '</g>';
+  s += '<circle cx="430" cy="640" r="70" fill="#ffb05a" opacity=".12" filter="url(#soft)"/>';
+  // ash and embers in the air, fades for the text, grain
+  for (var e = 0; e < 70; e++) s += '<circle cx="' + f(h(e) * 540) + '" cy="' + f(260 + h(e + 1) * 600) + '" r="' + f(.8 + h(e + 2) * 2) + '" fill="' + (e % 3 ? "#ffb05a" : "#d9cfc4") + '" opacity="' + f(.3 + h(e + 3) * .6) + '"/>';
+  s += '<rect width="540" height="300" fill="url(#fadeT)"/><rect y="680" width="540" height="280" fill="url(#fadeB)"/><rect width="540" height="960" filter="url(#grain)"/>';
+  document.getElementById("art").innerHTML = s;
+})();
+</script>
+</body></html>
