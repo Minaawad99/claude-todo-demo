@@ -158,7 +158,11 @@ clip still has a synthesized stand-in.
 | px-wind-gust | Wind Gust (Dragon Studio 386158) | 0.25–4.76 s | wind |
 | px-music-box (source) → px-music-soft (used) | **Mysterious Music Box – The Midnight Hour** (the series music) | whole | bed |
 
-**Music.** The user approved this music and its level. `px-music-soft.mp3` in the kit is already made this way:
+**No background music by default (the user's rule, Nov 2026, clouds episode).** Build the mix with sound effects only
+(`cues.js` writes `bed: false` and places no music). After sending the video, ask the user whether they want music added;
+add it only if they say yes. The notes below are for that case.
+
+**Music.** The user approved this music and its level when it is used. `px-music-soft.mp3` in the kit is already made this way:
 - **Soften the ring:**
   `ffmpeg -i px-music-box.mp3 -af "highshelf=f=3000:g=-5,volume='if(lt(t,12),0.6+0.4*t/12,1)':eval=frame" px-music-soft.mp3`
   This takes down the music-box ring, which the user found too much at the start.
@@ -170,8 +174,9 @@ clip still has a synthesized stand-in.
 - the bumper ticks;
 - a flip for every shot change;
 - the summary-card build;
-- the ask box;
-- the music.
+- the ask box.
+
+It places no music (see above).
 
 Add one or two sounds per line matched to what moves (`lab`, `ding`, `scribble`, `paper`, `sea`, `drone`; see
 `videos/tides/cues.js`), then:

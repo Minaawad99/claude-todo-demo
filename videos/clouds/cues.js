@@ -87,7 +87,7 @@ wind(L(22) + 0.2, 4, 0.2, 0.6); lab(22, 1.0); lab(22, 2.1); lab(22, 3.3);
 rec(L(23) + 0.2, 'water-rush', 0.16, 5, D(23) - 0.3, 1.0, 'slosh', 0.15); lab(23, 0.7); ding(L(23) + D(23) * 0.6);
 
 
-const MUSIC = has('music-soft') ? 'music-soft' : null;
-if (MUSIC) rec(0, MUSIC, 0.42, 0, window.TIMING.duration + 2.5, 0.6);
-fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: !MUSIC, cues: c }, null, 1));
+// No background music (the user's rule, Nov 2026): sound effects only, and no synthesized bed either. Ask the user before
+// adding music; if they say yes: rec(0, 'music-soft', 0.42, 0, window.TIMING.duration + 2.5, 0.6);
+fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: c }, null, 1));
 console.log(c.length + ' cues; kit clips here: ' + (['swipe', 'paper', 'pencil-scribble', 'ding', 'clock-ticking', 'space-drone', 'ocean-waves', 'water-rush', 'wind-gust', 'music-soft'].filter(has).join(', ') || 'none'));

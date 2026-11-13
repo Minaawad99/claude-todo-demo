@@ -37,4 +37,5 @@ matches. One word for the ear: line 17 «بتقع» may sound like «بتوقع�
 ## Sounds
 
 All from the shared «اسكتش» kit `videos/_templates/sketch/sfx/` (Pixabay Content License, see its SOURCES.md): the
-series music, paper flips, ding, pencil scribble, clock, wind gust (hook, rising air) and rushing water (rain).
+paper flips, ding, pencil scribble, clock, wind gust (hook, rising air) and rushing water (rain).
+No background music, at the user's request.
