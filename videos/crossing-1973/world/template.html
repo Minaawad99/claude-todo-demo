@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>العبور: الساعة اتنين الضهر — إيه الحكاية؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;800;900&family=Noto+Serif:wght@700&display=swap" rel="stylesheet">
+<style>
+  /* «القصة» 3D: a full-screen WebGL canvas, big clock/number overlays, captions over a bottom fade */
+  html, body { margin: 0; width: 360px; height: 640px; overflow: hidden; background: #000; }
+  #gl { position: absolute; inset: 0; width: 360px; height: 640px; display: block; }
+  .fadeT { position: absolute; left: 0; right: 0; top: 0; height: 120px; background: linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,0)); }
+  .fadeB { position: absolute; left: 0; right: 0; bottom: 0; height: 250px; background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.55) 45%, rgba(0,0,0,.85)); }
+  #fade { position: absolute; inset: 0; background: #000; opacity: 0; }
+  #ovbox { position: absolute; left: 0; right: 0; top: 96px; text-align: center; opacity: 0; }
+  #ov { font: 900 44px/1.15 "Noto Sans Arabic", "Noto Serif", sans-serif; color: #fff; text-shadow: 0 3px 12px rgba(0,0,0,.8), 0 0 2px #000; direction: rtl; }
+  #ovs { font: 800 17px/1.4 "Noto Sans Arabic", sans-serif; color: #f2ead8; text-shadow: 0 2px 8px rgba(0,0,0,.9); margin-top: 4px; }
+  .cap { position: absolute; left: 22px; right: 22px; top: 470px; text-align: center; font: 800 19px/1.6 "Noto Sans Arabic", sans-serif; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,.9), 0 0 2px #000; }
+  .cap span { opacity: .2; } .cap span.on { opacity: 1; } .cap span.k { color: #f2c230; }
+  .brand { position: absolute; left: 0; right: 0; bottom: 62px; text-align: center; font: 700 12px "Noto Sans Arabic", sans-serif; color: #c9c2b4; text-shadow: 0 1px 3px #000; }
+</style></head>
+<body>
+<canvas id="gl" width="1080" height="1920"></canvas>
+<div class="fadeT"></div><div class="fadeB"></div><div id="bino" style="position:absolute;inset:0;opacity:0;background:radial-gradient(circle at 50% 40%, rgba(0,0,0,0) 0 128px, rgba(0,0,0,.95) 132px)"></div><div id="fade"></div>
+<div id="ovbox"><div id="ov"></div><div id="ovs"></div></div>
+<div class="cap" id="cap"></div>
+<div class="brand">إيه الحكاية؟</div>
+<script src="../timing.js"></script>
+<script>/*CAPS*/</script>
+<script>
+  (function () {
+    var LN = TIMING.lines, cap = document.getElementById("cap"), cur = -1;
+    window.__cap = function (t) {
+      var i = 0; while (i < LN.length - 1 && LN[i + 1].start - 0.05 <= t) i++;
+      var c = CAPS[i], l = LN[i];
+      if (i !== cur) { cap.style.fontSize = c.w.join(" ").length > 62 ? "17px" : ""; cap.innerHTML = c.w.map(function (w, k) { return '<span class="' + (c.k[k] ? "k" : "") + '">' + w + '</span>'; }).join(" "); cur = i; }
+      var tot = c.w.join("").length, acc = 0, sp = cap.children;
+      for (var k = 0; k < sp.length; k++) { var at = l.start + (l.end - l.start) * (acc / tot) - 0.05; sp[k].classList.toggle("on", t >= at); acc += c.w[k].length; }
+    };
+  })();
+</script>
+<script src="../../lib/three.min.js"></script>
+<script src="world.js"></script>
+<script>renderAt(1);</script>
+</body></html>
