@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>هيروشيما: الساعة تمانية وربع — إيه الحكاية؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;800;900&family=Noto+Serif:wght@700&display=swap" rel="stylesheet">
+<style>
+  /* full-bleed cinematic look (inspired by the user's illustrated train references): one painted frame fills the screen,
+     cel-shaded drawing with dark outlines and hard light, captions in the lower third over a dark fade */
+  html, body { margin: 0; background: #000; }
+  .canvas { position: relative; width: 360px; height: 640px; background: #000; overflow: hidden; }
+  #scene { position: absolute; inset: 0; width: 360px; height: 640px; display: block; }
+  .fadeB { position: absolute; left: 0; right: 0; bottom: 0; height: 250px; background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,.55) 45%, rgba(0,0,0,.82)); pointer-events: none; }
+  .fadeT { position: absolute; left: 0; right: 0; top: 0; height: 110px; background: linear-gradient(to top, rgba(0,0,0,0), rgba(0,0,0,.5)); pointer-events: none; }
+  .chip { position: absolute; left: 0; right: 0; top: 60px; text-align: center; font: 800 12px "Noto Sans Arabic", sans-serif; color: #e9e2d2; letter-spacing: .3px; opacity: .9; }
+  .chip b { color: #f2c230; font-weight: 800; }
+  .cap { position: absolute; left: 22px; right: 22px; top: 470px; text-align: center; font: 800 19px/1.6 "Noto Sans Arabic", sans-serif; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,.9), 0 0 2px #000; }
+  .cap span { opacity: .2; transition: none; } .cap span.on { opacity: 1; } .cap span.k { color: #f2c230; }
+  .brand { position: absolute; left: 0; right: 0; bottom: 62px; text-align: center; font: 700 12px "Noto Sans Arabic", sans-serif; color: #b9b2a4; }
+</style></head>
+<body>
+<div class="canvas">
+  <svg id="scene" viewBox="0 0 360 640"></svg>
+  <div class="fadeT"></div><div class="fadeB"></div>
+  <div class="chip" id="chip">هيروشيما · <b>6 أغسطس 1945</b></div>
+  <div class="cap" id="cap"></div>
+  <div class="brand">إيه الحكاية؟</div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="soft2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.5"/></filter>
+  <filter id="blurX" x="-30%" y="-10%" width="160%" height="120%"><feGaussianBlur stdDeviation="9 0.6"/></filter>
+  <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4"/></filter>
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .48  0 0 0 0 .45  0 0 0 .09 0"/></filter>
+  <radialGradient id="vig" cx=".5" cy=".45" r=".75"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".6"/></radialGradient>
+  <linearGradient id="skyMorning" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f78b5"/><stop offset=".5" stop-color="#8dbbe0"/><stop offset="1" stop-color="#e9e4d0"/></linearGradient>
+  <linearGradient id="skyHigh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#173a6e"/><stop offset=".6" stop-color="#4f86c0"/><stop offset="1" stop-color="#a9cbe6"/></linearGradient>
+  <linearGradient id="skyAsh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2522"/><stop offset=".6" stop-color="#5a4c42"/><stop offset="1" stop-color="#8a6e58"/></linearGradient>
+  <linearGradient id="skyFire" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1e1412"/><stop offset=".5" stop-color="#7a2c14"/><stop offset="1" stop-color="#e2722a"/></linearGradient>
+  <linearGradient id="skyDusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14203e"/><stop offset=".55" stop-color="#3d4c7a"/><stop offset="1" stop-color="#d98a5e"/></linearGradient>
+  <linearGradient id="skyToday" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a8fd0"/><stop offset=".6" stop-color="#a6d0ee"/><stop offset="1" stop-color="#eef2ea"/></linearGradient>
+  <linearGradient id="river" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5f9cc4"/><stop offset="1" stop-color="#2f5f86"/></linearGradient>
+  <linearGradient id="riverDusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b3b62"/><stop offset="1" stop-color="#0f1730"/></linearGradient>
+  <linearGradient id="ray" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff6dc" stop-opacity="0"/><stop offset=".5" stop-color="#fff6dc" stop-opacity=".55"/><stop offset="1" stop-color="#fff6dc" stop-opacity="0"/></linearGradient>
+  <linearGradient id="silver" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f6f8"/><stop offset=".45" stop-color="#c9d0d7"/><stop offset=".7" stop-color="#8e98a3"/><stop offset="1" stop-color="#5d6772"/></linearGradient>
+  <linearGradient id="olive" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7b7c55"/><stop offset=".45" stop-color="#5a5b3a"/><stop offset="1" stop-color="#2f3020"/></linearGradient>
+  <radialGradient id="fireball" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffffff"/><stop offset=".35" stop-color="#fff2b0"/><stop offset=".7" stop-color="#ff9a2a"/><stop offset="1" stop-color="#c2361a"/></radialGradient>
+  <radialGradient id="warm" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffd98a" stop-opacity=".9"/><stop offset="1" stop-color="#ffd98a" stop-opacity="0"/></radialGradient>
+  <radialGradient id="cloudG" cx=".45" cy=".35" r=".7"><stop offset="0" stop-color="#f3e6d4"/><stop offset=".6" stop-color="#c9a98a"/><stop offset="1" stop-color="#7a5e4c"/></radialGradient>
+</defs></svg>
+<script src="../timing.js"></script>
+<script>/*CAPS*/</script>
+<script src="scenes.js"></script>
+<script>
+  (function () {
+    var LN = TIMING.lines, cap = document.getElementById("cap"), scene = document.getElementById("scene"), cur = -1;
+    window.VIDEO_END = TIMING.duration;
+    window.renderAt = function (t) {
+      window.__panel(scene, t);
+      var i = 0; while (i < LN.length - 1 && LN[i + 1].start - 0.05 <= t) i++;
+      var c = CAPS[i], l = LN[i];
+      if (i !== cur) { cap.style.fontSize = c.w.join(" ").length > 62 ? "17px" : ""; cap.innerHTML = c.w.map(function (w, k) { return '<span class="' + (c.k[k] ? "k" : "") + '">' + w + '</span>'; }).join(" "); cur = i; }
+      var tot = c.w.join("").length, acc = 0, sp = cap.children;
+      for (var k = 0; k < sp.length; k++) { var at = l.start + (l.end - l.start) * (acc / tot) - 0.05; sp[k].classList.toggle("on", t >= at); acc += c.w[k].length; }
+      document.getElementById("chip").style.opacity = window.__chip ? window.__chip(t) : 0.9;
+    };
+    renderAt(1);
+  })();
+</script>
+</body></html>
