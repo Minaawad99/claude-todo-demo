@@ -21,3 +21,8 @@ textbook and micrograph forms, in the hand of the «طب إزاي؟» reference 
 
 ## Sounds
 The «اسكتش» kit, `videos/_templates/sketch/sfx/` (credits in `videos/tides/refs/SOURCES.md`).
+
+## Animation version (`cartoon/`)
+The same shapes as the sketch version, in the cartoon-panel look: bacteria, the virus and the pill drawn as characters,
+a brick wall standing in for the cell wall, the gut seen in cross-section with villi, and Fleming's culture dish.
+The sound is the synthesized effects from `audio/sfx.py`, plus the kit's ding, clock and wind clips and the series music.
