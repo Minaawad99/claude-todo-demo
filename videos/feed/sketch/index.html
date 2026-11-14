@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>التيك توك عارف إنت عايز إيه إزاي؟ — إيه الحكاية؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&family=Noto+Serif:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* «إيه الحكاية؟» — the «الرسم الهندسي» look, measured from 20 reference videos (videos/_reference/tabizzay/STYLE.md).
+     360×640 canvas (render.js SCALE 3 → 1080×1920). Reference sizes are at 720 wide, so here they are halved.
+     Phases, all driven by TIMING: intro card (hook lines) → bumper (promise line) → panel + captions → summary card → ask box. */
+  :root { --paper: #eee5d0; --ink: #2a2016; --mute: #8f8576; --orange: #bd552f; --blue: #4a6f8a; --olive: #5e653a; --tan: #ddd2b8; }
+  html, body { margin: 0; background: var(--paper); }
+  .canvas { position: relative; width: 360px; height: 640px; background: var(--paper); overflow: hidden; font-family: "Noto Sans Arabic", sans-serif; color: var(--ink); }
+  .layer { position: absolute; inset: 0; }
+  /* the main card: one 1px frame 14px in, the panel fills its top, a rule, the caption */
+  #frame { position: absolute; left: 14px; top: 14px; width: 332px; height: 612px; box-sizing: border-box; border: 1.1px solid var(--ink); }
+  .panel { position: absolute; left: 15px; top: 15px; width: 330px; height: 405px; overflow: hidden; }
+  .panel svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #rule { position: absolute; left: 32px; right: 32px; top: 431px; border-top: .6px solid var(--ink); }
+  #wm { position: absolute; left: 0; right: 0; top: 440px; text-align: center; font: 500 8.5px "Noto Sans Arabic"; color: #b3a995; }
+  #cap { position: absolute; left: 30px; right: 30px; top: 458px; text-align: center; font: 700 14px/1.75 "Noto Sans Arabic", sans-serif; }
+  .k-o { color: var(--orange); } .k-b { color: var(--blue); } .k-g { color: var(--olive); } .k-gr { color: var(--mute); }
+  .k-u { text-decoration: underline; text-decoration-thickness: 1.2px; text-underline-offset: 4px; }
+  /* cards (intro + summary): paper, double frame drawn as SVG so it can draw itself in, crop marks outside the corners */
+  .card { position: absolute; inset: 0; background: var(--paper); display: none; }
+  .card .chrome { position: absolute; inset: 0; width: 360px; height: 640px; }
+  .logo { position: absolute; right: 30px; top: 28px; display: flex; align-items: center; gap: 4px; font: 500 8px "Noto Sans Arabic"; color: #6f6556; }
+  .logo svg { width: 11px; height: 11px; }
+  #intro .cat { position: absolute; left: 0; right: 0; top: 100px; text-align: center; font: 600 8px "Noto Sans Arabic"; color: var(--orange); }
+  #intro .r { position: absolute; left: 157px; width: 46px; border-top: .6px solid var(--ink); }
+  #intro .hook { position: absolute; left: 26px; right: 26px; top: 124px; min-height: 80px; text-align: center; font: 800 17px/1.6 "Noto Sans Arabic"; }
+  #intro .hook span { transition: none; }
+  #introArt { position: absolute; left: 28px; top: 236px; width: 304px; height: 330px; }
+  #bumper { position: absolute; inset: 0; display: none; background: var(--paper); }
+  #bumper svg { position: absolute; left: 90px; top: 98px; width: 180px; height: 200px; }
+  #bumper .name { position: absolute; left: 0; right: 0; top: 310px; text-align: center; font: 700 22px "Noto Sans Arabic"; }
+  #bumper .sub { position: absolute; left: 0; right: 0; top: 352px; text-align: center; font: 600 9.5px "Noto Sans Arabic"; }
+  /* summary card */
+  #outro .q { position: absolute; left: 28px; right: 28px; top: 50px; font: 800 12.5px/1.55 "Noto Sans Arabic"; }
+  #outro .art { position: absolute; left: 28px; right: 28px; top: 98px; height: 140px; background: var(--tan); overflow: hidden; }
+  #outro .art svg { width: 100%; height: 100%; display: block; }
+  #outro .leg { position: absolute; left: 28px; right: 28px; top: 246px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font: 600 7.5px "Noto Sans Arabic"; }
+  #outro .leg b { display: inline-grid; place-items: center; width: 10px; height: 10px; border: .8px solid var(--ink); border-radius: 50%; font: 700 6px "Noto Serif"; margin-left: 4px; vertical-align: -2px; }
+  #outro .stat { position: absolute; left: 28px; right: 28px; top: 290px; display: flex; align-items: center; gap: 9px; }
+  #outro .stat .n { font: 800 34px/1 "Noto Serif", serif; color: var(--orange); direction: ltr; white-space: nowrap; }
+  #outro .stat .t { font: 700 8px/1.55 "Noto Sans Arabic"; }
+  #outro .pts { position: absolute; left: 28px; right: 28px; top: 342px; border-top: .6px solid var(--ink); padding-top: 7px; font: 600 7.5px/1.75 "Noto Sans Arabic"; }
+  #outro .more { margin-top: 5px; font: 500 6.8px/1.6 "Noto Sans Arabic"; color: var(--mute); }
+  #outro .ask { position: absolute; left: 34px; right: 34px; top: 448px; height: 120px; border: 1px solid var(--ink); text-align: center; display: none; }
+  #outro .ask::after { content: ""; position: absolute; inset: 3px; border: .5px solid var(--ink); }
+  #outro .ask .l1 { margin-top: 20px; font: 600 9px "Noto Sans Arabic"; }
+  #outro .ask .l2 { margin-top: 6px; font: 700 12px "Noto Sans Arabic"; }
+  #outro .ask .l3 { margin-top: 8px; font: 700 13px "Noto Sans Arabic"; color: var(--orange); }
+  #outro .ask .blank { display: inline-block; width: 64px; border-bottom: 1.2px solid var(--orange); margin: 0 4px; position: relative; height: 14px; vertical-align: -2px; }
+  #outro .ask .caret { position: absolute; left: 4px; bottom: 2px; width: 1.4px; height: 13px; background: var(--ink); }
+</style></head>
+<body>
+<div class="canvas">
+  <div class="layer" id="main">
+    <div class="panel"><svg id="panelA" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg><svg id="panelB" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg></div>
+    <div id="frame"></div><div id="rule"></div><div id="wm"></div><div id="cap"></div>
+  </div>
+  <div class="card" id="intro"><svg class="chrome" id="introChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="cat">تكنولوجيا</div><div class="r" style="top:118px"></div><div class="hook" id="hook"></div><div class="r" id="hookRule" style="top:214px"></div>
+    <svg id="introArt" viewBox="0 0 608 660"></svg></div>
+  <div id="bumper"><svg id="bumperArt" viewBox="0 0 180 200"></svg><div class="name">إيه الحكاية؟</div><div class="sub">هشرحهالك في <span class="k-o">دقيقة.</span></div></div>
+  <div class="card" id="outro"><svg class="chrome" id="outroChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="q">التيك توك والفيسبوك عارفين إنت عايز إيه إزاي؟</div><div class="art"><svg id="outroArt" viewBox="0 0 600 280"></svg></div><div class="leg"><span><b>1</b>الوقت اللي بتقفه</span><span><b>2</b>ناس شبهك</span><span><b>3</b>البيكسل في المواقع</span><span><b>4</b>المايك؟ لأ</span></div><div class="stat"><div class="n">36</div><div class="t">دقيقة بس، وبقى 93% من اللي بيظهر<br>لحساب التجربة فيديوهات حزينة</div></div><div class="pts">1. أهم رقم هو إنت قعدت قد إيه على الفيديو، مش اللايك.<br>2. بيقارنك بناس تصرفاتهم شبهك، وبيجرّب كل فيديو على شوية ناس الأول.<br>3. الإعلانات بتيجي من البيكسل في المواقع، ومكانك وأصحابك، مش من المايك.<div class="more">معلومة زيادة: باحثين جربوا 17,260 تطبيق، وملقوش ولا تطبيق بيبعت صوتك من وراك.</div></div>
+    <div class="ask" id="ask"><div class="l1">قولولنا…</div><div class="l2">عايزين تعرفوا</div><div class="l3">حكاية<span class="blank"><span class="caret" id="caret"></span></span>؟</div></div>
+  </div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="mark"><rect x="84" y="4" width="32" height="10" fill="#2a2016"/><rect x="94" y="14" width="12" height="14" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" fill="#f4ecdb" stroke="#2a2016" stroke-width="9" stroke-linejoin="round"/><text x="106" y="140" text-anchor="middle" style="font:800 120px Noto Sans Arabic;fill:#bd552f">؟</text></g>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".15"/></pattern>
+  <pattern id="hatchW" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#fff" stroke-width="1" opacity=".25"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#e1d5ba" stroke-width="1.3" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .05 0"/></filter>
+</defs></svg>
+<script src="../timing.js"></script>
+<script>window.DATA = {"caps": [[{"f": 0.0, "h": "لو حكيت <span class=\"k-g\">لصاحبك</span> عن حاجة نفسك <span class=\"k-o\">تشتريها…</span>"}], [{"f": 0.0, "h": "وبعد شوية فتحت <span class=\"k-b\">الفيسبوك،</span>"}, {"f": 0.5556, "h": "تلاقي <span class=\"k-o\">إعلانها</span> قدامك."}], [{"f": 0.0, "h": "ولا <span class=\"k-u\">كتبتها،</span>"}, {"f": 0.4444, "h": "ولا دورت <span class=\"k-u\">عليها.</span>"}], [{"f": 0.0, "h": "إيه الحكاية؟"}, {"f": 0.4194, "h": "هشرحهالك في دقيقة."}], [{"f": 0.0, "h": "قبل ما نشرح محتاجين نوضّح <span class=\"k-u\">قاعدة</span> صغيرة…"}, {"f": 0.7647, "h": "خليك فاكرها."}], [{"f": 0.0, "h": "التطبيق مش بيفهم كلام،"}, {"f": 0.377, "h": "بيفهم <span class=\"k-o\">أرقام.</span>"}, {"f": 0.5902, "h": "وكل حركة منك بتتحول <span class=\"k-o\">لرقم.</span>"}], [{"f": 0.0, "h": "طب بيعرف منين إن الفيديو <span class=\"k-u\">عجبك؟</span>"}, {"f": 0.6596, "h": "مش من <span class=\"k-b\">اللايك</span> بس."}], [{"f": 0.0, "h": "أهم <span class=\"k-o\">رقم</span> عنده هو إنت"}, {"f": 0.4545, "h": "<span class=\"k-o\">قعدت</span> قد <span class=\"k-o\">إيه</span> على الفيديو."}], [{"f": 0.0, "h": "لو <span class=\"k-b\">كملته</span> أو <span class=\"k-b\">رجعته</span> تاني يبقى عجبك،"}, {"f": 0.5484, "h": "ولو <span class=\"k-o\">قلّبت</span> بعد <span class=\"k-o\">ثانية</span> يبقى لأ."}], [{"f": 0.0, "h": "زي <span class=\"k-g\">البياع</span> الشاطر،"}, {"f": 0.2143, "h": "بيبص على <span class=\"k-o\">عينك</span> وإنت بتلف في المحل،"}, {"f": 0.619, "h": "ويعرف إنت عايز إيه قبل ما تتكلم."}], [{"f": 0.0, "h": "طب بيجيبلك فيديوهات <span class=\"k-u\">جديدة</span> إزاي؟"}], [{"f": 0.0, "h": "بيدوّر على ناس تصرفاتهم <span class=\"k-o\">شبهك،</span>"}, {"f": 0.5263, "h": "واللي عجبهم <span class=\"k-b\">يوصلك</span> إنت كمان."}], [{"f": 0.0, "h": "وكل فيديو جديد بيتجرب الأول على <span class=\"k-o\">شوية</span> ناس،"}, {"f": 0.56, "h": "لو قعدوا عليه يتوزع على <span class=\"k-o\">ناس</span> <span class=\"k-b\">أكتر.</span>"}], [{"f": 0.0, "h": "وفي تجربة لجريدة وول ستريت جورنال،"}, {"f": 0.4268, "h": "التطبيق فهم اهتمامات الحسابات في أقل من <span class=\"k-o\">ساعتين.</span>"}], [{"f": 0.0, "h": "طب <span class=\"k-u\">والإعلان</span> اللي ظهرلك؟"}], [{"f": 0.0, "h": "وقبل ما أقولك…"}, {"f": 0.2, "h": "لو عايز تعرف تعمل فيديوهات زي دي،"}, {"f": 0.6533, "h": "شوف <span class=\"k-o\">اللينك</span> اللي في <span class=\"k-o\">البايو.</span>"}], [{"f": 0.0, "h": "الفيسبوك عنده كود صغير اسمه <span class=\"k-o\">البيكسل،</span>"}, {"f": 0.5139, "h": "متركّب في حوالي <span class=\"k-o\">⅓</span> المواقع المشهورة."}], [{"f": 0.0, "h": "فلما تتفرج على حاجة في موقع محل،"}, {"f": 0.5893, "h": "الموقع <span class=\"k-o\">بيبلّغ</span> <span class=\"k-b\">الفيسبوك.</span>"}], [{"f": 0.0, "h": "وكمان عارف <span class=\"k-g\">مكانك،</span>"}, {"f": 0.3462, "h": "ومين <span class=\"k-g\">أصحابك،</span>"}, {"f": 0.5962, "h": "وهما بيدوروا على إيه."}], [{"f": 0.0, "h": "وناس كتير فاكرة إن الموبايل"}, {"f": 0.56, "h": "بيسمعهم من <span class=\"k-u\">المايك.</span> <span class=\"k-o\">لأ.</span>"}], [{"f": 0.0, "h": "باحثين جربوا أكتر من <span class=\"k-o\">17,000</span> تطبيق،"}, {"f": 0.493, "h": "وملقوش <span class=\"k-o\">ولا</span> تطبيق بيبعت صوتك من وراك."}], [{"f": 0.0, "h": "هما مش محتاجين يسمعوك،"}, {"f": 0.4182, "h": "<span class=\"k-o\">تصرفاتك</span> بتقول عنك أكتر من <span class=\"k-gr\">كلامك.</span>"}], [{"f": 0.0, "h": "ولو عايز تغيّر اللي بيظهرلك،"}, {"f": 0.3919, "h": "<span class=\"k-o\">قلّب</span> <span class=\"k-o\">بسرعة</span> على اللي مش عايزه،"}, {"f": 0.7973, "h": "أو دوس مش <span class=\"k-b\">مهتم.</span>"}], [{"f": 0.0, "h": "يعني من الآخر:"}, {"f": 0.1685, "h": "كل <span class=\"k-o\">ثانية</span> بتقفها بتتحسب،"}, {"f": 0.4382, "h": "وبيقارنك بناس <span class=\"k-g\">شبهك،</span>"}, {"f": 0.6629, "h": "والمواقع اللي بتزورها <span class=\"k-b\">بتبلّغه.</span>"}], [{"f": 0.0, "h": "والأغرب إن في التجربة دي،"}, {"f": 0.2114, "h": "حساب كان بيقف ثواني زيادة على الفيديوهات <span class=\"k-b\">الحزينة،</span>"}, {"f": 0.6179, "h": "وبعد <span class=\"k-o\">36</span> دقيقة بس،"}, {"f": 0.7642, "h": "<span class=\"k-o\">93%</span> من اللي بيظهرله بقى <span class=\"k-b\">حزين.</span>"}], [{"f": 0.0, "h": "ودي كانت حكاية التيك توك والفيسبوك."}], [{"f": 0.0, "h": "قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟"}]], "hook": [[{"w": "لو", "c": "", "f": 0.0}, {"w": "حكيت", "c": "", "f": 0.0833}, {"w": "لصاحبك", "c": "k-g", "f": 0.2222}, {"w": "عن", "c": "", "f": 0.4167}, {"w": "حاجة", "c": "", "f": 0.5}, {"w": "نفسك", "c": "", "f": 0.6389}, {"w": "تشتريها…", "c": "k-o", "f": 0.7778}], [{"w": "وبعد", "c": "", "f": 0.0}, {"w": "شوية", "c": "", "f": 0.1111}, {"w": "فتحت", "c": "", "f": 0.2222}, {"w": "الفيسبوك،", "c": "k-b", "f": 0.3333}, {"w": "تلاقي", "c": "", "f": 0.5556}, {"w": "إعلانها", "c": "k-o", "f": 0.6889}, {"w": "قدامك.", "c": "", "f": 0.8667}], [{"w": "ولا", "c": "", "f": 0.0}, {"w": "كتبتها،", "c": "k-u", "f": 0.1481}, {"w": "ولا", "c": "", "f": 0.4444}, {"w": "دورت", "c": "", "f": 0.5926}, {"w": "عليها.", "c": "k-u", "f": 0.7778}]], "introLines": 3, "promise": 3, "summary": 25, "cta": 26, "watermark": ""};</script>
+
+<script src="scenes.js"></script>
+<script src="../../_templates/sketch/engine.js"></script>
+</body></html>
