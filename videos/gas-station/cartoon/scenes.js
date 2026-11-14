@@ -479,8 +479,14 @@
   shot(23, function (u, d) { var k = ease(clamp(u / d)); return [lerp(460, 400, k), lerp(150, 172, k), lerp(1.25, 0.84, k)]; }, function (u, d, t) {
     return whole(t, "day") + confetti(t, 20, 780, -60, GY) + tag("مبروك!", 250, 20, u, 0.3, -3, 34, "#bfe8c0");
   });
-  // 24 — outro
-  shot(24, function (u, d) { var k = clamp(u / d); return [lerp(400, 440, k), lerp(172, 160, k), lerp(0.84, 0.95, k)]; }, function (u, d, t) {
+  // 24 — if you want to make videos like this, look at the bio
+  shot(24, function (u, d) { var k = clamp(u / d); return [lerp(400, 380, k), lerp(172, 150, k), lerp(0.84, 0.92, k)]; }, function (u, d, t) {
+    var s = whole(t, "day"), k = pop((u - 0.3) / 1.2), by = 30 + Math.sin(t * 3) * 4;
+    s += '<g transform="translate(250 ' + f(by) + ') scale(' + f(k * 1.5) + ')">' + R(-20, -36, 40, 72, "#2b2e33", 2.4, 7) + R(-16, -30, 32, 56, "#fbfbf7", 1.2, 3) + '<circle cx="0" cy="-16" r="8" fill="#f2c230" stroke="' + INK + '" stroke-width="1.4"/><path d="M-10 0 H10 M-10 7 H6" stroke="#9aa2ac" stroke-width="2.4" stroke-linecap="round"/>' + R(-12, 13, 24, 9, "#2f6f9f", 1.2, 3) + '<circle cx="0" cy="17.5" r="' + f(9 + 5 * Math.abs(Math.sin(t * 5))) + '" fill="none" stroke="#f2c230" stroke-width="2"/></g>';
+    return s + arrow(165, 72, 208, 48, "#f2c230", 5, clamp((u - 1.0) * 2)) + tag("بص على البايو!", 135, 98, u, 0.8, -3, 22, "#ffe08a");
+  });
+  // 25 — outro
+  shot(25, function (u, d) { var k = clamp(u / d); return [lerp(400, 440, k), lerp(172, 160, k), lerp(0.84, 0.95, k)]; }, function (u, d, t) {
     return whole(t, "dusk", true) + tag("قولولنا!", 250, 20, u, 0.4, 3, 32);
   });
 

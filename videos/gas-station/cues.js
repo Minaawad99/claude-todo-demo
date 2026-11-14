@@ -30,6 +30,7 @@ ding(L(20) + 0.5); a(L(20) + 1.0, 'pop', 0.7); a(L(20) + 1.8, 'chime', 0.35);
 for (let k = 0; k < 9; k++) a(L(21) + 0.2 + k * 0.45, 'zap', 0.22 + (k % 3) * 0.05); a(L(21) + 0.7, 'pop', 0.7); a(L(21) + 3.0, 'pop', 0.8); a(L(21) + 3.1, 'spark', 0.35);
 a(L(22) + 0.2, 'servo', 0.25, 1.0); a(L(22) + 1.2, 'thud', 0.6); a(L(22) + 0.9, 'pop', 0.6); a(L(22) + 1.9, 'pop', 0.7); a(L(22) + 2.0, 'clink', 0.35); a(L(22) + 3.0, 'pop', 0.7); a(L(22) + 3.1, 'beep', 0.35);
 a(L(23) + 0.3, 'chime', 0.5); for (let k = 0; k < 6; k++) a(L(23) + 0.4 + k * 0.2, 'pop', 0.35);
-a(L(24) + 0.4, 'pop', 0.7); a(L(24) + 0.5, 'chime', 0.5); a(L(24) + 0.2, 'idle', 0.12, 2.5);
+a(L(24) + 0.3, 'notify', 0.4); a(L(24) + 0.8, 'pop', 0.7); a(L(24) + 1.2, 'ping', 0.3);
+a(L(25) + 0.4, 'pop', 0.7); a(L(25) + 0.5, 'chime', 0.5); a(L(25) + 0.2, 'idle', 0.12, 2.5);
 require('fs').writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: c }, null, 1));
 console.log(c.length + ' cues');
