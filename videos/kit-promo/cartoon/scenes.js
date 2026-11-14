@@ -155,13 +155,15 @@
     }
     return s;
   }
-  // a phone showing one of the channel's real covers
-  function phone(x, y, sc, rot, id, t, k) {
+  // a phone playing a few seconds of one of the channel's real videos (sprite sheets of 108×192 frames at 15 fps, made from the episodes' own builds)
+  var CLIP = { spTbm: [12, 120], spGas: [10, 90], spBridge: [10, 90], spHeli: [10, 90] };
+  function phone(x, y, sc, rot, id, t, k, c) {
     k = k == null ? 1 : k; if (k <= 0) return "";
     var s = '<g transform="translate(' + f(x) + ' ' + f(y + Math.sin(t * 2.1 + x * 0.01) * 4) + ') rotate(' + f(rot + Math.sin(t * 1.3 + x) * 1.6) + ') scale(' + (sc * k).toFixed(3) + ')">';
     s += '<rect x="-62" y="-106" width="124" height="212" rx="16" fill="#000" opacity=".35" transform="translate(5 8)" filter="url(#soft2)"/>';
     s += '<rect x="-60" y="-104" width="120" height="208" rx="15" fill="#0b0b0d" stroke="#4a4d55" stroke-width="2"/>';
-    s += '<use href="#' + id + '" x="-54" y="-96"/>';
+    var cl = CLIP[id], fr = Math.floor(Math.max(0, c == null ? t : c) * 15) % cl[1], col = fr % cl[0], row = Math.floor(fr / cl[0]);
+    s += '<svg x="-54" y="-96" width="108" height="192" viewBox="' + (col * 108) + ' ' + (row * 192) + ' 108 192"><use href="#' + id + '"/></svg>';
     s += '<rect x="-56" y="-98" width="112" height="196" rx="10" fill="none" stroke="#0b0b0d" stroke-width="5"/>';
     // a moving sheen so the screen is never still
     var sh = ((t * 0.35 + x * 0.003) % 1) * 260 - 130;
@@ -241,14 +243,14 @@
   // 0 — the tunnel video on a phone: 1.3M views
   shot(0, function (u, d) { return [320, lerp(170, 185, ease(u / d)), lerp(1.45, 1.0, ease(u / 2.4))]; }, function (u, d, t) {
     var s = stage(t, 320, 180) + hearts(t, 60, 230, 7, 1) + hearts(t, 410, 580, 7, 9);
-    s += phone(320, 172, 1.42, -3, "cvTbm", t) + views(320, 322, 1300000, u, 0.25, 2.3, 1.25, t);
+    s += phone(320, 172, 1.42, -3, "spTbm", t, 1, t - L(0)) + views(320, 322, 1300000, u, 0.25, 2.3, 1.25, t);
     s += tag("1.3 مليون مشاهدة", 505, 92, u, 1.5, 4, 22, YEL) + tag("تيك توك", 128, 120, u, 2.6, -5, 22);
     return s + sparkle(430, 60, 14, t, 0) + sparkle(205, 250, 11, t, 2) + sparkle(560, 240, 12, t, 4);
   });
   // 1 — drawing and explaining in a minute; you can do it too
   shot(1, function (u, d) { return [lerp(300, 340, ease(u / d)), 180, lerp(1.06, 1.0, u / d)]; }, function (u, d, t) {
     var k = ease(u / 0.9), s = stage(t, 430, 190);
-    s += phone(lerp(320, 150, k), lerp(172, 182, k), lerp(1.42, 1.15, k), -5, "cvTbm", t) + views(lerp(320, 150, k), 318, 1300000, 9, 0, 1, 0.95, t);
+    s += phone(lerp(320, 150, k), lerp(172, 182, k), lerp(1.42, 1.15, k), -5, "spTbm", t, 1, t - L(0)) + views(lerp(320, 150, k), 318, 1300000, 9, 0, 1, 0.95, t);
     s += stopwatch(318, 96, 30, t, 6.283 / 3, "60") + tag("رسم وشرح في دقيقة", 470, 44, u, 0.3, -2, 21);
     s += guy(480, 232, t, u < 1.9 ? "curious" : "happy", { s: 0.86, look: u < 1.9 ? -1 : 0, arm: u < 1.9 ? 0.2 : 1, side: 1 });
     return s + tag("وإنت كمان تقدر!", 330, 322, u, 2.0, 3, 22, YEL) + sparkle(585, 120, 12, t, 1);
@@ -283,8 +285,8 @@
     var z = lerp(1.22, 1.0, ease((u - 7.0) / 1.2)); if (u > 7.0) x = lerp(470, 320, ease((u - 7.0) / 1.2));
     return [x, lerp(176, 184, u / d), z];
   }, function (u, d, t) {
-    var s = stage(t, 320, 180) + hearts(t, 20, 620, 12, 21), ids = ["cvGas", "cvBridge", "cvHeli"], n = [520000, 476300, 384400], xs = [130, 320, 510];
-    for (var i = 0; i < 3; i++) s += phone(xs[i], 160, 1.08, (i - 1) * 4, ids[i], t, pop((u - T4[i]) / 0.9)) + views(xs[i], 296, n[i], u, T4[i] + 0.3, 1.6, 0.95, t);
+    var s = stage(t, 320, 180) + hearts(t, 20, 620, 12, 21), ids = ["spGas", "spBridge", "spHeli"], n = [520000, 476300, 384400], xs = [130, 320, 510];
+    for (var i = 0; i < 3; i++) s += phone(xs[i], 160, 1.08, (i - 1) * 4, ids[i], t, pop((u - T4[i]) / 0.9), u - T4[i]) + views(xs[i], 296, n[i], u, T4[i] + 0.3, 1.6, 0.95, t);
     return s + sparkle(225, 60, 12, t, 0) + sparkle(415, 300, 11, t, 2) + sparkle(600, 70, 12, t, 4) + sparkle(40, 290, 10, t, 5);
   });
   // 5 — the hard part: the script and the storyboard take hours
