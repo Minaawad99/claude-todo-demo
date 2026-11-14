@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>الدهون اللي بنخسّها بتروح فين؟ — إيه الحكاية؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&family=Noto+Serif:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* «إيه الحكاية؟» — the «الرسم الهندسي» look, measured from 20 reference videos (videos/_reference/tabizzay/STYLE.md).
+     360×640 canvas (render.js SCALE 3 → 1080×1920). Reference sizes are at 720 wide, so here they are halved.
+     Phases, all driven by TIMING: intro card (hook lines) → bumper (promise line) → panel + captions → summary card → ask box. */
+  :root { --paper: #eee5d0; --ink: #2a2016; --mute: #8f8576; --orange: #bd552f; --blue: #4a6f8a; --olive: #5e653a; --tan: #ddd2b8; }
+  html, body { margin: 0; background: var(--paper); }
+  .canvas { position: relative; width: 360px; height: 640px; background: var(--paper); overflow: hidden; font-family: "Noto Sans Arabic", sans-serif; color: var(--ink); }
+  .layer { position: absolute; inset: 0; }
+  /* the main card: one 1px frame 14px in, the panel fills its top, a rule, the caption */
+  #frame { position: absolute; left: 14px; top: 14px; width: 332px; height: 612px; box-sizing: border-box; border: 1.1px solid var(--ink); }
+  .panel { position: absolute; left: 15px; top: 15px; width: 330px; height: 405px; overflow: hidden; }
+  .panel svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #rule { position: absolute; left: 32px; right: 32px; top: 431px; border-top: .6px solid var(--ink); }
+  #wm { position: absolute; left: 0; right: 0; top: 440px; text-align: center; font: 500 8.5px "Noto Sans Arabic"; color: #b3a995; }
+  #cap { position: absolute; left: 30px; right: 30px; top: 458px; text-align: center; font: 700 14px/1.75 "Noto Sans Arabic", sans-serif; }
+  .k-o { color: var(--orange); } .k-b { color: var(--blue); } .k-g { color: var(--olive); } .k-gr { color: var(--mute); }
+  .k-u { text-decoration: underline; text-decoration-thickness: 1.2px; text-underline-offset: 4px; }
+  /* cards (intro + summary): paper, double frame drawn as SVG so it can draw itself in, crop marks outside the corners */
+  .card { position: absolute; inset: 0; background: var(--paper); display: none; }
+  .card .chrome { position: absolute; inset: 0; width: 360px; height: 640px; }
+  .logo { position: absolute; right: 30px; top: 28px; display: flex; align-items: center; gap: 4px; font: 500 8px "Noto Sans Arabic"; color: #6f6556; }
+  .logo svg { width: 11px; height: 11px; }
+  #intro .cat { position: absolute; left: 0; right: 0; top: 100px; text-align: center; font: 600 8px "Noto Sans Arabic"; color: var(--orange); }
+  #intro .r { position: absolute; left: 157px; width: 46px; border-top: .6px solid var(--ink); }
+  #intro .hook { position: absolute; left: 26px; right: 26px; top: 124px; min-height: 80px; text-align: center; font: 800 17px/1.6 "Noto Sans Arabic"; }
+  #intro .hook span { transition: none; }
+  #introArt { position: absolute; left: 28px; top: 236px; width: 304px; height: 330px; }
+  #bumper { position: absolute; inset: 0; display: none; background: var(--paper); }
+  #bumper svg { position: absolute; left: 90px; top: 98px; width: 180px; height: 200px; }
+  #bumper .name { position: absolute; left: 0; right: 0; top: 310px; text-align: center; font: 700 22px "Noto Sans Arabic"; }
+  #bumper .sub { position: absolute; left: 0; right: 0; top: 352px; text-align: center; font: 600 9.5px "Noto Sans Arabic"; }
+  /* summary card */
+  #outro .q { position: absolute; left: 28px; right: 28px; top: 50px; font: 800 12.5px/1.55 "Noto Sans Arabic"; }
+  #outro .art { position: absolute; left: 28px; right: 28px; top: 98px; height: 140px; background: var(--tan); overflow: hidden; }
+  #outro .art svg { width: 100%; height: 100%; display: block; }
+  #outro .leg { position: absolute; left: 28px; right: 28px; top: 246px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font: 600 7.5px "Noto Sans Arabic"; }
+  #outro .leg b { display: inline-grid; place-items: center; width: 10px; height: 10px; border: .8px solid var(--ink); border-radius: 50%; font: 700 6px "Noto Serif"; margin-left: 4px; vertical-align: -2px; }
+  #outro .stat { position: absolute; left: 28px; right: 28px; top: 290px; display: flex; align-items: center; gap: 9px; }
+  #outro .stat .n { font: 800 34px/1 "Noto Serif", serif; color: var(--orange); direction: ltr; white-space: nowrap; }
+  #outro .stat .t { font: 700 8px/1.55 "Noto Sans Arabic"; }
+  #outro .pts { position: absolute; left: 28px; right: 28px; top: 342px; border-top: .6px solid var(--ink); padding-top: 7px; font: 600 7.5px/1.75 "Noto Sans Arabic"; }
+  #outro .more { margin-top: 5px; font: 500 6.8px/1.6 "Noto Sans Arabic"; color: var(--mute); }
+  #outro .ask { position: absolute; left: 34px; right: 34px; top: 448px; height: 120px; border: 1px solid var(--ink); text-align: center; display: none; }
+  #outro .ask::after { content: ""; position: absolute; inset: 3px; border: .5px solid var(--ink); }
+  #outro .ask .l1 { margin-top: 20px; font: 600 9px "Noto Sans Arabic"; }
+  #outro .ask .l2 { margin-top: 6px; font: 700 12px "Noto Sans Arabic"; }
+  #outro .ask .l3 { margin-top: 8px; font: 700 13px "Noto Sans Arabic"; color: var(--orange); }
+  #outro .ask .blank { display: inline-block; width: 64px; border-bottom: 1.2px solid var(--orange); margin: 0 4px; position: relative; height: 14px; vertical-align: -2px; }
+  #outro .ask .caret { position: absolute; left: 4px; bottom: 2px; width: 1.4px; height: 13px; background: var(--ink); }
+</style></head>
+<body>
+<div class="canvas">
+  <div class="layer" id="main">
+    <div class="panel"><svg id="panelA" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg><svg id="panelB" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg></div>
+    <div id="frame"></div><div id="rule"></div><div id="wm"></div><div id="cap"></div>
+  </div>
+  <div class="card" id="intro"><svg class="chrome" id="introChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="cat">جسم الإنسان</div><div class="r" style="top:118px"></div><div class="hook" id="hook"></div><div class="r" id="hookRule" style="top:214px"></div>
+    <svg id="introArt" viewBox="0 0 608 660"></svg></div>
+  <div id="bumper"><svg id="bumperArt" viewBox="0 0 180 200"></svg><div class="name">إيه الحكاية؟</div><div class="sub">هشرحهالك في <span class="k-o">دقيقة.</span></div></div>
+  <div class="card" id="outro"><svg class="chrome" id="outroChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="q">الدهون اللي بنخسّها بتروح فين؟</div><div class="art"><svg id="outroArt" viewBox="0 0 600 280"></svg></div><div class="leg"><span><b>1</b>خلية الدهون</span><span><b>2</b>السلاسل في الدم</span><span><b>3</b>الميتوكوندريا</span><span><b>4</b>النَفَس</span></div><div class="stat"><div class="n">84%</div><div class="t">من وزن الدهون اللي بتخسها<br>بيطلع ثاني أكسيد كربون مع النَفَس</div></div><div class="pts">1. لما تاكل أقل من اللي بتصرفه، خلية الدهون تفك المخزون وتطلّعه للدم.<br>2. الميتوكوندريا تحرقه بالأكسجين: طاقة، وثاني أكسيد كربون، ومية.<br>3. ثاني أكسيد الكربون يطلع مع النَفَس، والمية في البول والعرق.<div class="more">معلومة زيادة: خلية الدهون ما بتختفيش لما تخس، بتصغر بس.</div></div>
+    <div class="ask" id="ask"><div class="l1">قولولنا…</div><div class="l2">عايزين تعرفوا</div><div class="l3">حكاية<span class="blank"><span class="caret" id="caret"></span></span>؟</div></div>
+  </div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="mark"><rect x="84" y="4" width="32" height="10" fill="#2a2016"/><rect x="94" y="14" width="12" height="14" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" fill="#f4ecdb" stroke="#2a2016" stroke-width="9" stroke-linejoin="round"/><text x="106" y="140" text-anchor="middle" style="font:800 120px Noto Sans Arabic;fill:#bd552f">؟</text></g>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".15"/></pattern>
+  <pattern id="hatchW" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#fff" stroke-width="1" opacity=".25"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#e1d5ba" stroke-width="1.3" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .05 0"/></filter>
+</defs></svg>
+<script src="../timing.js"></script>
+<script>window.DATA = {"caps": [[{"f": 0.0, "h": "لو خسيت <span class=\"k-o\">10</span> كيلو <span class=\"k-o\">دهون…</span>"}], [{"f": 0.0, "h": "الكيلوهات دي <span class=\"k-o\">خرجت</span> من جسمك فعلًا،"}, {"f": 0.7674, "h": "ما <span class=\"k-u\">اختفتش.</span>"}], [{"f": 0.0, "h": "بس عمرك ما <span class=\"k-u\">شفتها</span> وهي خارجة."}], [{"f": 0.0, "h": "إيه الحكاية؟"}, {"f": 0.4194, "h": "هشرحهالك في دقيقة."}], [{"f": 0.0, "h": "الدهون متخزنة في <span class=\"k-g\">خلايا</span> مخصوص،"}, {"f": 0.375, "h": "كل خلية جواها <span class=\"k-o\">نقطة</span> <span class=\"k-o\">زيت</span>"}, {"f": 0.6625, "h": "كبيرة مالية الخلية تقريبًا."}], [{"f": 0.0, "h": "والزيت ده جزيئات،"}, {"f": 0.2769, "h": "كل جزيء <span class=\"k-o\">تلات</span> <span class=\"k-o\">سلاسل</span> طويلة"}, {"f": 0.6615, "h": "متعلّقين في <span class=\"k-g\">راس</span> واحدة."}], [{"f": 0.0, "h": "طب إمتى الجسم يفتح <span class=\"k-g\">المخزن</span> ده؟"}, {"f": 0.5172, "h": "لما تاكل <span class=\"k-o\">أقل</span> من اللي بتصرفه."}], [{"f": 0.0, "h": "ساعتها <span class=\"k-b\">الإنسولين</span> <span class=\"k-b\">يقل</span> <span class=\"k-o\">والأدرينالين</span> <span class=\"k-o\">يزيد،</span>"}, {"f": 0.5128, "h": "ويبعتوا للخلية إشارة:"}, {"f": 0.7949, "h": "طلّعي اللي عندك."}], [{"f": 0.0, "h": "فإنزيمات جوه الخلية <span class=\"k-o\">تفك</span> السلاسل التلاتة من الراس،"}, {"f": 0.7812, "h": "وتطلّعهم <span class=\"k-o\">للدم.</span>"}], [{"f": 0.0, "h": "زي ما تفك ورقة بـ 100 جنيه <span class=\"k-o\">فكّة،</span>"}, {"f": 0.66, "h": "عشان تعرف <span class=\"k-u\">تصرفها.</span>"}], [{"f": 0.0, "h": "والدم يشيل السلاسل دي ويوصّلها <span class=\"k-g\">للعضلات</span> <span class=\"k-g\">والكبد.</span>"}], [{"f": 0.0, "h": "طب بتتحرق فين؟"}, {"f": 0.2381, "h": "جوه <span class=\"k-g\">الميتوكوندريا،</span>"}, {"f": 0.5397, "h": "محطات <span class=\"k-o\">الطاقة</span> اللي في كل خلية."}], [{"f": 0.0, "h": "هناك السلسلة <span class=\"k-o\">تتقطّع</span> حتت صغيرة،"}, {"f": 0.4247, "h": "وكل حتة تتحرق <span class=\"k-b\">بالأكسجين</span> اللي إنت بتتنفّسه."}], [{"f": 0.0, "h": "زي <span class=\"k-g\">الخشب</span> في الفرن،"}, {"f": 0.4222, "h": "يدّيك <span class=\"k-o\">دفا،</span>"}, {"f": 0.6667, "h": "ويفضل منه <span class=\"k-b\">دخان.</span>"}], [{"f": 0.0, "h": "والحرق ده بيطلّع <span class=\"k-o\">طاقة</span> جسمك يشتغل بيها،"}, {"f": 0.4535, "h": "ويفضل منه حاجتين بس:"}, {"f": 0.6977, "h": "ثاني أكسيد <span class=\"k-b\">الكربون</span> <span class=\"k-b\">والمية.</span>"}], [{"f": 0.0, "h": "طب بيخرجوا إزاي؟"}, {"f": 0.2329, "h": "ثاني أكسيد الكربون يرجع مع الدم <span class=\"k-g\">للرئة،</span>"}, {"f": 0.7671, "h": "ويطلع مع <span class=\"k-b\">النَفَس.</span>"}], [{"f": 0.0, "h": "<span class=\"k-b\">والمية</span> تطلع في <span class=\"k-u\">البول</span> <span class=\"k-u\">والعرق</span> والنَفَس."}], [{"f": 0.0, "h": "يعني الـ 10 كيلو دول،"}, {"f": 0.3492, "h": "حوالي <span class=\"k-o\">8.5</span> منهم بيطلعوا من <span class=\"k-b\">بُقّك</span> <span class=\"k-b\">ومناخيرك.</span>"}], [{"f": 0.0, "h": "والـ <span class=\"k-o\">1.5</span> كيلو اللي فاضلين"}, {"f": 0.5306, "h": "بس هم اللي بيطلعوا <span class=\"k-b\">مية.</span>"}], [{"f": 0.0, "h": "وناس كتير فاكرة إن الدهون بتتحوّل <span class=\"k-u\">عضلات،</span>"}, {"f": 0.6508, "h": "أو بتسيح مع <span class=\"k-u\">العرق.</span> <span class=\"k-o\">لأ.</span>"}], [{"f": 0.0, "h": "العضلات <span class=\"k-g\">نسيج</span> تاني خالص،"}, {"f": 0.4615, "h": "والعرق مية <span class=\"k-b\">بتبرّد</span> بيها جسمك."}], [{"f": 0.0, "h": "وكمان خلية الدهون نفسها <span class=\"k-o\">ما</span> <span class=\"k-o\">بتختفيش،</span>"}, {"f": 0.6102, "h": "بتفضى وتصغر زي <span class=\"k-g\">البلونة.</span>"}], [{"f": 0.0, "h": "وعشان كده لو رجعت تاكل زي الأول،"}, {"f": 0.6346, "h": "<span class=\"k-o\">بتتملي</span> تاني <span class=\"k-o\">بسهولة.</span>"}], [{"f": 0.0, "h": "يعني من الآخر:"}, {"f": 0.1685, "h": "الأكل يقل،"}, {"f": 0.2921, "h": "الخلية <span class=\"k-o\">تفك</span> المخزون،"}, {"f": 0.5169, "h": "الميتوكوندريا <span class=\"k-o\">تحرقه،</span>"}, {"f": 0.7528, "h": "وإنت تطلّعه في <span class=\"k-b\">نَفَسك.</span>"}], [{"f": 0.0, "h": "والأغرب إنك عشان تحرق الـ 10 كيلو دول،"}, {"f": 0.5417, "h": "لازم تتنفّس حوالي <span class=\"k-o\">29</span> كيلو <span class=\"k-b\">أكسجين.</span>"}], [{"f": 0.0, "h": "ودي كانت حكاية الدهون اللي بنخسّها."}], [{"f": 0.0, "h": "قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟"}]], "hook": [[{"w": "لو", "c": "", "f": 0.0}, {"w": "خسيت", "c": "", "f": 0.1304}, {"w": "عشرة", "c": "", "f": 0.3478}, {"w": "كيلو", "c": "", "f": 0.5652}, {"w": "دهون…", "c": "k-o", "f": 0.7826}], [{"w": "الكيلوهات", "c": "", "f": 0.0}, {"w": "دي", "c": "", "f": 0.2326}, {"w": "خرجت", "c": "k-o", "f": 0.3023}, {"w": "من", "c": "", "f": 0.4186}, {"w": "جسمك", "c": "", "f": 0.4884}, {"w": "فعلًا،", "c": "", "f": 0.6047}, {"w": "ما", "c": "", "f": 0.7674}, {"w": "اختفتش.", "c": "k-u", "f": 0.8372}], [{"w": "بس", "c": "", "f": 0.0}, {"w": "عمرك", "c": "", "f": 0.1111}, {"w": "ما", "c": "", "f": 0.2963}, {"w": "شفتها", "c": "k-u", "f": 0.4074}, {"w": "وهي", "c": "", "f": 0.6296}, {"w": "خارجة.", "c": "", "f": 0.7778}]], "introLines": 3, "promise": 3, "summary": 25, "cta": 26, "watermark": ""};</script>
+
+<script src="scenes.js"></script>
+<script src="../../_templates/sketch/engine.js"></script>
+</body></html>
