@@ -239,21 +239,31 @@
   var SH = [];
   function shot(line, cam, draw) { SH.push({ a: L(line), cam: cam, draw: draw }); }
   function at(t) { var i = 0; while (i < SH.length - 1 && SH[i + 1].a <= t) i++; return i; }
+  // a round badge for a platform (a plain glyph and the name, not the real logo)
+  function badge(x, y, sc, kind, name, t, k, op) {
+    if (k <= 0) return "";
+    var col = { fb: "#1f6fe0", tt: "#17181c", ig: "#d6336c", yt: "#e02f2f" }[kind], s = '<g transform="translate(' + f(x) + ' ' + f(y + Math.sin(t * 2.4 + x * 0.02) * 4) + ') rotate(' + f(Math.sin(t * 1.6 + x) * 3) + ') scale(' + (sc * k).toFixed(3) + ')" opacity="' + f2(op == null ? 1 : op) + '">';
+    s += '<circle r="46" fill="#000" opacity=".3" cx="4" cy="6"/><circle r="44" fill="' + col + '" stroke="#fbfbf7" stroke-width="4"/>';
+    if (kind === "fb") s += '<text x="4" y="24" font-family="Noto Serif, serif" font-weight="700" font-size="66" fill="#fff" text-anchor="middle" direction="ltr">f</text>';
+    if (kind === "tt") s += '<path d="M6 -24 V12 a12 12 0 1 1 -10 -12 M6 -24 q4 14 18 14" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
+    if (kind === "ig") s += '<rect x="-22" y="-22" width="44" height="44" rx="12" fill="none" stroke="#fff" stroke-width="6"/><circle r="10" fill="none" stroke="#fff" stroke-width="6"/><circle cx="14" cy="-14" r="3.4" fill="#fff"/>';
+    if (kind === "yt") s += '<path d="M-12 -18 L20 0 L-12 18 Z" fill="#fff"/>';
+    return s + txt(0, 74, name, 19, "#fff", { w: 900 }) + '</g>';
+  }
 
-  // 0 — the tunnel video on a phone: 1.3M views
-  shot(0, function (u, d) { return [320, lerp(170, 185, ease(u / d)), lerp(1.45, 1.0, ease(u / 2.4))]; }, function (u, d, t) {
+  // 0 — the tunnel video playing on a phone: 1.3M views
+  shot(0, function (u, d) { return [320, lerp(170, 185, ease(u / d)), lerp(1.45, 1.0, ease(u / 1.6))]; }, function (u, d, t) {
     var s = stage(t, 320, 180) + hearts(t, 60, 230, 7, 1) + hearts(t, 410, 580, 7, 9);
-    s += phone(320, 172, 1.42, -3, "spTbm", t, 1, t - L(0)) + views(320, 322, 1300000, u, 0.25, 2.3, 1.25, t);
-    s += tag("1.3 مليون مشاهدة", 505, 92, u, 1.5, 4, 22, YEL) + tag("تيك توك", 128, 120, u, 2.6, -5, 22);
-    return s + sparkle(430, 60, 14, t, 0) + sparkle(205, 250, 11, t, 2) + sparkle(560, 240, 12, t, 4);
+    s += phone(320, 172, 1.42, -3, "spTbm", t, 1, t - L(0)) + views(320, 322, 1300000, u, 0.2, 1.5, 1.25, t);
+    s += tag("1.3 مليون مشاهدة", 505, 92, u, 1.0, 4, 22, YEL);
+    return s + sparkle(430, 60, 14, t, 0) + sparkle(205, 250, 11, t, 2) + sparkle(560, 240, 12, t, 4) + sparkle(120, 110, 12, t, 5);
   });
-  // 1 — drawing and explaining in a minute; you can do it too
-  shot(1, function (u, d) { return [lerp(300, 340, ease(u / d)), 180, lerp(1.06, 1.0, u / d)]; }, function (u, d, t) {
-    var k = ease(u / 0.9), s = stage(t, 430, 190);
-    s += phone(lerp(320, 150, k), lerp(172, 182, k), lerp(1.42, 1.15, k), -5, "spTbm", t, 1, t - L(0)) + views(lerp(320, 150, k), 318, 1300000, 9, 0, 1, 0.95, t);
-    s += stopwatch(318, 96, 30, t, 6.283 / 3, "60") + tag("رسم وشرح في دقيقة", 470, 44, u, 0.3, -2, 21);
-    s += guy(480, 232, t, u < 1.9 ? "curious" : "happy", { s: 0.86, look: u < 1.9 ? -1 : 0, arm: u < 1.9 ? 0.2 : 1, side: 1 });
-    return s + tag("وإنت كمان تقدر!", 330, 322, u, 2.0, 3, 22, YEL) + sparkle(585, 120, 12, t, 1);
+  // 1 — two more videos around half a million each (the times come from the voice)
+  var T1 = [0, 1.2];
+  shot(1, function (u, d) { return [lerp(250, 320, ease((u - 1.0) / 0.8)), lerp(176, 184, u / d), lerp(1.3, 1.0, ease((u - 1.0) / 0.8))]; }, function (u, d, t) {
+    var s = stage(t, 320, 180) + hearts(t, 20, 620, 12, 21), ids = ["spGas", "spBridge"], n = [520000, 476300], xs = [205, 435];
+    for (var i = 0; i < 2; i++) s += phone(xs[i], 158, 1.12, (i - 0.5) * 7, ids[i], t, pop((u - T1[i]) / 0.9), u - T1[i]) + views(xs[i], 300, n[i], u, T1[i] + 0.2, 0.9, 1.0, t);
+    return s + sparkle(320, 60, 13, t, 0) + sparkle(560, 290, 11, t, 2) + sparkle(70, 80, 12, t, 4) + sparkle(60, 300, 10, t, 5);
   });
   // 2 — the brand line
   shot(2, function (u, d) { return [320, 180, lerp(1.12, 1.0, ease(u / d))]; }, function (u, d, t) {
@@ -262,101 +272,68 @@
     var k = pop(u / 0.9), b = 1 + 0.04 * Math.sin(t * 5);
     s += '<g transform="translate(250 165) rotate(' + f(-4 + Math.sin(t * 2) * 2) + ') scale(' + (k * b).toFixed(3) + ')"><path d="M-170 -70 Q-170 -96 -144 -96 H144 Q170 -96 170 -70 V40 Q170 66 144 66 H-60 L-104 106 L-98 66 H-144 Q-170 66 -170 40 Z" fill="#fbfbf7" stroke="' + INK + '" stroke-width="5"/>' + txt(0, 6, "إيه الحكاية؟", 52, INK, { w: 900 }) + '</g>';
     s += stopwatch(505, 200, 52, t, 6.283 / 2, "30 ث");
-    return s + tag("في نص دقيقة", 500, 300, u, 0.9, 3, 22, YEL);
+    return s + tag("في نص دقيقة", 500, 300, u, 0.8, 3, 22, YEL);
   });
-  // 3 — the channel earns dollars from its views
-  shot(3, function (u, d) { return [lerp(300, 335, u / d), 180, lerp(1.0, 1.08, u / d)]; }, function (u, d, t) {
-    var s = stage(t, 440, 200), i;
-    // the views chart climbing
-    s += '<rect x="56" y="70" width="230" height="230" rx="14" fill="#14161c" stroke="#4a4d55" stroke-width="2.5"/>' + txt(170, 100, "المشاهدات", 17, "#d9d4c8", { w: 800 });
-    for (i = 0; i < 5; i++) { var h = (34 + i * 30) * ease(clamp(u * 1.6 - i * 0.16)) * (1 + 0.05 * Math.sin(t * 5 + i)); s += '<rect x="' + (80 + i * 40) + '" y="' + f(282 - h) + '" width="26" height="' + f(h) + '" rx="5" fill="' + (i === 4 ? YEL : "#5d93ad") + '" stroke="' + INK + '" stroke-width="2"/>'; }
-    s += arrow(86, 240, lerp(86, 262, ease(u / 1.4)), lerp(240, 118, ease(u / 1.4)), "#5bbf6a", 6, 1);
-    // dollars dropping into the jar
-    s += '<path d="M392 196 H500 V300 Q500 318 482 318 H410 Q392 318 392 300 Z" fill="#cfe6f2" opacity=".35" stroke="#fbfbf7" stroke-width="3.5"/><rect x="384" y="182" width="124" height="16" rx="6" fill="#fbfbf7" stroke="' + INK + '" stroke-width="2.6"/>';
-    var fill = 20 + 70 * clamp(u / d);
-    for (i = 0; i < 9; i++) if (i * 10 < fill) s += coin(412 + (i % 3) * 34 + hash(i) * 6, 306 - Math.floor(i / 3) * 22 - hash(i + 4) * 5, 13, 0.3 + i);
-    for (i = 0; i < 6; i++) { var q = ((t * 0.9 + i / 6) % 1); s += coin(446 + Math.sin(i * 2.4) * 34, lerp(20, 200, q * q), 14, t * 6 + i); }
-    return s + tag("دولارات", 545, 110, u, 0.5, 4, 25, YEL) + sparkle(360, 80, 12, t, 0) + sparkle(560, 250, 11, t, 3);
+  // 3 — every platform, and Facebook pays for the views
+  var T3 = [0.1, 1.0, 1.5, 2.0], PAY = 2.75;
+  shot(3, function (u, d) { return [lerp(400, 320, clamp(u / PAY)), lerp(150, 185, ease((u - PAY) / 0.8)), lerp(1.25, 1.12, clamp(u / PAY)) * lerp(1, 0.893, ease((u - PAY) / 0.8))]; }, function (u, d, t) {
+    var s = stage(t, 320, 200) + hearts(t, 20, 620, 10, 60), pk = ease((u - PAY) / 0.6), kinds = ["fb", "tt", "ig", "yt"], names = ["فيسبوك", "تيك توك", "انستجرام", "يوتيوب"], xs = [530, 390, 250, 110], i;
+    for (i = 1; i < 4; i++) s += badge(lerp(xs[i], [0, 520, 120, 600][i], pk), lerp(130, [0, 110, 110, 250][i], pk), lerp(1, 0.62, pk), kinds[i], names[i], t, pop((u - T3[i]) / 0.8), lerp(1, 0.75, pk));
+    if (pk > 0) {
+      // the jar under Facebook filling up
+      s += '<path d="M262 236 H378 V318 Q378 334 362 334 H278 Q262 334 262 318 Z" fill="#cfe6f2" opacity="' + f2(0.35 * pk) + '" stroke="#fbfbf7" stroke-width="3.5" stroke-opacity="' + f2(pk) + '"/>';
+      var fill = clamp((u - PAY) / 1.6);
+      for (i = 0; i < 9; i++) if (i / 9 < fill) s += coin(286 + (i % 3) * 34 + hash(i) * 6, 322 - Math.floor(i / 3) * 21 - hash(i + 4) * 5, 13, 0.3 + i);
+      for (i = 0; i < 6; i++) { var q = ((t * 1.1 + i / 6) % 1); s += coin(320 + Math.sin(i * 2.4) * 30, lerp(150, 250, q * q), 13, t * 6 + i); }
+    }
+    s += badge(lerp(xs[0], 320, pk), lerp(130, 100, pk), lerp(1, 1.3, pk) * (1 + 0.04 * pk * Math.sin(t * 7)), "fb", pk > 0.5 ? "" : names[0], t, pop((u - T3[0]) / 0.8));
+    return s + tag("دولارات على المشاهدات", 150, 240, u, PAY + 0.5, -4, 20, YEL) + sparkle(60, 300, 12, t, 0) + sparkle(585, 330, 11, t, 3) + sparkle(200, 40, 11, t, 5);
   });
-  // 4 — three more videos with their real numbers (the times come from the voice)
-  var T4 = [0, 2.8, 5.06];
-  shot(4, function (u, d) {
-    var x = u < T4[1] ? lerp(140, 160, u / T4[1]) : u < T4[2] ? lerp(160, 320, ease((u - T4[1]) / 0.8)) : lerp(320, 470, ease((u - T4[2]) / 0.8));
-    var z = lerp(1.22, 1.0, ease((u - 7.0) / 1.2)); if (u > 7.0) x = lerp(470, 320, ease((u - 7.0) / 1.2));
-    return [x, lerp(176, 184, u / d), z];
-  }, function (u, d, t) {
-    var s = stage(t, 320, 180) + hearts(t, 20, 620, 12, 21), ids = ["spGas", "spBridge", "spHeli"], n = [520000, 476300, 384400], xs = [130, 320, 510];
-    for (var i = 0; i < 3; i++) s += phone(xs[i], 160, 1.08, (i - 1) * 4, ids[i], t, pop((u - T4[i]) / 0.9), u - T4[i]) + views(xs[i], 296, n[i], u, T4[i] + 0.3, 1.6, 0.95, t);
-    return s + sparkle(225, 60, 12, t, 0) + sparkle(415, 300, 11, t, 2) + sparkle(600, 70, 12, t, 4) + sparkle(40, 290, 10, t, 5);
-  });
-  // 5 — the hard part: the script and the storyboard take hours
-  shot(5, function (u, d) { return [lerp(335, 300, ease(u / d)), lerp(170, 185, u / d), lerp(1.1, 1.0, ease(u / d))]; }, function (u, d, t) {
-    var hk = (u / d * 1.6) % 1, s = '<rect x="-400" y="-300" width="1440" height="960" fill="url(#gWall)"/>';
-    // the window: the day goes by
-    s += '<g><rect x="52" y="36" width="150" height="120" rx="6" fill="url(#sky-' + hours(hk) + ')" stroke="#fbfbf7" stroke-width="6"/>' + (hk > 0.5 && hk < 0.75 ? '<circle cx="160" cy="70" r="14" fill="#f4f1e4"/>' : '<circle cx="' + f(70 + ((hk * 4) % 1) * 110) + '" cy="' + f(86 - Math.sin(((hk * 4) % 1) * Math.PI) * 30) + '" r="13" fill="#ffd98a"/>') + '<path d="M127 36 V156 M52 96 H202" stroke="#fbfbf7" stroke-width="4"/></g>';
-    // wall clock racing
-    var ca = t * 5;
-    s += '<g transform="translate(300 84)"><circle r="40" fill="' + INK + '"/><circle r="35" fill="#fbfbf7"/><path d="M0 0 L' + f(Math.sin(ca) * 27) + ' ' + f(-Math.cos(ca) * 27) + '" stroke="' + INK + '" stroke-width="3.4" stroke-linecap="round"/><path d="M0 0 L' + f(Math.sin(ca / 12) * 18) + ' ' + f(-Math.cos(ca / 12) * 18) + '" stroke="#d8452e" stroke-width="4.4" stroke-linecap="round"/><circle r="3.6" fill="' + INK + '"/></g>';
-    s += sheet(432, 108, 104, 128, "blank", 0, t, "سكريبت", pop((u - 1.5) / 0.9), -4) + sheet(540, 150, 108, 128, "grid", 0, t, "storyboard", pop((u - 2.4) / 0.9), 5);
-    s += guy(300, 236, t, u < 3.4 ? "worry" : "dizzy", { s: 0.8, look: 1 });
-    s += '<rect x="-400" y="296" width="1440" height="200" fill="url(#gDesk)"/><path d="M-400 296 H1040" stroke="' + INK + '" stroke-width="4"/>';
-    for (var i = 0; i < 5; i++) { var q = clamp((u - 0.8 - i * 0.7) / 0.7); if (q > 0) { var bx = lerp(330, 90 + i * 115, ease(q)), by = 300 - Math.sin(q * Math.PI) * 70 + 8 + Math.abs(Math.sin(t * 3 + i)) * -5; s += '<g transform="translate(' + f(bx) + ' ' + f(by) + ') rotate(' + f(t * 40 + i * 50) + ')"><path d="M-12 -4 L-4 -12 L8 -9 L13 2 L5 12 L-8 10 Z" fill="#fbf7ea" stroke="' + INK + '" stroke-width="2"/><path d="M-5 -3 L4 2 M-2 6 L6 -5" stroke="#a9a391" stroke-width="1.4"/></g>'; } }
-    return s + tag("ساعات!", 165, 232, u, 3.4, -5, 26, "#f2a0a0");
-  });
-  // 6 — Claude writes them in minutes
-  shot(6, function (u, d) { return [lerp(300, 330, u / d), 180, lerp(1.14, 1.02, ease(u / d))]; }, function (u, d, t) {
-    var s = stage(t, 300, 170, "#e8742e"), i;
+  // 4 — the hard part is the script and the storyboard; Claude writes them in minutes
+  var W4 = 2.2;
+  shot(4, function (u, d) { return [lerp(272, 292, u / d), 180, lerp(1.12, 1.02, ease(u / d))]; }, function (u, d, t) {
+    var s = stage(t, 300, 170, "#e8742e"), i, w = u - W4;
     s += '<path d="M118 292 H482 L512 322 H88 Z" fill="#8a9098" stroke="' + INK + '" stroke-width="3"/><rect x="128" y="52" width="344" height="240" rx="12" fill="#0b0b0d" stroke="#8a9098" stroke-width="5"/><rect x="140" y="64" width="320" height="216" rx="5" fill="#fbf7ea"/>';
     s += '<rect x="140" y="64" width="320" height="34" fill="#f1e6cf"/><circle cx="438" cy="81" r="9" fill="#e8742e" stroke="' + INK + '" stroke-width="2"/>' + txt(418, 88, "Claude", 19, INK, { w: 900, ltr: true, a: "end" });
-    for (i = 0; i < 9; i++) { var lw = 280 * (0.5 + 0.5 * hash(i + 30)), q = clamp(u * 5.5 - i * 0.55); if (q > 0) s += '<rect x="' + f(448 - lw * q) + '" y="' + (112 + i * 18) + '" width="' + f(lw * q) + '" height="8" rx="3.5" fill="' + (i === 0 || i === 5 ? "#d8452e" : "#6a6f7a") + '"/>'; }
-    var cur = Math.min(8, Math.floor(u * 10)); s += '<rect x="' + f(448 - 280 * (0.5 + 0.5 * hash(cur + 30)) * clamp(u * 5.5 - cur * 0.55) - 6) + '" y="' + (109 + cur * 18) + '" width="3" height="14" fill="#e8742e" opacity="' + (Math.sin(t * 14) > 0 ? 1 : 0.2) + '"/>';
-    s += guy(566, 250, t, "happy", { s: 0.62, look: -1, arm: 1, side: -1 });
-    return s + stopwatch(66, 150, 34, t, 6.283 / 1.2, "") + tag("في دقايق", 70, 230, u, 0.9, -4, 23, YEL) + sparkle(110, 60, 13, t, 0) + sparkle(520, 90, 12, t, 2) + sparkle(540, 330, 10, t, 4);
+    if (w < 0) s += '<rect x="442" y="109" width="3" height="14" fill="' + INK + '" opacity="' + (Math.sin(t * 9) > 0 ? 1 : 0.15) + '"/>' + txt(300, 200, "؟", 70, "#d9cfb4", { w: 900 });
+    else {
+      for (i = 0; i < 9; i++) { var lw = 280 * (0.5 + 0.5 * hash(i + 30)), q = clamp(w * 6 - i * 0.55); if (q > 0) s += '<rect x="' + f(448 - lw * q) + '" y="' + (112 + i * 18) + '" width="' + f(lw * q) + '" height="8" rx="3.5" fill="' + (i === 0 || i === 5 ? "#d8452e" : "#6a6f7a") + '"/>'; }
+      var cur = Math.min(8, Math.floor(w * 11)); s += '<rect x="' + f(448 - 280 * (0.5 + 0.5 * hash(cur + 30)) * clamp(w * 6 - cur * 0.55) - 6) + '" y="' + (109 + cur * 18) + '" width="3" height="14" fill="#e8742e" opacity="' + (Math.sin(t * 14) > 0 ? 1 : 0.2) + '"/>';
+    }
+    s += guy(548, 250, t, w < 0 ? "worry" : "happy", { s: 0.62, look: -1, arm: w < 0 ? undefined : 1, side: -1 });
+    s += tag("سكريبت", 70, 96, u, 0.45, -4, 22, "#f2a0a0") + tag("storyboard", 80, 160, u, 1.15, 3, 19, "#f2a0a0");
+    return s + stopwatch(66, 232, 30, t, w < 0 ? 6.283 / 6 : 6.283 / 1.0, "") + tag("في دقايق", 80, 300, u, W4 + 1.1, -4, 23, YEL) + sparkle(110, 30, 12, t, 0) + sparkle(520, 90, 12, t, 2) + sparkle(540, 330, 10, t, 4);
   });
-  // 7 — the kit: four things come out of the box
-  var T7 = [2.2, 3.0, 3.75, 4.5];
-  shot(7, function (u, d) { return [320, lerp(215, 172, ease(u / 2.4)), lerp(1.3, 1.0, ease(u / 2.6))]; }, function (u, d, t) {
-    var s = stage(t, 320, 230), open = ease(u / 1.6), wig = Math.sin(t * 9) * (u < 1.4 ? 3 : 0.8);
+  // 5 — the kit: four things come out of the box
+  var T5 = [1.35, 2.2, 3.1, 3.9];
+  shot(5, function (u, d) { return [320, lerp(215, 172, ease(u / 1.5)), lerp(1.3, 1.0, ease(u / 1.6))]; }, function (u, d, t) {
+    var s = stage(t, 320, 230), open = ease(u / 1.0), wig = Math.sin(t * 9) * (u < 1.0 ? 3 : 0.8);
     var items = [["SKILL", "مهارة|جاهزة", "#d8452e"], ["PDF", "دليل|عربي", "#3f6f8f"], ["MP4", "فيديو|شرح", "#3f8f7a"], ["PROMPTS", "برومبتات", "#8a5fb0"]], xs = [545, 395, 245, 95];
-    // light out of the open box
     s += '<path d="M250 262 L' + f(250 - 150 * open) + ' -40 H' + f(390 + 150 * open) + ' L390 262 Z" fill="#ffe9a0" opacity="' + f2(0.16 * open + 0.03 * Math.sin(t * 6)) + '"/>';
-    for (var i = 0; i < 4; i++) { var q = ease((u - T7[i]) / 0.7); if (u > T7[i]) s += kitCard(lerp(320, xs[i], q), lerp(250, 112, q), items[i][0], items[i][1], items[i][2], lerp(0.3, 1, q), t, (i - 1.5) * -3); }
+    for (var i = 0; i < 4; i++) { var q = ease((u - T5[i]) / 0.6); if (u > T5[i]) s += kitCard(lerp(320, xs[i], q), lerp(250, 112, q), items[i][0], items[i][1], items[i][2], lerp(0.3, 1, q), t, (i - 1.5) * -3); }
     s += '<g transform="translate(320 300) rotate(' + f(wig) + ')"><path d="M-78 -40 H78 V44 H-78 Z" fill="url(#gBox)" stroke="' + INK + '" stroke-width="3.4"/><path d="M-78 -40 L' + f(-78 - 46 * open) + ' ' + f(-40 - 30 * open) + ' L' + f(-8 - 40 * open) + ' ' + f(-40 - 30 * open) + ' L0 -40 Z" fill="#c4935a" stroke="' + INK + '" stroke-width="3"/><path d="M78 -40 L' + f(78 + 46 * open) + ' ' + f(-40 - 30 * open) + ' L' + f(8 + 40 * open) + ' ' + f(-40 - 30 * open) + ' L0 -40 Z" fill="#c4935a" stroke="' + INK + '" stroke-width="3"/><rect x="-40" y="-8" width="80" height="34" rx="6" fill="#fbf7ea" stroke="' + INK + '" stroke-width="2.4"/>' + txt(0, 17, "الحزمة", 19, INK, { w: 900 }) + '</g>';
-    if (u < T7[0] + 0.3) s += tag("الطريقة كلها في حزمة", 320, 150, u, 0.5, -2, 23, YEL);
+    if (u < T5[0] + 0.2) s += tag("الطريقة كلها في حزمة", 320, 150, u, 0.3, -2, 23, YEL);
     return s + sparkle(190, 250, 13, t, 0) + sparkle(455, 240, 12, t, 2) + sparkle(320, 30, 12, t, 4);
   });
-  // 8 — type the topic, get the script, the scenes and the titles
-  var T8 = [1.9, 2.6, 3.2];
-  shot(8, function (u, d) { return [320, lerp(120, 180, ease((u - 1.2) / 1.2)), lerp(1.4, 1.0, ease((u - 1.2) / 1.2))]; }, function (u, d, t) {
-    var s = stage(t, 320, 210), topic = "ليه السما زرقا؟", n = Math.min(topic.length, Math.floor(u * 11)), sent = u > 1.5, i;
+  // 6 — type the topic, get the script, the scenes and the titles; the drawing and editing are yours
+  var T6 = [0.7, 1.5, 2.0], YOU = 2.7;
+  shot(6, function (u, d) { return [lerp(320, 345, ease((u - YOU) / 0.7)), lerp(120, 180, ease((u - 0.35) / 0.7)), lerp(1.4, 1.0, ease((u - 0.35) / 0.7))]; }, function (u, d, t) {
+    var s = stage(t, 320, 210), topic = "ليه السما زرقا؟", n = Math.min(topic.length, Math.floor(u * 30)), sent = u > 0.55, i;
     s += '<rect x="116" y="38" width="408" height="52" rx="26" fill="#fbf7ea" stroke="' + INK + '" stroke-width="3.4"/>' + txt(470, 72, topic.slice(0, n), 23, INK, { w: 800, a: "start" });
     s += '<g transform="translate(150 64) scale(' + (sent ? 1 + 0.12 * Math.sin(t * 8) : 1).toFixed(3) + ')"><circle r="19" fill="' + (sent ? "#e8742e" : "#c9c2ad") + '" stroke="' + INK + '" stroke-width="2.6"/><path d="M0 9 V-8 M-7 -1 L0 -9 L7 -1" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>';
-    var xs = [500, 320, 140], kinds = ["lines", "grid", "titles"], names = ["السكريبت", "المشاهد", "العناوين"];
+    var xs = [450, 300, 150], kinds = ["lines", "grid", "titles"], names = ["السكريبت", "المشاهد", "العناوين"];
     for (i = 0; i < 3; i++) {
       if (sent) for (var q = 0; q < 5; q++) { var w = ((t * 1.4 + q / 5) % 1); s += '<circle cx="' + f(lerp(320, xs[i], w)) + '" cy="' + f(lerp(92, 150, w)) + '" r="3.4" fill="' + YEL + '" opacity="' + f2(Math.sin(w * Math.PI)) + '"/>'; }
-      s += sheet(xs[i], 232, 138, 150, kinds[i], clamp((u - T8[i] - 0.2) / 1.0), t, names[i], pop((u - T8[i]) / 0.9), (1 - i) * 3);
+      s += sheet(xs[i], 232, 128, 150, kinds[i], clamp((u - T6[i] - 0.15) / 0.8), t, names[i], pop((u - T6[i]) / 0.8), (1 - i) * 3);
     }
-    return s + sparkle(60, 120, 12, t, 0) + sparkle(585, 110, 12, t, 3);
+    var gk = ease((u - YOU) / 0.6);
+    if (gk > 0) s += guy(lerp(760, 590, gk), 250, t, "happy", { s: 0.6, look: -1, arm: 0.6, side: -1, pen: true }) + tag("وإنت ترسم وتركّب", 510, 322, u, YOU + 0.2, 3, 19, YEL);
+    return s + sparkle(60, 120, 12, t, 0) + sparkle(585, 60, 12, t, 3);
   });
-  // 9 — drawing and editing are yours, with any tool
-  shot(9, function (u, d) { return [lerp(305, 335, u / d), 180, lerp(1.06, 1.0, u / d)]; }, function (u, d, t) {
-    var s = stage(t, 220, 170), p = clamp(u / 1.6), dl = 420;
-    s += '<rect x="56" y="40" width="300" height="190" rx="10" fill="#fbf7ea" stroke="' + INK + '" stroke-width="3.4"/>';
-    s += '<path d="M90 190 H322 M130 190 V120 L176 84 L222 120 V190 M162 190 V150 H190 V190" stroke="' + INK + '" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="' + dl + '" stroke-dashoffset="' + f(dl * (1 - p)) + '"/>';
-    s += '<circle cx="286" cy="88" r="' + f(20 * p) + '" fill="' + YEL + '" stroke="' + INK + '" stroke-width="3"/>';
-    // the editing timeline
-    s += '<rect x="56" y="250" width="300" height="74" rx="8" fill="#14161c" stroke="#4a4d55" stroke-width="2.5"/>';
-    for (var i = 0; i < 4; i++) s += '<rect x="' + (66 + i * 71) + '" y="262" width="64" height="24" rx="4" fill="' + ["#5d93ad", "#3f8f7a", "#d8452e", "#8a5fb0"][i] + '"/>';
-    s += '<path d="M66 304 ' + Array.apply(null, Array(36)).map(function (_, k) { return "L" + (66 + k * 8) + " " + f(304 + Math.sin(k * 1.3 + t * 6) * 7 * hash(k)); }).join(" ").replace("L", "L") + '" stroke="#5bbf6a" stroke-width="2.4" fill="none"/>';
-    var ph = 66 + ((t * 70) % 280); s += '<path d="M' + f(ph) + ' 254 V320" stroke="' + YEL + '" stroke-width="3"/><path d="M' + f(ph - 6) + ' 252 h12 l-6 9 Z" fill="' + YEL + '"/>';
-    s += guy(490, 236, t, "happy", { s: 0.84, look: -1, arm: 0.5, side: -1, pen: true });
-    return s + tag("الرسم والمونتاج عليك", 478, 52, u, 0.3, 3, 20) + sparkle(600, 130, 12, t, 1) + sparkle(390, 110, 11, t, 3);
-  });
-  // 10 — the price and the link in the bio
-  shot(10, function (u, d) { return [lerp(300, 330, clamp(u / 5)), 180, lerp(1.1, 1.0, ease(u / 2))]; }, function (u, d, t) {
+  // 7 — the price and the link in the bio
+  shot(7, function (u, d) { return [lerp(300, 330, clamp(u / 5)), 180, lerp(1.1, 1.0, ease(u / 2))]; }, function (u, d, t) {
     var s = stage(t, 200, 170) + hearts(t, 30, 330, 6, 40), sw = Math.sin(t * 2.4) * 6, k = pop(u / 0.9), b = 1 + 0.05 * Math.sin(t * 6);
     s += '<g transform="translate(200 60) rotate(' + f(sw) + ') scale(' + k.toFixed(3) + ')"><path d="M0 0 V44" stroke="#d9d4c8" stroke-width="3"/><path d="M-124 60 L-96 34 H124 V150 H-96 L-124 124 Z" fill="' + YEL + '" stroke="' + INK + '" stroke-width="4"/><circle cx="-98" cy="92" r="7" fill="#1c1d26" stroke="' + INK + '" stroke-width="2.4"/>' + '<text x="20" y="112" ' + FONT + ' font-weight="900" font-size="58" fill="' + INK + '" text-anchor="middle" direction="ltr" transform="scale(' + b.toFixed(3) + ')">$14.99</text></g>';
-    // the profile with the link highlighted
     var px = 480, hl = 0.5 + 0.5 * Math.sin(t * 7);
     s += '<g transform="translate(' + px + ' ' + f(180 + Math.sin(t * 2) * 4) + ') rotate(' + f(3 + Math.sin(t * 1.3) * 1.5) + ')"><rect x="-84" y="-146" width="176" height="300" rx="20" fill="#000" opacity=".35"/><rect x="-88" y="-150" width="176" height="300" rx="20" fill="#0b0b0d" stroke="#4a4d55" stroke-width="2.5"/><rect x="-78" y="-138" width="156" height="276" rx="11" fill="#fbf7ea"/>';
     s += '<circle cx="0" cy="-92" r="27" fill="#f3e7d0" stroke="' + INK + '" stroke-width="2.6"/>' + txt(0, -84, "؟", 30, "#d8452e", { w: 900 }) + txt(0, -46, "إيه الحكاية؟", 17, INK, { w: 900 });
@@ -365,8 +342,8 @@
     for (var i = 0; i < 6; i++) s += '<rect x="' + (-72 + (i % 3) * 50) + '" y="' + (58 + Math.floor(i / 3) * 40) + '" width="44" height="34" rx="4" fill="' + ["#5d93ad", "#d9a86a", "#3f8f7a", "#d8452e", "#8a5fb0", "#6a6f7a"][i] + '"/>';
     s += '</g>';
     var ay = Math.abs(Math.sin(t * 5)) * 14;
-    if (u > 1.4) s += arrow(330 - ay, 252 + ay * 0.3, 392 - ay, 214 + ay * 0.3, "#d8452e", 9, 1);
-    return s + tag("اللينك في البايو", 208, 300, u, 1.5, -3, 24) + sparkle(60, 60, 13, t, 0) + sparkle(360, 60, 12, t, 2) + sparkle(600, 330, 11, t, 4);
+    if (u > 2.2) s += arrow(330 - ay, 252 + ay * 0.3, 392 - ay, 214 + ay * 0.3, "#d8452e", 9, 1);
+    return s + tag("اللينك في البايو", 208, 300, u, 2.3, -3, 24) + sparkle(60, 60, 13, t, 0) + sparkle(360, 60, 12, t, 2) + sparkle(600, 330, 11, t, 4);
   });
 
   window.__parts = { stage: stage, phone: phone, views: views, guy: guy, kitCard: kitCard, sheet: sheet, tag: tag, coin: coin, sparkle: sparkle };
