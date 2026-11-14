@@ -19,3 +19,9 @@ Facts:
 - Mobile phones: the Petroleum Equipment Institute has not documented a single fire caused by a phone, and has counted more
   than 150 refuelling fires attributed to static electricity (IEEE Spectrum "Cellphones pose no gas station hazard"; Snopes; TechXplore 2022).
 - Emergency stop cuts power to all dispensers (NFPA 30A 6.7).
+
+Reference photos: Wikimedia Commons answered "too many requests" during this build, so the drawings follow the known real
+shapes (buried capsule tank with fill port and vent riser, red-topped dispenser with display and holstered nozzle, flat
+red-and-white canopy on columns, road tanker) rather than specific photos.
+
+Sound: synthesized effects (audio/sfx.py) plus two Pixabay clips from the sketch kit (water rush for the rain, ding).
