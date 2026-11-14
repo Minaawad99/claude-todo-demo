@@ -10,7 +10,9 @@
   measured rules (narration, layout, colours, fonts, motion, sound). They are references to look at: draw in the
   same hand, with real shapes from reference photos, and never copy a drawing or a script.
 - Other styles only when named: `animation` (cartoon panel), `law` («لو»), the old `diagram-v1` build for the X-ray video.
-- **Every script, in every style, carries the bio line** just before the closing question (the user's rule):
-  «ولو عايز تعمل فيديوهات زي كده، بص على البايو.» It gets its own shot (a phone showing the profile, tag «بص على البايو!»).
+- **Every script, in every style, carries the bio line** «ولو عايز تعمل فيديوهات زي كده، بص على البايو.» (the user's rule).
+  It goes in the middle of the video, right after the strongest reveal or hook pay-off (the moment viewers were waiting
+  for), never at the end, because many viewers leave before the end. It gets its own shot (a phone showing the profile,
+  tag «بص على البايو!») on the build as it stands at that point.
 - Never send the TTS a short excerpt (`--lines` with one to three lines): the model then invents a long speech. To add or
   change a line, generate the whole script again and check the take with `align_asr.py`.

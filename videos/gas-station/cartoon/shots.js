@@ -272,85 +272,86 @@
     if (!on) s += star(187, 79, 30 * (1 - clamp((u - 1.7) / 0.7)) + 0.01, t, "#ffe46a") + '<circle cx="359" cy="231" r="' + f(9 + 4 * Math.sin(t * 8)) + '" fill="none" stroke="#f2c230" stroke-width="3"/>';
     return s + tag("تك!", 300, 52, u, 1.7, -5, 26, "#ffe08a") + tag("يفصل لوحده", 500, 150, u, 2.3, 3, 24, "#bfe8c0") + check(590, 100, 0.6, (u - 2.8) / 1.2);
   });
-  // 14 — but someone can drive off with the nozzle still in the tank
-  shot(14, function (u, d) { var k = clamp(u / d); return [lerp(560, 625, k), lerp(118, 118, k), lerp(1.5, 1.3, k)]; }, function (u, d, t) {
+  // 15 — but someone can drive off with the nozzle still in the tank
+  shot(15, function (u, d) { var k = clamp(u / d); return [lerp(560, 625, k), lerp(118, 118, k), lerp(1.5, 1.3, k)]; }, function (u, d, t) {
     var cx = 600 + 105 * ease(clamp((u - 0.4) / 1.8)) + Math.sin(t * 24) * (u > 2.2 ? 1.5 : 0), nz = fill(cx);
     var s = scene(t) + station(t, parts(4, { nz: nz, sag: Math.max(0, 26 - (cx - 600) * 0.5), tilt: clamp((cx - 660) / 45) * 6 })) + car(cx, t, "#c23a26") + nozzle(nz[0], nz[1], nz[2]);
     return s + man(455, t, "shock", "#e8742e") + tag("استنى!", 470, 52, u, 0.9, -4, 24, "#f2a0a0");
   });
-  // 15 — so the hose has a coupling that comes apart and seals itself: not a drop comes out
-  shot(15, function (u, d) { var k = clamp(u / d); return [lerp(585, 610, k), lerp(112, 116, k), lerp(1.7, 2.1, k)]; }, function (u, d, t) {
+  // 16 — so the hose has a coupling that comes apart and seals itself: not a drop comes out
+  shot(16, function (u, d) { var k = clamp(u / d); return [lerp(585, 610, k), lerp(112, 116, k), lerp(1.7, 2.1, k)]; }, function (u, d, t) {
     var cx = 705 + u * 9, nz = fill(cx), sw = Math.sin(t * 3) * 6 * Math.exp(-u * 0.5), a = [DX + 22, GY - 68], e1 = [556 + sw, GY - 12], e2 = [nz[0] - 34, GY - 16 + Math.sin(t * 5) * 2];
     var s = scene(t) + station(t, parts(4, { nohose: 1, shear: 1 })) + car(cx, t, "#c23a26") + hose(hoseD(a, e1, 4)) + hose(hoseD(e2, nz, 8)) + nozzle(nz[0], nz[1], nz[2]);
     [e1, e2].forEach(function (e) { s += '<circle cx="' + f(e[0]) + '" cy="' + f(e[1]) + '" r="5.5" fill="#f2c230" stroke="' + INK + '" stroke-width="1.8"/><circle cx="' + f(e[0]) + '" cy="' + f(e[1]) + '" r="' + f(8 + 3 * Math.sin(t * 7)) + '" fill="none" stroke="#f2c230" stroke-width="1.4" opacity=".7"/>'; });
     return s + star((e1[0] + e2[0]) / 2, GY - 16, 16 * (1 - clamp(u / 0.6)) + 0.01, t) + tag("وصلة أمان", 610, 58, u, 0.8, 3, 18, "#ffe08a") + check(600, GY - 42, 0.34, (u - 2.0) / 1.2) + man(470, t, "happy", "#e8742e", 0.62);
   });
-  // 16 — and if a car hits the dispenser itself, a valve under it shuts the pipe at once
-  shot(16, function (u, d) { var k = clamp(u / d); return [lerp(545, 505, k), lerp(125, 152, k), lerp(1.45, 1.95, k)]; }, function (u, d, t) {
+  // 17 — and if a car hits the dispenser itself, a valve under it shuts the pipe at once
+  shot(17, function (u, d) { var k = clamp(u / d); return [lerp(545, 505, k), lerp(125, 152, k), lerp(1.45, 1.95, k)]; }, function (u, d, t) {
     var k = clamp(u / 1.0), hit = u > 1.0, cx = lerp(840, 594, k * k) + (hit ? Math.min(10, (u - 1.0) * 30) : 0);
     var s = scene(t) + station(t, parts(5, { tilt: hit ? -16 * clamp((u - 1.0) * 6) + Math.sin(t * 20) * 1.2 * Math.exp(-(u - 1) * 2) : 0, shut: hit, flow: !hit, shear: 1 })) + carFlip(cx, hit ? 0 : t, "#2f6f9f");
     if (hit) s += star(532, GY - 30, 22 * (1 - clamp((u - 1.0) / 0.7)) + 0.01, t) + '<circle cx="' + DX + '" cy="' + (GY + 15) + '" r="' + f(15 + 4 * Math.sin(t * 8)) + '" fill="none" stroke="#f2c230" stroke-width="2.4"/>';
     return s + tag("صمام قطع", 600, 208, u, 1.5, 3, 20, "#ffe08a") + check(420, 190, 0.4, (u - 2.4) / 1.2);
   });
-  // 17 — but any petrol spilled on the ground gets washed into the drains by the rain
-  shot(17, function (u, d) { var k = clamp(u / d); return [lerp(570, 660, k), lerp(140, 150, k), lerp(1.35, 1.5, k)]; }, function (u, d, t) {
+  // 18 — but any petrol spilled on the ground gets washed into the drains by the rain
+  shot(18, function (u, d) { var k = clamp(u / d); return [lerp(570, 660, k), lerp(140, 150, k), lerp(1.35, 1.5, k)]; }, function (u, d, t) {
     var s = scene(t, { sky: "dusk" }) + station(t, parts(5)) + car(600, 0, "#c23a26");
     for (var i = 0; i < 9; i++) { var p = (t * 0.35 + i / 9) % 1, x = lerp(560, 900, p); s += '<ellipse cx="' + f(x) + '" cy="' + (GY + 4) + '" rx="' + f(16 - p * 6) + '" ry="3" fill="' + ["#eba21c", "#d06a8a", "#5aa0c8"][i % 3] + '" opacity=".85" stroke="' + INK + '" stroke-width=".8"/>'; }
     s += arrow(650, GY + 26, 760, GY + 26, "#f2a0a0", 4, clamp((u - 0.8) / 1));
     return s + rain(t) + tag("على المجاري!", 700, 78, u, 1.2, 3, 22, "#f2a0a0") + cross(790, 128, 0.5, (u - 1.8) / 1.2);
   });
-  // 18 — so the floor is concrete sloping to a drain, with a tank under it that separates the petrol from the water
-  shot(18, function (u, d) { var k = clamp(u / d); return [lerp(650, 680, k), lerp(160, 185, k), lerp(1.3, 1.5, k)]; }, function (u, d, t) {
+  // 19 — so the floor is concrete sloping to a drain, with a tank under it that separates the petrol from the water
+  shot(19, function (u, d) { var k = clamp(u / d); return [lerp(650, 680, k), lerp(160, 185, k), lerp(1.3, 1.5, k)]; }, function (u, d, t) {
     var sk = ease(clamp(u / 1.2)), pk = clamp((u - 1.2) / 1.2), s = scene(t, { sky: "dusk" }) + station(t, parts(5, { slab: sk, sep: pk, sepflow: u > 2.6 })) + car(600, 0, "#c23a26");
     if (sk >= 1) for (var i = 0; i < 6; i++) { var p = (t * 0.6 + i / 6) % 1; s += '<ellipse cx="' + f(lerp(560, 712, p)) + '" cy="' + f(GY + 1 + p * 3) + '" rx="7" ry="2" fill="' + (i % 2 ? FUEL : "#8fc3e6") + '" stroke="' + INK + '" stroke-width=".6"/>'; }
     return s + rain(t, 0.7) + tag("خرسانة مايلة", 770, 98, u, 0.6, -3, 19) + tag("فاصل", 800, 262, u, 2.6, 3, 22, "#ffe08a") + check(840, 200, 0.42, (u - 3.4) / 1.2);
   });
-  // 19 — many people think a mobile phone can set a petrol station on fire
+  // 20 — many people think a mobile phone can set a petrol station on fire
   function phoneScene(u, t, ok) {
     var nz = fill(645), s = scene(t) + station(t, parts(6, { nz: nz, sag: 26, flow: 1 })) + car(645, 0, "#c23a26") + nozzle(nz[0], nz[1], nz[2]) + man(552, t, ok ? "happy" : "worry", "#3aa05a") + R(562, GY - 44, 7, 12, "#2b2e33", 1.2, 2);
     return s + phone(560, 36, 1, t);
   }
-  shot(19, function (u, d) { var k = clamp(u / d); return [lerp(545, 525, k), lerp(98, 90, k), lerp(1.5, 1.75, k)]; }, function (u, d, t) {
+  shot(20, function (u, d) { var k = clamp(u / d); return [lerp(545, 525, k), lerp(98, 90, k), lerp(1.5, 1.75, k)]; }, function (u, d, t) {
     var s = phoneScene(u, t, false), r = 44 + 3 * Math.sin(t * 6), k = pop((u - 0.9) / 1.2);
     if (k > 0) s += '<g transform="translate(560 36) scale(' + f(k) + ')"><circle r="' + f(r) + '" fill="none" stroke="#d8352a" stroke-width="7"/><path d="M' + f(-r * 0.7) + ' ' + f(-r * 0.7) + ' L' + f(r * 0.7) + ' ' + f(r * 0.7) + '" stroke="#d8352a" stroke-width="7"/></g>';
     return s + qmark(640, 46, t, 46);
   });
-  // 20 — the truth: not one fire has ever been confirmed to be caused by a phone
-  shot(20, function (u, d) { var k = clamp(u / d); return [lerp(525, 545, k), lerp(90, 96, k), lerp(1.75, 1.55, k)]; }, function (u, d, t) {
+  // 21 — the truth: not one fire has ever been confirmed to be caused by a phone
+  shot(21, function (u, d) { var k = clamp(u / d); return [lerp(525, 545, k), lerp(90, 96, k), lerp(1.75, 1.55, k)]; }, function (u, d, t) {
     return phoneScene(u, t, true) + check(596, 62, 0.7, (u - 0.5) / 1.2) + tag("ولا حريقة!", 440, 18, u, 1.0, -3, 24, "#bfe8c0");
   });
-  // 21 — the real culprit is static electricity, blamed for more than a hundred and fifty recorded fires
-  shot(21, function (u, d) { var k = clamp(u / d); return [lerp(585, 598, k), lerp(108, 114, k), lerp(1.55, 1.8, k)]; }, function (u, d, t) {
+  // 22 — the real culprit is static electricity, blamed for more than a hundred and fifty recorded fires
+  shot(22, function (u, d) { var k = clamp(u / d); return [lerp(585, 598, k), lerp(108, 114, k), lerp(1.55, 1.8, k)]; }, function (u, d, t) {
     var nz = fill(645), s = scene(t) + station(t, parts(6, { nz: nz, sag: 26 })) + car(645, 0, "#c23a26") + nozzle(nz[0], nz[1], nz[2]) + man(558, t, "shock", "#3aa05a");
     s += '<path d="M566 ' + (GY - 26) + ' L' + f(578 + Math.sin(t * 4) * 1.5) + ' ' + (GY - 32) + '" stroke="#3aa05a" stroke-width="6" stroke-linecap="round"/><circle cx="' + f(580 + Math.sin(t * 4) * 1.5) + '" cy="' + (GY - 33) + '" r="3.6" fill="#fbfbf7" stroke="' + INK + '" stroke-width="1.2"/>';
     if (((t * 2.2) % 1) < 0.7) s += spark(582, GY - 34, nz[0] - 6, nz[1] - 4, t) + star(nz[0] - 8, nz[1] - 5, 7 + 3 * Math.sin(t * 20), t, "#fff");
     for (var i = 0; i < 5; i++) s += T(i % 2 ? "+" : "−", 545 + i * 9 + Math.sin(t * 5 + i) * 2, GY - 12 - i * 9 + Math.cos(t * 6 + i) * 2, 9, "#7fd0ff");
     return s + tag("كهربا استاتيكية", 565, 42, u, 0.7, -3, 18, "#ffe08a") + tag("+150 حريقة", 690, 182, u, 3.0, 4, 18, "#f2a0a0");
   });
-  // 22 — add a big canopy, fire extinguishers and an emergency button that cuts the power to every dispenser
-  shot(22, function (u, d) { var k = clamp(u / d); return [lerp(530, 560, k), lerp(105, 85, k), lerp(1.1, 0.95, k)]; }, function (u, d, t) {
+  // 23 — add a big canopy, fire extinguishers and an emergency button that cuts the power to every dispenser
+  shot(23, function (u, d) { var k = clamp(u / d); return [lerp(530, 560, k), lerp(105, 85, k), lerp(1.1, 0.95, k)]; }, function (u, d, t) {
     var s = scene(t) + station(t, parts(6, { canopy: clamp(u / 1.3) + 0.001, ext: (u - 1.9) / 1.2, estop: (u - 3.0) / 1.2 })) + car(645, 0, "#c23a26") + man(552, t, "happy", "#3aa05a");
     return s + tag("مظلة", 600, -30, u, 0.9, 3, 24) + tag("طفايات", 350, 120, u, 2.0, -3, 24, "#f2a0a0") + tag("زرار طوارئ", 320, 36, u, 3.1, 3, 24, "#ffe08a");
   });
-  // 23 — congratulations: you have built a petrol station
+  // 24 — congratulations: you have built a petrol station
   function whole(t, sk, night) {
     var nz = fill(645), s = scene(t, { sky: sk }) + station(t, parts(7, { flow: 1, sepflow: 1, puff: 0.6, nz: nz, sag: 26, night: night, lit: ((t * 6.8) % 60).toFixed(1) })) + car(645, 0, "#c23a26") + nozzle(nz[0], nz[1], nz[2]);
     return s + man(552, t, "happy", "#3aa05a") + man(470, t + 1, "happy", "#e8742e") + hardHat(250, GY - 42, 0.3, t, "happy", { point: true });
   }
-  shot(23, function (u, d) { var k = ease(clamp(u / d)); return [lerp(460, 400, k), lerp(150, 172, k), lerp(1.25, 0.84, k)]; }, function (u, d, t) {
+  shot(24, function (u, d) { var k = ease(clamp(u / d)); return [lerp(460, 400, k), lerp(150, 172, k), lerp(1.25, 0.84, k)]; }, function (u, d, t) {
     return whole(t, "day") + confetti(t, 20, 780, -60, GY) + tag("مبروك!", 250, 20, u, 0.3, -3, 34, "#bfe8c0");
   });
-  // 24 — if you want to make videos like this, look at the bio
-  shot(24, function (u, d) { var k = clamp(u / d); return [lerp(400, 380, k), lerp(172, 150, k), lerp(0.84, 0.92, k)]; }, function (u, d, t) {
-    var s = whole(t, "day"), k = pop((u - 0.3) / 1.2), by = 30 + Math.sin(t * 3) * 4;
-    s += '<g transform="translate(250 ' + f(by) + ') scale(' + f(k * 1.5) + ')">' + R(-20, -36, 40, 72, "#2b2e33", 2.4, 7) + R(-16, -30, 32, 56, "#fbfbf7", 1.2, 3) + '<circle cx="0" cy="-16" r="8" fill="#f2c230" stroke="' + INK + '" stroke-width="1.4"/><path d="M-10 0 H10 M-10 7 H6" stroke="#9aa2ac" stroke-width="2.4" stroke-linecap="round"/>' + R(-12, 13, 24, 9, "#2f6f9f", 1.2, 3) + '<circle cx="0" cy="17.5" r="' + f(9 + 5 * Math.abs(Math.sin(t * 5))) + '" fill="none" stroke="#f2c230" stroke-width="2"/></g>';
-    return s + arrow(165, 72, 208, 48, "#f2c230", 5, clamp((u - 1.0) * 2)) + tag("بص على البايو!", 135, 98, u, 0.8, -3, 22, "#ffe08a");
+  // 14 — if you want to make videos like this, look at the bio
+  shot(14, function (u, d) { var k = clamp(u / d); return [lerp(360, 350, k), lerp(150, 135, k), lerp(1.0, 1.05, k)]; }, function (u, d, t) {
+    var nz = fill(600), s = scene(t) + station(t, parts(4, { nz: nz, sag: 26 })) + car(600, 0, "#c23a26") + nozzle(nz[0], nz[1], nz[2]) + man(470, t, "happy", "#e8742e"), k = pop((u - 0.3) / 1.2), by = 30 + Math.sin(t * 3) * 4;
+    s += '<g transform="translate(300 ' + f(by) + ') scale(' + f(k * 1.5) + ')">' + R(-20, -36, 40, 72, "#2b2e33", 2.4, 7) + R(-16, -30, 32, 56, "#fbfbf7", 1.2, 3) + '<circle cx="0" cy="-16" r="8" fill="#f2c230" stroke="' + INK + '" stroke-width="1.4"/><path d="M-10 0 H10 M-10 7 H6" stroke="#9aa2ac" stroke-width="2.4" stroke-linecap="round"/>' + R(-12, 13, 24, 9, "#2f6f9f", 1.2, 3) + '<circle cx="0" cy="17.5" r="' + f(9 + 5 * Math.abs(Math.sin(t * 5))) + '" fill="none" stroke="#f2c230" stroke-width="2"/></g>';
+    return s + arrow(215, 72, 258, 48, "#f2c230", 5, clamp((u - 1.0) * 2)) + tag("بص على البايو!", 180, 98, u, 0.8, -3, 22, "#ffe08a");
   });
   // 25 — outro
   shot(25, function (u, d) { var k = clamp(u / d); return [lerp(400, 440, k), lerp(172, 160, k), lerp(0.84, 0.95, k)]; }, function (u, d, t) {
     return whole(t, "dusk", true) + tag("قولولنا!", 250, 20, u, 0.4, 3, 32);
   });
 
+  SH.sort(function (x, y) { return x.a - y.a; });
   window.__parts = { scene: scene, station: station, parts: parts, tank: tank, vent: vent, stp: stp, dispenser: dispenser, canopy: canopy, slab: slab, sep: sep, car: car, carFlip: carFlip, nozzle: nozzle, fill: fill, man: man, tanker: tanker, hardHat: hardHat, tag: tag, T: T, flame: flame, GY: GY };
   window.__panel = function (svg, t) {
     var i = at(t), sh = SH[i], next = i + 1 < SH.length ? SH[i + 1].a : L(LN.length), u = t - sh.a, d = Math.max(0.5, next - sh.a);
