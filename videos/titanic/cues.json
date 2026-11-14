@@ -1,0 +1,830 @@
+{
+ "bed": false,
+ "cues": [
+  {
+   "t": 5.79,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 11.5,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 17.65,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 20.99,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 23.72,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 28.72,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 32.7,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 38.75,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 45.48,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 51.06,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 57.23,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 64.36,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 67.99,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 71.12,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 72.52,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 78.03,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 83.57,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 87.85,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 91.85,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 96.57,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 101.01,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 106.62,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 110.31,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 114.23,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 118.71,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 122.34,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 123.76,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 128.03,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 131.8,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 137.15,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 141.63,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 147.96,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 151.61,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 155.07,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 158.89,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 162.09,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 167.13,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 172.6,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 177.18,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 182.82,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 188.21,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 190.21,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 193.58,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 200.7,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 206.5,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 211.29,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 218.46,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 223.6,
+   "fx": "whoosh",
+   "gain": 0.08
+  },
+  {
+   "t": 0.1,
+   "fx": "waves",
+   "gain": 0.22,
+   "dur": 32.8
+  },
+  {
+   "t": 0.1,
+   "fx": "wind",
+   "gain": 0.12,
+   "dur": 32.8
+  },
+  {
+   "t": 11.6,
+   "fx": "motor",
+   "gain": 0.2,
+   "dur": 9.49
+  },
+  {
+   "t": 21.49,
+   "fx": "creak",
+   "gain": 0.35
+  },
+  {
+   "t": 24.12,
+   "file": "../_templates/sketch/sfx/px-space-drone.mp3",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 5
+  },
+  {
+   "t": 32.8,
+   "fx": "waves",
+   "gain": 0.15,
+   "dur": 6.05
+  },
+  {
+   "t": 33.8,
+   "fx": "bell",
+   "gain": 0.3,
+   "f": 660
+  },
+  {
+   "t": 36,
+   "fx": "thud",
+   "gain": 0.35
+  },
+  {
+   "t": 39.15,
+   "file": "sfx/morse.wav",
+   "gain": 0.3,
+   "from": 0,
+   "dur": 6
+  },
+  {
+   "t": 39.65,
+   "file": "../_templates/sketch/sfx/px-paper.mp3",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 0.6
+  },
+  {
+   "t": 40.55,
+   "file": "../_templates/sketch/sfx/px-paper.mp3",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 0.6
+  },
+  {
+   "t": 41.45,
+   "file": "../_templates/sketch/sfx/px-paper.mp3",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 0.6
+  },
+  {
+   "t": 42.35,
+   "file": "../_templates/sketch/sfx/px-paper.mp3",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 0.6
+  },
+  {
+   "t": 45.78,
+   "file": "sfx/morse.wav",
+   "gain": 0.3,
+   "from": 1.5,
+   "dur": 5
+  },
+  {
+   "t": 46.08,
+   "file": "../_templates/sketch/sfx/px-paper.mp3",
+   "gain": 0.3,
+   "from": 0,
+   "dur": 0.6
+  },
+  {
+   "t": 46.78,
+   "file": "../_templates/sketch/sfx/px-paper.mp3",
+   "gain": 0.3,
+   "from": 0,
+   "dur": 0.6
+  },
+  {
+   "t": 47.48,
+   "file": "../_templates/sketch/sfx/px-paper.mp3",
+   "gain": 0.3,
+   "from": 0,
+   "dur": 0.6
+  },
+  {
+   "t": 48.18,
+   "file": "../_templates/sketch/sfx/px-paper.mp3",
+   "gain": 0.3,
+   "from": 0,
+   "dur": 0.6
+  },
+  {
+   "t": 48.88,
+   "file": "../_templates/sketch/sfx/px-paper.mp3",
+   "gain": 0.3,
+   "from": 0,
+   "dur": 0.6
+  },
+  {
+   "t": 52.16,
+   "fx": "thud",
+   "gain": 0.4
+  },
+  {
+   "t": 57.33,
+   "fx": "wind",
+   "gain": 0.2,
+   "dur": 7.13
+  },
+  {
+   "t": 58.83,
+   "file": "sfx/morse.wav",
+   "gain": 0.3,
+   "from": 0,
+   "dur": 3
+  },
+  {
+   "t": 64.86,
+   "fx": "thud",
+   "gain": 0.45
+  },
+  {
+   "t": 68.89,
+   "fx": "tick",
+   "gain": 0.5
+  },
+  {
+   "t": 69.09,
+   "fx": "wind",
+   "gain": 0.12,
+   "dur": 3.13
+  },
+  {
+   "t": 71.22,
+   "file": "../_templates/sketch/sfx/px-space-drone.mp3",
+   "gain": 0.4,
+   "from": 0,
+   "dur": 16.73
+  },
+  {
+   "t": 72.62,
+   "fx": "wind",
+   "gain": 0.3,
+   "dur": 15.33
+  },
+  {
+   "t": 79.33,
+   "fx": "clink",
+   "gain": 0.35
+  },
+  {
+   "t": 80.73,
+   "fx": "clank",
+   "gain": 0.3
+  },
+  {
+   "t": 88.25,
+   "fx": "bell",
+   "gain": 0.7,
+   "f": 990
+  },
+  {
+   "t": 88.7,
+   "fx": "bell",
+   "gain": 0.7,
+   "f": 990
+  },
+  {
+   "t": 89.15,
+   "fx": "bell",
+   "gain": 0.7,
+   "f": 990
+  },
+  {
+   "t": 91.95,
+   "fx": "creak",
+   "gain": 0.6,
+   "dur": 2.2
+  },
+  {
+   "t": 93.55,
+   "fx": "creak",
+   "gain": 0.7,
+   "dur": 2.4
+  },
+  {
+   "t": 93.95,
+   "fx": "boom",
+   "gain": 0.45
+  },
+  {
+   "t": 94.15,
+   "fx": "spray",
+   "gain": 0.3,
+   "dur": 1.6
+  },
+  {
+   "t": 97.27,
+   "fx": "clink",
+   "gain": 0.3
+  },
+  {
+   "t": 97.47,
+   "fx": "thud",
+   "gain": 0.3
+  },
+  {
+   "t": 101.11,
+   "fx": "fill",
+   "gain": 0.5,
+   "dur": 5.61
+  },
+  {
+   "t": 101.51,
+   "fx": "slosh",
+   "gain": 0.4
+  },
+  {
+   "t": 103.51,
+   "fx": "slosh",
+   "gain": 0.35
+  },
+  {
+   "t": 106.72,
+   "file": "../_templates/sketch/sfx/px-clock-ticking.mp3",
+   "gain": 0.45,
+   "from": 0,
+   "dur": 3.69
+  },
+  {
+   "t": 110.71,
+   "fx": "pop",
+   "gain": 0.3
+  },
+  {
+   "t": 110.96,
+   "fx": "pop",
+   "gain": 0.3
+  },
+  {
+   "t": 111.21,
+   "fx": "pop",
+   "gain": 0.3
+  },
+  {
+   "t": 111.46,
+   "fx": "pop",
+   "gain": 0.3
+  },
+  {
+   "t": 111.71,
+   "fx": "pop",
+   "gain": 0.3
+  },
+  {
+   "t": 114.33,
+   "fx": "creak",
+   "gain": 0.35,
+   "dur": 2
+  },
+  {
+   "t": 114.73,
+   "fx": "gear",
+   "gain": 0.3
+  },
+  {
+   "t": 118.01,
+   "fx": "splash",
+   "gain": 0.35
+  },
+  {
+   "t": 118.81,
+   "fx": "wind",
+   "gain": 0.15,
+   "dur": 5.05
+  },
+  {
+   "t": 123.24,
+   "fx": "whoosh",
+   "gain": 0.4
+  },
+  {
+   "t": 124.44,
+   "fx": "pop",
+   "gain": 0.5
+  },
+  {
+   "t": 123.86,
+   "fx": "creak",
+   "gain": 0.25,
+   "dur": 2
+  },
+  {
+   "t": 128.13,
+   "fx": "wind",
+   "gain": 0.15,
+   "dur": 3.77
+  },
+  {
+   "t": 131.9,
+   "fx": "creak",
+   "gain": 0.3,
+   "dur": 2.4
+  },
+  {
+   "t": 131.9,
+   "fx": "waves",
+   "gain": 0.2,
+   "dur": 5.35
+  },
+  {
+   "t": 137.85,
+   "fx": "chime",
+   "gain": 0.25
+  },
+  {
+   "t": 143.93,
+   "fx": "gear",
+   "gain": 0.3
+  },
+  {
+   "t": 147.46,
+   "fx": "splash",
+   "gain": 0.3
+  },
+  {
+   "t": 148.36,
+   "fx": "whoosh",
+   "gain": 0.5
+  },
+  {
+   "t": 149.06,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 149.56,
+   "fx": "whoosh",
+   "gain": 0.5
+  },
+  {
+   "t": 150.26,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 150.66,
+   "fx": "whoosh",
+   "gain": 0.5
+  },
+  {
+   "t": 151.36,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 151.71,
+   "fx": "wind",
+   "gain": 0.2,
+   "dur": 10.48
+  },
+  {
+   "t": 152.71,
+   "fx": "pop",
+   "gain": 0.25
+  },
+  {
+   "t": 156.57,
+   "fx": "tick",
+   "gain": 0.4
+  },
+  {
+   "t": 156.87,
+   "fx": "tick",
+   "gain": 0.4
+  },
+  {
+   "t": 162.49,
+   "file": "sfx/morse.wav",
+   "gain": 0.35,
+   "from": 2.4,
+   "dur": 3.2
+  },
+  {
+   "t": 164.39,
+   "file": "sfx/horn.wav",
+   "gain": 0.4,
+   "from": 0,
+   "dur": 3.2
+  },
+  {
+   "t": 167.23,
+   "fx": "motor",
+   "gain": 0.4,
+   "dur": 5.47
+  },
+  {
+   "t": 167.23,
+   "fx": "waves",
+   "gain": 0.3,
+   "dur": 5.47
+  },
+  {
+   "t": 167.73,
+   "fx": "steam",
+   "gain": 0.3,
+   "dur": 1.6
+  },
+  {
+   "t": 172.7,
+   "file": "../_templates/sketch/sfx/px-space-drone.mp3",
+   "gain": 0.5,
+   "from": 0,
+   "dur": 10.22
+  },
+  {
+   "t": 173.2,
+   "fx": "creak",
+   "gain": 0.6,
+   "dur": 2.4
+  },
+  {
+   "t": 175.1,
+   "fx": "clank",
+   "gain": 0.3
+  },
+  {
+   "t": 177.88,
+   "fx": "creak",
+   "gain": 0.5,
+   "dur": 2.4
+  },
+  {
+   "t": 184.12,
+   "fx": "zap",
+   "gain": 0.4
+  },
+  {
+   "t": 184.92,
+   "fx": "creak",
+   "gain": 0.9,
+   "dur": 2.6
+  },
+  {
+   "t": 185.72,
+   "fx": "boom",
+   "gain": 0.9
+  },
+  {
+   "t": 185.92,
+   "fx": "thud",
+   "gain": 0.7
+  },
+  {
+   "t": 186.52,
+   "fx": "fill",
+   "gain": 0.6,
+   "dur": 2.4
+  },
+  {
+   "t": 187.12,
+   "fx": "splash",
+   "gain": 0.6
+  },
+  {
+   "t": 188.31,
+   "fx": "wind",
+   "gain": 0.25,
+   "dur": 5.37
+  },
+  {
+   "t": 193.68,
+   "fx": "waves",
+   "gain": 0.2,
+   "dur": 7.12
+  },
+  {
+   "t": 194.68,
+   "fx": "splash",
+   "gain": 0.2
+  },
+  {
+   "t": 201.1,
+   "file": "sfx/horn.wav",
+   "gain": 0.45,
+   "from": 0,
+   "dur": 3.2
+  },
+  {
+   "t": 200.8,
+   "fx": "waves",
+   "gain": 0.3,
+   "dur": 5.8
+  },
+  {
+   "t": 201.4,
+   "fx": "splash",
+   "gain": 0.14
+  },
+  {
+   "t": 202.3,
+   "fx": "splash",
+   "gain": 0.14
+  },
+  {
+   "t": 203.2,
+   "fx": "splash",
+   "gain": 0.14
+  },
+  {
+   "t": 204.1,
+   "fx": "splash",
+   "gain": 0.14
+  },
+  {
+   "t": 205,
+   "fx": "splash",
+   "gain": 0.14
+  },
+  {
+   "t": 205.9,
+   "fx": "splash",
+   "gain": 0.14
+  },
+  {
+   "t": 209.23,
+   "file": "sfx/morse.wav",
+   "gain": 0.3,
+   "from": 0,
+   "dur": 2.4
+  },
+  {
+   "t": 211.79,
+   "fx": "thud",
+   "gain": 0.4
+  },
+  {
+   "t": 212.59,
+   "fx": "pop",
+   "gain": 0.3
+  },
+  {
+   "t": 218.56,
+   "fx": "wind",
+   "gain": 0.12,
+   "dur": 5.14
+  },
+  {
+   "t": 219.96,
+   "fx": "chime",
+   "gain": 0.3
+  },
+  {
+   "t": 224,
+   "fx": "bell",
+   "gain": 0.35,
+   "dur": 2.5,
+   "f": 330
+  }
+ ]
+}
