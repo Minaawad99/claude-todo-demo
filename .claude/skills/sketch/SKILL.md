@@ -2,7 +2,7 @@
 name: sketch
 description: >
   Make an «إيه الحكاية؟» explainer video in the user's «اسكتش» style, end to end: script, voice, real-shape drawings, sound
-  effects (no music, ever), 1080×1920 60 fps render that passes qa.py, then the reel cover and the TikTok / Instagram+Facebook /
+  effects only (no background music unless the user asks for it for that video), 1080×1920 60 fps render that passes qa.py, then the reel cover and the TikTok / Instagram+Facebook /
   YouTube Shorts titles, every time. Cream graph-paper card, close-up technical drawings (real
   coastline globes, side cuts, isometric machines) with leader-line labels, one short caption chunk at a time under a rule,
   no hard cuts, a word-by-word hook card, a stopwatch bumper, a summary card and ask box. The reference episode is
@@ -17,7 +17,8 @@ every episode.
 
 **Locked by the user after «لو حد شرق قدامك» (`videos/choking/`), for every sketch episode from now on:**
 1. **The drawing style of that episode**, including people drawn with real body proportions (section 3).
-2. **No background music, ever.** Not the music box, not any other bed. The sound is the narrator plus sound effects only.
+2. **No background music.** Not the music box, not any other bed. The sound is the narrator plus sound effects only.
+   The one exception is the user asking for music in a specific video (section 5); it doesn't carry over to the next one.
 3. **You make the sound effects** from the kit, the episode's own clips and `audio/sfx.py`'s synthesized ones. When a moment
    needs a real recording the kit doesn't have, ask the user for it by name with Pixabay search terms; they fetch it.
 4. **Always finish with the reel cover and the titles** (section 7), without being asked: TikTok, Instagram (shared to the
@@ -180,9 +181,17 @@ the sound and Pixabay search terms, sent once the picture is done and before the
 | px-ocean-waves | Ocean Waves (Dragon Studio 376898) | 0.2–22 s | sea |
 | px-water-rush | Above Rushing Water (61158) | from 3 s | water moving |
 | px-wind-gust | Wind Gust (Dragon Studio 386158) | 0.25–4.76 s | wind |
+| px-music-box (source) → px-music-soft | **Mysterious Music Box – The Midnight Hour** | whole | music, **only when the user asks** |
 
-**No music.** The user removed the background music for good. The music files in the kit (`px-music-box`, `px-music-soft`)
-are not to be used, and `cues.json` always has `"bed": false` so sfx.py doesn't add its own synthesized bed either.
+**Sound without asking: sound effects only (the user's fixed rule, for every video in every skill).** Without the user's
+permission you may add only sound effects (swipes, ticks, dings, whooshes, and effects you synthesize such as a buzz).
+Never add background music of any kind (a kit track, a synthesized bed, a generated or licensed track) unless the user
+asks for it for that video; asking once does not carry over to the next video. `videos/audio/sfx.py` leaves all music
+out unless run with `--music`, so pass that flag only when the user asked.
+- `sfx.py` leaves all music out by default (it prints «music off»). Don't pass `--music`.
+- Only when the user asks for music in a given video: run `sfx.py` with `--music`. `cues.js` then adds the kit's
+  `px-music-soft.mp3` at gain 0.42 (about 22 dB under the narrator; 153 s long, no loop needed under about 2:30).
+- Asking for music once does not carry over to the next video.
 
 **Cues.** Start from `videos/_templates/sketch/cues.js`. It already places these:
 - the hook chime;
@@ -191,7 +200,7 @@ are not to be used, and `cues.json` always has `"bed": false` so sfx.py doesn't 
 - the summary-card build;
 - the ask box.
 
-It writes `"bed": false` and places no music.
+It holds no music unless `sfx.py` is run with `--music`.
 
 Add one or two sounds per line matched to what moves (`lab`, `ding`, `scribble`, `paper`, `sea`, `drone`; see
 `videos/tides/cues.js`), then:

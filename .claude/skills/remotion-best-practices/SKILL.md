@@ -4,6 +4,10 @@ description: Router for all Remotion skills
 version: 4.0.539
 ---
 
+**Sound without asking: sound effects only (the user's fixed rule, for every video in every skill).** Without the user's
+permission you may add only sound effects (swipes, ticks, dings, whooshes, and effects you synthesize such as a buzz).
+Never add background music of any kind (a kit track, a synthesized bed, a generated or licensed track) unless the user
+asks for it for that video; asking once does not carry over to the next video. 
 ## Preserve user changes
 
 Users may make edits in the code outside of the conversation.

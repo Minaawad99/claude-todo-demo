@@ -329,6 +329,7 @@ def mix(voice, cues, use_bed=True, bed_db=-18.0, fx_db=-10.0, duck_db=-8.0, tail
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(); ap.add_argument("voice"); ap.add_argument("cues"); ap.add_argument("out")
+    ap.add_argument("--music", action="store_true", help="only when the user asked for music in this video");
     ap.add_argument("--start", type=float, default=0); ap.add_argument("--dur", type=float, default=0)
     a = ap.parse_args()
     voice = read_wav(a.voice)
@@ -337,7 +338,11 @@ if __name__ == "__main__":
     for c in spec["cues"]:
         if "file" in c: c["file"] = os.path.join(base, c["file"])
     cues = [dict(c, t=c["t"] - a.start) for c in spec["cues"] if c["t"] >= a.start and (not a.dur or c["t"] < a.start + a.dur)]
-    out, v, srms = mix(voice, cues, spec.get("bed", True))
+    # the user's rule: no background music of any kind unless they ask for it for this video (then pass --music)
+    if not a.music:
+        n0 = len(cues); cues = [c for c in cues if "music" not in os.path.basename(c.get("file", ""))]
+        print("music off (pass --music only when the user asks): no bed" + (", %d music clip(s) skipped" % (n0 - len(cues)) if n0 != len(cues) else ""))
+    out, v, srms = mix(voice, cues, a.music and spec.get("bed", True))
     write_wav(a.out, out)
     # report: how far below the voice the rest of the mix sits while the narrator speaks
     rest = out[: len(v)] - v[: len(out)]

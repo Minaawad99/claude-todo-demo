@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>الناموس بيلاقيك إزاي في الضلمة؟ — إيه الحكاية؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&family=Noto+Serif:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* «إيه الحكاية؟» — the «الرسم الهندسي» look, measured from 20 reference videos (videos/_reference/tabizzay/STYLE.md).
+     360×640 canvas (render.js SCALE 3 → 1080×1920). Reference sizes are at 720 wide, so here they are halved.
+     Phases, all driven by TIMING: intro card (hook lines) → bumper (promise line) → panel + captions → summary card → ask box. */
+  :root { --paper: #eee5d0; --ink: #2a2016; --mute: #8f8576; --orange: #bd552f; --blue: #4a6f8a; --olive: #5e653a; --tan: #ddd2b8; }
+  html, body { margin: 0; background: var(--paper); }
+  .canvas { position: relative; width: 360px; height: 640px; background: var(--paper); overflow: hidden; font-family: "Noto Sans Arabic", sans-serif; color: var(--ink); }
+  .layer { position: absolute; inset: 0; }
+  /* the main card: one 1px frame 14px in, the panel fills its top, a rule, the caption */
+  #frame { position: absolute; left: 14px; top: 14px; width: 332px; height: 612px; box-sizing: border-box; border: 1.1px solid var(--ink); }
+  .panel { position: absolute; left: 15px; top: 15px; width: 330px; height: 405px; overflow: hidden; }
+  .panel svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #rule { position: absolute; left: 32px; right: 32px; top: 431px; border-top: .6px solid var(--ink); }
+  #wm { position: absolute; left: 0; right: 0; top: 440px; text-align: center; font: 500 8.5px "Noto Sans Arabic"; color: #b3a995; }
+  #cap { position: absolute; left: 30px; right: 30px; top: 458px; text-align: center; font: 700 14px/1.75 "Noto Sans Arabic", sans-serif; }
+  .k-o { color: var(--orange); } .k-b { color: var(--blue); } .k-g { color: var(--olive); } .k-gr { color: var(--mute); }
+  .k-u { text-decoration: underline; text-decoration-thickness: 1.2px; text-underline-offset: 4px; }
+  /* cards (intro + summary): paper, double frame drawn as SVG so it can draw itself in, crop marks outside the corners */
+  .card { position: absolute; inset: 0; background: var(--paper); display: none; }
+  .card .chrome { position: absolute; inset: 0; width: 360px; height: 640px; }
+  .logo { position: absolute; right: 30px; top: 28px; display: flex; align-items: center; gap: 4px; font: 500 8px "Noto Sans Arabic"; color: #6f6556; }
+  .logo svg { width: 11px; height: 11px; }
+  #intro .cat { position: absolute; left: 0; right: 0; top: 100px; text-align: center; font: 600 8px "Noto Sans Arabic"; color: var(--orange); }
+  #intro .r { position: absolute; left: 157px; width: 46px; border-top: .6px solid var(--ink); }
+  #intro .hook { position: absolute; left: 26px; right: 26px; top: 124px; min-height: 80px; text-align: center; font: 800 17px/1.6 "Noto Sans Arabic"; }
+  #intro .hook span { transition: none; }
+  #introArt { position: absolute; left: 28px; top: 236px; width: 304px; height: 330px; }
+  #bumper { position: absolute; inset: 0; display: none; background: var(--paper); }
+  #bumper svg { position: absolute; left: 90px; top: 98px; width: 180px; height: 200px; }
+  #bumper .name { position: absolute; left: 0; right: 0; top: 310px; text-align: center; font: 700 22px "Noto Sans Arabic"; }
+  #bumper .sub { position: absolute; left: 0; right: 0; top: 352px; text-align: center; font: 600 9.5px "Noto Sans Arabic"; }
+  /* summary card */
+  #outro .q { position: absolute; left: 28px; right: 28px; top: 50px; font: 800 12.5px/1.55 "Noto Sans Arabic"; }
+  #outro .art { position: absolute; left: 28px; right: 28px; top: 98px; height: 140px; background: var(--tan); overflow: hidden; }
+  #outro .art svg { width: 100%; height: 100%; display: block; }
+  #outro .leg { position: absolute; left: 28px; right: 28px; top: 246px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font: 600 7.5px "Noto Sans Arabic"; }
+  #outro .leg b { display: inline-grid; place-items: center; width: 10px; height: 10px; border: .8px solid var(--ink); border-radius: 50%; font: 700 6px "Noto Serif"; margin-left: 4px; vertical-align: -2px; }
+  #outro .stat { position: absolute; left: 28px; right: 28px; top: 290px; display: flex; align-items: center; gap: 9px; }
+  #outro .stat .n { font: 800 34px/1 "Noto Serif", serif; color: var(--orange); direction: ltr; white-space: nowrap; }
+  #outro .stat .t { font: 700 8px/1.55 "Noto Sans Arabic"; }
+  #outro .pts { position: absolute; left: 28px; right: 28px; top: 342px; border-top: .6px solid var(--ink); padding-top: 7px; font: 600 7.5px/1.75 "Noto Sans Arabic"; }
+  #outro .more { margin-top: 5px; font: 500 6.8px/1.6 "Noto Sans Arabic"; color: var(--mute); }
+  #outro .ask { position: absolute; left: 34px; right: 34px; top: 448px; height: 120px; border: 1px solid var(--ink); text-align: center; display: none; }
+  #outro .ask::after { content: ""; position: absolute; inset: 3px; border: .5px solid var(--ink); }
+  #outro .ask .l1 { margin-top: 20px; font: 600 9px "Noto Sans Arabic"; }
+  #outro .ask .l2 { margin-top: 6px; font: 700 12px "Noto Sans Arabic"; }
+  #outro .ask .l3 { margin-top: 8px; font: 700 13px "Noto Sans Arabic"; color: var(--orange); }
+  #outro .ask .blank { display: inline-block; width: 64px; border-bottom: 1.2px solid var(--orange); margin: 0 4px; position: relative; height: 14px; vertical-align: -2px; }
+  #outro .ask .caret { position: absolute; left: 4px; bottom: 2px; width: 1.4px; height: 13px; background: var(--ink); }
+</style></head>
+<body>
+<div class="canvas">
+  <div class="layer" id="main">
+    <div class="panel"><svg id="panelA" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg><svg id="panelB" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg></div>
+    <div id="frame"></div><div id="rule"></div><div id="wm"></div><div id="cap"></div>
+  </div>
+  <div class="card" id="intro"><svg class="chrome" id="introChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="cat">حشرات وعلوم</div><div class="r" style="top:118px"></div><div class="hook" id="hook"></div><div class="r" id="hookRule" style="top:214px"></div>
+    <svg id="introArt" viewBox="0 0 608 660"></svg></div>
+  <div id="bumper"><svg id="bumperArt" viewBox="0 0 180 200"></svg><div class="name">إيه الحكاية؟</div><div class="sub">هشرحهالك في <span class="k-o">دقيقة.</span></div></div>
+  <div class="card" id="outro"><svg class="chrome" id="outroChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="q">الناموس بيلاقيك إزاي؟ وليه إنت بالذات؟</div><div class="art"><svg id="outroArt" viewBox="0 0 600 280"></svg></div><div class="leg"><span><b>1</b>النَفَس</span><span><b>2</b>الحرارة</span><span><b>3</b>ريحة الجلد</span><span><b>4</b>الناموسة</span></div><div class="stat"><div class="n">100</div><div class="t">مرة: الفرق في تجربة بين أكتر واحد<br>جذب الناموس وأقل واحد</div></div><div class="pts">1. نَفَسك بيجيبها من أكتر من 10 متر، وحرارة جسمك بتقرّبها.<br>2. ريحة جلدك هي اللي بتختار: بكتيريا الجلد بتطلّع أحماض ليها ريحة.<br>3. اللي جلده بيطلّع أحماض دهنية أكتر بيبقى مغناطيس ناموس، سنين.<div class="more">معلومة زيادة: دراسات صغيرة قالت إن فصيلة O بتتقرص أكتر، بس الدليل لسه ضعيف.</div></div>
+    <div class="ask" id="ask"><div class="l1">قولولنا…</div><div class="l2">عايزين تعرفوا</div><div class="l3">حكاية<span class="blank"><span class="caret" id="caret"></span></span>؟</div></div>
+  </div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="mark"><rect x="84" y="4" width="32" height="10" fill="#2a2016"/><rect x="94" y="14" width="12" height="14" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" fill="#f4ecdb" stroke="#2a2016" stroke-width="9" stroke-linejoin="round"/><text x="106" y="140" text-anchor="middle" style="font:800 120px Noto Sans Arabic;fill:#bd552f">؟</text></g>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".15"/></pattern>
+  <pattern id="hatchW" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#fff" stroke-width="1" opacity=".25"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#e1d5ba" stroke-width="1.3" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .05 0"/></filter>
+</defs></svg>
+<script src="../timing.js"></script>
+<script>window.DATA = {"caps": [[{"f": 0.0, "h": "لو طفيت النور ونمت في أوضة <span class=\"k-u\">ضلمة</span> خالص…"}], [{"f": 0.0, "h": "بعد دقايق هتسمع <span class=\"k-o\">الزنّة</span> جنب ودنك بالظبط."}], [{"f": 0.0, "h": "ولو معاك 3 في الأوضة،"}, {"f": 0.4314, "h": "ممكن تصحى <span class=\"k-o\">إنت</span> <span class=\"k-o\">بس</span> اللي متقرّص."}], [{"f": 0.0, "h": "إيه الحكاية؟"}, {"f": 0.4194, "h": "هشرحهالك في دقيقة."}], [{"f": 0.0, "h": "أول حاجة،"}, {"f": 0.1333, "h": "اللي بيقرص هي الناموسة <span class=\"k-o\">الأنثى</span> بس،"}, {"f": 0.5867, "h": "عشان محتاجة بروتين <span class=\"k-o\">الدم</span> لبيضها."}], [{"f": 0.0, "h": "طب بتلاقيك إزاي في <span class=\"k-u\">الضلمة؟</span>"}, {"f": 0.6923, "h": "<span class=\"k-b\">بالشم</span> الأول."}], [{"f": 0.0, "h": "كل ما تطلّع نَفَس،"}, {"f": 0.3958, "h": "بيخرج منك <span class=\"k-b\">تاني</span> <span class=\"k-b\">أكسيد</span> <span class=\"k-b\">الكربون.</span>"}], [{"f": 0.0, "h": "والناموسة بتشمّه من على بعد"}, {"f": 0.4179, "h": "أكتر من <span class=\"k-o\">10</span> <span class=\"k-o\">متر،</span>"}, {"f": 0.6567, "h": "وتمشي وراه زي خيط <span class=\"k-u\">دخان.</span>"}], [{"f": 0.0, "h": "ولما تشم النَفَس،"}, {"f": 0.24, "h": "<span class=\"k-g\">عينيها</span> بتصحى وتدوّر على أي جسم <span class=\"k-o\">غامق،</span>"}, {"f": 0.7333, "h": "حتى في النور الضعيف."}], [{"f": 0.0, "h": "وعلى بعد أقل من <span class=\"k-o\">متر،</span>"}, {"f": 0.3387, "h": "بتحس <span class=\"k-o\">بحرارة</span> جسمك،"}, {"f": 0.629, "h": "زي كاميرا <span class=\"k-u\">حرارية</span> صغيرة."}], [{"f": 0.0, "h": "وفي الآخر <span class=\"k-g\">ريحة</span> <span class=\"k-g\">جلدك</span> هي"}, {"f": 0.5111, "h": "اللي بتقولها تنزل فين."}], [{"f": 0.0, "h": "طب ليه بتختارك <span class=\"k-o\">إنت</span> وتسيب اللي جنبك؟"}], [{"f": 0.0, "h": "لأن كل واحد جلده ليه ريحة <span class=\"k-g\">مختلفة،</span>"}, {"f": 0.7727, "h": "زي <span class=\"k-u\">البصمة.</span>"}], [{"f": 0.0, "h": "على جلدك <span class=\"k-g\">بكتيريا</span> بتاكل العرق والدهون،"}, {"f": 0.623, "h": "وتطلّع <span class=\"k-o\">أحماض</span> ليها ريحة."}], [{"f": 0.0, "h": "وفيه ناس جلدهم بيطلّع أحماض <span class=\"k-o\">دهنية</span> أكتر بكتير،"}, {"f": 0.6866, "h": "ودول <span class=\"k-o\">مغناطيس</span> الناموس."}], [{"f": 0.0, "h": "في <span class=\"k-u\">تجربة،</span>"}, {"f": 0.1538, "h": "أكتر واحد جذب الناموس كان مغري"}, {"f": 0.6308, "h": "ليه قد أقل واحد <span class=\"k-o\">100</span> <span class=\"k-o\">مرة.</span>"}], [{"f": 0.0, "h": "والريحة دي بتفضل معاك <span class=\"k-o\">سنين،</span>"}, {"f": 0.4912, "h": "حتى لو غيّرت أكلك أو الصابون."}], [{"f": 0.0, "h": "ونتيجة لإيه كمان؟"}, {"f": 0.2647, "h": "اللي جسمه <span class=\"k-o\">أكبر</span> بيطلّع <span class=\"k-b\">نَفَس</span> أكتر،"}, {"f": 0.7647, "h": "فبتشمّه من أبعد."}], [{"f": 0.0, "h": "عشان كده <span class=\"k-o\">الحامل</span> بتتقرص حوالي <span class=\"k-o\">ضعف</span> غيرها."}], [{"f": 0.0, "h": "واللي لسه <span class=\"k-b\">عرقان</span> أو جسمه"}, {"f": 0.5455, "h": "<span class=\"k-o\">سخن</span> بيبان ليها أوضح."}], [{"f": 0.0, "h": "وناس كتير فاكرة إن السبب"}, {"f": 0.6098, "h": "إن دمهم <span class=\"k-u\">حلو.</span> <span class=\"k-o\">لأ.</span>"}], [{"f": 0.0, "h": "الناموسة مش بتشم <span class=\"k-u\">دمك</span> أصلاً،"}, {"f": 0.5714, "h": "هي بتشم <span class=\"k-g\">جلدك</span> <span class=\"k-b\">ونَفَسك.</span>"}], [{"f": 0.0, "h": "يعني من الآخر:"}, {"f": 0.1829, "h": "<span class=\"k-b\">النَفَس</span> بيجيبها من بعيد،"}, {"f": 0.4878, "h": "<span class=\"k-o\">والحرارة</span> بتقرّبها،"}, {"f": 0.7195, "h": "وريحة <span class=\"k-g\">الجلد</span> بتختار مين."}], [{"f": 0.0, "h": "والأغرب إنها بتدوق جلدك <span class=\"k-o\">برجليها</span> قبل ما تقرص."}], [{"f": 0.0, "h": "ودي كانت حكاية الناموس."}], [{"f": 0.0, "h": "قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟"}]], "hook": [[{"w": "لو", "c": "", "f": 0.0}, {"w": "طفيت", "c": "", "f": 0.0811}, {"w": "النور", "c": "", "f": 0.2162}, {"w": "ونمت", "c": "", "f": 0.3784}, {"w": "في", "c": "", "f": 0.5135}, {"w": "أوضة", "c": "", "f": 0.5946}, {"w": "ضلمة", "c": "k-u", "f": 0.7297}, {"w": "خالص…", "c": "", "f": 0.8649}], [{"w": "بعد", "c": "", "f": 0.0}, {"w": "دقايق", "c": "", "f": 0.1026}, {"w": "هتسمع", "c": "", "f": 0.2564}, {"w": "الزنّة", "c": "k-o", "f": 0.4103}, {"w": "جنب", "c": "", "f": 0.5897}, {"w": "ودنك", "c": "", "f": 0.6923}, {"w": "بالظبط.", "c": "", "f": 0.8205}], [{"w": "ولو", "c": "", "f": 0.0}, {"w": "معاك", "c": "", "f": 0.0727}, {"w": "تلاتة", "c": "", "f": 0.1636}, {"w": "في", "c": "", "f": 0.2727}, {"w": "الأوضة،", "c": "", "f": 0.3273}, {"w": "ممكن", "c": "", "f": 0.4727}, {"w": "تصحى", "c": "", "f": 0.5636}, {"w": "إنت", "c": "k-o", "f": 0.6545}, {"w": "بس", "c": "k-o", "f": 0.7273}, {"w": "اللي", "c": "", "f": 0.7818}, {"w": "متقرّص.", "c": "", "f": 0.8727}]], "introLines": 3, "promise": 3, "summary": 24, "cta": 25, "watermark": ""};</script>
+
+<script src="scenes.js"></script>
+<script src="../../_templates/sketch/engine.js"></script>
+</body></html>
