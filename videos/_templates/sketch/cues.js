@@ -12,9 +12,8 @@
 //   ocean-waves     «Ocean Waves» (Dragon Studio 376898)            0.2–22 s                    → sea, beach
 //   water-rush      «Above Rushing Water» (61158)                   from 3 s                    → water moving
 //   wind-gust       «Wind Gust» (Dragon Studio 386158)              0.25–4.76 s                 → wind
-//   music-soft      «Mysterious Music Box – The Midnight Hour»      the series' music (the user's pick): make it with
-//                   ffmpeg -i px-music-box.mp3 -af "highshelf=f=3000:g=-5,volume='if(lt(t,12),0.6+0.4*t/12,1)':eval=frame" px-music-soft.mp3
-//                   and keep gain 0.42 (≈22 dB under the narrator while he speaks; the user approved this level)
+// NO MUSIC: the user removed the background music for good (after «لو حد شرق قدامك»). Sound effects only; ask the user
+// for any real recording a moment needs (Pixabay search terms) and put it in <episode>/sfx/px-<name>.mp3.
 const fs = require('fs');
 global.window = {}; eval(fs.readFileSync(__dirname + '/timing.js', 'utf8'));
 const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration : T[i].start, D = i => L(i + 1) - L(i), c = [];
@@ -46,7 +45,6 @@ paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                               
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
 // e.g. lab(5, 0.4); ding(L(6) + 1.6); scribble(L(9) + 1.2); sea(L(0), L(PROMISE) - L(0) + 0.6, 0.45);
 
-const MUSIC = has('music-soft') ? 'music-soft' : null;
-if (MUSIC) rec(0, MUSIC, 0.42, 0, window.TIMING.duration + 2.5, 0.6);
-fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: !MUSIC, cues: c }, null, 1));
-console.log(c.length + ' cues; kit clips here: ' + (['swipe', 'paper', 'pencil-scribble', 'ding', 'clock-ticking', 'space-drone', 'ocean-waves', 'water-rush', 'wind-gust', 'music-soft'].filter(has).join(', ') || 'none'));
+// no music and no synthesized bed (bed: false), ever
+fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: c }, null, 1));
+console.log(c.length + ' cues; kit clips here: ' + (['swipe', 'paper', 'pencil-scribble', 'ding', 'clock-ticking', 'space-drone', 'ocean-waves', 'water-rush', 'wind-gust'].filter(has).join(', ') || 'none'));

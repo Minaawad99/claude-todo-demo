@@ -2,7 +2,8 @@
 name: sketch
 description: >
   Make an «إيه الحكاية؟» explainer video in the user's «اسكتش» style, end to end: script, voice, real-shape drawings, sound
-  kit and music, 1080×1920 60 fps render that passes qa.py. Cream graph-paper card, close-up technical drawings (real
+  effects (no music, ever), 1080×1920 60 fps render that passes qa.py, then the reel cover and the TikTok / Instagram+Facebook /
+  YouTube Shorts titles, every time. Cream graph-paper card, close-up technical drawings (real
   coastline globes, side cuts, isometric machines) with leader-line labels, one short caption chunk at a time under a rule,
   no hard cuts, a word-by-word hook card, a stopwatch bumper, a summary card and ask box. The reference episode is
   «المد والجزر» (videos/tides). Built on videos/_templates/sketch. Use when the user says "اسكتش", "بأسلوب الاسكتش",
@@ -11,8 +12,16 @@ description: >
 
 # «إيه الحكاية؟» — the «اسكتش» style
 
-**The user named this style «اسكتش»** and locked it after «المد والجزر». Use the same drawings, narration, sounds and
-music in every episode. It copies the look, pacing and narration of the «طب إزاي؟» series: 20 reference videos, measured in
+**The user named this style «اسكتش»** and locked it after «المد والجزر». Use the same drawings, narration and sounds in
+every episode.
+
+**Locked by the user after «لو حد شرق قدامك» (`videos/choking/`), for every sketch episode from now on:**
+1. **The drawing style of that episode**, including people drawn with real body proportions (section 3).
+2. **No background music, ever.** Not the music box, not any other bed. The sound is the narrator plus sound effects only.
+3. **You make the sound effects** from the kit, the episode's own clips and `audio/sfx.py`'s synthesized ones. When a moment
+   needs a real recording the kit doesn't have, ask the user for it by name with Pixabay search terms; they fetch it.
+4. **Always finish with the reel cover and the titles** (section 7), without being asked: TikTok, Instagram (shared to the
+   Facebook page) and YouTube Shorts. It copies the look, pacing and narration of the «طب إزاي؟» series: 20 reference videos, measured in
 `videos/_reference/tabizzay/STYLE.md`, with contact sheets, motion strips and transcripts. We make it under our own name.
 
 **The reference episode is `videos/tides/`.** Start every new episode from a copy of these files:
@@ -116,6 +125,18 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
     - big serif numbers that count up (`count`, `bigNum`, `numBox`);
     - Arabic words in a box (`tag`);
     - dimension lines (`measure`).
+- **People: real body proportions** (the user's rule). Never stick figures or guessed sizes. Copy `fig()`, `limb()`, `ik()`,
+  `rel()` and the `HB` table from `videos/choking/sketch/shots.js`. They follow Drillis & Contini segment lengths as
+  fractions of the height H (H = 400 units):
+  - heights: ankle 0.039H, knee 0.285H, hip joint 0.52H, shoulder 0.818H, chin 0.87H;
+  - segment lengths: thigh 0.245H, shank 0.246H, foot 0.152H, upper arm 0.186H, forearm 0.146H, hand 0.108H;
+  - side depths: chest 0.13H, waist 0.115H, seat 0.14H; the head is 0.115H deep and 0.13H tall.
+
+  Furniture is to the same scale: a table 0.43H, a chair seat 0.25H. Put the hip at `floor − 212·s` so the feet stand on
+  the floor. Place hands with `rel(h, side)` (a point h above the hip, to the front or the back) so they land on the real
+  spot: throat, between the shoulder blades, above the navel, mid-chest. People are flat salmon-skinned side views as in
+  reference v20, with no faces beyond a nose, an ear and a hair cap. A body cut uses the real anatomy from a reference
+  picture (`throat()` in the same file: windpipe in front, gullet behind, epiglottis on the voice box).
 - **Shots:** one `shot()` per idea, usually per line, sometimes per caption chunk (`[line, chunk]`).
   - Transitions: `tr: "fade"`, or `"in"` / `"out"` when the camera flies into a detail or pulls back. There are no hard cuts.
   - `hud(from, to, draw)` holds a dial, chip or checklist over several shots.
@@ -141,9 +162,12 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
 ## 5. Sound
 
 **The kit is in the repo:** `videos/_templates/sketch/sfx/` (committed at the user's request, about 11 MB). `cues.js` finds
-a clip in the episode's own `sfx/` first and then in the kit, so a new episode needs nothing copied. Ask the user only for
-sounds the kit doesn't have, with Pixabay search terms. Those one-off clips go in `<episode>/sfx/` (gitignored). Every
-clip still has a synthesized stand-in.
+a clip in the episode's own `sfx/` first and then in the kit, so a new episode needs nothing copied. **You make the sound
+effects.** Ask the user only for real recordings the kit doesn't have (a cough, a cork, a siren…): one table of the moment,
+the sound and Pixabay search terms, sent once the picture is done and before the final mix. Their clips go in
+`<episode>/sfx/` as `px-<name>.mp3` and are committed, so nobody asks for them again. Measure each clip's clean part with
+`silencedetect`, slice it in `rec()`, and credit it in `refs/SOURCES.md`. Every clip still has a synthesized stand-in.
+`videos/choking/cues.js` shows recordings timed to the drawing (one blow per beat, a breath per thrust).
 
 | file | Pixabay title (the one the user picked) | slice | use |
 |---|---|---|---|
@@ -156,22 +180,18 @@ clip still has a synthesized stand-in.
 | px-ocean-waves | Ocean Waves (Dragon Studio 376898) | 0.2–22 s | sea |
 | px-water-rush | Above Rushing Water (61158) | from 3 s | water moving |
 | px-wind-gust | Wind Gust (Dragon Studio 386158) | 0.25–4.76 s | wind |
-| px-music-box (source) → px-music-soft (used) | **Mysterious Music Box – The Midnight Hour** (the series music) | whole | bed |
 
-**Music.** The user approved this music and its level. `px-music-soft.mp3` in the kit is already made this way:
-- **Soften the ring:**
-  `ffmpeg -i px-music-box.mp3 -af "highshelf=f=3000:g=-5,volume='if(lt(t,12),0.6+0.4*t/12,1)':eval=frame" px-music-soft.mp3`
-  This takes down the music-box ring, which the user found too much at the start.
-- **Level:** play it at gain 0.42, which sfx.py reports as about 22 dB under the narrator while he speaks. It is 153 s long,
-  so no loop is needed under about 2:30.
+**No music.** The user removed the background music for good. The music files in the kit (`px-music-box`, `px-music-soft`)
+are not to be used, and `cues.json` always has `"bed": false` so sfx.py doesn't add its own synthesized bed either.
 
 **Cues.** Start from `videos/_templates/sketch/cues.js`. It already places these:
 - the hook chime;
 - the bumper ticks;
 - a flip for every shot change;
 - the summary-card build;
-- the ask box;
-- the music.
+- the ask box.
+
+It writes `"bed": false` and places no music.
 
 Add one or two sounds per line matched to what moves (`lab`, `ding`, `scribble`, `paper`, `sea`, `drone`; see
 `videos/tides/cues.js`), then:
@@ -183,7 +203,7 @@ Credit every clip in `refs/SOURCES.md`.
 
 ```
 TAIL=3 node render.js $PWD/<slug>/sketch/index.html <mix.wav> <scratchpad>/<slug>.mp4
-ffmpeg -y -i <mp4> -c:v copy -af "alimiter=limit=0.6:level=false:attack=1:release=60" -c:a aac -b:a 192k -ar 48000 <fixed.mp4>
+ffmpeg -y -i <mp4> -c:v copy -af "volume=1.6dB,alimiter=limit=0.6:level=false:attack=1:release=60" -c:a aac -b:a 192k -ar 48000 <fixed.mp4>
 python3 qa.py <fixed.mp4>
 ```
 
@@ -191,6 +211,44 @@ python3 qa.py <fixed.mp4>
 - **Send the video** with SendUserFile under an Arabic name, e.g. `<الموضوع>-إيه-الحكاية.mp4`.
 - **Code:** commit and push it. Keep the mp4 and the mix in the scratchpad.
 - **A sound-only change** doesn't need a render: remux the new mix onto the video with the same audio chain.
-- **Cover and titles:** follow the animation skill (section 9) when the user asks.
+- Without music the mix sits about 1.5 dB lower, hence `volume=1.6dB` before the limiter (choking: -15.3 LUFS, PASS).
+
+## 7. Cover and titles (always, right after the video)
+
+**Cover.** Copy `brand/eh-elhekaya/cover-choking-tiktok.html` to `cover-<slug>-tiktok.html`. It loads the episode's
+`timing.js` and `sketch/scenes.js` and draws with the episode's own helpers. The layout is full bleed, 540×960 (1080×1920
+at 2x):
+- **Background:** dark slate `#1b1d22` with a faint grid, and one warm yellow glow behind the main drawing.
+- **The drawing:** the main drawing big in the middle, showing the move or the mechanism the video teaches.
+- **Inset and tags:** one magnified inset circle on the key detail, ringed in orange, and one or two tags with the key
+  numbers.
+- **Fades:** dark at the top (0–300) and the bottom (680–960).
+- **Text:** all Noto Sans Arabic.
+  - «إيه الحكاية؟» 15px at the top (y 132);
+  - the hook 900 40–42px in white (y 154);
+  - a yellow 800 24px sub-title (y 210);
+  - the punch line at y 722, 34px, with the number in yellow and a grey second line.
+- **Safe area:** everything that matters stays inside y 120–840, which is also Instagram's 3:4 grid crop, and the text box
+  is `left: 24px; right: 64px`.
+
+Shoot it with `node videos/tools/cover.js <abs html> <abs brand/eh-elhekaya/tiktok-cover-<slug>-1080x1920.png>`. Look at it
+and check that the inset doesn't hide a face or a hand. Then commit and send it.
+
+**Titles** (Egyptian Arabic, run through the `humanizer` skill, each in its own code block):
+- **TikTok:** 3 hook titles to choose from, then a description with the steps or the key fact and hashtags, `#إيه_الحكاية`
+  first.
+- **Instagram Reel, shared to the Facebook page:**
+  - a caption with a short hook, the key steps on their own lines, «احفظ الفيديو وابعته لحد…» and 4–5 hashtags;
+  - a longer Facebook description: 3–4 emoji points of what the video covers, the odd fact and the closing question. The
+    user pastes it into the Facebook reel with Edit after it is published;
+  - a short comment to pin.
+- **YouTube Shorts:** one title ending in `#shorts` and a two-line description.
+
+**Posting steps.** Remind the user briefly how to post:
+- **TikTok:** title, then description and hashtags in the caption; cover from the image; no ads disclosure; turn on the AI
+  label and high-quality upload.
+- **Instagram:** Reel; cover from the camera roll (the 3:4 crop is safe); Share to Facebook, choosing the channel's page;
+  AI label; highest quality.
+- **Facebook:** don't upload it to the page again.
 
 The older «الرسم الهندسي» build (`videos/_templates/diagram-v1/`, `videos/xray-diagram/`) stays only for the X-ray video.
