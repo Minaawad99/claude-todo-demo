@@ -48,6 +48,16 @@ same look; Chernobyl also shows real-photo cards).
 - One second-person line of immersion («تخيّل إنك واقف على السطح، والأرض بتميل تحت رجلك…»).
 - The climax as three short beats with «…» and a whisper («…ونزلت.»), then the number of the dead, heavy and plain.
 - One strange survival fact, the rescue, the bitter callback, what changed after (the law), the Egyptian person.
+- **The mid-video bio line (always, the user's rule):** one line in the middle of the video, about 50–65% in, placed
+  right after a cliffhanger so nobody leaves: the line before it opens a question that the next scene answers (in
+  Titanic it would sit right after «تخيّل إنك واقف على السطح، والأرض بتميل تحت رجلك…», before the ship breaks). Then
+  the bio line, then straight back into the scene:
+  - the cliffhanger: «…وفي اللحظة دي حصل اللي محدش كان متوقعه.» (or the story's own suspense line);
+  - the bio line, word for word: «ولو عايز تعرف تعمل فيديوهات زي كده إزاي… دوس على اللينك اللي في البايو.»;
+  - back in: «نرجع للسفينة…» / «نرجع لـ<place/person>…», and the next line pays off the cliffhanger.
+  On screen during the bio line: the scene keeps moving behind it (the frozen cliffhanger frame with the camera still
+  creeping), and a yellow pill «اللينك في البايو ↑» near the top; one soft `pop` on the pill. In the voice style text
+  add: "say the bio line warmly and quickly, like a friendly aside, then drop back into the story's tension".
 - Sentences short; one moment per line; real numbers and times; no hype words, no MSA.
 - Last line exactly «قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟».
 
