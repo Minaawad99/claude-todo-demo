@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — Bermuda Triangle</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;800;900&family=Noto+Serif:wght@700&display=swap" rel="stylesheet">
+<style>
+  /* full bleed 540x960 (1080x1920 at 2x): the storm over the five Avengers, drawn with the episode's own helpers;
+     the real map of the triangle in an inset ringed in orange; text inside y 120-840, left 24 / right 64 */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #0b0f18; }
+  #art { position: absolute; left: 0; top: 0; width: 540px; height: 960px; }
+  .fT { position: absolute; left: 0; right: 0; top: 0; height: 300px; background: linear-gradient(rgba(0,0,0,.85), rgba(0,0,0,0)); }
+  .fB { position: absolute; left: 0; right: 0; bottom: 0; height: 300px; background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.6) 35%, rgba(0,0,0,.9)); }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 14px rgba(0,0,0,.9), 0 0 3px rgba(0,0,0,.8); }
+</style></head><body>
+<div class="cover">
+  <svg id="art" viewBox="0 0 360 640"></svg>
+  <div class="fT"></div><div class="fB"></div>
+  <p class="t" style="top:118px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
+  <p class="t" style="top:136px;font:900 46px/1.2 'Noto Sans Arabic';color:#fff">مثلث برمودا</p>
+  <p class="t" style="top:200px;font:800 24px/1.2 'Noto Sans Arabic';color:#f2c230">خمس طيارات… واختفوا</p>
+  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff"><span style="color:#f2c230">27</span> راجل في ليلة واحدة<br><span style="font-size:24px;color:#e6e0d4">ولا حتة حطام لحد النهارده</span></p>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="soft2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.5"/></filter>
+  <filter id="blurX" x="-30%" y="-10%" width="160%" height="120%"><feGaussianBlur stdDeviation="9 0.6"/></filter>
+  <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4"/></filter>
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .48  0 0 0 0 .45  0 0 0 .09 0"/></filter>
+  <radialGradient id="vig" cx=".5" cy=".45" r=".75"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".6"/></radialGradient>
+  <linearGradient id="skyMorning" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f78b5"/><stop offset=".5" stop-color="#8dbbe0"/><stop offset="1" stop-color="#e9e4d0"/></linearGradient>
+  <linearGradient id="skyHigh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#173a6e"/><stop offset=".6" stop-color="#4f86c0"/><stop offset="1" stop-color="#a9cbe6"/></linearGradient>
+  <linearGradient id="skyAsh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2522"/><stop offset=".6" stop-color="#5a4c42"/><stop offset="1" stop-color="#8a6e58"/></linearGradient>
+  <linearGradient id="skyFire" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1e1412"/><stop offset=".5" stop-color="#7a2c14"/><stop offset="1" stop-color="#e2722a"/></linearGradient>
+  <linearGradient id="skyDusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14203e"/><stop offset=".55" stop-color="#3d4c7a"/><stop offset="1" stop-color="#d98a5e"/></linearGradient>
+  <linearGradient id="skyToday" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a8fd0"/><stop offset=".6" stop-color="#a6d0ee"/><stop offset="1" stop-color="#eef2ea"/></linearGradient>
+  <linearGradient id="river" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5f9cc4"/><stop offset="1" stop-color="#2f5f86"/></linearGradient>
+  <linearGradient id="riverDusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b3b62"/><stop offset="1" stop-color="#0f1730"/></linearGradient>
+  <linearGradient id="ray" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff6dc" stop-opacity="0"/><stop offset=".5" stop-color="#fff6dc" stop-opacity=".55"/><stop offset="1" stop-color="#fff6dc" stop-opacity="0"/></linearGradient>
+  <linearGradient id="silver" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f6f8"/><stop offset=".45" stop-color="#c9d0d7"/><stop offset=".7" stop-color="#8e98a3"/><stop offset="1" stop-color="#5d6772"/></linearGradient>
+  <linearGradient id="olive" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7b7c55"/><stop offset=".45" stop-color="#5a5b3a"/><stop offset="1" stop-color="#2f3020"/></linearGradient>
+  <radialGradient id="fireball" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffffff"/><stop offset=".35" stop-color="#fff2b0"/><stop offset=".7" stop-color="#ff9a2a"/><stop offset="1" stop-color="#c2361a"/></radialGradient>
+  <radialGradient id="warm" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffd98a" stop-opacity=".9"/><stop offset="1" stop-color="#ffd98a" stop-opacity="0"/></radialGradient>
+  <radialGradient id="cloudG" cx=".45" cy=".35" r=".7"><stop offset="0" stop-color="#f3e6d4"/><stop offset=".6" stop-color="#c9a98a"/><stop offset="1" stop-color="#7a5e4c"/></radialGradient>
+  <pattern id="camo" patternUnits="userSpaceOnUse" width="24" height="24"><rect width="24" height="24" fill="#c4ae7c"/><path d="M2 3 q5 -3 9 1 q-2 5 -8 3Z M14 12 q6 -2 8 3 q-4 4 -9 1Z M4 16 q4 -1 5 3 q-3 3 -6 0Z" fill="#8f7a4c"/><path d="M15 2 q4 0 5 3 q-3 2 -5 0Z M6 10 q3 -1 4 2 q-2 2 -4 0Z M18 20 q3 0 3 3 q-2 1 -4 -1Z" fill="#6e6c42"/></pattern>
+  <pattern id="jetcamo" patternUnits="userSpaceOnUse" width="40" height="40"><rect width="40" height="40" fill="#c8b07a"/><path d="M0 8 q10 -6 18 2 q-4 8 -16 4Z M22 22 q10 -4 16 4 q-6 8 -14 2Z" fill="#8a6a3e"/><path d="M20 4 q6 -2 10 3 q-4 4 -9 1Z M4 26 q6 -2 8 4 q-5 3 -8 -1Z" fill="#6a6e44"/></pattern>
+  <linearGradient id="sand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9cf96"/><stop offset="1" stop-color="#b8945c"/></linearGradient>
+  <linearGradient id="sandFace" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9b77c"/><stop offset="1" stop-color="#a07a48"/></linearGradient>
+  <linearGradient id="canal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a8fb8"/><stop offset="1" stop-color="#1f5f86"/></linearGradient>
+  <linearGradient id="canalDusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d88a5a"/><stop offset=".3" stop-color="#5a5a7a"/><stop offset="1" stop-color="#1e2a48"/></linearGradient>
+  <linearGradient id="skyNoon" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a7cc4"/><stop offset=".55" stop-color="#9ccaee"/><stop offset="1" stop-color="#f2e2be"/></linearGradient>
+  <linearGradient id="skySmoke" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a5a62"/><stop offset=".5" stop-color="#a88a6a"/><stop offset="1" stop-color="#e2c08a"/></linearGradient>
+  <linearGradient id="skySunset" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a3a6a"/><stop offset=".5" stop-color="#d47a4a"/><stop offset="1" stop-color="#f6c070"/></linearGradient>
+  <linearGradient id="skyNight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#05070f"/><stop offset=".6" stop-color="#14203e"/><stop offset="1" stop-color="#28385a"/></linearGradient>
+  <linearGradient id="mud" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a7044"/><stop offset="1" stop-color="#6a4a2a"/></linearGradient>
+  <linearGradient id="skyStar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#03050c"/><stop offset=".6" stop-color="#0c1630"/><stop offset="1" stop-color="#1c2c50"/></linearGradient>
+  <linearGradient id="seaNight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14264a"/><stop offset="1" stop-color="#050a18"/></linearGradient>
+  <linearGradient id="seaDawn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c88a7a"/><stop offset=".3" stop-color="#5a6a8a"/><stop offset="1" stop-color="#1e2a48"/></linearGradient>
+  <linearGradient id="skyDawnT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#28345a"/><stop offset=".6" stop-color="#b87a7a"/><stop offset="1" stop-color="#f6c890"/></linearGradient>
+  <linearGradient id="ice" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4fbff"/><stop offset=".5" stop-color="#bcd8ea"/><stop offset="1" stop-color="#6a94b4"/></linearGradient>
+  <linearGradient id="funnel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b8843e"/><stop offset=".4" stop-color="#e8b86a"/><stop offset="1" stop-color="#a87434"/></linearGradient>
+  <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a5a34"/><stop offset="1" stop-color="#5a3820"/></linearGradient>
+</defs></svg>
+<script src="../../videos/bermuda/timing.js"></script>
+<script src="../../videos/bermuda/film/map.js"></script>
+<script src="../../videos/bermuda/film/scenes.js"></script>
+<script>
+  (function () { var P = window.__parts, t = 84.43, s = "";
+    s += P.sky("skyNight") + P.stars(t, 40, 220) + P.stormClouds(t, 250, 1) + (function(){ var h = function (i) { var x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }; var tb = ((0.02 - h(7)) * 2.2 + 22) % 2.2; return P.bolt(tb, 130, 90, 330, 7, 2.2) + P.bolt(tb, 300, 110, 220, 7, 2.2); })();
+    s += '<circle cx="250" cy="200" r="150" fill="#9fc0ff" opacity=".12" filter="url(#soft)"/>' + P.sea(t, 470, "storm");
+    var pos = [[150, 400, .5], [80, 372, .38], [220, 372, .38], [40, 346, .3], [270, 346, .3]];
+    pos.forEach(function (q, k) { s += P.avenger(q[0], q[1], q[2], t + k, { dark: true, lit: true, code: "FT-" + [28, 36, 3, 81, 117][k] }); });
+    s += P.rain(t, 70, .3);
+    // inset: the real map with the triangle, ringed in orange
+    s += '<clipPath id="ins"><circle cx="268" cy="290" r="62"/></clipPath><g clip-path="url(#ins)"><g transform="translate(88 -10)">' + P.mapView(t, -72.4, 25.4, .25, { draw: function (mp, sw) { return P.tri3(mp, sw, 1, t); } }) + '</g></g><circle cx="268" cy="290" r="62" fill="none" stroke="#e8602a" stroke-width="4"/>';
+    s += P.vignette() + '<rect width="360" height="640" filter="url(#grain)"/>';
+    document.getElementById("art").innerHTML = s; })();
+</script>
+</body></html>

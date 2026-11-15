@@ -377,7 +377,7 @@
     38: [["gernon", "جيرنون وطيارته", { x: 292, y: 218, w: 116, h: 70, rot: 3, at: 1.6 }]]
   };
   SH.forEach(function (sh) { var c = CARDS[sh.i]; if (c) sh.card = function (u, d, t) { var r = ""; c.forEach(function (cd) { r += photoCard(u, d, t, cd[0], cd[1], cd[2]); }); return r; }; });
-  window.__parts = { avenger: avenger, mariner: mariner, bonanza: bonanza, tanker: tanker, cyclops: cyclops, mapView: mapView, compass: compass, gauge: gauge, sea: sea, bolt: bolt, portrait: portrait, person: person, tri3: tri3, mp: mp };
+  window.__parts = { sky: sky, stormClouds: stormClouds, rain: rain, stars: stars, cloudBank: cloudBank, rays: rays, dust: dust, vignette: vignette, avenger: avenger, mariner: mariner, bonanza: bonanza, tanker: tanker, cyclops: cyclops, mapView: mapView, compass: compass, gauge: gauge, sea: sea, bolt: bolt, portrait: portrait, person: person, tri3: tri3, mp: mp };
   window.__chip = function (t) { var i = 0; while (i < LN.length - 1 && LN[i + 1].start - .05 <= t) i++; return 0; };
   function drawShot(sh, t, next) { var u = t - sh.a, d = Math.max(.6, next - sh.a), c = sh.cam(u, d), cx = c[0] + 9 * Math.sin(t * 1.1) + 3 * Math.sin(t * 2.3), cy = c[1] + 7 * Math.cos(t * .9), z = c[2] * (1 + .02 * Math.sin(t * .8)); return '<g transform="translate(180 320) rotate(' + f(.5 * Math.sin(t * .5)) + ') scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g>' + (sh.card ? sh.card(u, d, t) : ''); }
   window.__panel = function (svg, t) {
