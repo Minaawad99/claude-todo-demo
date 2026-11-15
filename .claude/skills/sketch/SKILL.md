@@ -215,6 +215,10 @@ python3 qa.py <fixed.mp4>
 
 ## 7. Cover and titles (always, right after the video)
 
+Send the cover and all the titles together with the finished video, in the same reply, without being asked and without
+waiting for recorded sounds (the user confirmed this again after «لو عربيتك وقعت في المية»). Sounds can be swapped in
+later by a remux; the cover and titles don't change.
+
 **Cover.** Copy `brand/eh-elhekaya/cover-choking-tiktok.html` to `cover-<slug>-tiktok.html`. It loads the episode's
 `timing.js` and `sketch/scenes.js` and draws with the episode's own helpers. The layout is full bleed, 540×960 (1080×1920
 at 2x):
