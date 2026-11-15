@@ -45,33 +45,37 @@ paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                               
 
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
 // 0–2 · hook: the throat grab, the crossed-out speech bubble, the stopwatch from 4:00
+rec(L(0) + 1.4, 'choke', 0.35, 0.15, 2.55, 1.0, null);                                               // he chokes as he grabs his throat
 a(L(1) + 0.2, 'pop', 0.3); scribble(L(1) + 0.7);
 rec(L(2) + 0.1, 'clock-ticking', 0.3, 0.1, D(2) + 0.3, 1.0, null); ding(L(2) + 1.3);
 // 4–7 · the throat cut: labels, the bite going down, the flap, the wrong pipe crossed out
 lab(4, 0.4); a(L(4) + 0.3, 'pop', 0.3);
 lab(5, 0.9); lab(5, 2.2); rec(L(5) + 2.2, 'wind-gust', 0.12, 0.25, 1.4, 1.0, 'wind', 0.1);
-lab(6, 0.6); a(L(6) + 1.4, 'pop', 0.3); a(L(6) + 3.4, 'pop', 0.25);
+lab(6, 0.6); rec(L(6) + 0.3, 'swallow', 0.4, 0.9, 1.5, 1.0, 'pop', 0.3); rec(L(6) + 2.7, 'swallow', 0.3, 0.9, 1.5, 1.0, 'pop', 0.25);
 a(L(7) + 0.3, 'pop', 0.3); a(L(7) + 1.6, 'whoosh', 0.15, 1.6); scribble(L(7) + 3.5); paper(L(7) + 3.8);
 // 8–10 · cough or not; let him cough; call 123
-a(L(8) + 0.3, 'pop', 0.3); a(L(8) + 0.6, 'pop', 0.3);
-rec(L(9) + 0.4, 'wind-gust', 0.18, 0.25, 1.2, 1.0, 'wind', 0.15); scribble(L(9) + 1.4); paper(L(9) + 1.8);
-scribble(L(10) + 0.5); paper(L(10) + 1.6); for (let k = 0; k < 3; k++) a(L(10) + 2.0 + k * 0.45, 'tick', 0.3); ding(L(10) + 3.4);
+rec(L(8) + 0.2, 'cough', 0.4, 0.85, 1.8, 1.0, 'pop', 0.3);                                            // the man on the left coughs
+rec(L(9) + 0.3, 'cough', 0.4, 1.85, 1.7, 1.0, 'wind', 0.15); rec(L(9) + 2.6, 'cough', 0.3, 3.0, 1.0, 1.0, null); scribble(L(9) + 1.4); paper(L(9) + 1.8);
+scribble(L(10) + 0.5); paper(L(10) + 1.6); for (let k = 0; k < 3; k++) rec(L(10) + 2.0 + k * 0.45, 'dial', 0.2, 1 + k, 0.16, 1.0, 'tick', 0.3);   // one short tone per digit ding(L(10) + 3.4);
 // 11, 13 · five blows, five thrusts: one knock per beat
-const beats = (i, u0) => { const d = T[i].end - T[i].start - u0; for (let k = 0; k < 5; k++) a(L(i) + u0 + (k + 0.5) * d / 5, 'thud', 0.35, 0.3); };
-beats(11, 1.2); lab(11, 0.6); beats(13, 0.8); a(L(13) + 0.6, 'whoosh', 0.12);
+const hit = (t, g) => rec(t - 0.02, 'punch', g, 0, 0.26, 1.0, 'thud', g);   // the blow lands at the middle of each beat
+const beats = (i, u0, g) => { const d = T[i].end - T[i].start - u0; for (let k = 0; k < 5; k++) hit(L(i) + u0 + (k + 0.5) * d / 5, g); };
+beats(11, 1.2, 0.3); lab(11, 0.6);
+{ const d = T[13].end - T[13].start - 0.8; for (let k = 0; k < 5; k++) rec(L(13) + 0.8 + (k + 0.45) * d / 5, 'exhale', 0.22, 0.4, 0.45, 1.0, 'thud', 0.2); }   // a short forced breath on each thrust
 // 12 · ribs, navel, the fist slides up
 lab(12, 0.4); lab(12, 0.9); a(L(12) + 1.6, 'whoosh', 0.15); ding(L(12) + 2.6);
 // 14–15 · the dome pushes up, the bite flies; the cork pops
-lab(14, 0.4); a(L(14) + 1.6, 'whoosh', 0.2, 0.6); a(L(14) + 2.1, 'pop', 0.45);
-a(L(15) + 0.6, 'squeeze', 0.2, 0.5); a(L(15) + 1.1, 'pop', 0.5); a(L(15) + 1.2, 'whoosh', 0.18);
+lab(14, 0.4); rec(L(14) + 1.7, 'exhale', 0.35, 0.36, 1.0, 1.0, 'whoosh', 0.2); a(L(14) + 2.1, 'pop', 0.4);
+a(L(15) + 0.6, 'squeeze', 0.2, 0.5); rec(L(15) + 1.08, 'cork', 0.45, 0, 0.6, 1.0, 'pop', 0.5); a(L(15) + 1.2, 'whoosh', 0.15);
 // 16–19 · alternate; pregnant; baby; CPR and the ambulance
 paper(L(16) + 0.3); paper(L(16) + 0.6);
 lab(17, 1.0); scribble(L(17) + 1.8);
-for (let k = 0; k < 5; k++) a(L(18) + 0.8 + (k + 0.5) * ((T[18].end - T[18].start) * 0.55 - 0.8) / 5, 'thud', 0.28, 0.3); a(L(18) + (T[18].end - T[18].start) * 0.55, 'pop', 0.35);
-lab(19, 0.6); for (let s = L(19) + 0.3; s < L(20) - 0.2; s += 0.56) a(s, 'bump', 0.2); a(L(19) + 1.4, 'pop', 0.3);
+for (let k = 0; k < 5; k++) hit(L(18) + 0.8 + (k + 0.5) * ((T[18].end - T[18].start) * 0.55 - 0.8) / 5, 0.16);   // gentler on a baby
+a(L(18) + (T[18].end - T[18].start) * 0.55, 'pop', 0.35);
+lab(19, 0.6); rec(L(19), 'heartbeat', 0.3, 0, D(19), 1.0, 'bump', 0.2); rec(L(19) + 1.2, 'siren', 0.18, 1.0, D(19) + 0.4, 1.0, null); a(L(19) + 1.4, 'pop', 0.25);
 // 20–21 · water: a pour, then crossed out; the finger pushes the bite down
-rec(L(20) + 0.4, 'water-rush', 0.2, 3, 1.2, 1.0, 'slosh', 0.2); paper(L(20) + 0.2); scribble(L(20) + D(20) - 1.2);
-rec(L(21) + 0.1, 'water-rush', 0.15, 3, 1.0, 1.0, 'slosh', 0.15); scribble(L(21) + 1.1); a(L(21) + 1.9, 'whoosh', 0.15); scribble(L(21) + 3.1);
+rec(L(20) + 0.4, 'pour', 0.35, 0, 1.8, 1.0, 'slosh', 0.2); paper(L(20) + 0.2); scribble(L(20) + D(20) - 1.2);
+rec(L(21) + 0.1, 'pour', 0.22, 1.2, 1.2, 1.0, 'slosh', 0.15); scribble(L(21) + 1.1); a(L(21) + 1.9, 'whoosh', 0.15); scribble(L(21) + 3.1);
 // 22 · the decision tree builds
 paper(L(22) + 0.2); scribble(L(22) + 0.9); a(L(22) + 2.2, 'pop', 0.3); a(L(22) + 3.0, 'pop', 0.3); a(L(22) + 4.0, 'whoosh', 0.15);
 // 23 · 96 counts up, 2016 lands
