@@ -22,3 +22,12 @@ engines, twin fins), USS Cyclops (row of coaling gantries), Beechcraft Bonanza (
 ## Map
 Natural Earth 1:10m admin-0 countries (public domain) via world-atlas 2.0.2, projected with d3-geo (Mercator) into
 `film/map.js`. Egypt's outline is shifted by 100° of longitude at the same latitude to compare sizes.
+
+## Photos sent by the user (videos/bermuda/photos/)
+taylor.jpg (Lt. Charles C. Taylor), cyclops.jpg and cyclops2.jpg (USS Cyclops), mariner.jpg (PBM Mariner in flight),
+avengers.jpg (a formation of Avengers, not identified as Flight 19), gernon.jpg (Bruce Gernon with a Bonanza, carries the
+source's own logo), avenger-side.jpg (a restored TBM, side reference only). Used as reference for the drawings and as
+small framed «صورة حقيقية» prints. Not used: a 3D render of Flight 19 (not a photograph), a NASA test-pilot photo (not
+Kosnar or Gernon), a 300 px collage too small to use.
+The redraws from these photos: Mariner oval twin fins on a dihedral tailplane and wing floats on struts; Cyclops two tall
+black funnels with a white band aft, a tall bridge forward, X-braced coaling gantries amidships.

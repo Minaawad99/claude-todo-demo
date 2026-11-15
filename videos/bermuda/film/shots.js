@@ -73,12 +73,12 @@
     g += P('M124 -22 Q136 -16 140 -6 L118 -8 Q116 -18 124 -22 Z', "#9fc0d8", { w: 1.2 }) + P('M96 -28 L74 -40 L50 -40 L44 -30 Z', "#9fc0d8", { w: 1.4 });
     for (var w = 0; w < 6; w++) g += '<circle cx="' + (20 - w * 22) + '" cy="-12" r="2.6" fill="' + (o.lit ? "#ffd98a" : "#9fc0d8") + '" stroke="' + INK + '" stroke-width=".7"/>';
     // twin fins at the tail (one seen)
-    g += P('M-130 -18 L-150 -70 L-168 -72 L-160 -10 Z', top, { w: 1.6 }) + P('M-140 -18 L-190 -30 L-190 -22 L-148 -10 Z', top, { w: 1.3 });
+    g += P('M-128 -16 L-178 -52 L-182 -44 L-136 -8 Z', top, { w: 1.4 }) + '<ellipse cx="-180" cy="-52" rx="11" ry="27" fill="' + top + '" stroke="' + INK + '" stroke-width="1.6"/><path d="M-180 -79 V-25" stroke="' + INK + '" stroke-width=".8" opacity=".6"/>';
     // gull wing: rising from the hull, then flat; the engine under the break
     g += P('M50 -30 L30 -64 L-10 -66 L-4 -30 Z', top, { w: 1.6 }) + P('M30 -64 L60 -70 L-60 -72 L-10 -66 Z', darker(top, 1.1), { w: 1.4 });
     g += P('M54 -66 Q74 -66 76 -58 Q74 -48 54 -48 L10 -50 L10 -64 Z', top, { w: 1.5 }) + prop(78, -57, 24, t);
     g += '<path d="M10 -66 L-4 -20 M40 -66 L50 -26" stroke="' + INK + '" stroke-width="0" />';
-    g += star(-90, -6, 7);
+    g += '<path d="M-36 -66 L-30 -24 M-14 -66 L-26 -24 M-36 -66 L-26 -24" stroke="' + INK + '" stroke-width="1.6"/>' + P('M-48 -22 Q-30 -28 -8 -22 Q-12 -14 -30 -14 Q-46 -15 -48 -22 Z', bel, { w: 1.4 }) + star(-90, -6, 7);
     if (o.fumes) for (var q = 0; q < 6; q++) { var ph = ((t * .5 + q / 6) % 1); g += '<circle cx="' + f(-20 - ph * 60) + '" cy="' + f(-30 - ph * 20) + '" r="' + f(6 + ph * 14) + '" fill="#c8d06a" opacity="' + f2(.35 * (1 - ph)) + '"/>'; }
     return G('translate(' + f(x) + ' ' + f(y + bob) + ') rotate(' + f(o.rot || 0) + ') scale(' + f(s * (o.flip ? -1 : 1)) + ' ' + f(s) + ')', g, o.op);
   }
@@ -105,10 +105,11 @@
   // the collier USS Cyclops (1910): low hull, a row of tall gantry frames for coaling, bridge forward, funnel aft
   function cyclops(x, y, s, t, o) {
     o = o || {}; var g = "", c = o.col || "#5a626e";
-    for (var k = 0; k < 12; k++) { var gx = -150 + k * 24; g += '<path d="M' + (gx - 6) + ' -18 L' + (gx - 6) + ' -78 L' + (gx + 6) + ' -78 L' + (gx + 6) + ' -18 M' + (gx - 6) + ' -50 L' + (gx + 6) + ' -50" stroke="' + c + '" stroke-width="1.8" fill="none"/>'; }
-    g += '<path d="M-156 -78 H118" stroke="' + c + '" stroke-width="2"/>';
-    g += R(130, -44, 30, 26, "#c8c4b8", { w: 1.2 }) + R(-196, -40, 24, 22, "#c8c4b8", { w: 1.2 }) + P('M-186 -40 L-188 -64 L-176 -64 L-178 -40 Z', "#2a2a2e", { w: 1.2 });
-    g += '<path d="M150 -18 V-96 M-184 -18 V-90" stroke="#4a4a4a" stroke-width="2"/>';
+    for (var k = 0; k < 10; k++) { var gx = -110 + k * 24; if (k < 9) g += '<path d="M' + (gx + 6) + ' -50 L' + (gx + 18) + ' -76 M' + (gx + 6) + ' -76 L' + (gx + 18) + ' -50" stroke="' + c + '" stroke-width="1.2"/>'; g += '<path d="M' + (gx - 6) + ' -18 L' + (gx - 6) + ' -78 L' + (gx + 6) + ' -78 L' + (gx + 6) + ' -18 M' + (gx - 6) + ' -50 L' + (gx + 6) + ' -50" stroke="' + c + '" stroke-width="1.8" fill="none"/>'; }
+    g += '<path d="M-116 -78 H122" stroke="' + c + '" stroke-width="2"/>';
+    g += R(130, -60, 30, 42, "#c8c4b8", { w: 1.2 }) + R(126, -70, 38, 10, "#b8b4a8", { w: 1.2 }) + R(-200, -38, 70, 18, "#c8c4b8", { w: 1.2 });
+    [-182, -150].forEach(function (fx) { g += R(fx - 6, -96, 12, 58, "#1e1e22", { w: 1.2 }) + R(fx - 6, -84, 12, 6, "#e8e4d8", { s: 0 }); });
+    g += '<path d="M146 -60 V-110 M-124 -18 V-104 M172 -22 L146 -106 L-124 -100 L-206 -22" stroke="#4a4a4a" stroke-width="1.4" fill="none"/>';
     g += P('M-206 -8 Q-208 -20 -198 -20 L176 -22 L184 -20 L176 0 L-200 0 Z', o.hull || "#3a4048", { w: 1.6 });
     return G('translate(' + f(x) + ' ' + f(y + Math.sin(t * 1.1) * 1.2) + ') scale(' + f(s) + ')', g, o.op);
   }
@@ -195,7 +196,7 @@
     return s + dust(t, 14, "#fff", .3) + bigNum("2:10", 180, 160, u, .4, 50, YEL) + label("الضهر", 180, 196, u, .8, 18, "#fff"); });
   function palmRow(t) { var s = ""; for (var k = 0; k < 6; k++) { var x = -40 + k * 80, sw = Math.sin(t * .9 + k) * 2; s += P('M' + x + ' 430 Q' + f(x + 2 + sw * .3) + ' 390 ' + f(x + sw) + ' 350 l4 0 Q' + f(x + 5 + sw * .3) + ' 390 ' + (x + 4) + ' 430Z', "#8a6a44", { w: 1 }); for (var j = 0; j < 6; j++) { var a = -2.6 + j * .62; s += P('M' + f(x + sw + 2) + ' 350 q' + f(Math.cos(a) * 14) + ' ' + f(Math.sin(a) * 10) + ' ' + f(Math.cos(a) * 26) + ' ' + f(Math.sin(a) * 4 + 12) + ' q' + f(-Math.cos(a) * 10) + ' -6 ' + f(-Math.cos(a) * 26) + ' ' + f(-Math.sin(a) * 4 - 12) + 'Z', j % 2 ? "#4f7a34" : "#6a9a44", { w: .8 }); } } return s; }
   // 8 — their leader, Lieutenant Charles Taylor, an experienced pilot with more than 2,500 hours
-  shot(8, push([180, 330], [180, 320], 1.0, 1.08), function (u, d, t) { return sky("skyMorning") + rays(t, 320, 40, 2.2, 6, 600, .45) + R(-200, 420, 760, 300, "#7a7870", { s: 0 }) + avenger(250, 380, .9, t, { code: "FT-28" }) + portrait(140, 400, 1.9, t, { top: "#6a5a3e", skin: SK[0], hair: "short", hairCol: "#4a3424", rim: true }) + label("تشارلز تايلور", 180, 130, u, .5, 26, "#fff") + bigNum("2,500+", 180, 180, u, 1.6, 34, YEL) + label("ساعة طيران", 180, 206, u, 2, 16, "#fff"); });
+  shot(8, push([180, 330], [180, 320], 1.0, 1.08), function (u, d, t) { return sky("skyMorning") + rays(t, 320, 40, 2.2, 6, 600, .45) + R(-200, 420, 760, 300, "#7a7870", { s: 0 }) + avenger(250, 380, .9, t, { code: "FT-28" }) + portrait(140, 400, 1.9, t, { top: "#f0eee6", skin: SK[0], hair: "short", hairCol: "#4a3424", hat: "officer", hatCol: "#f2f0ea", rim: true }) + label("تشارلز تايلور", 180, 130, u, .5, 26, "#fff") + bigNum("2,500+", 180, 180, u, 1.6, 34, YEL) + label("ساعة طيران", 180, 206, u, 2, 16, "#fff"); });
   // 9 — that morning he asked for someone else to take this flight… and was refused
   shot(9, push([180, 340], [170, 330], 1.0, 1.1), function (u, d, t) { var s = R(-200, -200, 760, 1040, "#3a3a34", { s: 0 }) + R(-200, 380, 760, 400, "#5a4a3a", { s: 0 }) + R(40, 120, 120, 90, "#6a8aa0", { w: 2 }) + rays(t, 100, 160, .8, 5, 500, .4);
     s += R(60, 400, 240, 14, "#7a5a3a", { w: 2 }) + paper(180, 396, 60, 30, -4, '<path d="M-20 -6 h40 M-20 2 h30" stroke="#5a4a3a" stroke-width="1.5"/>');
@@ -358,9 +359,27 @@
   // 55 — tell us: which story next time?
   shot(55, push([180, 320], [180, 320], 1.0, 1.06), function (u, d, t) { return mapView(t, -73, 25.6, .66, { night: true, draw: function (mp, sw) { return tri3(mp, sw, 1, t); } }) + label("قولولنا!", 180, 150, u, .3, 34, "#fff"); });
 
+  // ── real photographs (sent by the user): a framed print that slides into an empty corner when the narrator names the thing ──
+  var PH = { taylor: [364, 529], cyclops: [610, 503], cyclops2: [723, 424], mariner: [562, 355], avengers: [559, 548], gernon: [450, 267] }, PHN = 0;
+  function photoCard(u, d, t, name, tag, o) {
+    o = o || {}; var dim = PH[name], at0 = o.at == null ? .5 : o.at, k = clamp((u - at0) / .45), out = o.until ? clamp((o.until - u) / .35) : 1; k = Math.min(k, out); if (k <= 0) return "";
+    var maxW = o.w || 290, maxH = o.h || 300, sc = Math.min(maxW / dim[0], maxH / dim[1]), w = dim[0] * sc, h = dim[1] * sc, cx = o.x || 180, cy = o.y || 300, rot = (o.rot == null ? -2 : o.rot) * (1 - .3 * k), z = 1.06 + .08 * clamp((u - at0) / Math.max(1, (o.until || d) - at0)), id = "phc" + (++PHN);
+    var g = '<rect x="' + f(-w / 2 - 8) + '" y="' + f(-h / 2 - 8) + '" width="' + f(w + 16) + '" height="' + f(h + 30) + '" fill="#000" opacity=".45" transform="translate(5 7)" filter="url(#soft2)"/>' + R(-w / 2 - 8, -h / 2 - 8, w + 16, h + 30, "#f4f0e4", { w: 1.2, s: "#8a8478" });
+    g += '<clipPath id="' + id + '"><rect x="' + f(-w / 2) + '" y="' + f(-h / 2) + '" width="' + f(w) + '" height="' + f(h) + '"/></clipPath><g clip-path="url(#' + id + ')"><image href="../photos/' + name + '.jpg" x="' + f(-w / 2 * z) + '" y="' + f(-h / 2 * z) + '" width="' + f(w * z) + '" height="' + f(h * z) + '" preserveAspectRatio="xMidYMid slice"/></g>';
+    g += txt(tag, 0, h / 2 + 15, 10, "#3a3428", { wt: 800 }) + txt("صورة حقيقية", 0, -h / 2 - 12, 10, YEL, { wt: 900, st: "rgba(0,0,0,.7)", sw: 3 });
+    return G('translate(' + f(cx) + ' ' + f(cy + (1 - eout(k)) * 30) + ') rotate(' + f(rot) + ') scale(' + f2(.92 + .08 * eout(k)) + ')', g, k);
+  }
+  var CARDS = {
+    2: [["avengers", "طيارات أفنجر", { x: 290, y: 236, w: 110, h: 110, rot: 4, at: 1.0 }]],
+    8: [["taylor", "تشارلز تايلور", { x: 292, y: 262, w: 96, h: 130, rot: 4, at: .8 }]],
+    23: [["mariner", "مارينر", { x: 290, y: 268, w: 116, h: 80, rot: 3, at: 2.2 }]],
+    33: [["cyclops2", "سايكلوبس", { x: 78, y: 300, w: 120, h: 72, rot: -4, at: 1.0 }]],
+    38: [["gernon", "جيرنون وطيارته", { x: 292, y: 218, w: 116, h: 70, rot: 3, at: 1.6 }]]
+  };
+  SH.forEach(function (sh) { var c = CARDS[sh.i]; if (c) sh.card = function (u, d, t) { var r = ""; c.forEach(function (cd) { r += photoCard(u, d, t, cd[0], cd[1], cd[2]); }); return r; }; });
   window.__parts = { avenger: avenger, mariner: mariner, bonanza: bonanza, tanker: tanker, cyclops: cyclops, mapView: mapView, compass: compass, gauge: gauge, sea: sea, bolt: bolt, portrait: portrait, person: person, tri3: tri3, mp: mp };
   window.__chip = function (t) { var i = 0; while (i < LN.length - 1 && LN[i + 1].start - .05 <= t) i++; return 0; };
-  function drawShot(sh, t, next) { var u = t - sh.a, d = Math.max(.6, next - sh.a), c = sh.cam(u, d), cx = c[0] + 9 * Math.sin(t * 1.1) + 3 * Math.sin(t * 2.3), cy = c[1] + 7 * Math.cos(t * .9), z = c[2] * (1 + .02 * Math.sin(t * .8)); return '<g transform="translate(180 320) rotate(' + f(.5 * Math.sin(t * .5)) + ') scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g>'; }
+  function drawShot(sh, t, next) { var u = t - sh.a, d = Math.max(.6, next - sh.a), c = sh.cam(u, d), cx = c[0] + 9 * Math.sin(t * 1.1) + 3 * Math.sin(t * 2.3), cy = c[1] + 7 * Math.cos(t * .9), z = c[2] * (1 + .02 * Math.sin(t * .8)); return '<g transform="translate(180 320) rotate(' + f(.5 * Math.sin(t * .5)) + ') scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g>' + (sh.card ? sh.card(u, d, t) : ''); }
   window.__panel = function (svg, t) {
     var i = at(t), sh = SH[i], next = i + 1 < SH.length ? SH[i + 1].a : L(LN.length), s = "", u = t - sh.a;
     if (i > 0 && u < .35) s += drawShot(SH[i - 1], t, sh.a) + '<g opacity="' + f2(ease(u / .35)) + '">' + drawShot(sh, t, next) + '</g>';
