@@ -12,9 +12,8 @@
 //   ocean-waves     «Ocean Waves» (Dragon Studio 376898)            0.2–22 s                    → sea, beach
 //   water-rush      «Above Rushing Water» (61158)                   from 3 s                    → water moving
 //   wind-gust       «Wind Gust» (Dragon Studio 386158)              0.25–4.76 s                 → wind
-//   music-soft      «Mysterious Music Box – The Midnight Hour»      the series' music (the user's pick): make it with
-//                   ffmpeg -i px-music-box.mp3 -af "highshelf=f=3000:g=-5,volume='if(lt(t,12),0.6+0.4*t/12,1)':eval=frame" px-music-soft.mp3
-//                   and keep gain 0.42 (≈22 dB under the narrator while he speaks; the user approved this level)
+// NO MUSIC: the user removed the background music for good (after «لو حد شرق قدامك»). Sound effects only; ask the user
+// for any real recording a moment needs (Pixabay search terms) and put it in <episode>/sfx/px-<name>.mp3.
 const fs = require('fs');
 global.window = {}; eval(fs.readFileSync(__dirname + '/timing.js', 'utf8'));
 const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration : T[i].start, D = i => L(i + 1) - L(i), c = [];
