@@ -503,21 +503,24 @@
     var maxW = o.w || 290, maxH = o.h || 300, sc = Math.min(maxW / dim[0], maxH / dim[1]), w = dim[0] * sc, h = dim[1] * sc, cx = o.x || 180, cy = o.y || 300, rot = (o.rot == null ? -2 : o.rot) * (1 - .3 * k), z = 1.06 + .08 * clamp((u - at0) / Math.max(1, (o.until || d) - at0)), id = "phc" + (++PHN);
     var g = '<rect x="' + f(-w / 2 - 8) + '" y="' + f(-h / 2 - 8) + '" width="' + f(w + 16) + '" height="' + f(h + 30) + '" fill="#000" opacity=".45" transform="translate(5 7)" filter="url(#soft2)"/>' + R(-w / 2 - 8, -h / 2 - 8, w + 16, h + 30, "#f4f0e4", { w: 1.2, s: "#8a8478" });
     g += '<clipPath id="' + id + '"><rect x="' + f(-w / 2) + '" y="' + f(-h / 2) + '" width="' + f(w) + '" height="' + f(h) + '"/></clipPath><g clip-path="url(#' + id + ')"><image href="../photos/' + name + '.jpg" x="' + f(-w / 2 * z + (o.panX || 0) * u) + '" y="' + f(-h / 2 * z) + '" width="' + f(w * z) + '" height="' + f(h * z) + '" preserveAspectRatio="xMidYMid slice"/></g>';
-    g += w < 180 ? txt(tag, 0, h / 2 + 16, 11, "#3a3428", { wt: 800 }) : txt(tag, w / 2 - 4, h / 2 + 16, 11, "#3a3428", { a: "end", wt: 800 }) + txt("صورة حقيقية", -w / 2 + 2, h / 2 + 16, 11, "#b8322a", { a: "start", wt: 900 });
+    g += w < 130 ? txt(tag, 0, h / 2 + 15, 10, "#3a3428", { wt: 800 }) + txt("صورة حقيقية", 0, -h / 2 - 12, 10, "#f2c230", { wt: 900, st: "rgba(0,0,0,.7)", sw: 3 }) : w < 180 ? txt(tag, 0, h / 2 + 16, 11, "#3a3428", { wt: 800 }) : txt(tag, w / 2 - 4, h / 2 + 16, 11, "#3a3428", { a: "end", wt: 800 }) + txt("صورة حقيقية", -w / 2 + 2, h / 2 + 16, 11, "#b8322a", { a: "start", wt: 900 });
     return G('translate(' + f(cx) + ' ' + f(cy + (1 - eout(k)) * 30) + ') rotate(' + f(rot) + ') scale(' + f2(.92 + .08 * eout(k)) + ')', g, k);
   }
+  // small prints tucked into an empty corner of each drawing, so the drawing stays fully visible
+  var TR = { x: 286, y: 262, w: 120, h: 110, rot: 4 }, TL = { x: 74, y: 262, w: 120, h: 110, rot: -4 }, BR = { x: 288, y: 420, w: 116, h: 96, rot: 3 }, BL = { x: 72, y: 420, w: 116, h: 96, rot: -3 };
+  function spot(o, extra) { return Object.assign({}, o, extra || {}); }
   var CARDS = {
-    19: [["akimov", "أكيموف", { x: 98, y: 330, w: 140, h: 200, rot: -3, at: .6 }], ["toptunov", "توبتونوف", { x: 262, y: 340, w: 140, h: 200, rot: 3, at: 1.6 }]], 25: [["akimov", "أكيموف", { x: 290, y: 200, w: 100, h: 140, rot: 4, at: 2.2 }]],
-    11: [["controlroom", "غرفة التحكم · تشيرنوبل"]], 20: [["controlroom", "غرفة التحكم", { rot: 2, at: .3 }]], 24: [["rbmk", "مفاعل RBMK من جوه", { y: 330, at: 1.4 }]],
-    33: [["reactor4-1986", "مفاعل 4 · 1986", { h: 330, y: 290, at: .4 }]], 38: [["firemen1", "رجالة الإطفاء · 1986", { at: 1.0 }]], 41: [["firemen2", "1986", { rot: 2, at: .6 }]],
-    46: [["convoy", "قافلة الإخلاء · 1986", { at: 1.2 }]], 47: [["boarding", "1986", { h: 300, at: .4 }]], 49: [["forsmark", "محطة فورسمارك · السويد", { at: 1.6 }]],
-    53: [["roof", "على سطح المفاعل · 1986", { at: .4, until: 4.6 }], ["helicopter-1986", "1986", { at: 4.6, rot: 2 }]], 54: [["sarcophagus", "مفاعل 4 · النهارده", { at: 1.0, y: 290 }]],
-    55: [["ferris", "عجلة ملاهي بريبيات", { at: 1.2 }]], 56: [["pripyat-today", "بريبيات النهارده", { at: 1.2, w: 310 }]]
+    11: [["controlroom", "غرفة التحكم", spot(TR, { y: 236, at: .6 })]], 19: [["akimov", "أكيموف", spot(TL, { x: 60, y: 92, w: 72, h: 96, at: .6 })], ["toptunov", "توبتونوف", spot(TR, { x: 300, y: 92, w: 72, h: 96, at: 1.6 })]],
+    20: [["controlroom", "غرفة التحكم", spot(TL, { y: 236, at: .4 })]], 24: [["rbmk", "RBMK", spot(TR, { x: 290, y: 52, w: 96, h: 62, at: 1.4 })]], 25: [["akimov", "أكيموف", spot(TR, { x: 300, y: 236, w: 80, h: 106, at: 2.2 })]],
+    33: [["reactor4-1986", "1986", spot(TR, { x: 318, y: 236, w: 66, h: 100, at: .4 })]], 38: [["firemen1", "1986", spot(TR, { y: 250, at: 1.0 })]], 41: [["firemen2", "1986", spot(TL, { y: 250, at: .6 })]],
+    46: [["convoy", "الإخلاء · 1986", spot(TR, { y: 250, at: 1.2 })]], 47: [["boarding", "1986", spot(TL, { y: 250, w: 96, h: 120, at: .4 })]], 49: [["forsmark", "فورسمارك", spot(TL, { x: 70, y: 54, w: 96, h: 62, at: 1.6 })]],
+    53: [["roof", "سطح المفاعل · 1986", spot(TR, { y: 250, at: .4, until: 4.6 })], ["helicopter-1986", "1986", spot(TR, { y: 250, at: 4.6 })]], 54: [["sarcophagus", "مفاعل 4 النهارده", spot(TR, { y: 250, at: 1.0 })]],
+    55: [["ferris", "عجلة الملاهي", spot(TL, { y: 250, at: 1.2 })]], 56: [["pripyat-today", "بريبيات النهارده", spot(TR, { y: 248, w: 140, h: 60, at: 1.2 })]]
   };
   SH.forEach(function (sh) { var c = CARDS[sh.i]; if (c) sh.card = function (u, d, t) { var s = ""; c.forEach(function (cd) { s += photoCard(u, d, t, cd[0], cd[1], cd[2]); }); return s; }; });
   window.__parts = { person: person, portrait: portrait, plant: plant, controlRoom: controlRoom, az5: az5, core: core, pripyat: pripyat, ferris: ferris, confinement: confinement, op: op, fireman: fireman };
   window.__chip = function (t) { var i = 0; while (i < LN.length - 1 && LN[i + 1].start - .05 <= t) i++; return (i >= 9 && i <= 14) ? .9 : 0; };
-  function drawShot(sh, t, next) { var u = t - sh.a, d = Math.max(.6, next - sh.a), c = sh.cam(u, d), cx = c[0] + 9 * Math.sin(t * 1.1) + 3 * Math.sin(t * 2.3), cy = c[1] + 7 * Math.cos(t * .9), z = c[2] * (1 + .02 * Math.sin(t * .8)); return '<g transform="translate(180 320) rotate(' + f(.5 * Math.sin(t * .5)) + ') scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g>' + (sh.card ? R(0, 0, 360, 640, "#000", { s: 0, op: .28 * clamp((u - .3) / .5) }) + sh.card(u, d, t) : ''); }
+  function drawShot(sh, t, next) { var u = t - sh.a, d = Math.max(.6, next - sh.a), c = sh.cam(u, d), cx = c[0] + 9 * Math.sin(t * 1.1) + 3 * Math.sin(t * 2.3), cy = c[1] + 7 * Math.cos(t * .9), z = c[2] * (1 + .02 * Math.sin(t * .8)); return '<g transform="translate(180 320) rotate(' + f(.5 * Math.sin(t * .5)) + ') scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g>' + (sh.card ? sh.card(u, d, t) : ''); }
   window.__panel = function (svg, t) {
     var i = at(t), sh = SH[i], next = i + 1 < SH.length ? SH[i + 1].a : L(LN.length), s = "", u = t - sh.a;
     if (i > 0 && u < .35) s += drawShot(SH[i - 1], t, sh.a) + '<g opacity="' + f2(ease(u / .35)) + '">' + drawShot(sh, t, next) + '</g>';
