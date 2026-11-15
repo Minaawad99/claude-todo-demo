@@ -83,6 +83,7 @@ a(L(22) + 0.3, 'pop', 0.3); a(L(22) + D(22) * 0.4, 'pop', 0.3); a(L(22) + D(22) 
 // 23 · tasting with her feet
 lab(23, 0.8); lab(23, 1.1);
 
+// music plays only when sfx.py is run with --music, and that only when the user asked for music in this video
 const MUSIC = has('music-soft') ? 'music-soft' : null;
 if (MUSIC) rec(0, MUSIC, 0.42, 0, window.TIMING.duration + 2.5, 0.6);
 fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: !MUSIC, cues: c }, null, 1));

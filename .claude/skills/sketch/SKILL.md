@@ -2,7 +2,7 @@
 name: sketch
 description: >
   Make an «إيه الحكاية؟» explainer video in the user's «اسكتش» style, end to end: script, voice, real-shape drawings, sound
-  kit and music, 1080×1920 60 fps render that passes qa.py. Cream graph-paper card, close-up technical drawings (real
+  kit (no background music unless the user asks), 1080×1920 60 fps render that passes qa.py. Cream graph-paper card, close-up technical drawings (real
   coastline globes, side cuts, isometric machines) with leader-line labels, one short caption chunk at a time under a rule,
   no hard cuts, a word-by-word hook card, a stopwatch bumper, a summary card and ask box. The reference episode is
   «المد والجزر» (videos/tides). Built on videos/_templates/sketch. Use when the user says "اسكتش", "بأسلوب الاسكتش",
@@ -11,8 +11,8 @@ description: >
 
 # «إيه الحكاية؟» — the «اسكتش» style
 
-**The user named this style «اسكتش»** and locked it after «المد والجزر». Use the same drawings, narration, sounds and
-music in every episode. It copies the look, pacing and narration of the «طب إزاي؟» series: 20 reference videos, measured in
+**The user named this style «اسكتش»** and locked it after «المد والجزر». Use the same drawings, narration and sounds in
+every episode. **No background music of any kind unless the user asks for it for that video** (see section 5). It copies the look, pacing and narration of the «طب إزاي؟» series: 20 reference videos, measured in
 `videos/_reference/tabizzay/STYLE.md`, with contact sheets, motion strips and transcripts. We make it under our own name.
 
 **The reference episode is `videos/tides/`.** Start every new episode from a copy of these files:
@@ -156,22 +156,24 @@ clip still has a synthesized stand-in.
 | px-ocean-waves | Ocean Waves (Dragon Studio 376898) | 0.2–22 s | sea |
 | px-water-rush | Above Rushing Water (61158) | from 3 s | water moving |
 | px-wind-gust | Wind Gust (Dragon Studio 386158) | 0.25–4.76 s | wind |
-| px-music-box (source) → px-music-soft (used) | **Mysterious Music Box – The Midnight Hour** (the series music) | whole | bed |
+| px-music-box (source) → px-music-soft | **Mysterious Music Box – The Midnight Hour** | whole | music, **only when the user asks** |
 
-**Music.** The user approved this music and its level. `px-music-soft.mp3` in the kit is already made this way:
-- **Soften the ring:**
-  `ffmpeg -i px-music-box.mp3 -af "highshelf=f=3000:g=-5,volume='if(lt(t,12),0.6+0.4*t/12,1)':eval=frame" px-music-soft.mp3`
-  This takes down the music-box ring, which the user found too much at the start.
-- **Level:** play it at gain 0.42, which sfx.py reports as about 22 dB under the narrator while he speaks. It is 153 s long,
-  so no loop is needed under about 2:30.
+**Music: none, unless the user asks (the user's fixed rule).** Never put background music of any kind under a video on
+your own: not the kit's music box, not `sfx.py`'s synthesized bed, not any other track. The user has had to pay for a
+re-mix to take music out more than once. Sound effects stay.
+- `sfx.py` leaves all music out by default (it prints «music off»). Don't pass `--music`.
+- Only when the user asks for music in a given video: run `sfx.py` with `--music`. `cues.js` then adds the kit's
+  `px-music-soft.mp3` at gain 0.42 (about 22 dB under the narrator; 153 s long, no loop needed under about 2:30).
+- Asking for music once does not carry over to the next video.
 
 **Cues.** Start from `videos/_templates/sketch/cues.js`. It already places these:
 - the hook chime;
 - the bumper ticks;
 - a flip for every shot change;
 - the summary-card build;
-- the ask box;
-- the music.
+- the ask box.
+
+It holds no music unless `sfx.py` is run with `--music`.
 
 Add one or two sounds per line matched to what moves (`lab`, `ding`, `scribble`, `paper`, `sea`, `drone`; see
 `videos/tides/cues.js`), then:
