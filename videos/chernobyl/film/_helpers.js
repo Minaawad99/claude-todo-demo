@@ -131,6 +131,7 @@
     if (o.hat === "tarboush") g += P(side ? 'M-9 -9 L-7 -27 L9 -27 L11 -9 Z' : 'M-10 -9 L-8 -27 L8 -27 L10 -9 Z', "#b8222a", { w: 1.2 }) + '<path d="M0 -27 Q8 -24 9 -14" stroke="#141414" stroke-width="1.4" fill="none"/><circle cx="9" cy="-13" r="1.6" fill="#141414"/>';
     if (o.hat === "whitecap") g += P('M-12 -9 Q-13 -26 0 -27 Q13 -26 12 -9 Z', "#f4f2ec", { w: 1.2 }) + '<path d="M-12 -12 Q0 -9 12 -12" stroke="#c8c4bc" stroke-width="1" fill="none"/>';
     if (o.hat === "fire") g += P(side ? 'M-13 -6 Q-14 -24 2 -25 Q15 -24 15 -8 L20 -4 L-15 -3 Z' : 'M-15 -6 Q-15 -25 0 -26 Q15 -25 15 -6 L18 -3 L-18 -3 Z', "#2e3034", { w: 1.3 }) + '<path d="M0 -26 V-8" stroke="#8a8a8a" stroke-width="2.4"/>';
+    if (o.glasses && view !== "back") g += (side ? '<rect x="3" y="-6" width="9" height="7" rx="2" fill="#cfe6f4" fill-opacity=".35" stroke="#1a1a1a" stroke-width="1.4"/>' : '<rect x="-10" y="-6" width="9" height="7.5" rx="2" fill="#cfe6f4" fill-opacity=".35" stroke="#1a1a1a" stroke-width="1.4"/><rect x="1" y="-6" width="9" height="7.5" rx="2" fill="#cfe6f4" fill-opacity=".35" stroke="#1a1a1a" stroke-width="1.4"/><path d="M-1 -3 h2" stroke="#1a1a1a" stroke-width="1.2"/>');
     if (o.mask && view !== "back") g += P(side ? 'M2 -2 Q14 -2 13 8 Q8 14 2 12Z' : 'M-9 -1 Q0 -4 9 -1 Q10 9 0 12 Q-10 9 -9 -1Z', "#e8e4dc", { w: 1 }) + '<path d="M-12 -2 L-9 0 M12 -2 L9 0" stroke="#c8c4bc" stroke-width="1"/>';
     if (o.hat === "officer") g += P('M-13 -9 Q-14 -22 0 -23 Q14 -22 13 -9 Z', o.hatCol || "#f4f2ec", { w: 1.2 }) + P('M-13 -9 Q0 -5 13 -9 L14 -6 Q0 -2 -14 -6Z', "#141418", { w: 1 }) + R(-13, -13, 26, 4, "#16182a", { s: 0 }) + '<circle cx="0" cy="-11" r="2" fill="#c9a860"/>';
     if (o.band) g += R(-12, -12, 24, 4, "#f0ede4", { w: .9 }) + '<circle cx="0" cy="-10" r="1.6" fill="#c2361a"/>';
@@ -156,7 +157,7 @@
     g += !side ? arm(-22, o.look === "up" ? 6 : 4 + br) + arm(22, o.wave ? -150 + Math.sin(t * 6) * 15 : -4 - br) : arm(0, wk * 26);
     if (o.bag) g += P('M' + (side ? -16 : 14) + ' -112 h14 v18 h-14 Z', "#7a5a3a", { w: 1.2 }) + '<path d="M' + (side ? -9 : 21) + ' -112 L' + (side ? 6 : -14) + ' -134" stroke="#5a3a20" stroke-width="2"/>';
     // neck + head
-    g += R(-4, -144, 8, 10, skin, { w: 1.1 }) + G('translate(0 -157) rotate(' + f(view === "up" ? (side ? -18 : 0) : br) + ')', face(view, { skin: skin, hair: o.helmet ? 'short' : hair, hairCol: o.hairCol, capCol: o.cap, band: o.band, sad: o.sad, helmet: o.helmet, mustache: o.mustache, beard: o.beard, hat: o.hat, hatCol: o.hatCol, mask: o.mask }));
+    g += R(-4, -144, 8, 10, skin, { w: 1.1 }) + G('translate(0 -157) rotate(' + f(view === "up" ? (side ? -18 : 0) : br) + ')', face(view, { skin: skin, hair: o.helmet ? 'short' : hair, hairCol: o.hairCol, capCol: o.cap, band: o.band, sad: o.sad, helmet: o.helmet, mustache: o.mustache, beard: o.beard, hat: o.hat, hatCol: o.hatCol, mask: o.mask, glasses: o.glasses }));
     return G('translate(' + f(x) + ' ' + f(y) + ') scale(' + f(s * .42 * (o.flip ? -1 : 1)) + ' ' + f(s * .42) + ')', g, o.op);
   }
   // a big close-up portrait (the user's middle panel): head and shoulders, cel-shaded, light from the left
@@ -165,7 +166,7 @@
     var g = '<clipPath id="' + cid + '"><rect x="4" y="-200" width="200" height="400"/></clipPath>';
     g += cel('M-70 120 Q-66 60 -30 48 L30 48 Q66 60 70 120 Z', top, cid, { w: 2 }) + '<path d="M-14 48 L0 70 L14 48" stroke="' + INK + '" stroke-width="1.6" fill="' + darker(top, .85) + '"/>';
     g += cel('M-11 20 L-12 52 Q0 58 12 52 L11 20 Z', skin, cid, { w: 1.6 });
-    g += G('scale(2.6)', face("front", { skin: skin, hair: o.hair || "bob", hairCol: o.hairCol, capCol: o.cap, band: o.band, sad: o.sad, child: o.child, helmet: o.helmet, mustache: o.mustache, beard: o.beard, hat: o.hat, hatCol: o.hatCol, mask: o.mask }));
+    g += G('scale(2.6)', face("front", { skin: skin, hair: o.hair || "bob", hairCol: o.hairCol, capCol: o.cap, band: o.band, sad: o.sad, child: o.child, helmet: o.helmet, mustache: o.mustache, beard: o.beard, hat: o.hat, hatCol: o.hatCol, mask: o.mask, glasses: o.glasses }));
     if (bl) g += '<path d="M-22 -6 h16 M6 -6 h16" stroke="' + skin + '" stroke-width="6"/><path d="M-21 -5 q8 3 14 0 M7 -5 q8 3 14 0" stroke="' + INK + '" stroke-width="1.4" fill="none"/>';
     if (o.rim) g += '<path d="M-29 -20 Q-31 10 -16 30" stroke="#fff6dc" stroke-width="2.4" fill="none" opacity=".75"/>';
     return G('translate(' + f(x) + ' ' + f(y + Math.sin(t * 1.4) * 1.2) + ') scale(' + s + ')', g, o.op);

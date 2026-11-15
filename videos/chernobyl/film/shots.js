@@ -153,7 +153,7 @@
   // 18 — those rods are the brakes… and they left the reactor almost without brakes
   shot(18, push([180, 320], [180, 330], 1.1, 1.0), function (u, d, t) { return core(t, { gas: .4, rods: .05, heat: .15 + .05 * Math.sin(t * 3) }) + label("من غير فرامل", 180, 150, u, .8, 30, "#f2c230"); });
   // 19 — at the head of the shift, Aleksandr Akimov, with a 25-year-old named Leonid Toptunov
-  shot(19, push([180, 340], [180, 330], 1.05, 1.15), function (u, d, t) { return controlRoom(t) + R(-200, -200, 760, 1040, "#000", { s: 0, op: .35 }) + portrait(105, 400, 1.6, t, { hair: "short", hat: "whitecap", top: "#f0eee6", skin: SK[0], mustache: true, rim: true }) + portrait(255, 410, 1.5, t, { hair: "short", hat: "whitecap", top: "#f0eee6", skin: SK[2] }) + label("أكيموف", 105, 230, u, .6, 20, "#f2c230") + label("توبتونوف · 25 سنة", 255, 230, u, 1.4, 17, "#f2c230"); });
+  shot(19, push([180, 340], [180, 330], 1.05, 1.15), function (u, d, t) { return controlRoom(t) + R(-200, -200, 760, 1040, "#000", { s: 0, op: .35 }) + portrait(105, 400, 1.6, t, { hair: "short", hat: "whitecap", top: "#f0eee6", skin: SK[0], mustache: true, glasses: true, rim: true }) + portrait(255, 410, 1.5, t, { hair: "short", hat: "whitecap", top: "#f0eee6", skin: SK[2], mustache: true, glasses: true }) + label("أكيموف", 105, 230, u, .6, 20, "#f2c230") + label("توبتونوف · 25 سنة", 255, 230, u, 1.4, 17, "#f2c230"); });
   // 20 — and their boss insisted: the test must happen tonight
   shot(20, push([180, 350], [180, 340], 1.0, 1.1), function (u, d, t) { return controlRoom(t) + op(90, 600, 2.1, t, 1, { sad: true }) + op(280, 600, 2.1, t, 2, { flip: true, sad: true }) + person(180, 630, 2.8, t, { top: "#3a3a44", pants: "#3a3a44", coat: "#3a3a44", back: true, hair: "short", hairCol: "#3a3a3a", wave: true }) + label("الليلة دي!", 180, 160, u, .6, 32, "#fff"); });
   // 21 — 1:23, the test began
@@ -239,11 +239,33 @@
   // 59 — the city of 50,000 people… became a nature reserve, without anyone meaning it to
   shot(59, push([180, 330], [180, 320], 1.0, 1.08), function (u, d, t) { var s = sky("skySunset") + '<circle cx="90" cy="300" r="34" fill="#ffd890"/>' + cloudBank(t, 140, 3, 5, "#f6b070", .7) + pripyat(t, 440, { empty: true }); for (var i = 0; i < 30; i++) s += '<circle cx="' + f(-180 + hash(i) * 720) + '" cy="' + f(430 + hash(i + 3) * 60) + '" r="' + f(16 + hash(i + 5) * 20) + '" fill="' + ["#4a6a32", "#5a7a3a"][i % 2] + '"/>'; return s + R(-200, 480, 760, 300, "#4a5a32", { s: 0 }) + horse(240, 580, 1.0, t, { flip: true }) + rays(t, 90, 300, .2, 5, 500, .4) + label("محمية طبيعية", 180, 170, u, 1.2, 30, "#9ad08a"); });
   // 60 — tell us: which story next time?
-  shot(60, push([180, 330], [180, 330], 1.0, 1.06), function (u, d, t) { return sky("skySunset") + forestBand(500) + ferris(180, 380, 1.7, t, { rust: true, rot: t * .02 }) + rays(t, 180, 380, 1.57, 8, 500, .4) + label("قولولنا!", 180, 170, u, .3, 34, "#fff"); });
+  shot(60, push([180, 330], [180, 330], 1.0, 1.06), function (u, d, t) { return sky("skySunset") + forestBand(500) + ferris(180, 380, 1.7, t, { rust: true, rot: t * .02 }) + rays(t, 180, 380, 1.57, 8, 500, .4) + label("قولولنا!", 180, 170, u, .3, 34, "#fff") + txt("صور حقيقية: IAEA Imagebank · Wikimedia Commons (CC BY-SA) · أرشيف", 180, 430, 8, "#e8e0d0", { op: .8 }); });
 
+  // ── real photographs: a framed print that slides in over the drawing at the moment the narrator names the thing,
+  //    with a slow push-in, a «صورة حقيقية» tag and the year; drawn outside the camera move so it stays put ──
+  var PH = { akimov: [178, 248], toptunov: [270, 338], firemen1: [564, 354], firemen2: [721, 542], roof: [657, 468], boarding: [495, 620], convoy: [620, 414], "reactor4-1986": [900, 1382], "helicopter-1986": [900, 636],
+    sarcophagus: [900, 600], forsmark: [900, 676], controlroom: [900, 600], "pripyat-today": [900, 290], ferris: [900, 600], rbmk: [900, 636] };
+  var PHN = 0;
+  function photoCard(u, d, t, name, tag, o) {
+    o = o || {}; var dim = PH[name], at0 = o.at == null ? .5 : o.at, k = clamp((u - at0) / .45), out = o.until ? clamp((o.until - u) / .35) : 1; k = Math.min(k, out); if (k <= 0) return "";
+    var maxW = o.w || 290, maxH = o.h || 300, sc = Math.min(maxW / dim[0], maxH / dim[1]), w = dim[0] * sc, h = dim[1] * sc, cx = o.x || 180, cy = o.y || 300, rot = (o.rot == null ? -2 : o.rot) * (1 - .3 * k), z = 1.06 + .08 * clamp((u - at0) / Math.max(1, (o.until || d) - at0)), id = "phc" + (++PHN);
+    var g = '<rect x="' + f(-w / 2 - 8) + '" y="' + f(-h / 2 - 8) + '" width="' + f(w + 16) + '" height="' + f(h + 30) + '" fill="#000" opacity=".45" transform="translate(5 7)" filter="url(#soft2)"/>' + R(-w / 2 - 8, -h / 2 - 8, w + 16, h + 30, "#f4f0e4", { w: 1.2, s: "#8a8478" });
+    g += '<clipPath id="' + id + '"><rect x="' + f(-w / 2) + '" y="' + f(-h / 2) + '" width="' + f(w) + '" height="' + f(h) + '"/></clipPath><g clip-path="url(#' + id + ')"><image href="../photos/' + name + '.jpg" x="' + f(-w / 2 * z + (o.panX || 0) * u) + '" y="' + f(-h / 2 * z) + '" width="' + f(w * z) + '" height="' + f(h * z) + '" preserveAspectRatio="xMidYMid slice"/></g>';
+    g += w < 180 ? txt(tag, 0, h / 2 + 16, 11, "#3a3428", { wt: 800 }) : txt(tag, w / 2 - 4, h / 2 + 16, 11, "#3a3428", { a: "end", wt: 800 }) + txt("صورة حقيقية", -w / 2 + 2, h / 2 + 16, 11, "#b8322a", { a: "start", wt: 900 });
+    return G('translate(' + f(cx) + ' ' + f(cy + (1 - eout(k)) * 30) + ') rotate(' + f(rot) + ') scale(' + f2(.92 + .08 * eout(k)) + ')', g, k);
+  }
+  var CARDS = {
+    19: [["akimov", "أكيموف", { x: 98, y: 330, w: 140, h: 200, rot: -3, at: .6 }], ["toptunov", "توبتونوف", { x: 262, y: 340, w: 140, h: 200, rot: 3, at: 1.6 }]], 25: [["akimov", "أكيموف", { x: 290, y: 200, w: 100, h: 140, rot: 4, at: 2.2 }]],
+    11: [["controlroom", "غرفة التحكم · تشيرنوبل"]], 20: [["controlroom", "غرفة التحكم", { rot: 2, at: .3 }]], 24: [["rbmk", "مفاعل RBMK من جوه", { y: 330, at: 1.4 }]],
+    33: [["reactor4-1986", "مفاعل 4 · 1986", { h: 330, y: 290, at: .4 }]], 38: [["firemen1", "رجالة الإطفاء · 1986", { at: 1.0 }]], 41: [["firemen2", "1986", { rot: 2, at: .6 }]],
+    46: [["convoy", "قافلة الإخلاء · 1986", { at: 1.2 }]], 47: [["boarding", "1986", { h: 300, at: .4 }]], 49: [["forsmark", "محطة فورسمارك · السويد", { at: 1.6 }]],
+    53: [["roof", "على سطح المفاعل · 1986", { at: .4, until: 4.6 }], ["helicopter-1986", "1986", { at: 4.6, rot: 2 }]], 54: [["sarcophagus", "مفاعل 4 · النهارده", { at: 1.0, y: 290 }]],
+    55: [["ferris", "عجلة ملاهي بريبيات", { at: 1.2 }]], 56: [["pripyat-today", "بريبيات النهارده", { at: 1.2, w: 310 }]]
+  };
+  SH.forEach(function (sh) { var c = CARDS[sh.i]; if (c) sh.card = function (u, d, t) { var s = ""; c.forEach(function (cd) { s += photoCard(u, d, t, cd[0], cd[1], cd[2]); }); return s; }; });
   window.__parts = { person: person, portrait: portrait, plant: plant, controlRoom: controlRoom, az5: az5, core: core, pripyat: pripyat, ferris: ferris, confinement: confinement, op: op, fireman: fireman };
   window.__chip = function (t) { var i = 0; while (i < LN.length - 1 && LN[i + 1].start - .05 <= t) i++; return (i >= 9 && i <= 14) ? .9 : 0; };
-  function drawShot(sh, t, next) { var u = t - sh.a, d = Math.max(.6, next - sh.a), c = sh.cam(u, d), cx = c[0] + 9 * Math.sin(t * 1.1) + 3 * Math.sin(t * 2.3), cy = c[1] + 7 * Math.cos(t * .9), z = c[2] * (1 + .02 * Math.sin(t * .8)); return '<g transform="translate(180 320) rotate(' + f(.5 * Math.sin(t * .5)) + ') scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g>'; }
+  function drawShot(sh, t, next) { var u = t - sh.a, d = Math.max(.6, next - sh.a), c = sh.cam(u, d), cx = c[0] + 9 * Math.sin(t * 1.1) + 3 * Math.sin(t * 2.3), cy = c[1] + 7 * Math.cos(t * .9), z = c[2] * (1 + .02 * Math.sin(t * .8)); return '<g transform="translate(180 320) rotate(' + f(.5 * Math.sin(t * .5)) + ') scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g>' + (sh.card ? R(0, 0, 360, 640, "#000", { s: 0, op: .28 * clamp((u - .3) / .5) }) + sh.card(u, d, t) : ''); }
   window.__panel = function (svg, t) {
     var i = at(t), sh = SH[i], next = i + 1 < SH.length ? SH[i + 1].a : L(LN.length), s = "", u = t - sh.a;
     if (i > 0 && u < .35) s += drawShot(SH[i - 1], t, sh.a) + '<g opacity="' + f2(ease(u / .35)) + '">' + drawShot(sh, t, next) + '</g>';
