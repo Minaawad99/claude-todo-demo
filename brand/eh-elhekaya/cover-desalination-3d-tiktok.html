@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — desalination plant (3D)</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  /* the reel cover in 3D (three.js from videos/lib, so it opens from file://), full bleed 540×960 at 2x: the tunnel-cover
+     palette (near black top and bottom, a warm glow behind the subject) with a seawater reverse-osmosis plant on a coast
+     cut open as a diorama. Text stays inside y 120–840 and away from the right-hand buttons. */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #000; }
+  canvas { position: absolute; inset: 0; width: 540px !important; height: 960px !important; }
+  .fade { position: absolute; left: 0; right: 0; pointer-events: none; }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 10px rgba(0,0,0,.6); }
+  #over { position: absolute; inset: 0; width: 540px; height: 960px; }
+  .tag { font-family: "Noto Sans Arabic", sans-serif; font-weight: 800; fill: #2b2016; }
+</style></head><body>
+<div class="cover">
+  <div id="gl"></div>
+  <div class="fade" style="top:0;height:300px;background:linear-gradient(#000e,#0008 75%,#0000)"></div>
+  <div class="fade" style="top:680px;height:280px;background:linear-gradient(#0000,#000b 30%,#000f)"></div>
+  <svg id="over" viewBox="0 0 540 960"><defs><path id="swash" d="M6 14 C40 4 120 2 196 8 C214 10 222 20 214 30 C206 44 140 46 70 44 C30 44 4 40 2 30 C0 24 2 18 6 14 Z"/></defs>
+    <g transform="translate(96 396) rotate(-5)"><use href="#swash" fill="#e8c48e" transform="translate(-84 -26) scale(.78 1.15)"/><text y="8" text-anchor="middle" class="tag" style="font-size:23px">مية البحر</text></g>
+    <g transform="translate(238 334) rotate(-4)"><use href="#swash" fill="#bfe8c0" transform="translate(-98 -26) scale(.9 1.15)"/><text y="8" text-anchor="middle" class="tag" style="font-size:23px">60 ضغط جوي</text></g>
+    <g transform="translate(432 318) rotate(4)"><use href="#swash" fill="#bfe6fb" transform="translate(-74 -26) scale(.68 1.15)"/><text y="8" text-anchor="middle" class="tag" style="font-size:23px">مية شرب</text></g>
+  </svg>
+  <p class="t" style="top:124px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
+  <p class="t" style="top:154px;font:900 38px/1.2 'Noto Sans Arabic';color:#fff">تعمل محطة تحلية إزاي؟</p>
+  <p class="t" style="top:214px;font:800 24px/1.3 'Noto Sans Arabic';color:#f2c230">من مية البحر لمية شرب!</p>
+  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff">من غير <span style="color:#f2c230">غلي</span> خالص<br><span style="font-size:24px;color:#d9d4c8">ومش بتاكل كهربا زي ما فاكر!</span></p>
+</div>
+<script src="../../videos/lib/three.min.js"></script>
+<script>
+  const W = 540, H = 960, r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+  r.setPixelRatio(2); r.setSize(W, H); r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 0.82; r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
+  document.getElementById("gl").appendChild(r.domElement);
+  const scene = new THREE.Scene(); scene.background = new THREE.Color("#0b0d14"); scene.fog = new THREE.Fog("#0b0d14", 24, 60);
+  const tex = (w, h, draw) => { const c = document.createElement("canvas"); c.width = w; c.height = h; draw(c.getContext("2d")); const t = new THREE.CanvasTexture(c); if (THREE.sRGBEncoding) t.encoding = THREE.sRGBEncoding; else t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; };
+  // a soft studio environment so the steel and the white vessels pick up reflections
+  { const es = new THREE.Scene(), et = tex(64, 256, g => { const gr = g.createLinearGradient(0, 0, 0, 256); gr.addColorStop(0, "#fff4e0"); gr.addColorStop(0.45, "#c98a5a"); gr.addColorStop(0.55, "#3a3040"); gr.addColorStop(1, "#0a0c14"); g.fillStyle = gr; g.fillRect(0, 0, 64, 256); });
+    es.add(new THREE.Mesh(new THREE.SphereGeometry(20, 32, 16), new THREE.MeshBasicMaterial({ map: et, side: THREE.BackSide })));
+    scene.environment = new THREE.PMREMGenerator(r).fromScene(es, 0.04).texture; }
+  const cam = new THREE.PerspectiveCamera(32, W / H, 0.1, 100); cam.position.set(5.2, 9.0, 21.5); cam.lookAt(0.0, -0.5, -1.6);
+  const std = (color, o) => new THREE.MeshStandardMaterial(Object.assign({ color, roughness: 0.8, envMapIntensity: 0.5 }, o || {}));
+  const add = (geo, mat, x, y, z, sh) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); if (sh !== false) { m.castShadow = true; m.receiveShadow = true; } scene.add(m); return m; };
+  const cylX = (rad, len, mat, x, y, z) => { const m = add(new THREE.CylinderGeometry(rad, rad, len, 40), mat, x, y, z); m.rotation.z = Math.PI / 2; return m; };
+  const tube = (pts, rad, mat) => { const c = new THREE.CatmullRomCurve3(pts.map(p => new THREE.Vector3(p[0], p[1], p[2])), false, "catmullrom", 0.05); const m = new THREE.Mesh(new THREE.TubeGeometry(c, 80, rad, 16), mat); m.castShadow = true; scene.add(m); return m; };
+  const D = 3.4, X0 = -3.7, X1 = 3.7, SH = -0.6, BOT = -2.7;   // block depth, ends, the shore, the bottom
+  const ext = (pts, mat, z, d) => { const s = new THREE.Shape(); pts.forEach((p, i) => i ? s.lineTo(p[0], p[1]) : s.moveTo(p[0], p[1])); const m = new THREE.Mesh(new THREE.ExtrudeGeometry(s, { depth: d || D, bevelEnabled: false }), mat); m.position.z = z == null ? -D : z; m.receiveShadow = true; scene.add(m); return m; };
+  // the land in section: soil layers on the cut face, a concrete pad on top
+  const soil = tex(512, 512, g => { const L = ["#9a7a52", "#8a6844", "#775638", "#64472d", "#523a24"]; for (let i = 0; i < 5; i++) { g.fillStyle = L[i]; g.fillRect(0, i * 103, 512, 106); } for (let k = 0; k < 700; k++) { g.fillStyle = `rgba(30,20,10,${Math.random() * 0.3})`; g.beginPath(); g.arc(Math.random() * 512, Math.random() * 512, 1 + Math.random() * 3, 0, 7); g.fill(); } });
+  soil.wrapS = soil.wrapT = THREE.RepeatWrapping; soil.repeat.set(0.24, 0.37);
+  ext([[SH, 0], [X1, 0], [X1, BOT], [X0, BOT], [X0, -2.0], [SH, -0.08]], std("#ffffff", { map: soil, roughness: 1 }));
+  const sand = tex(256, 256, g => { g.fillStyle = "#d8c08a"; g.fillRect(0, 0, 256, 256); for (let k = 0; k < 1500; k++) { g.fillStyle = `rgba(${120 + Math.random() * 80},${95 + Math.random() * 60},50,.35)`; g.fillRect(Math.random() * 256, Math.random() * 256, 2, 2); } });
+  sand.wrapS = sand.wrapT = THREE.RepeatWrapping; sand.repeat.set(0.5, 0.5); ext([[X0, -1.96], [SH, -0.04], [SH, -0.09], [X0, -2.01]], std("#ffffff", { map: sand, roughness: 1 }));
+  const conc = tex(256, 256, g => { g.fillStyle = "#b9b4a8"; g.fillRect(0, 0, 256, 256); for (let k = 0; k < 900; k++) { g.fillStyle = `rgba(60,60,60,${Math.random() * 0.12})`; g.fillRect(Math.random() * 256, Math.random() * 256, 3, 3); } g.strokeStyle = "rgba(70,70,70,.5)"; g.lineWidth = 2; g.strokeRect(0, 0, 256, 256); });
+  conc.wrapS = conc.wrapT = THREE.RepeatWrapping; conc.repeat.set(4, 3);
+  add(new THREE.BoxGeometry(X1 - SH - 0.25, 0.08, D - 0.1), std("#ffffff", { map: conc, roughness: 0.9 }), (X1 + SH) / 2 + 0.1, 0.04, -D / 2);
+  // the sea: a clear blue volume against the cut, a glossy surface
+  ext([[X0, -0.14], [SH - 0.1, -0.14], [X0, -1.98]], new THREE.MeshStandardMaterial({ color: "#12679a", transparent: true, opacity: 0.8, roughness: 1, metalness: 0, envMapIntensity: 0, depthWrite: false })).renderOrder = 2;
+  const wn = tex(256, 256, g => { g.fillStyle = "#1d7fb6"; g.fillRect(0, 0, 256, 256); for (let k = 0; k < 160; k++) { const x = Math.random() * 256, y = Math.random() * 256; g.strokeStyle = Math.random() > 0.5 ? "rgba(140,210,240,.35)" : "rgba(10,70,120,.35)"; g.lineWidth = 1.5 + Math.random() * 2; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + 20, y - 5, x + 44, y + 2); g.stroke(); } });
+  const surf = add(new THREE.PlaneGeometry(3.0, D), new THREE.MeshStandardMaterial({ map: wn, transparent: true, opacity: 0.92, roughness: 1, metalness: 0, envMapIntensity: 0, depthWrite: false }), X0 + 1.5, -0.135, -D / 2, false); surf.rotation.x = -Math.PI / 2; surf.renderOrder = 3;
+  // materials
+  const white = std("#f4f2ea", { roughness: 0.3, envMapIntensity: 0.9 }), blue = std("#2a6fb0", { roughness: 0.35, metalness: 0.3, envMapIntensity: 0.9 }), steel = std("#b8bec4", { metalness: 0.9, roughness: 0.32, envMapIntensity: 1 }), yel = std("#e2b035", { roughness: 0.5, metalness: 0.2 }), green = std("#2f9a55", { roughness: 0.45, metalness: 0.2 }), seaP = std("#2b86b5", { roughness: 0.4, metalness: 0.3 }), brine = std("#d98a2b", { roughness: 0.45, metalness: 0.2 }), fresh = std("#7fd0ff", { roughness: 0.3, metalness: 0.2 });
+  // the reverse-osmosis rack: white pressure vessels with blue end caps in a yellow frame, two deep and four high
+  const RX = 1.95, RL = 2.3;
+  [-0.75, -1.2].forEach(z => { for (let k = 0; k < 4; k++) { const y = 0.32 + k * 0.3; cylX(0.115, RL, white, RX, y, z); [-1, 1].forEach(s => { cylX(0.13, 0.12, blue, RX + s * (RL / 2 + 0.02), y, z); cylX(0.03, 0.14, steel, RX + s * (RL / 2 + 0.13), y, z); }); } });
+  [-1, 0, 1].forEach(s => [-0.52, -1.43].forEach(z => add(new THREE.BoxGeometry(0.07, 1.42, 0.07), yel, RX + s * 0.85, 0.79, z)));
+  [-1, 0, 1].forEach(s => add(new THREE.BoxGeometry(0.07, 0.07, 0.98), yel, RX + s * 0.85, 1.5, -0.975)); [-0.52, -1.43].forEach(z => add(new THREE.BoxGeometry(1.78, 0.07, 0.07), yel, RX, 1.5, z));
+  [RX - RL / 2 - 0.2, RX + RL / 2 + 0.2].forEach((x, i) => [-0.75, -1.2].forEach(z => add(new THREE.CylinderGeometry(0.05, 0.05, 1.25, 20), i ? brine : seaP, x, 0.72, z)));
+  // the high-pressure pump: a green motor on a base, a blue pump casing, a gauge
+  add(new THREE.BoxGeometry(1.0, 0.1, 0.5), std("#5a6068", { roughness: 0.6 }), 0.0, 0.13, -0.8); cylX(0.2, 0.55, green, -0.2, 0.42, -0.8);
+  for (let k = 0; k < 6; k++) cylX(0.215, 0.025, std("#237a42"), -0.4 + k * 0.08, 0.42, -0.8);
+  cylX(0.06, 0.2, steel, 0.14, 0.42, -0.8); const vol = add(new THREE.CylinderGeometry(0.24, 0.24, 0.22, 40), blue, 0.33, 0.42, -0.8); vol.rotation.x = Math.PI / 2;
+  add(new THREE.CylinderGeometry(0.07, 0.07, 0.4, 20), blue, 0.33, 0.78, -0.8); cylX(0.07, 0.42, seaP, 0.52, 0.95, -0.8);
+  const gz = add(new THREE.CylinderGeometry(0.1, 0.1, 0.04, 32), std("#f4f2ea", { roughness: 0.3 }), 0.33, 1.12, -0.74); gz.rotation.x = Math.PI / 2; add(new THREE.TorusGeometry(0.1, 0.018, 12, 32), steel, 0.33, 1.12, -0.72); add(new THREE.BoxGeometry(0.012, 0.085, 0.01), std("#d02a1e"), 0.35, 1.145, -0.715, false).rotation.z = -0.7;
+  // two sand filters and the limestone contactor: steel pressure tanks with domed heads
+  const tank = (x, z, rad, h, mat) => { add(new THREE.CylinderGeometry(rad, rad, h, 48), mat, x, 0.2 + h / 2, z); const d = add(new THREE.SphereGeometry(rad, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2), mat, x, 0.2 + h, z); d.scale.y = 0.5; add(new THREE.CylinderGeometry(rad * 0.8, rad * 0.9, 0.14, 32), std("#4a5058"), x, 0.13, z); add(new THREE.CylinderGeometry(0.07, 0.07, 0.12, 20), steel, x, 0.2 + h + rad * 0.5, z); };
+  const fMat = std("#3f7fae", { roughness: 0.35, metalness: 0.35, envMapIntensity: 0.9 }); tank(-0.05, -2.2, 0.33, 0.95, fMat); tank(0.75, -2.2, 0.33, 0.95, fMat); tank(1.75, -2.35, 0.3, 0.85, std("#7fae9a", { roughness: 0.4, metalness: 0.3 }));
+  // the product tank: a big white tank with a domed roof, a ladder and a blue band
+  add(new THREE.CylinderGeometry(0.72, 0.72, 1.25, 64), white, 2.85, 0.7, -2.45); const dome = add(new THREE.SphereGeometry(0.72, 64, 24, 0, Math.PI * 2, 0, Math.PI / 2), white, 2.85, 1.325, -2.45); dome.scale.y = 0.3;
+  add(new THREE.CylinderGeometry(0.725, 0.725, 0.16, 64), fresh, 2.85, 1.0, -2.45); for (let k = 0; k < 9; k++) add(new THREE.BoxGeometry(0.16, 0.015, 0.015), steel, 2.5, 0.2 + k * 0.13, -1.8);
+  [2.43, 2.57].forEach(x => add(new THREE.BoxGeometry(0.02, 1.25, 0.02), steel, x, 0.7, -1.8));
+  // pipes on the pad: filtered seawater to the pump, the pump to the rack, product to the tank
+  tube([[0.75, 0.3, -1.85], [0.75, 0.3, -1.5], [-0.75, 0.3, -1.5], [-0.75, 0.42, -0.8], [-0.5, 0.42, -0.8]], 0.05, seaP); tube([[-0.05, 0.3, -1.85], [-0.05, 0.3, -1.5]], 0.05, seaP);
+  tube([[0.72, 0.95, -0.8], [0.6, 0.95, -0.8], [0.6, 0.95, -0.98], [0.6, 0.72, -0.98]], 0.05, seaP); tube([[0.6, 0.6, -0.75], [0.6, 0.6, -1.2]], 0.05, seaP);
+  tube([[3.3, 0.6, -0.75], [3.3, 0.6, -1.2]], 0.05, brine); tube([[3.2, 1.22, -1.2], [3.2, 1.22, -1.75], [2.2, 1.0, -2.35], [2.05, 0.9, -2.35]], 0.04, fresh); tube([[1.75, 1.2, -2.35], [1.75, 1.4, -2.35], [2.4, 1.4, -2.45]], 0.04, fresh);
+  // on the cut face: the intake pipe coming up from its screened head on the bed, the brine outfall running back out to sea
+  const slope = x => -0.08 + (x - SH) * (1.92 / 3.1);
+  tube([[-2.6, slope(-2.6) - 0.2, 0], [SH, -0.3, 0], [-0.3, -0.3, 0], [-0.3, -0.3, -0.5], [-0.3, 0.3, -0.5]], 0.07, seaP);
+  add(new THREE.CylinderGeometry(0.07, 0.07, 0.5, 20), seaP, -2.6, slope(-2.6) + 0.02, 0); add(new THREE.CylinderGeometry(0.2, 0.2, 0.26, 24, 1, true), new THREE.MeshStandardMaterial({ color: "#d9dee4", metalness: 0.8, roughness: 0.35, wireframe: true }), -2.6, slope(-2.6) + 0.4, 0); add(new THREE.CylinderGeometry(0.24, 0.24, 0.05, 24), yel, -2.6, slope(-2.6) + 0.55, 0);
+  tube([[3.3, 0.1, -0.98], [3.3, -0.75, -0.6], [3.3, -0.75, 0], [SH, -0.75, 0], [-3.3, slope(-3.3) - 0.45, 0]], 0.07, brine);
+  [-3.25, -2.95].forEach(x => add(new THREE.CylinderGeometry(0.045, 0.045, 0.6, 16), brine, x, slope(x) - 0.12, 0));
+  // an engineer for scale, a few fish, bubbles
+  const man = (x, z) => { add(new THREE.CapsuleGeometry(0.075, 0.2, 8, 16), std("#e8742e", { roughness: 0.6 }), x, 0.34, z); add(new THREE.SphereGeometry(0.07, 20, 20), std("#e8b48a", { roughness: 0.6 }), x, 0.6, z); const h = add(new THREE.SphereGeometry(0.078, 20, 12, 0, Math.PI * 2, 0, Math.PI / 2), std("#f4f1e8", { roughness: 0.4 }), x, 0.615, z); };
+  man(1.1, -0.25); man(-0.35, -1.2);
+  [[-2.9, -0.9, -0.9, "#f2a03a"], [-2.2, -0.6, -1.6, "#e25a4a"], [-1.7, -0.5, -0.5, "#f2d24a"]].forEach(p => { const b = add(new THREE.SphereGeometry(0.09, 16, 12), std(p[3], { roughness: 0.4 }), p[0], p[1], p[2], false); b.scale.set(1.7, 0.8, 0.5); const t = add(new THREE.ConeGeometry(0.07, 0.12, 4), std(p[3]), p[0] + 0.18, p[1], p[2], false); t.rotation.z = Math.PI / 2; t.scale.z = 0.3; });
+  const pts = []; for (let i = 0; i < 60; i++) { const x = X0 + 0.2 + Math.random() * 2.6; pts.push(x, -0.2 - Math.random() * Math.max(0.1, -slope(x) - 0.3), -Math.random() * D); }
+  const pg = new THREE.BufferGeometry(); pg.setAttribute("position", new THREE.Float32BufferAttribute(pts, 3)); scene.add(new THREE.Points(pg, new THREE.PointsMaterial({ color: "#d9f2ff", size: 0.035, transparent: true, opacity: 0.7 })));
+  // the warm glow behind the plant (a low sun), the lights
+  const sunT = tex(256, 256, g => { const gr = g.createRadialGradient(128, 128, 4, 128, 128, 128); gr.addColorStop(0, "rgba(255,236,180,1)"); gr.addColorStop(0.25, "rgba(255,190,90,.75)"); gr.addColorStop(0.6, "rgba(230,120,50,.25)"); gr.addColorStop(1, "rgba(120,50,30,0)"); g.fillStyle = gr; g.fillRect(0, 0, 256, 256); });
+  const sun = new THREE.Sprite(new THREE.SpriteMaterial({ map: sunT, transparent: true, depthWrite: false, fog: false })); sun.scale.set(20, 20, 1); sun.position.set(0.5, -2.0, -16); scene.add(sun);
+  const back = new THREE.PointLight("#ffa050", 60, 30, 1.4); back.position.set(0.5, 2.6, -6.5); scene.add(back);
+  const key = new THREE.DirectionalLight("#ffe2c0", 1.7); key.position.set(4, 7, 7); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); Object.assign(key.shadow.camera, { left: -6, right: 6, top: 6, bottom: -6 }); key.shadow.bias = -0.0004; scene.add(key);
+  scene.add(new THREE.HemisphereLight("#7a8ab0", "#20140c", 0.45));
+  r.render(scene, cam); window.READY = true;
+</script>
+</body></html>
