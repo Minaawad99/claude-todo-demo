@@ -223,35 +223,64 @@ function ik(sh, tg, l1, l2, bend) {   // elbow for a two-bone arm reaching tg; b
   var dx = tg[0] - sh[0], dy = tg[1] - sh[1], d = Math.min(Math.hypot(dx, dy), l1 + l2 - .01), a = Math.atan2(dy, dx), c = Math.acos(clamp((l1 * l1 + d * d - l2 * l2) / (2 * l1 * d)));
   return [sh[0] + Math.cos(a + bend * c) * l1, sh[1] + Math.sin(a + bend * c) * l1];
 }
-// o: {x, y (hip), s, lean, shirt, hair, legs: [[thigh, shin], [thigh, shin]], hands: [[x,y] | null, …], bend: [±1, ±1], belly, kneel}
-// returns {far, body, near}: draw far, then whatever goes between, then body, then near
+// Proportions from real body measurements (Drillis & Contini segment lengths as fractions of the standing height H,
+// side-view depths from adult anthropometry). H = 400 units at s = 1:
+//   ankle 0.039H · knee 0.285H · hip joint 0.52H · navel 0.60H · shoulder 0.818H · chin 0.87H · top of head 1.0H
+//   thigh 0.245H · shank 0.246H · foot 0.152H · upper arm 0.186H · forearm 0.146H · hand 0.108H
+//   side depths: chest 0.13H · waist 0.115H · seat 0.14H · head 0.115H deep by 0.13H tall · neck 0.06H
+var HB = { thigh: 98, shin: 98, foot: 61, ankle: 16, sh: 119, chin: 140, head: 166, ua: 74, fa: 58, hand: 43 };
+// o: {x, y (hip joint), s, lean, shirt, hair, legs: [[thigh, shin], [thigh, shin]], hands: [[x,y] | rel(), …], bend: [±1, ±1], belly, mouth, tilt}
+// returns {far, body, near}: draw far, then whatever goes between, then body, then near. at(h, side): a point h above the hip
+// along the trunk and side units to the front (+) or back (−).
 function fig(o) {
-  var s = o.s || 1, up = dirv(180 - (o.lean || 0)), hip = [o.x, o.y], sh = [hip[0] + up[0] * 128 * s, hip[1] + up[1] * 128 * s], hd = [hip[0] + up[0] * 178 * s, hip[1] + up[1] * 178 * s];
-  var fw = [up[1], -up[0]];   // perpendicular to the torso, pointing to the front (left)
+  var s = o.s || 1, up = dirv(180 - (o.lean || 0)), hip = [o.x, o.y], fw = [up[1], -up[0]];
   function atF(h, side) { return [hip[0] + up[0] * h * s + fw[0] * side * s, hip[1] + up[1] * h * s + fw[1] * side * s]; }
+  var sh = atF(HB.sh, -2), hd = atF(HB.head, 3);
   var legs = o.legs || [[8, -4], [-8, 4]], arms = o.hands || [null, null], bend = o.bend || [-1, -1], out = { far: "", body: "", near: "" };
-  function leg(i) { var k = hip.slice(), a = dirv(legs[i][0]), b = dirv(legs[i][0] + legs[i][1]), kn = [k[0] + a[0] * 88 * s, k[1] + a[1] * 88 * s], ft = [kn[0] + b[0] * 86 * s, kn[1] + b[1] * 86 * s];
-    return limb([k, kn, ft], 30 * s, PANTS) + '<path d="M' + f(ft[0] + 8 * s) + ' ' + f(ft[1] - 6 * s) + ' l-34 ' + f(0) + ' q-6 12 4 14 l30 0 z" fill="' + INK + '" transform="rotate(' + f(o.kneel && i === 0 ? 0 : 0) + ')"/>'; }
-  function arm(i) { var sp = [sh[0] + (i ? 4 : -4) * s, sh[1] + 6 * s], tg = arms[i] && arms[i].rel ? atF(arms[i].h, arms[i].side) : arms[i] || [sp[0] - 10 * s, sp[1] + 130 * s], el = ik(sp, tg, 72 * s, 68 * s, bend[i]), dx = tg[0] - el[0], dy = tg[1] - el[1], dl = Math.hypot(dx, dy) || 1, hd2 = [el[0] + dx / dl * Math.min(dl, 68 * s), el[1] + dy / dl * Math.min(dl, 68 * s)];
-    return limb([sp, el, hd2], 22 * s, o.shirt || SHIRT_V) + C(hd2[0], hd2[1], 11 * s, SKIN, 2); }
+  function seg2(a1, b1, w1, a2, b2, w2, c1, c2) {   // two tapered segments: ink outlines first, then fills, so the joint stays clean
+    var d1 = "M" + f(a1[0]) + " " + f(a1[1]) + " L" + f(b1[0]) + " " + f(b1[1]), d2 = "M" + f(a2[0]) + " " + f(a2[1]) + " L" + f(b2[0]) + " " + f(b2[1]);
+    return '<path d="' + d1 + '" stroke="' + INK + '" stroke-width="' + f(w1 + 4) + '" stroke-linecap="round"/><path d="' + d2 + '" stroke="' + INK + '" stroke-width="' + f(w2 + 4) + '" stroke-linecap="round"/>' +
+      '<path d="' + d1 + '" stroke="' + c1 + '" stroke-width="' + f(w1) + '" stroke-linecap="round"/><path d="' + d2 + '" stroke="' + c2 + '" stroke-width="' + f(w2) + '" stroke-linecap="round"/>';
+  }
+  function leg(i) {
+    var a = dirv(legs[i][0]), b = dirv(legs[i][0] + legs[i][1]), kn = [hip[0] + a[0] * HB.thigh * s, hip[1] + a[1] * HB.thigh * s], an = [kn[0] + b[0] * HB.shin * s, kn[1] + b[1] * HB.shin * s];
+    var sole = [-b[1], b[0]];   // the foot points to the front, square to the shank
+    var toe = [an[0] - Math.abs(sole[0]) * HB.foot * .78 * s, an[1] + b[1] * 0 + 0], heel = [an[0] + 12 * s, an[1]];
+    var shoe = '<path d="M' + f(heel[0]) + ' ' + f(an[1] - 8 * s) + ' L' + f(heel[0]) + ' ' + f(an[1] + HB.ankle * s) + ' L' + f(toe[0] - 6 * s) + ' ' + f(an[1] + HB.ankle * s) + ' Q' + f(toe[0] - 10 * s) + ' ' + f(an[1] + 2 * s) + ' ' + f(toe[0] + 8 * s) + ' ' + f(an[1] - 2 * s) + ' L' + f(an[0] - 4 * s) + ' ' + f(an[1] - 10 * s) + ' Z" fill="' + INK + '"/>';
+    if (o.kneel) shoe = "";
+    return seg2(hip, kn, 36 * s, kn, an, 25 * s, PANTS, PANTS) + shoe;
+  }
+  function arm(i) {
+    var sp = atF(HB.sh - 8, i ? 2 : -2), tg = arms[i] && arms[i].rel ? atF(arms[i].h, arms[i].side) : arms[i] || [sp[0] - 8 * s, sp[1] + (HB.ua + HB.fa) * s * .97];
+    var el = ik(sp, tg, HB.ua * s, HB.fa * s, bend[i]), dx = tg[0] - el[0], dy = tg[1] - el[1], dl = Math.hypot(dx, dy) || 1, wr = [el[0] + dx / dl * Math.min(dl, HB.fa * s), el[1] + dy / dl * Math.min(dl, HB.fa * s)];
+    var ang = Math.atan2(dy, dx) * 180 / Math.PI, hand = G("translate(" + f(wr[0]) + " " + f(wr[1]) + ") rotate(" + f(ang) + ")", '<path d="M-4 -9 C10 -11 ' + f(HB.hand * .62 * s) + ' -8 ' + f(HB.hand * .66 * s) + ' 0 C' + f(HB.hand * .62 * s) + ' 8 10 11 -4 9 Z" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2"/>');
+    return seg2(sp, el, 22 * s, el, wr, 17 * s, o.shirt || SHIRT_V, SKIN) + '<path d="M' + f(el[0] + (wr[0] - el[0]) * .55) + ' ' + f(el[1] + (wr[1] - el[1]) * .55) + ' L' + f(el[0]) + ' ' + f(el[1]) + '" stroke="' + (o.shirt || SHIRT_V) + '" stroke-width="' + f(19 * s) + '" stroke-linecap="butt"/>' + hand;
+  }
   out.far = arm(1) + leg(1);
-  var tor = limb([hip, sh], 62 * s, o.shirt || SHIRT_V);
-  if (o.belly) { var bc = [hip[0] + up[0] * 52 * s + fw[0] * 30 * s, hip[1] + up[1] * 52 * s + fw[1] * 30 * s]; tor += '<ellipse cx="' + f(bc[0]) + '" cy="' + f(bc[1]) + '" rx="' + f(36 * s) + '" ry="' + f(42 * s) + '" fill="' + (o.shirt || SHIRT_V) + '" stroke="' + INK + '" stroke-width="2"/>'; }
-  var neck = limb([sh, [hd[0] - up[0] * 20 * s, hd[1] - up[1] * 20 * s]], 22 * s, SKIN);
-  var r = 33 * s, ang = -(o.lean || 0) + (o.tilt || 0), head = G("translate(" + f(hd[0]) + " " + f(hd[1]) + ") rotate(" + f(ang) + ")",
-    '<circle r="' + f(r) + '" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2.2"/>' +
-    '<path d="M' + f(-r * .05) + ' ' + f(-r) + ' A' + f(r) + ' ' + f(r) + ' 0 0 1 ' + f(r * .98) + ' ' + f(r * .2) + ' L' + f(r * .55) + ' ' + f(r * .1) + ' Q' + f(r * .2) + ' ' + f(-r * .55) + ' ' + f(-r * .62) + ' ' + f(-r * .55) + ' Z" fill="' + (o.hair || HAIR) + '" stroke="' + INK + '" stroke-width="1.6"/>' +
-    '<path d="M' + f(-r * .96) + ' ' + f(-r * .08) + ' l' + f(-r * .22) + ' ' + f(r * .26) + ' l' + f(r * .24) + ' ' + f(r * .04) + '" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="1.8" stroke-linejoin="round"/>' +
-    '<circle cx="' + f(r * .22) + '" cy="' + f(r * .12) + '" r="' + f(r * .15) + '" fill="' + SKIN2 + '" stroke="' + INK + '" stroke-width="1.2"/>' +
-    (o.mouth ? '<ellipse cx="' + f(-r * .84) + '" cy="' + f(r * .45) + '" rx="' + f(r * .12) + '" ry="' + f(r * .1 + r * .1 * o.mouth) + '" fill="' + INK + '"/>' : ""));
+  // trunk outline: front then back, measured depths (chest 0.13H, waist 0.115H, seat 0.14H)
+  var fr = [[-6, 18], [24, 22], [46, 22], [70, 27], [92, 28], [110, 22], [120, 10]], bk = [[120, -12], [104, -24], [80, -24], [52, -19], [26, -27], [4, -30], [-10, -18]];
+  if (o.belly) fr = [[-6, 18], [14, 34], [34, 46], [56, 40], [76, 30], [92, 28], [110, 22], [120, 10]];
+  var pts = fr.concat(bk).map(function (q) { return atF(q[0], q[1]); }), d = "M" + f(pts[0][0]) + " " + f(pts[0][1]);
+  for (var i = 1; i < pts.length; i++) { var m = [(pts[i - 1][0] + pts[i][0]) / 2, (pts[i - 1][1] + pts[i][1]) / 2]; d += " Q" + f(pts[i - 1][0]) + " " + f(pts[i - 1][1]) + " " + f(m[0]) + " " + f(m[1]); }
+  d += " Q" + f(pts[pts.length - 1][0]) + " " + f(pts[pts.length - 1][1]) + " " + f(pts[0][0]) + " " + f(pts[0][1]) + " Z";
+  var belt = atF(10, 0), tor = '<path d="' + d + '" fill="' + (o.shirt || SHIRT_V) + '" stroke="' + INK + '" stroke-width="2.2" stroke-linejoin="round"/>';
+  var pd = [atF(-6, 18), atF(14, 20), atF(14, -28), atF(-10, -18)];
+  tor += '<path d="M' + pd.map(function (q) { return f(q[0]) + " " + f(q[1]); }).join(" L") + ' Z" fill="' + PANTS + '" stroke="' + INK + '" stroke-width="2"/>';
+  var n0 = atF(HB.sh - 4, 2), n1 = atF(HB.chin + 6, 4), neck = limb([n0, n1], 24 * s, SKIN);
+  // head: 0.115H deep, 0.13H tall, face to the front; nose, ear, hair at the back and top
+  var rx = 23 * s, ry = 26 * s, ang = -(o.lean || 0) + (o.tilt || 0), head = G("translate(" + f(hd[0]) + " " + f(hd[1]) + ") rotate(" + f(ang) + ")",
+    '<ellipse rx="' + f(rx) + '" ry="' + f(ry) + '" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2.2"/>' +
+    '<path d="M' + f(-rx * .2) + ' ' + f(-ry * .98) + ' C' + f(rx * .6) + ' ' + f(-ry * 1.12) + ' ' + f(rx * 1.12) + ' ' + f(-ry * .5) + ' ' + f(rx) + ' ' + f(ry * .25) + ' L' + f(rx * .45) + ' ' + f(ry * .05) + ' Q' + f(rx * .2) + ' ' + f(-ry * .55) + ' ' + f(-rx * .78) + ' ' + f(-ry * .6) + ' Z" fill="' + (o.hair || HAIR) + '" stroke="' + INK + '" stroke-width="1.6"/>' +
+    '<path d="M' + f(-rx * .97) + ' ' + f(-ry * .12) + ' l' + f(-rx * .26) + ' ' + f(ry * .3) + ' l' + f(rx * .26) + ' ' + f(ry * .05) + '" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="1.8" stroke-linejoin="round"/>' +
+    '<ellipse cx="' + f(rx * .2) + '" cy="' + f(ry * .08) + '" rx="' + f(rx * .14) + '" ry="' + f(ry * .2) + '" fill="' + SKIN2 + '" stroke="' + INK + '" stroke-width="1.2"/>' +
+    (o.mouth ? '<ellipse cx="' + f(-rx * .82) + '" cy="' + f(ry * .48) + '" rx="' + f(rx * .13) + '" ry="' + f(ry * .08 + ry * .08 * o.mouth) + '" fill="' + INK + '"/>' : ""));
   out.body = leg(0) + tor + neck + head;
   out.near = arm(0);
-  out.sh = sh; out.hd = hd; out.hip = hip; out.up = up;
-  out.at = atF;
+  out.sh = sh; out.hd = hd; out.hip = hip; out.up = up; out.at = atF;
   return out;
 }
 function rel(h, side) { return { rel: 1, h: h, side: side }; }
-var THROAT = [rel(150, 20), rel(144, 24)];
+var THROAT = [rel(130, 16), rel(124, 18)];   // the neck, just under the chin
 function whole(fg) { return fg.far + fg.body + fg.near; }
 function floor(y, x0, x1) { return '<path d="M' + (x0 || -400) + ' ' + y + ' H' + (x1 || 1040) + '" stroke="' + INK + '" stroke-width="2.4"/>' + R(x0 || -400, y, (x1 || 1040) - (x0 || -400), 300, "#e3d7bd", 0) + '<rect x="' + (x0 || -400) + '" y="' + y + '" width="' + ((x1 || 1040) - (x0 || -400)) + '" height="300" fill="url(#hatch)" opacity=".35"/>'; }
 function impact(x, y, k, col) { k = clamp(k); if (k <= 0 || k >= 1) return ""; var r = 10 + 26 * k, s = ""; for (var i = 0; i < 8; i++) { var a = i * Math.PI / 4; s += '<path d="M' + f(x + Math.cos(a) * r * .55) + ' ' + f(y + Math.sin(a) * r * .55) + ' L' + f(x + Math.cos(a) * r) + ' ' + f(y + Math.sin(a) * r) + '" stroke="' + (col || ORANGE) + '" stroke-width="4" stroke-linecap="round"/>'; } return G("", s, 1 - k); }
@@ -260,16 +289,16 @@ function beat(u, u0, dur, n) { var x = (u - u0) / dur * n; if (x < 0 || x >= n) 
 function chips(n, on, x, y) { var s = ""; for (var i = 0; i < n; i++) { var c = i < on; s += '<circle cx="' + (x + (i - (n - 1) / 2) * 44) + '" cy="' + y + '" r="17" fill="' + (c ? ORANGE : PAPER) + '" stroke="' + INK + '" stroke-width="2"/>' + N(String(i + 1), x + (i - (n - 1) / 2) * 44, y + 7, 18, c ? "#fff" : INK); } return s; }
 // victim leaning forward and the rescuer at his side (back blows); hit 0..1 = the hand coming down
 function backBlows(t, hit, opt) {
-  opt = opt || {}; var v = fig({ x: 300, y: 520, lean: 52, shirt: SHIRT_V, hands: THROAT, bend: [-1, -1], tilt: -10, legs: [[14, -6], [-6, 6]] });
-  var back = v.at(112, -30), lift = (1 - hit) * 80, hand = [back[0] + 14 + lift * .5, back[1] - 18 - lift];
-  var r = fig({ x: 470, y: 520, lean: 14, shirt: SHIRT_R, hair: "#5a4636", hands: [hand, v.at(105, 34)], bend: [-1, 1], legs: [[10, -4], [-8, 4]] });
+  opt = opt || {}; var v = fig({ x: 300, y: 492, lean: 52, shirt: SHIRT_V, hands: THROAT, bend: [-1, -1], tilt: -10, legs: [[14, -6], [-6, 6]] });
+  var back = v.at(92, -26), lift = (1 - hit) * 80, hand = [back[0] + 14 + lift * .5, back[1] - 18 - lift];
+  var r = fig({ x: 390, y: 490, lean: 22, shirt: SHIRT_R, hair: "#5a4636", hands: [hand, v.at(85, 30)], bend: [-1, 1], legs: [[10, -4], [-8, 4]] });
   return (opt.noFloor ? "" : floor(700)) + r.far + whole(v) + r.body + r.near;
 }
 // the rescuer behind, arms round the victim's waist; th 0..1 = the thrust (in and up)
 function thrustPair(t, th, opt) {
-  opt = opt || {}; var v = fig({ x: 290, y: 520, lean: 14, shirt: opt.shirt || SHIRT_V, hands: THROAT, bend: [-1, -1], belly: opt.belly, tilt: -8, mouth: opt.mouth });
-  var spot = opt.chest ? v.at(112, 34) : v.at(62, 34), fist = [spot[0] + 10 + th * 8, spot[1] + 6 - th * 10];
-  var r = fig({ x: 400, y: 525, lean: 18, shirt: SHIRT_R, hair: opt.oldHair || "#5a4636", hands: [fist, [fist[0] + 6, fist[1] + 4]], bend: [1, 1], legs: [[16, -8], [-6, 4]] });
+  opt = opt || {}; var v = fig({ x: 290, y: 490, lean: 10, shirt: opt.shirt || SHIRT_V, hands: THROAT, bend: [-1, -1], belly: opt.belly, tilt: -8, mouth: opt.mouth });
+  var spot = opt.chest ? v.at(84, 30) : v.at(46, opt.belly ? 50 : 26), fist = [spot[0] + 10 + th * 8, spot[1] + 6 - th * 10];
+  var r = fig({ x: 380, y: 490, lean: 16, shirt: SHIRT_R, hair: opt.oldHair || "#5a4636", hands: [fist, [fist[0] + 6, fist[1] + 4]], bend: [1, 1], legs: [[16, -8], [-6, 4]] });
   var fistD = '<rect x="' + f(fist[0] - 15) + '" y="' + f(fist[1] - 14) + '" width="30" height="28" rx="9" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2"/>';
   return (opt.noFloor ? "" : floor(700)) + r.far + r.body + whole(v) + r.near + fistD;
 }
@@ -351,14 +380,14 @@ shot(7, push(300, 440, 1.2, 1.1), function (u, d, t) {
 }, { tr: "out" });
 // 8 · coughing or not? two people side by side
 shot(8, push(320, 440, 1.1, 1.16), function (u, d, t) {
-  var a = fig({ x: 170, y: 520, lean: 12 + 6 * Math.abs(Math.sin(t * 6)), shirt: SHIRT_V, hands: [rel(150, 26), null], bend: [-1, -1], s: .82, mouth: 1 });
-  var b = fig({ x: 470, y: 520, lean: 4, shirt: "#8f7f9a", hands: THROAT, bend: [-1, -1], s: .82 });
+  var a = fig({ x: 170, y: 499, lean: 12 + 6 * Math.abs(Math.sin(t * 6)), shirt: SHIRT_V, hands: [rel(132, 24), null], bend: [-1, -1], s: .82, mouth: 1 });
+  var b = fig({ x: 470, y: 499, lean: 4, shirt: "#8f7f9a", hands: THROAT, bend: [-1, -1], s: .82 });
   var cough = ""; for (var i = 0; i < 3; i++) { var p = (t * 1.6 + i / 3) % 1; cough += '<path d="M' + f(a.hd[0] - 40 - p * 60) + ' ' + f(a.hd[1] + 10 - 20 + i * 20) + ' h-' + f(18 * (1 - p)) + '" stroke="' + BLUE + '" stroke-width="5" stroke-linecap="round" opacity="' + f(1 - p) + '"/>'; }
   return paper() + floor(670) + whole(a) + cough + whole(b) + '<path d="M320 120 V680" stroke="' + INK + '" stroke-width="1.6" stroke-dasharray="8 8"/>' + G("", T("كح… كح", 140, 180, 30, BLUE, 800), at(u, .3, .3)) + G("", T("؟", 470, 180, 90, ORANGE, 800), at(u, .6, .3));
 });
 // 9 · if he coughs: let him. The cough pushes the bite back up
 shot(9, push(340, 430, 1.12, 1.04), function (u, d, t) {
-  var a = fig({ x: 300, y: 540, lean: 22 + 8 * Math.abs(Math.sin(t * 5)), shirt: SHIRT_V, hands: [rel(150, 30), null], bend: [-1, -1], mouth: 1 });
+  var a = fig({ x: 300, y: 508, lean: 22 + 8 * Math.abs(Math.sin(t * 5)), shirt: SHIRT_V, hands: [rel(132, 28), null], bend: [-1, -1], mouth: 1 });
   var cough = ""; for (var i = 0; i < 4; i++) { var p = (t * 1.4 + i / 4) % 1; cough += '<path d="M' + f(a.hd[0] - 46 - p * 90) + ' ' + f(a.hd[1] + 12 - 30 + i * 20) + ' h-' + f(24 * (1 - p)) + '" stroke="' + BLUE + '" stroke-width="6" stroke-linecap="round" opacity="' + f(1 - p) + '"/>'; }
   var bk = (u * .5) % 1;
   return paper() + floor(720) + whole(a) + cough + inset(500, 190, 130, G("translate(-300 -500) scale(1)", throat(t, { food: along([[290, 560], [292, 480], [320, 380], [250, 320], [140, 330]], bk), ep: 0, air: 1, hl: "air" })), at(u, .6, .3)) +
@@ -373,8 +402,8 @@ shot(10, push(320, 400, 1.05, 1.0), function (u, d, t) {
 // 11 · five hard blows between the shoulder blades, the victim leaning forward
 hud(11, 12, function (u, t) { var b = beat(u, 1.2, LN[11].end - LN[11].start - 1.2, 5); return chips(5, b.i, 320, 60); });
 shot(11, push(370, 450, 1.3, 1.4), function (u, d, t) {
-  var b = beat(u, 1.2, LN[11].end - LN[11].start - 1.2, 5), hk = b.k, v = fig({ x: 300, y: 520, lean: 52 });
-  var bk = v.at(112, -30);
+  var b = beat(u, 1.2, LN[11].end - LN[11].start - 1.2, 5), hk = b.k, v = fig({ x: 300, y: 492, lean: 52 });
+  var bk = v.at(92, -26);
   return paper() + backBlows(t, hk) + impact(bk[0] + 6, bk[1] - 14, b.p > .5 && b.p < 1 ? (b.p - .5) * 2 : 0) + label(bk[0] + 4, bk[1] + 4, 420, 300, "بين لوحين الكتف", OLIVE, at(u, .6, .5), 20);
 });
 // 12 · thrusts set-up: a front view of the belly, the fist above the navel and below the ribs
@@ -394,7 +423,7 @@ shot(12, push(320, 400, 1.0, 1.06), function (u, d, t) {
 hud(13, 14, function (u, t) { var b = beat(u, .8, LN[13].end - LN[13].start - .8, 5); return chips(5, b.i, 320, 60); });
 shot(13, push(340, 460, 1.42, 1.32), function (u, d, t) {
   var b = beat(u, .8, LN[13].end - LN[13].start - .8, 5);
-  return paper() + thrustPair(t, b.k) + arrow(260, 480, 220, 440, ORANGE, 6, at(u, .6, .3)) + G("", T("لجوه ولفوق", 200, 560, 26, ORANGE, 800), at(u, .9, .3));
+  return paper() + thrustPair(t, b.k) + arrow(260, 480, 220, 440, ORANGE, 6, at(u, .6, .3)) + G("", T("لجوه ولفوق", 190, 610, 26, ORANGE, 800), at(u, .9, .3));
 }, { tr: "out" });
 // 14 · why it works: the dome is pushed up, the lungs squeeze, the air shoots the bite out
 shot(14, push(320, 380, 0.95, 1.02), function (u, d, t) {
@@ -421,7 +450,7 @@ shot(16, push(320, 400, 1.0, 1.05), function (u, d, t) {
 // 17 · pregnant or heavy: press on the middle of the chest instead
 shot(17, push(330, 460, 1.4, 1.3), function (u, d, t) {
   var b = beat(u, 1.4, 2, 2);
-  return paper() + thrustPair(t, b.k, { belly: true, chest: true, shirt: "#a38aa0" }) + label(250, 400, 310, 250, "نص الصدر", ORANGE, at(u, 1.0, .5), 26) + cross(205, 470, .7, at(u, 1.8, .4));
+  return paper() + thrustPair(t, b.k, { belly: true, chest: true, shirt: "#a38aa0" }) + label(250, 400, 310, 250, "نص الصدر", ORANGE, at(u, 1.0, .5), 26) + cross(236, 452, .7, at(u, 1.8, .4));
 });
 // 18 · a baby under one: face down along your forearm, head lower than the body, blows between the shoulders; then two fingers on the chest
 shot(18, push(380, 470, 1.25, 1.33), function (u, d, t) {
@@ -443,11 +472,11 @@ shot(18, push(380, 470, 1.25, 1.33), function (u, d, t) {
 // 19 · unconscious: on the floor, face up, chest compressions until the ambulance arrives
 shot(19, push(380, 520, 1.25, 1.18), function (u, d, t) {
   var pump = Math.abs(Math.sin(t * 5.6)), s = paper() + floor(640);
-  var r = fig({ x: 420, y: 556 - 8 * pump, lean: 40 + 4 * pump, shirt: SHIRT_R, hair: "#5a4636", hands: [[318, 592 - 10 * pump], [326, 590 - 10 * pump]], bend: [1, 1], legs: [[0, -90], [-4, -86]] });
+  var r = fig({ x: 420, y: 544 - 8 * pump, lean: 40 + 4 * pump, kneel: 1, shirt: SHIRT_R, hair: "#5a4636", hands: [[352, 578 - 8 * pump], [360, 576 - 8 * pump]], bend: [1, 1], legs: [[0, -90], [-4, -86]] });
   s += r.far + r.body;
   s += G("translate(440 609) scale(-1 1) rotate(90)", whole(fig({ x: 0, y: 0, lean: 0, shirt: SHIRT_V, legs: [[0, 0], [0, 0]], hands: [rel(40, -6), rel(40, -6)] })));
-  s += r.near + '<rect x="300" y="' + f(574 - 10 * pump) + '" width="40" height="24" rx="8" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2"/>';
-  s += label(318, 600, 340, 420, "إنعاش القلب", ORANGE, at(u, .6, .5), 24) + iconBox(540, 260, 120, '<rect x="-50" y="-20" width="100" height="50" rx="6" fill="#f4efe3" stroke="' + INK + '" stroke-width="2"/><path d="M-6 -6 h12 v8 h8 v12 h-8 v8 h-12 v-8 h-8 v-12 h8 z" fill="' + ORANGE + '"/><circle cx="-28" cy="32" r="9" fill="' + INK + '"/><circle cx="28" cy="32" r="9" fill="' + INK + '"/>' + T("123", 0, -34, 20, ORANGE, 800), at(u, 1.4, .3));
+  s += r.near + '<rect x="336" y="' + f(564 - 8 * pump) + '" width="40" height="24" rx="8" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2"/>';
+  s += label(352, 586, 300, 480, "إنعاش القلب", ORANGE, at(u, .6, .5), 24) + iconBox(540, 260, 120, '<rect x="-50" y="-20" width="100" height="50" rx="6" fill="#f4efe3" stroke="' + INK + '" stroke-width="2"/><path d="M-6 -6 h12 v8 h8 v12 h-8 v8 h-12 v-8 h-8 v-12 h8 z" fill="' + ORANGE + '"/><circle cx="-28" cy="32" r="9" fill="' + INK + '"/><circle cx="28" cy="32" r="9" fill="' + INK + '"/>' + T("123", 0, -34, 20, ORANGE, 800), at(u, 1.4, .3));
   return s;
 }, { tr: "out" });
 // 20 · the myth: a glass of water to wash it down — no
@@ -486,10 +515,10 @@ window.SCENE = window.SCENE || {};
 SCENE.intro = function (svg, t, li) {
   // line 0: at a table, a man grabs his throat with both hands. line 1: no voice, no cough, no breath. line 2: the stopwatch from 4:00
   var s = '<path d="M-20 600 H640" stroke="' + INK + '" stroke-width="2.4"/>' + R(-20, 600, 660, 80, "#e3d7bd", 0);
-  s += R(20, 400, 240, 18, "#a9784d", 2.2) + R(40, 418, 14, 182, WOOD_D, 2) + R(226, 418, 14, 182, WOOD_D, 2);
-  s += '<ellipse cx="140" cy="394" rx="70" ry="10" fill="#f4efe3" stroke="' + INK + '" stroke-width="2"/><ellipse cx="140" cy="390" rx="34" ry="6" fill="#c38a54" stroke="' + INK + '" stroke-width="1.4"/>';
-  var shake = 3 * Math.sin(t * 14), m = fig({ x: 370 + shake, y: 420, lean: 6, shirt: SHIRT_V, hands: THROAT, bend: [-1, -1], legs: [[80, -80], [76, -76]], tilt: -14 });
-  s += m.far + m.body + m.near + R(330, 420, 110, 14, "#a9784d", 2) + R(420, 434, 12, 166, WOOD_D, 2);
+  s += R(20, 430, 240, 16, "#a9784d", 2.2) + R(40, 446, 14, 154, WOOD_D, 2) + R(226, 446, 14, 154, WOOD_D, 2);
+  s += '<ellipse cx="140" cy="424" rx="70" ry="10" fill="#f4efe3" stroke="' + INK + '" stroke-width="2"/><ellipse cx="140" cy="420" rx="34" ry="6" fill="#c38a54" stroke="' + INK + '" stroke-width="1.4"/>';
+  var shake = 3 * Math.sin(t * 14), m = fig({ x: 370 + shake, y: 478, lean: 6, shirt: SHIRT_V, hands: THROAT, bend: [-1, -1], legs: [[80, -80], [76, -76]], tilt: -14 });
+  s += m.far + m.body + m.near + R(330, 488, 110, 12, "#a9784d", 2) + R(420, 500, 12, 100, WOOD_D, 2) + R(426, 330, 12, 158, WOOD_D, 2);
   if (li >= 1) { var u = t - LN[1].start;
     s += G("", '<path d="M220 150 h120 a18 18 0 0 1 18 18 v50 a18 18 0 0 1 -18 18 h-70 l-24 22 v-22 h-26 a18 18 0 0 1 -18 -18 v-50 a18 18 0 0 1 18 -18 z" fill="#f4ecdb" stroke="' + INK + '" stroke-width="2.2"/>' + T("…", 280, 210, 40, INK, 800), ease(u / .3)) + cross(280, 192, .9, ease((u - .6) / .4));
   }
