@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>إيه الحكاية؟ — YouTube channel art</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&family=Noto+Serif:wght@700;800&display=swap" rel="stylesheet">
+<style>html, body { margin: 0; background: #eee5d0; } svg { display: block; }</style></head>
+<body>
+<!-- YouTube channel art in the «اسكتش» hand. One page, four pictures: ?v=profile1 | profile2 (800×800, cropped to a circle by
+     YouTube) and ?v=banner1 | banner2 (2560×1440; phones show only the middle 1546×423, desktop the middle 2560×423, TV all of it).
+     ?guide=1 draws the crop guides. Render: node render.js. Drawing helpers come from videos/_templates/sketch/_helpers.js. -->
+<svg id="out" xmlns="http://www.w3.org/2000/svg"></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="mark"><rect x="84" y="4" width="32" height="10" fill="#2a2016"/><rect x="94" y="14" width="12" height="14" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" fill="#f4ecdb" stroke="#2a2016" stroke-width="9" stroke-linejoin="round"/><text x="106" y="140" text-anchor="middle" style="font:800 120px Noto Sans Arabic;fill:#bd552f">؟</text></g>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".15"/></pattern>
+  <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse"><path d="M64 0 H0 V64" stroke="#e1d5ba" stroke-width="1.6" fill="none"/></pattern>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .05 0"/></filter>
+</defs></svg>
+<script>window.TIMING = { lines: [], duration: 0 };</script>
+<script src="../../videos/lib/geo.min.js"></script>
+<script src="../../videos/_templates/sketch/_helpers.js"></script>
+<script>
+var Q = new URLSearchParams(location.search), V = Q.get("v") || "banner1", GUIDE = Q.get("guide");
+var CREAM = "#f4ecdb";
+function bg(w, h) { return '<rect width="' + w + '" height="' + h + '" fill="' + PAPER + '"/><rect width="' + w + '" height="' + h + '" fill="url(#grid)"/>'; }
+function grain(w, h) { return '<rect width="' + w + '" height="' + h + '" filter="url(#paperN)"/>'; }
+function arc(cx, cy, r, a0, a1) {   // degrees, 0 = up, clockwise
+  var p = function (a) { a = (a - 90) * Math.PI / 180; return f(cx + r * Math.cos(a)) + " " + f(cy + r * Math.sin(a)); };
+  return "M" + p(a0) + " A" + r + " " + r + " 0 " + (a1 - a0 > 180 ? 1 : 0) + " 1 " + p(a1);
+}
+function ticks(cx, cy, r, n, len, big) { var s = ""; for (var i = 0; i < n; i++) { var a = i / n * Math.PI * 2, l = i % 5 ? len : big; s += '<path d="M' + f(cx + Math.cos(a) * (r - l)) + ' ' + f(cy + Math.sin(a) * (r - l)) + ' L' + f(cx + Math.cos(a) * r) + ' ' + f(cy + Math.sin(a) * r) + '" stroke="' + INK + '" stroke-width="' + (i % 5 ? 2 : 4) + '"/>'; } return s; }
+// the series name with its orange question mark
+function title(x, y, sz, anchor) { return '<text x="' + x + '" y="' + y + '" text-anchor="' + (anchor || "middle") + '" direction="rtl" style="font:900 ' + sz + 'px Noto Sans Arabic;fill:' + INK + '">إيه الحكاية<tspan fill="' + ORANGE + '">؟</tspan></text>'; }
+// a stopwatch: crown, pusher, dial, an orange wedge for «دقيقة»
+function stopwatch(x, y, r) {
+  var s = R(x - r * .18, y - r * 1.42, r * .36, r * .2, INK, 0) + R(x - r * .08, y - r * 1.24, r * .16, r * .26, INK, 0);
+  s += G("rotate(42 " + x + " " + y + ")", R(x - r * .09, y - r * 1.3, r * .18, r * .3, INK, 0));
+  s += C(x, y, r, CREAM, Math.max(2.4, r * .09));
+  s += '<path d="M' + x + ' ' + y + ' L' + x + ' ' + f(y - r * .8) + ' A' + f(r * .8) + ' ' + f(r * .8) + ' 0 1 1 ' + f(x - r * .8) + ' ' + y + ' Z" fill="' + ORANGE + '" opacity=".9"/>';
+  return s + '<path d="M' + x + ' ' + y + ' L' + f(x - r * .62) + ' ' + y + '" stroke="' + INK + '" stroke-width="' + f(r * .1) + '" stroke-linecap="round"/>' + C(x, y, r * .1, INK, 0);
+}
+// a framed thumbnail with its drawing clipped to the frame (the reference crops close-ups with the panel edge)
+var BOXN = 0;
+function box(x, y, s, inner, tilt) { var id = "bx" + (++BOXN); return G("translate(" + x + " " + y + ")" + (tilt ? " rotate(" + tilt + ")" : ""), '<rect x="' + (-s / 2 + 7) + '" y="' + (-s / 2 + 7) + '" width="' + s + '" height="' + s + '" fill="' + INK + '" opacity=".16"/><clipPath id="' + id + '"><rect x="' + (-s / 2) + '" y="' + (-s / 2) + '" width="' + s + '" height="' + s + '"/></clipPath><rect x="' + (-s / 2) + '" y="' + (-s / 2) + '" width="' + s + '" height="' + s + '" fill="' + CREAM + '"/><g clip-path="url(#' + id + ')">' + inner + '</g><rect x="' + (-s / 2) + '" y="' + (-s / 2) + '" width="' + s + '" height="' + s + '" fill="none" stroke="' + INK + '" stroke-width="2.6"/>'); }
+
+// ── the sea from the side, any width (the tides episode's beachSide, stretched): sand bed with strata, the sea on the slope,
+// a pier, a tide staff, a boat. y0 = sand top at the left, y1 = at the right, yw = water level, H = bottom
+function seaCut(W, y0, y1, yw, H) {
+  var ys = function (x) { return y0 + (y1 - y0) * x / W + 5 * Math.sin(x * .02); }, s = "", k, x, xw = 0;
+  for (x = 0; x <= W; x += 4) if (ys(x) >= yw) { xw = x; break; }
+  var sand = "M0 " + f(ys(0)); for (x = 16; x <= W; x += 16) sand += " L" + x + " " + f(ys(x));
+  s += '<path d="' + sand + ' L' + W + ' ' + H + ' L0 ' + H + ' Z" fill="' + SAND_SIDE + '" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/><path d="' + sand + ' L' + W + ' ' + H + ' L0 ' + H + ' Z" fill="url(#hatch)" opacity=".7"/>';
+  [46, 104, 170].forEach(function (dz, j) { var d = ""; for (x = 0; x <= W; x += 16) d += (x ? " L" : "M") + x + " " + f(Math.min(H - 6, ys(x) + dz)); s += '<path d="' + d + '" stroke="' + STRATA + '" stroke-width="' + (3.2 - j * .6) + '" fill="none"' + (j ? ' stroke-dasharray="10 8"' : "") + '/>'; });
+  for (k = 0; k < 90; k++) { var px = hash(k) * W, py = ys(px) + 16 + hash(k + 40) * 200; if (py < H - 8) s += '<circle cx="' + f(px) + '" cy="' + f(py) + '" r="' + f(2.5 + hash(k + 9) * 4) + '" fill="' + STRATA + '"/>'; }
+  // umbrella and towel on the dry sand
+  var ux = xw * .3, uy = ys(ux);
+  s += '<path d="M' + f(ux) + ' ' + f(uy) + ' L' + f(ux + 8) + ' ' + f(uy - 150) + '" stroke="' + INK + '" stroke-width="4"/><path d="M' + f(ux - 68) + ' ' + f(uy - 130) + ' Q' + f(ux + 8) + ' ' + f(uy - 200) + ' ' + f(ux + 84) + ' ' + f(uy - 130) + ' Z" fill="#e9e1cc" stroke="' + INK + '" stroke-width="2.4"/><path d="M' + f(ux - 18) + ' ' + f(uy - 135) + ' Q' + f(ux + 8) + ' ' + f(uy - 188) + ' ' + f(ux + 34) + ' ' + f(uy - 135) + ' Z" fill="' + ORANGE + '" stroke="' + INK + '" stroke-width="2"/>';
+  s += '<path d="M' + f(ux + 40) + ' ' + f(ys(ux + 40) - 4) + ' L' + f(ux + 150) + ' ' + f(ys(ux + 150) - 4) + '" stroke="#c96a4a" stroke-width="8" stroke-linecap="round"/>';
+  // pier posts, then the sea over their feet
+  var p0 = xw - 120, p1 = xw + 520, deck = yw - 78;
+  for (x = p0 + 30; x < p1; x += 86) s += R(x, deck + 16, 16, ys(x) + 30 - deck - 16, WOOD_D, 2.2);
+  var top = "M" + f(xw) + " " + f(yw); for (x = xw; x <= W + 1; x += 8) top += " L" + f(x) + " " + f(yw + 5 * Math.sin(x * .04));
+  var body = top + " L" + W + " " + f(ys(W)); for (x = W; x >= xw; x -= 16) body += " L" + f(x) + " " + f(ys(x)); body += " Z";
+  s += '<path d="' + body + '" fill="' + SEA_SIDE + '" opacity=".88" stroke="' + INK + '" stroke-width="2.6"/><path d="' + top + ' L' + W + ' ' + f(yw + 22) + ' L' + f(xw + 30) + ' ' + f(yw + 22) + ' Z" fill="' + SEA_TOP + '" opacity=".75"/>';
+  for (k = 0; k < 26; k++) { var cx2 = xw + 60 + hash(k + 3) * (W - xw - 80), cy2 = yw + 40 + hash(k + 77) * 70; if (cy2 < ys(cx2) - 14) s += '<path d="M' + f(cx2 - 16) + ' ' + f(cy2) + ' q16 -7 32 0" stroke="#d6e2e6" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/>'; }
+  s += '<path d="M' + f(xw - 8) + ' ' + f(yw + 1) + ' q10 -8 24 -3 t24 0" stroke="#f6f3ea" stroke-width="5" fill="none" stroke-linecap="round"/>';
+  s += R(p0, deck, p1 - p0, 18, "#c69a6c", 2.4) + R(p0, deck + 18, p1 - p0, 7, WOOD_D, 1.6); for (x = p0 + 28; x < p1; x += 28) s += '<path d="M' + x + ' ' + deck + ' v18" stroke="' + WOOD_D + '" stroke-width="1.4"/>';
+  // tide staff and boat
+  var sx = p1 - 60; s += R(sx, deck - 60, 30, 250, "#f4efe3", 2.2); for (k = 0; k < 12; k++) { var my = deck - 50 + k * 20; s += R(sx, my, k % 2 ? 15 : 30, 7, my > yw - 30 && my < yw + 4 ? ORANGE : INK, 0); }
+  var bx = p1 + 190, by = yw + 8;
+  s += G("translate(" + f(bx) + " " + f(by) + ") rotate(-2 70 0)", '<path d="M0 -34 L146 -34 L128 6 Q72 16 18 6 Z" fill="#3f6a7e" stroke="' + INK + '" stroke-width="2.8" stroke-linejoin="round"/><path d="M5 -28 L141 -28" stroke="#e7e1d1" stroke-width="5"/><path d="M40 -34 l-10 -20 M106 -34 l12 -18" stroke="' + WOOD_D + '" stroke-width="5" stroke-linecap="round"/>');
+  return { svg: s, xw: xw, staff: sx, deck: deck, boat: bx };
+}
+// the Moon lit from the left by a fraction k (0 new … 1 full) — the phase row
+function phase(x, y, r, k) {
+  var id = "ph" + (++BOXN), s = moon(x, y, r), w = r * Math.abs(1 - 2 * k);
+  var d = "M" + f(x) + " " + f(y - r) + " A" + r + " " + r + " 0 0 1 " + f(x) + " " + f(y + r) + " A" + f(w) + " " + r + " 0 0 " + (k < .5 ? 1 : 0) + " " + f(x) + " " + f(y - r) + " Z";
+  if (k >= 1) return s; if (k <= 0) d = "M" + f(x - r) + " " + y + " a" + r + " " + r + " 0 1 0 " + 2 * r + " 0 a" + r + " " + r + " 0 1 0 " + (-2 * r) + " 0 Z";
+  return s + '<path d="' + d + '" fill="#3d3a34" opacity=".86"/><circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="none" stroke="' + INK + '" stroke-width="' + f(Math.max(1.6, r * .06)) + '"/>';
+}
+function gear(x, y, r, n, fill, rot) { var d = "", i, a, k = Math.PI / n; for (i = 0; i < n; i++) { a = i * 2 * k + (rot || 0); [[-.3, r * .8], [-.18, r], [.18, r], [.3, r * .8]].forEach(function (q, j) { d += (i || j ? " L" : "M") + f(x + Math.cos(a + q[0] * k * 2) * q[1]) + " " + f(y + Math.sin(a + q[0] * k * 2) * q[1]); }); } return P(d + " Z", fill, 2.4) + C(x, y, r * .3, CREAM, 2.4); }
+
+// ── small drawings for the thumbnails (each around 0,0, inside ±100) ──
+var ICONS = [
+  function () { return globe(0, 6, 72, 22, 14, { dot: [31.2, 30] }); },
+  function () { return moon(0, 0, 66); },
+  function () { return sun(0, 0, 44, .2); },
+  function () { return C(0, 0, 74, CREAM, 3.2) + ticks(0, 0, 68, 60, 6, 13) + '<path d="M0 0 L0 -60 A60 60 0 0 1 52 30 Z" fill="' + ORANGE + '" opacity=".28"/><path d="M0 0 L50 28" stroke="' + INK + '" stroke-width="5" stroke-linecap="round"/><path d="M0 0 L-8 -38" stroke="' + INK + '" stroke-width="8" stroke-linecap="round"/>' + C(0, 0, 6, INK, 0); },
+  function () { return G("translate(-150 -150) scale(.5)", seaCut(608, 250, 470, 330, 620).svg); },
+  function () { return bulge(0, 0, 50, 1, 0) + globe(0, 0, 50, -40, 72, { dot: [29.9, 31.2] }); },
+  function () { return '<path d="M-62 -30 Q-70 -62 -36 -62 Q-22 -86 8 -74 Q40 -86 52 -56 Q80 -52 70 -26 Z" fill="' + GREY + '" stroke="' + INK + '" stroke-width="2.6" stroke-linejoin="round"/>' + P("M4 -22 L-26 30 H-4 L-16 82 L34 12 H10 L26 -22 Z", ORANGE, 2.6); },
+  function () { return gear(-22, -10, 52, 10, LAND, .1) + gear(46, 44, 34, 7, ORANGE, .42); },
+  function () { return P("M-36 -28 A40 40 0 1 1 36 -28 Q22 6 22 28 H-22 Q-22 6 -36 -28 Z", "#efe2b4", 2.6, ' transform="translate(0 -10)"') + '<path d="M-12 18 V-6 L-4 -22 L4 -6 L12 -22 M12 18 V-6" transform="translate(0 -10)" fill="none" stroke="' + ORANGE + '" stroke-width="3" stroke-linejoin="round"/>' + R(-22, 20, 44, 34, GREY, 2.6) + '<path d="M-22 31 H22 M-22 42 H22" stroke="' + INK + '" stroke-width="2"/>' + P("M-12 54 H12 L6 66 H-6 Z", INK, 0); },
+  function () { return P("M-60 -50 H-22 V10 A22 22 0 0 0 22 10 V-50 H60 V10 A60 60 0 0 1 -60 10 Z", ORANGE, 2.6) + R(-60, -66, 38, 24, GREY, 2.6) + R(22, -66, 38, 24, GREY, 2.6) + '<path d="M-41 -76 Q0 -112 41 -76 M-41 -90 Q0 -140 41 -90" fill="none" stroke="' + BLUE + '" stroke-width="2.6" stroke-dasharray="7 6"/>'; },
+  function () { return wave(-90, -10, 90, -10, 0, BLUE, 30, 90, 1, 5) + '<path d="M-90 -10 H90" stroke="' + INK + '" stroke-width="1.4" stroke-dasharray="6 6"/>' + measure(-67, 46, 23, 46, 1, "", 0) + N("λ", -22, 82, 28, INK); },
+  function () { return P("M0 -74 Q54 -6 54 26 A54 54 0 0 1 -54 26 Q-54 -6 0 -74 Z", SEA_TOP, 2.8) + '<path d="M-30 30 A32 32 0 0 0 0 58" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".7"/>'; },
+  function () { return R(-13, -76, 26, 112, CREAM, 2.6, 13) + C(0, 52, 27, ORANGE, 2.6) + '<rect x="-5" y="-22" width="10" height="70" fill="' + ORANGE + '"/>' + [-56, -38, -20, -2, 16].map(function (y) { return '<path d="M18 ' + y + ' h14" stroke="' + INK + '" stroke-width="2.2"/>'; }).join("") + N("°C", 52, -44, 24, INK); },
+  function () { return R(-62, -30, 116, 64, CREAM, 2.8, 6) + R(54, -12, 12, 28, INK, 0) + R(-54, -22, 30, 48, LAND, 1.6) + R(-20, -22, 30, 48, LAND, 1.6) + R(14, -22, 30, 48, "#e6dcc5", 1.6) + P("M-2 -62 L-14 -42 H-4 L-8 -34 L8 -52 H-2 Z", ORANGE, 1.6); }
+];
+function thumb(i, x, y, s, tilt) { return box(x, y, s, G("scale(" + (s / 200).toFixed(3) + ")", ICONS[((i % ICONS.length) + ICONS.length) % ICONS.length]()), tilt); }
+
+// ── profile pictures (800×800; keep everything that matters inside the r=400 circle) ──
+function profile1() {   // the series mark, big, inside a stopwatch dial
+  var s = bg(800, 800) + C(400, 400, 372, CREAM, 0) + ticks(400, 400, 372, 60, 16, 34);
+  s += '<path d="' + arc(400, 400, 318, 0, 359.9) + '" fill="none" stroke="' + TAN + '" stroke-width="20"/><path d="' + arc(400, 400, 318, 0, 262) + '" fill="none" stroke="' + ORANGE + '" stroke-width="20" stroke-linecap="round"/>';
+  s += G("translate(400 412) scale(2.45) translate(-110 -100)", '<use href="#mark"/>');
+  return s + grain(800, 800);
+}
+function profile2() {   // a real-coastline globe inside the stopwatch, the question mark pinned on it
+  var s = bg(800, 800);
+  s += R(352, 60, 96, 30, INK, 0) + R(380, 88, 40, 44, INK, 0) + G("rotate(40 400 410)", R(380, 82, 40, 50, INK, 0));
+  s += C(400, 410, 292, CREAM, 9) + '<path d="' + arc(400, 410, 262, 0, 359.9) + '" fill="none" stroke="' + TAN + '" stroke-width="22"/><path d="' + arc(400, 410, 262, 0, 250) + '" fill="none" stroke="' + ORANGE + '" stroke-width="22" stroke-linecap="round"/>';
+  s += globe(400, 410, 214, 26, 16);
+  s += '<circle cx="566" cy="566" r="112" fill="' + INK + '"/>' + C(558, 558, 112, CREAM, 8) + '<text x="558" y="622" text-anchor="middle" style="font:900 176px Noto Sans Arabic;fill:' + ORANGE + '">؟</text>';
+  return s + grain(800, 800);
+}
+
+// ── banners (2560×1440). Strip shown on desktop: y 508–931. Safe for every screen: x 507–2053 of that strip. ──
+function frameTV() { return '<rect x="44" y="44" width="2472" height="1352" fill="none" stroke="' + INK + '" stroke-width="2.4"/><rect x="56" y="56" width="2448" height="1328" fill="none" stroke="' + INK + '" stroke-width="1"/>'; }
+function titleBlock(cx, sz) {
+  var s = "", w = sz * 4.25;
+  s += T("علوم · هندسة · حاجات حوالينا", cx, 574, 31, ORANGE, 700) + '<path d="M' + (cx - 330) + ' 564 h80 M' + (cx + 250) + ' 564 h80" stroke="' + INK + '" stroke-width="1.6"/>';
+  s += title(cx, 742, sz);
+  s += '<path d="M' + f(cx - w / 2) + ' 796 H' + f(cx + w / 2) + '" stroke="' + INK + '" stroke-width="2"/>';
+  s += '<text x="' + (cx + 30) + '" y="878" text-anchor="middle" direction="rtl" style="font:700 50px Noto Sans Arabic;fill:' + INK + '">هشرحهالك في <tspan fill="' + ORANGE + '">دقيقة.</tspan></text>' + stopwatch(cx - 248, 866, 27);
+  return s;
+}
+function banner1() {   // one wide technical sheet: the tides scene. Sun – Moon – Earth with its bulges in the strip, the sea cut along the bottom, the Moon's phases along the top
+  var s = bg(2560, 1440) + frameTV(), gx = 905, gy = 720, gr = 150;
+  // top (TV only): the Moon's month along a dashed orbit
+  s += '<path d="M150 470 Q1280 -40 2410 470" fill="none" stroke="' + INK + '" stroke-width="2" stroke-dasharray="12 10"/>';
+  var names = ["محاق", "هلال", "تربيع أول", "أحدب", "بدر", "أحدب", "تربيع أخير", "هلال"];
+  names.forEach(function (n, i) { var u = (i + .5) / 8, x = 150 + 2260 * u, y = 470 - 4 * 255 * u * (1 - u), k = i <= 4 ? i / 4 : (8 - i) / 4;
+    s += (i <= 4 ? phase(x, y, 46, k) : G("translate(" + 2 * x + " 0) scale(-1 1)", phase(x, y, 46, k))) + T(n, x, y + 92, 26, i === 0 || i === 4 ? ORANGE : INK, 700); });
+  s += T("شهر قمري", 1280, 130, 30, MUTE, 600) + N("29.5", 1280, 96, 44, INK) + arrow(1150, 86, 1040, 100, INK, 3) + arrow(1410, 86, 1520, 100, INK, 3);
+  // bottom (TV only): the sea from the side
+  var sea = seaCut(2560, 1105, 1400, 1205, 1440); s += sea.svg;
+  s += measure(sea.staff + 70, 1115, sea.staff + 70, 1205, 1, "", 0) + N("1.5 m", sea.staff + 150, 1172, 34, ORANGE) + label(sea.boat + 70, 1180, sea.boat + 190, 1040, "مد", BLUE, 1, 40) + label(sea.xw - 190, 1162, sea.xw - 300, 1030, "رمل مبلول", OLIVE, 1, 30);
+  // the strip: Sun (off the left edge) · Moon · Earth with two bulges, on one dashed line
+  s += '<path d="M330 ' + gy + ' H1130" stroke="' + ORANGE + '" stroke-width="2.6" stroke-dasharray="12 9"/>';
+  s += sun(120, gy, 150, .3) + bulge(gx, gy, gr, 1, 0) + globe(gx, gy, gr, 24, 14, { dot: [29.9, 31.2] }) + moon(590, gy, 40);
+  s += label(590, 684, 640, 600, "القمر", OLIVE, 1, 30) + label(gx + 150, 628, gx + 205, 566, "انتفاخ", BLUE, 1, 28) + label(gx - 170, 800, gx - 225, 876, "انتفاخ تاني", BLUE, 1, 28);
+  s += arrow(gx - 240, gy, 650, gy, ORANGE, 7);
+  s += titleBlock(1632, 150);
+  // right wing of the strip (desktop): what the sea does at your beach, framed
+  s += box(2300, gy, 330, G("translate(-250 -252) scale(.82)", seaCut(608, 250, 470, 318, 620).svg)) + tag("مد", 2400, 610, 1, 34, BLUE);
+  return s + grain(2560, 1440);
+}
+function banner2() {   // a wall of framed thumbnails (one drawing per topic) round the name
+  var s = bg(2560, 1440), cols = [-1161, -903, -645, 645, 903, 1161], all = [-1161, -903, -645, -387, -129, 129, 387, 645, 903, 1161], n = 0;
+  [-660, -330, 330, 660].forEach(function (dy, r) { all.forEach(function (dx, c) { s += thumb(r * 5 + c * 3 + (r % 2) * 2, 1280 + dx, 720 + dy, 200, (hash(n++) - .5) * 5); }); });
+  cols.forEach(function (dx, c) { s += thumb([5, 3, 0, 4, 8, 6][c], 1280 + dx, 720, 200, (hash(90 + c) - .5) * 5); });
+  // the name plate: a card laid on the wall
+  s += '<rect x="772" y="524" width="1032" height="400" fill="' + INK + '" opacity=".18"/><rect x="760" y="512" width="1040" height="416" fill="' + CREAM + '" stroke="' + INK + '" stroke-width="3"/><rect x="772" y="524" width="1016" height="392" fill="none" stroke="' + INK + '" stroke-width="1.2"/>';
+  s += '<text x="1280" y="596" text-anchor="middle" direction="rtl" style="font:700 30px Noto Sans Arabic;fill:' + ORANGE + '">علوم · هندسة · حاجات حوالينا</text>';
+  s += title(1280, 758, 168);
+  s += '<path d="M900 808 H1660" stroke="' + INK + '" stroke-width="2"/><text x="1310" y="880" text-anchor="middle" direction="rtl" style="font:700 46px Noto Sans Arabic;fill:' + INK + '">هشرحهالك في <tspan fill="' + ORANGE + '">دقيقة.</tspan></text>' + stopwatch(1052, 868, 25);
+  return s + grain(2560, 1440);
+}
+
+var SIZE = V.indexOf("profile") === 0 ? [800, 800] : [2560, 1440], out = document.getElementById("out");
+out.setAttribute("viewBox", "0 0 " + SIZE[0] + " " + SIZE[1]); out.setAttribute("width", SIZE[0]); out.setAttribute("height", SIZE[1]);
+function paint() {
+  var s = { profile1: profile1, profile2: profile2, banner1: banner1, banner2: banner2 }[V]();
+  if (GUIDE) s += SIZE[0] === 800 ? '<circle cx="400" cy="400" r="399" fill="none" stroke="#e11" stroke-width="2"/><path fill-rule="evenodd" d="M0 0 H800 V800 H0 Z M400 1 A399 399 0 1 0 400 799 A399 399 0 1 0 400 1 Z" fill="#000" opacity=".55"/>'
+    : '<rect x="0" y="508" width="2560" height="423" fill="none" stroke="#e11" stroke-width="3"/><rect x="507" y="508" width="1546" height="423" fill="none" stroke="#11e" stroke-width="3"/>';
+  out.innerHTML = s; window.READY = true;
+}
+Promise.all(["900 60px 'Noto Sans Arabic'", "800 60px 'Noto Sans Arabic'", "700 60px 'Noto Sans Arabic'", "600 60px 'Noto Sans Arabic'", "800 60px 'Noto Serif'"].map(function (q) { return document.fonts.load(q, "إيه الحكاية؟ 123"); })).then(paint, paint);
+</script>
+</body></html>
