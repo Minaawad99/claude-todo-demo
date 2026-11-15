@@ -1,0 +1,36 @@
+// Sound cues from the line timings: node cues.js → cues.json
+// Synthesized effects from audio/sfx.py, plus Pixabay clips already in the repo's sketch kit (water for the Nile, ding).
+global.window = {}; eval(require('fs').readFileSync(__dirname + '/timing.js', 'utf8'));
+const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration : T[i].start, D = i => L(i + 1) - L(i), c = [];
+const a = (t, fx, gain, dur) => c.push(Object.assign({ t: +t.toFixed(2), fx, gain }, dur ? { dur } : {}));
+const rec = (t, file, gain, from, dur, duck) => c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), file: '../_templates/sketch/sfx/px-' + file + '.mp3', gain, from: from || 0 }, dur ? { dur: +dur.toFixed(2) } : {}, duck != null ? { duck } : {}));
+const ding = t => rec(t, 'ding', 0.3, 0, 1.1, 1.0);
+const drill = (i, g, from, len) => a(L(i) + (from || 0.2), 'gear', g || 0.2, len || D(i) - 0.4);
+for (let i = 1; i < T.length; i++) a(L(i) - 0.08, 'whoosh', 0.3);
+for (let k = 1; k <= 5; k++) a(L(0) + k * 0.7, 'clank', 0.45); a(L(0) + 2.3, 'pop', 0.7);
+a(L(1) + 0.4, 'creak', 0.3); a(L(1) + 0.9, 'pop', 0.6); a(L(1) + 3.0, 'creak', 0.35); a(L(1) + 3.6, 'pop', 0.7); a(L(1) + 4.4, 'bump', 0.4);
+a(L(2) + 0.4, 'sizzle', 0.25, 2.6); a(L(2) + 0.5, 'spark', 0.3); a(L(2) + 1.2, 'pop', 0.7); a(L(2) + 3.0, 'chime', 0.35);
+drill(3); a(L(3) + 1.0, 'pop', 0.7); ding(L(3) + 1.6);
+drill(4, 0.25); a(L(4) + 0.5, 'clank', 0.3); a(L(4) + 0.8, 'pop', 0.6); a(L(4) + 1.6, 'ping', 0.3);
+a(L(5) + 0.5, 'sizzle', 0.25, 1.5); a(L(5) + 0.6, 'spark', 0.35); a(L(5) + 0.7, 'clink', 0.4); a(L(5) + 1.5, 'pop', 0.7); drill(5, 0.15, 2.4, 2.4);
+drill(6, 0.2); for (let k = 0; k < 4; k++) a(L(6) + 0.4 + k * 0.7, 'creak', 0.25); a(L(6) + 0.8, 'pop', 0.7);
+a(L(7) + 0.5, 'spark', 0.3); a(L(7) + 0.6, 'clink', 0.4); a(L(7) + 1.1, 'pop', 0.7); a(L(7) + 2.9, 'thud', 0.6); ding(L(7) + 3.3);
+a(L(8) + 0.2, 'ping', 0.35);
+a(L(9) + 0.5, 'spark', 0.3); a(L(9) + 0.6, 'clank', 0.4); a(L(9) + 1.0, 'pop', 0.7); drill(9, 0.18, 1.9, D(9) - 2.1);
+drill(10, 0.2); for (let k = 0; k < 5; k++) a(L(10) + 0.6 + k * 0.7, 'clink', 0.3); a(L(10) + 1.2, 'pop', 0.6); a(L(10) + 3.3, 'pop', 0.9); a(L(10) + 3.4, 'chime', 0.45);
+a(L(11) + 0.3, 'notify', 0.4); a(L(11) + 0.8, 'pop', 0.7); a(L(11) + 1.2, 'ping', 0.3);
+a(L(12) + 0.4, 'creak', 0.3); for (let k = 0; k < 4; k++) a(L(12) + 0.6 + k * 0.6, 'drip', 0.3); a(L(12) + 1.4, 'pop', 0.7);
+a(L(13) + 0.5, 'clank', 0.4); a(L(13) + 1.0, 'pop', 0.7); a(L(13) + 2.2, 'clink', 0.4); a(L(13) + 2.7, 'pop', 0.6); a(L(13) + 3.2, 'rev', 0.3, 0.8); a(L(13) + 3.4, 'idle', 0.25, D(13) - 3.5);
+a(L(14) + 0.1, 'idle', 0.25, D(14) - 0.3); a(L(14) + 0.3, 'clank', 0.7); a(L(14) + 0.35, 'thud', 0.6); for (let k = 0; k < 5; k++) a(L(14) + 0.6 + k * 0.55, 'wipe', 0.3); a(L(14) + 0.7, 'pop', 0.7); a(L(14) + 2.2, 'bump', 0.4);
+a(L(15) + 0.1, 'idle', 0.2, 2.4); a(L(15) + 0.5, 'pop', 0.6); for (let k = 0; k < 4; k++) a(L(15) + 1.2 + k * 0.35, 'bump', 0.2); a(L(15) + 2.6, 'motor', 0.3, D(15) - 2.8); a(L(15) + 2.7, 'servo', 0.3, 1.2); a(L(15) + 3.2, 'pop', 0.7);
+a(L(16) + 0.1, 'servo', 0.3, 1.2); a(L(16) + 0.6, 'pop', 0.6); a(L(16) + 1.2, 'slosh', 0.3); a(L(16) + 1.4, 'thud', 0.5); a(L(16) + 1.8, 'pop', 0.7); a(L(16) + 3.0, 'bump', 0.4);
+a(L(17) + 0.3, 'clank', 0.35); a(L(17) + 0.5, 'pop', 0.7); a(L(17) + 1.0, 'chime', 0.35);
+a(L(18) + 0.1, 'motor', 0.25, D(18) - 0.3); a(L(18) + 0.3, 'fill', 0.3, D(18) - 0.6); a(L(18) + 1.0, 'pop', 0.7);
+for (let k = 0; k < 5; k++) a(L(19) + 0.4 + k * 0.45, 'thud', 0.35); a(L(19) + 1.0, 'pop', 0.7); a(L(19) + 3.0, 'pop', 0.9); a(L(19) + 3.1, 'chime', 0.45);
+a(L(20) + 0.6, 'pop', 0.7); a(L(20) + 1.2, 'ping', 0.3);
+rec(L(21), 'water-rush', 0.2, 0, D(21), 1.2); for (let k = 0; k < 6; k++) a(L(21) + 0.5 + k * 0.9, 'creak', 0.2); a(L(21) + 1.2, 'pop', 0.7); a(L(21) + 3.6, 'pop', 0.8); a(L(21) + 3.7, 'chime', 0.4);
+a(L(22) + 0.3, 'pop', 0.7); a(L(22) + 0.4, 'clank', 0.3); a(L(22) + 1.6, 'pop', 0.7); a(L(22) + 1.7, 'clink', 0.35); a(L(22) + 2.9, 'pop', 0.7); a(L(22) + 3.0, 'drip', 0.4);
+a(L(23) + 0.1, 'motor', 0.2, D(23)); a(L(23) + 0.3, 'chime', 0.5); for (let k = 0; k < 6; k++) a(L(23) + 0.4 + k * 0.2, 'pop', 0.35);
+a(L(24) + 0.4, 'pop', 0.7); a(L(24) + 0.5, 'chime', 0.5); a(L(24) + 0.2, 'idle', 0.12, 2.5);
+require('fs').writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: c }, null, 1));
+console.log(c.length + ' cues');

@@ -14,3 +14,9 @@ Facts:
   diameter (Soilmec CFA brochure; Balfour Beatty CFA technique sheet; Comacchio rig data).
 - The Archimedes screw (in Egypt: the tanbur) has been turned by hand by Nile-delta farmers to lift water since about the
   3rd century BC (Akvopedia "Archimedes screw"; World History Edu).
+
+Characters: the cel-shaded people of the Hiroshima video (`person`, `portrait`, `face` from the story-2d build on branch
+ccr-c17904ec-b1mykg), as the user asked. Reference photos: Wikimedia Commons was rate-limiting during this session, so the
+drawings follow the known real shapes (flighted auger with fishtail point and bolt-on teeth, one-man petrol auger head,
+tracked excavator with auger drive, CFA rig hollow stem, the wooden tanbur).
+Sound: synthesized effects (audio/sfx.py) plus two Pixabay clips from the sketch kit (water rush, ding).
