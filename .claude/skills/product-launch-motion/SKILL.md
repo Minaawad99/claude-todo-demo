@@ -30,7 +30,7 @@ Ask in one compact message (multiple choice where possible). Full question bank:
 7. **Brand:** website URL, brand guide / UI kit / Figma, logo SVG, fonts, colors (`references/intake.md` § Brand).
 8. **Product access:** product URL to open in the user's Chrome, or screenshots (step 3).
 9. **Voice-over:** yes / no. If yes → which **language**, and an **ElevenLabs API key**.
-10. **Music:** a licensed track the user owns, or an **original track generated with ElevenLabs Music** (`scripts/elevenlabs.mjs music`), or none. Never use unlicensed music.
+10. **Music: none unless the user asks for it for this video** (the user's fixed rule: without permission, sound effects only). When asked: a licensed track the user owns, or an **original track generated with ElevenLabs Music** (`scripts/elevenlabs.mjs music`). Never use unlicensed music. The music notes below apply only then.
 11. **Reference video?** "Is there a launch video whose style you love?" If yes, follow `references/reference-replication.md`. Copy its motion and structure, never its brand, copy or photos.
 12. **Font:** offer a specimen sheet of 6–12 candidate fonts rendered with the user's real lines (headline, sentence, UI string) and let them pick. For Arabic, check that the font supports tashkeel. Check the licence before any public use.
 

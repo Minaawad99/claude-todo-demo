@@ -179,9 +179,11 @@ pulsing circles, dashes running, the camera creeping.
 - If only the sound changed, skip the 20-minute render: remux the new mix onto the rendered mp4 with the same audio chain
   as `render.js` (apad, fade, loudnorm, limiter) and run qa.py again.
 
-**No background music (the user's fixed rule):** never put music of any kind under a video unless the user asks for it for
-that video. `audio/sfx.py` leaves the music bed and any music clip out unless it is run with `--music`; pass that flag only
-when the user asked. Sound effects stay.
+**Sound without asking: sound effects only (the user's fixed rule, for every video in every skill).** Without the user's
+permission you may add only sound effects (swipes, ticks, dings, whooshes, and effects you synthesize such as a buzz).
+Never add background music of any kind (a kit track, a synthesized bed, a generated or licensed track) unless the user
+asks for it for that video; asking once does not carry over to the next video. `videos/audio/sfx.py` leaves all music
+out unless run with `--music`, so pass that flag only when the user asked.
 
 ## 8. Render and QA (from `videos/`; run it in the background, it takes about 20 minutes)
 

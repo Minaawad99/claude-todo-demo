@@ -158,9 +158,11 @@ clip still has a synthesized stand-in.
 | px-wind-gust | Wind Gust (Dragon Studio 386158) | 0.25–4.76 s | wind |
 | px-music-box (source) → px-music-soft | **Mysterious Music Box – The Midnight Hour** | whole | music, **only when the user asks** |
 
-**Music: none, unless the user asks (the user's fixed rule).** Never put background music of any kind under a video on
-your own: not the kit's music box, not `sfx.py`'s synthesized bed, not any other track. The user has had to pay for a
-re-mix to take music out more than once. Sound effects stay.
+**Sound without asking: sound effects only (the user's fixed rule, for every video in every skill).** Without the user's
+permission you may add only sound effects (swipes, ticks, dings, whooshes, and effects you synthesize such as a buzz).
+Never add background music of any kind (a kit track, a synthesized bed, a generated or licensed track) unless the user
+asks for it for that video; asking once does not carry over to the next video. `videos/audio/sfx.py` leaves all music
+out unless run with `--music`, so pass that flag only when the user asked.
 - `sfx.py` leaves all music out by default (it prints «music off»). Don't pass `--music`.
 - Only when the user asks for music in a given video: run `sfx.py` with `--music`. `cues.js` then adds the kit's
   `px-music-soft.mp3` at gain 0.42 (about 22 dB under the narrator; 153 s long, no loop needed under about 2:30).

@@ -4,7 +4,8 @@
 - **New videos are made in the «اسكتش» style unless the user names another:** `.claude/skills/sketch/SKILL.md`.
   The reference episode is «المد والجزر» (`videos/tides/`), the shared template `videos/_templates/sketch/`
   (its README lists the drawing helpers), the sound kit `videos/_templates/sketch/sfx/`.
-- **No background music in any video, in any style, unless the user asks for it for that video.** Sound effects only.
+- **Sound without asking: sound effects only, in every video and every skill.** No background music of any kind
+  unless the user asks for it for that video.
   `videos/audio/sfx.py` leaves music out unless run with `--music`; never pass it on your own.
 - **The 20 reference videos the style comes from are in the repo**, so never ask the user to upload them again:
   `videos/_reference/tabizzay/`. Start with its `README.md` (an index of what each video draws), then open the
