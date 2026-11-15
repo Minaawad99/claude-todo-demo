@@ -17,8 +17,8 @@ body{width:1080px;height:1920px;overflow:hidden;position:relative;font-family:Al
 .fig img{display:block;max-width:1000px;border:6px solid #fff;border-radius:20px;box-shadow:0 18px 50px rgba(0,0,0,.6)}
 .tag{direction:rtl;white-space:nowrap;position:absolute;bottom:14px;right:14px;background:#ffd60a;color:#111;font-weight:900;font-size:34px;line-height:1.5;padding:2px 18px;border-radius:12px;box-shadow:0 4px 14px rgba(0,0,0,.4)}
 .card{direction:rtl;position:absolute;left:50%;transform:translateX(-50%);top:${s.hook?(process.env.HOOKTOP||110):(big?250:190)}px;${s.hook&&process.env.HOOKLEFT?'left:'+process.env.HOOKLEFT+'px;':''};width:${big?900:1010}px;background:#fff;border-radius:34px;padding:${big?'40px 50px':'28px 36px 34px'};text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.35)}
-.t{font-weight:900;color:#111;font-size:${big?78:50}px;line-height:1.35}
-.b{font-weight:700;color:#222;font-size:${s.cta?42:38}px;line-height:1.55;margin-top:12px}
+.t{font-weight:900;color:#111;font-size:${big?78:(process.env.TITLESIZE||50)}px;line-height:1.35}
+.b{font-weight:700;color:#222;font-size:${s.cta?42:(process.env.BODYSIZE||38)}px;line-height:1.55;margin-top:12px}
 </style></head><body>${transparent||!bg?'':`<div class="bg"></div><div class="pair">${figs}</div>`}
 <div class="card"><div class="t">${s.title}</div>${s.body?`<div class="b">${s.body}</div>`:''}</div></body></html>`}
 (async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:1080,height:1920}});

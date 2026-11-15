@@ -59,7 +59,7 @@ Images live in `<project>/img/<key>.jpg` (convert user uploads with `ffmpeg -i i
 
 ```bash
 VF=/path/to/video-factory; P=/path/to/project   # P contains img/ and slides.json
-node $VF/shared/tools/render.js $P                     # all slides
+node $VF/shared/tools/render.js $P                     # all slides (optional: TITLESIZE=58 BODYSIZE=48 for bigger text; defaults 50/38)
 HOOKTOP=170 node $VF/shared/tools/render.js $P 00      # hook overlay for the chosen intro
 SEC10=54 $VF/shared/tools/build.sh $P/out/slides $P/out/body.mp4      # 5.4 s per slide (≈5 s after crossfade)
 $VF/shared/tools/withintro.sh $VF/shared/intros/intro1.mp4 5.2 $P/out/hook_overlay_transparent.png $P/out/body.mp4 $P/out/final.mp4
