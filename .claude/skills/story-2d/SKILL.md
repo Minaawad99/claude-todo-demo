@@ -1,43 +1,70 @@
 ---
 name: story-2d
 description: |
-  Make an «إيه الحكاية؟» video in the «القصة 2D» style the user picked: a true, moving story (about 3 minutes) told by a
-  calm storyteller in Egyptian Arabic, drawn as full-screen cinematic 2D frames — cel-shaded SVG with dark outlines, hard
-  light, light rays, dust and film grain, triptych panels, and characters with real proportions and faces — 1080×1920
-  60 fps. Built like the Hiroshima video «هيروشيما: الساعة تمانية وربع» (`videos/hiroshima/`), inspired by the illustrated
-  train pictures the user sent. Use when the user says "القصة 2D", "القصة الـ2D", "بأسلوب القصة 2D", "زي فيديو هيروشيما
-  الأولاني" or "story 2D style".
+  Make an «إيه الحكاية؟» true-story video the way the Titanic video «تيتانيك» was made (the user's best-performing
+  video, fixed as the standard for every story): a cinematic cold open that grabs the eye in the first second, a calm
+  storyteller in Egyptian Arabic telling the night hour by hour, drawn as full-screen cinematic 2D frames — cel-shaded
+  SVG with dark outlines, hard light, light rays, dust and film grain, characters with real proportions and faces —
+  1080×1920 60 fps. Reference build `videos/titanic/`. Use whenever the user asks for a story: "اعملي قصة",
+  "عايز أعمل قصة", "قصة عن…", "حكاية…", "القصة 2D", "زي فيديو تيتانيك", "زي فيديو هيروشيما الأولاني" or "story 2D style"
+  (the 3D «القصة» skill only when the user says 3D).
 ---
 
-# «إيه الحكاية؟» — the «القصة 2D» style
+# «إيه الحكاية؟» — the «القصة 2D» style (the Titanic recipe)
 
-A separate style: use it only when the user names it (the 3D version is the `story` skill «القصة»). Talk to the user
-in Egyptian Arabic. Show each stage before the next (the user's rule: "اعمله واعرضه عليا الأول"). The reference build is
-`videos/hiroshima/` (script, style, cues, `film/`); start every new video from a copy of `videos/hiroshima/film/`.
+**This is the standard for every story.** When the user says "اعملي قصة" (or any story request without naming 3D),
+use this skill and the Titanic recipe below: the Titanic video got the channel's highest views, and the user fixed its
+narration and its opening as the style. The 3D version (`story` skill) is only for when the user says 3D.
+
+Talk to the user in Egyptian Arabic. Show each stage before the next (the user's rule: "اعمله واعرضه عليا الأول"). The
+reference build is `videos/titanic/` (`script.txt`, `style.txt`, `cues.js`, `film/`); start every new video from a copy
+of `videos/titanic/film/` (Hiroshima `videos/hiroshima/` and Chernobyl `videos/chernobyl/` are later examples of the
+same look; Chernobyl also shows real-photo cards).
+
+## 0. The Titanic recipe — why it works (keep all of it)
+
+**The cold open (lines 0–6, the first ~25 seconds).** No greeting, no channel name, no «تعالوا أحكيهالكم».
+- Line 0 drops the viewer *inside the scene*: date + place as a film title («ليلة أربعتاشر أبريل سنة ألف تسعمية
+  واتناشر، في نص المحيط الأطلنطي.»). Shot 0 is already a full cinematic frame in motion from frame one: the subject
+  itself (the ship sailing at night, stars, sea glints), the camera creeping, the date in big white type and the place
+  in yellow popping in by 0.3–0.8 s. Ambient sound starts at 0.0 s (waves + wind), never silence.
+- Lines 1–2: atmosphere in the senses (cold, stars, a sea still as glass), then scale with one big number on screen
+  («أكتر من ألفين ومتين إنسان» → `bigNum("2,200+")`).
+- Line 3: the irony the whole story will break («السفينة اللي ما بتغرقش»), one huge word on screen.
+- Lines 4–5: two sharp questions with a number and a mystery («إزاي غرقت في ساعتين وأربعين دقيقة؟» / «ليه أقرب
+  سفينة شافت الصواريخ… وما اتحركتش؟»). The second question is a hook that is only paid off at the end.
+- Line 6: the promise and the frame of the telling: «ودي حكاية الليلة دي، ساعة بساعة. نبدأ من الصبح.»
+
+**The narration (the body).**
+- A clock thread: every few lines starts with a time («الساعة حداشر وأربعين دقيقة…»), and the time is on screen.
+- A chain of small, human mistakes that add up (the cancelled drill, the ignored warning under a paperweight, the
+  binoculars locked in a cupboard): each one short, concrete, almost unbelievable.
+- A planted thread with an explicit order to remember it («افتكروا السفينة دي.») and a callback later («فاكرين
+  كاليفورنيان؟»), paid off again at the end («عرفت الصبح… لما عاملها صحي»).
+- Quoted dialogue in Egyptian, short and blunt («اسكت! أنا مشغول.»; «زعق: جبل جليد قدامنا!»).
+- A turn line «وهنا بدأت الحكايات.» before the human stories: a couple's last words, the band playing to the end.
+- **An Egyptian / Arab link when one exists** (Hamad Hassab, the Egyptian translator who survived): introduced
+  mid-story, and he gets the last line before the CTA. Research one for every story; it drove comments.
+- One second-person line of immersion («تخيّل إنك واقف على السطح، والأرض بتميل تحت رجلك…»).
+- The climax as three short beats with «…» and a whisper («…ونزلت.»), then the number of the dead, heavy and plain.
+- One strange survival fact, the rescue, the bitter callback, what changed after (the law), the Egyptian person.
+- Sentences short; one moment per line; real numbers and times; no hype words, no MSA.
+- Last line exactly «قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟».
+
+**Length:** about 45–50 lines, 560–620 words → about 3:45 (Titanic: 47 lines, 3:46). Longer only if the user asks
+(Chernobyl ran 61 lines, 4:56).
 
 ## 1. Script → `videos/<slug>/script.txt`
 
-About **3 minutes**: 33–36 lines, one sentence per line, about 360–380 words (the storyteller reads about 125 words a
-minute with its pauses; the Hiroshima script, 35 lines and 371 words, came out at 2:58 after trimming pauses).
-
-- Casual Cairo Egyptian Arabic, calm and moving, no hype.
-- Shape (as in Hiroshima):
-  - line 0: the moment itself as a hook («الساعة تمانية وربع الصبح… وفي ثانية واحدة، مدينة كاملة اختفت.»);
-  - lines 1–2: the questions the story answers;
-  - line 3: «إيه الحكاية؟ تعالوا أحكيهالكم من الأول.»;
-  - the story in time order, each line one moment, with real numbers and times;
-  - a thread of real people to follow (the girl tram drivers, Sadako), planted early and brought back at the end;
-  - a callback line («طب فاكرين…؟») and an ending of quiet hope and remembrance;
-  - last line exactly «قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟».
-- Use «…» where the voice should pause: in this style the pauses are wanted.
-- Numbers as words; verify every fact and tell the user which were checked. Humanizer pass, one copy-ready code block,
-  commit.
+Follow section 0 line by line (open with `videos/titanic/script.txt` beside you). Casual Cairo Egyptian Arabic, calm
+and moving. Use «…» where the voice should pause. Numbers as words; verify every fact and tell the user which were
+checked. Humanizer pass, one copy-ready code block, commit.
 
 ## 2. Voice
 
 Generated here with `videos/tools/tts.py` (Puck, `gemini-3.8-flash-tts`, temperature 1; about 10 free requests a day,
 a 429 means wait) or made by the user in AI Studio from the script and this style text (`videos/<slug>/style.txt`);
-offer a short sample first (`--lines`):
+offer a short sample first (`--lines`). Start from `videos/titanic/style.txt` (it ends with "Say only the text given, nothing more.", which stops invented takes):
 
 ```
 Speak in casual Egyptian Arabic (Cairo dialect), like a calm, heartfelt storyteller telling a true, tragic story to a friend late at night: <the story>. Low, warm, intimate voice, close to the microphone, never excited or salesy, never like a YouTuber. Slow, unhurried pace with real pauses: a long pause at every "…", and a short breath between sentences. Let the tension build quietly before <the turning point>, almost a whisper on "<key word>", then heavy, sad and respectful on the numbers of the dead. Gentle and tender on <the people we follow>. Make "إيه الحكاية؟" soft and inviting, not playful. End with quiet hope on the last lines. Never use Modern Standard Arabic pronunciation; pronounce ق as a glottal stop like Cairenes.
@@ -49,7 +76,7 @@ Audio pipeline as in the animation skill (section 4) with longer pauses kept: `t
 ## 3. The look (fixed; `film/template.html`, `film/_helpers.js`, `film/shots.js`, `film/build.py`)
 
 - **Full bleed:** one SVG (`viewBox 0 0 360 640`) fills the 360×640 page; dark fades top and bottom; a small chip
-  («هيروشيما · 6 أغسطس 1945») on the opening lines; captions Noto Sans Arabic 800 19px (17px over 62 characters) at
+  («تيتانيك · 14 أبريل 1912») on the opening lines; captions Noto Sans Arabic 800 19px (17px over 62 characters) at
   top 470px with a text shadow, keywords yellow `#f2c230` (`K` in `build.py`), word-by-word reveal; brand at the bottom.
 - **Painted, cinematic, cel-shaded** like the user's train pictures: flat colours, ink outlines (`INK #121419`), one hard
   shadow shape per part (`cel()` clips a darker copy to the side away from the light), warm light rays (`rays`), dust
@@ -63,6 +90,11 @@ Audio pipeline as in the animation skill (section 4) with longer pauses kept: `t
   (`bigNum`) and labels (`label`).
 - **Real shapes:** draw every object from its real shape (look at photos first; Wikimedia Commons as in the animation
   skill, and if it blocks you, say so and use the documented features). Note the sources in `refs/SOURCES.md`.
+- **Shot 0 = the hook frame:** the most beautiful, most recognisable frame of the subject (the real shape from
+  photos), already moving at t=0, title-card date/place in big type. Never open on a black frame, a logo, a map or a
+  person talking. Shots 1–5 keep the same place and light (one world), each adding one big word or number on screen.
+- **Real photos (optional, as in Chernobyl):** small framed prints («صورة حقيقية») in an empty corner, never over a
+  drawing, a label or the captions; check every card on a full-frame sheet.
 - **Motion:** every shot keeps the camera creeping (`push`), plus the drift in `__panel`, and something moving in the
   frame; shots cross-fade over 0.35 s. White flashes and dark holds need moving rings, rays or dust (qa.py counts a
   plain white frame as still).

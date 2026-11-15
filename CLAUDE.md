@@ -9,5 +9,8 @@
   matching `sheets/vNN.jpg`, or pull frames and motion strips from `videos/vNN.mp4` with ffmpeg. `STYLE.md` has the
   measured rules (narration, layout, colours, fonts, motion, sound). They are references to look at: draw in the
   same hand, with real shapes from reference photos, and never copy a drawing or a script.
-- Other styles only when named: `animation` (cartoon panel), `law` («لو»), `story` («القصة»: a true story hour by hour in 3D, `.claude/skills/story/SKILL.md`), `story-2d` («القصة 2D»: the cinematic 2D Hiroshima video, `.claude/skills/story-2d/SKILL.md`), the old `diagram-v1` build for the X-ray video.
+- **Stories:** when the user says "اعملي قصة" (or asks for any true story), make it the Titanic way: the `story-2d`
+  skill (`.claude/skills/story-2d/SKILL.md`, section 0 «The Titanic recipe»), reference build `videos/titanic/`. The
+  cold open and the narration shape there are fixed; the 3D `story` skill only when the user says 3D.
+- Other styles only when named: `animation` (cartoon panel), `law` («لو»), `story` («القصة 3D»: a true story hour by hour in 3D, `.claude/skills/story/SKILL.md`), the old `diagram-v1` build for the X-ray video.
 - **No background music unless the user asks for it.** Videos get the voice plus sound effects made for them.

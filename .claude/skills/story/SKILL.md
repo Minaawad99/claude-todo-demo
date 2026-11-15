@@ -5,8 +5,9 @@ description: |
   storyteller Egyptian Arabic (about 4 minutes), drawn in real 3D (three.js) with toon shading and ink outlines — a city of
   thousands of little houses seen from the air, real machines and buildings built from their real shapes, and round-headed
   bean characters — 1080×1920 60 fps. Built on the Hiroshima test (`videos/hiroshima-3d/test/`), narration modelled on the
-  reference the user sent (see REFERENCE.md). Use when the user says "القصة", "بأسلوب القصة", "بطريقة القصة",
-  "زي فيديو هيروشيما 3D", "حكاية تاريخية" or "story style".
+  reference the user sent (see REFERENCE.md). Use only when the user asks for the story in 3D:
+  "القصة 3D", "قصة 3D", "زي فيديو هيروشيما 3D" or "story 3D style". A plain "اعملي قصة" goes to the `story-2d` skill
+  (the Titanic recipe).
 ---
 
 # «إيه الحكاية؟» — the «القصة» style
