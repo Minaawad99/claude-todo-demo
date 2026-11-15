@@ -3,6 +3,9 @@
 Style: «لو» (build-along), structure as in `videos/nuclear-shelter/`. Script and drawings are our own.
 
 Facts:
+- Boiling: heating water from 25 to 100 °C takes about 315 kJ/kg and evaporating it 2,257 kJ/kg, about 2,570 kJ/kg in
+  all, which is roughly 700 kWh for 1,000 litres in a plain pot with no heat reuse. Against about 3 kWh by reverse
+  osmosis that is more than 200 times as much.
 - Seawater has about 35 g of dissolved salt per litre; a household sediment/carbon filter does not remove dissolved ions.
 - RO membrane effective pore size about 0.0001 micron (0.1 nm) against a human hair of roughly 100 micron: about a
   million times smaller (membrane makers' fact sheets; AMPAC, Crystal Quest).

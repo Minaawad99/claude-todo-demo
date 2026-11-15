@@ -340,41 +340,47 @@
   function at(t) { var i = 0; while (i < SH.length - 1 && SH[i + 1].a <= t) i++; return i; }
   function cam2(a, b) { return function (u, d) { var k = clamp(u / d); return [lerp(a[0], b[0], k), lerp(a[1], b[1], k), lerp(a[2], b[2], k)]; }; }
 
-  // 0 — fill a bucket from the sea and run it through the home water filter: is that a desalination plant?
-  shot(0, cam2([330, 112, 1.45], [395, 108, 1.7]), function (u, d, t) {
-    var k = ease(clamp((u - 0.3) / 1.6)), pour = clamp((u - 2.0) / 1.6), bx = lerp(246, 372, k), by = lerp(166, 78, Math.sin(k * Math.PI / 2)), s = coast(t);
-    s += R(366, 124, 96, 5, "#8a6a3a", 1.6) + '<path d="M372 129 V150 M456 129 V150" stroke="' + INK + '" stroke-width="3"/>' + homeFilter(382, 80, t) + glass(476, 150, pour, "#6fb8d8");
-    if (pour > 0 && pour < 1) { s += '<path d="M' + f(bx + 10) + ' ' + f(by + 4) + ' Q' + f(bx + 22) + ' ' + f(by + 4) + ' 392 80" stroke="' + SEAW + '" stroke-width="4" fill="none" stroke-linecap="round"/>'; var dp = (t * 2) % 1; s += '<circle cx="476" cy="' + f(126 + dp * 12) + '" r="1.8" fill="#6fb8d8"/>'; }
-    s += '<g transform="translate(' + f(bx) + ' ' + f(by) + ') rotate(' + f(pour > 0 && pour < 1 ? 55 : 0) + ')"><path d="M-10 -12 L-8 8 H8 L10 -12 Z" fill="#e23b2e" stroke="' + INK + '" stroke-width="1.8"/><path d="M-9 -7 H9 L8 6 H-8 Z" fill="' + SEAW + '"/><path d="M-10 -12 Q0 -26 10 -12" stroke="' + INK + '" stroke-width="1.6" fill="none"/></g>';
-    s += stand(lerp(280, 344, k), 0.2, t, u > d * 0.55 ? "curious" : "happy", { look: 1 });
-    return s + qmark(520, 78, t, 30) + tag("محطة تحلية؟", 440, 44, u, d * 0.55, -3, 19);
+  // 0 — boil seawater in a pot and collect the steam: is that a desalination plant?
+  shot(0, cam2([420, 96, 1.45], [452, 90, 1.7]), function (u, d, t) {
+    var s = coast(t) + pot(450, 150, t), dp = (t * 1.3) % 1;
+    s += '<path d="M400 44 L520 70" stroke="' + INK + '" stroke-width="7" stroke-linecap="round"/><path d="M400 44 L520 70" stroke="#cfe1ec" stroke-width="4" stroke-linecap="round"/><circle cx="' + f(lerp(430, 520, dp)) + '" cy="' + f(lerp(54, 74, dp)) + '" r="2.4" fill="' + FRESH + '" stroke="' + INK + '" stroke-width=".6"/><circle cx="522" cy="' + f(76 + dp * 46) + '" r="2.2" fill="' + FRESH + '" stroke="' + INK + '" stroke-width=".6"/>';
+    s += glass(522, 150, clamp(u / d) * 0.8) + stand(580, 0.2, t, u > d * 0.55 ? "curious" : "happy", { look: -1 });
+    return s + qmark(350, 70, t, 30) + tag("بخار = مية حلوة", 330, 110, u, 1.2, -3, 13) + tag("محطة تحلية؟", 470, 22, u, d * 0.55, -3, 18);
   });
-  // 1 — no: the salt is dissolved in the water itself and goes straight through the filter
-  shot(1, cam2([400, 100, 1.5], [410, 96, 1.7]), function (u, d, t) {
-    var s = coast(t) + R(366, 124, 96, 5, "#8a6a3a", 1.6) + '<path d="M372 129 V150 M456 129 V150" stroke="' + INK + '" stroke-width="3"/>' + homeFilter(382, 80, t) + glass(476, 150, 1, "#6fb8d8");
-    s += stand(520, 0.2, t, u > 1.4 ? "dizzy" : "worry", { look: -1 }) + micro(330, 92, 52, t, "filter");
-    return s + tag("الملح بيعدي!", 330, 30, u, 1.0, -3, 17, "#f2a0a0") + tag("35 جم ملح في اللتر", 470, 184, u, d * 0.5, 2, 13) + xmark(424, 100, 12, u, 0.7);
+  // 1 — no: the steam is fresh water all right, but boiling a thousand litres burns about 700 kWh
+  shot(1, cam2([452, 92, 1.5], [440, 90, 1.7]), function (u, d, t) {
+    var s = coast(t) + pot(450, 150, t) + glass(522, 150, 0.8) + stand(580, 0.2, t, u > d * 0.45 ? "shock" : "worry", { look: -1 }), a = t * 16;
+    s += R(318, 78, 56, 64, "#f4f1e8", 2.4, 5) + '<ellipse cx="346" cy="100" rx="20" ry="6" fill="#c9ced4" stroke="' + INK + '" stroke-width="1.4"/><rect x="' + f(346 + Math.cos(a) * 17 - 3) + '" y="97" width="6" height="6" fill="#e23b2e"/>' + R(326, 116, 40, 15, "#1c1c1c", 1, 3) + T(String(1000 + Math.floor(t * 97) % 9000), 346, 128, 11, "#7cf28a") + '<path d="M374 120 Q392 150 412 148" stroke="' + INK + '" stroke-width="3" fill="none"/>';
+    for (var k = 0; k < 4; k++) if (Math.sin(t * 13 + k * 1.9) > 0.1) s += bolt(384 + k * 44, 40 + (k % 2) * 22, 0.9);
+    for (var c = 0; c < 6; c++) { var p = (t * 0.7 + c / 6) % 1; s += '<circle cx="' + f(330 + c * 6 + Math.sin(p * 6 + c) * 6) + '" cy="' + f(74 - p * 50) + '" r="5" fill="#f2c230" stroke="' + INK + '" stroke-width="1.2" opacity="' + f(1 - p) + '"/>'; }
+    return s + tag("700 كيلو وات ساعة", 440, 24, u, d * 0.5, -2, 17, "#f2a0a0") + tag("لألف لتر بس!", 350, 176, u, d * 0.7, 3, 13, "#f2a0a0");
   });
-  // 2 — so you get a membrane with openings about a million times finer than a hair: water passes, salt stays
-  shot(2, cam2([585, 84, 1.45], [590, 80, 1.7]), function (u, d, t) {
-    var s = coast(t) + plant(t, { rack: (u - 0.3) / 0.9, cut: u > 2.2, run: false });
-    s += '<path d="M500 80 L540 84" stroke="' + INK + '" stroke-width="2" stroke-dasharray="4 4"/>' + app((u - 1.4) / 0.9, 470, 62, micro(470, 62, 44, t, "still"));
-    return s + stand(730, 0.2, t, "happy", { look: -1, point: false }) + tag("غشاء", 600, 174, u, 0.9, -3, 17) + tag("أصغر من الشعرة مليون مرة", 600, 22, u, d * 0.45, 2, 13, "#bfe8c0");
+  // 2 — so you drop the boiling and get a membrane with openings about a million times finer than a hair
+  shot(2, cam2([570, 84, 1.4], [590, 80, 1.65]), function (u, d, t) {
+    var s = coast(t) + plant(t, { rack: (u - 1.2) / 0.9, run: false });
+    s += '<g transform="translate(440 150) scale(.4)">' + pot(0, 0, t) + '</g>' + xmark(440, 128, 15, u, 0.5);
+    return s + stand(730, 0.2, t, "happy", { look: -1 }) + tag("غشاء", 600, 174, u, 1.8, -3, 17) + tag("أصغر من الشعرة مليون مرة", 600, 22, u, d * 0.5, 2, 13, "#bfe8c0");
   });
-  // 3 — but water won't go through on its own: by nature it is drawn towards the salty side
-  shot(3, cam2([320, 180, 1.0], [320, 178, 1.1]), function (u, d, t) {
+  // 3 — the membrane lets the water through and holds the salt behind it
+  shot(3, cam2([560, 84, 1.5], [540, 82, 1.75]), function (u, d, t) {
+    var s = coast(t) + plant(t, { rack: 1, cut: true, run: false });
+    s += '<path d="M492 84 L520 86" stroke="' + INK + '" stroke-width="2" stroke-dasharray="4 4"/>' + app((u - 0.2) / 0.9, 440, 76, micro(440, 76, 56, t, "still"));
+    return s + T("ملح", 412, 146, 12, "#fff7d6") + T("مية", 470, 146, 12, "#bfe6fb") + tag("يعدّي المية ويحجز الملح", 580, 176, u, 1.0, -2, 13, "#bfe8c0");
+  });
+  // 4 — but water won't go through on its own: by nature it is drawn towards the salty side
+  shot(4, cam2([320, 180, 1.0], [320, 178, 1.1]), function (u, d, t) {
     var s = coast(t) + '<rect x="-1200" y="-600" width="3400" height="1600" fill="#0d2a48" opacity=".55"/>' + micro(320, 190, 102, t, "osmosis");
     s += T("مالحة", 262, 306, 15, "#fff7d6") + T("حلوة", 378, 306, 15, "#1f6f9f") + arrow(400, 190, lerp(400, 250, clamp((u - 0.8) / 1.2)), 190, "#f2c230", 7, clamp((u - 0.8) * 3));
     return s + tag("المية بتتسحب للملح", 320, 56, u, 1.2, -2, 20, "#f2a0a0");
   });
-  // 4 — so you fit a pump that pushes the seawater onto the membrane at about 60 atmospheres
-  shot(4, cam2([470, 104, 1.5], [472, 102, 1.85]), function (u, d, t) {
+  // 5 — so you fit a pump that pushes the seawater onto the membrane at about 60 atmospheres
+  shot(5, cam2([470, 104, 1.5], [472, 102, 1.85]), function (u, d, t) {
     var on = u > 1.3, s = coast(t) + plant(t, { rack: 1, pump: (u - 0.3) / 0.9, run: on, gauge: ease(clamp((u - 1.3) / 2)) * 0.82 });
     if (on) for (var k = 0; k < 3; k++) { var p = (t * 1.4 + k / 3) % 1; s += '<circle cx="444" cy="128" r="' + f(18 + p * 22) + '" fill="none" stroke="#f2c230" stroke-width="2" opacity="' + f(0.7 * (1 - p)) + '"/>'; }
     return s + tag("طلمبة ضغط عالي", 432, 176, u, 0.9, -3, 14) + tag("60 ضغط جوي", 470, 44, u, d * 0.55, 3, 19, "#f2c230");
   });
-  // 5 — the pressure of 600 m of sea above you: reverse osmosis
-  shot(5, function (u, d) { var k = clamp(u / d); return [330, lerp(105, 235, ease(k * 1.15)), 1.2]; }, function (u, d, t) {
+  // 6 — the pressure of 600 m of sea above you: reverse osmosis
+  shot(6, function (u, d) { var k = clamp(u / d); return [330, lerp(105, 235, ease(k * 1.15)), 1.2]; }, function (u, d, t) {
     var k = ease(clamp(u / d * 1.15)), y = lerp(50, 300, k), s = '<rect x="-1200" y="-600" width="3400" height="630" fill="url(#sky-day)"/>' + clouds(t, 12, -60, 4, 0.85) + '<rect x="-1200" y="20" width="3400" height="900" fill="url(#sea2)"/><rect x="-1200" y="230" width="3400" height="700" fill="#06182a" opacity=".45"/>';
     var w = "M-1200 20"; for (var x = -1200; x <= 2200; x += 24) w += " L" + x + " " + f(20 + Math.sin(x * 0.04 + t * 2.2) * 3); s += '<path d="' + w + ' V34 H-1200 Z" fill="#bfe6f7" opacity=".7"/>';
     for (var i = 0; i < 30; i++) { var px = 40 + hash(i) * 560, py = 30 + ((hash(i + 5) * 340 - t * (10 + hash(i) * 14)) % 340 + 340) % 340; s += '<circle cx="' + f(px) + '" cy="' + f(py) + '" r="' + f(1 + hash(i + 1) * 2) + '" fill="#fff" opacity=".45"/>'; }
@@ -383,96 +389,91 @@
     s += sub(420, y, t) + '<path d="M548 ' + f(y) + ' H572" stroke="#f2c230" stroke-width="5"/>';
     return s + tag("عمق 600 متر", 190, 286, u, d * 0.42, -3, 21, "#f2c230") + tag("التناضح العكسي", 210, 216, u, d * 0.66, 2, 20, "#bfe8c0");
   });
-  // 6 — but the sea is full of sand, algae and jellyfish, and they would clog the membrane fast
-  shot(6, function (u, d) { var k = clamp(u / d); return k < 0.58 ? [lerp(140, 175, k / 0.58), lerp(222, 212, k / 0.58), 1.6] : [lerp(585, 592, (k - 0.58) / 0.42), 92, lerp(1.6, 1.8, (k - 0.58) / 0.42)]; }, function (u, d, t) {
+  // 7 — but the sea is full of sand, algae and jellyfish, and they would clog the membrane fast
+  shot(7, function (u, d) { var k = clamp(u / d); return k < 0.58 ? [lerp(140, 175, k / 0.58), lerp(222, 212, k / 0.58), 1.6] : [lerp(585, 592, (k - 0.58) / 0.42), 92, lerp(1.6, 1.8, (k - 0.58) / 0.42)]; }, function (u, d, t) {
     var k = clamp(u / d), cl = clamp((k - 0.58) / 0.3), s = coast(t, { fish: false }) + plant(t, { rack: 1, pump: 1, clog: cl, run: cl < 0.9, gauge: 0.82 });
     for (var j = 0; j < 3; j++) { var p = (t * 0.22 + j / 3) % 1; s += jelly(lerp(40 + j * 20, 226, p), lerp(250 - j * 22, 190, p), 0.8 - 0.4 * p, t + j); }
     for (var i = 0; i < 22; i++) { var q = (t * 0.3 + hash(i)) % 1, x0 = 30 + hash(i + 3) * 160, y0 = 180 + hash(i + 8) * (bedY(x0) - 190); s += '<circle cx="' + f(lerp(x0, 228, q * q)) + '" cy="' + f(lerp(y0, 187, q * q)) + '" r="' + f(1.5 + hash(i + 1) * 2.5) + '" fill="' + (i % 3 ? "#c9a25a" : "#4faa5a") + '" stroke="' + INK + '" stroke-width=".5"/>'; }
     s += tag("رمل وطحالب وقناديل", 150, 152, u, 0.5, -2, 14, "#f2a0a0");
     return s + tag("الغشاء اتسد!", 590, 26, u, d * 0.66, -3, 16, "#f2a0a0") + xmark(590, 84, 16, u, d * 0.7);
   });
-  // 7 — so you draw the water through a pipe out in the sea, far from the shore, with a screen on its mouth
-  shot(7, cam2([130, 218, 1.3], [78, 222, 1.65]), function (u, d, t) {
+  // 8 — so you draw the water through a pipe out in the sea, far from the shore, with a screen on its mouth
+  shot(8, cam2([130, 218, 1.3], [78, 222, 1.65]), function (u, d, t) {
     var s = coast(t) + plant(t, { rack: 1, pump: 1, intake: (u - 0.3) / 0.9 });
     for (var j = 0; j < 3; j++) { var b = Math.abs(Math.sin(t * 0.9 + j * 2)); s += jelly((j % 2 ? 92 : 26) + (j % 2 ? 1 : -1) * b * 34, 196 + j * 9, 0.55, t + j * 3); }
     return s + tag("ماسورة بعيد عن الشط", 150, 152, u, 0.9, -2, 14) + tag("مصفاة", 2, 196, u, d * 0.6, 3, 15, "#bfe8c0");
   });
-  // 8 — then through sand filters and finer filters before it reaches the membrane
-  shot(8, cam2([345, 106, 1.85], [352, 104, 2.15]), function (u, d, t) {
+  // 9 — then through sand filters and finer filters before it reaches the membrane
+  shot(9, cam2([345, 106, 1.85], [352, 104, 2.15]), function (u, d, t) {
     var s = coast(t) + plant(t, { rack: 1, pump: 1, intake: 1, filters: (u - 0.3) / 0.9 });
     for (var i = 0; i < 6; i++) { var p = (t * 0.6 + i / 6) % 1; s += '<circle cx="' + f(lerp(240, 288, p)) + '" cy="' + f(lerp(170, 140, clamp(p * 3))) + '" r="2" fill="#7a5a36" opacity="' + f(1 - p * 0.5) + '"/>'; }
     return s + tag("فلاتر رمل", 334, 58, u, 0.9, -3, 13) + tag("فلاتر أنعم", 436, 92, u, d * 0.5, 3, 12, "#bfe8c0");
   });
-  // 9 — but that pump draws a lot of electricity, the plant's biggest running cost
-  shot(9, cam2([444, 98, 2.0], [446, 94, 2.3]), function (u, d, t) {
+  // 10 — but that pump draws a lot of electricity, the plant's biggest running cost
+  shot(10, cam2([444, 98, 2.0], [446, 94, 2.3]), function (u, d, t) {
     var s = coast(t) + plant(t, upTo(4)), a = t * 9;
     s += R(408, 56, 34, 40, "#f4f1e8", 2, 4) + '<ellipse cx="425" cy="72" rx="12" ry="4" fill="#c9ced4" stroke="' + INK + '" stroke-width="1.2"/><rect x="' + f(425 + Math.cos(a) * 10 - 2) + '" y="70" width="4" height="4" fill="#e23b2e"/>' + R(413, 82, 24, 9, "#1c1c1c", 1, 2) + T(String(1000 + Math.floor(t * 37) % 9000), 425, 90, 7, "#7cf28a");
     for (var k = 0; k < 4; k++) if (Math.sin(t * 13 + k * 1.9) > 0.1) s += bolt(410 + k * 22, 108 + (k % 2) * 26, 0.7);
     for (var c = 0; c < 5; c++) { var p = (t * 0.7 + c / 5) % 1; s += '<g opacity="' + f(1 - p) + '"><circle cx="' + f(452 + c * 7 + Math.sin(p * 6 + c) * 5) + '" cy="' + f(72 - p * 40) + '" r="5" fill="#f2c230" stroke="' + INK + '" stroke-width="1.2"/></g>'; }
     return s + tag("أكبر مصروف", 500, 40, u, d * 0.5, 3, 13, "#f2a0a0") + tag("كهربا كتير", 384, 44, u, 0.7, -3, 12);
   });
-  // 10 — stranger still: only about half the water gets through the membrane
-  shot(10, cam2([592, 86, 1.7], [600, 86, 1.95]), function (u, d, t) {
+  // 11 — stranger still: only about half the water gets through the membrane
+  shot(11, cam2([592, 86, 1.7], [600, 86, 1.95]), function (u, d, t) {
     var s = coast(t) + plant(t, upTo(4, { cut: true }));
     return s + Tp("100%", 488, 100, 15, "#fff", u, 0.4) + Tp("50%", 724, 100, 17, FRESH, u, d * 0.4) + tag("النص بس بيعدي", 592, 24, u, d * 0.45, -2, 15, "#f2c230");
   });
-  // 11 — the other half leaves saltier, still carrying nearly all of the high pressure
-  shot(11, cam2([650, 116, 1.85], [664, 122, 2.05]), function (u, d, t) {
+  // 12 — the other half leaves saltier, still carrying nearly all of the high pressure
+  shot(12, cam2([650, 116, 1.85], [664, 122, 2.05]), function (u, d, t) {
     var s = coast(t) + plant(t, upTo(4, { cut: true }));
     s += '<path d="M672 170 H690" stroke="' + INK + '" stroke-width="2"/>' + gauge(702, 170, 13, 0.8 + Math.sin(t * 19) * 0.03);
     for (var k = 0; k < 3; k++) { var p = (t * 1.3 + k / 3) % 1; s += '<circle cx="668" cy="150" r="' + f(8 + p * 16) + '" fill="none" stroke="' + BRINE + '" stroke-width="2" opacity="' + f(0.8 * (1 - p)) + '"/>'; }
     return s + tag("مالح أكتر", 730, 196, u, 0.8, 3, 13, "#f0d090") + tag("والضغط لسه عالي!", 650, 60, u, d * 0.5, -2, 14, "#f2a0a0");
   });
-  // 12 — so you add an energy recovery device: it takes that pressure and hands it to the incoming water
-  shot(12, cam2([570, 140, 1.9], [572, 138, 2.25]), function (u, d, t) {
+  // 13 — so you add an energy recovery device: it takes that pressure and hands it to the incoming water
+  shot(13, cam2([570, 140, 1.9], [572, 138, 2.25]), function (u, d, t) {
     var s = coast(t) + plant(t, upTo(4, { erd: (u - 0.3) / 0.9 }));
     if (u > 1.6) s += curl(570, 118, 30, 0.2, -3.3, "#f2c230", 2.6, clamp((u - 1.6) / 1.2));
     return s + tag("جهاز استرجاع الطاقة", 572, 184, u, 0.9, -2, 13, "#bfe8c0");
   });
-  // 13 — it gives back more than 90% of the pressure that would have been lost
-  shot(13, cam2([574, 136, 2.3], [576, 134, 2.6]), function (u, d, t) {
+  // 14 — it gives back more than 90% of the pressure that would have been lost
+  shot(14, cam2([574, 136, 2.3], [576, 134, 2.6]), function (u, d, t) {
     var s = coast(t) + plant(t, upTo(5));
     for (var k = 0; k < 3; k++) { var p = (t * 1.2 + k / 3) % 1; s += '<circle cx="570" cy="135" r="' + f(12 + p * 26) + '" fill="none" stroke="#f2c230" stroke-width="1.8" opacity="' + f(0.8 * (1 - p)) + '"/>'; }
     return s + Tp("+90%", 632, 176, 20, "#f2c230", u, 0.6) + tag("الضغط بيرجع تاني", 520, 186, u, d * 0.45, -2, 10, "#bfe8c0");
   });
-  // 14 — but the leftover brine is about twice as salty: dumped at the shore it harms the fish and the reefs
-  shot(14, cam2([175, 218, 1.4], [150, 226, 1.6]), function (u, d, t) {
+  // 15 — but the leftover brine is about twice as salty: dumped at the shore it harms the fish and the reefs
+  shot(15, cam2([175, 218, 1.4], [150, 226, 1.6]), function (u, d, t) {
     var g = clamp((u - 0.5) / 2.6), s = coast(t, { mood: g > 0.3 ? "shock" : "n", flee: g > 0.45, pale: g });
     for (var i = 0; i < 12; i++) { var x = 212 - i * 15 * g, r = (10 + i * 1.6) * (0.4 + 0.6 * g) + Math.sin(t * 3 + i) * 2; s += '<ellipse cx="' + f(x) + '" cy="' + f(bedY(x) - 6) + '" rx="' + f(r * 1.5) + '" ry="' + f(r * 0.7) + '" fill="' + BRINE + '" opacity="' + f(0.34 * g + 0.1) + '"/>'; }
     s += plant(t, upTo(5));
     return s + tag("ملوحة الضعف", 110, 150, u, 0.8, -3, 16, "#f2a0a0") + xmark(160, 222, 12, u, d * 0.55);
   });
-  // 15 — so you run a long pipe out to sea, ending in many openings that spray the brine and mix it quickly
-  shot(15, cam2([60, 246, 1.2], [-36, 268, 1.5]), function (u, d, t) {
+  // 16 — so you run a long pipe out to sea, ending in many openings that spray the brine and mix it quickly
+  shot(16, cam2([60, 246, 1.2], [-36, 268, 1.5]), function (u, d, t) {
     var s = coast(t, { mood: "happy" }) + plant(t, upTo(5, { outfall: (u - 0.3) / 0.9 }));
     return s + tag("ماسورة طويلة لجوه البحر", 20, 184, u, 0.9, -2, 14) + tag("فتحات بترش وتخلط", -96, 214, u, d * 0.5, 3, 14, "#bfe8c0");
   });
-  // 16 — but the water that came through is too pure: flat taste, and it eats the pipes
-  shot(16, cam2([752, 104, 1.8], [762, 104, 2.0]), function (u, d, t) {
+  // 17 — but the water that came through is too pure: flat taste, and it eats the pipes
+  shot(17, cam2([752, 104, 1.8], [762, 104, 2.0]), function (u, d, t) {
     var r = clamp((u - d * 0.45) / 1.6), s = coast(t) + plant(t, upTo(6));
     s += stand(650, 0.17, t, "worry", { look: 1 }) + glass(676, 122, 0.8) + '<path d="M664 116 Q668 108 676 112" stroke="#e8742e" stroke-width="3" fill="none"/>';
     s += pipe("M760 78 H870", "#9aa2ac", 16, t, 0) + '<path d="M762 73 H868" stroke="#fff" stroke-width="2" opacity=".6"/>';
     [[786, 80, 9], [818, 74, 7], [846, 82, 10], [802, 84, 5]].forEach(function (h, i) { s += '<ellipse cx="' + h[0] + '" cy="' + h[1] + '" rx="' + f(h[2] * r) + '" ry="' + f(h[2] * 0.6 * r) + '" fill="#8a4a1e" stroke="#5a2c10" stroke-width="1"/>'; if (r > 0.5) { var p = (t * 1.2 + i * 0.3) % 1; s += '<circle cx="' + h[0] + '" cy="' + f(90 + p * 50) + '" r="2" fill="' + FRESH + '" stroke="' + INK + '" stroke-width=".5" opacity="' + f(1 - p) + '"/>'; } });
     return s + tag("طعمها ماسخ", 668, 62, u, 0.7, -3, 13, "#f2a0a0") + tag("بتاكل المواسير", 816, 48, u, d * 0.5, 2, 13, "#f2a0a0");
   });
-  // 17 — so you pass it over limestone, which gives back a little useful mineral, and add chlorine to disinfect it
-  shot(17, cam2([735, 106, 2.0], [742, 104, 2.25]), function (u, d, t) {
+  // 18 — so you pass it over limestone, which gives back a little useful mineral, and add chlorine to disinfect it
+  shot(18, cam2([735, 106, 2.0], [742, 104, 2.25]), function (u, d, t) {
     var s = coast(t) + plant(t, upTo(6, { lime: (u - 0.3) / 0.9, chlor: (u - d * 0.55) / 0.9 }));
     return s + tag("حجر جيري", 722, 56, u, 0.9, -3, 13) + tag("كلور", 806, 94, u, d * 0.55 + 0.4, 3, 13, "#e9e36a");
   });
-  // 18 — many people think desalination means boiling seawater and collecting the steam
-  shot(18, cam2([440, 92, 1.5], [452, 88, 1.7]), function (u, d, t) {
-    var s = coast(t) + pot(450, 150, t) + stand(540, 0.2, t, "curious", { look: -1 });
-    for (var k = 0; k < 3; k++) s += '<circle cx="' + (522 - k * 8) + '" cy="' + (88 - k * 10) + '" r="' + (2 + k * 1.5) + '" fill="#fff" stroke="' + INK + '" stroke-width="1"/>';
-    return s + qmark(560, 70, t, 26) + tag("بنغلي مية البحر؟", 440, 34, u, 0.8, -3, 17);
+  // 19 — many people think desalinating seawater eats a fantastic amount of electricity
+  shot(19, cam2([560, 96, 1.2], [585, 92, 1.4]), function (u, d, t) {
+    var s = coast(t) + plant(t, upTo(8)), a = t * 20;
+    s += stand(450, 0.22, t, "worry", { look: 1, col: "#2f6f9f" }) + '<circle cx="474" cy="70" r="3" fill="#fff" stroke="' + INK + '"/><circle cx="484" cy="56" r="5" fill="#fff" stroke="' + INK + '"/><ellipse cx="540" cy="14" rx="62" ry="36" fill="#fff" stroke="' + INK + '" stroke-width="2.4"/>';
+    s += R(512, -8, 34, 40, "#f4f1e8", 2, 4) + '<ellipse cx="529" cy="6" rx="12" ry="4" fill="#c9ced4" stroke="' + INK + '" stroke-width="1.2"/><rect x="' + f(529 + Math.cos(a) * 10 - 2) + '" y="4" width="4" height="4" fill="#e23b2e"/>' + R(517, 16, 24, 9, "#1c1c1c", 1, 2) + bolt(566, 4, 1.1) + bolt(584, 22, 0.8);
+    return s + qmark(600, -6, t, 22, "#e23b2e") + tag("كهربا خرافية؟", 690, 20, u, 0.8, 3, 16, "#f2a0a0");
   });
-  // 19 — in fact most of the world's plants now work by pressure, with no boiling at all
-  shot(19, cam2([580, 88, 1.5], [592, 86, 1.75]), function (u, d, t) {
-    var s = coast(t) + plant(t, upTo(8, { cut: true }));
-    s += '<g transform="translate(462 64) scale(.36)">' + pot(0, 0, t) + '</g>' + xmark(462, 46, 14, u, 0.5);
-    return s + tag("بالضغط من غير غلي", 612, 20, u, d * 0.4, 2, 15, "#bfe8c0");
-  });
-  // 20 — a thousand litres of drinking water take about 3 kWh, an air conditioner running for two hours
+  // 20 — in fact a thousand litres of drinking water take about 3 kWh, an air conditioner running for two hours
   shot(20, cam2([320, 118, 1.05], [320, 118, 1.15]), function (u, d, t) {
     var s = '<rect x="-1200" y="-600" width="3400" height="1600" fill="#16324f"/>', o = (t * 24) % 40, g = "";
     for (var x = -200; x <= 900; x += 40) g += "M" + f(x + o) + " -300 V700 "; for (var y = -300; y <= 700; y += 40) g += "M-300 " + f(y + o) + " H1000 "; s += '<path d="' + g + '" stroke="#2a5078" stroke-width="1.4" fill="none"/>';
@@ -483,20 +484,27 @@
     s += arrow(190, 112, 262, 112, "#fff", 5, clamp((u - d * 0.25) * 2)) + (u > d * 0.58 ? T("=", 408, 124, 34, "#fff") : "");
     return s + tag("3 كيلو وات بس!", 320, 30, u, d * 0.35, -2, 19, "#bfe8c0");
   });
-  // 21 — add a big tank, pumps that carry the water to the homes, and a lab that tests the water every day
-  shot(21, cam2([800, 100, 1.5], [890, 100, 1.5]), function (u, d, t) {
+  // 21 — more than 200 times less than boiling, which is why most of the world's plants run on pressure
+  shot(21, cam2([560, 90, 1.4], [590, 86, 1.7]), function (u, d, t) {
+    var s = coast(t) + plant(t, upTo(8, { cut: true }));
+    s += '<g transform="translate(455 60) scale(.36)">' + pot(0, 0, t) + '</g>' + T("700", 455, 78, 13, "#f2a0a0") + xmark(455, 44, 13, u, 0.5) + Tp("3", 590, 40, 22, "#bfe8c0", u, 0.9);
+    return s + tag("أقل 200 مرة", 520, 8, u, 1.2, -2, 16, "#f2c230") + tag("أغلب المحطات بالضغط", 620, 178, u, d * 0.5, 2, 14, "#bfe8c0");
+  });
+  // 22 — add a big tank, pumps that carry the water to the homes, and a lab that tests the water every day
+  shot(22, cam2([800, 100, 1.5], [890, 100, 1.5]), function (u, d, t) {
     var s = coast(t) + plant(t, upTo(8, { tank: (u - 0.2) / 0.9, dist: (u - d * 0.38) / 0.9, lab: (u - d * 0.68) / 0.9 }));
     return s + tag("خزان كبير", 830, 34, u, 0.6, -3, 15) + tag("طلمبات", 898, 190, u, d * 0.38 + 0.4, 3, 13, "#bfe8c0") + tag("معمل", 952, 78, u, d * 0.68 + 0.4, -3, 14, "#e9e36a");
   });
-  // 22 — congratulations, you've built a desalination plant: pull back to the whole build
-  shot(22, function (u, d) { var k = ease(clamp(u / d)); return [lerp(640, 430, k), lerp(110, 140, k), lerp(1.3, 0.64, k)]; }, function (u, d, t) {
+  // 23 — congratulations, you've built a desalination plant: pull back to the whole build
+  shot(23, function (u, d) { var k = ease(clamp(u / d)); return [lerp(640, 430, k), lerp(110, 140, k), lerp(1.3, 0.64, k)]; }, function (u, d, t) {
     var s = coast(t, { mood: "happy" }) + plant(t, FULL) + stand(1000, 0.26, t, "happy", {}) + stand(250, 0.24, t + 1, "happy", { col: "#2f6f9f" });
     return s + confetti(t, -120, 980, -160, 150, 46, 7) + tag("مبروك!", 430, -40, u, 0.5, -3, 46, "#bfe8c0");
   });
-  // 23 — outro
-  shot(23, cam2([430, 140, 0.64], [440, 138, 0.58]), function (u, d, t) {
+  // 24 — outro
+  shot(24, cam2([430, 140, 0.64], [440, 138, 0.58]), function (u, d, t) {
     return coast(t, { sky: "dusk", mood: "happy" }) + plant(t, FULL) + stand(1000, 0.26, t, "happy", {}) + stand(250, 0.24, t + 1, "happy", { col: "#2f6f9f" }) + tag("قولولنا!", 430, -50, u, 0.4, 3, 48);
   });
+
 
   window.__parts = { coast: coast, plant: plant, FULL: FULL, upTo: upTo, micro: micro, rack: rack, pump: pump, pot: pot, tag: tag, stand: stand, T: T, fishes: fishes, jelly: jelly, bedY: bedY };
   window.__panel = function (svg, t) {
