@@ -112,6 +112,26 @@ function profile2() {   // a real-coastline globe inside the stopwatch, the ques
   return s + grain(800, 800);
 }
 
+function profile3() {   // the name inside the dial; the question mark's dot is the Earth
+  var s = bg(800, 800) + C(400, 400, 372, CREAM, 0) + ticks(400, 400, 372, 60, 14, 30);
+  s += '<text x="668" y="346" text-anchor="start" direction="rtl" style="font:900 190px Noto Sans Arabic;fill:' + INK + '">إيه</text>';
+  s += '<text x="668" y="556" text-anchor="start" direction="rtl" style="font:900 126px Noto Sans Arabic;fill:' + INK + '">الحكاية</text>';
+  // the Arabic question mark, drawn: an orange hook, and a real-coastline globe for its dot
+  s += '<path d="M246 322 A66 66 0 1 0 150 392 Q180 410 180 458" fill="none" stroke="' + INK + '" stroke-width="44" stroke-linecap="round" transform="translate(6 6)" opacity=".9"/><path d="M246 322 A66 66 0 1 0 150 392 Q180 410 180 458" fill="none" stroke="' + ORANGE + '" stroke-width="38" stroke-linecap="round"/>';
+  s += globe(180, 540, 44, 26, 16);
+  s += '<path d="M270 610 H668" stroke="' + INK + '" stroke-width="3"/>' + '<text x="486" y="668" text-anchor="middle" direction="rtl" style="font:700 40px Noto Sans Arabic;fill:' + INK + '">في <tspan fill="' + ORANGE + '">دقيقة.</tspan></text>' + stopwatch(372, 656, 22);
+  return s + grain(800, 800);
+}
+function profile4() {   // the Earth asks: the name in its speech bubble, a stopwatch beside it
+  var s = bg(800, 800) + C(400, 400, 386, CREAM, 0);
+  var bub = "M146 116 H654 V462 H330 L262 530 V462 H146 Z";
+  s += '<path d="' + bub + '" transform="translate(12 12)" fill="' + INK + '"/><path d="' + bub + '" fill="' + PAPER + '" stroke="' + INK + '" stroke-width="12" stroke-linejoin="round"/>';
+  s += '<text x="400" y="254" text-anchor="middle" direction="rtl" style="font:900 150px Noto Sans Arabic;fill:' + INK + '">إيه</text>';
+  s += '<text x="400" y="416" text-anchor="middle" direction="rtl" style="font:900 118px Noto Sans Arabic;fill:' + INK + '">الحكاية<tspan fill="' + ORANGE + '">؟</tspan></text>';
+  s += globe(268, 636, 100, 26, 16) + stopwatch(548, 640, 66);
+  return s + grain(800, 800);
+}
+
 // ── banners (2560×1440). Strip shown on desktop: y 508–931. Safe for every screen: x 507–2053 of that strip. ──
 function frameTV() { return '<rect x="44" y="44" width="2472" height="1352" fill="none" stroke="' + INK + '" stroke-width="2.4"/><rect x="56" y="56" width="2448" height="1328" fill="none" stroke="' + INK + '" stroke-width="1"/>'; }
 function titleBlock(cx, sz) {
@@ -158,7 +178,7 @@ function banner2() {   // a wall of framed thumbnails (one drawing per topic) ro
 var SIZE = V.indexOf("profile") === 0 ? [800, 800] : [2560, 1440], out = document.getElementById("out");
 out.setAttribute("viewBox", "0 0 " + SIZE[0] + " " + SIZE[1]); out.setAttribute("width", SIZE[0]); out.setAttribute("height", SIZE[1]);
 function paint() {
-  var s = { profile1: profile1, profile2: profile2, banner1: banner1, banner2: banner2 }[V]();
+  var s = { profile1: profile1, profile2: profile2, profile3: profile3, profile4: profile4, banner1: banner1, banner2: banner2 }[V]();
   if (GUIDE) s += SIZE[0] === 800 ? '<circle cx="400" cy="400" r="399" fill="none" stroke="#e11" stroke-width="2"/><path fill-rule="evenodd" d="M0 0 H800 V800 H0 Z M400 1 A399 399 0 1 0 400 799 A399 399 0 1 0 400 1 Z" fill="#000" opacity=".55"/>'
     : '<rect x="0" y="508" width="2560" height="423" fill="none" stroke="#e11" stroke-width="3"/><rect x="507" y="508" width="1546" height="423" fill="none" stroke="#11e" stroke-width="3"/>';
   out.innerHTML = s; window.READY = true;
