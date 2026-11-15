@@ -77,7 +77,7 @@ paper(L(22) + 0.2); scribble(L(22) + 0.9); a(L(22) + 2.2, 'pop', 0.3); a(L(22) +
 // 23 · 96 counts up, 2016 lands
 lab(23, 0.6); ding(L(23) + 2.2); paper(L(23) + 1.8);
 
-const MUSIC = has('music-soft') ? 'music-soft' : null;
+const MUSIC = null;   // no music in this episode (the user asked for sound effects only)
 if (MUSIC) rec(0, MUSIC, 0.42, 0, window.TIMING.duration + 2.5, 0.6);
-fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: !MUSIC, cues: c }, null, 1));
+fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: c }, null, 1));
 console.log(c.length + ' cues; kit clips here: ' + (['swipe', 'paper', 'pencil-scribble', 'ding', 'clock-ticking', 'space-drone', 'ocean-waves', 'water-rush', 'wind-gust', 'music-soft'].filter(has).join(', ') || 'none'));
