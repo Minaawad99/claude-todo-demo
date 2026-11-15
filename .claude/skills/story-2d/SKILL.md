@@ -86,6 +86,10 @@ ffmpeg -y -i <mp4> -i <mix.wav> -map 0:v -map 1:a -c:v copy -t <dur> -af "apad,a
 python3 qa.py <final.mp4>
 ```
 
+If the mix has loud explosions and qa.py reports a peak above -0.5 dBFS, use the harder chain (Chernobyl: -14.5 LUFS,
+peak -2.8 dBFS): `volume=7dB,alimiter=limit=0.45:level=false:attack=1:release=80,loudnorm=I=-14:TP=-2.5:LRA=9,aresample=192000,alimiter=limit=0.7:level=false:attack=1:release=60`.
+Dark night scenes need more motion than day ones: a stronger camera drift and moving glints, boats or embers (Titanic).
+
 The quiet storyteller voice comes out near -16 LUFS without that remux; with it, about -14.4 LUFS. QA must PASS. Send
 the mp4, commit and push; keep mixes and videos in the scratchpad. Cover and titles follow the animation skill's
 section 9 when the user asks.
