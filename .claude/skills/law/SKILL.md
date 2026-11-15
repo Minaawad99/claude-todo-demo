@@ -10,6 +10,12 @@ description: >
 
 # «إيه الحكاية؟» — the «لو» style
 
+**Sound without asking: sound effects only (the user's fixed rule, for every video in every skill).** Without the user's
+permission you may add only sound effects (swipes, ticks, dings, whooshes, and effects you synthesize such as a buzz).
+Never add background music of any kind (a kit track, a synthesized bed, a generated or licensed track) unless the user
+asks for it for that video; asking once does not carry over to the next video. `videos/audio/sfx.py` leaves all music
+out unless run with `--music`, so pass that flag only when the user asked.
+
 The user's name for this style is **«لو»**. The reference build is the nuclear shelter video: `videos/nuclear-shelter/`
 (script, voice, `cartoon/`, 26 lines, 276 words, 1:45) and its cover `brand/eh-elhekaya/cover-nuclear-shelter-3d-tiktok.html`.
 Its structure came from a video the user sent (a 3D back-garden shelter explainer, "but… so you add…"); the script and the
