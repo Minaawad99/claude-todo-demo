@@ -22,3 +22,8 @@ Visual references: drawn from the well-known real shape of a hammerhead (saddle-
 sections, slewing ring with cab on one side, A-frame/tower head with pendant ties, long lattice jib with trolley and hook
 block, short counter-jib with stacked concrete counterweight slabs and the hoist winch, red aviation light and anemometer on
 the top.
+
+Script v2 (after the user's reference video, a rope-over-pulley start built up part by part):
+- Load falls with radius: e.g. Liebherr 160 EC-B8 Litronic, 8 t max, 60 m jib, ~1.85 t at the tip (cranepedia.com spec page).
+- In-service wind: tower cranes are commonly designed for a max in-service wind of 20 m/s (72 km/h) (WorkSafe QLD alert citing
+  AS 1418.4; CPA TIN 020); the anemometer warns the operator; many sites stop earlier.

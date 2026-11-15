@@ -379,154 +379,178 @@
   function full(t, o) { return Object.assign({ n: 6, top: true, cj: true, cw: 4, tr: 0.5, hook: 70, cab: true, light: true, anemo: true, gear: t * 0.05 }, o || {}); }
   function cmv(x0, y0, z0, x1, y1, z1) { return function (u, d) { var k = 0.4 * ease(clamp(u / d)) + 0.6 * clamp(u / d); return [lerp(x0, x1, k), lerp(y0, y1, k), lerp(z0, z1, k)]; }; }
 
-  // 0 — a long steel arm on top of a tall pole: is that a tower crane?
-  shot(0, cmv(330, 170, 1.25, 320, 190, 1.0), function (u, d, t) {
-    return site(t, { pit: false, dirt: false }) + crane(t, { n: 6, top: true, tr: 0.75 + 0.05 * Math.sin(t), hook: 80 + 6 * Math.sin(t * 1.4), load: { w: 46, h: 16, col: "#8a6a4a" } }) + guy(150, 0.24, t, "curious") + qmark(150, GY - 74, t, 28) + tag("ونش برجي؟", 410, 70, u, 0.8, -3, 24);
+  // ── the simple start: a stick, a rope, a pole with a pulley, a winch drum ──
+  function brickBag(x, y, s) { s = s || 1; var g = '<g transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + s + ')">' + '<path d="M-16 0 L-12 -24 H12 L16 0 Z" fill="#c9a46a" stroke="' + INK + '" stroke-width="1.8"/>'; for (var i = 0; i < 3; i++) g += R(-10 + i * 7, -30 - (i % 2) * 3, 8, 6, "#b5523a", 1); return g + '<path d="M-12 -24 Q0 -34 12 -24" stroke="' + INK + '" stroke-width="1.6" fill="none"/></g>'; }
+  // a guy holding a long stick out, a rope from its tip down to a bag. bend: 0..1, tired: sweat drops
+  function stickGuy(t, x, bend, lift, mood, tired) {
+    var tipX = x + 170, tipY = GY - 170 + bend * 55, s = '<path d="M' + f(x + 18) + ' ' + f(GY - 70) + ' Q' + f(x + 100) + ' ' + f(GY - 150 + bend * 10) + ' ' + f(tipX) + ' ' + f(tipY) + '" stroke="' + INK + '" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M' + f(x + 18) + ' ' + f(GY - 70) + ' Q' + f(x + 100) + ' ' + f(GY - 150 + bend * 10) + ' ' + f(tipX) + ' ' + f(tipY) + '" stroke="#a8743a" stroke-width="4" fill="none" stroke-linecap="round"/>';
+    var by = lerp(GY, tipY + 70, lift); s += '<path d="M' + f(tipX) + ' ' + f(tipY) + ' V' + f(by - 34) + '" stroke="#6a4a2a" stroke-width="2"/>' + brickBag(tipX, by, 1.1);
+    s += hardHat(x, GY - 140 * 0.3, 0.3, t, mood, { point: true });
+    if (tired) for (var k = 0; k < 3; k++) { var q = (t * 1.2 + k / 3) % 1; s += '<path d="M' + f(x + 14 + k * 6) + ' ' + f(GY - 92 + q * 20) + ' q3 5 0 8 q-3 -3 0 -8 Z" fill="#7fb7e0" stroke="' + INK + '" stroke-width=".8" opacity="' + f(1 - q) + '"/>'; }
+    return s;
+  }
+  // a steel pole with a pulley on top; the rope goes over it down to the load and down to the drum (or a hand)
+  function polePulley(t, x, h, lift, o) {
+    o = o || {}; var top = GY - h, s = R(x - 5, top, 10, h, "url(#steel)", 1.8) + '<path d="M' + (x - 30) + ' ' + GY + ' H' + (x + 30) + '" stroke="' + INK + '" stroke-width="5"/>';
+    var px = x + 12, ph = t * (o.spin || 0) * 4; s += '<path d="M' + x + ' ' + (top + 4) + ' L' + px + ' ' + (top - 2) + '" stroke="' + INK + '" stroke-width="4"/><g transform="translate(' + px + ' ' + (top - 2) + ') rotate(' + f(ph * 57) + ')"><circle r="11" fill="#c9ced4" stroke="' + INK + '" stroke-width="2"/><path d="M-8 0 H8 M0 -8 V8" stroke="' + INK + '" stroke-width="1.6"/><circle r="2.4" fill="' + INK + '"/></g>';
+    var lx = px + 11, ly = lerp(GY, top + 60, lift); s += '<path d="M' + lx + ' ' + (top - 2) + ' V' + f(ly - 34) + '" stroke="#6a4a2a" stroke-width="2"/>' + brickBag(lx, ly, 1.1);
+    var dx = px - 11; if (o.drum) { var dX = x - 60, dY = GY - 14; s += '<path d="M' + dx + ' ' + (top - 2) + ' L' + f(dX) + ' ' + f(dY - 12) + '" stroke="#6a4a2a" stroke-width="2"/>' + R(dX - 30, dY - 2, 60, 16, "#3a3d42", 1.6, 3) + '<g transform="translate(' + dX + ' ' + dY + ')"><ellipse rx="16" ry="12" fill="#e2b035" stroke="' + INK + '" stroke-width="2"/>' + [0, 1, 2, 3].map(function (k) { var yy = -9 + ((k * 6 + t * 30 * (o.spin || 0)) % 24 + 24) % 24 * 0.75; return '<path d="M-15 ' + f(yy) + ' H15" stroke="#6a4a2a" stroke-width="1.6"/>'; }).join("") + '</g>' + R(dX + 18, dY - 16, 22, 18, "#2f6f9f", 1.8, 3) + '<circle cx="' + (dX + 29) + '" cy="' + (dY - 7) + '" r="3" fill="' + (Math.sin(t * 12) > 0 ? "#7cf29a" : "#2b2f34") + '"/>'; }
+    else if (o.hand) { s += '<path d="M' + dx + ' ' + (top - 2) + ' L' + f(x - 50) + ' ' + f(GY - 60) + '" stroke="#6a4a2a" stroke-width="2"/>' + hardHat(x - 66, GY - 140 * 0.3, 0.3, t, o.mood || "worry"); }
+    return s;
+  }
+
+  // 0 — a long stick with a rope at its tip, pulling up a bag of bricks: is that a crane?
+  shot(0, cmv(260, 220, 1.6, 280, 210, 1.25), function (u, d, t) {
+    var lift = 0.5 + 0.5 * Math.sin(clamp(u / 2.5) * 1.57) + 0.04 * Math.sin(t * 3);
+    return site(t, { pit: false, dirt: false }) + stickGuy(t, 170, 0.1 * lift, lift, "happy") + qmark(470, GY - 110, t, 26) + tag("ونش؟", 470, GY - 150, u, 1.0, -3, 22);
   });
-  // 1 — no: the first heavy load tips the whole pole over
-  shot(1, cmv(330, 190, 1.0, 360, 210, 1.1), function (u, d, t) {
-    var k = ease(clamp((u - 0.9) / 1.6)), tl = k * 58 + (k >= 1 ? Math.sin(t * 9) * 0.5 : 0);
-    return site(t, { pit: false, dirt: false }) + crane(t, { n: 6, top: true, tr: 0.8, hook: 80, load: { w: 60, h: 22, col: "#6a5a4a", txt: "حمل تقيل" }, tilt: tl }) + guy(130, 0.24, t, k > 0.2 ? "shock" : "worry") + (k > 0.6 ? cross(420, 120, 1.5, t) + dust(t, 470, GY - 4, k) : "");
+  // 1 — yes, but the stick bends and your arm tires by the second bag
+  shot(1, cmv(280, 220, 1.25, 260, 230, 1.5), function (u, d, t) {
+    var bend = ease(clamp((u - 0.4) / 1.2)), lift = 1 - 0.6 * bend + 0.05 * Math.sin(t * 6);
+    return site(t, { pit: false, dirt: false }) + stickGuy(t, 170, bend, lift, bend > 0.4 ? "dizzy" : "worry", bend > 0.3) + (bend > 0.6 ? cross(330, GY - 150, 1, t) : "");
   });
-  // 2 — so you start under the ground: a concrete pad 10 m by 10 m, about 180 tonnes
-  shot(2, cmv(250, 280, 1.9, 250, 290, 2.1), function (u, d, t) {
-    var p = ease(clamp((u - 0.4) / (d * 0.6))), s = site(t, { pad: p });
+  // 2 — so you stick a steel pole in the ground and put a pulley on top for the rope
+  shot(2, cmv(260, 190, 1.2, 250, 160, 1.5), function (u, d, t) {
+    var h = 190 * ease(clamp(u / 1.2)), lift = u < 1.6 ? 0 : 0.45 - 0.45 * Math.cos((u - 1.6) * 1.6);
+    return site(t, { pit: false, dirt: false }) + (h > 5 ? polePulley(t, MX, h, lift, { hand: true, spin: u > 1.6 ? 1 : 0, mood: "happy" }) : "") + tag("بكرة", MX + 60, GY - 210, u, 1.4, 3, 18);
+  });
+  // 3 — and instead of your hands, you wind the rope on a drum with a motor
+  shot(3, cmv(230, 230, 1.9, 240, 190, 1.2), function (u, d, t) {
+    var lift = 0.2 + 0.75 * clamp(u / d);
+    return site(t, { pit: false, dirt: false }) + polePulley(t, MX, 190, lift, { drum: true, spin: 1 }) + tag("درام + موتور", MX - 70, GY - 95, u, 0.4, -3, 16);
+  });
+  // 4 — but the building grows, and the pole ends up shorter than it
+  shot(4, cmv(300, 190, 1.2, 330, 150, 0.9), function (u, d, t) {
+    var fl = 6 + clamp(u / d) * 7;
+    return site(t, { pit: false, dirt: false }) + bldg(t, fl) + polePulley(t, MX, 190, 0.6, { drum: true, spin: 0.3 }) + (fl > 11 ? cross(MX, GY - 230, 1, t) : "") + guy(130, 0.24, t, fl > 10 ? "worry" : "curious");
+  });
+  // 5 — so you stack lattice steel sections on top of each other until you have a tall tower
+  shot(5, cmv(230, 255, 1.9, 255, 185, 1.2), function (u, d, t) {
+    var n = 1 + clamp(u / (d * 1.02)) * 5;
+    return site(t, {}) + crane(t, { n: n, top: false }) + tag("برج", MX + 50, GY - n * SEC, u, 0.5, 3, 18) + guy(140, 0.24, t, "happy", { point: true });
+  });
+  // 6 — but as soon as you lift something heavy, the whole tower tips over
+  shot(6, cmv(300, 190, 1.0, 340, 210, 1.1), function (u, d, t) {
+    var k = ease(clamp((u - 0.6) / 1.4)), tl = k * 58;
+    return site(t, { pit: false, dirt: false }) + crane(t, { n: 6, top: false, tilt: tl }) + '<g transform="rotate(' + f(tl) + ' ' + f(MX + MW / 2) + ' ' + GY + ')"><path d="M' + (MX + 11) + ' ' + (GY - 156) + ' h20 V' + (GY - 60) + '" stroke="#6a4a2a" stroke-width="2" fill="none"/>' + brickBag(MX + 31, GY - 26, 1.4) + '</g>' + dust(t, 420, GY - 4, k > 0.8 ? 1 : 0) + guy(130, 0.24, t, k > 0.2 ? "shock" : "worry") + (k > 0.6 ? cross(400, 110, 1.4, t) : "");
+  });
+  // 7 — so you fix it in a concrete pad 10 m by 10 m, about 180 tonnes
+  shot(7, cmv(250, 280, 1.9, 250, 260, 1.6), function (u, d, t) {
+    var p = ease(clamp((u - 0.3) / (d * 0.55))), s = site(t, { pad: p, bolts: p >= 1 ? 1 : 0 });
     for (var i = 0; i < 6; i++) { var q = (t * 1.6 + i / 6) % 1; if (p < 1) s += '<circle cx="' + f(MX - 30 + i * 12) + '" cy="' + f(GY - 40 + q * 50) + '" r="3" fill="#a7a198" stroke="' + INK + '" stroke-width=".8"/>'; }
-    s += '<path d="M' + (MX - 40) + ' ' + (GY - 60) + ' L' + (MX - 10) + ' ' + (GY - 14) + '" stroke="#5a6068" stroke-width="8" stroke-linecap="round"/>' + '<path d="M' + (MX - 64) + ' ' + (GY + 44) + ' H' + (MX + 64) + '" stroke="' + INK + '" stroke-width="1.6"/><path d="M' + (MX - 64) + ' ' + (GY + 40) + ' v8 M' + (MX + 64) + ' ' + (GY + 40) + ' v8" stroke="' + INK + '" stroke-width="1.6"/>';
-    return s + tag("10 × 10 متر", MX, GY + 54, u, 1.4, -2, 15) + tag("180 طن", MX + 70, GY - 40, u, d * 0.6, 3, 17, "#f2c230");
+    if (p < 1) s += '<path d="M' + (MX - 40) + ' ' + (GY - 60) + ' L' + (MX - 10) + ' ' + (GY - 14) + '" stroke="#5a6068" stroke-width="8" stroke-linecap="round"/>';
+    else s += crane(t, { n: clamp((u - d * 0.6) / 0.8) * 3, top: false });
+    s += '<path d="M' + (MX - 64) + ' ' + (GY + 44) + ' H' + (MX + 64) + '" stroke="' + INK + '" stroke-width="1.6"/>';
+    return s + tag("10 × 10 متر", MX, GY + 54, u, 1.0, -2, 15) + tag("180 طن", MX + 80, GY - 40, u, d * 0.5, 3, 17, "#f2c230");
   });
-  // 3 — you fix the first tower section to it with huge bolts buried in the concrete
-  shot(3, cmv(250, 270, 2.2, 250, 255, 2.0), function (u, d, t) {
-    var bk = ease(clamp(u / 1.0)), mk = clamp((u - 1.0) / 1.4), s = site(t, { bolts: 1 }) + crane(t, { n: mk, top: false });
-    if (bk < 1) s += '<path d="M' + (MX - 6) + ' ' + f(GY - 30 + bk * 20) + ' v-10 M' + (MX + 10) + ' ' + f(GY - 30 + bk * 20) + ' v-10" stroke="#fff" stroke-width="2"/>';
-    if (mk >= 1) for (var g = 0; g < 2; g++) s += '<circle cx="' + (MX - 8 + g * 16) + '" cy="' + (GY - 3) + '" r="' + f(2 + 2 * Math.abs(Math.sin(t * 5 + g))) + '" fill="#fff" opacity=".8"/>';
-    return s + tag("مسامير ضخمة", MX - 80, GY - 40, u, 0.5, -3, 15);
+  // 8 — but the tower only lifts what's right under it
+  shot(8, cmv(270, 190, 1.0, 280, 200, 1.1), function (u, d, t) {
+    var s = site(t, {}) + crane(t, { n: 6, top: false }) + '<path d="M' + (MX + 11) + ' ' + (GY - 156) + ' h10 V' + (GY - 90) + '" stroke="#6a4a2a" stroke-width="2" fill="none"/>' + hookBlock(MX + 21, GY - 86, null);
+    [[420, 0], [520, 1], [120, 2]].forEach(function (b) { s += brickBag(b[0], GY, 1.2) + (u > 0.6 + b[1] * 0.4 ? cross(b[0], GY - 60, 0.7, t) : ""); });
+    return s + guy(180, 0.22, t, "worry");
   });
-  // 4 — but this tower is tall: who lifts its pieces up there?
-  shot(4, cmv(250, 250, 1.6, 270, 180, 1.0), function (u, d, t) {
-    var s = site(t, {}) + crane(t, { n: 1, top: false });
-    for (var i = 1; i < 6; i++) s += '<rect x="' + (MX - MW / 2) + '" y="' + (GY - (i + 1) * SEC) + '" width="' + MW + '" height="' + SEC + '" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="5 4" opacity="' + f(0.5 + 0.4 * Math.sin(t * 4 + i)) + '"/>';
-    var up = (t * 0.8) % 1; s += arrow(MX + 40, GY - 20 - up * 150, MX + 40, GY - 70 - up * 150, "#f2c230", 8, 1) + arrow(MX - 40, GY - 20 - ((up + 0.5) % 1) * 150, MX - 40, GY - 70 - ((up + 0.5) % 1) * 150, "#f2c230", 8, 1).replace(/<path/g, '<path opacity="' + f(Math.sin(Math.PI * up)) + '"');
-    return s + guy(170, 0.24, t, "curious", { look: 1 }) + qmark(MX, GY - 180, t, 34) + tag("مين يرفعه؟", 380, 120, u, 0.6, 3, 22);
+  // 9 — so you fit a long jib on top, with a small trolley running back and forth carrying the hook
+  shot(9, cmv(300, 170, 1.4, 360, 175, 1.05), function (u, d, t) {
+    var j = ease(clamp(u / 1.4)), tr = 0.5 + 0.45 * Math.sin(t * 1.9);
+    return site(t, {}) + crane(t, { n: 6, top: true, jib: Math.max(0.05, j), tr: j > 0.9 ? tr : null, hook: 80 + 10 * Math.sin(t), load: { w: 40, h: 16 } }) + tag("دراع طويل", 470, 70, u, 0.6, -3, 16) + tag("عربية", MX + 30 + (18 + tr * (JL - 34)), GY - 6 * SEC + 26, u, 1.8, 3, 13);
   });
-  // 5 — so you bring a truck crane that stacks the first few sections
-  shot(5, cmv(180, 200, 1.0, 240, 225, 1.5), function (u, d, t) {
-    var k = clamp(u / (d * 1.02)) * 3, i = Math.min(2, Math.floor(k)), q = k >= 3 ? 1 : k - i, placed = 1 + i, ey = -34 - Math.sin(34 * Math.PI / 180) * 230;
-    function target(n) { return -n * SEC - SEC - 22 - ey; }
-    var on = q < 0.72, n = on ? placed : placed + 1, hang = on ? lerp(6, target(placed), ease(clamp(q / 0.6))) : lerp(target(placed + 1) + SEC, 6, clamp((q - 0.72) / 0.28));
-    if (k >= 3) { n = 4; hang = 6; on = false; }
-    var top = GY - n * SEC, burst = ""; for (var b = 0; b < 10; b++) { var ang = b * 0.628 + t * 1.5, r0 = 18 + 6 * Math.sin(t * 6 + b); burst += '<path d="M' + f(MX + Math.cos(ang) * r0) + ' ' + f(top + Math.sin(ang) * r0) + ' l' + f(Math.cos(ang) * 10) + ' ' + f(Math.sin(ang) * 10) + '" stroke="#ffd84a" stroke-width="3.4" stroke-linecap="round"/>'; }
-    return site(t, {}) + crane(t, { n: n, top: false }) + (on ? "" : burst) + truckCrane(t, 90, 34, 230, hang, on ? { sec: true } : null) + tag("ونش عربية", 90, GY - 60, u, 0.5, -3, 18) + guy(400, 0.22, t, "happy", { point: true });
+  // 10 — but the load at the end of the jib pulls the whole crane forward
+  shot(10, cmv(330, 180, 0.95, 380, 170, 1.05), function (u, d, t) {
+    var k = ease(clamp((u - 0.5) / 1.4)), tl = k * 9 + Math.sin(t * 7) * 0.6 * k;
+    return site(t, {}) + crane(t, { n: 6, top: true, tr: 0.9, hook: 70, load: { w: 50, h: 18, col: "#6a5a4a" }, tilt: tl }) + arrow(480, 150, 480, 230, "#e8352a", 7, clamp((u - 0.3) / 0.8)) + (k > 0.5 ? cross(300, 60, 1.2, t) : "") + guy(130, 0.24, t, k > 0.3 ? "shock" : "n");
   });
-  // 6 — but the load on the jib keeps pulling the whole crane forward
-  shot(6, cmv(330, 180, 0.95, 380, 170, 1.05), function (u, d, t) {
-    var k = ease(clamp((u - 0.6) / 1.6)), tl = k * 9 + Math.sin(t * 7) * 0.6 * k;
-    return site(t, {}) + crane(t, { n: 6, top: true, tr: 0.85, hook: 70, load: { w: 50, h: 18, col: "#6a5a4a" }, tilt: tl }) + arrow(470, 150, 470, 230, "#e8352a", 7, clamp((u - 0.3) / 0.8)) + (k > 0.5 ? cross(300, 60, 1.2, t) : "") + guy(130, 0.24, t, k > 0.3 ? "shock" : "n");
+  // 11 — so you build a short counter-jib at the back with heavy concrete blocks that balance the load
+  shot(11, cmv(200, 170, 1.7, 300, 175, 1.0), function (u, d, t) {
+    var cw = clamp((u - 0.9) / (d * 0.6)) * 4, bal = cw >= 4;
+    return site(t, {}) + crane(t, { n: 6, top: true, cj: u > 0.3, cw: cw, tr: 0.7, hook: 70, load: { w: 44, h: 16 } }) + tag("دراع ورا", 150, 100, u, 0.4, -3, 15) + tag("بلوكات خرسانة", 165, 222, u, 1.2, 3, 15) + (bal ? scale(560, 290, 1, 0, t) + check(560, 210, 1.1, t) : "");
   });
-  // 7 — so you build a short counter-jib at the back and stack heavy concrete blocks on it
-  shot(7, cmv(200, 170, 1.7, 180, 175, 1.5), function (u, d, t) {
-    var cj = u > 0.3, cw = clamp((u - 1.0) / (d - 1.4)) * 4;
-    return site(t, {}) + crane(t, { n: 6, top: true, cj: cj, cw: cw, tr: 0.5, hook: 60 }) + tag("دراع ورا", 150, 100, u, 0.4, -3, 15) + tag("بلوكات خرسانة", 165, 222, u, 1.2, 3, 15);
-  });
-  // 8 — those blocks can reach 20 tonnes and balance the load like the two pans of a scale
-  shot(8, cmv(320, 170, 1.0, 330, 175, 0.95), function (u, d, t) {
-    var tr = 0.55 + 0.25 * Math.sin(t * 0.9);
-    return site(t, {}) + crane(t, full(t, { cab: false, light: false, anemo: false, tr: tr, load: { w: 44, h: 16 } })) + arrow(176, 120, 176, 180, "#e8352a", 6, clamp((u - 0.4) / 0.6)) + arrow(MX + 12 + (18 + tr * (JL - 34)), 104, MX + 12 + (18 + tr * (JL - 34)), 144, "#e8352a", 6, clamp((u - 0.8) / 0.6)) + tag("20 طن", 176, 230, u, 0.5, -3, 18, "#f2c230") + scale(560, 290, 1, 0, t) + check(560, 210, 1.1, t);
-  });
-  // 9 — but the crane has to reach every spot on the site (seen from above, a fixed jib only covers one line)
-  shot(9, cmv(320, 180, 1.0, 320, 180, 1.12), function (u, d, t) {
-    var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#a89a7a"/>';
-    for (var i = 0; i < 5; i++) { var bx = [130, 470, 200, 450, 330][i], by = [90, 80, 270, 270, 300][i]; s += R(bx - 40, by - 25, 80, 50, "#cfc8bb", 2) + R(bx - 30, by - 15, 60, 30, "#bdb4a4", 1); }
-    s += '<circle cx="320" cy="180" r="170" fill="#f2c230" opacity=".12" stroke="#fff" stroke-width="2" stroke-dasharray="6 6"/>';
+  // 12 — but the building is around you on every side, and the jib faces one way only (seen from above)
+  shot(12, cmv(320, 180, 1.0, 320, 180, 1.12), function (u, d, t) {
+    var s = '<rect x="-400" y="-300" width="1440" height="960" fill="#a89a7a"/>' + R(150, 60, 340, 240, "none", 0);
+    s += '<path d="M170 70 H470 V290 H170 Z" fill="#cfc8bb" stroke="' + INK + '" stroke-width="2"/><path d="M220 120 H420 V240 H220 Z" fill="#a89a7a" stroke="' + INK + '" stroke-width="2"/>';
     s += '<path d="M320 180 H490" stroke="' + INK + '" stroke-width="10"/><path d="M320 180 H490" stroke="' + YEL + '" stroke-width="6"/>' + R(306, 166, 28, 28, "#3a3d42", 2) + '<path d="M320 180 H264" stroke="' + INK + '" stroke-width="8"/><path d="M320 180 H264" stroke="' + YEL + '" stroke-width="4"/>';
-    [[130, 90], [200, 270], [450, 270]].forEach(function (p, j) { s += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + f(10 + 4 * Math.sin(t * 5 + j)) + '" fill="none" stroke="#e8352a" stroke-width="3"/>'; if (u > 0.8 + j * 0.4) s += cross(p[0] + 26, p[1] - 22, 0.6, t); });
+    [[195, 95], [195, 265], [445, 95], [320, 80], [320, 280]].forEach(function (p, j) { s += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + f(10 + 4 * Math.sin(t * 5 + j)) + '" fill="none" stroke="#e8352a" stroke-width="3"/>'; if (u > 0.8 + j * 0.3) s += cross(p[0] + 20, p[1] - 16, 0.55, t); });
     return s + tag("من فوق", 320, 30, u, 0.3, -2, 16);
   });
-  // 10 — so you put a big gear and a motor on top of the tower: they turn both arms a full circle
-  shot(10, cmv(250, 150, 2.6, 270, 160, 1.0), function (u, d, t) {
-    var sp = clamp((u - 1.2) / 1.0), ph = (u > 1.2 ? (u - 1.2) * 1.4 : 0) * sp;
+  // 13 — so you put a big gear and a motor on top of the tower: they turn both arms a full circle
+  shot(13, cmv(250, 150, 2.6, 270, 160, 1.0), function (u, d, t) {
+    var ph = Math.max(0, u - 1.2) * 1.4;
     return site(t, {}) + crane(t, { n: 6, top: true, cj: true, cw: 4, tr: 0.5, hook: 60, motor: true, gear: t * 0.6, phi: ph }) + curl(MX, GY - 6 * SEC - 6, 60, 0.3, 5.9, "#f2c230", 4, clamp((u - 1.2) / 1.6)) + tag("ترس + موتور", MX - 20, GY - 6 * SEC + 34, u, 0.4, -3, 13);
   });
-  // 11 — but you still need to bring the load closer to the tower and push it out
-  shot(11, cmv(380, 170, 1.15, 400, 175, 1.25), function (u, d, t) {
-    var lx = MX + 12 + JL * 0.86;
-    return site(t, {}) + crane(t, { n: 6, top: true, cj: true, cw: 4, phi: 0, gear: t * 0.05 }) + '<path d="M' + f(lx) + ' ' + (GY - 6 * SEC - 14) + ' V' + (GY - 60) + '" stroke="#2a2a2a" stroke-width="1.4"/>' + hookBlock(lx, GY - 60, { w: 40, h: 16 }) + arrow(lx - 30, GY - 40, lx - 110, GY - 40, "#f2c230", 6, clamp(Math.sin(t * 2) * 0.5 + 0.5)) + qmark(lx - 70, GY - 70, t, 26) + guy(160, 0.24, t, "curious");
+  // 14 — and add a cab up top where the operator sits and controls everything
+  shot(14, cmv(270, 120, 2.8, 280, 130, 2.0), function (u, d, t) {
+    var cab = u > 0.4, s = site(t, {}) + crane(t, { n: 6, top: true, cj: true, cw: 4, tr: 0.4 + 0.3 * Math.sin(t), hook: 50, cab: cab, mood: "happy", phi: Math.sin(t * 0.6) * 0.25 });
+    return s + tag("كابينة", MX + 50, GY - 6 * SEC + 24, u, 0.5, -3, 13);
   });
-  // 12 — so you fit a small trolley that runs along the jib, with the hook hanging from it on the cable
-  shot(12, cmv(420, 160, 1.7, 370, 175, 1.2), function (u, d, t) {
-    var tr = 0.5 + 0.42 * Math.sin(t * 1.1);
-    return site(t, {}) + crane(t, { n: 6, top: true, cj: true, cw: 4, tr: tr, hook: 62 + 10 * Math.sin(t * 0.7), load: { w: 40, h: 16 } }) + tag("عربية + خطاف", 420, 98, u, 0.5, -3, 16);
+  // 15 — but the farther the trolley goes, the less it can lift
+  shot(15, cmv(340, 175, 1.0, 360, 180, 1.05), function (u, d, t) {
+    var tr = clamp(u / (d * 0.85)), lx = MX + 12 + (18 + tr * (JL - 34)), cap = 1 - 0.78 * tr;
+    var s = site(t, {}) + crane(t, full(t, { light: false, anemo: false, tr: tr, load: { w: 30 + 30 * cap, h: 10 + 12 * cap } }));
+    s += '<g transform="translate(120 70)">' + R(-12, -40, 24, 80, "#2b2f34", 2, 4) + '<rect x="-8" y="' + f(36 - 72 * cap) + '" width="16" height="' + f(72 * cap) + '" rx="3" fill="' + (cap > 0.5 ? "#3aa05a" : "#e8a23a") + '"/></g>';
+    return s + curl(lx, 220, 30 + tr * 20, -1.2, 2.2, "#e8352a", 3 + tr * 3, clamp(u / 0.8));
   });
-  // 13 — but the farther out the load goes, the harder it pulls the crane over
-  shot(13, cmv(340, 175, 1.0, 360, 180, 1.05), function (u, d, t) {
-    var tr = clamp(u / (d * 0.85)), lx = MX + 12 + (18 + tr * (JL - 34));
-    return site(t, {}) + crane(t, full(t, { cab: false, light: false, anemo: false, tr: tr, load: { w: 44, h: 16 }, tilt: tr * tr * 3 + Math.sin(t * 8) * 0.3 * tr })) + curl(lx, 220, 34 + tr * 30, -1.2, 2.2, "#e8352a", 3 + tr * 3, clamp(u / 0.8)) + tag("بيشد أقوى", 470, 70, u, 1.0, 3, 18, tr > 0.6 ? "#f2a0a0" : "#e8c48e");
+  // 16 — a crane like this lifts 8 tonnes next to the tower, and only about 1.8 tonnes at the end of the jib
+  shot(16, cmv(330, 170, 1.0, 340, 175, 0.95), function (u, d, t) {
+    var tr = u < 2.2 ? 0.05 : lerp(0.05, 1, ease(clamp((u - 2.2) / 1.4))), big = u < 2.2;
+    return site(t, {}) + crane(t, full(t, { light: false, anemo: false, tr: tr, hook: 90, load: big ? { w: 60, h: 24, col: "#6a5a4a", txt: "8 طن" } : { w: 26, h: 12, txt: "1.8 طن" } })) + tag("8 طن", MX + 60, GY - 50, u, 0.6, -3, 20, "#f2c230") + tag("1.8 طن بس", MX + 220, GY - 230, u, 3.2, 3, 18);
   });
-  // 14 — a load you lift easily next to the tower can bring the crane down at the end of the jib
-  shot(14, cmv(340, 180, 1.0, 360, 190, 1.05), function (u, d, t) {
-    var mv = ease(clamp((u - 1.0) / 1.2)), tr = lerp(0.08, 1, mv), k = ease(clamp((u - 2.0) / 1.2)), lx = MX + 12 + (18 + tr * (JL - 34));
-    return site(t, {}) + crane(t, full(t, { cab: false, light: false, anemo: false, tr: tr, load: { w: 54, h: 20, col: "#6a5a4a" }, tilt: k * 16 })) + (u < 1.2 ? check(MX + 70, 110, 1.1, t) : "") + (k > 0.3 ? cross(lx, 100, 1.3, t) : "") + guy(120, 0.24, t, k > 0.2 ? "shock" : "happy");
-  });
-  // 15 — so sensors compute weight × distance and stop the crane on their own past the limit
-  shot(15, cmv(300, 140, 2.0, 320, 160, 1.3), function (u, d, t) {
+  // 17 — so you fit a computer that weighs everything and stops the crane before it gets dangerous
+  shot(17, cmv(300, 140, 2.0, 320, 160, 1.3), function (u, d, t) {
     var tr = Math.min(0.78, clamp(u / (d * 0.6))), warn = tr >= 0.78;
     var s = site(t, {}) + crane(t, full(t, { light: false, anemo: false, tr: tr, load: { w: 48, h: 18, col: "#6a5a4a" }, sensor: warn ? "warn" : "ok", mood: warn ? "shock" : "n" }));
     s += '<g transform="translate(390 205)">' + R(-70, -34, 140, 60, "#2b2f34", 2.4, 6) + T("وزن × مسافة", 0, -10, 14, "#fff") + R(-56, 2, 112, 12, "#1c1c1c", 1, 3) + '<rect x="-55" y="3" width="' + f(110 * tr / 0.78) + '" height="10" rx="3" fill="' + (warn ? "#e8352a" : "#3aa05a") + '"/></g>';
-    return s + (warn ? T("STOP", 390, 254, 18, "#ff5a4a") : "") + tag("حساسات", MX - 50, GY - 6 * SEC - 70, u, 0.5, -3, 15);
+    return s + (warn ? T("STOP", 390, 254, 18, "#ff5a4a") : "") + tag("كمبيوتر", MX - 50, GY - 6 * SEC - 70, u, 0.5, -3, 15);
   });
-  // 16 — but the building climbs every few weeks, and the crane must stay above it
-  shot(16, cmv(330, 180, 1.0, 340, 150, 0.9), function (u, d, t) {
-    var fl = 4 + clamp(u / (d * 0.9)) * 4.5;
-    return site(t, {}) + bldg(t, fl) + crane(t, full(t, { tr: 0.4, hook: 50 })) + guy(120, 0.24, t, fl > 7.5 ? "worry" : "curious") + (fl > 7.5 ? T("!", 400, GY - 6 * SEC - 20, 30, "#ff8a7e") : "");
+  // 18 — but the building keeps rising until it's taller than the crane itself
+  shot(18, cmv(330, 180, 1.0, 340, 150, 0.9), function (u, d, t) {
+    var fl = 4 + clamp(u / (d * 0.9)) * 5.5;
+    return site(t, {}) + bldg(t, fl) + crane(t, full(t, { tr: 0.4, hook: 50 })) + guy(120, 0.24, t, fl > 8 ? "worry" : "curious") + (fl > 8.5 ? cross(MX + 140, GY - 6 * SEC - 30, 0.9, t) : "");
   });
-  // 17 — so the crane grows by itself: a hydraulic jack pushes the top part up six metres
-  shot(17, cmv(250, 140, 1.8, 260, 140, 1.6), function (u, d, t) {
-    var g = ease(clamp((u - 0.8) / (d - 1.4))) * SEC;
-    return site(t, {}) + bldg(t, 8.5) + crane(t, full(t, { tr: 0.15, hook: 30, gap: g, climb: true })) + (g > 4 ? '<path d="M' + (MX + MW / 2 + 16) + ' ' + f(GY - 6 * SEC - g) + ' V' + (GY - 6 * SEC) + '" stroke="#fff" stroke-width="2" stroke-dasharray="3 3"/>' : "") + tag("6 متر", MX + 60, GY - 6 * SEC - 14, u, 1.6, 3, 15, "#f2c230") + tag("جاك هيدروليك", MX - 70, GY - 4 * SEC, u, 0.5, -3, 14);
-  });
-  // 18 — then the crane lifts a new tower section itself and slides it into the gap below
-  shot(18, cmv(290, 150, 1.4, 270, 140, 1.4), function (u, d, t) {
-    var a = clamp(u / (d * 0.5)), b = ease(clamp((u - d * 0.5) / (d * 0.35))), tr = lerp(0.5, 0.02, ease(a)), done = b >= 1;
-    var s = site(t, {}) + bldg(t, 8.5) + crane(t, full(t, { n: done ? 7 : 6, gap: done ? 0 : SEC, climb: !done, tr: tr, hook: done ? 40 : lerp(150, 64, ease(a)), load: done ? null : (b > 0 ? null : { sec: true }) }));
+  // 19 — so the crane grows by itself: a jack lifts the top and a new tower section goes in underneath
+  shot(19, cmv(250, 140, 1.8, 270, 140, 1.4), function (u, d, t) {
+    var g = ease(clamp((u - 0.5) / 2.0)) * SEC, a = clamp((u - 2.6) / 2.0), b = ease(clamp((u - 4.6) / 1.6)), done = b >= 1;
+    var s = site(t, {}) + bldg(t, 9.5) + crane(t, full(t, { n: done ? 7 : 6, gap: done ? 0 : g, climb: !done, tr: lerp(0.5, 0.02, ease(a)), hook: done ? 40 : lerp(150, 64, ease(a)), load: (done || b > 0) ? null : { sec: true } }));
     if (b > 0 && !done) s += '<g transform="translate(' + f(lerp(36, 0, b)) + ' 0)">' + mastSec(MX, GY - 6 * SEC, 1, "#ffd84a") + '</g>';
-    return s + (done ? check(MX + 40, GY - 6 * SEC + 6, 0.9, t) : "") + tag("قطعة جديدة", MX + 80, GY - 3 * SEC, u, 0.5, 3, 14);
+    return s + tag("جاك هيدروليك", MX - 70, GY - 4 * SEC, u, 0.5, -3, 14) + tag("قطعة جديدة", MX + 80, GY - 3 * SEC, u, 2.8, 3, 14) + (done ? check(MX + 40, GY - 6 * SEC + 6, 0.9, t) : "");
   });
-  // 19 — but when the tower gets very tall, the wind starts to shake it
-  shot(19, cmv(320, 130, 0.8, 320, 120, 0.85), function (u, d, t) {
+  // 20 — but the higher the crane, the harder the wind pushes it
+  shot(20, cmv(320, 130, 0.8, 320, 120, 0.85), function (u, d, t) {
     var sw = Math.sin(t * 3.2) * 2.4 * clamp(u / 0.8);
     return site(t, { sky: "dusk" }) + bldg(t, 11) + crane(t, full(t, { n: 10, tilt: sw, tr: 0.3, hook: 40, mood: "shock" })) + wind(t, -60, 200, 14, 0.7) + guy(110, 0.26, t, "shock");
   });
-  // 20 — so you tie it to the building itself with steel collars
-  shot(20, cmv(290, 170, 1.5, 300, 130, 0.85), function (u, d, t) {
-    var nt = Math.min(3, Math.floor(clamp((u - 0.3) / (d * 0.6)) * 3.999)), ties = [2, 5, 8].slice(0, nt), sw = Math.sin(t * 3.2) * 2.4 * (1 - nt / 3);
-    return site(t, { sky: "dusk" }) + bldg(t, 11) + crane(t, full(t, { n: 10, tilt: sw, tr: 0.3, hook: 40, ties: ties })) + wind(t, -60, 200, 10, 0.7) + tag("كانات حديد", MX + 120, GY - 5 * SEC - 20, u, 0.6, 3, 16) + (nt >= 3 ? check(MX - 50, GY - 5 * SEC, 1, t) : "");
+  // 21 — so you tie the tower to the building with steel collars
+  shot(21, cmv(290, 170, 1.5, 300, 130, 0.85), function (u, d, t) {
+    var nt = Math.min(3, Math.floor(clamp((u - 0.2) / (d * 0.6)) * 3.999)), ties = [2, 5, 8].slice(0, nt), sw = Math.sin(t * 3.2) * 2.4 * (1 - nt / 3);
+    return site(t, { sky: "dusk" }) + bldg(t, 11) + crane(t, full(t, { n: 10, tilt: sw, tr: 0.3, hook: 40, ties: ties })) + wind(t, -60, 200, 10, 0.7) + tag("كانات حديد", MX + 120, GY - 5 * SEC - 20, u, 0.5, 3, 16) + (nt >= 3 ? check(MX - 50, GY - 5 * SEC, 1, t) : "");
   });
-  // 21 — many think the jib must be locked with the brake at night so the wind can't turn it
-  shot(21, cmv(300, 120, 0.95, 290, 110, 1.15), function (u, d, t) {
-    var strain = clamp(u / d), bend = Math.sin(t * 4) * 1.6 * strain;
-    return site(t, { sky: "night" }) + bldg(t, 11) + crane(t, full(t, { n: 10, ties: [2, 5, 8], tr: 0.05, hook: 20, cab: true, mood: "worry", brake: "on", tilt: bend * 0.4 })) + wind(t, -80, 160, 16, 0.9) + arrow(560, -10, 470, -10, "#9fd0ff", 6, clamp((u - 0.3) / 0.6)) + tag("فرامل؟", MX - 70, GY - 10 * SEC - 70, u, 0.6, -3, 16, "#f2a0a0");
+  // 22 — lots of people, seeing a crane turning by itself at night, think it's broken
+  shot(22, cmv(300, 120, 0.95, 290, 110, 1.15), function (u, d, t) {
+    var ph = Math.sin(t * 0.7) * 0.9;
+    return site(t, { sky: "night" }) + bldg(t, 11) + crane(t, full(t, { n: 10, ties: [2, 5, 8], tr: 0.05, hook: 20, cab: false, phi: ph })) + wind(t, -80, 160, 12, 0.8) + guy(120, 0.28, t, "shock") + tag("عطلان؟!", MX - 60, GY - 10 * SEC - 60, u, 0.6, -3, 18, "#f2a0a0");
   });
-  // 22 — really the operator releases the brake when leaving, so the jib swings with the wind like a weathervane
-  shot(22, cmv(290, 110, 1.15, 300, 130, 0.95), function (u, d, t) {
-    var ph = Math.max(0, u - 1.4) * 0.9 + Math.sin(t * 0.8) * 0.15 * clamp(u - 1.4);
-    return site(t, { sky: "night" }) + bldg(t, 11) + crane(t, full(t, { n: 10, ties: [2, 5, 8], tr: 0.05, hook: 20, cab: true, mood: "happy", brake: "off", phi: ph })) + wind(t, -80, 160, 16, 0.9) + vane(520, 260, 1.2, t, ph) + tag("زي دوارة الهوا", 520, 300, u, 1.6, -3, 16);
+  // 23 — really the operator leaves the brake open on purpose: the jib swings with the wind like a weathervane
+  shot(23, cmv(290, 110, 1.15, 300, 130, 0.95), function (u, d, t) {
+    var ph = Math.max(0, u - 1.0) * 0.8 + Math.sin(t * 0.8) * 0.15;
+    return site(t, { sky: "night" }) + bldg(t, 11) + crane(t, full(t, { n: 10, ties: [2, 5, 8], tr: 0.05, hook: 20, cab: true, mood: "happy", brake: "off", phi: ph })) + wind(t, -80, 160, 16, 0.9) + vane(520, 260, 1.2, t, ph) + tag("فرامل مفتوحة", MX - 60, GY - 10 * SEC - 70, u, 0.6, -3, 14, "#bfe8c0") + tag("زي دوارة الهوا", 520, 300, u, 2.0, -3, 16);
   });
-  // 23 — add a cab for the operator up top, a red light for planes and a little fan that measures the wind
-  shot(23, cmv(240, 20, 2.6, 270, 30, 2.1), function (u, d, t) {
-    return site(t, { sky: "dusk" }) + bldg(t, 11) + crane(t, full(t, { n: 10, ties: [2, 5, 8], tr: 0.2, hook: 30, cab: u > 0.3, light: u > 1.6, anemo: u > 3.0, mood: "happy" })) + tag("كابينة", MX + 40, GY - 10 * SEC + 12, u, 0.3, -3, 11) + tag("لمبة حمرا", MX - 46, GY - 10 * SEC - 70, u, 1.6, 3, 11) + tag("مقياس الريح", MX + 50, GY - 10 * SEC - 84, u, 3.0, -3, 11);
+  // 24 — last, a little fan up top that measures the wind and alarms the operator past 72 km/h
+  shot(24, cmv(250, 20, 2.6, 270, 30, 2.1), function (u, d, t) {
+    var alarm = u > 3.0, s = site(t, { sky: "dusk" }) + bldg(t, 11) + crane(t, full(t, { n: 10, ties: [2, 5, 8], tr: 0.2, hook: 30, anemo: u > 0.4, mood: alarm ? "shock" : "happy" })) + wind(t, -60, 120, 10, 1.1);
+    if (alarm) for (var k = 0; k < 3; k++) { var q = (t * 1.5 + k / 3) % 1; s += '<circle cx="' + (MX + 20) + '" cy="' + (GY - 10 * SEC - 20) + '" r="' + f(10 + q * 40) + '" fill="none" stroke="#ff5a4a" stroke-width="2.4" opacity="' + f(1 - q) + '"/>'; }
+    return s + tag("مقياس الريح", MX + 60, GY - 10 * SEC - 84, u, 0.5, -3, 12) + tag("72 كم/س", MX - 50, GY - 10 * SEC - 60, u, 2.4, 3, 13, "#f2c230");
   });
-  // 24 — and congratulations, you've built a tower crane
-  shot(24, cmv(280, 80, 1.6, 320, 140, 0.8), function (u, d, t) {
+  // 25 — and congratulations, you've built a tower crane
+  shot(25, cmv(280, 80, 1.6, 320, 140, 0.8), function (u, d, t) {
     var s = site(t, {}) + bldg(t, 11) + crane(t, full(t, { n: 10, ties: [2, 5, 8], tr: 0.6 + 0.3 * Math.sin(t), hook: 60, load: { w: 40, h: 14 }, phi: Math.sin(t * 0.5) * 0.3 }));
     for (var c = 0; c < 18; c++) { var p = (t * 0.5 + hash(c)) % 1; s += '<rect x="' + f(80 + hash(c + 2) * 480) + '" y="' + f(-80 + p * 300) + '" width="6" height="9" fill="' + ["#c23a26", "#f2c230", "#3aa05a", "#2f6f9f"][c % 4] + '" transform="rotate(' + f(t * 200 + c * 40) + ' ' + f(80 + hash(c + 2) * 480) + ' ' + f(-80 + p * 300) + ')"/>'; }
     return s + guy(130, 0.3, t, "happy") + tag("مبروك!", 330, -30, u, 0.5, -3, 30, "#bfe8c0");
   });
-  // 25 — outro
-  shot(25, cmv(300, 140, 0.85, 340, 130, 0.8), function (u, d, t) {
+  // 26 — outro
+  shot(26, cmv(300, 140, 0.85, 340, 130, 0.8), function (u, d, t) {
     return site(t, { sky: "dusk" }) + bldg(t, 11) + crane(t, full(t, { n: 10, ties: [2, 5, 8], tr: 0.5, hook: 50, phi: t * 0.4 })) + tag("قولولنا!", 330, 0, u, 0.4, 3, 30);
   });
 
-  window.__parts = { site: site, crane: crane, bldg: bldg, full: full, truckCrane: truckCrane, tag: tag, hardHat: hardHat, T: T, GY: GY, SEC: SEC, MX: MX };
+  window.__parts = { polePulley: polePulley, brickBag: brickBag, site: site, crane: crane, bldg: bldg, full: full, truckCrane: truckCrane, tag: tag, hardHat: hardHat, T: T, GY: GY, SEC: SEC, MX: MX };
   window.__panel = function (svg, t) {
     CLIPN = 0; OILN = 0; var i = at(t), sh = SH[i], next = i + 1 < SH.length ? SH[i + 1].a : L(LN.length), u = t - sh.a, d = Math.max(0.5, next - sh.a);
     var c = sh.cam(u, d), cx = c[0] + 16 * Math.sin(t * 1.2), cy = c[1] + 12 * Math.cos(t * 1.2), z = c[2] * (1 + 0.03 * Math.sin(t * 1.1));
