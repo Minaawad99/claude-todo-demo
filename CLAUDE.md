@@ -6,6 +6,8 @@
   proportions; **no background music** (narrator plus sound effects only, unless the user asks for music in that video); Claude makes the effects and asks the user
   for any real recording it needs; and every video ends with the reel cover and the TikTok, Instagram (shared to Facebook)
   and YouTube Shorts titles, without being asked.
+  **Also locked (after «تكميم المعدة» `videos/sleeve/`):** a brisk voice with pauses capped at 0.15 s, and sparse,
+  on-topic sound effects (synthesized foley for what moves; paper and pencil clips only a few times).
   The reference episode is «المد والجزر» (`videos/tides/`), the shared template `videos/_templates/sketch/`
   (its README lists the drawing helpers), the sound kit `videos/_templates/sketch/sfx/`.
 - **Sound without asking: sound effects only, in every video and every skill.** No background music of any kind

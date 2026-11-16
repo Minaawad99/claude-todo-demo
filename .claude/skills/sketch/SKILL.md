@@ -22,7 +22,11 @@ every episode.
 3. **You make the sound effects** from the kit, the episode's own clips and `audio/sfx.py`'s synthesized ones. When a moment
    needs a real recording the kit doesn't have, ask the user for it by name with Pixabay search terms; they fetch it.
 4. **Always finish with the reel cover and the titles** (section 7), without being asked: TikTok, Instagram (shared to the
-   Facebook page) and YouTube Shorts. It copies the look, pacing and narration of the «طب إزاي؟» series: 20 reference videos, measured in
+   Facebook page) and YouTube Shorts.
+5. **Locked after «تكميم المعدة» (`videos/sleeve/`):** the brisk voice with pauses capped at 0.15 s (section 2), and
+   sparse, on-topic sound effects (section 5).
+
+It copies the look, pacing and narration of the «طب إزاي؟» series: 20 reference videos, measured in
 `videos/_reference/tabizzay/STYLE.md`, with contact sheets, motion strips and transcripts. We make it under our own name.
 
 **The reference episode is `videos/tides/`.** Start every new episode from a copy of these files:
@@ -205,8 +209,19 @@ out unless run with `--music`, so pass that flag only when the user asked.
 
 It holds no music unless `sfx.py` is run with `--music`.
 
-Add one or two sounds per line matched to what moves (`lab`, `ding`, `scribble`, `paper`, `sea`, `drone`; see
-`videos/tides/cues.js`), then:
+**The sound style is locked (the user's rule, after «تكميم المعدة» `videos/sleeve/cues.js`, the reference for cues):**
+sparse, on-topic foley like «لو عربيتك وقعت في المية». Recorded kit clips are levelled by loudness against the
+narrator, so a few of them sound loud and crunchy; that is what made the first sleeve mix bad (15 paper + 13 pencil clips).
+- **Topic sounds first, synthesized in `audio/sfx.py`:** what the drawing does makes the sound (`fill` water rising,
+  `staple` a surgical stapler, `drip`, `bell` with a pitch `f`, `heart`, `rattle` pills, `fizz`, `clink`, `slosh`,
+  `squeeze`, `thud`, `creak`…). Add a new `fx_` there when the topic needs one.
+- **Kit paper and pencil sparingly:** `paper` only on the ask box (plus at most 2 more); `scribble` only on a ✗ (a ✓
+  gets a `tick`); a flip (`swipe`) on each shot change, kept.
+- **Few UI blips:** `pop` at most about 5; `tick` for labels; `ding` only when a key number lands.
+- **About 100 cues for a 1:45 video**, no more than one or two per line besides the flips. Count them by type before
+  mixing (`videos/sleeve/cues.json`: 107).
+
+Then:
 `node cues.js && python3 ../audio/sfx.py voice.wav cues.json <scratchpad>/<slug>-mix.wav`.
 
 Credit every clip in `refs/SOURCES.md`.

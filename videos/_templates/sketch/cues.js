@@ -42,7 +42,9 @@ for (let i = PROMISE + 1; i < SUMMARY; i++) swipe(i);                           
 a(L(SUMMARY) + 0.1, 'chime', 0.35); for (let k = 0; k < 5; k++) a(L(SUMMARY) + 0.3 + k * 0.15, 'tick', 0.16);   // summary card builds
 paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                                                       // ask box
 
-// ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
+// ── this episode: one or two sounds per line, matched to what moves (the reference is videos/sleeve/cues.js) ──
+// LOCKED STYLE: sparse, on-topic synthesized foley (fill, staple, drip, bell + f, heart, rattle, fizz, clink, slosh…);
+// paper only on the ask box (+ at most 2), scribble only on a ✗, pop ≤ ~5, ding only for a key number. ~100 cues in all.
 // e.g. lab(5, 0.4); ding(L(6) + 1.6); scribble(L(9) + 1.2); sea(L(0), L(PROMISE) - L(0) + 0.6, 0.45);
 
 // music plays only when sfx.py is run with --music, and that only when the user asked for music in this video
