@@ -40,7 +40,7 @@ and fix them.
 
 ## 1. Script → `videos/<slug>/script.txt`
 
-**Length:** about 25–27 lines and 260–280 words. The voice comes out about 1:55, and about 1:45 after tightening.
+**Length:** about 25–27 lines and 260–280 words. The brisk take comes out about 2:00 raw and about 1:40 after tightening to 0.15 s.
 
 **The fixed spine:**
 1. **Hook:** a fact from the viewer's own life, then its contradiction, spoken to «you», over 2–3 lines. These lines are
@@ -75,22 +75,25 @@ the style in two code blocks for Google AI Studio. Settings: Single-speaker, Puc
 made this way. The style text, with the topic and key words filled in:
 
 ```
-Speak in casual Egyptian Arabic (Cairo dialect), like a calm, confident teacher explaining to a friend <topic>. Warm and clear, more teacher than hype, with quiet amazement on the surprising facts and numbers. Natural, relaxed conversational speed, not rushed. Take a short natural breath between sentences, and don't stop at commas. Emphasize key words like <word>, <word>, <word>. Make the opening line intriguing and the question "إيه الحكاية؟" playful. Never use Modern Standard Arabic pronunciation; pronounce ق as a glottal stop like Cairenes.
+Speak in casual Egyptian Arabic (Cairo dialect), like a confident teacher explaining to a friend <topic>. Warm and clear, with quiet amazement on the surprising facts and numbers. Brisk, energetic pace like a quick social-media explainer: keep the momentum, move straight from one sentence to the next with only a very short breath, and don't stop at commas. Emphasize key words like <word>, <word>, <word>. Make the opening line intriguing and the question "إيه الحكاية؟" playful. Never use Modern Standard Arabic pronunciation; pronounce ق as a glottal stop like Cairenes.
 ```
 
 **Timing.** The whisper-small model for `align_asr.py` comes from Hugging Face; GitHub releases often answer 504 here.
 
 ```
 M=<scratchpad>/asr/sherpa-onnx-whisper-small   # small-encoder.int8.onnx, small-decoder.int8.onnx, small-tokens.txt from huggingface.co/csukuangfj/sherpa-onnx-whisper-small
-python3 ../audio/tighten.py voice-raw.wav voice.wav --max 0.3
+python3 ../audio/tighten.py voice-raw.wav voice.wav --max 0.15
 python3 ../align_asr.py voice-raw.wav script.txt raw-timing.json --model $M --gap 0.08 --db -34
-python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max 0.3 --tempo 1.0
+python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max 0.15 --tempo 1.0
 ```
 
 - **Check the whole take with the stronger model** to catch invented sentences and misread numbers:
   `~/.cache/hyperframes/whisper/whisper.cpp/build/bin/whisper-cli -m ~/.cache/hyperframes/whisper/models/ggml-large-v3-turbo.bin -l ar` (16 kHz mono).
 - **Fix line boundaries by hand** in `raw-timing.json` where whisper-small drifts. Tides: line 23 started 0.7 s early.
-- **Never speed the voice up.** Tightening the pauses is all.
+- **The pace is locked (the user's rule, from «تكميم المعدة» `videos/sleeve/`):** the brisk style text above and pauses capped
+  at **0.15 s**, which matches the user's reference reel (median pause 0.14 s, about 3.4–3.5 words a second of speech).
+  Check it: `silencedetect=n=-34dB:d=0.08` on `voice.wav` should give a median pause of about 0.15 s.
+- **Never speed the voice up.** The pace comes from the delivery and the short pauses, never from tempo.
 - Tell the user any second that needs their ear (tides: «4 سنتي» heard as «4 سنة»).
 
 ## 3. Drawings: real shapes, the reference's hand
