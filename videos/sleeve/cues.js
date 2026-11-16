@@ -47,49 +47,51 @@ paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                               
 const CH = [[0.0], [0.0, 0.587], [0.0], [0.0, 0.2708, 0.625], [0.0, 0.4737, 0.6491], [0.0, 0.7091], [0.0, 0.5507], [0.0, 0.5932], [0.0, 0.6667], [0.0, 0.4634], [0.0, 0.6667], [0.0, 0.2105, 0.5263], [0.0, 0.4032], [0.0, 0.6522], [0.0, 0.2143, 0.6143], [0.0, 0.5526], [0.0, 0.1642, 0.3582, 0.8209], [0.0, 0.5], [0.0, 0.2687, 0.7463], [0.0, 0.252, 0.6378, 0.7953], [0.0, 0.4464], [0.0], [0.0, 0.5672], [0.0, 0.1765, 0.3059, 0.4235, 0.5647], [0.0, 0.25, 0.5, 0.75], [0.0], [0.0]];
 const cf = (i, k) => (T[i].end - T[i].start) * CH[i][k], at = (i, k, dt) => L(i) + cf(i, k) + (dt || 0);
 [[4, 1], [19, 1], [19, 3]].forEach(([i, k]) => rec(at(i, k) - 0.08, 'swipe', 0.28, 0.6, 0.42, 1.0, 'whoosh', 0.2));
-// 0–2 · hook: three quarters lit up, the plate, the cut piece slides away
-ding(L(0) + 0.7); paper(L(1) + 0.1); scribble(L(1) + 1.4); a(L(2) + 0.1, 'whoosh', 0.2, 1.2); paper(L(2) + 0.35);
+// Sparse and on-topic, like «لو عربيتك وقعت في المية»: synthesized foley for what moves (fill, staples, drips, bell, heart),
+// the kit's flip for shot changes, the pencil only for a ✗. Labels get a soft tick, numbers a ding.
+// 0–2 · hook: three quarters light up, a plate is set down, the cut piece slides away
+ding(L(0) + 0.7); a(L(1) + 0.15, 'clink', 0.18); a(L(1) + 1.4, 'tick', 0.2); a(L(2) + 0.1, 'whoosh', 0.18, 1.2);
 // 4 · where it is, then it fills to 1.5 L
-lab(4, 0.6); a(L(4) + 0.2, 'pop', 0.25); rec(at(4, 1, 0.6), 'water-rush', 0.16, 3, 1.8, 1.0, 'slosh', 0.2); ding(at(4, 1, 1.2));
-// 5 · five ports, one pop each; the long tools slide in; the big cut crossed out
-for (let k = 0; k < 5; k++) a(L(5) + 0.3 + k * 0.32, 'pop', 0.25); a(L(5) + 1.3, 'whoosh', 0.15, 0.8); lab(5, 1.0); scribble(at(5, 1, 0.3));
-// 6 · the stapler: a click every few staples as it runs down; the labels
-for (let k = 0; k < 7; k++) a(L(6) + 0.3 + k * 0.4, 'snip', 0.22); lab(6, 0.6); lab(6, cf(6, 1) + 0.2);
-// 7 · the cut piece leaves; banana box; it fills to 150 ml
-a(L(7) + 0.1, 'whoosh', 0.2, 1.1); paper(L(7) + 0.8); lab(7, 1.2); rec(L(7) + 1.8, 'water-rush', 0.13, 3, 1.4, 1.0, 'slosh', 0.15); ding(L(7) + 2.4);
+lab(4, 0.6); a(at(4, 1, 0.6), 'fill', 0.22, 1.8); ding(at(4, 1, 1.25));
+// 5 · five ports, the long tools slide in, the big cut crossed out
+for (let k = 0; k < 5; k++) a(L(5) + 0.3 + k * 0.32, 'clink', 0.1); a(L(5) + 1.3, 'wipe', 0.18, 0.5); scribble(at(5, 1, 0.3));
+// 6 · the stapler fires its way down the stomach
+for (let k = 0; k < 4; k++) a(L(6) + 0.35 + k * 0.7, 'staple', 0.32); lab(6, 0.6); lab(6, cf(6, 1) + 0.2);
+// 7 · the cut piece leaves; it fills to 150 ml
+a(L(7) + 0.1, 'whoosh', 0.18, 1.1); lab(7, 1.2); a(L(7) + 1.8, 'fill', 0.16, 1.4); ding(L(7) + 2.4);
 // 8 · bottle to tea glass
-a(L(8) + 1.1, 'whoosh', 0.15); a(L(8) + 1.5, 'pop', 0.3);
+a(L(8) + 1.1, 'whoosh', 0.14); a(L(8) + 1.45, 'clink', 0.2, 0.9);
 // 9 · the question
-a(L(9) + 0.2, 'pop', 0.3);
-// 10–11 · ghrelin dots pop in; the bell rings, then goes quiet
-for (let k = 0; k < 6; k++) a(L(10) + 0.25 + k * 0.2, 'tick', 0.14); lab(10, 1.0); a(at(10, 1), 'chime', 0.25); a(at(10, 1, 0.5), 'chime', 0.18);
-a(L(11) + 0.1, 'whoosh', 0.2, 1.2); a(at(11, 1), 'chime', 0.08); scribble(at(11, 2, 0.2));
+a(L(9) + 0.2, 'pop', 0.22);
+// 10–11 · ghrelin dots; the bell rings, then goes quiet as the part is taken away
+lab(10, 1.0); [1319, 1760, 1319, 1760].forEach((fr, k) => c.push({ t: +(at(10, 1) + k * 0.12).toFixed(2), fx: 'bell', gain: 0.22, f: fr }));
+a(L(11) + 0.1, 'whoosh', 0.18, 1.2); c.push({ t: +at(11, 1, 0.1).toFixed(2), fx: 'bell', gain: 0.07, f: 1319 }); a(at(11, 2, 0.2), 'tick', 0.2);
 // 12 · the curve draws down; 60% lands
-a(L(12) + 0.4, 'whoosh', 0.12, 2.2); ding(L(12) + 2.6);
-// 13 · three ticks, then «sometimes it goes»
-scribble(L(13) + 1.3); scribble(L(13) + 1.75); scribble(L(13) + 2.2); paper(at(13, 1)); scribble(at(13, 1, 0.5));
+a(L(12) + 0.4, 'whoosh', 0.1, 2.2); ding(L(12) + 2.6);
+// 13 · three checks, then «sometimes it goes»
+for (let k = 0; k < 3; k++) a(L(13) + 1.3 + k * 0.45, 'tick', 0.2); scribble(at(13, 1, 0.5));
 // 14 · the BMI formula and the two numbers
-paper(at(14, 1, -0.2)); ding(at(14, 1, 0.3)); a(at(14, 2, 0.2), 'pop', 0.3); a(at(14, 2, 0.8), 'pop', 0.25);
+ding(at(14, 1, 0.3)); a(at(14, 2, 0.2), 'pop', 0.2);
 // 15 · the wedding, crossed out
-paper(L(15) + 0.3); scribble(L(15) + 1.3);
-// 16 · leaking drops, 1%
-paper(at(16, 1)); for (let k = 0; k < 3; k++) a(at(16, 2, 0.2 + k * 0.5), 'bump', 0.18); lab(16, cf(16, 2) + 0.3); ding(at(16, 3));
-// 17 · pressure arrows, acid climbing
-for (let k = 0; k < 3; k++) a(L(17) + 0.4 + k * 0.1, 'tick', 0.14); a(L(17) + 0.8, 'squeeze', 0.18, 0.8); lab(17, 1.4);
-// 18 · plate, pills, anaemia
-rec(at(18, 1), 'paper', 0.35, 0, 0.5, 1.0, 'paper', 0.3); a(at(18, 1, 0.2), 'slosh', 0.12, 0.5); a(at(18, 2), 'pop', 0.25);
-// 19 · hair falling, the queue (heart beats), it grows back
-paper(L(19) + 1.0); a(at(19, 1, 0.2), 'bump', 0.22); a(at(19, 1, 0.5), 'bump', 0.18); a(at(19, 1, 0.8), 'pop', 0.25); a(at(19, 2), 'pop', 0.2); paper(at(19, 3, 0.2)); scribble(at(19, 3, 0.6));
+scribble(L(15) + 1.3);
+// 16 · drops leaking from the staple line, 1%
+for (let k = 0; k < 3; k++) a(at(16, 2, 0.2 + k * 0.45), 'drip', 0.3); ding(at(16, 3));
+// 17 · pressure, the acid climbing
+a(L(17) + 0.5, 'squeeze', 0.16, 1.0); lab(17, 1.4);
+// 18 · pills for life, anaemia
+a(at(18, 1, 0.1), 'rattle', 0.25); a(at(18, 2), 'pop', 0.18);
+// 19 · hair falls, the queue (the heart beats first), it grows back
+a(L(19) + 0.4, 'whoosh', 0.1, 1.4); a(at(19, 1, 0.2), 'heart', 0.4); a(at(19, 1, 0.9), 'heart', 0.35); a(at(19, 2), 'pop', 0.16); a(at(19, 3, 0.6), 'tick', 0.2);
 // 20 · no way back
-paper(L(20) + 0.3); a(L(20) + 0.6, 'whoosh', 0.12); scribble(L(20) + 1.0);
+scribble(L(20) + 1.0);
 // 21 · the myth, crossed out, «لأ»
-paper(L(21) + 0.2); scribble(L(21) + 1.6); a(L(21) + 1.9, 'pop', 0.35);
-// 22 · a can, a cake, the sleeve stretches, the scale goes up
-a(L(22) + 0.1, 'pop', 0.25); a(L(22) + 0.5, 'pop', 0.25); a(at(22, 1), 'squeeze', 0.2, 1.4); a(at(22, 1, 1.2), 'pop', 0.3);
-// 23 · recap: four things land
-paper(L(23) + 0.05); for (let k = 1; k <= 4; k++) a(at(23, k), 'pop', 0.25);
+scribble(L(21) + 1.6);
+// 22 · a fizzy can, a cake, the sleeve stretches
+a(L(22) + 0.1, 'fizz', 0.18, 1.0); a(at(22, 1), 'squeeze', 0.14, 1.4);
+// 23 · recap: four soft notes climbing as the four things land
+[1047, 1175, 1319, 1568].forEach((fr, k) => c.push({ t: +at(23, k + 1).toFixed(2), fx: 'bell', gain: 0.14, f: fr }));
 // 24 · two steps, the second crossed out, one is enough
-callouts: { a(L(24) + 0.3, 'pop', 0.25); a(at(24, 1, -0.4), 'pop', 0.25); scribble(at(24, 2, 0.2)); paper(at(24, 3)); scribble(at(24, 3, 0.4)); }
+scribble(at(24, 2, 0.2)); a(at(24, 3, 0.4), 'tick', 0.2);
 
 // music plays only when sfx.py is run with --music, and that only when the user asked for music in this video
 const MUSIC = has('music-soft') ? 'music-soft' : null;

@@ -256,6 +256,20 @@ def fx_chime(d=1.0):          # docked / charging: rising three-note chime
     return x
 def fx_bell(d=0.9, f=880):    # a soft bell note at pitch f (a scale: pass "f" in the cue)
     t = t_(d); return (np.sin(2 * np.pi * f * t) + 0.3 * np.sin(2 * np.pi * 2 * f * t) * np.exp(-t * 4)) * np.exp(-t * 5) * env(len(t), .004, .05)
+def fx_staple(d=0.35):        # surgical stapler firing: a dry mechanical "ka-chunk" (latch click, body thunk, second click)
+    t = t_(d); c = lambda t0, f, k, g: g * (t >= t0) * np.sin(2 * np.pi * f * np.maximum(0, t - t0)) * np.exp(-np.maximum(0, t - t0) * k)
+    x = c(0, 3100, 90, .7) + c(0, 4700, 140, .4) + c(.045, 190, 35, 1.0) + c(.045, 520, 60, .5) + c(.11, 2600, 110, .55)
+    x += 0.5 * hp_fast(noise(len(t)), 2500) * (np.exp(-t * 160) + 0.6 * (t >= .11) * np.exp(-np.maximum(0, t - .11) * 200))
+    return x.astype(np.float32)
+def fx_heart(d=0.6):          # one heartbeat: lub-dub, low and soft
+    t = t_(d); h = lambda t0, f, g: g * (t >= t0) * np.sin(2 * np.pi * (f * np.exp(-np.maximum(0, t - t0) * 8) + 30) * np.maximum(0, t - t0)) * np.exp(-np.maximum(0, t - t0) * 22)
+    return lp_fast((h(0, 70, 1.0) + h(0.17, 85, 0.7)).astype(np.float32), 400, 1)
+def fx_rattle(d=0.5):         # pills shaken in a plastic bottle
+    n = int(d * SR); x = np.zeros(n, np.float32)
+    for _ in range(int(40 * d)):
+        s = int(rng.random() * (n - 900)); L = int(rng.uniform(300, 900)); tt = np.arange(L) / SR
+        x[s:s + L] += rng.uniform(.3, 1) * np.sin(2 * np.pi * rng.uniform(2500, 4200) * tt) * np.exp(-tt * 260)
+    return x * np.sin(np.pi * np.arange(n) / n) ** .5
 def fx_notify(d=0.6):         # phone notification: two soft bubbles
     t = t_(d); x = np.zeros(len(t), np.float32)
     for t0, f in [(0, 880), (0.14, 1175)]:
