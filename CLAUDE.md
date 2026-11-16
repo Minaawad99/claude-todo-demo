@@ -8,6 +8,8 @@
   and YouTube Shorts titles, without being asked.
   The reference episode is «المد والجزر» (`videos/tides/`), the shared template `videos/_templates/sketch/`
   (its README lists the drawing helpers), the sound kit `videos/_templates/sketch/sfx/`.
+- **Sketch episodes get a final sound pass with the `real-sfx` skill and `--ui library`** (real recordings only, no uisfx),
+  never `bed.py` or music; details in the sketch skill, section 5.
 - **Sound without asking: sound effects only, in every video and every skill.** No background music of any kind
   unless the user asks for it for that video.
   `videos/audio/sfx.py` leaves music out unless run with `--music`; never pass it on your own.

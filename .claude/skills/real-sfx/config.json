@@ -1,9 +1,17 @@
 {
-  "libraries": [],
+  "libraries": [
+    {
+      "name": "sketch-kit",
+      "path": "/home/user/claude-todo-demo/.claude/skills/real-sfx/libraries/sketch-kit",
+      "tier": "main"
+    }
+  ],
   "uisfx": {
     "path": "vendor/node_modules/uisfx",
     "default_pack": "studio"
   },
-  "skip_dir_names": ["_mister horse previews"],
+  "skip_dir_names": [
+    "_mister horse previews"
+  ],
   "index_path": "library_index.json"
 }

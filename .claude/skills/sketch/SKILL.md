@@ -19,7 +19,8 @@ every episode.
 1. **The drawing style of that episode**, including people drawn with real body proportions (section 3).
 2. **No background music.** Not the music box, not any other bed. The sound is the narrator plus sound effects only.
    The one exception is the user asking for music in a specific video (section 5); it doesn't carry over to the next one.
-3. **You make the sound effects** from the kit, the episode's own clips and `audio/sfx.py`'s synthesized ones. When a moment
+3. **You make the sound effects** from the kit, the episode's own clips and `audio/sfx.py`'s synthesized ones, then run
+   the final pass with the `real-sfx` skill and `--ui library`: real recordings only (section 5). When a moment
    needs a real recording the kit doesn't have, ask the user for it by name with Pixabay search terms; they fetch it.
 4. **Always finish with the reel cover and the titles** (section 7), without being asked: TikTok, Instagram (shared to the
    Facebook page) and YouTube Shorts. It copies the look, pacing and narration of the «طب إزاي؟» series: 20 reference videos, measured in
@@ -207,6 +208,27 @@ Add one or two sounds per line matched to what moves (`lab`, `ding`, `scribble`,
 `node cues.js && python3 ../audio/sfx.py voice.wav cues.json <scratchpad>/<slug>-mix.wav`.
 
 Credit every clip in `refs/SOURCES.md`.
+
+**Final sound pass: the `real-sfx` skill with `--ui library` (the user's choice, for every sketch episode).** Once the
+cues are placed, real-sfx picks and places the sounds from real recordings only. `--ui library` keeps it off uisfx, which
+is synthesized. Its library is `.claude/skills/real-sfx/libraries/sketch-kit/`: links to the kit's SFX clips and the
+episodes' `px-*` recordings, with the two music tracks left out on purpose. When an episode adds a new recorded clip, link
+it there too and run `python3 -I scripts/build_index.py`. Run it from the skill folder, with the work files in the
+scratchpad:
+```
+TAIL=3 node render.js $PWD/<slug>/sketch/index.html <slug>/voice.wav <scratchpad>/<slug>-voice.mp4   # narrator only
+python3 -I scripts/from_cues.py <abs>/<slug>/cues.json --video <scratchpad>/<slug>-voice.mp4 --out <scratchpad>/rsfx/cues.json --ui library
+python3 -I scripts/mix.py <scratchpad>/rsfx/cues.json --out <scratchpad>/rsfx/<slug>.mp4 --voice-safe --plan   # check, then without --plan
+python3 -I scripts/critique.py <scratchpad>/rsfx/<slug>_resolved_cues.json <scratchpad>/rsfx/<slug>_sfx_track.wav
+```
+- **The locked rules still hold over real-sfx's defaults.** No `bed.py`: a bed is background sound, and the sketch rule
+  bans it. Never `--music`, `--duck` on a music track, or the kit's `px-music-*`. `texture.py` (small SFX in the gaps)
+  is allowed.
+- A moment the library can't voice stays quiet and shows up in real-sfx's report. Ask the user for that sound with
+  Pixabay terms, as above. Don't fill it with synthesis.
+- Then finish as in section 6: the `volume`/`alimiter` chain on the mix.py output, and `qa.py` must say PASS. You can
+  remux the new mix onto the full render too, since it's a sound-only change.
+- Tell the user which picks were checked by eye or by measurement and which ones to listen to. real-sfx can't hear.
 
 ## 6. Render and QA (in the background, about 20 minutes for a 106 s video)
 
