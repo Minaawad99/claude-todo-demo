@@ -25,14 +25,15 @@ function along(pts, k) {
 }
 
 // ── the stomach, front view, world units (it fills about 380×560 around 330,380) ──
-var GC = [[300, 188], [330, 128], [392, 94], [458, 112], [503, 172], [524, 258], [524, 360], [504, 462], [462, 560], [402, 618], [336, 634], [276, 618], [222, 594], [182, 566], [156, 538]],   // greater curve, His → pylorus (bottom)
-    LC = [[152, 494], [196, 497], [233, 470], [251, 420], [259, 350], [257, 270], [255, 190]],   // lesser curve, pylorus (top) → gullet (left edge)
-    SL = [[300, 188], [313, 250], [318, 320], [313, 392], [303, 452], [308, 532], [336, 634]],   // the staple line, His → antrum (ends on GC[10])
-    OES_L = [[255, 190], [248, 90], [240, -80]], OES_R = [[300, 188], [292, 90], [286, -80]],
-    DUO = [[154, 516], [116, 520], [86, 546], [74, 600], [84, 690]];
-var P_FULL = curve(GC) + " L152 494" + curve(LC, 1) + " Z",
-    P_SLEEVE = curve(SL) + curve(GC.slice(10), 1) + " L152 494" + curve(LC, 1) + " Z",
-    P_CUT = curve(GC.slice(0, 11)) + curve(rev(SL), 1) + " Z";
+// traced from the NCI stomach plate (refs/SOURCES.md, refs/stomach-nci.jpg): world = 30 + 1.75 × plate px
+var GC = [[315, 166], [324, 119], [350, 75], [398, 54], [450, 61], [490, 96], [518, 148], [534, 224], [538, 302], [529, 390], [510, 464], [478, 523], [436, 565], [385, 593], [328, 604], [275, 595], [230, 572], [194, 548], [177, 534]],   // greater curve, angle of His → pylorus (bottom)
+    LC = [[180, 411], [205, 397], [231, 404], [254, 432], [278, 427], [292, 386], [294, 334], [291, 285], [282, 250]],   // pylorus (top) → angular notch → lesser curve → cardia
+    SL = [[315, 166], [331, 215], [340, 285], [340, 355], [331, 416], [319, 469], [306, 521], [292, 565], [275, 595]],   // the staple line: His → about 5 cm before the pylorus (ends on GC[15])
+    OES_L = [[282, 250], [254, 206], [226, 148], [205, 84], [191, -12], [186, -90]], OES_R = [[315, 166], [292, 145], [268, 110], [247, 58], [236, -12], [232, -90]],
+    DUO = [[184, 472], [138, 470], [100, 464], [65, 481], [51, 539], [62, 640]];
+var PY = [180, 411], P_FULL = curve(GC) + " L180 411" + curve(LC, 1) + " Z",
+    P_SLEEVE = curve(SL) + curve(GC.slice(15), 1) + " L180 411" + curve(LC, 1) + " Z",
+    P_CUT = curve(GC.slice(0, 16)) + curve(rev(SL), 1) + " Z";
 // an organ: flat fill, a darker band just inside the outline (the wall), light hatching, ink outline
 function organ(d, fill, band, sw) {
   var id = "og" + (++CLIPN);
@@ -42,9 +43,9 @@ function organ(d, fill, band, sw) {
 }
 // soft folds (rugae) inside the stomach, clipped to a shape
 function rugae(d, op) {
-  var id = "rg" + (++CLIPN), s = "";
-  for (var i = 0; i < 9; i++) { var y = 150 + i * 52; s += '<path d="M120 ' + (y + 40) + ' C220 ' + (y - 10) + ' 300 ' + (y + 30) + ' 380 ' + (y - 6) + ' S500 ' + (y + 20) + ' 560 ' + (y - 20) + '" stroke="' + FOLD + '" stroke-width="2.4" fill="none" opacity="' + (op || .55) + '"/>'; }
-  return '<clipPath id="' + id + '"><path d="' + d + '"/></clipPath><g clip-path="url(#' + id + ')">' + s + '</g>';
+  var id = "rg" + (++CLIPN), sx = "";
+  for (var i = 0; i < 9; i++) { var x0 = 250 + i * 32, q = ""; for (var y = 40; y <= 640; y += 20) { var x = x0 + 12 * Math.sin(y / 36 + i * 1.7) - (y > 420 ? (y - 420) * .45 : 0); q += (y === 40 ? "M" : " L") + f(x) + " " + y; } sx += '<path d="' + q + '" stroke="' + FOLD + '" stroke-width="2.4" fill="none" stroke-linejoin="round" opacity="' + (op || .55) + '"/>'; }
+  return '<clipPath id="' + id + '"><path d="' + d + '"/></clipPath><g clip-path="url(#' + id + ')">' + sx + '</g>';
 }
 // a liquid filling a shape from the bottom: lvl 0..1 of the box y0..y1, the surface wobbles with t
 function fillIn(d, lvl, t, y0, y1, col) {
@@ -52,9 +53,9 @@ function fillIn(d, lvl, t, y0, y1, col) {
   for (var x = 60; x <= 600; x += 20) w += (x === 60 ? "M" : " L") + x + " " + f(y + 4 * Math.sin(x / 40 + t * 3));
   return '<clipPath id="' + id + '"><path d="' + d + '"/></clipPath><g clip-path="url(#' + id + ')"><path d="' + w + ' L600 900 L60 900 Z" fill="' + (col || "#9fbccb") + '" opacity=".85"/><path d="' + w + '" stroke="' + INK + '" stroke-width="1.6" fill="none"/></g>';
 }
-function gullet(hl) { return organ(curve(OES_L) + " L" + OES_R[2].join(" ") + curve(rev(OES_R), 1).replace(/^ C/, " C") + " Z", hl ? "#e7a58f" : GUT, WALLD, 2.4); }
-function duodenum() { var d = curve(DUO); return '<path d="' + d + '" stroke="' + INK + '" stroke-width="46" fill="none" stroke-linecap="round"/><path d="' + d + '" stroke="' + GUT + '" stroke-width="41" fill="none" stroke-linecap="round"/><path d="' + d + '" stroke="' + WALLD + '" stroke-width="2" fill="none" opacity=".5"/>'; }
-function pylorus() { return '<path d="M150 490 Q140 515 152 540" stroke="' + INK + '" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M150 490 Q140 515 152 540" stroke="' + WALLD + '" stroke-width="3" fill="none" stroke-linecap="round"/>'; }
+function gullet(hl) { return organ(curve(OES_L) + " L" + OES_R[OES_R.length - 1].join(" ") + curve(rev(OES_R), 1) + " Z", hl ? "#e7a58f" : GUT, WALLD, 2.4); }
+function duodenum() { var d = curve(DUO); return '<path d="' + d + '" stroke="' + INK + '" stroke-width="74" fill="none" stroke-linecap="round"/><path d="' + d + '" stroke="' + GUT + '" stroke-width="68" fill="none" stroke-linecap="round"/><path d="' + d + '" stroke="' + WALLD + '" stroke-width="2" fill="none" opacity=".4" stroke-dasharray="4 10"/>'; }
+function pylorus() { return '<path d="M180 414 Q166 472 178 531" stroke="' + INK + '" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M180 414 Q166 472 178 531" stroke="' + WALLD + '" stroke-width="6" fill="none" stroke-linecap="round"/>'; }
 // staples along the staple line, drawn up to k
 function staples(k, col) {
   k = clamp(k); if (k <= 0) return ""; var s = draw(curve(SL), k, col || INK, 3);
@@ -68,7 +69,7 @@ function stomach(t, o) {
   o = o || {}; var s = duodenum() + gullet(o.hlGullet);
   var cutK = clamp(o.cut || 0), dx = 150 * ease(cutK), dy = -40 * ease(cutK), rot = 14 * ease(cutK);
   var sleeveD = P_SLEEVE;
-  if (o.stretch) { var k = o.stretch, SL2 = SL.map(function (p, i) { return [p[0] + k * 30 * Math.sin(i / (SL.length - 1) * Math.PI), p[1]]; }); sleeveD = curve(SL2) + curve(GC.slice(10), 1) + " L152 494" + curve(LC, 1) + " Z"; }
+  if (o.stretch) { var k = o.stretch, SL2 = SL.map(function (p, i) { return [p[0] + k * 30 * Math.sin(i / (SL.length - 1) * Math.PI), p[1]]; }); sleeveD = curve(SL2) + curve(GC.slice(15), 1) + " L180 411" + curve(LC, 1) + " Z"; }
   if (o.full) { s += organ(P_FULL, WALL) + (o.folds !== 0 ? rugae(P_FULL) : ""); }
   else {
     s += organ(sleeveD, o.hlSleeve ? "#e7a58f" : WALL) + (o.folds !== 0 ? rugae(sleeveD) : "");
@@ -82,8 +83,9 @@ function stomach(t, o) {
   return s;
 }
 // ghrelin: orange dots, most of them in the fundus and the upper body (the part that is removed), a few in the sleeve
-var GDOTS = (function () { var a = [], i = 0, n = 0; while (a.length < 46 && n < 4000) { n++; var x = 300 + hash(n) * 230, y = 100 + hash(n + 999) * 420; if (y < 140 + (x - 300) * -.2 || x > 515 - Math.max(0, (y - 300)) * .25 || x < 322) continue; a.push([x, y, hash(n + 7)]); } return a; })(),
-    GSLEEVE = [[282, 260], [290, 330], [278, 400], [286, 470], [268, 520]];
+function inPath(d, x, y) { try { var c = document.createElement("canvas").getContext("2d"); return c.isPointInPath(new Path2D(d), x, y); } catch (e) { return false; } }
+var GDOTS = (function () { var a = [], n = 0; while (a.length < 50 && n < 6000) { n++; var x = 330 + hash(n) * 210, y = 70 + hash(n + 999) * 500; if (inPath(P_CUT, x, y) && inPath(P_CUT, x - 14, y) && inPath(P_CUT, x + 14, y) && inPath(P_CUT, x, y - 14) && inPath(P_CUT, x, y + 14)) a.push([x, y, hash(n + 7)]); } return a; })(),
+    GSLEEVE = [[316, 250], [318, 320], [314, 390], [298, 470], [262, 520]];
 function ghrelin(t, k, inCut, dx, dy) {
   var s = ""; GDOTS.forEach(function (p, i) { if (!inCut) return; var r = 5.5 + 1.6 * Math.sin(t * 4 + i); s += G("", '<circle cx="' + f(p[0] + (dx || 0)) + '" cy="' + f(p[1] + (dy || 0)) + '" r="' + f(r) + '" fill="' + GHREL + '" stroke="' + INK + '" stroke-width="1.1"/>', clamp(k * 3 - p[2] * 2)); });
   GSLEEVE.forEach(function (p, i) { s += G("", '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + f(5 + 1.4 * Math.sin(t * 4 + i)) + '" fill="' + GHREL + '" stroke="' + INK + '" stroke-width="1.1"/>', clamp(k * 2)); });
@@ -170,7 +172,7 @@ function trunk(t, o) {
   s += P("M180 60 C230 200 300 260 320 280 C340 260 410 200 460 60", "none", 2.4) + '<path d="M320 40 V280" stroke="' + SKIN2 + '" stroke-width="3"/>';
   for (var i = 0; i < 4; i++) s += '<path d="M' + (200 + i * 10) + ' ' + (80 + i * 40) + ' Q260 ' + (110 + i * 40) + ' 310 ' + (100 + i * 40) + ' M' + (440 - i * 10) + ' ' + (80 + i * 40) + ' Q380 ' + (110 + i * 40) + ' 330 ' + (100 + i * 40) + '" stroke="' + SKIN2 + '" stroke-width="2.4" fill="none"/>';
   s += '<ellipse cx="320" cy="560" rx="9" ry="12" fill="' + SKIN2 + '" stroke="' + INK + '" stroke-width="2"/>';
-  if (o.organ) s += G("", G("translate(262 190) scale(.42)", stomach(t, { full: 1, folds: 0 })), o.organ);
+  if (o.organ) s += G("", G("translate(226 177) scale(.42)", stomach(t, { full: 1, folds: 0 })), o.organ);
   return s;
 }
 // the 5 keyhole ports: camera above the navel, two on each side, one under the breastbone (liver retractor)
@@ -218,17 +220,17 @@ function head(x, y, s, hair, t) {   // a side-view head (face to the left) with 
 // ── shots (one per idea; line numbers from script.txt) ──
 // 4 · where it is: the trunk, the stomach under the left ribs; then into the stomach, a slanting bag, filling to 1.5 L
 shot(4, push(330, 340, 1.0, 1.12), function (u, d, t) {
-  return paper() + trunk(t, { organ: at(u, .2, .5) }) + label(400, 260, 470, 150, "المعدة", OLIVE, at(u, .6, .5), 28) + G("", T("؟", 160, 200, 110, ORANGE, 800), at(u, .2, .3));
+  return paper() + trunk(t, { organ: at(u, .2, .5) }) + label(380, 300, 470, 160, "المعدة", OLIVE, at(u, .6, .5), 28) + G("", T("؟", 160, 200, 110, ORANGE, 800), at(u, .2, .3));
 });
 shot([4, 1], push(330, 380, 1.12, 1.0), function (u, d, t) {
   var lv = at(u, .6, 1.8) * (.84 + .02 * Math.sin(t * 2));
-  return paper() + stomach(t, { full: 1, fill: lv }) + label(300, 140, 180, 70, "كيس مايل", OLIVE, at(u, .1, .4), 24) + numBox("1.5 L", 520, 700, at(u, 1.2, .3), 30);
+  return paper() + stomach(t, { full: 1, fill: lv }) + label(420, 120, 140, 110, "كيس مايل", OLIVE, at(u, .1, .4), 24) + numBox("1.5 L", 520, 700, at(u, 1.2, .3), 30);
 }, { tr: "in" });
 // 5 · keyhole surgery: 5 ports in the belly, long instruments in; no big cut
 hud(5, 6, function (u, t) { var n = 0; PORTS.forEach(function (p, i) { if (u > .3 + i * .32) n = i + 1; }); var s = ""; for (var i = 0; i < 5; i++) s += '<circle cx="' + (232 + i * 44) + '" cy="60" r="17" fill="' + (i < n ? ORANGE : PAPER) + '" stroke="' + INK + '" stroke-width="2"/>' + N(String(i + 1), 232 + i * 44, 67, 18, i < n ? "#fff" : INK); return s; });
 shot(5, push(330, 420, 1.0, 1.08), function (u, d, t) {
   var s = paper() + trunk(t, {}), c2 = cf(5, 1);
-  s += G("", G("translate(262 190) scale(.42)", stomach(t, { full: 1, folds: 0 })), .35);
+  s += G("", G("translate(226 177) scale(.42)", stomach(t, { full: 1, folds: 0 })), .35);
   PORTS.forEach(function (p, i) { s += port(p[0], p[1], at(u, .3 + i * .32, .3)); });
   var ends = [[320, 760], [600, 220], [640, 420], [20, 300], [320, 120]];
   PORTS.forEach(function (p, i) { if (i === 0 || i === 4) return; s += rod(p[0], p[1], ends[i][0], ends[i][1], at(u, 1.2 + i * .1, .5)); });
@@ -241,14 +243,14 @@ shot(6, push(340, 380, 1.12, 1.0), function (u, d, t) {
   var c2 = cf(6, 1), k = at(u, .2, 2.8);
   var s = paper() + stomach(t, { hlCut: at(u, .3, .5), sl: k, slCol: k < 1 ? INK : OLIVE });
   if (k < 1) s += stapler(k, t);
-  s += label(440, 300, 420, 50, "الجنب الكبير", ORANGE, at(u, .6, .5), 24) + label(310, 420, 140, 330, "دبابيس", OLIVE, at(u, c2 + .2, .5), 24);
+  s += label(440, 300, 420, 80, "الجنب الكبير", ORANGE, at(u, .6, .5), 24) + label(331, 420, 160, 330, "دبابيس", OLIVE, at(u, c2 + .2, .5), 24);
   return s;
 });
 // 7 · what is left: a thin tube like a banana, about 150 ml
 shot(7, push(320, 390, 1.0, 1.1), function (u, d, t) {
   var cut = at(u, 0, 1.2), lv = at(u, 1.8, 1.4) * (.86 + .02 * Math.sin(t * 2));
   return paper() + GHOST() + stomach(t, { cut: cut, gone: cut >= 1, sl: 1, slCol: OLIVE, fill: lv }) + iconBox(510, 140, 130, banana(), at(u, .8, .3)) + G("", T("زي الموزة", 510, 230, 22, OLIVE, 800), at(u, 1.0, .3)) +
-    numBox("150 ml", 500, 560, at(u, 2.4, .3), 30, true) + label(300, 420, 140, 300, "الأنبوبة", OLIVE, at(u, 1.2, .5), 24);
+    numBox("150 ml", 500, 560, at(u, 2.4, .3), 30, true) + label(310, 360, 170, 300, "الأنبوبة", OLIVE, at(u, 1.2, .5), 24);
 }, { tr: "fade" });
 // 8 · a big water bottle becomes a tea glass
 shot(8, push(320, 420, 1.06, 1.0), function (u, d, t) {
@@ -262,9 +264,9 @@ shot(9, push(320, 400, 1.0, 1.08), function (u, d, t) {
   return paper() + GHOST() + stomach(t, { gone: 1, sl: 1, slCol: OLIVE }) + G("translate(0 " + f(6 * Math.sin(t * 3)) + ")", T("؟", 470, 360, 170, ORANGE, 800), at(u, .2, .3)) + G("", T("الجوع", 470, 470, 34, INK, 800), at(u, .5, .3));
 });
 // 10 · the part that goes made ghrelin, the hunger bell
-shot(10, push(360, 340, 1.0, 1.12), function (u, d, t) {
-  return paper() + stomach(t, { full: 1, ghrel: at(u, .2, 1.4), sl: 1, slCol: "#a89f8c" }) + label(470, 250, 400, 700, "الجريلين", ORANGE, at(u, 1.0, .5), 26) +
-    iconBox(150, 140, 150, bell(0, 6, .9, t, 1), at(u, cf(10, 1), .3)) + G("", T("جرس الجوع", 150, 250, 22, ORANGE, 800), at(u, cf(10, 1) + .2, .3));
+shot(10, push(340, 360, 1.0, 1.1), function (u, d, t) {
+  return paper() + stomach(t, { full: 1, ghrel: at(u, .2, 1.4), sl: 1, slCol: "#a89f8c" }) + label(470, 250, 150, 300, "الجريلين", ORANGE, at(u, 1.0, .5), 26) +
+    iconBox(175, 150, 150, bell(0, 6, .9, t, 1), at(u, cf(10, 1), .3)) + G("", T("جرس الجوع", 175, 260, 22, ORANGE, 800), at(u, cf(10, 1) + .2, .3));
 });
 // 11 · it is taken away, the bell goes quiet, and eating is easier to control
 shot(11, push(330, 360, 1.08, 1.0), function (u, d, t) {
@@ -309,18 +311,18 @@ shot(15, push(320, 420, 1.06, 1.0), function (u, d, t) {
   return s;
 });
 // 16 · the risks: bleeding or a leak from the staples, about 1 in 100
-shot(16, push(320, 440, 1.6, 1.75), function (u, d, t) {
+shot(16, push(340, 420, 1.6, 1.75), function (u, d, t) {
   var c3 = cf(16, 2), c4 = cf(16, 3), lk = (u - c3) * .8, s = paper() + stomach(t, { gone: 1, sl: 1, slCol: OLIVE });
-  if (u > c3) for (var i = 0; i < 4; i++) { var p = ((lk + i / 4) % 1); s += G("", drop(318 + p * 60, 440 + p * 40 + i * 6, .45 + .1 * i % 2, i % 2 ? "#b8402f" : "#c9a34a"), clamp(lk * 2) * (1 - p)); }
-  s += G("", tag("زي أي عملية", 320, 250, 1, 22, INK), at(u, cf(16, 1), .3)) + label(312, 400, 420, 330, "تسريب", ORANGE, at(u, c3 + .3, .5), 20) + numBox("1%", 410, 560, at(u, c4, .3), 30, true);
+  if (u > c3) for (var i = 0; i < 4; i++) { var p = ((lk + i / 4) % 1); s += G("", drop(338 + p * 60, 430 + p * 40 + i * 6, .45 + .1 * i % 2, i % 2 ? "#b8402f" : "#c9a34a"), clamp(lk * 2) * (1 - p)); }
+  s += G("", tag("زي أي عملية", 320, 250, 1, 22, INK), at(u, cf(16, 1), .3)) + label(334, 400, 440, 330, "تسريب", ORANGE, at(u, c3 + .3, .5), 20) + numBox("1%", 410, 560, at(u, c4, .3), 30, true);
   return s;
 }, { tr: "in" });
 // 17 · reflux: the narrow tube is under pressure and pushes the acid up the gullet
 shot(17, push(300, 260, 1.15, 1.05), function (u, d, t) {
   var s = paper() + stomach(t, { gone: 1, sl: 1, slCol: OLIVE, hlGullet: at(u, 1.6, .5) }), k = at(u, .8, .6);
-  for (var i = 0; i < 4; i++) s += arrow(330, 260 + i * 70, 300, 260 + i * 70, BLUE, 3.5, at(u, .4 + i * .1, .3)) + arrow(220, 290 + i * 70, 250, 290 + i * 70, BLUE, 3.5, at(u, .4 + i * .1, .3));
-  if (k > 0) s += '<path d="M276 330 L272 190 L266 40 L262 -60" stroke="' + ORANGE + '" stroke-width="9" fill="none" stroke-linecap="round" stroke-dasharray="4 18" stroke-dashoffset="' + f(t * 50) + '" opacity="' + f(k) + '"/>';
-  s += label(270, 80, 420, 40, "ارتجاع", ORANGE, at(u, 1.4, .5), 26) + G("", T("ضغط", 410, 420, 26, BLUE, 800), at(u, .7, .3));
+  for (var i = 0; i < 3; i++) s += arrow(380, 270 + i * 60, 348, 270 + i * 60, BLUE, 3.5, at(u, .4 + i * .1, .3)) + arrow(250, 300 + i * 60, 284, 300 + i * 60, BLUE, 3.5, at(u, .4 + i * .1, .3));
+  if (k > 0) s += '<path d="M312 380 L310 260 L268 180 L236 100 L218 0 L210 -80" stroke="' + ORANGE + '" stroke-width="9" fill="none" stroke-linecap="round" stroke-dasharray="4 18" stroke-dashoffset="' + f(t * 50) + '" opacity="' + f(k) + '"/>';
+  s += label(234, 100, 420, 40, "ارتجاع", ORANGE, at(u, 1.4, .5), 26) + G("", T("ضغط", 430, 340, 26, BLUE, 800), at(u, .7, .3));
   return s;
 });
 // 18 · eating little: vitamins and iron for life, or anaemia
@@ -375,7 +377,7 @@ shot(22, push(320, 400, 1.0, 1.06), function (u, d, t) {
 shot(23, push(320, 400, 1.0, 1.04), function (u, d, t) {
   var c = [cf(23, 1), cf(23, 2), cf(23, 3), cf(23, 4)], s = paper();
   s += G("translate(320 400) scale(" + f(1 + .05 * Math.sin(t * 4)) + ") translate(-320 -400)", tag("من الآخر", 320, 400, at(u, .05, .3), 44, ORANGE), 1 - at(u, c[0] - .1, .3));
-  s += G("translate(70 80) scale(.34)", stomach(t, { gone: 1, sl: 1, slCol: OLIVE }), at(u, c[0], .3)) + G("", T("معدة أصغر", 150, 340, 22, OLIVE, 800), at(u, c[0], .3));
+  s += G("translate(100 80) scale(.34)", stomach(t, { gone: 1, sl: 1, slCol: OLIVE }), at(u, c[0], .3)) + G("", T("معدة أصغر", 150, 340, 22, OLIVE, 800), at(u, c[0], .3));
   s += G("", bell(320, 190, .8, t, .15) + T("جوع أقل", 320, 340, 22, BLUE, 800), at(u, c[1], .3));
   s += G("", arrow(490, 120, 490, 260, ORANGE, 7, 1) + T("وزن بينزل", 490, 340, 22, ORANGE, 800), at(u, c[2], .3));
   s += G("", '<path d="M80 420 H560" stroke="' + INK + '" stroke-width="1.6" stroke-dasharray="6 6"/>', at(u, c[3], .3));
@@ -390,7 +392,7 @@ shot(24, push(320, 400, 1.04, 1.0), function (u, d, t) {
   s += G("translate(70 120) scale(.42)", stomach(t, { gone: 1, sl: 1, slCol: OLIVE }), at(u, .2, .3)) + callout("1", 120, 130, at(u, .3, .3), 22);
   var gut = ""; for (var i = 0; i < 5; i++) gut += '<path d="M' + (380 + (i % 2) * 0) + ' ' + (180 + i * 50) + ' h150 a25 25 0 0 1 0 50 h-150 a25 25 0 0 0 0 50" stroke="' + INK + '" stroke-width="22" fill="none" opacity="0"/>';
   var bowel = '<path d="M380 180 H540 A25 25 0 0 1 540 230 H400 A25 25 0 0 0 400 280 H540 A25 25 0 0 1 540 330 H400 A25 25 0 0 0 400 380 H540" stroke="' + INK + '" stroke-width="24" fill="none" stroke-linecap="round"/><path d="M380 180 H540 A25 25 0 0 1 540 230 H400 A25 25 0 0 0 400 280 H540 A25 25 0 0 1 540 330 H400 A25 25 0 0 0 400 380 H540" stroke="' + GUT + '" stroke-width="19" fill="none" stroke-linecap="round"/>';
-  s += G("", bowel + callout("2", 600, 130, 1, 22), at(u, c2 - .4, .3) * (1 - .7 * at(u, c3, .5)));
+  s += G("", bowel + callout("2", 560, 140, 1, 22), at(u, c2 - .4, .3) * (1 - .7 * at(u, c3, .5)));
   s += G("", T("+", 330, 300, 50, INK, 800), at(u, c2 - .4, .3)) + cross(470, 280, 1.6, at(u, c3 + .2, .4));
   s += G("", tag("كفاية لوحده", 230, 560, 1, 30, ORANGE) + check(420, 560, 1.1, at(u, c4 + .4, .4), OLIVE), at(u, c4, .3));
   return s;

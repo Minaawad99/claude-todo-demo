@@ -10,7 +10,7 @@
 - The sleeve began as the first stage of the duodenal switch for very heavy patients (Gagner and others, around 2000) and became a standalone operation once patients lost enough weight with it alone.
 
 ## Drawings
-- Stomach front view (fundus, greater/lesser curve, antrum, pylorus, duodenum) from standard anatomy plates (Gray's Anatomy, Wikimedia Commons "Stomach diagram"), drawn in the hand of reference v17 (`videos/_reference/tabizzay/sheets/v17.jpg`).
+- Stomach front view traced point by point from the NCI stomach plate «Illu stomach.jpg» (training.seer.cancer.gov, public domain; copy in `refs/stomach-nci.jpg`), world = 30 + 1.75 × plate px. Staple line placed per the standard technique (angle of His, along a bougie, ending ~5 cm before the pylorus). Drawn in the hand of reference v17 (`videos/_reference/tabizzay/sheets/v17.jpg`).
 - People: `fig()` from `videos/choking/sketch/shots.js` (Drillis & Contini proportions).
 - Pace of the voice: the user's reference reel (median pause 0.14 s).
 
