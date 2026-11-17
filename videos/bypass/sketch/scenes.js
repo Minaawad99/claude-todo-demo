@@ -374,7 +374,7 @@ function gutCloseup(t, o) {
   var rem = gullet() + organ(P_FULL, o.hlRem ? "#eaa890" : WALL) + rugae(P_FULL) + pylorus();
   s += o.dimRem ? dim(o.dimRem, rem) : rem;
   if (o.remFill) s += fillIn(P_FULL, o.remFill, t, 100, 610, "#c9c46a");
-  if (pk > 0) { s += G("", organ(POUCH, o.hlPouch ? "#f6c9a4" : POUCHC, o.hlPouch ? ORANGE : WALLD), pk) + (o.fill ? fillIn(POUCH, o.fill, t, 170, 304, FOODC) : "");
+  if (pk > 0) { s += G("", organ(POUCH, o.hlPouch ? "#f6c9a4" : POUCHC, o.hlPouch ? ORANGE : WALLD), pk) + (o.fill ? fillIn(POUCH, o.fill, t, 170, 304, "#c79a63") : "");
     var pp = part(cr(PSTAPLE, 6), 0, pk); s += '<path d="' + pathPts(pp) + '" stroke="' + PAPER + '" stroke-width="9" fill="none" stroke-linecap="round"/><path d="' + pathPts(pp) + '" stroke="' + INK + '" stroke-width="2.6" fill="none" stroke-dasharray="7 5"/>'; }
   if (up > 0 || !o.after) s += tube(low, 50, { fill: o.hlRoux ? "#f3c0a0" : BOWEL });
   if (up >= 1) s += '<ellipse cx="' + JOIN[0] + '" cy="' + JOIN[1] + '" rx="10" ry="24" fill="none" stroke="' + INK + '" stroke-width="2.4" stroke-dasharray="4 4"/>';
