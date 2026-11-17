@@ -408,7 +408,7 @@ window.SCENE = window.SCENE || {};
 SCENE.intro = function (svg, t, li) {
   window.__t = t; CLIPN = 0;
   if (li <= 2) {
-    var s = phone(304, 296, 270, "viral", t - LN[0].start, { src: "المقطع المنتشر", k: ease(t / .4) });
+    var s = phone(304, 296, 270, "viral", t - LN[0].start, { src: "المقطع المنتشر", k: 1 });
     if (li >= 1) s += tag("بيغطّسه في المية", 130, 90, ease((t - LN[1].start - 1) / .3), 22, BLUE);
     if (li >= 2) s += tag("ياكل لوحده", 480, 600, ease((t - LN[2].start - .5) / .3), 22, ORANGE);
     return s;
