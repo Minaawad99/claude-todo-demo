@@ -40,7 +40,7 @@ and fix them.
 
 ## 1. Script → `videos/<slug>/script.txt`
 
-**Length:** about 25–27 lines and 260–280 words. The voice comes out about 1:55, and about 1:45 after tightening.
+**Length:** about 25–27 lines and 260–280 words. The voice comes out about 2:00 raw, and about 1:45 after tightening and the 5% tempo.
 
 **The fixed spine:**
 1. **Hook:** a fact from the viewer's own life, then its contradiction, spoken to «you», over 2–3 lines. These lines are
@@ -75,22 +75,34 @@ the style in two code blocks for Google AI Studio. Settings: Single-speaker, Puc
 made this way. The style text, with the topic and key words filled in:
 
 ```
-Speak in casual Egyptian Arabic (Cairo dialect), like a calm, confident teacher explaining to a friend <topic>. Warm and clear, more teacher than hype, with quiet amazement on the surprising facts and numbers. Natural, relaxed conversational speed, not rushed. Take a short natural breath between sentences, and don't stop at commas. Emphasize key words like <word>, <word>, <word>. Make the opening line intriguing and the question "إيه الحكاية؟" playful. Never use Modern Standard Arabic pronunciation; pronounce ق as a glottal stop like Cairenes.
+Speak in casual Egyptian Arabic (Cairo dialect), like a calm, confident teacher explaining to a friend <topic>. Warm and clear, more teacher than hype, with quiet amazement on the surprising facts and numbers. Natural, relaxed conversational speed, not rushed. Take a short natural breath between sentences, and don't stop at commas. Emphasize key words like <word>, <word>, <word>. Make the opening line intriguing and the question "إيه الحكاية؟" playful. Never use Modern Standard Arabic pronunciation; pronounce ق as a glottal stop like Cairenes. Keep the exact same Cairene Egyptian accent and the same voice from the first word to the last, never drifting into another dialect.
 ```
+
+- **Keep this style text as it is.** Only the topic, the key words and a note on the opening (a warning, a question) change.
+  Asking for a "reel narrator", a "brisk" or "fast" delivery made the take drift into two accents in «الموبايل في الشاحن»,
+  and the user rejected it. Speed comes from the edit below, never from the style text.
+
+**Pace (locked by the user after «الموبايل في الشاحن», for every sketch episode).** The user's reference is a «طب إزاي»
+reel on gastric sleeve surgery: about 176 words a minute, pauses about 0.15 s. Ours matches it with pauses capped at
+**0.12 s** and the take sped up **5%** with `atempo` (pitch unchanged): about 172 words a minute. Use exactly these
+numbers; don't go back to 0.3 s or to an untouched tempo.
 
 **Timing.** The whisper-small model for `align_asr.py` comes from Hugging Face; GitHub releases often answer 504 here.
 
 ```
 M=<scratchpad>/asr/sherpa-onnx-whisper-small   # small-encoder.int8.onnx, small-decoder.int8.onnx, small-tokens.txt from huggingface.co/csukuangfj/sherpa-onnx-whisper-small
-python3 ../audio/tighten.py voice-raw.wav voice.wav --max 0.3
+python3 ../audio/tighten.py voice-raw.wav <scratchpad>/tight.wav --max 0.12
+ffmpeg -y -i <scratchpad>/tight.wav -af atempo=1.05 voice.wav
 python3 ../align_asr.py voice-raw.wav script.txt raw-timing.json --model $M --gap 0.08 --db -34
-python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max 0.3 --tempo 1.0
+python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max 0.12 --tempo 1.05
 ```
 
 - **Check the whole take with the stronger model** to catch invented sentences and misread numbers:
-  `~/.cache/hyperframes/whisper/whisper.cpp/build/bin/whisper-cli -m ~/.cache/hyperframes/whisper/models/ggml-large-v3-turbo.bin -l ar` (16 kHz mono).
+  `~/.cache/hyperframes/whisper/whisper.cpp/build/bin/whisper-cli -m ~/.cache/hyperframes/whisper/models/ggml-large-v3-turbo.bin -l ar` (16 kHz mono). If the model is missing, fetch `ggml-large-v3-turbo-q5_0.bin` from
+  huggingface.co/ggerganov/whisper.cpp.
 - **Fix line boundaries by hand** in `raw-timing.json` where whisper-small drifts. Tides: line 23 started 0.7 s early.
-- **Never speed the voice up.** Tightening the pauses is all.
+- **The tempo is 1.05, never more.** If the voice is still long, cut words from the script.
+- **Send the voice to the user before drawing.** They listen for the accent and the pace; you can't hear either.
 - Tell the user any second that needs their ear (tides: «4 سنتي» heard as «4 سنة»).
 
 ## 3. Drawings: real shapes, the reference's hand
