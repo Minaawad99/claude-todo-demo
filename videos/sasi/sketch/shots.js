@@ -364,7 +364,7 @@ shot(13, push(330, 380, 1.0, 1.06), function (u, d, t) {
 // 14 · versus the bypass: no closed-off pouch and no bowel left out
 shot(14, push(320, 420, 1.0, 1.0), function (u, d, t) {
   var c1 = cf(14, 1), c2 = cf(14, 2), s = paper();
-  s += G("translate(-12 110) scale(.33)", sasiCloseup(t, {}) + flowA(t, 1, 12) + flowB(t, 1, 5)) + G("translate(305 110) scale(.33)", gutCloseup(t, { after: 1 }) + flow(FOOD_NEW, t, 9, .15, FOODC, 11, 1, 1));
+  s += G("translate(30 120) scale(.29)", sasiCloseup(t, {}) + flowA(t, 1, 12) + flowB(t, 1, 5)) + G("translate(345 120) scale(.29)", gutCloseup(t, { after: 1 }) + flow(FOOD_NEW, t, 9, .15, FOODC, 11, 1, 1));
   s += T("ساسي", 160, 110, 30, ORANGE, 800) + T("تحويل المسار", 480, 110, 30, MUTE, 800) + '<path d="M320 90 V560" stroke="' + INK + '" stroke-width="1.6" stroke-dasharray="8 8"/>';
   s += G("", T("جيب مقفول", 480, 610, 24, INK, 800) + check(480, 660, .8, 1, MUTE) + T("مفيش", 160, 610, 24, INK, 800) + cross(160, 660, .7, at(u, c1 + .3, .4)), at(u, c1, .3));
   s += G("", T("أمعاء متسابة", 480, 730, 24, INK, 800) + check(480, 780, .8, 1, MUTE) + T("مفيش", 160, 730, 24, INK, 800) + cross(160, 780, .7, at(u, c2 + .3, .4)), at(u, c2, .3));
