@@ -270,6 +270,17 @@ def fx_rotor(d=4.0, rate=6.5):   # main rotor "chop": low thumps per blade pass 
 def fx_windmill(d=3.0):          # rotor coasting without the engine: slower chop, airy
     return fx_rotor(d, 4.2) * 0.6 + lp_fast(noise(int(d * SR)), 1200, 1) * 0.3 * env(int(d * SR), .5, .5)
 
+# crow
+def fx_caw(d=0.42):              # a crow's harsh «kaah»: raspy sawtooth falling 420→300 Hz, nasal formants, vocal fry
+    t = t_(d); f = 420 - 120 * t / d; ph = 2 * np.pi * np.cumsum(f) / SR
+    saw = sum(np.sin(k * ph) / k for k in range(1, 18))
+    fry = 0.55 + 0.45 * np.sign(np.sin(2 * np.pi * 70 * t))
+    x = saw * fry + 0.35 * noise(len(t))
+    x = hp_fast(lp_fast(x, 2600, 2), 700) + 0.4 * hp_fast(lp_fast(x, 1400, 1), 900)
+    return (x * env(len(t), .025, .12)).astype(np.float32)
+def fx_scratch(d=0.6):           # claws / beak scratching soil
+    t = t_(d); x = hp_fast(noise(len(t)), 1800) * (0.4 + 0.6 * (np.sin(2 * np.pi * 9 * t) > 0)); return (lp_fast(x, 5000, 1) * env(len(t), .02, .1)).astype(np.float32)
+
 FX = {k[3:]: v for k, v in globals().items() if k.startswith("fx_")}
 
 # ── music bed: soft chords + plucks, 84 bpm, voice band carved out ──
