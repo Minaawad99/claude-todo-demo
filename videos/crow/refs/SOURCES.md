@@ -4,6 +4,7 @@
 | sprite | clip | used |
 |---|---|---|
 | viral | the viral clip of a crow dunking bread in a puddle for its fledgling (sent first, 15 s) | hook card, lines 0–2 |
+| betty | «Betty The Crow Modifies a Tool» (University of Oxford, Behavioural Ecology Research Group) | lines 8–10 |
 | puzzle | «Crow Solves An 8-Step Puzzle To Get Food» — BBC Two, Inside the Animal Mind (007, Alex Taylor) | lines 11–12 |
 | water | «Water displacement by a crow» (YouTube Shorts) | lines 17–19 |
 | japan | «Wild crows inhabiting the city use it to their advantage» — David Attenborough, BBC The Life of Birds | line 20 |

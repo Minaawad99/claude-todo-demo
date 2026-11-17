@@ -228,25 +228,14 @@ function wire(x, y, len, bend, ang) {   // a wire held at (x,y), straight along 
   if (bend > 0) d += " q" + f(Math.cos(a) * 22 - Math.sin(a) * hk * .2) + " " + f(Math.sin(a) * 22 + Math.cos(a) * hk * .2) + " " + f(-Math.sin(a) * hk) + " " + f(Math.cos(a) * hk) + " l" + f(-Math.cos(a) * 14 * bend) + " " + f(-Math.sin(a) * 14 * bend);
   return '<path d="' + d + '" stroke="' + INK + '" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="' + d + '" stroke="#b9bcc0" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
 }
-shot(8, push(330, 420, 0.94, 1.02), function (u, d, t) {
-  var s = bettySet(u, t, 0, 0) + crow(150, 660, { s: .9, head: 4 * Math.sin(t * 2) });
-  s += G("", wire(250, 640, 220, 0, -2), at(u, 2.2, .4));
-  s += label(470, 570, 330, 420, "سطل أكل", OLIVE, at(u, 1.4, .5), 24) + label(380, 638, 420, 730, "سلك مستقيم", ORANGE, at(u, 3.4, .5), 24);
-  return s + tag("أكسفورد · 2002", 180, 120, at(u, .5, .3), 30) + T("بيتي", 150, 330, 30, OLIVE, 800);
-});
-// 9 · she bends it into a hook with her beak, then fishes the bucket out
-shot(9, push(380, 420, 1.0, 1.1), function (u, d, t) {
-  var bend = at(u, .6, 1.4), lift = at(u, 2.6, d - 3.2), s = bettySet(u, t, bend, lift);
-  var hx = 470, hy = 300 - 30 + 290 * (1 - lift) - 20;
-  s += crow(250, 640, { s: .9, head: lerp(30, -10, lift) });
-  s += lift > 0 ? '<path d="M' + f(hx) + ' ' + f(hy) + ' L' + f(hx) + ' ' + f(hy - 120) + '" stroke="' + INK + '" stroke-width="7"/><path d="M' + f(hx) + ' ' + f(hy) + ' L' + f(hx) + ' ' + f(hy - 120) + '" stroke="#b9bcc0" stroke-width="3.4"/>' : G("", wire(300, 560, 160, bend, 0), 1);
-  s += inset(220, 210, 100, G("translate(-60 0)", wire(0, 0, 70, bend, 0)) + T("خطاف", 0, 80, 26, ORANGE, 800), at(u, .4, .3));
+shot(8, push(320, 390, 0.98, 1.04), function (u, d, t) {
+  // the real experiment (Weir, Chappell & Kacelnik, Oxford): the straight wire fails, she bends it into a hook, the bucket comes out
+  var tot = LN[11].start - LN[8].start, u9 = u - (LN[9].start - LN[8].start), u10 = u - (LN[10].start - LN[8].start);
+  var s = paper() + phone(320, 330, 500, "betty", u, { src: "Betty the crow · University of Oxford", k: at(u, 0, .4), rate: CLIPS.betty.n / CLIPS.betty.fps / Math.max(8, tot - .3) });
+  s += tag("أكسفورد · 2002", 200, 66, at(u, .4, .3), 28) + G("", T("بيتي", 480, 80, 34, OLIVE, 800), at(u, .8, .3));
+  var bend = u9 > 0 ? at(u9, .3, 1.4) : 0;
+  s += G("", R(80, 610, 480, 110, "#f4ecdb", 2) + wire(110, 665, 170, bend, 0) + T(u10 > 0 ? "محدش علّمها" : bend > .5 ? "خطاف" : "سلك مستقيم", 540, 676, 28, u10 > 0 || bend > .5 ? ORANGE : INK, 800, "start"), at(u, 3.2, .4));
   return s;
-}, { tr: "in" });
-// 10 · nobody had taught her to bend wire
-shot(10, push(320, 380, 1.06, 0.98), function (u, d, t) {
-  return paper() + crow(300, 600, { s: 1.1, head: -6 + 4 * Math.sin(t * 2) }) + G("", wire(370, 420, 120, 1, -30), 1) + T("؟", 120, 260, 120, ORANGE, 800) +
-    tag("محدش علّمها", 320, 690, at(u, .3, .3), 34, ORANGE);
 });
 // 11–12 · 007's eight-step puzzle (BBC «Inside the Animal Mind»): the real clip, eight numbered steps lighting up
 shot(11, push(320, 380, 0.98, 1.04), function (u, d, t) {
