@@ -325,8 +325,8 @@ shot(13, push(360, 310, 1.2, 1.35), function (u, d, t) {
 shot(14, push(C_ALL[0] + 20, 600, .62, .66), function (u, d, t) {
   var c1 = cf(14, 1), c3 = cf(14, 3) || cf(14, 2), hl = pathPts(part(rev(ROUX), .1, 1));
   return paper() + gutCloseup(t, { after: 1, dimRem: .4 }) + G("", '<path d="' + hl + '" stroke="' + ORANGE + '" stroke-width="64" fill="none" opacity=".22" stroke-linecap="round"/>', at(u, c1, .4)) +
-    flow(FOOD_NEW, t, 9, .13, FOODC, 11, 1, 1) + flow(JUICE, t, 12, .12, BILE, 9) + G("", T("أكل لوحده", 740, 540, 36, FOODC, 800) + T("من غير عصارة", 740, 590, 30, MUTE, 700), at(u, c1 + .3, .3)) +
-    G("", arrow(500, 1120, 500, 1210, ORANGE, 9, 1) + T("امتصاص أقل", 330, 1190, 36, ORANGE, 800), at(u, c3, .3));
+    flow(FOOD_NEW, t, 9, .13, FOODC, 11, 1, 1) + flow(JUICE, t, 12, .12, BILE, 9) + G("", T("أكل لوحده", 150, 800, 36, FOODC, 800) + T("من غير عصارة", 150, 850, 30, MUTE, 700), at(u, c1 + .3, .3)) +
+    G("", arrow(40, 1010, 40, 1090, ORANGE, 9, 1) + T("امتصاص أقل", 190, 1070, 36, ORANGE, 800), at(u, c3, .3));
 });
 // 15 · three: food reaches the far bowel early; it releases satiety hormones that also steady the sugar
 shot(15, push(320, 400, 1.0, 1.06), function (u, d, t) {
