@@ -5,7 +5,8 @@
   **Locked for every sketch episode:** the drawing style of «لو حد شرق قدامك» (`videos/choking/`) with people in real body
   proportions; **no background music** (narrator plus sound effects only, unless the user asks for music in that video); Claude makes the effects and asks the user
   for any real recording it needs; and every video ends with the reel cover and the TikTok, Instagram (shared to Facebook)
-  and YouTube Shorts titles, without being asked.
+  and YouTube Shorts titles, without being asked. **Voice pace (locked):** pauses capped at 0.12 s and tempo 1.05,
+  one Cairene accent throughout; the skill's section 2 has the exact commands.
   The reference episode is «المد والجزر» (`videos/tides/`), the shared template `videos/_templates/sketch/`
   (its README lists the drawing helpers), the sound kit `videos/_templates/sketch/sfx/`.
 - **Sound without asking: sound effects only, in every video and every skill.** No background music of any kind
