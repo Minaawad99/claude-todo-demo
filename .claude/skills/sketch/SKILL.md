@@ -103,6 +103,11 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
 - **Fix line boundaries by hand** in `raw-timing.json` where whisper-small drifts. Tides: line 23 started 0.7 s early.
 - **The tempo is 1.05, never more.** If the voice is still long, cut words from the script.
 - **Send the voice to the user before drawing.** They listen for the accent and the pace; you can't hear either.
+- **If the user hears the accent drift** (it went Gulf halfway through a 2-minute take in «الموبايل في الشاحن»), don't
+  regenerate again: give them the script and the style for AI Studio, as above, and suggest two halves if it drifts there
+  too. Their WAV goes in as `voice-raw.wav` (24 kHz mono), then the same tighten, tempo and timing steps.
+- **Reference photos:** when Wikimedia answers 429, ask the user for the few photos that matter (a settings screenshot,
+  a teardown, the real thing next to the fake one) with search terms; their photos made «الموبايل في الشاحن» much closer to life.
 - Tell the user any second that needs their ear (tides: «4 سنتي» heard as «4 سنة»).
 
 ## 3. Drawings: real shapes, the reference's hand
