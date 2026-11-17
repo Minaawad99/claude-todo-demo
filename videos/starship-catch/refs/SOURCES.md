@@ -11,3 +11,14 @@ Facts checked 2026-11-17:
 - $/kg targets ~$100–200/kg are SpaceX targets, unproven: https://newspaceeconomy.ca/2026/06/21/how-accurate-were-elon-musks-falcon-9-and-starship-kg-claims/
 
 Real footage cards: supplied by the user (see list in the episode notes); credit «SpaceX» on every card.
+
+## Footage cards (frames in footage/, gitignored; cut from clips the user sent)
+| card | source | used at |
+|---|---|---|
+| launch | «Blastoff! SpaceX Starship launches to orbit on Flight 15» (YouTube RHY66XujZ90), 0:38–0:45 | line 4 |
+| starlink | «Starship deploys Starlink V3 satellites from orbit» (Shorts DmTvoD59rc0) — **Ship 41, an earlier flight**, labelled «من رحلة سابقة» | line 5 |
+| reentry, reentry2, flaps, catch, topcam, drone | SpaceX «Replay: Starship Flight 15 Reentry and Historic Catch at Starbase» (YouTube KqGPHd7XAbs), 720p cuts by the user | lines 7, 9, 12, 15, 17, 23 |
+Every card is credited «SpaceX» on the card.
+
+## Sound
+Kit clips (see _templates/sketch/sfx) + synthesized jet / exhaust / sizzle / steam / clank / gear from audio/sfx.py. No music.
