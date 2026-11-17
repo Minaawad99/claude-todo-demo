@@ -423,7 +423,7 @@ shot(23, push(320, 393, 1.0, 1.05), function (u, d, t) {
 // ── the hook card, the bumper and the summary drawing ──
 SCENE.intro = function (svg, t, li) {
   // line 0: the real catch, flip to arms (SpaceX webcast, played at 2×), on a tall card
-  if (li === 0) return vcard("hook", (t - LN[0].start) * 2, 304, 410, 530, ease(t / .3), { zoom: 1.9, cx: .49, cy: .45, h: 430, rot: -1.5 });
+  if (li === 0) return vcard("hook", (t - LN[0].start) * 2, 304, 410, 530, 1, { zoom: 1.9, cx: .49, cy: .45, h: 430, rot: -1.5 });
   if (li === 1) {
     var u = t - LN[1].start;
     return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(function (i) { var y = 600 - ((t * 300 + i * 97) % 520); return '<path d="M' + (40 + i * 26) + ' ' + f(y) + ' v-90" stroke="' + ORANGE + '" stroke-width="9" stroke-linecap="round" opacity=".6"/>'; }).join("") + G("translate(160 " + f(300 + 26 * Math.sin(t * 2.6)) + ") rotate(" + f(10 * Math.sin(t * 2)) + ") scale(1.5)", appear(at(u, 0, .3), P("M-40 40 L-30 -20 Q0 -50 30 -20 L40 40 Z", "#9b958a", 2) + plasma(0, 30, 60, 1, t))) +
