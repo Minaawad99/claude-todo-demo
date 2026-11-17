@@ -7,8 +7,8 @@ import json, numpy as np, soundfile as sf
 # slot = seconds of gap; say = how long the clip line's words stay as the timed line; text = the words heard.
 CLIPS = [
     {"after": -1, "file": "vdr-hook", "slot": 7.0, "say": 2.7, "text": "المركب بتغرق يا قبطان!"},
-    {"after": 15, "file": "vdr-list", "slot": 4.9, "say": 4.0, "text": "احنا نزلنا عشرين درجة دلوقتي يا جماعة… المركب هتقلب!"},
-    {"after": 16, "file": "vdr-sunk", "slot": 8.1, "say": 7.3, "text": "المركب غرقت يا قبطان… لا حول ولا قوة إلا بالله… وأشهد أن محمدًا رسول الله."},
+    {"after": 21, "file": "vdr-list", "slot": 4.9, "say": 4.0, "text": "احنا نزلنا عشرين درجة دلوقتي يا جماعة… المركب هتقلب!"},
+    {"after": 27, "file": "vdr-sunk", "slot": 8.1, "say": 7.3, "text": "المركب غرقت يا قبطان… لا حول ولا قوة إلا بالله… وأشهد أن محمدًا رسول الله."},
 ]
 T = json.loads(open("narr-timing.js", encoding="utf-8").read().split("=", 1)[1].rstrip().rstrip(";"))
 NL = T["lines"]; x, sr = sf.read("voice-narr.wav", dtype="float32")
