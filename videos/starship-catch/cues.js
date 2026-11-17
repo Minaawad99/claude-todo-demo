@@ -46,7 +46,7 @@ paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                               
 const wind = (t, g, dur) => rec(t, 'wind-gust', g || 0.3, 0.25, dur || 4.4, 1.0, 'whoosh', 0.2);
 const tickT = (t, dur) => rec(t, 'clock-ticking', 0.3, 0, dur, 1.0, 'tick', 0.15);
 // hook: the catch, the burning capsule, the parachute, the tick of a ship ready again
-a(L(0) + 1.0, 'jet', 0.18, 3); a(L(0) + 4.2, 'clank', 0.35);
+a(L(0) + 0.3, 'exhaust', 0.32, 5.0); a(L(0) + 5.4, 'clank', 0.4);
 a(L(1) + 0.2, 'sizzle', 0.2, 1.6); paper(L(1) + 1.9); paper(L(1) + 3.7); scribble(L(2) + 0.4);
 // 4 launch card, the stack draws, its labels
 a(L(4) + 0.1, 'boom', 0.25); a(L(4) + 0.3, 'jet', 0.16, 1.4); lab(4, 2.6); lab(4, 3.3); lab(4, 4.4);

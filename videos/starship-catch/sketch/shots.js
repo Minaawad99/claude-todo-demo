@@ -6,7 +6,7 @@
 
 // ── real footage: footage/<clip>/NNNN.jpg at 30 fps, cut from the webcast clips the user sent (gitignored) ──
 var CLIPS = { launch: [211, 640, 360], starlink: [210, 360, 640], reentry: [270, 640, 360], reentry2: [240, 640, 360],
-              flaps: [270, 640, 360], "catch": [450, 640, 358], topcam: [150, 640, 358], drone: [270, 640, 358] };
+              flaps: [270, 640, 360], hook: [390, 960, 540], "catch": [450, 640, 358], topcam: [150, 640, 358], drone: [270, 640, 358] };
 function frameURL(n, s) { var c = CLIPS[n], i = Math.max(1, Math.min(c[0], 1 + Math.floor(s * 30))); return "../footage/" + n + "/" + ("000" + i).slice(-4) + ".jpg"; }
 // preload every frame so the renderer never shoots a frame before its picture has decoded
 window.__imgs = [];
@@ -16,11 +16,11 @@ Object.keys(CLIPS).forEach(function (n) { for (var i = 1; i <= CLIPS[n][0]; i++)
 // s = seconds into the clip; o = {crop: [top, bottom] fractions cut off the source, rot, note, credit, speed}
 function vcard(n, s, x, y, w, k, o) {
   k = pop(k == null ? 1 : k); if (k <= 0) return ""; o = o || {}; var c = CLIPS[n], ct = (o.crop || [0.07, 0.15])[0], cb = (o.crop || [0.07, 0.15])[1];
-  var full = w * c[2] / c[1], h = full * (1 - ct - cb), pad = 9, id = "vc" + (++CLIPN), rot = o.rot == null ? -2 : o.rot;
+  var zm = o.zoom || 1, wz = w * zm, full = wz * c[2] / c[1], h = o.h || full * (1 - ct - cb), pad = 9, ix = o.zoom ? -wz * (o.cx || .5) : -w / 2, iy = o.zoom ? -full * (o.cy || .5) : -h / 2 - ct * full, id = "vc" + (++CLIPN), rot = o.rot == null ? -2 : o.rot;
   var s0 = '<rect x="' + f(-w / 2 - pad + 6) + '" y="' + f(-h / 2 - pad + 8) + '" width="' + f(w + 2 * pad) + '" height="' + f(h + 2 * pad + 26) + '" fill="#000" opacity=".16"/>' +
     '<rect x="' + f(-w / 2 - pad) + '" y="' + f(-h / 2 - pad) + '" width="' + f(w + 2 * pad) + '" height="' + f(h + 2 * pad + 26) + '" fill="#fbf8f1" stroke="' + INK + '" stroke-width="1.4"/>' +
     '<clipPath id="' + id + '"><rect x="' + f(-w / 2) + '" y="' + f(-h / 2) + '" width="' + f(w) + '" height="' + f(h) + '"/></clipPath>' +
-    '<g clip-path="url(#' + id + ')"><image href="' + frameURL(n, s) + '" x="' + f(-w / 2) + '" y="' + f(-h / 2 - ct * full) + '" width="' + f(w) + '" height="' + f(full) + '" preserveAspectRatio="none"/></g>' +
+    '<g clip-path="url(#' + id + ')"><image href="' + frameURL(n, s) + '" x="' + f(ix) + '" y="' + f(iy) + '" width="' + f(wz) + '" height="' + f(full) + '" preserveAspectRatio="none"/></g>' +
     '<rect x="' + f(-w / 2) + '" y="' + f(-h / 2) + '" width="' + f(w) + '" height="' + f(h) + '" fill="none" stroke="' + INK + '" stroke-width="1.2"/>' +
     '<rect x="' + f(-w / 2 - 24) + '" y="' + f(-h / 2 - 22) + '" width="74" height="24" fill="#e3d6b0" opacity=".85" transform="rotate(-24 ' + f(-w / 2 + 12) + ' ' + f(-h / 2 - 10) + ')"/>' +
     '<rect x="' + f(w / 2 - 50) + '" y="' + f(-h / 2 - 22) + '" width="74" height="24" fill="#e3d6b0" opacity=".85" transform="rotate(22 ' + f(w / 2 - 12) + ' ' + f(-h / 2 - 10) + ')"/>' +
@@ -261,7 +261,8 @@ shot(23, push(320, 393, 1.0, 1.05), function (u, d, t) {
 
 // ── the hook card, the bumper and the summary drawing ──
 SCENE.intro = function (svg, t, li) {
-  if (li === 0) return tower(150, 640, 560) + arm(220, 238, 240, null, true) + G("translate(370 " + f(80 + 4 * Math.sin(t * 2)) + ") scale(.6)", ship()) + arm(220, 230, 240);
+  // line 0: the real catch, flip to arms (SpaceX webcast, played at 2×), on a tall card
+  if (li === 0) return vcard("hook", (t - LN[0].start) * 2, 304, 410, 530, ease(t / .3), { zoom: 1.9, cx: .49, cy: .45, h: 430, rot: -1.5 });
   if (li === 1) {
     var u = t - LN[1].start;
     return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(function (i) { var y = 600 - ((t * 300 + i * 97) % 520); return '<path d="M' + (40 + i * 26) + ' ' + f(y) + ' v-90" stroke="' + ORANGE + '" stroke-width="9" stroke-linecap="round" opacity=".6"/>'; }).join("") + G("translate(160 " + f(300 + 26 * Math.sin(t * 2.6)) + ") rotate(" + f(10 * Math.sin(t * 2)) + ") scale(1.5)", appear(at(u, 0, .3), P("M-40 40 L-30 -20 Q0 -50 30 -20 L40 40 Z", "#9b958a", 2) + plasma(0, 30, 60, 1, t))) +
