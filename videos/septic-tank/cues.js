@@ -1,0 +1,33 @@
+// Sound cues from the line timings: node cues.js → cues.json
+// Sound effects only (no music). sfx/px-pour.mp3 is a Pixabay clip the channel sent for the choking episode (Pixabay Content License).
+global.window = {}; eval(require('fs').readFileSync(__dirname + '/timing.js', 'utf8'));
+const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration : T[i].start, D = i => L(i + 1) - L(i), c = [];
+const a = (t, fx, gain, dur) => c.push(Object.assign({ t: +t.toFixed(2), fx, gain }, dur ? { dur } : {}));
+const pour = (t, gain, from, dur) => c.push({ t: +t.toFixed(2), file: 'sfx/px-pour.mp3', gain, from: from || 0, dur: +dur.toFixed(2) });
+for (let i = 1; i < T.length; i++) a(L(i) - 0.08, 'whoosh', 0.3);
+for (let k = 0; k < 5; k++) a(L(0) + 0.3 + k * 0.35, 'thud', 0.25); a(L(0) + 2.0, 'slosh', 0.3); a(L(0) + 2.6, 'pop', 0.7);
+for (let k = 0; k < 6; k++) a(L(1) + 0.5 + k * 0.2, 'thud', 0.22); a(L(1) + 0.8, 'pop', 0.6); a(L(1) + 1.6, 'drip', 0.4); a(L(1) + 2.2, 'drip', 0.35); a(L(1) + 2.4, 'pop', 0.6);
+for (let k = 0; k < 4; k++) a(L(2) + 0.4 + k * 0.5, 'clank', 0.25); a(L(2) + 1.0, 'pop', 0.6); a(L(2) + 2.6, 'pop', 0.6); a(L(2) + 3.6, 'pop', 0.5);
+a(L(3) + 0.4, 'plunk', 0.4); a(L(3) + 1.2, 'squeeze', 0.3); a(L(3) + 1.0, 'pop', 0.6); a(L(3) + 1.6, 'pop', 0.6);
+pour(L(4) + 0.2, 0.5, 0, Math.min(2.4, D(4) - 0.3)); a(L(4) + 1.0, 'pop', 0.6); a(L(4) + 2.0, 'chime', 0.35);
+a(L(5) + 0.4, 'slosh', 0.35); a(L(5) + 0.6, 'pop', 0.6); a(L(5) + 1.6, 'pop', 0.6); a(L(5) + 2.2, 'plunk', 0.3);
+a(L(6) + 0.3, 'clank', 0.35); a(L(6) + 1.0, 'thud', 0.35); a(L(6) + 1.8, 'pop', 0.6); a(L(6) + 2.2, 'pop', 0.6);
+for (let k = 0; k < 6; k++) a(L(7) + 0.3 + k * 0.7, 'drop', 0.2); a(L(7) + 1.0, 'pop', 0.6); a(L(7) + 1.8, 'pop', 0.6);
+a(L(8) + 0.4, 'slosh', 0.3); a(L(8) + 1.8, 'pop', 0.6);
+a(L(9) + 0.4, 'clink', 0.4); a(L(9) + 1.0, 'pop', 0.6); a(L(9) + 1.4, 'drip', 0.3); a(L(9) + 2.4, 'chime', 0.35);
+a(L(10) + 0.6, 'pop', 0.6); a(L(10) + 1.6, 'fizz', 0.25, 2.0); a(L(10) + 2.6, 'pop', 0.6);
+a(L(11) + 0.3, 'clank', 0.3); a(L(11) + 1.0, 'pop', 0.6); a(L(11) + 1.9, 'steam', 0.25, 1.4); a(L(11) + 2.0, 'pop', 0.5);
+a(L(12) + 0.3, 'fill', 0.3, 2.6); for (let k = 0; k < 6; k++) a(L(12) + 0.4 + k * 0.45, 'tick', 0.25); a(L(12) + 2.6, 'beep', 0.3); a(L(12) + 2.7, 'pop', 0.6);
+a(L(13) + 0.4, 'clank', 0.3); a(L(13) + 1.0, 'pop', 0.6); a(L(13) + 1.8, 'pop', 0.6); for (let k = 0; k < 4; k++) a(L(13) + 2.1 + k * 0.4, 'drip', 0.3);
+for (let k = 0; k < 5; k++) a(L(14) + 0.3 + k * 0.7, 'drip', 0.25); a(L(14) + 0.8, 'pop', 0.6); a(L(14) + 2.2, 'chime', 0.35);
+pour(L(15) + 0.3, 0.4, 0.5, Math.min(1.8, D(15) - 0.4)); a(L(15) + 0.4, 'pop', 0.6); a(L(15) + 2.4, 'pop', 0.6); a(L(15) + 2.5, 'beep', 0.25);
+a(L(16) + 0.4, 'wipe', 0.35); a(L(16) + 1.4, 'pop', 0.7); a(L(16) + 2.4, 'chime', 0.4);
+a(L(17) + 0.6, 'pop', 0.6); for (let k = 0; k < 4; k++) a(L(17) + 0.3 + k * 0.65, 'tick', 0.3);
+a(L(18) + 0.4, 'clank', 0.35); a(L(18) + 0.6, 'pop', 0.6); a(L(18) + 1.2, 'idle', 0.25, 1.4); a(L(18) + 2.0, 'pop', 0.6); a(L(18) + 2.5, 'vac', 0.3, Math.max(0.5, D(18) - 2.6));
+a(L(19) + 0.3, 'pop', 0.5); a(L(19) + 2.2, 'drip', 0.3); a(L(19) + 2.5, 'drip', 0.3); a(L(19) + 1.0, 'ping', 0.3);
+a(L(20) + 0.6, 'pop', 0.6); a(L(20) + 0.9, 'fizz', 0.25, 1.2); a(L(20) + 3.4, 'pop', 0.6); a(L(20) + 3.6, 'chime', 0.4); a(L(20) + 3.7, 'pop', 0.6);
+a(L(21) + 0.3, 'thud', 0.4); a(L(21) + 0.4, 'pop', 0.5); a(L(21) + 1.4, 'pop', 0.6); a(L(21) + 1.9, 'pop', 0.6); a(L(21) + 2.8, 'pop', 0.5);
+a(L(22) + 0.4, 'chime', 0.5); for (let k = 0; k < 5; k++) a(L(22) + 0.5 + k * 0.2, 'pop', 0.35);
+a(L(23) + 0.4, 'pop', 0.7); a(L(23) + 0.5, 'chime', 0.5);
+require('fs').writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: c }, null, 1));
+console.log(c.length + ' cues');

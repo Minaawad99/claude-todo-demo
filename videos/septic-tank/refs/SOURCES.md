@@ -18,3 +18,9 @@ Facts:
   don't flush oils, wipes; grass only over the drain field, no trees (EPA SepticSmart).
 
 Drawing references: see the photo notes below (Wikimedia Commons, visual reference only).
+
+Drawing references: Wikimedia Commons answered 429 (too many requests) on every try during this build, so the drawings
+follow well-known real shapes rather than downloaded photos: the standard two-compartment septic-tank section in the EPA
+manual (inlet/outlet tees, mid-depth opening in the partition, a riser and lid over each compartment), perforated drain-field
+pipe bedded in gravel, the Egyptian village house (red brick in a reinforced-concrete frame, rebar left on the roof, a black
+plastic water tank), and the Egyptian cast-iron hand pump (طلمبة حبشية) with its long lever handle and spout.
