@@ -6,7 +6,7 @@ description: >
   YouTube Shorts titles, every time. Cream graph-paper card, close-up technical drawings (real
   coastline globes, side cuts, isometric machines) with leader-line labels, one short caption chunk at a time under a rule,
   no hard cuts, a word-by-word hook card, a stopwatch bumper, a summary card and ask box. The reference episode is
-  «المد والجزر» (videos/tides). Built on videos/_templates/sketch. Use when the user says "اسكتش", "بأسلوب الاسكتش",
+  «المد والجزر» (videos/tides); «تحويل المسار» (videos/bypass) is the reference for rich drawings traced from real pictures. Built on videos/_templates/sketch. Use when the user says "اسكتش", "بأسلوب الاسكتش",
   "زي فيديو المد والجزر", "بالرسم الهندسي", "زي طب إزاي" or "sketch style".
 ---
 
@@ -25,6 +25,10 @@ every episode.
    Facebook page) and YouTube Shorts.
 5. **Locked after «تكميم المعدة» (`videos/sleeve/`):** the brisk voice with pauses capped at 0.15 s (section 2), and
    sparse, on-topic sound effects (section 5).
+6. **Locked after «تحويل المسار» (`videos/bypass/`, the reference for rich drawings):** every drawing is traced from real
+   pictures (section 3, «Trace from real pictures»), and the scenes are full and alive: the surrounding parts drawn in,
+   things moving inside them, the process happening on screen (section 3, «Rich scenes»). Full review by default for a
+   new topic: the script first, then a sheet of stills, then the render.
 
 It copies the look, pacing and narration of the «طب إزاي؟» series: 20 reference videos, measured in
 `videos/_reference/tabizzay/STYLE.md`, with contact sheets, motion strips and transcripts. We make it under our own name.
@@ -94,6 +98,9 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
 - **Check the whole take with the stronger model** to catch invented sentences and misread numbers:
   `~/.cache/hyperframes/whisper/whisper.cpp/build/bin/whisper-cli -m ~/.cache/hyperframes/whisper/models/ggml-large-v3-turbo.bin -l ar` (16 kHz mono).
 - **Fix line boundaries by hand** in `raw-timing.json` where whisper-small drifts. Tides: line 23 started 0.7 s early.
+- **The voice recipe, every episode (locked):** Puck, `gemini-3.8-flash-tts`, temperature 1, the brisk style text above
+  (topic and key words filled in), then `tighten.py --max 0.15` and `map_timing.py --max 0.15`. A take comes out about
+  2:00 raw and 1:40–1:45 after cutting the pauses; the speech itself runs about 3.4–3.5 words a second.
 - **The pace is locked (the user's rule, from «تكميم المعدة» `videos/sleeve/`):** the brisk style text above and pauses capped
   at **0.15 s**, which matches the user's reference reel (median pause 0.14 s, about 3.4–3.5 words a second of speech).
   Check it: `silencedetect=n=-34dB:d=0.08` on `voice.wav` should give a median pause of about 0.15 s.
@@ -102,9 +109,41 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
 
 ## 3. Drawings: real shapes, the reference's hand
 
-- **Research first.** Look at real photos of the objects (Wikimedia Commons, one request at a time, User-Agent with the
-  repo URL). Look at the matching reference sheet in `videos/_reference/tabizzay/sheets/` as well. Note the sources in
-  `refs/SOURCES.md`.
+- **Trace from real pictures (locked, the user's rule after «تكميم المعدة» and «تحويل المسار»).** Never draw a shape
+  from memory. For every main object find a real picture (an anatomy plate, a photo, an official diagram), save a copy
+  in `<episode>/refs/`, and trace it:
+  - **Where to get them:** Wikimedia Commons public-domain plates (Gray's Anatomy, NCI, NIDDK, Blausen). Search with the
+    API (`list=search&srnamespace=6`), one request at a time with a User-Agent naming the repo, a few seconds apart.
+    Download the original from `upload.wikimedia.org/wikipedia/commons/<h0>/<h0h1>/<File_name>`, where h = md5 of the
+    file name. `thumb.wikimedia.org` is blocked here and the API often answers 429: wait and retry one at a time.
+    Other medical sites are usually outside the network; if a picture is needed and can't be fetched, ask the user for it.
+  - **How to trace:** overlay a grid on the picture (PIL, a line every 10 px, labels every 50), read the outline points
+    off it, and map them to world units with one scale and offset, written in a comment above the points
+    (`world = 30 + 1.75 × plate px`). Smooth them with `curve()` (Catmull-Rom). Keep the real proportions and the real
+    side: a front view of the body shows the patient's left on the viewer's right.
+  - **Examples:** `videos/sleeve/sketch/shots.js` (the stomach traced from the NCI plate, `refs/stomach-nci.jpg`);
+    `videos/bypass/sketch/shots.js` (the organs' places from Gray's plate 1223, the new route from the NIDDK drawing).
+  - Look at the matching reference sheet in `videos/_reference/tabizzay/sheets/` for the hand (organs: v17). Credit every
+    picture in `refs/SOURCES.md`, and show the user the traced plate with the grid when they review the drawings.
+- **Rich scenes (locked, the user asked for «رسومات أحلى وفيها شغل»).** A shot is never one object on empty paper:
+  - **Draw the neighbours.** An organ comes with the organs around it (liver and gallbladder, pancreas, duodenum, coils
+    of bowel, colon frame); a machine with its housing, pipes and mount.
+  - **The look of an organ:** `organ(d, fill, band)` = flat fill, a darker wall band just inside the outline, light
+    hatching, ink outline; folds with `rugae()`; a bowel or hose with `tube(pts, w)` (ink outline, fill, ring folds, a
+    lit strip). Muted body colours: wall `#e39a82` / band `#b85a44`, liver `#9c4a3a`, gallbladder `#6f8a4a`, pancreas
+    `#e3c27a`, bowel `#e8a98c`, colon `#d9b49a`.
+  - **Something moves inside:** what the episode is about runs through the drawing with `flow(route, t, n, speed, colour)`
+    (food as brown chunks, juice as green dots, air or hormone as blue dots), and two flows meet where the story says.
+  - **The process happens on screen:** the tool does the work (`stapler2` along a staple line, `scissors` at the cut),
+    and a part moves into its new place with `morph(a, b, k)`, instead of the drawing just swapping.
+  - **Where the helpers live:** copy `curve`, `cr`, `along`, `organ`, `rugae`, `fillIn`, `tube`, `flow`, `morph` from
+    the top of `videos/bypass/sketch/shots.js` (the people helpers come along with them).
+  - **Fills and levels:** `fillIn()` for a liquid rising inside a shape; a ghost dashed outline (`GHOST`) for «before».
+  - **Counters and charts** where they help: a `hud` of numbered chips for «three reasons», a curve that draws itself.
+  - **Labels stay in frame:** text on a right-hand label grows to the right of its end point, so keep that point at
+    x ≤ about 470 (zoom 1), and on a left-hand label at x ≥ about 200. Check every shot in a strip before the render.
+- **Stills for review:** `node tools/strip.js <index.html> out.png 4 <one time per shot…>` into three sheets covering
+  the whole video; send them to the user with the questions about anything uncertain.
 - **Globes use real coastlines.** `globe(cx, cy, r, lon, lat, {dot})` projects Natural Earth through `lib/geo.min.js`, which
   loads by default. It draws:
   - pale blue ocean, olive land and a graticule;

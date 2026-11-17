@@ -8,6 +8,9 @@
   and YouTube Shorts titles, without being asked.
   **Also locked (after «تكميم المعدة» `videos/sleeve/`):** a brisk voice with pauses capped at 0.15 s, and sparse,
   on-topic sound effects (synthesized foley for what moves; paper and pencil clips only a few times).
+  **Also locked (after «تحويل المسار» `videos/bypass/`):** every drawing traced from real pictures (public-domain plates
+  and photos saved in `refs/`), and rich, moving scenes (neighbouring parts drawn in, flows running through them, the
+  process happening on screen). Full review by default: script, then stills, then render.
   The reference episode is «المد والجزر» (`videos/tides/`), the shared template `videos/_templates/sketch/`
   (its README lists the drawing helpers), the sound kit `videos/_templates/sketch/sfx/`.
 - **Sound without asking: sound effects only, in every video and every skill.** No background music of any kind
