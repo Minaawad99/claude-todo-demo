@@ -242,7 +242,7 @@ function stopwatch(x, y, r, k) {
 // pouch cell inside about 92 × 60 × 4.5 mm; 20 W USB-C wall charger, EU plug: body 44 × 38 × 28 mm, pins Ø4.8 × 19 mm, 19 mm apart;
 // cell layers: aluminium foil + LiCoO2 cathode | separator | graphite anode + copper foil, in electrolyte.
 // Bedroom: bed 2.0 m long, mattress top 0.55 m, nightstand 0.55 m; people with real proportions (H = 1.75 m).
-var GLASSD = "#2f3a42", SCREEN = "#dfe6e4", FRAME = "#9aa2ac", POUCH = "#c9c2b0", BOARD = "#5e653a", CU = "#c07a4a", AL = "#b8bec4",
+var GLASSD = "#2f3a42", SCREEN = "#dfe6e4", FRAME = "#9aa2ac", POUCH = "#45484e", BOARD = "#5e653a", CU = "#c07a4a", AL = "#b8bec4",
     GRAPH = "#4d4a44", CATH = "#7f97a6", ION = ORANGE, SHEET = "#e9e0c9", WOODN = "#a9784d", WOODN_D = "#7c5434", PILLOW = "#f1ebdc", BLANKET = "#9fb2a2";
 
 // the phone from the front, centre (x, y), s units per mm. o: {pct, charging, dark, time, screen (svg in screen coords), tilt}
@@ -277,11 +277,19 @@ function charger(x, y, s, o) {
   return G("translate(" + f(x) + " " + f(y) + ")", g);
 }
 // charger cut open: o.cheap → bare board, no fuse, no isolation; else transformer, fuse, protection chip
-function chargerInside(x, y, s, cheap, k) {
-  var g = R(0, 0, 120 * s, 90 * s, "#f6f3ec", 2.4, 8 * s) + R(10 * s, 60 * s, 100 * s, 10 * s, BOARD, 1.6, 2);
-  if (!cheap) g += R(18 * s, 26 * s, 30 * s, 34 * s, "#d9b86a", 1.8, 3) + '<path d="M22 ' + 30 * s + ' h' + 22 * s + ' M22 ' + 36 * s + ' h' + 22 * s + ' M22 ' + 42 * s + ' h' + 22 * s + ' M22 ' + 48 * s + ' h' + 22 * s + '" stroke="' + CU + '" stroke-width="2" transform="translate(' + f(-22 + 18 * s) + ' 0)"/>' +
-    R(56 * s, 44 * s, 14 * s, 16 * s, INK, 0, 2) + R(76 * s, 34 * s, 10 * s, 26 * s, "#4a6f8a", 1.6, 4 * s) + R(92 * s, 48 * s, 18 * s, 8 * s, "#d8ccae", 1.4, 3);
-  else g += R(30 * s, 46 * s, 12 * s, 14 * s, "#3a352e", 1.4, 2) + R(60 * s, 40 * s, 8 * s, 20 * s, "#b9ab8a", 1.4, 3);
+function cap(x, y, r, h) { return R(x - r, y - h, 2 * r, h, "#2f3134", 1.8, 3) + '<ellipse cx="' + f(x) + '" cy="' + f(y - h) + '" rx="' + f(r) + '" ry="' + f(r * .35) + '" fill="#c9cdd2" stroke="' + INK + '" stroke-width="1.6"/><path d="M' + f(x - r * .5) + ' ' + f(y - h) + ' h' + f(r) + ' M' + f(x) + ' ' + f(y - h - r * .3) + ' v' + f(r * .6) + '" stroke="' + INK + '" stroke-width="1"/>'; }
+// a USB charger opened up (front view, pins at the top), s units per mm; cheap = the fake one
+function chargerInside(x, y, s, cheap) {
+  var W = 30 * s, H = 40 * s, g = R(-4 * s, -6 * s, W + 8 * s, H + 10 * s, "#f6f3ec", 2.4, 5 * s) + R(4 * s, -16 * s, 3 * s, 12 * s, AL, 1.4, 2) + R(W - 7 * s, -16 * s, 3 * s, 12 * s, AL, 1.4, 2);
+  g += R(0, 0, W, H, cheap ? "#d9b25a" : "#3f7a52", 1.8, 2);                                                   // the board
+  if (!cheap) {
+    g += R(2 * s, 2 * s, W - 4 * s, 16 * s, "#e8d36a", 1.8, 2) + '<rect x="' + f(2 * s) + '" y="' + f(2 * s) + '" width="' + f(W - 4 * s) + '" height="' + f(16 * s) + '" fill="url(#hatch)" opacity=".4"/>';   // tape-wrapped transformer block
+    g += R(5 * s, 6 * s, 18 * s, 8 * s, "#2f3134", 1.4, 1) + cap(25 * s, 16 * s, 3.4 * s, 12 * s);
+    g += cap(7 * s, 33 * s, 4.4 * s, 12 * s) + R(14 * s, 22 * s, 13 * s, 8 * s, "#b9bec4", 1.6, 1) + R(14 * s, 31 * s, 6 * s, 6 * s, "#d98fb8", 1.4, 3) + C(24 * s, 35 * s, 2.6 * s, "#f2efe8", 1.4) + C(21 * s, 20 * s, 2 * s, "#f2efe8", 1.2);
+  } else {
+    g += R(9 * s, 10 * s, 11 * s, 7 * s, "#e8e06a", 1.6, 1) + R(10 * s, 17 * s, 9 * s, 3 * s, INK, 0) + cap(6 * s, 9 * s, 2.4 * s, 6 * s) + cap(24 * s, 12 * s, 2.8 * s, 8 * s);
+    g += R(6 * s, 24 * s, 16 * s, 7 * s, "#b9bec4", 1.6, 1) + cap(23 * s, 38 * s, 3 * s, 7 * s) + C(9 * s, 36 * s, 1.6 * s, INK, 0) + C(14 * s, 36 * s, 1.6 * s, INK, 0);
+  }
   return G("translate(" + f(x) + " " + f(y) + ")", g);
 }
 // Egyptian wall socket (Schuko, round recess) at (x, y) seen from the side as a plate on the wall
@@ -343,6 +351,7 @@ function room(t, o) {
   s += R(170, 140, 150, 170, o.night ? "#3a4654" : "#cdd9df", 2.4) + '<path d="M245 140 V310 M170 225 H320" stroke="' + INK + '" stroke-width="2"/>';   // window
   if (o.night) s += C(285, 175, 14, "#f1e9c8", 1.4) + C(291, 171, 13, "#3a4654", 0);
   s += bed(220) + nightstand(90);
+  if (o.night) s += '<circle cx="146" cy="' + (FL - 120) + '" r="70" fill="#ffe08a" opacity=".22"/>' + R(143, FL - 112, 6, 30, "#c9c2b0", 1.6) + '<ellipse cx="146" cy="' + (FL - 82) + '" rx="12" ry="4" fill="#c9c2b0" stroke="' + INK + '" stroke-width="1.6"/>' + P("M132 " + (FL - 112) + " L136 " + (FL - 138) + " L156 " + (FL - 138) + " L160 " + (FL - 112) + " Z", "#f3ead2", 1.8);
   s += socketSide(-8 + 0, FL - 200, 1) + R(-18, FL - 240, 10, 80, "#efe9dc", 2, 3);
   return s;
 }
@@ -375,8 +384,8 @@ function phoneSide(x0, y, s, swell, t) {
   var bx0 = x0 + 30 * s, bx1 = x0 + 122 * s;                                                     // battery under the middle
   g += P("M" + f(bx0) + " " + f(y + 6.6 * s) + " L" + f(bx0) + " " + f(y + 2.2 * s) + " Q" + f((bx0 + bx1) / 2) + " " + f(y + 2.2 * s - bul * 2) + " " + f(bx1) + " " + f(y + 2.2 * s) + " L" + f(bx1) + " " + f(y + 6.6 * s) + " Z", POUCH, 1.8);
   // the screen: hinged at the left end, its right end lifted by the bulge
-  var lift = bul * 2.1, ang = Math.atan2(lift, L * .85) * 180 / Math.PI;
-  g += G("rotate(" + f(-ang) + " " + f(x0 + 6 * s) + " " + f(y) + ")", R(x0 + 2 * s, y - 1.6 * s, L - 4 * s, 2.2 * s, GLASSD, 1.8, 1));
+  var sd = "M" + f(x0 + 3 * s) + " " + f(y - .6 * s) + " Q" + f(x0 + L * .45) + " " + f(y - .6 * s - bul * 8) + " " + f(x0 + L - 3 * s) + " " + f(y - .6 * s);
+  g += '<path d="' + sd + '" stroke="' + INK + '" stroke-width="' + f(2.4 * s + 3) + '" fill="none" stroke-linecap="round"/><path d="' + sd + '" stroke="' + GLASSD + '" stroke-width="' + f(2.4 * s) + '" fill="none" stroke-linecap="round"/>';
   if (sw > .2) for (var i = 0; i < 6; i++) { var p = ((t * .5 + i / 6) % 1); g += C(lerp(bx0 + 10 * s, bx1 - 10 * s, hash(i)), y + 3 * s - p * 3 * s * sw, 1.6 * s * (.6 + hash(i + 3)), "none", 1.4); }
   return g;
 }
@@ -386,7 +395,7 @@ function swollen(x, y, k, t) {
   var w = 170, h = 18 + 40 * k, b = 26 * k, g = "";
   g += R(-w / 2 - 14, 30, w + 28, 14, FRAME, 2, 4);
   g += P("M" + (-w / 2) + " 30 C" + (-w / 2) + " " + f(30 - h) + " " + (w / 2) + " " + f(30 - h) + " " + (w / 2) + " 30 Z", POUCH, 2.2);
-  g += P("M" + (-w / 2 + 10) + " 26 Q0 " + f(26 - h * .7 - b * .2) + " " + (w / 2 - 10) + " 26", "none", 1.2);
+  g += '<path d="M' + (-w / 2 + 10) + ' 26 Q0 ' + f(26 - h * .7 - b * .2) + ' ' + (w / 2 - 10) + ' 26" fill="none" stroke="#8a8d93" stroke-width="1.4"/>';
   g += G("rotate(" + f(-16 * k) + " " + (-w / 2 - 14) + " 24)", R(-w / 2 - 14, f(24 - 6 - h * .62 * k), w + 28, 8, GLASSD, 2, 3));
   return G("translate(" + x + " " + y + ")", g);
 }
@@ -404,9 +413,10 @@ shot(5, push(320, 400, 1.0, 1.06), function (u, d, t) {
 shot(6, push(320, 400, 1.0, 1.25), function (u, d, t) {
   var s = paper(), k = at(u, .2, .8), w = 71.5 * 3.4, h = 147 * 3.4;
   s += R(320 - w / 2, 400 - h / 2, w, h, FRAME, 2.6, 30) + R(320 - w / 2 + 6, 400 - h / 2 + 6, w - 12, h - 12, "#e9e3d4", 1.6, 26);
-  s += R(320 - w / 2 + 20, 400 - h / 2 + 20, w - 40, 110, BOARD, 2, 8) + C(320 - w / 2 + 60, 400 - h / 2 + 60, 22, "#3a352e", 2) + R(320 - 30, 400 + h / 2 - 40, 60, 16, FRAME, 1.6, 4);
-  s += appear(k, R(320 - 30 * 3.4, 400 - h / 2 + 150, 60 * 3.4, 92 * 3.4, POUCH, 2.4, 8) + T("بطارية", 320, 400 + 40, 30, INK, 800));
-  return s + G("", T("؟", 520, 200, 120, ORANGE, 800), at(u, .2, .3)) + label(390, 360, 560, 300, "جوه", BLUE, at(u, 1, .4), 26);
+  s += R(348, 170, 80, 230, BOARD, 2, 4) + R(360, 190, 26, 26, INK, 0, 2) + R(392, 230, 24, 30, "#2f3134", 1.2, 2) + R(360, 290, 50, 22, "#9aa2ac", 1.2, 2) + R(366, 330, 40, 40, "#2f3134", 1.2, 2);
+  s += C(240, 178, 16, "#2f3134", 2) + C(280, 178, 12, "#2f3134", 2) + R(214, 612, 100, 34, "#3a3c40", 2, 4) + T("Taptic", 264, 635, 13, "#e9ecea", 700) + R(330, 616, 80, 30, FRAME, 1.6, 4);
+  s += appear(k, R(212, 205, 128, 220, POUCH, 2.4, 6) + R(212, 432, 216, 172, POUCH, 2.4, 6) + T("Li-ion", 276, 320, 18, "#e9ecea", 700) + T("Li-ion", 320, 525, 22, "#e9ecea", 700));
+  return s + G("", T("؟", 520, 200, 120, ORANGE, 800), at(u, .2, .3)) + label(300, 560, 150, 700, "البطارية", BLUE, at(u, 1, .4), 28);
 }, { tr: "in" });
 // 7 · charging pushes lithium ions across and packs them between the graphite sheets
 shot(7, push(320, 390, 1.0, 1.05), function (u, d, t) {
@@ -467,8 +477,9 @@ shot(16, push(320, 380, 1.0, 1.1), function (u, d, t) {
 // 17 · fire: a fake charger without protection; the heat can run away
 shot(17, push(320, 400, 1.0, 1.05), function (u, d, t) {
   var c = window.CHUNKS[17], D = LN[17].end - LN[17].start, k2 = at(u, D * (c[1] || .45), .6);
-  var s = paper() + chargerInside(110, 160, 1.9, 1, 1) + T("شاحن مضروب", 224, 140, 26, ORANGE, 800) + label(220, 260, 470, 220, "مفيش حماية", ORANGE, at(u, .5, .5), 22);
-  s += G("", phoneFront(320, 560, 1.2, { pct: 100, charging: 1 }) + flame(320, 470, .9 + .2 * k2, t) + heat(320, 400, t, 3, 50, 1), k2);
+  var s = paper() + chargerInside(70, 200, 6, 0) + chargerInside(390, 200, 6, 1) + T("أصلي", 160, 70, 30, OLIVE, 800) + T("مضروب", 480, 70, 30, ORANGE, 800);
+  s += label(160, 260, 140, 500, "عازل وحماية", OLIVE, at(u, .3, .5), 20) + label(460, 340, 470, 455, "مفيش حماية", ORANGE, at(u, .6, .5), 20) + check(240, 62, .7, at(u, .4, .3)) + cross(570, 62, .55, at(u, .7, .3));
+  s += G("", phoneFront(520, 650, .75, { pct: 100, charging: 1 }) + flame(520, 600, .6 + .15 * k2, t) + heat(520, 540, t, 3, 40, 1), k2);
   return s + G("", T("نادر… بس بيحصل", 320, 760, 26, INK, 800), at(u, D * .8, .3));
 });
 // 18 · the myth: «it overcharges» — no: a chip cuts the current at 100 %; it just sleeps full and warm
@@ -482,9 +493,12 @@ shot(18, push(320, 400, 1.0, 1.05), function (u, d, t) {
 // 19 · what to do: smart charging in the battery settings: stop at 80, finish before you wake
 shot(19, push(320, 400, 1.0, 1.04), function (u, d, t) {
   var c = window.CHUNKS[19], D = LN[19].end - LN[19].start, on = at(u, D * (c[1] || .3), .4);
-  var scr = T("البطارية", 0, -100, 18, INK, 800) + R(-62, -80, 124, 40, "#f4f1ea", 1.4, 8) + T("الشحن الذكي", 54, -54, 12, INK, 800, "start") + R(-56, -70, 34, 20, on > .5 ? OLIVE : GREY, 1.2, 10) + C(lerp(-46, -32, on), -60, 8, "#fff", 1.2) +
-    R(-62, -32, 124, 40, "#f4f1ea", 1.4, 8) + T("حد الشحن", 54, -6, 12, INK, 800, "start") + N("80%", -36, -5, 15, ORANGE) + battIcon(0, 50, 1.6, 80, 0) + N("80%", 0, 90, 22, OLIVE);
-  return paper() + phoneFront(170, 400, 2.0, { screen: scr }) + nightGraph(320, 560, 280, 280, 8 * at(u, D * .5, D * .5), "smart", at(u, D * .45, .3));
+  var W = "#e9ecea", Gy = "#9aa0a6", BL = "#4d8fe0";
+  var scr = R(-80, -160, 160, 320, "#0d0e10", 0) + T("حماية البطارية", 58, -112, 14, W, 800, "start") + R(-60, -90, 120, 34, "#26282b", 0, 8) + T("صحة البطارية", 52, -68, 9, W, 700, "start") + N("92%", -44, -68, 10, Gy, "start") +
+    T("حماية الشحن", 56, -38, 8, Gy, 700, "start") + R(-60, -30, 120, 118, "#26282b", 0, 8) + T("شحن كامل", 52, -12, 10, W, 700, "start") +
+    T("حماية البطارية", 52, 14, 10, W, 700, "start") + T("بيوقف عند 80%", 52, 27, 8, Gy, 600, "start") +
+    T("الشحن الذكي", 52, 54, 10, on > .5 ? BL : W, 800, "start") + T("بيتعلّم مواعيدك ويوقف عند 80%", 52, 68, 7, on > .5 ? BL : Gy, 600, "start") + G("translate(-46 58) scale(.32)", draw("M-24 2 L-8 18 L26 -20", on, BL, 9));
+  return paper() + phoneFront(165, 400, 2.6, { screen: G("scale(1.42)", scr), dark: 1 }) + nightGraph(345, 560, 260, 280, 8 * at(u, D * .5, D * .5), "smart", at(u, D * .45, .3));
 });
 // 20 · the 20–80 rule
 shot(20, push(320, 400, 1.0, 1.05), function (u, d, t) {
@@ -516,7 +530,7 @@ shot(23, push(320, 420, 1.0, 1.04), function (u, d, t) {
 SCENE.intro = function (svg, t, li) {
   // 0: the bedroom at night, the phone charging on the nightstand; 1: it ages; 2: it swells; 3: it heats up
   var s = G("translate(30 -275) scale(1.25)", room(t, { night: 1 }) + sleeper(360, FL - 120, .6125 * .9, t) + pillowAt(270, FL - 112, 90) + blanket(330, FL - 118, 180, t) +
-    R(108, FL - 82, 34, 5, GLASSD, 1.4) + cable("M142 " + (FL - 80) + " C170 " + (FL - 80) + " 60 " + (FL - 100) + " 2 " + (FL - 200), "#f2efe8") + charger(2, FL - 200, .9, {}));
+    R(96, FL - 82, 34, 5, GLASSD, 1.4) + R(104, FL - 82, 16, 2, "#6fcf6a", 0) + cable("M96 " + (FL - 80) + " C70 " + (FL - 80) + " 60 " + (FL - 100) + " 2 " + (FL - 200), "#f2efe8") + charger(2, FL - 200, .9, {}));
   var v = li >= 1 ? t - LN[li].start : t - LN[0].start;
   if (li === 0) s += inset(150, 175, 115, phoneFront(0, 0, 1.2, { pct: 100, charging: 1, dark: 1, time: "2:14" }), ease(v / .5));
   if (li === 1) s += inset(150, 175, 115, bigBatt(-40, 80, 80, 160, 100 - 30 * ease(v / 2), OLIVE, 1), ease(v / .4)) + T("بتعجّز", 150, 330, 30, ORANGE, 800);
