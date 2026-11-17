@@ -430,24 +430,26 @@ function staples(k, col) {
 // to the antrum. Places from Gray's plate 1223 (the caecum and the end of the ileum low on the viewer's left), the stomach
 // from the NCI plate, the bowel look from the NIDDK drawing (refs/SOURCES.md). No published SASI plate could be fetched;
 // the join follows the technique papers: a side-to-side gastro-ileal join on the antrum, about 2.5 m before the caecum.
-var AN = [252, 592],
-    JEJ = cr([CUT, [470, 852], [556, 832], [610, 880], [560, 926], [480, 920], [470, 960], [540, 990], [590, 1000]], 8),
-    ILIN = cr([[590, 1000], [612, 900], [570, 780], [450, 690], [270, 612]], 8),
-    ILOUT = cr([[238, 612], [160, 690], [116, 800], [118, 920], [160, 1010]], 8),
-    LOOP = ILIN.concat(ILOUT), LOOP_DOWN = cr([[590, 1000], [560, 1050], [450, 1080], [320, 1080], [210, 1060], [160, 1010]], 10),
+function sq(p) { return [p[0], p[1] <= 600 ? p[1] : 600 + (p[1] - 600) * .65]; }
+var DUOS = DUOJ.map(sq), CUTS = sq(CUT), AN = [252, 592],
+    JEJ = cr([CUTS, [470, 852], [556, 832], [610, 880], [560, 926], [480, 920], [470, 960], [540, 990], [590, 1000]].map(sq), 8),
+    ILIN = cr([[590, 1000], [612, 900], [570, 780], [450, 690], [270, 612]].map(sq), 8),
+    ILOUT = cr([[238, 612], [160, 690], [116, 800], [118, 920], [160, 1010]].map(sq), 8),
+    LOOP = ILIN.concat(ILOUT), LOOP_DOWN = cr([[590, 1000], [560, 1050], [450, 1080], [320, 1080], [210, 1060], [160, 1010]].map(sq), 10),
     SLV_A = cr([[318, 250], [316, 330], [312, 400], [292, 468], [236, 500], [184, 472]], 8),
     SLV_B = cr([[318, 250], [316, 330], [312, 400], [300, 480], [266, 552], [248, 600]], 8),
-    PATH_A = OESC.concat(SLV_A, DUOJ, JEJ, ILIN, ILOUT), PATH_B = OESC.concat(SLV_B, ILOUT);
-function caecum() { return G("translate(0 -170)", P("M100 1170 C70 1180 70 1260 110 1280 C150 1296 220 1290 240 1250 C256 1214 230 1170 190 1166 Z", COLON, 2.6) + '<path d="M120 1200 q40 10 90 0 M110 1240 q50 12 110 0" stroke="' + COLOND + '" stroke-width="2" fill="none"/>' + tube(cr([[230, 1250], [300, 1290], [330, 1360]]), 40, { fill: COLON, dark: COLOND, ticks: 17 }) + tube(cr([[110, 1180], [100, 1100], [96, 1000]]), 44, { fill: COLON, dark: COLOND, ticks: 17 })); }
+    PATH_A = OESC.concat(SLV_A, DUOS, JEJ, ILIN, ILOUT), PATH_B = OESC.concat(SLV_B, ILOUT);
+function caecum() { return G("translate(0 -310)", P("M100 1170 C70 1180 70 1260 110 1280 C150 1296 220 1290 240 1250 C256 1214 230 1170 190 1166 Z", COLON, 2.6) + '<path d="M120 1200 q40 10 90 0 M110 1240 q50 12 110 0" stroke="' + COLOND + '" stroke-width="2" fill="none"/>' + tube(cr([[230, 1250], [300, 1290], [330, 1360]]), 40, { fill: COLON, dark: COLOND, ticks: 17 }) + tube(cr([[110, 1180], [100, 1100], [96, 1000]]), 44, { fill: COLON, dark: COLOND, ticks: 17 })); }
 // o: {cut: 0..1 the sleeve's removed part drifting off (1 = gone), sl: staple line 0..1, loop: 0..1 brought up, an: 0..1 join,
 //     hlLoop, hlDuo, hlSleeve, dim: 0..1 everything but the two routes, full: the whole stomach before the sleeve}
 function sasiCloseup(t, o) {
   o = o || {}; var s = "", cut = o.cut == null ? 1 : clamp(o.cut), lp = o.loop == null ? 1 : clamp(o.loop), an = o.an == null ? lp : clamp(o.an);
-  var bg = liverUp() + pancreas() + caecum() + tube(JEJ, 50) + tube(DUOJ, 54, { fill: o.hlDuo ? "#f3c0a0" : BOWEL, dark: o.hlDuo ? ORANGE : BOWELD });
+  var bg = liverUp() + pancreas() + caecum() + tube(JEJ, 50) + tube(DUOS, 54, { fill: o.hlDuo ? "#f3c0a0" : BOWEL, dark: o.hlDuo ? ORANGE : BOWELD });
   s += o.dim ? dim(o.dim, bg) : bg;
   var lpts = lp >= 1 ? LOOP : lp <= 0 ? LOOP_DOWN : morph(LOOP_DOWN, LOOP, ease(lp));
   s += tube(lpts, 50, { fill: o.hlLoop ? "#f3c0a0" : BOWEL, dark: o.hlLoop ? ORANGE : BOWELD });
   var st = gullet() + (o.full ? organ(P_FULL, WALL) + rugae(P_FULL) : organ(P_SLEEVE, o.hlSleeve ? "#f2b39a" : WALL) + rugae(P_SLEEVE)) + pylorus();
+  if (!o.full && cut >= 1 && o.ghost !== 0) s += '<path d="' + P_FULL + '" fill="none" stroke="' + MUTE + '" stroke-width="2.4" stroke-dasharray="8 7"/>';
   s += o.dim ? dim(o.dim * .6, st) : st;
   if (!o.full && cut < 1) s += G("translate(" + f(170 * ease(cut)) + " " + f(-50 * ease(cut)) + ") rotate(" + f(16 * ease(cut)) + " 420 380)", organ(P_CUT, "#e9a07a") + rugae(P_CUT) + '<path d="' + P_CUT + '" fill="' + ORANGE + '" opacity=".22"/>', 1 - .6 * cut);
   if (o.sl != null || !o.full) s += staples(o.sl == null ? 1 : o.sl, OLIVE);
@@ -475,30 +477,30 @@ shot(4, push(320, 400, 1.04, 1.0), function (u, d, t) {
 shot(5, push(330, 360, 1.0, 1.08), function (u, d, t) {
   var k = at(u, .2, 1.6), cut = at(u, 2.0, 1.4);
   return paper() + G("translate(0 0)", gullet() + organ(P_SLEEVE, WALL) + rugae(P_SLEEVE) + (cut < 1 ? G("translate(" + f(170 * ease(cut)) + " " + f(-50 * ease(cut)) + ") rotate(" + f(16 * ease(cut)) + " 420 380)", organ(P_CUT, "#e9a07a") + rugae(P_CUT) + '<path d="' + P_CUT + '" fill="' + ORANGE + '" opacity="' + f(.25 * k) + '"/>', 1 - .6 * cut) : "") + pylorus() + staples(k, OLIVE)) +
-    tube(DUOJ.slice(0, 40), 54) + G("", tag("1", 90, 100, 1, 34, ORANGE), at(u, .1, .3)) + label(440, 300, 470, 120, "بيتشال", ORANGE, at(u, 1.0, .4), 24) + iconBox(510, 620, 130, banana(), at(u, cf(5, 2), .3));
+    tube(DUOS.slice(0, 40), 54) + G("", tag("1", 90, 100, 1, 34, ORANGE), at(u, .1, .3)) + label(440, 300, 470, 120, "بيتشال", ORANGE, at(u, 1.0, .4), 24) + iconBox(510, 620, 130, banana(), at(u, cf(5, 2), .3));
 });
 // 6 · but the pylorus and the duodenum keep working
 shot(6, push(250, 470, 1.1, 1.2), function (u, d, t) {
-  return paper() + sasiCloseup(t, { loop: 0, an: 0, hlDuo: 1 }) + flow(SLV_A.concat(DUOJ), t, 7, .2, FOODC, 10, at(u, .4, 1.2), 1) +
+  return paper() + sasiCloseup(t, { loop: 0, an: 0, hlDuo: 1 }) + flow(SLV_A.concat(DUOS), t, 7, .2, FOODC, 10, at(u, .4, 1.2), 1) +
     label(176, 440, 330, 330, "البواب", OLIVE, at(u, .3, .4), 24) + label(80, 560, 230, 740, "الاتناشر", OLIVE, at(u, .8, .4), 24) + check(470, 480, 1.4, at(u, cf(6, 1), .4), OLIVE);
 });
 // 7 · step two: the last part of the small bowel, about 2.5 m before its end
-shot(7, push(340, 760, .7, .66), function (u, d, t) {
+shot(7, push(340, 640, .85, .8), function (u, d, t) {
   var hk = at(u, .3, .5), seg = part(LOOP_DOWN, 0, 1);
   return paper() + sasiCloseup(t, { loop: 0, an: 0, dim: .4 }) + G("", '<path d="' + pathPts(seg) + '" stroke="' + ORANGE + '" stroke-width="64" fill="none" opacity=".25" stroke-linecap="round"/>', hk) +
-    G("", tag("2", 90, 120, 1, 50, ORANGE), at(u, .1, .3)) + label(160, 1010, 330, 1180, "نهاية الأمعاء الدقيقة", OLIVE, at(u, .8, .4), 32) + G("", numBox("2.5 m", 470, 1110, 1, 40, true), at(u, cf(7, 2), .3)) + draw(pathPts(part(LOOP_DOWN, .4, 1)), at(u, cf(7, 2), 1.0), ORANGE, 6, ' stroke-dasharray="10 8"');
+    G("", tag("2", 90, 120, 1, 50, ORANGE), at(u, .1, .3)) + label(160, 866, 300, 980, "نهاية الأمعاء الدقيقة", OLIVE, at(u, .8, .4), 32) + G("", numBox("2.5 m", 520, 800, 1, 40, true), at(u, cf(7, 2), .3)) + draw(pathPts(part(LOOP_DOWN, .4, 1)), at(u, cf(7, 2), 1.0), ORANGE, 6, ' stroke-dasharray="10 8"');
 }, { tr: "out" });
 // 8 · it is brought up and opened onto the end of the tube: one join only
-shot(8, push(340, 620, .66, .7), function (u, d, t) {
+shot(8, push(290, 600, .95, 1.05), function (u, d, t) {
   var up = at(u, .1, 2.0), c1 = cf(8, 1);
-  return paper() + sasiCloseup(t, { loop: up, an: at(u, 2.0, .4), hlLoop: 1, hlAn: 1 }) + (up < 1 ? arrow(330, 900, 300, 720, ORANGE, 8, 1) : "") +
-    label(AN[0], AN[1] + 8, 470, 470, "توصيلة واحدة", ORANGE, at(u, c1, .4), 32) + G("", numBox("1", 120, 470, 1, 44, true), at(u, c1 + .4, .3));
+  return paper() + sasiCloseup(t, { loop: up, an: at(u, 2.0, .4), hlLoop: 1, hlAn: 1 }) + (up < 1 ? arrow(330, 800, 300, 690, ORANGE, 8, 1) : "") +
+    label(AN[0], AN[1] + 8, 400, 470, "توصيلة واحدة", ORANGE, at(u, c1, .4), 32) + G("", numBox("1", 120, 400, 1, 44, true), at(u, c1 + .4, .3));
 });
 // 9 · the food splits: some goes on the usual road through the pylorus, some takes the shortcut through the join
-shot(9, push(340, 500, .64, .67), function (u, d, t) {
+shot(9, push(330, 430, .88, .92), function (u, d, t) {
   var c1 = cf(9, 1);
   return paper() + sasiCloseup(t, { dim: .35 }) + flowA(t, at(u, .1, 1.4)) + flowB(t, at(u, c1, 1.2)) +
-    G("", tag("الطريق العادي", 520, 980, 1, 32, OLIVE), at(u, .6, .3)) + G("", tag("المختصر", 130, 980, 1, 36, ORANGE), at(u, c1 + .2, .3));
+    G("", tag("الطريق العادي", 520, 820, 1, 30, OLIVE), at(u, .6, .3)) + G("", tag("المختصر", 120, 760, 1, 34, ORANGE), at(u, c1 + .2, .3));
 });
 // 10 · like water in a pipe with a side tap opened
 shot(10, push(320, 440, 1.0, 1.06), function (u, d, t) {
@@ -506,8 +508,8 @@ shot(10, push(320, 440, 1.0, 1.06), function (u, d, t) {
   return paper() + pipe(t, tap) + G("", tag("حنفية جانبية", 470, 640, 1, 30, BLUE), at(u, 1.0, .3)) + G("", T("ماسورة", 120, 330, 26, INK, 800), at(u, .2, .3));
 });
 // 11 · the shortcut food reaches the end of the bowel early
-shot(11, push(240, 760, .8, .86), function (u, d, t) {
-  return paper() + sasiCloseup(t, { dim: .4, hlLoop: 1 }) + flowB(t, 1, 8) + G("", tag("بدري", 300, 1000, 1, 40, ORANGE), at(u, cf(11, 1) + .3, .3)) + label(118, 900, 340, 900, "آخر الأمعاء", OLIVE, at(u, .4, .4), 30);
+shot(11, push(230, 640, .92, .98), function (u, d, t) {
+  return paper() + sasiCloseup(t, { dim: .4, hlLoop: 1 }) + flowB(t, 1, 8) + G("", tag("بدري", 320, 860, 1, 40, ORANGE), at(u, cf(11, 1) + .3, .3)) + label(118, 800, 330, 780, "آخر الأمعاء", OLIVE, at(u, .4, .4), 30);
 });
 // 12 · there it releases satiety hormones that close the appetite and steady the sugar
 shot(12, push(320, 400, 1.0, 1.06), function (u, d, t) {
@@ -518,8 +520,8 @@ shot(12, push(320, 400, 1.0, 1.06), function (u, d, t) {
   return s + G("", tag("هرمونات", 320, 420, 1, 26, HORM), hk);
 });
 // 13 · and with the sleeve, a small stomach and little hunger hormone
-shot(13, push(330, 380, 1.0, 1.06), function (u, d, t) {
-  return paper() + gullet() + organ(P_SLEEVE, WALL) + rugae(P_SLEEVE) + pylorus() + staples(1, OLIVE) + tube(DUOJ.slice(0, 40), 54) + '<path d="' + P_FULL + '" fill="none" stroke="' + MUTE + '" stroke-width="2" stroke-dasharray="7 7"/>' +
+shot(13, push(320, 380, 1.08, 1.16), function (u, d, t) {
+  return paper() + gullet() + organ(P_SLEEVE, WALL) + rugae(P_SLEEVE) + pylorus() + staples(1, OLIVE) + tube(DUOS.slice(0, 40), 54) + '<path d="' + P_FULL + '" fill="none" stroke="' + MUTE + '" stroke-width="2" stroke-dasharray="7 7"/>' +
     G("", tag("معدة صغيرة", 470, 140, 1, 28, OLIVE), at(u, .3, .3)) + iconBox(480, 470, 150, bell(0, 6, .9, t, .15), at(u, cf(13, 1), .3)) + G("", T("جوع أقل", 480, 580, 24, ORANGE, 800), at(u, cf(13, 1) + .2, .3));
 });
 // 14 · versus the bypass: no closed-off pouch and no bowel left out
@@ -533,11 +535,11 @@ shot(14, push(320, 420, 1.0, 1.0), function (u, d, t) {
 });
 // 15 · the duodenum still sees food: iron and calcium are absorbed better
 shot(15, push(270, 560, 1.0, 1.05), function (u, d, t) {
-  return paper() + sasiCloseup(t, { hlDuo: 1, dim: .2 }) + flow(SLV_A.concat(DUOJ), t, 8, .2, FOODC, 10, 1, 1) + numBox("Fe", 360, 760, at(u, cf(15, 1), .3), 34, true) + numBox("Ca", 460, 760, at(u, cf(15, 1) + .3, .3), 34, true) + check(560, 750, 1.0, at(u, cf(15, 1) + .9, .4), OLIVE) + label(80, 560, 160, 700, "الاتناشر", OLIVE, at(u, .2, .4), 26);
+  return paper() + sasiCloseup(t, { hlDuo: 1, dim: .2 }) + flow(SLV_A.concat(DUOS), t, 8, .2, FOODC, 10, 1, 1) + numBox("Fe", 360, 760, at(u, cf(15, 1), .3), 34, true) + numBox("Ca", 460, 760, at(u, cf(15, 1) + .3, .3), 34, true) + check(560, 750, 1.0, at(u, cf(15, 1) + .9, .4), OLIVE) + label(80, 560, 160, 700, "الاتناشر", OLIVE, at(u, .2, .4), 26);
 });
 // 16 · and a doctor can still look at it with an endoscope
 shot(16, push(250, 360, .9, .96), function (u, d, t) {
-  var sc = OESC.concat(SLV_A, DUOJ.slice(0, 30)), k = at(u, .2, 1.8), pts = part(sc, 0, k), tip = along(sc, k);
+  var sc = OESC.concat(SLV_A, DUOS.slice(0, 30)), k = at(u, .2, 1.8), pts = part(sc, 0, k), tip = along(sc, k);
   return paper() + sasiCloseup(t, { dim: .25 }) + '<path d="' + pathPts(pts) + '" stroke="' + INK + '" stroke-width="13" fill="none" stroke-linecap="round"/><path d="' + pathPts(pts) + '" stroke="#3a3f42" stroke-width="9" fill="none" stroke-linecap="round"/>' +
     '<circle cx="' + f(tip[0]) + '" cy="' + f(tip[1]) + '" r="' + f(16 + 4 * Math.sin(t * 8)) + '" fill="#fff3c8" opacity=".75"/>' + C(tip[0], tip[1], 7, "#fff3c8", 2) + label(240, 120, 420, 60, "منظار", OLIVE, at(u, .6, .4), 26) + check(470, 560, 1.3, at(u, 2.0, .4), OLIVE);
 });
@@ -585,10 +587,10 @@ shot(23, push(320, 420, 1.04, 1.0), function (u, d, t) {
   return s + G("", T("دكتور", 150, 740, 24, INK, 800), at(u, .1, .3));
 });
 // 24 · from the end: a sleeve, one join, food on two roads
-shot(24, push(340, 500, .64, .67), function (u, d, t) {
+shot(24, push(330, 430, .88, .92), function (u, d, t) {
   var c = [cf(24, 1), cf(24, 2), cf(24, 3)];
   return paper() + sasiCloseup(t, { hlSleeve: at(u, c[0], .3), hlAn: u > c[1] ? 1 : 0, dim: .3 }) + G("translate(330 640) scale(" + f(1 + .05 * Math.sin(t * 4)) + ") translate(-330 -640)", tag("من الآخر", 330, 640, at(u, .05, .3), 70, ORANGE), 1 - at(u, c[0] - .1, .3)) +
-    G("", tag("تكميم", 560, 220, 1, 40, OLIVE), at(u, c[0], .3)) + G("", tag("توصيلة واحدة", 470, 640, 1, 40, ORANGE), at(u, c[1], .3)) + flowA(t, at(u, c[2], 1.0)) + flowB(t, at(u, c[2], 1.0)) + G("", tag("طريقين", 340, 990, 1, 44, ORANGE), at(u, c[2] + .3, .3));
+    G("", tag("تكميم", 560, 220, 1, 40, OLIVE), at(u, c[0], .3)) + G("", tag("توصيلة واحدة", 470, 640, 1, 40, ORANGE), at(u, c[1], .3)) + flowA(t, at(u, c[2], 1.0)) + flowB(t, at(u, c[2], 1.0)) + G("", tag("طريقين", 330, 820, 1, 44, ORANGE), at(u, c[2] + .3, .3));
 });
 // 25 · the odd fact: published by Dr Tarek Mahdy in 2016, now done in many countries
 shot(25, push(320, 400, 1.0, 1.04), function (u, d, t) {
@@ -603,15 +605,15 @@ shot(25, push(320, 400, 1.0, 1.04), function (u, d, t) {
 // ── opening card, bumper and summary art ──
 window.SCENE = window.SCENE || {};
 SCENE.intro = function (svg, t, li) {
-  var s = "", TR = "translate(132 54) scale(.52)", u = t - LN[li].start;
+  var s = "", TR = "translate(118 40) scale(.72)", u = t - LN[li].start;
   if (li === 0) s += G(TR, sasiCloseup(t, { dim: .25 }) + flowA(t, ease(u / 1.4)) + flowB(t, ease((u - 1.4) / 1.2)));
-  if (li === 1) s += G(TR, sasiCloseup(t, { dim: .35 }) + flowA(t, 1) + flowB(t, 1)) + G("", tag("عادي", 90, 420, 1, 34, OLIVE), ease(u / .3)) + G("", tag("مختصر", 520, 160, 1, 34, ORANGE), ease((u - 1.2) / .3));
+  if (li === 1) s += G(TR, sasiCloseup(t, { dim: .35 }) + flowA(t, 1) + flowB(t, 1)) + G("", tag("عادي", 520, 470, 1, 34, OLIVE), ease(u / .3)) + G("", tag("مختصر", 90, 560, 1, 34, ORANGE), ease((u - 1.2) / .3));
   if (li >= 2) s += G(TR, dim(.6, sasiCloseup(t, {}))) + G("", egyptFlag(300, 300, 2.4), ease(u / .3)) + G("", tag("جراح مصري", 300, 470, 1, 40, ORANGE), ease((u - .3) / .3));
   return s;
 };
-SCENE.bumper = function (u, t) { return G("translate(48 16) scale(.15)", sasiCloseup(t, {}) + flowA(t, 1, 10) + flowB(t, 1, 5)); };
+SCENE.bumper = function (u, t) { return G("translate(44 18) scale(.17)", sasiCloseup(t, {}) + flowA(t, 1, 10) + flowB(t, 1, 5)); };
 SCENE.outro = function (svg, u, t) {
-  return G("translate(176 18) scale(.23)", sasiCloseup(t, {}) + flowA(t, 1, 12) + flowB(t, 1, 6)) +
-    callout("1", 222, 64, ease(u / .3)) + callout("2", 200, 112, ease(u / .3 - .5)) + callout("3", 236, 150, ease(u / .3 - 1)) + callout("4", 196, 210, ease(u / .3 - 1.5));
+  return G("translate(176 24) scale(.25)", sasiCloseup(t, {}) + flowA(t, 1, 12) + flowB(t, 1, 6)) +
+    callout("1", 262, 96, ease(u / .3)) + callout("2", 206, 128, ease(u / .3 - .5)) + callout("3", 252, 172, ease(u / .3 - 1)) + callout("4", 196, 222, ease(u / .3 - 1.5));
 };
 function banana() { return '<path d="M-44 -18 C-30 30 30 36 48 -8 C36 4 0 14 -32 -22 Z" fill="#e8c95a" stroke="' + INK + '" stroke-width="2"/><path d="M-44 -18 l-6 -8" stroke="' + INK + '" stroke-width="4" stroke-linecap="round"/><path d="M-30 -6 C-10 14 20 16 40 -2" stroke="#b99a35" stroke-width="1.6" fill="none"/>'; }
