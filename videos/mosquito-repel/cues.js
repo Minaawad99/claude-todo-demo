@@ -50,15 +50,15 @@ a(L(0) + 0.6, 'fizz', 0.2, 1.2); buzz(L(1) + 0.3, D(1) + 0.3, 0.18); paper(L(2) 
 paper(L(4) + 0.4); a(L(4) + 0.55, 'pop', 0.35);
 for (let k = 0; k < 3; k++) a(L(5) + D(5) * (0.3 + 0.22 * k), 'pop', 0.35);
 // 6 · the repellent sprays and the film sweeps across the skin
-a(L(6) + 0.3, 'spray', 0.3, 0.5); a(L(6) + 0.7, 'wipe', 0.2); lab(6, D(6) * 0.6 + 0.2);
+a(L(6) + 0.3, 'spray', 0.3, 1.0); a(L(6) + 0.7, 'wipe', 0.2); lab(6, D(6) * 0.6 + 0.2);
 // 7 · the label inset; the tick
 a(L(7) + 0.5, 'pop', 0.35); scribble(L(7) + D(7) * 0.7);
 // 8 · the haze over the antennae
 lab(8, 0.4); a(L(8) + 0.6, 'whoosh', 0.14, 1.2); a(L(8) + D(8) * 0.6, 'pop', 0.3);
 // 9 · the perfume puff over the plate
-a(L(9) + D(9) * 0.35, 'spray', 0.28, 0.6); a(L(9) + D(9) * 0.7, 'pop', 0.3);
+a(L(9) + D(9) * 0.35, 'spray', 0.28, 1.0); a(L(9) + D(9) * 0.7, 'pop', 0.3);
 // 10 · the clock runs, sweat drips, spray again
-rec(L(10) + 0.3, 'clock-ticking', 0.25, 0.1, Math.min(8.6, D(10) * 0.7), 1.0, null); a(L(10) + D(10) * 0.3, 'drip', 0.25); a(L(10) + D(10) * 0.78, 'spray', 0.28, 0.4);
+rec(L(10) + 0.3, 'clock-ticking', 0.25, 0.1, Math.min(8.6, D(10) * 0.7), 1.0, null); a(L(10) + D(10) * 0.3, 'drip', 0.25); a(L(10) + D(10) * 0.78, 'spray', 0.28, 1.0);
 // 11 · lemon eucalyptus: tick and cross
 lab(11, 0.4); scribble(L(11) + D(11) * 0.5); scribble(L(11) + D(11) * 0.55 + 0.4);
 // 12 · the candle: a soft flame, the smell drifting away
