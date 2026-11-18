@@ -126,18 +126,41 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
     - big serif numbers that count up (`count`, `bigNum`, `numBox`);
     - Arabic words in a box (`tag`);
     - dimension lines (`measure`).
-- **People: real body proportions** (the user's rule). Never stick figures or guessed sizes. Copy `fig()`, `limb()`, `ik()`,
-  `rel()` and the `HB` table from `videos/choking/sketch/shots.js`. They follow Drillis & Contini segment lengths as
-  fractions of the height H (H = 400 units):
-  - heights: ankle 0.039H, knee 0.285H, hip joint 0.52H, shoulder 0.818H, chin 0.87H;
-  - segment lengths: thigh 0.245H, shank 0.246H, foot 0.152H, upper arm 0.186H, forearm 0.146H, hand 0.108H;
-  - side depths: chest 0.13H, waist 0.115H, seat 0.14H; the head is 0.115H deep and 0.13H tall.
+- **People: one shared drawing, locked by the user after «الناصور العصعصي».** Every sketch episode draws people with
+  `videos/_templates/sketch/people.js`. `build.py` loads it after `_helpers.js`, so `fig()`, `sitter()`, `chair()`, `rel()`,
+  `whole()`, `floor()` and `PX_PER_M()` are already there. Never copy an older `fig()` into an episode (the one in
+  `videos/choking` bends elbows the wrong way), and never pick an elbow side by hand. The rules, all built in:
+  - **Real proportions** (Drillis & Contini, as fractions of the height H; H = 400 units):
+    - heights: ankle 0.039H, knee 0.285H, hip joint 0.52H, shoulder 0.818H, chin 0.87H;
+    - segment lengths: thigh 0.245H, shank 0.246H, foot 0.152H, upper arm 0.186H, forearm 0.146H, hand 0.108H;
+    - side depths: chest 0.13H, waist 0.115H, seat 0.14H; the head is 0.115H deep and 0.13H tall.
+  - **Joints bend like real ones:**
+    - the **elbow** always sits below or behind the line from the shoulder to the hand: never up at the face, never
+      into the chest;
+    - the **knee** bends one way only: the shank swings back, the knee points to the front.
 
-  Furniture is to the same scale: a table 0.43H, a chair seat 0.25H. Put the hip at `floor − 212·s` so the feet stand on
-  the floor. Place hands with `rel(h, side)` (a point h above the hip, to the front or the back) so they land on the real
-  spot: throat, between the shoulder blades, above the navel, mid-chest. People are flat salmon-skinned side views as in
-  reference v20, with no faces beyond a nose, an ear and a hair cap. A body cut uses the real anatomy from a reference
-  picture (`throat()` in the same file: windpipe in front, gullet behind, epiglottis on the voice box).
+    Give `hands` (a point, or `rel(h, side)` for a spot on the body) and `legs` (`[thigh, knee]` angles), and the joints
+    work themselves out.
+  - **A face and hair, always:**
+    - the face is a profile with brow, nose, lips, chin and ear, an eye under its brow, and an expression that fits the
+      moment: `expr` `"neutral" | "pain" | "smile" | "focus"`, `blink: 1`;
+    - the hair: `hs` `"short"` (with volume), `"long"` with `female: 1`, `"helmet"`, or `"none"`.
+  - **Clothes:**
+    - a shirt with short sleeves, or `sleeves: "long"` for a jacket or uniform;
+    - trousers to the waist and shoes;
+    - `nude: 1` for an anatomy figure, with the bones drawn over it;
+    - `grip` for fists on a wheel or a handle.
+  - **Real sizes for everything a person uses, in metres at the person's scale:** 1 m = `PX_PER_M(s)` = 400·s / 1.75
+    units.
+    - Furniture: a table 0.43H, a chair seat 0.25H (`sitter()` puts the hips on it).
+    - Vehicles at their real size: the Willys jeep in `videos/pilonidal/sketch/shots.js` is 3.36 m long with its floor
+      at 0.35 m. The driver's feet rest on the floor and the car side hides the legs. Nothing pokes out under the car.
+  - **Draw order:** `fig().far`, then whatever hides the legs (a seat, a car body), then `fig().body`, then what is in
+    front (a table, a steering wheel), then `fig().near`.
+  - **Check before rendering:** every person at full size with `tools/frame.js`.
+
+  A body cut uses the real anatomy from a reference picture (`throat()` in `videos/choking`; the cut across the buttocks
+  and the side view with spine, sacrum and coccyx in `videos/pilonidal`).
 - **Shots:** one `shot()` per idea, usually per line, sometimes per caption chunk (`[line, chunk]`).
   - Transitions: `tr: "fade"`, or `"in"` / `"out"` when the camera flies into a detail or pulls back. There are no hard cuts.
   - `hud(from, to, draw)` holds a dial, chip or checklist over several shots.
