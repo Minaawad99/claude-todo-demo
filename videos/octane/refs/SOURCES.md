@@ -10,9 +10,17 @@
 - WWII: 100-octane fuel let the RAF run Merlin engines at higher boost (Battle of Britain, 1940). — Wikipedia «Avgas», «Rolls-Royce Merlin».
 
 ## Drawings
+Reference photos the user sent (refs/photos/): a cut motorcycle engine, a DOHC car-engine cutaway diagram, three classroom
+cut-away models (Fama, NTL and one more), piston/rod/crank sets, two knock-damaged pistons, two knock sensors on the block,
+two fuel-filler doors with the octane sticker, a Spitfire Mk I profile, and an Egyptian station pump (stainless cabinet,
+blue screens, red «بنزين 80» sticker, yellow nozzle). Plug from Wikimedia «Plug construction - en.jpg» (public domain).
+The drawings are redrawn from these in the series hand; nothing is traced or copied.
 - One cylinder cut through the middle after the «طب إزاي؟» reference v18 (`videos/_reference/tabizzay/sheets/v18.jpg`): head with a pent-roof chamber, central plug, two valves, piston with three rings, rod, crank and counterweight. Proportions: bore 80 mm, stroke 85 mm, rod 145 mm (common 1.6 L four-cylinder).
 - The car and the people come from `videos/car-water/sketch/shots.js` (real proportions, from `videos/choking`).
 - Fighter plane: a generic WWII single-engine profile, no markings of a real squadron.
 
 ## Sound
+Recordings the user sent (Pixabay / Freesound), in sfx/: engine idle (car-idle-1-blyth 62010), engine start (44357),
+acceleration inside a car (7087), engine knock (64227), electric sparks (6130), gas pump (29700), bicycle air pump (39598),
+car passing (soundque 442774), small propeller plane flyby (kalsstockmedia 341994), drop coin (freesound_gamestudio 384921).
 Kit clips from `videos/_templates/sketch/sfx/` (see its SOURCES.md); engine idle/rev, spark, clank (the knock), squeeze, boom, coins: synthesized in `videos/audio/sfx.py`. No music.

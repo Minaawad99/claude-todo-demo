@@ -39,10 +39,10 @@
     s += '<circle cx="270" cy="440" r="250" fill="#ffd27a" opacity=".35" filter="url(#soft)"/><circle cx="270" cy="420" r="140" fill="#ffe08a" opacity=".3" filter="url(#soft)"/>';
     // the cylinder knocking: the plug's flame and a second one lit by itself in the far corner, crashing on the piston
     var eng = '<rect x="' + E.x0 + '" y="' + E.deck + '" width="' + (E.x1 - E.x0) + '" height="' + (420 - E.deck) + '" fill="#e2d9c3"/>' + engine({ th: th, t: t, heat: .9, flame: .42, knock: 1.0, clash: .3, hl: "piston" });
-    s += '<g transform="translate(270 318) scale(.6) translate(-320 -60)">' + eng + '</g>';
+    s += '<g transform="translate(270 382) scale(.52) translate(-320 -60)">' + eng + '</g>';
     // magnified inset on the far corner, ringed in orange
-    s += '<g transform="translate(420 610)"><circle r="78" fill="#eee5d0"/><clipPath id="ic"><circle r="78"/></clipPath><g clip-path="url(#ic)"><g transform="scale(1.6) translate(' + (-kx - 40) + ' ' + (-ky + 20) + ')">' + eng + '</g></g><circle r="78" fill="none" stroke="#e8743c" stroke-width="5"/></g>';
-    s += '<path d="M' + (270 + (kx - 320) * .6) + ' ' + (318 + (ky - 60) * .6) + ' L362 556" stroke="#e8743c" stroke-width="3"/>';
+    s += '<g transform="translate(420 610)"><circle r="78" fill="#eee5d0"/><clipPath id="ic"><circle r="78"/></clipPath><g clip-path="url(#ic)">' + pistonBroken(0, -34, .62, 1) + '</g><circle r="78" fill="none" stroke="#e8743c" stroke-width="5"/></g>';
+    s += '<path d="M' + (270 + (kx - 320) * .52) + ' ' + (382 + (ky - 60) * .52) + ' L362 556" stroke="#e8743c" stroke-width="3"/>';
     [["80", "#9aa86e"], ["92", "#d9a86a"], ["95", "#c96a4a"]].forEach(function (g, i) { s += '<g transform="translate(' + (70 + i * 66) + ' 660)"><rect x="-28" y="-22" width="56" height="42" rx="5" fill="' + g[1] + '" stroke="#2a2016" stroke-width="2"/><text x="0" y="10" text-anchor="middle" style="font:800 24px Noto Serif;fill:#2a2016">' + g[0] + '</text></g>'; });
     s += '<defs><linearGradient id="fadeT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".95"/><stop offset=".75" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>' +
          '<linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset=".3" stop-color="#000" stop-opacity=".7"/><stop offset="1" stop-color="#000" stop-opacity=".95"/></linearGradient></defs>';

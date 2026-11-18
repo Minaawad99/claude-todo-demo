@@ -43,46 +43,52 @@ a(L(SUMMARY) + 0.1, 'chime', 0.35); for (let k = 0; k < 5; k++) a(L(SUMMARY) + 0
 paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                                                       // ask box
 
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
-// 0-2 · the pump: a beep per grade lighting up, a pop on «أقوى؟», the ✗
-for (let k = 0; k < 3; k++) a(L(0) + 0.8 + k * 0.8, 'beep', 0.18);
+// the user's Pixabay recordings for this episode (videos/octane/sfx, credited in refs/SOURCES.md); each falls back to a synth stand-in
+const idle = (t, dur, g) => rec(t, 'engine-idle', g || 0.32, 2, dur, 1.0, 'idle', 0.12);
+const knock = (t, dur, from, g) => rec(t, 'engine-knock', g || 0.16, from || 3, dur, 1.0, 'clank', 0.2);
+const spark = (t, dur, from) => rec(t, 'ignition-spark', 1.5, from || 1, dur || 0.35, 1.0, 'spark', 0.3);
+// 0-2 · the station: the pump running, a beep per grade lighting up, a pop on «أقوى؟», the ✗
+rec(L(0) + 0.2, 'fuel-pump', 0.4, 6, L(3) - L(0) - 0.3, 1.0, 'hum', 0.1);
+for (let k = 0; k < 3; k++) a(L(0) + 0.8 + k * 0.85, 'beep', 0.16);
 a(L(1) + 0.1, 'pop', 0.3); scribble(L(2) + 0.5);
-// 4-5 · the rule card, then the bike pump strokes (a squeeze per stroke)
+// 4-5 · the rule card, then the bike pump strokes
 paper(L(4) + 0.3); lab(4, 0.6);
-for (let k = 0; k < 3; k++) a(L(5) + 0.2 + k * 1.21, 'squeeze', 0.25); lab(5, 0.6);
-// 6 · the engine turns over; the piston squeezes the mix, 1/10 lands
-a(L(6), 'idle', 0.12, D(6)); a(L(6) + 0.6, 'squeeze', 0.25, 2.2); lab(6, 0.3); ding(L(6) + D(6) - 1.3);
+rec(L(5) + 0.1, 'bike-pump', 1.4, 0.4, D(5) - 0.1, 1.0, 'squeeze', 0.25); lab(5, 0.6);
+// 6 · the engine starts and idles; the piston squeezes the mix, 1/10 lands
+rec(L(6), 'engine-start', 0.34, 0, 3.4, 1.0, 'rev', 0.15); idle(L(6) + 3.2, D(6) - 3.2); lab(6, 0.3); ding(L(6) + D(6) - 1.3);
 // 7 · the spark plug fires
-lab(7, 0.3); for (let k = 0; k < 3; k++) a(L(7) + D(7) * 0.45 + k * 0.35, 'spark', 0.3);
+idle(L(7), D(7)); lab(7, 0.3); for (let k = 0; k < 3; k++) spark(L(7) + D(7) * 0.45 + k * 0.35, 0.3, 1 + k * 2);
 // 8 · the flame spreads and pushes the piston down: a soft boom, then the ✓
-a(L(8) + 0.2, 'boom', 0.22); a(L(8) + 0.5, 'whoosh', 0.15); scribble(L(8) + D(8) - 1);
+idle(L(8), D(8)); a(L(8) + 0.2, 'boom', 0.18); scribble(L(8) + D(8) - 1);
 // 9 · the far corner lights by itself
-a(L(9), 'idle', 0.1, D(9)); lab(9, 1.0); a(L(9) + D(9) * 0.6, 'spark', 0.3); a(L(9) + D(9) * 0.65, 'pop', 0.3);
-// 10 · two flames crash: a metal knock three times a second
-for (let k = 0; k < 11; k++) a(L(10) + 0.3 + k / 3, 'clank', 0.22);
-// 11 · uphill: the engine pulls, and the knocks «تك تك»
-a(L(11), 'rev', 0.16, D(11)); for (let k = 0; k < 3; k++) a(L(11) + 0.3 + k * 0.45, 'clank', 0.25);
-// 12-13 · the octane tag, the gauge, the bars growing
-paper(L(12) + 0.3); lab(12, 1.0); for (let k = 0; k < 3; k++) { a(L(13) + 0.2 + k * 0.7, 'whoosh', 0.1); lab(13, 0.9 + k * 0.7); }
-// 14-15 · two engines; the tags, the ✓ and the numbers
-a(L(14), 'idle', 0.1, D(14) + D(15)); ding(L(14) + 0.6); lab(15, 0.4); scribble(L(15) + 0.8); ding(L(15) + D(15) * 0.45);
-// 16 · the manual, the filler flap opening
-paper(L(16) + 0.1); a(L(16) + 0.8, 'creak', 0.18); lab(16, 1.4);
-// 17 · the sensor hears the knock and the spark moves later
-for (let k = 0; k < 6; k++) a(L(17) + 0.4 + k * 0.4, 'clank', 0.16); lab(17, 0.8); paper(L(17) + D(17) * 0.55);
-// 18 · gauges swing; the crack
-a(L(18) + 0.3, 'whoosh', 0.12, 1.4); a(L(18) + D(18) * 0.55, 'clank', 0.35); a(L(18) + D(18) * 0.58, 'snip', 0.3);
-// 19 · no harm ✗, no benefit ✗
-paper(L(19) + D(19) * 0.3); scribble(L(19) + D(19) * 0.4); paper(L(19) + D(19) * 0.65); scribble(L(19) + D(19) * 0.75);
+idle(L(9), D(9)); lab(9, 1.0); spark(L(9) + D(9) * 0.6, 0.4, 6); a(L(9) + D(9) * 0.65, 'pop', 0.25);
+// 10 · two flames crash: the real knock
+knock(L(10) + 0.2, D(10) - 0.2, 3, 0.2);
+// 11 · uphill: the engine pulls under load, and it knocks
+rec(L(11) - 0.1, 'engine-rev', 0.22, 1, D(11) + 0.2, 1.0, 'rev', 0.16); knock(L(11) + 0.3, D(11) - 0.3, 20, 0.14);
+// 12-13 · the octane tag, the gauge (a pump stroke), the bars growing
+paper(L(12) + 0.3); lab(12, 1.0); rec(L(12) + 1.0, 'bike-pump', 1.1, 2.4, 2.4, 1.0, 'squeeze', 0.2);
+for (let k = 0; k < 3; k++) { a(L(13) + 0.2 + k * 0.7, 'whoosh', 0.1); lab(13, 0.9 + k * 0.7); }
+// 14-15 · two engines idling; the tags, the ✓ and the numbers
+idle(L(14), D(14) + D(15), 0.28); ding(L(14) + 0.6); lab(15, 0.4); scribble(L(15) + 0.8); ding(L(15) + D(15) * 0.45);
+// 16 · the manual, the filler door opening
+paper(L(16) + 0.1); a(L(16) + 0.7, 'creak', 0.18); lab(16, 1.4);
+// 17 · the sensor hears the knock and the spark moves later: the knock fades out
+idle(L(17), D(17), 0.25); knock(L(17) + 0.3, D(17) * 0.55, 8, 0.15); lab(17, 0.8); paper(L(17) + D(17) * 0.55);
+// 18 · gauges swing; the piston breaks
+a(L(18) + 0.3, 'whoosh', 0.12, 1.4); knock(L(18) + D(18) * 0.5, 1.0, 25, 0.2); a(L(18) + D(18) * 0.6, 'clank', 0.35);
+// 19 · the 95 pump; no harm ✗, no benefit ✗
+rec(L(19), 'fuel-pump', 0.3, 20, D(19), 1.0, 'hum', 0.1); paper(L(19) + D(19) * 0.3); scribble(L(19) + D(19) * 0.4); paper(L(19) + D(19) * 0.65); scribble(L(19) + D(19) * 0.75);
 // 20 · the myth crossed out
 a(L(20) + 0.2, 'pop', 0.3); scribble(L(20) + D(20) * 0.7);
-// 21 · same energy; the coins fly off
-a(L(21) + 0.2, 'fill', 0.15, 1.2); for (let k = 0; k < 4; k++) a(L(21) + D(21) * 0.55 + k * 0.2, 'clink', 0.2);
+// 21 · same energy; the coins fly off, one drop each
+a(L(21) + 0.2, 'fill', 0.12, 1.2); for (let k = 0; k < 4; k++) rec(L(21) + D(21) * 0.55 + k * 0.2, 'coins', 0.35, 0, 0.5, 1.0, 'clink', 0.2);
 // 22 · a sports car passes, 98 lands
-a(L(22), 'rev', 0.14, D(22)); ding(L(22) + 0.4); lab(22, D(22) * 0.55);
+rec(L(22) - 0.6, 'sports-car', 0.3, 1.0, 4.8, 1.0, 'rev', 0.14); ding(L(22) + 0.4); lab(22, D(22) * 0.55);
 // 23 · recap: ✗ on «قوة», the tag, the manual
 scribble(L(23) + 0.5); paper(L(23) + 1.0); lab(23, D(23) * 0.55);
-// 24 · the fighter: a propeller drone, 100 lands, it speeds off
-a(L(24), 'motor', 0.12, D(24)); ding(L(24) + 0.6); a(L(24) + D(24) * 0.45, 'whoosh', 0.18, 1.6);
+// 24 · the Spitfire flies past; 100 lands
+rec(L(24) - 0.3, 'propeller-plane', 0.24, 1.5, D(24) + 0.3, 1.0, 'motor', 0.12); ding(L(24) + 0.6);
 
 // music plays only when sfx.py is run with --music, and that only when the user asked for music in this video
 const MUSIC = has('music-soft') ? 'music-soft' : null;
