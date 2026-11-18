@@ -54,8 +54,9 @@ that goes on in the next line). This speed is the style: one line ≈ 1.7 s.
 6. **Finishing touches (3 lines):** «زوّد <حاجة>…» / «و<حاجة>…» / «و<حاجة>.»
 7. **The payoff (3 lines):** «بص لنفسك…» / «إنت لسه عامل <الحاجة> بإيديك.» / «مبروك يا باشمهندس.»
 
-No «إيه الحكاية؟ هشرحهالك في دقيقة.» line and no «قولولنا…» line: the reference ends on «مبروك يا باشمهندس» and so do
-we (ask the user once if they want the «قولولنا» line added; it is their channel's habit in other styles).
+**Locked by the user:** this style is its own thing, built like the video they sent, not like the other styles. No
+«إيه الحكاية؟ هشرحهالك في دقيقة.» line, no intro card, no summary card, and **never the «قولولنا، عايزين تعرفوا حكاية إيه
+المرة الجاية؟» line**. The last line is always «مبروك يا باشمهندس.» Don't ask about it again.
 
 **Wording:**
 - Casual Cairo Arabic, to «إنت», present tense, no classical words.
@@ -74,13 +75,25 @@ sketch skill). Style text, filled in:
 Speak in casual Egyptian Arabic (Cairo dialect), like a funny, energetic young YouTuber building <the thing> in front of a friend, one silly step at a time. Fast and punchy, almost no pauses between sentences, like a reel. Playful on the jokes and comparisons, a quick "uh-oh" on every "بس" problem, satisfied on every part name. Emphasize the part names: <word>, <word>, <word>. Make the opening "مبروك، إنت عملت" ironic and the final "مبروك يا باشمهندس" proud and warm. Never use Modern Standard Arabic pronunciation; pronounce ق as a glottal stop like Cairenes.
 ```
 
-Timing as in the sketch skill (`tighten.py --max 0.15`, `align_asr.py`, `map_timing.py`), but tighten harder: the
-reference has no pause over 0.25 s. Never speed the voice up.
+Timing as in the sketch skill (`tighten.py`, `align_asr.py`, `map_timing.py`) with `--max 0.25`: the engine take went
+from 84 s to 74 s. Never speed the voice up. Where whisper-small runs two lines together, split them at the quietest
+10 ms between them (the engine episode, lines 30/31).
 
 ## 3. The 3D world (three.js)
 
-Build on the real-3D episode `videos/fridge-3d/` (`world.js` is a pure function of time, `template.html`, `build.py`,
-`videos/lib/three.min.js`, `videos/engine.js`). Make `videos/<slug>/world.js`, `template.html`, `build.py`.
+**The reference episode is «ازاي تعمل موتور؟» (`videos/car-engine/`).** Start every new episode from a copy of it:
+- `world.js`: the whole 3D world as a pure function of time (`window.__world(t)`): the garage set, the environment map
+  for metals, `fadeable()` / `setOpacity()` for parts that fade in (they go back to opaque at full opacity, so nothing
+  looks see-through), the build, and the camera table `CAM` (keyframe i is the shot for line i; the move into it starts
+  0.3 s before the line and lasts up to 1.3 s; the last two keys are a slow orbit). It also fills `ANCH` with 3D points the
+  labels pin to, and honours `window.__camOverride` for the cover.
+- `index.html`: the overlay (brand, top tags `TAGS`, part labels `LABS`, captions) and `renderAt(t)`; counters are tags
+  whose text is `COUNT_…`.
+- `cues.js`, `style.txt`, `refs/SOURCES.md`, and the cover `brand/eh-elhekaya/cover-car-engine-tiktok.html`.
+
+Check frames with `node videos/tools/strip3d.js <abs index.html> <out.png> <cols> <t…>` (software WebGL; the plain
+`strip.js` has none) and shoot the cover with `videos/tools/shoot3d.js`. Run them from a folder where `playwright`
+resolves (`NODE_PATH=$(npm root -g)`).
 
 - **Set:** one place for the whole video. A large concrete or dusty floor (canvas texture with stains and fine noise), a
   corrugated metal wall or a hangar far behind, softly out of focus (a blurred texture on a far plane is enough). Daylight:

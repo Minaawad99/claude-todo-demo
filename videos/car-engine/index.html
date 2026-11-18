@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>ازاي تعمل موتور؟ — إيه الحكاية؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* «ازاي نعمل» style: a real 3D build under three kinds of pills (measured from the user's reference). 360×640 at 3x. */
+  html, body { margin: 0; width: 360px; height: 640px; overflow: hidden; background: #111; font-family: "Noto Sans Arabic", sans-serif; }
+  #gl { position: absolute; inset: 0; width: 360px; height: 640px; display: block; }
+  .ui { position: absolute; inset: 0; pointer-events: none; }
+  #brand { position: absolute; left: 14px; top: 30px; direction: rtl; font: 800 11px "Noto Sans Arabic"; color: rgba(255,255,255,.85); text-shadow: 0 1px 3px rgba(0,0,0,.55); letter-spacing: .2px; }
+  #brand b { color: #ffcc33; }
+  .tag { position: absolute; left: 50%; transform: translate(-50%, -50%); white-space: nowrap; background: #fff; border-radius: 999px; padding: 4px 11px 5px;
+         font: 800 13px/1.2 "Noto Sans Arabic"; color: #1d1d1f; box-shadow: 0 2px 8px rgba(0,0,0,.28); display: flex; align-items: center; gap: 5px; opacity: 0; }
+  .tag.sub { font-size: 10.5px; padding: 3px 9px 4px; }
+  .tag.name { color: #c8141d; font-weight: 900; }
+  .tag i { font-style: normal; font-weight: 900; font-size: 12px; }
+  .tag.ok i { color: #1fa04a; } .tag.bad i { color: #e0322b; }
+  .tag .n { direction: ltr; unicode-bidi: isolate; font-variant-numeric: tabular-nums; }
+  #lead { position: absolute; inset: 0; width: 360px; height: 640px; overflow: visible; }
+  .lab { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; background: #fff; border-radius: 999px; padding: 3px 11px 5px;
+         font: 900 14px/1.2 "Noto Sans Arabic"; color: #c8141d; box-shadow: 0 2px 8px rgba(0,0,0,.3); opacity: 0; }
+  #cap { position: absolute; left: 24px; right: 24px; top: 541px; transform: translateY(-50%); display: grid; place-items: center; }
+  #cap p { margin: 0; max-width: 300px; text-align: center; text-wrap: balance; background: rgba(18,18,20,.78); color: #fff; border-radius: 8px;
+           padding: 3px 10px 5px; font: 800 14px/1.55 "Noto Sans Arabic"; }
+  #black { position: absolute; inset: 0; background: #000; opacity: 0; }
+</style>
+</head>
+<body>
+<canvas id="gl" width="1080" height="1920"></canvas>
+<div class="ui">
+  <svg id="lead" viewBox="0 0 360 640"></svg>
+  <div id="labs"></div>
+  <div id="tags"></div>
+  <div id="brand">إيه الحكاية<b>؟</b></div>
+  <div id="cap"></div>
+  <div id="black"></div>
+</div>
+<script src="timing.js"></script>
+<script src="../lib/three.min.js"></script>
+<script src="world.js"></script>
+<script>
+(function () {
+  var LN = TIMING.lines, END = TIMING.duration;
+  function L(i) { return i >= LN.length ? END : LN[i].start; }
+  function cl(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+  function eio(x) { x = cl(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+  window.VIDEO_END = END;
+
+  // captions: the whole spoken line, one at a time
+  var capEl = document.getElementById("cap"), CAPS = LN.map(function (l) { return l.text; });
+  CAPS[31] = "موتورك بيفرقع 100 مرة في الثانية."; CAPS[32] = "بس الحرارة جوه بتعدّي 2000 درجة…"; CAPS[24] = "فالبستم يكبس الخليط لـ1/10 حجمه الأول…";
+  var capP = CAPS.map(function (s) { var p = document.createElement("p"); p.textContent = s; p.style.position = "absolute"; p.style.opacity = 0; capEl.appendChild(p); return p; });
+
+  // top tags: [from line, offset, to line, offset, html, kind, slot]  kind: ok ✓ / bad ✗ / name (red) / plain
+  function n(f) { return f; }
+  var TAGS = [
+    [0, 0.3, 2, 0, "إزازة حاجة ساقعة", ""], [1, 0.25, 2, 0, "رج… وافتح", "", 1],
+    [2, 0.1, 3, 0, "موتور!", "ok"], [3, 0.2, 4, 0, "الغاز بيزق", "ok"],
+    [4, 0.2, 5, 0, "طار", "bad"], [5, 0.2, 6, 0, "على هدومك", "bad"],
+    [6, 0.3, 8, 0, "طلوع ونزول", "ok"], [9, 0.2, 10, 0, "لازم تلف", "ok"], [10, 0.1, 11, 0, "بتتنطط", "bad"],
+    [11, 0.3, 13, 0, "زقة = نص لفة", "ok"], [14, 0.2, 15, 0, "هيقطع دراعك", "bad"],
+    [15, 0.3, 17, 0, "بنزين + هوا", ""], [16, 0.2, 17, 0, "شرارة", "", 1],
+    [18, 0.2, 19, 0, "دخان قديم", "bad"], [19, 0.2, 20, 0, "مفيش مكان", "bad"],
+    [20, 0.3, 22, 0, "باب يدخّل… وباب يطلّع", "ok"],
+    [23, 0.3, 24, 0, "زي عطسة قطة", "bad"], [24, 0.4, 25, 0, "اكبس لـ<span class=n>1/10</span>", ""], [25, 0.2, 26, 0, "أقوى بكتير", "ok"],
+    [26, 0.1, 27, 0, "الكمبريشن", "name"], [26, 0.4, 27, 0, "يعني الضغط", "", 1],
+    [27, 0.3, 28, 0, "بيرزّع", "bad"], [27, 1.2, 28, 0, "زي ماكينة خياطة قديمة", "", 1],
+    [28, 0.3, 30, 0, "<span class=n>4</span> بساتم", "ok"], [29, 0.2, 30, 0, "<span class=n>1 → 3 → 4 → 2</span>", "", 1],
+    [30, 0.1, 32, 0, "COUNT_FIRE", "name"],
+    [32, 0.1, 33, 0.4, "COUNT_HEAT", "name"],
+    [33, 0.3, 35, 0, "مية بتبرّد", "ok"],
+    [36, 0.2, 37, 0, "أعلى من توكتوك", "bad"], [37, 0.3, 38, 0, "بتكتم الصوت", "ok"],
+    [39, 0.1, 42, 0, "تنك بنزين", ""], [40, 0.05, 42, 0, "مارش", "", 1], [41, 0.05, 42, 0, "<span class=n>4</span> عجل", "", 2],
+    [44, 0.0, 46, 0, "مبروك يا باشمهندس", "name"], [44, 0.5, 46, 0, "إنت عملت موتور عربية", "", 1]
+  ];
+  var SLOT = [110, 138, 162];
+  var host = document.getElementById("tags");
+  TAGS.forEach(function (g) {
+    var d = document.createElement("div"); d.className = "tag " + (g[5] || "") + (g[6] ? " sub" : "");
+    d.innerHTML = '<span class="tx">' + g[4] + "</span>" + (g[5] === "ok" ? "<i>✓</i>" : g[5] === "bad" ? "<i>✗</i>" : "");
+    d.style.top = SLOT[g[6] || 0] + "px"; host.appendChild(d); g.el = d; g.tx = d.querySelector(".tx");
+    g.a = L(g[0]) + g[1]; g.z = L(g[2]) + g[3];
+  });
+  // when two tags in slot 0 overlap in time, the newer one wins
+  TAGS.forEach(function (g) { TAGS.forEach(function (h) { if (h !== g && (h[6] || 0) === (g[6] || 0) && h.a > g.a && h.a < g.z) g.z = h.a; }); });
+
+  // part labels pinned to 3D points: [anchor, text, from line, offset, to line, offset, dx, dy]
+  var LABS = [["piston0", "البستم", 8, 0, 9, 0.2, 58, -64], ["crank", "عمود الكرنك", 13, 0, 14, 0.2, 70, -40], ["plug0", "البوجيه", 17, 0, 18, 0.2, 62, -40],
+    ["valve0", "البلوف", 22, 0, 23, 0.1, -64, -40], ["piston0", "البستم بيكبس", 24, 0.5, 25, 0.3, 70, -52],
+    ["rad", "الرادياتير", 35, 0, 36, 0.1, -60, -70], ["muffler", "الشكمان", 38, 0, 39, 0.1, 0, -70],
+    ["inj0", "بخاخ البنزين", 15, 0.6, 17, 0, -64, -34]];
+  var lead = document.getElementById("lead"), lh = document.getElementById("labs"), NS = "http://www.w3.org/2000/svg";
+  LABS.forEach(function (b) {
+    var d = document.createElement("div"); d.className = "lab"; d.textContent = b[1]; lh.appendChild(d); b.el = d;
+    b.ln = document.createElementNS(NS, "line"); b.ln.setAttribute("stroke", "#111"); b.ln.setAttribute("stroke-width", "1.2"); lead.appendChild(b.ln);
+    b.dot = document.createElementNS(NS, "circle"); b.dot.setAttribute("r", "2.6"); b.dot.setAttribute("fill", "#111"); lead.appendChild(b.dot);
+    b.a = L(b[2]) + b[3]; b.z = L(b[4]) + b[5];
+  });
+
+  function fmt(x) { return Math.round(x).toLocaleString("en-US"); }
+  window.renderAt = function (t) {
+    __world(t);
+    // captions
+    LN.forEach(function (l, i) {
+      var a = L(i) - 0.05, z = i + 1 < LN.length ? L(i + 1) - 0.05 : END + 3;
+      var o = cl((t - a) / 0.12) * cl((z - t) / 0.08); capP[i].style.opacity = o.toFixed(3);
+    });
+    // top tags: pop in with a small overshoot, fade out
+    TAGS.forEach(function (g) {
+      var k = cl((t - g.a) / 0.25), o = Math.min(cl((t - g.a) / 0.15), cl((g.z - t) / 0.18));
+      g.el.style.opacity = o.toFixed(3);
+      var s = k < 1 ? 0.6 + 0.4 * (1 + 2.7 * Math.pow(k - 1, 3) + 1.7 * Math.pow(k - 1, 2)) : 1;
+      g.el.style.transform = "translate(-50%,-50%) scale(" + s.toFixed(3) + ")";
+      if (g[4] === "COUNT_FIRE") { var c = 1 + 99 * eio((t - L(30) - 0.2) / (L(31) + 1.6 - L(30))); g.tx.innerHTML = '<span class=n>×' + fmt(c) + "</span> فرقعة / ثانية"; }
+      if (g[4] === "COUNT_HEAT") { var h = 90 + 1910 * eio((t - L(32) - 0.1) / 1.8); g.tx.innerHTML = '<span class=n>' + fmt(h) + "°C</span>"; }
+    });
+    // part labels with leader lines
+    LABS.forEach(function (b) {
+      var o = Math.min(cl((t - b.a) / 0.2), cl((b.z - t) / 0.2)), p = o > 0 ? __project(b[0]) : null;
+      if (!p || p[2] > 1) { b.el.style.opacity = 0; b.ln.setAttribute("opacity", 0); b.dot.setAttribute("opacity", 0); return; }
+      var k = eio((t - b.a) / 0.35), lx = Math.max(52, Math.min(308, p[0] + b[6] * k)), ly = Math.max(70, Math.min(480, p[1] + b[7] * k));
+      b.el.style.left = lx.toFixed(1) + "px"; b.el.style.top = ly.toFixed(1) + "px"; b.el.style.opacity = o.toFixed(3);
+      b.ln.setAttribute("x1", p[0].toFixed(1)); b.ln.setAttribute("y1", p[1].toFixed(1)); b.ln.setAttribute("x2", lx.toFixed(1)); b.ln.setAttribute("y2", (ly + 9).toFixed(1));
+      b.ln.setAttribute("opacity", o.toFixed(3)); b.dot.setAttribute("cx", p[0].toFixed(1)); b.dot.setAttribute("cy", p[1].toFixed(1)); b.dot.setAttribute("opacity", o.toFixed(3));
+    });
+    document.getElementById("black").style.opacity = cl((t - END - 1.4) / 1.2).toFixed(3);
+  };
+  renderAt(0.4);
+})();
+</script>
+</body>
+</html>
