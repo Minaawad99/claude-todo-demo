@@ -7,7 +7,9 @@ description: |
   SVG with dark outlines, hard light, light rays, dust and film grain, characters with real proportions and faces —
   1080×1920 60 fps. Reference build `videos/titanic/`. Use whenever the user asks for a story: "اعملي قصة",
   "عايز أعمل قصة", "قصة عن…", "حكاية…", "القصة 2D", "زي فيديو تيتانيك", "زي فيديو هيروشيما الأولاني" or "story 2D style"
-  (the 3D «القصة» skill only when the user says 3D).
+  (the 3D «القصة» skill only when the user says 3D). Every story opens on a REAL recording or real footage of the event
+  (black box, air-traffic control, a distress call, a broadcast, a witness video) and plays more real clips inside the
+  story, as in «عبّارة السلام 98» (`videos/salam98/`).
 ---
 
 # «إيه الحكاية؟» — the «القصة 2D» style (the Titanic recipe)
@@ -20,6 +22,58 @@ Talk to the user in Egyptian Arabic. Show each stage before the next (the user's
 reference build is `videos/titanic/` (`script.txt`, `style.txt`, `cues.js`, `film/`); start every new video from a copy
 of `videos/titanic/film/` (Hiroshima `videos/hiroshima/` and Chernobyl `videos/chernobyl/` are later examples of the
 same look; Chernobyl also shows real-photo cards).
+
+## 0a. The real hook — open on something that really happened (fixed after «عبّارة السلام 98», the user's rule)
+
+«عبّارة السلام 98» (`videos/salam98/`) opened on the ferry's real black-box voice and played two more real clips inside
+the story; it got very high views and the user fixed it as the way every story script is written from now on. It sits
+on top of the Titanic recipe below: the real clip comes first, then the Titanic cold open, the clock thread and the rest.
+
+**Pick a story that has real material.** Before writing, find what real sound or picture of the moment exists and say
+which in the topic proposal: a black box / VDR or cockpit recording, air-traffic or coast-guard radio, a distress or
+emergency call, a live radio or TV broadcast, a witness phone video, a famous real line («Houston, we've had a problem»).
+Prefer official or public-domain sources (NASA, FAA/ATC archives, court records, the investigation report). When there
+is no audio, only a published transcript, say so plainly and use the transcript as an on-screen quote, never a fake
+"recording".
+
+**The script shape.**
+- **Line 0 is the real clip, not the narrator:** 5–8 seconds, the most gripping words of the event (Salam 98: «المركب
+  بتغرق يا قبطان!»). The caption shows the words in «…». Nothing before it: no title, no voice-over.
+- **Line 1 says it is real and whose voice it is:** «الصوت ده حقيقي… من الصندوق الأسود لـ…». Then the Titanic cold open:
+  date and place, the people, the scale number, two questions, «ودي حكاية الليلة دي، ساعة بساعة. نبدأ من …».
+- **Two more real clips inside the story,** each at the moment it belongs to (Salam 98: «احنا نزلنا عشرين درجة…
+  المركب هتقلب!» right before the roll, «المركب غرقت يا قبطان… لا حول ولا قوة إلا بالله» right after it). The line
+  before a clip sets it up («…الصوت في كابينة القيادة بقى كده:»); the line after it lets it land («ودي من آخر الأصوات
+  اللي اتسجلت.»). One clip goes right after the climax, never as the opening repeat.
+- **Pay the hook off near the end:** say where the recording came from («الصندوق الأسود طلع من قاع البحر… ومعاه
+  الأصوات اللي سمعتوها»).
+- Put each clip line in `script.txt` with the words heard; the narrator's lines alone go in `voice-script.txt` for TTS.
+
+**Getting the clips.** YouTube and most video sites are blocked from this container: ask the user for the file by name
+(the video title or link) and wait for it; carry on with the script meanwhile. In the file:
+- read the burned-in subtitles every 0.5 s (`fps=2,crop=…` tiles) and find each line's seconds; whisper is useless on
+  noisy radio audio;
+- cut each clip with `highpass=f=140,lowpass=f=5000`, short fades and `loudnorm=I=-16:TP=-2` into `sfx/px-<name>.mp3`;
+- tell the user the clip words were read from the subtitles and ask them to confirm by ear before posting.
+
+**Timing.** `videos/salam98/clips.py` cuts gaps into the tightened narration (`voice-narr.wav`) after the narrator line
+each clip follows, writes `voice.wav`, `script.txt` and `timing.js` with `TIMING.clips`; `cues.js` mixes each clip in at
+its time with `duck: false` and a low drone under it. Copy it and edit its `CLIPS` list.
+
+**On screen during a clip.** A dark «تسجيل حقيقي · <source>» bar with a red REC dot and a moving orange level meter
+(`rec()` in `videos/salam98/film/shots.js`), over a frame of that exact moment (the ship listing 20°, the sea closed
+over her). Add real photos as «صورة حقيقية» cards (`photoCard()`), at least the subject itself and one of the event.
+
+**The reel cover.** Write the user a Gemini / AI Studio image prompt in English, in a code block, every time, without
+being asked (the user's rule): the subject drawn from its real reference photo (say "use the attached photo as the
+reference for the shape" and tell them to attach it), the key moment, the channel's cel-shaded look, 9:16, top and
+bottom quarters left empty for the titles, and "Strictly no text anywhere in the image". Build the cover on their
+picture as in `brand/eh-elhekaya/cover-salam98-tiktok.html`; until it arrives, a frame from the film stands in.
+
+**The captions (TikTok and Instagram).** Two lines at most, because the platform shows only those: line 1 makes them
+watch to a moment (Salam 98: «الصندوق الأسود سجّل آخر دقايق في العبّارة… اسمع اللي اتقال عند 2:14»), line 2 is a
+question that asks for a comment («كنت فين لما سمعت الخبر؟»), then 4 hashtags. Never retell the story or repeat the
+words already on screen: the first Salam 98 caption did both and got 6 comments for 81 saves.
 
 ## 0. The Titanic recipe — why it works (keep all of it)
 
@@ -134,4 +188,4 @@ Dark night scenes need more motion than day ones: a stronger camera drift and mo
 
 The quiet storyteller voice comes out near -16 LUFS without that remux; with it, about -14.4 LUFS. QA must PASS. Send
 the mp4, commit and push; keep mixes and videos in the scratchpad. Cover and titles follow the animation skill's
-section 9 when the user asks.
+section 9, and the cover prompt and captions follow section 0a; send them with the video without being asked.
