@@ -23,3 +23,11 @@ gumroad products page url irkva --json --jq '.product.landing_url' --no-input --
 ```
 gumroad products page clear irkva --yes --json --no-input --non-interactive
 ```
+
+## تعديل الصفحة
+الصفحة بتتبني من `gumroad/landing-src/`: النص والتصميم في `template.html`، والصور في `img/`، والشخصيات من دوال الحزمة (`chars.js`). بعد أي تعديل:
+```
+pip install fonttools brotli
+python3 gumroad/landing-src/build.py
+```
+ده بيطلّع `gumroad/landing.html` من جديد (ملف واحد، والخط العربي مقصوص على الحروف المستخدمة).

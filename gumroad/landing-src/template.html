@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>حزمة فيديوهات الأنيميشن بالذكاء الاصطناعي</title>
+<style>
+{{FONT}}
+:root{
+  --paper:#f3ead6; --grid:#e2d6bb; --ink:#1c1c1c; --ink2:#4b4436; --muted:#7a6f5c;
+  --yellow:#f2c230; --orange:#c4532c; --blue:#46698a; --olive:#6b7d3c;
+  --card:#fbf6ea; --line:#2b2b2b; --note1:#fff3bf; --note2:#e1edf4; --note3:#f6dccf; --note4:#e6edd2;
+  --shadow:rgba(70,50,15,.35); --btn:#c4532c; --btnInk:#fff;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#141a26; --grid:#1f2838; --ink:#efe8d8; --ink2:#cfc6b2; --muted:#9a927f;
+    --card:#1a2231; --line:#d9d1bf; --note1:#3a3418; --note2:#1c3040; --note3:#3c2620; --note4:#26301c;
+    --shadow:rgba(0,0,0,.6); --btn:#e0663b; --btnInk:#fff;
+  }
+  .char{filter:drop-shadow(0 0 1.5px #efe8d8) drop-shadow(0 0 1px #efe8d8)}
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:36px 36px;color:var(--ink);font-family:"Kit Arabic","Segoe UI",Tahoma,system-ui,sans-serif;line-height:1.85;font-size:17px;overflow-x:hidden}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:3px;border-radius:8px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 18px}
+.skip{position:absolute;right:-999px;top:8px;background:var(--card);padding:8px 14px;border-radius:8px}.skip:focus{right:12px;z-index:20}
+
+/* hand-made bits */
+.hl{position:relative;display:inline-block;z-index:0}
+.hl:before{content:"";position:absolute;inset:auto -.18em .1em -.18em;height:.48em;background:var(--yellow);border-radius:40% 60% 52% 44%/60% 45% 55% 40%;transform:rotate(-2deg);z-index:-1;opacity:.95}
+.or{color:var(--orange)}
+.brush{display:inline-block;position:relative;padding:.2em .9em .35em;font-weight:800;color:#2b2016;z-index:0}
+.brush:before{content:"";position:absolute;inset:0;background:var(--yellow);border-radius:46% 54% 40% 60%/58% 42% 58% 42%;transform:rotate(-2.5deg);z-index:-1}
+.badge{display:inline-block;background:var(--ink);color:var(--paper);font-weight:800;border-radius:999px;padding:.2em 1em;transform:rotate(-3deg);font-size:15px}
+.note{display:inline-block;padding:.55em 1em;border-radius:4px;font-weight:800;box-shadow:0 8px 14px -8px var(--shadow);position:relative}
+.note:after{content:"";position:absolute;top:-9px;left:50%;width:44px;height:16px;margin-left:-22px;background:rgba(255,255,255,.45);transform:rotate(-3deg)}
+.n1{background:var(--note1)}.n2{background:var(--note2)}.n3{background:var(--note3)}.n4{background:var(--note4)}
+.sk{background:var(--card);border:1.5px solid var(--line);outline:1px solid var(--line);outline-offset:-6px;border-radius:2px;position:relative}
+.doodle{position:absolute;pointer-events:none;overflow:visible}
+.doodle path{fill:none;stroke:var(--ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.star{position:absolute;width:22px;height:22px;animation:tw 3s ease-in-out infinite}
+@keyframes tw{50%{transform:scale(.6) rotate(20deg);opacity:.6}}
+
+/* phones */
+.phone{position:absolute;border-radius:24px;background:#151515;padding:7px;box-shadow:0 22px 36px -16px var(--shadow),0 0 0 2px #151515;animation:bob 5s ease-in-out infinite}
+.phone img{display:block;width:100%;height:100%;object-fit:cover;border-radius:18px}
+.phone:after{content:"";position:absolute;top:11px;left:50%;width:30px;height:5px;margin-left:-15px;border-radius:3px;background:#333}
+@keyframes bob{50%{translate:0 -10px}}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:.5em;background:var(--btn);color:var(--btnInk);font-weight:900;font-size:19px;padding:.7em 1.4em;border-radius:14px 18px 12px 16px;text-decoration:none;border:2.5px solid var(--ink);box-shadow:4px 5px 0 var(--ink);cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 7px 0 var(--ink)}
+.price{font-weight:900;font-size:32px}
+
+/* hero */
+.hero{position:relative;padding:34px 0 30px}
+.hero .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:24px;align-items:center}
+h1{font-weight:900;font-size:clamp(34px,5.4vw,60px);line-height:1.25;margin:16px 0 12px}
+.lead{color:var(--ink2);font-size:clamp(16px,2.1vw,20px);font-weight:600;max-width:540px}
+.buyrow{display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin-top:24px}
+.small{color:var(--muted);font-size:14px;margin-top:10px}
+.stage{position:relative;height:520px}
+.stage .char{position:absolute;right:-6px;bottom:-24px;width:130px;z-index:6;animation:bob 4s ease-in-out infinite}
+.stage .say{position:absolute;right:96px;bottom:150px;z-index:7;transform:rotate(-4deg);font-size:15px}
+
+/* sections */
+section{padding:44px 0}
+h2{font-size:clamp(26px,3.6vw,38px);font-weight:900;line-height:1.3}
+.kicker{font-weight:800;color:var(--orange);font-size:15px;letter-spacing:.3px}
+.sub{color:var(--ink2);margin:6px 0 26px;font-weight:600}
+.ways{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.way{padding:22px 20px 20px}
+.way .shots{display:flex;justify-content:center;gap:14px;height:250px;align-items:center;margin:4px 0 18px}
+.way .mini{position:relative;width:118px;border-radius:16px;background:#151515;padding:5px;box-shadow:0 14px 22px -12px var(--shadow)}
+.way .mini img{display:block;width:100%;height:auto;border-radius:12px}
+.way .mini small{position:absolute;bottom:-26px;left:0;right:0;text-align:center;font-weight:800;font-size:13px;color:var(--muted)}
+.way h3{font-size:23px;font-weight:900;margin-top:14px}
+.way p{color:var(--ink2);font-size:15.5px}
+.way .ask{display:inline-block;margin-top:10px;font-size:14px}
+
+.steps{list-style:none;display:grid;gap:16px;position:relative}
+.steps li{display:flex;gap:16px;align-items:flex-start;padding:16px 18px}
+.steps .num{flex:none;width:44px;height:44px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;background:var(--paper)}
+.steps li:nth-child(odd){transform:rotate(-.6deg)}.steps li:nth-child(even){transform:rotate(.5deg)}
+.steps h3{font-size:19px;font-weight:900}
+.steps p{color:var(--ink2);font-size:15.5px}
+.steps code{direction:ltr;unicode-bidi:embed;background:var(--note1);padding:0 .4em;border-radius:4px;font-size:14px}
+
+.box{display:flex;flex-wrap:wrap;gap:20px 18px;justify-content:center}
+.box .note{width:min(300px,100%);padding:16px 18px 14px;font-weight:600}
+.box .note b{display:block;font-size:18px;font-weight:900;margin-bottom:2px}
+.box .note:nth-child(3n+1){transform:rotate(-2deg)}.box .note:nth-child(3n+2){transform:rotate(1.5deg)}.box .note:nth-child(3n){transform:rotate(-.8deg)}
+
+.honest{padding:18px 20px;border-right:6px solid var(--orange)}
+.honest b{color:var(--orange)}
+
+.faq details{border-bottom:1.5px dashed var(--line);padding:14px 4px}
+.faq summary{font-weight:800;cursor:pointer;font-size:17.5px;list-style:none;display:flex;gap:10px;align-items:center}
+.faq summary:before{content:"✎";color:var(--orange);font-size:18px}
+.faq details[open] summary:before{content:"✓"}
+.faq p{color:var(--ink2);margin-top:6px;padding-right:28px}
+
+.final{text-align:center;padding:38px 20px 34px;position:relative;margin:10px 0 40px}
+.final .char{width:120px;margin:0 auto -6px;display:block;animation:bob 4s ease-in-out infinite}
+.final .price{display:block;margin:6px 0 16px;font-size:40px}
+.rating{color:var(--muted);font-size:15px}
+footer{color:var(--muted);font-size:13px;text-align:center;padding:0 0 96px}
+
+.bar{position:fixed;inset:auto 0 0 0;background:var(--card);border-top:2px solid var(--line);padding:10px 16px;display:none;align-items:center;justify-content:space-between;gap:12px;z-index:30}
+.bar .btn{font-size:16px;padding:.5em 1.1em;box-shadow:3px 3px 0 var(--ink)}
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:820px){
+  .hero .grid{grid-template-columns:1fr}
+  .stage{height:380px;order:-1;margin-top:6px}
+  .stage .phone{scale:.68}
+  .stage .char{width:96px;bottom:-10px}
+  .stage .say{right:70px;bottom:100px;font-size:13px}
+  .stage .doodle{display:none}
+  .ways{grid-template-columns:1fr}
+  .bar{display:flex}
+}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">تخطّى للمحتوى</a>
+
+<header class="hero">
+  <div class="wrap grid">
+    <div>
+      <span class="badge">حزمة رقمية · Claude Code</span>
+      <h1>اعمل فيديو شرح <span class="hl">بالأنيميشن</span><br>أو <span class="or">بالسكتش</span></h1>
+      <p class="lead">بصوتك ومن موبايلك. Claude بيكتب السكريبت، ويرسم مشهد متحرك لكل جملة، ويطلّعلك فيديو عمودي جاهز للنشر.</p>
+      <div class="buyrow">
+        <a class="btn" href="#buy" data-gumroad-action="buy">احصل على الحزمة <span aria-hidden="true">←</span></a>
+        <span class="price" data-gumroad-field="price">$14.99</span>
+      </div>
+      <p class="small">تحميل فوري بعد الدفع · الدفع آمن عن طريق Gumroad</p>
+    </div>
+    <div class="stage" aria-label="لقطات من فيديوهات طلعت من الحزمة">
+      <div class="phone" style="right:4%;top:70px;width:132px;height:236px;rotate:14deg;animation-delay:-1s;z-index:1"><img src="{{IMG:s2}}" alt="مشهد بالسكتش: الكرة الأرضية ومسار ضوء الشمس" width="240" height="427"></div>
+      <div class="phone" style="right:22%;top:30px;width:150px;height:267px;rotate:7deg;animation-delay:-2.5s;z-index:3"><img src="{{IMG:c1}}" alt="مشهد بالأنيميشن: ضوء الشمس بيتفرّق لألوان قوس قزح" width="240" height="427"></div>
+      <div class="phone" style="right:41%;top:12px;width:158px;height:281px;rotate:-1deg;animation-delay:-.5s;z-index:4"><img src="{{IMG:s1}}" alt="كارت البداية بستايل السكتش" width="240" height="427"></div>
+      <div class="phone" style="right:60%;top:44px;width:146px;height:260px;rotate:-8deg;animation-delay:-3.5s;z-index:2"><img src="{{IMG:c2}}" alt="مشهد بالأنيميشن: الغروب فوق المدينة" width="240" height="427"></div>
+      <div class="phone" style="right:77%;top:96px;width:128px;height:228px;rotate:-15deg;animation-delay:-2s;z-index:1"><img src="{{IMG:s3}}" alt="مشهد بالسكتش: ألوان الغروب" width="240" height="427"></div>
+      <svg class="char" viewBox="0 -20 140 200" aria-hidden="true"><g transform="translate(140 0) scale(-1 1)">{{CHAR:point}}</g></svg>
+      <span class="brush say">كلهم طالعين من الحزمة!</span>
+      <svg class="doodle" style="right:150px;bottom:110px;width:120px;height:90px" viewBox="0 0 120 90" aria-hidden="true"><path d="M110 80 Q 90 20 20 18"/><path d="M34 6 L18 18 L34 30"/></svg>
+      <svg class="star" style="left:2%;top:4px" viewBox="-12 -12 24 24" aria-hidden="true"><path d="M0 -11 L3 0 L0 11 L-3 0 Z M-11 0 L0 -3 L11 0 L0 3 Z" fill="#f2c230"/></svg>
+      <svg class="star" style="right:2%;top:340px;animation-delay:-1.5s" viewBox="-12 -12 24 24" aria-hidden="true"><path d="M0 -11 L3 0 L0 11 L-3 0 Z M-11 0 L0 -3 L11 0 L0 3 Z" fill="#c4532c"/></svg>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="reveal">
+    <div class="wrap">
+      <span class="kicker">3 طرق للرسم</span>
+      <h2>اختار <span class="hl">الستايل</span> اللي يشبهك</h2>
+      <p class="sub">كل اللقطات اللي هنا طالعة فعلاً من الحزمة، من نفس الفيديو المثال.</p>
+      <div class="ways">
+        <article class="way sk">
+          <div class="shots"><div class="mini" style="rotate:-4deg"><img src="{{IMG:c1}}" alt="لقطة أنيميشن" width="240" height="427"></div><div class="mini" style="rotate:5deg"><img src="{{IMG:c3}}" alt="لقطة أنيميشن من الفضا" width="240" height="427"></div></div>
+          <h3>🎬 أنيميشن</h3>
+          <p>شخصيات كرتون بتعبيرات، وعناوين بالفرشاة، وترجمة بتظهر كلمة بكلمة مع صوتك.</p>
+          <span class="note n1 ask">«ارسم الفيديو بالأنيميشن»</span>
+        </article>
+        <article class="way sk">
+          <div class="shots"><div class="mini" style="rotate:3deg"><img src="{{IMG:s1}}" alt="كارت البداية بالسكتش" width="240" height="427"></div><div class="mini" style="rotate:-5deg"><img src="{{IMG:s2}}" alt="مشهد سكتش" width="240" height="427"></div></div>
+          <h3>✏️ سكتش</h3>
+          <p>رسم هندسي على ورق: أسماء الأجزاء بخطوط إشارة، وتظليل، وكارت ملخص في الآخر.</p>
+          <span class="note n2 ask">«ارسم الفيديو بالسكتش»</span>
+        </article>
+        <article class="way sk">
+          <div class="shots"><div class="mini" style="rotate:-3deg"><img src="{{IMG:ref}}" alt="فيديو مرجع" width="180" height="320"><small>المرجع</small></div><div class="mini" style="rotate:4deg"><img src="{{IMG:mine}}" alt="نفس الشكل بألوان جديدة" width="180" height="320"><small>رسمك</small></div></div>
+          <h3>🎞️ زي فيديو تبعته</h3>
+          <p>ارفع فيديو شكله عاجبك، وClaude يحلّل ألوانه وتقسيمه وأسلوب رسمه، ويعمل نفس الشكل بمحتواك.</p>
+          <span class="note n3 ask">«اعمله زي الفيديو ده»</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="wrap">
+      <span class="kicker">خطوة بخطوة</span>
+      <h2>من <span class="hl">الفكرة</span> للفيديو في 5 خطوات</h2>
+      <p class="sub">كل خطوة جملة بتكتبها لـClaude Code، وهو بيعمل الباقي.</p>
+      <ol class="steps">
+        <li class="sk"><span class="num">1</span><div><h3>جهّز الحزمة مرة واحدة</h3><p>ارفع الحزمة في شات Claude Code على الموبايل، أو حطها على الكمبيوتر. الدليل بيشرح الطريقتين.</p></div></li>
+        <li class="sk"><span class="num">2</span><div><h3>اكتب الموضوع</h3><p>«اكتب فيديو شرح عن …» وClaude يكتب سكريبت بالعامية المصرية، سطر لكل جملة.</p></div></li>
+        <li class="sk"><span class="num">3</span><div><h3>سجّل صوتك</h3><p>كل جملة في ملف وارفعهم بالترتيب، والتوقيت والترجمة بيتظبطوا على صوتك لوحدهم.</p></div></li>
+        <li class="sk"><span class="num">4</span><div><h3>ارسم وراجع</h3><p>اختار الستايل، وClaude يرسم مشهد لكل سطر ويوريك لقطة من كل مشهد عشان تطلب تعديلات.</p></div></li>
+        <li class="sk"><span class="num">5</span><div><h3>طلّع الفيديو</h3><p>فيديو <code>1080×1920</code> بصوتك والترجمة والمؤثرات وموسيقى خفيفة، بيتبعتلك تحمّله.</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="wrap">
+      <span class="kicker">جوه الحزمة</span>
+      <h2>هتاخد <span class="hl">إيه</span>؟</h2>
+      <p class="sub">ملف ZIP واحد، وكل حاجة فيه بالعربي.</p>
+      <div class="box">
+        <div class="note n1"><b>مهارة السكريبت</b>بتكتب السكريبت والـstoryboard والعناوين لتيك توك وفيسبوك ويوتيوب.</div>
+        <div class="note n2"><b>مهارة الرسم والإخراج</b>بترسم بالأنيميشن أو السكتش أو زي فيديو مرجع، وتطلّع MP4.</div>
+        <div class="note n3"><b>مثالين كاملين</b>نفس الفيديو بالستايلين (25 مشهد)، ناقصهم صوتك بس.</div>
+        <div class="note n4"><b>دليل عربي PDF</b>12 صفحة: التجهيز، والصوت، والرسم، والستايلات، والعناوين.</div>
+        <div class="note n1"><b>فيديو تعليمي</b>حوالي دقيقة ونص، بيوريك كل خطوة على الشاشة.</div>
+        <div class="note n2"><b>برومبتات جاهزة</b>لو حابب تشتغل بأي AI تاني من غير المهارات.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="wrap">
+      <p class="honest sk"><b>بوضوح قبل ما تشتري:</b> الحزمة محتاجة Claude Code، من تطبيق Claude على الموبايل أو من الكمبيوتر، وحساب GitHub مجاني. إنت بتسجّل الصوت وتراجع المشاهد وتطلب التعديلات. والرسم بيتعمل بالكود، فوضع "زي الفيديو ده" بيطلع أقرب شكل للمرجع، مش نسخة طبق الأصل.</p>
+    </div>
+  </section>
+
+  <section class="reveal faq">
+    <div class="wrap">
+      <span class="kicker">أسئلة</span>
+      <h2>كل حاجة <span class="hl">أوضح</span></h2>
+      <details><summary>محتاج أعرف برمجة؟</summary><p>لا. إنت بتطلب بالكلام، وClaude Code هو اللي بيكتب الكود ويشغّله.</p></details>
+      <details><summary>ينفع من الموبايل؟</summary><p>أيوه، من Claude Code في تطبيق Claude. بترفع صوتك في الشات، والفيديو بيتبعتلك تحمّله.</p></details>
+      <details><summary>ينفع بصوتي؟</summary><p>أيوه. سجّل كل جملة في ملف، والترجمة بتمشي مع صوتك كلمة بكلمة. أو ولّد الصوت من Google AI Studio.</p></details>
+      <details><summary>فيه ستايلات إيه؟</summary><p>أنيميشن (كرتون بشخصيات)، وسكتش (رسم هندسي على ورق)، أو تبعت فيديو عاجبك وClaude يعمل نفس شكله بمحتواك. بيقلّد الشكل بس، من غير ما ينسخ شخصيات أو لوجو حد.</p></details>
+      <details><summary>الفيديو بياخد قد إيه؟</summary><p>الكتابة والرسم بياخدوا دقايق، والإخراج حوالي 5 دقايق على الموبايل، و5 لـ15 دقيقة على الكمبيوتر.</p></details>
+      <details><summary>محتاج إيه عشان أبدأ؟</summary><p>اشتراك Claude بيدعم Claude Code، وحساب GitHub مجاني. على الموبايل مش محتاج تسطّب حاجة.</p></details>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="wrap final sk" id="buy">
+      <svg class="char" viewBox="0 -20 140 200" aria-hidden="true">{{CHAR:cheer}}</svg>
+      <h2>ابدأ <span class="hl">أول فيديو</span> النهارده</h2>
+      <p class="rating" data-gumroad-field="rating">كن أول واحد يقيّم الحزمة</p>
+      <span class="price" data-gumroad-field="price">$14.99</span>
+      <a class="btn" href="#buy" data-gumroad-action="buy">احصل على الحزمة <span aria-hidden="true">←</span></a>
+    </div>
+  </section>
+</main>
+
+<footer><span data-gumroad-field="name">AI Video Creator Kit</span> · إيه الحكاية؟</footer>
+
+<div class="bar" role="region" aria-label="شراء سريع">
+  <span class="price" data-gumroad-field="price" style="font-size:24px">$14.99</span>
+  <a class="btn" href="#buy" data-gumroad-action="buy">احصل على الحزمة</a>
+</div>
+
+<script>
+(function(){
+  var els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) { els.forEach(function(e){ e.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function(en){ en.forEach(function(x){ if (x.isIntersecting) { x.target.classList.add('in'); io.unobserve(x.target); } }); }, { threshold: 0.1 });
+  els.forEach(function(e){ io.observe(e); });
+})();
+</script>
+</body>
+</html>
