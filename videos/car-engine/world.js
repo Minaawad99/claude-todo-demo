@@ -212,7 +212,7 @@
     tmpE.set(lerp(a[1][0], b[1][0], k), lerp(a[1][1], b[1][1], k), lerp(a[1][2], b[1][2], k));
     tmpT.set(lerp(a[2][0], b[2][0], k), lerp(a[2][1], b[2][1], k), lerp(a[2][2], b[2][2], k));
     // a slow handheld drift so no frame is ever still
-    tmpE.x += Math.sin(t * 0.45) * 0.35; tmpE.y += Math.sin(t * 0.31 + 1) * 0.18; tmpE.z += Math.cos(t * 0.38) * 0.3;
+    tmpE.x += Math.sin(t * 0.45) * 0.55; tmpE.y += Math.sin(t * 0.31 + 1) * 0.25; tmpE.z += Math.cos(t * 0.38) * 0.45;
   }
 
   var shake = 0, capY = 4;
@@ -225,16 +225,17 @@
     bottle.visible = bOut < 1; bottle.position.set(lerp(0, -6, bOut), 0, lerp(0, -3, bOut)); bottle.rotation.z = shk; bottle.rotation.x = shk * 0.4;
     var popT = L(1) + 0.35, fly = t - popT;
     var capPos = V(0, 4.05, 0);
-    if (fly > 0) { capPos.set(Math.sin(fly) * 0.3, 4.05 + 1.3 * fly + 0.12 * fly * fly, 0.1 * fly); }
+    if (fly > 0) { capPos.set(Math.sin(fly * 1.3) * 0.5, 4.05 + 5.2 * (1 - Math.exp(-fly * 0.55)) + Math.sin(fly * 3.1) * 0.12, 0.1 * fly); }
     var drop = eio(ramp(t, L(6) - 0.2, 0.9));                  // the cap comes back down into the pipe and turns into the piston
     if (t >= L(6) - 0.2) { capPos.set(0, lerp(9, CYL0 - 2.0 + 0.6, drop), 0); }
     capY = capPos.y; cap.position.copy(capPos); cap.rotation.x = fly > 0 && t < L(6) ? fly * 7 : 0; cap.rotation.z = shk;
     var morph = eio(ramp(t, L(6) + 0.5, 0.6));
     setOpacity(cap, 1 - morph);
     foam.forEach(function (d, i) {
-      var t0 = popT + hash(i) * 0.5, a = t - t0, life = 2.2;
-      if (a < 0 || a > life || t > L(6)) { d.visible = false; return; }
-      d.visible = true; var vx = (hash(i + 3) - 0.5) * 3, vz = (hash(i + 7) - 0.5) * 2, vy = 6 + hash(i + 5) * 6;
+      var t0 = popT + hash(i) * 0.5, a = t - t0, life = 2.2, n = Math.floor(a / life);
+      if (a < 0 || t > L(6)) { d.visible = false; return; }
+      a -= n * life; var g = n ? 0.4 : 1;   // after the first fountain the foam keeps bubbling out, smaller
+      d.visible = true; var vx = (hash(i + 3 + n) - 0.5) * 3 * g, vz = (hash(i + 7 + n) - 0.5) * 2 * g, vy = (6 + hash(i + 5 + n) * 6) * g;
       var y = 4.0 + vy * a - 4.9 * a * a; d.position.set(vx * a, Math.max(0.05, y), vz * a); d.scale.setScalar(y < 0.1 ? 0.6 : 1);
     });
     var pud = eout(ramp(t, popT + 0.6, 2.4)) * (1 - eio(ramp(t, L(9), 0.8)));
@@ -251,9 +252,9 @@
     wheel.position.y = lerp(1.25 + (CYL0 - 0.05), CY, lift);  // the wheel rests on the floor until the crank lifts it
     // crank angle: still until the first push, then turns; speeds up for "a hundred times a second"
     var w = 0, th = 0;
-    function spd(x) { return x < L(12) ? 0 : x < L(14) ? 3.2 : x < L(14) + 1.2 ? 3.2 * (1 - (x - L(14)) / 1.2) : x < L(16) + 0.2 ? 0 : x < L(30) ? 5 : x < L(32) ? 5 + 9 * (x - L(30)) / (L(32) - L(30)) : x < L(42) ? 14 : 14 * Math.max(0, 1 - (x - L(42)) / 1.2); }
-    for (var x = L(12), dt = 0.02; x < t; x += dt) th += spd(x) * dt;      // integrate (cheap: < 4k steps)
-    var bob = t < L(11) ? Math.max(0, Math.sin((t - L(7)) * 4.2)) * (t > L(7) ? 1 : 0) * 0.9 : 0;
+    function spd(x) { return x < L(11) + 1.0 ? 0 : x < L(12) ? 1.6 : x < L(14) ? 3.2 : x < L(14) + 1.2 ? 3.2 * (1 - (x - L(14)) / 1.2) : x < L(16) + 0.2 ? 0 : x < L(30) ? 5 : x < L(32) ? 5 + 9 * (x - L(30)) / (L(32) - L(30)) : x < L(42) ? 14 : 14 * Math.max(0, 1 - (x - L(42)) / 1.2); }
+    for (var x = L(11) + 1.0, dt = 0.02; x < t; x += dt) th += spd(x) * dt;      // integrate (cheap: < 4k steps)
+    var bob = t < L(11) && t > L(6) + 1.1 ? 0.9 * (0.5 - 0.5 * Math.cos((t - L(6) - 1.1) * 3.6)) : 0;
     var nCyl = 1 + Math.floor(3 * cl((t - L(28)) / 0.01));
     var four = eio(ramp(t, L(28), 1.0));
     shake = (t > L(27) && t < L(28) + 0.3) ? 0.06 : (t > L(14) && t < L(14) + 1.4) ? 0.03 * (1 - (t - L(14)) / 1.4) : 0;
