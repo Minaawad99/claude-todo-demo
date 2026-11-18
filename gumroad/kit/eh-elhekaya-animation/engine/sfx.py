@@ -345,4 +345,5 @@ if __name__ == "__main__":
     for i in range(0, len(v) - win, win):
         m = act[i:i + win]
         if m.mean() > 0.3: gaps.append(rms_db(v[i:i + win][m]) - rms_db(rest[i:i + win]))
-    print(f"voice speech RMS {srms:.1f} dBFS; voice-over-background while speaking: median {np.median(gaps):.1f} dB, worst {np.min(gaps):.1f} dB")
+    if gaps: print(f"voice speech RMS {srms:.1f} dBFS; voice-over-background while speaking: median {np.median(gaps):.1f} dB, worst {np.min(gaps):.1f} dB")
+    else: print("no speech found in the voice track")
