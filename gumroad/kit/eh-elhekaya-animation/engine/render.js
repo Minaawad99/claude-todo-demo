@@ -7,6 +7,7 @@ const FPS = +(process.env.FPS || 30), SCALE = +(process.env.SCALE || 3), TAIL = 
 (async () => {
   const b = await chromium.launch();
   const p = await b.newPage({ viewport: { width: 360, height: 640 }, deviceScaleFactor: SCALE });
+  await p.route('**/*', r => r.request().url().startsWith('file:') ? r.continue() : r.abort());   // كل حاجة من جوه الحزمة، من غير إنترنت
   await p.goto('file://' + html);
   await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(1500);
   const end = (await p.evaluate(() => window.VIDEO_END)) + TAIL, N = Math.ceil(end * FPS);

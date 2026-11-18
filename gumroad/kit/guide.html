@@ -60,8 +60,8 @@ th { background: #f6f3ec; }
 
   <h2>ثانياً: اللي هتحتاجه</h2>
   <ul>
-    <li><strong>Claude Code</strong> على كمبيوتر (Mac أو Windows أو Linux). الرسم بيتعمل على جهازك، فالموبايل مش هينفع.</li>
-    <li><strong>Node.js وPython وffmpeg:</strong> برامج مجانية، وخطوات تسطيبها في الفصل السابع.</li>
+    <li><strong>Claude Code</strong> من تطبيق Claude على الموبايل، أو على الكمبيوتر (اشتراك بيدعم Claude Code).</li>
+    <li><strong>على الموبايل</strong> مش محتاج تسطّب حاجة. <strong>على الكمبيوتر</strong> محتاج Node.js وPython وffmpeg (مجانية، والفصل السابع بيشرحها).</li>
     <li><strong>الصوت:</strong> بصوتك، أو من Google AI Studio (فيه نسخة مجانية محدودة).</li>
     <li><strong>من غير Claude Code:</strong> البرومبتات بتشتغل مع أي AI، والرسم ساعتها هيبقى بإيدك بأي أداة زي Canva أو CapCut.</li>
   </ul>
@@ -77,7 +77,7 @@ th { background: #f6f3ec; }
   <div class="step"><div class="num">3</div><div>افتح Claude Code واكتب: «اكتب فيديو شرح عن [الموضوع]». المهارة هتتفعّل لوحدها.</div></div>
 
   <h3>2. لو بتستخدم تطبيق Claude أو الموقع</h3>
-  <p>مهارة السكريبت ممكن ترفعها من إعدادات الـSkills (شكل الخيار بيختلف حسب الخطة)، أو تستخدم البرومبتات بدلها. أما مهارة الرسم فمحتاجة Claude Code على كمبيوتر، لأنها بتشغّل برامج على الجهاز.</p>
+  <p>مهارة الرسم محتاجة <strong>Claude Code</strong> (من الموبايل أو الكمبيوتر)، لأنها بتشغّل برامج. على الموبايل، المهارات بتتحط في الـrepository بتاعك على GitHub، والخطوات في الفصل السابع. ولو بتستخدم شات Claude العادي، استخدم البرومبتات.</p>
 
   <div class="box warn">
     <strong>مهم:</strong> لو الـSkill مش بيظهر، اتأكد إن اسم المجلد هو <code>eh-elhekaya-script</code> وإن الملف اسمه <code>SKILL.md</code> بالظبط، بحروف كبيرة.
@@ -138,29 +138,29 @@ th { background: #f6f3ec; }
 </section>
 
 <section class="page">
-  <h2>سابعاً: تجهيز الكمبيوتر (مرة واحدة)</h2>
-  <p>مهارة الرسم محتاجة 3 برامج مجانية. أسهل طريقة: افتح Claude Code واكتب <strong>«جهّز مهارة eh-elhekaya-animation»</strong>، وهو هيكشف الناقص ويقولك تعمل إيه. ولو حابب تسطّب بنفسك:</p>
+  <h2>سابعاً: التجهيز (مرة واحدة)</h2>
+  <h3>من الموبايل (Claude Code في تطبيق Claude)</h3>
+  <p>Claude Code على الموبايل شغال على كمبيوتر في السحابة جاهز بكل البرامج، فمش محتاج تسطّب حاجة.</p>
+  <div class="step"><div class="num">1</div><div>اعمل حساب GitHub مجاني، واعمل repository فاضي (مثلاً <code>my-videos</code>).</div></div>
+  <div class="step"><div class="num">2</div><div>من تطبيق Claude افتح <strong>Code</strong>، واربط GitHub، وابدأ جلسة على الـrepository ده.</div></div>
+  <div class="step"><div class="num">3</div><div>ارفع ملف الـZIP في الشات واكتب: «فك الحزمة، وحط فولدري المهارات جوه <code>.claude/skills</code>، واعمل commit وpush».</div></div>
+  <div class="step"><div class="num">4</div><div>ابدأ <strong>جلسة جديدة</strong> على نفس الـrepository عشان المهارات تتحمّل.</div></div>
+  <h3>من الكمبيوتر</h3>
+  <p>انسخ الفولدرين لـ<code>~/.claude/skills/</code>، واكتب في Claude Code: <strong>«جهّز مهارة eh-elhekaya-animation»</strong>. هيكشف البرامج الناقصة ويسطّبها معاك:</p>
   <table>
     <tr><th>الجهاز</th><th>الأمر</th></tr>
     <tr><td>Mac</td><td><code>brew install node python ffmpeg</code></td></tr>
     <tr><td>Windows</td><td><code>winget install OpenJS.NodeJS Python.Python.3.12 Gyan.FFmpeg</code></td></tr>
-    <tr><td>Linux</td><td><code>sudo apt install nodejs npm python3 ffmpeg</code></td></tr>
   </table>
-  <p>وبعدين في فولدر <code>eh-elhekaya-animation/engine</code> شغّل:</p>
-  <pre>npm install
-npx playwright install chromium
-pip install numpy</pre>
-  <div class="box"><strong>ليه البرامج دي؟</strong> Node بيرسم المشاهد ويصوّرها فريم فريم، وffmpeg بيجمعها فيديو، وPython بيظبط التوقيت والمؤثرات.</div>
-  <div class="box warn"><strong>على Windows:</strong> بعد التسطيب اقفل الترمينال وافتحه تاني عشان البرامج تبان.</div>
 </section>
 
 <section class="page">
   <h2>ثامناً: رسم الفيديو وإخراجه</h2>
   <div class="step"><div class="num">1</div><div><strong>السكريبت:</strong> اكتبه بالمهارة الأولى أو حط سكريبتك.</div></div>
-  <div class="step"><div class="num">2</div><div><strong>الصوت:</strong> سجّل كل سطر في ملف لوحده (<code>01.wav</code>، <code>02.wav</code>...) في فولدر <code>voice</code>، أو ملف واحد بسكتة نص ثانية بين كل جملة والتانية.</div></div>
+  <div class="step"><div class="num">2</div><div><strong>الصوت:</strong> سجّل كل سطر في ملف لوحده، أو ملف واحد بسكتة نص ثانية بين كل جملة والتانية. على الموبايل <strong>ارفع الملفات في الشات بالترتيب</strong>، وعلى الكمبيوتر حطها في فولدر <code>voice</code>.</div></div>
   <div class="step"><div class="num">3</div><div>قول لـClaude: <strong>«ارسم الفيديو»</strong>. هيظبط التوقيت على صوتك، ويرسم مشهد متحرك لكل سطر، ويوريك صورة فيها لقطة من كل مشهد.</div></div>
   <div class="step"><div class="num">4</div><div><strong>راجع الصورة</strong> واطلب تعديلات: «المشهد 5 خلّي فيه عربية»، «كبّر العنوان في المشهد 9».</div></div>
-  <div class="step"><div class="num">5</div><div>قول: <strong>«طلّع الفيديو»</strong>. هيطلع <code>build/video.mp4</code> بمقاس 1080×1920، بالترجمة كلمة بكلمة والمؤثرات وموسيقى خفيفة. ده بياخد حوالي 5 لـ15 دقيقة حسب جهازك.</div></div>
+  <div class="step"><div class="num">5</div><div>قول: <strong>«طلّع الفيديو»</strong>. هيطلع <code>build/video.mp4</code> بمقاس 1080×1920، بالترجمة كلمة بكلمة والمؤثرات وموسيقى خفيفة. ده بياخد حوالي 5 دقايق على الموبايل، و5 لـ15 دقيقة على الكمبيوتر، والفيديو بيتبعتلك تحمّله.</div></div>
   <div class="box"><strong>جرّب الأول على المثال:</strong> في <code>example/</code> فيديو «ليه السما لونها أزرق؟» جاهز. سجّل الـ25 سطر بصوتك، وقول لـClaude «طلّع فيديو المثال».</div>
   <div class="box warn"><strong>ما تنسخش:</strong> ماتطلبش رسم شخصيات أو مشاهد من فيديوهات حد تاني. المحتوى لازم يكون من عندك.</div>
 </section>
@@ -180,7 +180,7 @@ pip install numpy</pre>
 <section class="page">
   <h2>عاشراً: أسئلة شائعة</h2>
   <h3>هل لازم أعرف برمجة؟</h3>
-  <p>لا. إنت بتطلب بالكلام، وClaude Code هو اللي بيكتب الكود ويشغّله. محتاج بس تسطّب البرامج مرة واحدة (الفصل السابع).</p>
+  <p>لا. إنت بتطلب بالكلام، وClaude Code هو اللي بيكتب الكود ويشغّله. وعلى الموبايل مش محتاج تسطّب حاجة خالص.</p>
   <h3>هل الحزمة بتعمل الفيديو كامل لوحدها؟</h3>
   <p>تقريباً. Claude بيكتب السكريبت ويرسم المشاهد ويطلّع الفيديو، وإنت عليك تسجّل الصوت وتراجع الرسم وتطلب التعديلات. الرسم بأسلوب كرتوني ثابت، وجودته بتتحسن كل ما توصف المشهد أكتر.</p>
   <h3>الـSkill مش بيشتغل عندي، أعمل إيه؟</h3>

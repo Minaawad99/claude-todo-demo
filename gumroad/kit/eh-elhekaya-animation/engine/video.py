@@ -148,6 +148,7 @@ def cmd_build(d):
     defs = os.path.join(d, "defs.svg")
     if os.path.exists(defs): html = html.replace("<!--DEFS-->", open(defs, encoding="utf-8").read())
     open(out(d, "index.html"), "w", encoding="utf-8").write(html)
+    shutil.copytree(os.path.join(ENGINE, "fonts"), out(d, "fonts"), dirs_exist_ok=True)   # الخط جوه الحزمة، فالرسم مش محتاج إنترنت
     n = len(re.findall(r"\bshot\s*\(", shots))
     print(f"✓ build/index.html جاهز ({n} مشهد لـ{len(lines)} سطر)")
     if n < len(lines): print(f"  ! فيه سطور من غير مشهد خاص بيها: المشهد اللي قبلها هيكمل عليها")

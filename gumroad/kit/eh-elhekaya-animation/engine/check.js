@@ -7,9 +7,11 @@ const [, , html, sheet] = process.argv;
   const p = await b.newPage({ viewport: { width: 360, height: 640 } });
   const errs = [];
   p.on('pageerror', e => errs.push('خطأ في الكود: ' + e.message));
-  p.on('console', m => { if (m.type() === 'error' && !/fonts\.g/.test(m.text())) errs.push('console: ' + m.text()); });
+  p.on('console', m => { if (m.type() === 'error') errs.push('console: ' + m.text()); });
+  await p.route('**/*', r => r.request().url().startsWith('file:') ? r.continue() : r.abort());   // كل حاجة من جوه الحزمة، من غير إنترنت
   await p.goto('file://' + html);
   await p.evaluate(() => document.fonts.ready);
+  if (!(await p.evaluate(() => document.fonts.check('900 20px "Noto Sans Arabic"')))) errs.push('الخط العربي ما اتحمّلش: اتأكد إن فولدر engine/fonts موجود');
   const T = await p.evaluate(() => window.TIMING.lines.map(l => [l.start, l.end]));
   const shots = []; let bad = 0;
   for (let i = 0; i < T.length; i++) {
