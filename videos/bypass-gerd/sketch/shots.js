@@ -310,6 +310,27 @@ function bellySide(t, fat, push) {   // a side cut of the belly (front to the ri
   return s;
 }
 
+// a whole person from the side (real proportions, fig()), facing left, with a cut-away window on the belly showing the
+// skin, the fat layer and the stomach inside; fat 0..1 (the belly grows forward), push 0..1 arrows pressing on the stomach
+function personCut(t, o) {
+  o = o || {}; var fat = o.fat == null ? 1 : o.fat, sc = o.s || 1.6, fl = o.floor || 760, sh = o.shirt || SKIN;
+  var p = fig({ x: o.x || 330, y: fl - 212 * sc, s: sc, lean: 0, shirt: sh, hands: [null, null], bend: [-1, -1], belly: fat > .4 });
+  var bl = p.at(40, 18 + 14 * fat), c = p.at(60, 12 + 16 * fat), rx = (30 + 14 * fat) * sc, ry = (38 + 8 * fat) * sc;
+  var s = floor(fl) + p.far;
+  // the belly grows forward with the fat (same skin as the trunk)
+  s += '<ellipse cx="' + f(bl[0]) + '" cy="' + f(bl[1]) + '" rx="' + f((18 + 30 * fat) * sc) + '" ry="' + f((40 + 24 * fat) * sc) + '" fill="' + sh + '" stroke="' + INK + '" stroke-width="2.2"/>' + p.body + p.near;
+  s += '<ellipse cx="' + f(bl[0]) + '" cy="' + f(bl[1]) + '" rx="' + f((18 + 30 * fat) * sc - 2) + '" ry="' + f((40 + 24 * fat) * sc - 2) + '" fill="' + sh + '"/>';
+  // the cut-away window: the fat band at the front, the cavity, the stomach
+  var id = "pc" + (++CLIPN), band = (6 + 20 * fat) * sc, cx = c[0], cy = c[1];
+  s += '<clipPath id="' + id + '"><ellipse cx="' + f(cx) + '" cy="' + f(cy) + '" rx="' + f(rx) + '" ry="' + f(ry) + '"/></clipPath><g clip-path="url(#' + id + ')">';
+  s += '<rect x="' + f(cx - rx) + '" y="' + f(cy - ry) + '" width="' + f(2 * rx) + '" height="' + f(2 * ry) + '" fill="' + FAT + '"/>';
+  for (var i = 0; i < 14; i++) s += '<circle cx="' + f(cx - rx + band * .5 + (i % 2) * band * .3) + '" cy="' + f(cy - ry + i * ry / 7) + '" r="' + f(band * .3) + '" fill="#f3e2a8" stroke="#c9a84f" stroke-width="1"/>';
+  s += '<rect x="' + f(cx - rx + band) + '" y="' + f(cy - ry) + '" width="' + f(2 * rx) + '" height="' + f(2 * ry) + '" fill="#f1dccd"/><path d="M' + f(cx - rx + band) + ' ' + f(cy - ry) + ' V' + f(cy + ry) + '" stroke="#c9a84f" stroke-width="2"/>';
+  var ss = (2 * rx - band) * .9 / 560; s += G("translate(" + f(cx - rx + band + 4 - 30 * ss) + " " + f(cy - ry + 6 - 30 * ss) + ") scale(" + f(ss) + ")", stomachFull(t, {}) + (o.acid ? reflux(t, o.acid, 7) : "")) + '</g>';
+  s += '<ellipse cx="' + f(cx) + '" cy="' + f(cy) + '" rx="' + f(rx) + '" ry="' + f(ry) + '" fill="none" stroke="' + INK + '" stroke-width="2.6"/>';
+  if (o.push) for (var k = 0; k < 3; k++) { var y = cy - ry * .5 + k * ry * .5, pp = Math.sin(t * 4 + k) * 5; s += arrow(cx - rx - 40 * sc + pp, y, cx - rx + band + pp, y, ORANGE, 5, o.push); }
+  return { svg: s, c: c, rx: rx, ry: ry, p: p };
+}
 // ── shots ──
 // 4 · how does reflux happen at all?
 shot(4, push(300, 300, 1.0, 1.08), function (u, d, t) { return paper() + stomachFull(t, {}) + G("translate(0 " + f(6 * Math.sin(t * 3)) + ")", T("؟", 480, 300, 170, ORANGE, 800), at(u, .2, .3)); });
