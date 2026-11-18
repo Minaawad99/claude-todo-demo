@@ -16,3 +16,9 @@ our own silly start (a shaken soda bottle instead of the reference's firecracker
 All synthesized by `videos/audio/sfx.py` (pop, fizz, slosh, splash, clink, clank, spark, boom, idle, rev, intake, exhaust,
 squeeze, sizzle, coolant, whoosh, bump, servo, beep, tick, chime), plus the kit's `px-ding` (Pixabay, credited in
 `videos/_templates/sketch/sfx/SOURCES.md`). No music.
+
+## Real car recordings (added after the first cut)
+The user's Pixabay / Freesound clips, first sent for «أوكتان» (`videos/octane/sfx`), copied to `videos/car-engine/sfx/`:
+engine idle (car-idle-1-blyth 62010), engine start (44357), acceleration inside a car (7087), engine knock (64227),
+electric sparks (6130), car passing (soundque 442774), gas pump (29700). They replace the synthesized idle, rev, starter
+and loud-exhaust sounds; slices are listed at the top of `cues.js`. No music.
