@@ -3,7 +3,7 @@
 
 الاستخدام:  python3 video.py <أمر> <فولدر-الفيديو> [اختيارات]
 
-  init    <dir>          يعمل فولدر فيديو جديد بالملفات الأساسية
+  init    <dir> [--style cartoon|sketch]   يعمل فولدر فيديو جديد بالملفات الأساسية
   timing  <dir>          يقرا الصوت من <dir>/voice/ ويطلع توقيت كل سطر (build/timing.js) و build/voice.wav
   build   <dir>          يجمع الرسم والترجمة في build/index.html
   check   <dir>          يدور على أخطاء في الرسم ويعمل صورة فيها لقطة من كل مشهد (build/sheet.png)
@@ -11,9 +11,14 @@
   render  <dir> [--fps 30]  يطلع الفيديو النهائي build/video.mp4 بمقاس 1080×1920
   all     <dir>          timing + build + check + sound + render
 
+  وضع "اعمل زي الفيديو ده":
+  frames  <video.mp4> <out-dir>        يطلع 16 لقطة من فيديو مرجع + sheet.png
+  style   <dir> --from cartoon|sketch  ينسخ ستايل جاهز لـ<dir>/style/ عشان يتعدّل
+  compare <dir> <ref-sheet.png>        صورة المرجع جنب رسمنا (build/compare.png)
+
 فولدر الفيديو:
   script.txt   السكريبت، سطر لكل جملة
-  config.json  {"title": "...", "sub": "...", "brand": "...", "keywords": {"0": ["كلمة"]}, "music": true}
+  config.json  {"style": "cartoon"|"sketch"|"custom", "title": "...", "sub": "...", "brand": "...", "keywords": {"0": ["كلمة"]}, "music": true}
   voice/       الصوت: ملف لكل سطر (01.wav, 02.wav, ...) أو ملف واحد للسكريبت كله
   shots.js     الرسم: shot(...) لكل سطر (شوف API.md)
   sfx.json     (اختياري) مؤثرات صوتية: [{"line": 3, "at": 0.8, "fx": "pop", "gain": 0.6}]
@@ -48,16 +53,22 @@ def out(d, name=""):
 
 
 # ── init ────────────────────────────────────────────────
-def cmd_init(d):
+def cmd_init(d, style="cartoon"):
     os.makedirs(os.path.join(d, "voice"), exist_ok=True)
     def put(name, text):
         p = os.path.join(d, name)
         if not os.path.exists(p): open(p, "w", encoding="utf-8").write(text)
     put("script.txt", "اكتب هنا السكريبت، سطر لكل جملة.\n")
-    put("config.json", json.dumps({"title": "عنوان الفيديو", "sub": "سطر تحت العنوان", "brand": "", "keywords": {}, "music": True}, ensure_ascii=False, indent=2) + "\n")
-    put("shots.js", "// مشهد لكل سطر: shot(رقم_السطر, كاميرا, رسم). شوف API.md\nshot(0, camPush(320, 180, 1, 1.1), function (u, d, t) {\n  return sky(\"day\") + clouds(t, 20, 30, 4, 0.9) + grass(t, 270) + person(320, 300, t, { mood: \"curious\", pose: \"think\" }) + tag(\"أول مشهد\", 320, 80, u, 0.4);\n});\n")
+    cfg = {"style": style, "title": "عنوان الفيديو", "sub": "سطر تحت العنوان", "brand": "", "keywords": {}, "music": True}
+    if style == "sketch":
+        cfg["sketch"] = {"category": "تصنيف الموضوع", "hook": "جملة البداية فيها *كلمة* مهمة | وسطر رمادي", "outro": {"q": "السؤال", "legend": ["جزء 1", "جزء 2"], "stat": "99%", "statText": "شرح الرقم", "points": ["نقطة 1", "نقطة 2", "نقطة 3"], "more": "معلومة زيادة"}}
+        shots = "// ستايل السكتش: كارت البداية على السطر 0، وكارت الملخص على آخر سطر. shot من السطر 1. شوف styles/sketch/API.md\nintro(function (t) { return dark() + ring(290, 160, 70, t, ease(t / 1.2)); });\nshot(1, camPush(320, 400, 1, 1.1), function (u, d, t) {\n  return paper() + gearS(320, 380, 110, t, 0.6) + label(320, 270, 470, 170, \"اسم الجزء\", OLIVE, ease((u - 0.5) / 0.8));\n});\n"
+    else:
+        shots = "// مشهد لكل سطر: shot(رقم_السطر, كاميرا, رسم). شوف styles/cartoon/API.md\nshot(0, camPush(320, 180, 1, 1.1), function (u, d, t) {\n  return sky(\"day\") + clouds(t, 20, 30, 4, 0.9) + grass(t, 270) + person(320, 300, t, { mood: \"curious\", pose: \"think\" }) + tag(\"أول مشهد\", 320, 80, u, 0.4);\n});\n"
+    put("config.json", json.dumps(cfg, ensure_ascii=False, indent=2) + "\n")
+    put("shots.js", shots)
     put("sfx.json", "[]\n")
-    print("✓ اتعمل فولدر الفيديو:", d)
+    print(f"✓ اتعمل فولدر الفيديو: {d} (ستايل {style})")
 
 
 # ── timing ──────────────────────────────────────────────
@@ -133,25 +144,97 @@ def cmd_timing(d):
 
 
 # ── build ───────────────────────────────────────────────
+def style_dir(d, cfg):
+    """الستايل: cartoon (أنيميشن كرتون) أو sketch (سكتش / رسم هندسي)، أو custom = فولدر style/ جوه فولدر الفيديو."""
+    st = cfg.get("style", "cartoon")
+    if st == "custom":
+        p = os.path.join(d, "style")
+        if not os.path.isdir(p): die("الستايل custom محتاج فولدر style/ جوه فولدر الفيديو. اعمله بـ: video.py style <dir> --from cartoon")
+        return p
+    p = os.path.join(ENGINE, "styles", st)
+    if not os.path.isdir(p): die(f"مفيش ستايل اسمه '{st}'. الموجود: cartoon، sketch، custom")
+    return p
+
+
+def hook_html(text):
+    """*كلمة* = برتقالي، وبعد | سطر رمادي."""
+    parts = text.split("|"); main = re.sub(r"\*([^*]+)\*", r'<span class="o">\1</span>', parts[0].strip())
+    return main + ('<br><span class="gr">' + parts[1].strip() + '</span>' if len(parts) > 1 else "")
+
+
+def outro_html(o):
+    if not o: return '<svg id="outroArt" viewBox="0 0 580 300" style="top:98px;height:300px"></svg>'
+    leg = "".join(f'<span><b>{i + 1}</b>{x}</span>' for i, x in enumerate(o.get("legend", [])))
+    pts = "<br>".join(f"{i + 1}. {x}" for i, x in enumerate(o.get("points", [])))
+    return (f'<div class="q">{o.get("q", "")}</div><svg id="outroArt" viewBox="0 0 580 300"></svg>'
+            + (f'<div class="leg">{leg}</div>' if leg else "")
+            + (f'<div class="stat"><div class="n">{o["stat"]}</div><div class="t">{o.get("statText", "")}</div></div>' if o.get("stat") else "")
+            + f'<div class="pts">{pts}' + (f'<div class="more">معلومة زيادة: {o["more"]}</div>' if o.get("more") else "") + '</div>')
+
+
 def cmd_build(d):
     if not os.path.exists(out(d, "timing.js")): die("شغّل timing الأول.")
-    lines = lines_of(d); cfg = config_of(d); K = {int(k): v for k, v in cfg.get("keywords", {}).items()}
+    lines = lines_of(d); cfg = config_of(d); sd = style_dir(d, cfg); sketch = os.path.exists(os.path.join(sd, "IS_SKETCH")) or cfg.get("style") == "sketch"
+    K = {}
+    for k, v in cfg.get("keywords", {}).items():   # {"3": ["كلمة"]} أو {"3": {"كلمة": "o"}} (o برتقالي، b أزرق، g زيتوني في السكتش)
+        K[int(k)] = v if isinstance(v, dict) else {w: ("o" if sketch else "k") for w in v}
     for i, ws in K.items():
         for w in ws:
             if i >= len(lines) or w not in lines[i].split(" "): print(f"  ! الكلمة '{w}' مش موجودة في السطر {i} بالظبط (لازم تتكتب زي ما هي في السكريبت)")
-    caps = [{"w": l.split(" "), "k": [w in K.get(i, []) for w in l.split(" ")]} for i, l in enumerate(lines)]
+    caps = [{"w": l.split(" "), "k": [K.get(i, {}).get(w, "") for w in l.split(" ")]} for i, l in enumerate(lines)]
     shots = open(os.path.join(d, "shots.js"), encoding="utf-8").read()
-    js = "(function () {\n" + open(os.path.join(ENGINE, "helpers.js"), encoding="utf-8").read() + "\n" + open(os.path.join(ENGINE, "panel.js"), encoding="utf-8").read() + "\n// ── shots.js ──\n" + shots + "\n})();\n"
+    js = "(function () {\n" + open(os.path.join(sd, "helpers.js"), encoding="utf-8").read() + "\n" + open(os.path.join(sd, "panel.js"), encoding="utf-8").read() + "\n// ── shots.js ──\n" + shots + "\n})();\n"
     open(out(d, "scenes.js"), "w", encoding="utf-8").write(js)
     data = "window.CAPS = " + json.dumps(caps, ensure_ascii=False) + ";\nwindow.CFG = " + json.dumps({k: cfg.get(k, "") for k in ("title", "sub", "brand")}, ensure_ascii=False) + ";"
-    html = open(os.path.join(ENGINE, "template.html"), encoding="utf-8").read().replace("/*DATA*/", data)
+    html = open(os.path.join(sd, "template.html"), encoding="utf-8").read().replace("/*DATA*/", data)
+    sk = cfg.get("sketch", {})
+    html = (html.replace("/*BRAND*/", cfg.get("brand", "")).replace("/*CATEGORY*/", sk.get("category", ""))
+                .replace("/*HOOK*/", hook_html(sk.get("hook", cfg.get("title", "")))).replace("/*OUTRO*/", outro_html(sk.get("outro"))))
     defs = os.path.join(d, "defs.svg")
     if os.path.exists(defs): html = html.replace("<!--DEFS-->", open(defs, encoding="utf-8").read())
     open(out(d, "index.html"), "w", encoding="utf-8").write(html)
     shutil.copytree(os.path.join(ENGINE, "fonts"), out(d, "fonts"), dirs_exist_ok=True)   # الخط جوه الحزمة، فالرسم مش محتاج إنترنت
     n = len(re.findall(r"\bshot\s*\(", shots))
-    print(f"✓ build/index.html جاهز ({n} مشهد لـ{len(lines)} سطر)")
-    if n < len(lines): print(f"  ! فيه سطور من غير مشهد خاص بيها: المشهد اللي قبلها هيكمل عليها")
+    print(f"✓ build/index.html جاهز (ستايل {cfg.get('style', 'cartoon')}، {n} مشهد لـ{len(lines)} سطر)")
+    need_n = len(lines) - 2 if sketch else len(lines)
+    if n < need_n: print(f"  ! فيه سطور من غير مشهد خاص بيها: المشهد اللي قبلها هيكمل عليها")
+
+
+# ── فيديو مرجع ───────────────────────────────────────────
+def cmd_frames(src, dst, n=16):
+    """يطلع n لقطة من فيديو مرجع + صورة واحدة فيهم كلهم (sheet.png) عشان Claude يشوف الستايل."""
+    need("ffmpeg"); os.makedirs(dst, exist_ok=True)
+    dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", src], capture_output=True, text=True).stdout.strip() or 0)
+    if not dur: die("مش قادر أقرا الفيديو: " + src)
+    for i in range(n):
+        t = dur * (i + 0.5) / n
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{t:.2f}", "-i", src, "-frames:v", "1", "-vf", "scale=360:-2", os.path.join(dst, f"f{i + 1:02d}.png")], check=True)
+    cols = 4; rows = (n + cols - 1) // cols
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", os.path.join(dst, "f%02d.png"), "-vf", f"tile={cols}x{rows}:padding=6:color=gray", "-frames:v", "1", os.path.join(dst, "sheet.png")], check=True)
+    info = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height,r_frame_rate", "-of", "csv=p=0", src], capture_output=True, text=True).stdout.strip()
+    print(f"✓ {n} لقطة في {dst} (الفيديو {dur:.1f} ثانية، {info})\n✓ كلهم في صورة واحدة: {os.path.join(dst, 'sheet.png')}")
+
+
+def cmd_style(d, base="cartoon"):
+    """ينسخ ستايل جاهز لفولدر الفيديو (style/) عشان يتعدّل يقرّب من فيديو مرجع، ويخلي config يستخدمه."""
+    src = os.path.join(ENGINE, "styles", base)
+    if not os.path.isdir(src): die("الأساس لازم يبقى cartoon أو sketch")
+    dst = os.path.join(d, "style")
+    if os.path.exists(dst): die("فيه فولدر style/ بالفعل في " + d)
+    shutil.copytree(src, dst)
+    if base == "sketch": open(os.path.join(dst, "IS_SKETCH"), "w").write("")
+    cfg = config_of(d); cfg["style"] = "custom"
+    json.dump(cfg, open(os.path.join(d, "config.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    print(f"✓ اتنسخ ستايل {base} لـ{dst}، وconfig.json بقى style=custom. عدّل template.html وhelpers.js جوه الفولدر ده.")
+
+
+def cmd_compare(d, ref_sheet):
+    """صورة واحدة فيها المرجع جنب رسمنا عشان المقارنة."""
+    mine = out(d, "sheet.png")
+    if not os.path.exists(mine): die("شغّل check الأول.")
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", ref_sheet, "-i", mine, "-filter_complex",
+                    "[0:v]scale=-2:1400[a];[1:v]scale=-2:1400[b];[a][b]hstack", out(d, "compare.png")], check=True)
+    print("✓ المقارنة (المرجع شمال، رسمنا يمين):", out(d, "compare.png"))
 
 
 # ── check / render (node + playwright) ─────────────────
@@ -206,7 +289,10 @@ if __name__ == "__main__":
     if len(sys.argv) < 3: print(__doc__); sys.exit(0)
     c, d = sys.argv[1], sys.argv[2]
     fps = sys.argv[sys.argv.index("--fps") + 1] if "--fps" in sys.argv else "30"
-    if c == "init": cmd_init(d)
+    if c == "frames": cmd_frames(sys.argv[2], sys.argv[3] if len(sys.argv) > 3 and not sys.argv[3].startswith("--") else "ref"); sys.exit(0)
+    if c == "style": cmd_style(d, sys.argv[sys.argv.index("--from") + 1] if "--from" in sys.argv else "cartoon"); sys.exit(0)
+    if c == "compare": cmd_compare(d, sys.argv[3]); sys.exit(0)
+    if c == "init": cmd_init(d, sys.argv[sys.argv.index("--style") + 1] if "--style" in sys.argv else "cartoon")
     elif c == "timing": cmd_timing(d)
     elif c == "build": cmd_build(d)
     elif c == "check": cmd_check(d)

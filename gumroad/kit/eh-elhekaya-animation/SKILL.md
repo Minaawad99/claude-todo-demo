@@ -1,6 +1,6 @@
 ---
 name: eh-elhekaya-animation
-description: Turns an Arabic explainer script into a finished vertical animated video (1080×1920 MP4) in the "إيه الحكاية؟" cartoon-panel style - draws one animated scene per line, syncs word-by-word captions to the user's voice recording, adds sound effects and a light music bed, and renders. Use when the user asks to draw, animate, make or render the video ("ارسم الفيديو", "اعمل الأنيميشن", "طلّع الفيديو") after a script exists, or asks for a full video from a script and voice.
+description: Turns an Arabic explainer script and the user's voice into a finished vertical video (1080×1920 MP4) - draws one animated scene per line in a ready style (cartoon animation or sketch/technical-diagram) or in a style matched to a reference video the user sends, syncs captions to the voice, adds sound effects and a light music bed, and renders. Use when the user asks to draw, animate, make or render the video ("ارسم الفيديو", "اعمل الأنيميشن", "طلّع الفيديو", "بالسكتش", "بالرسم الهندسي", "اعمل زي الفيديو ده") after a script exists, or asks for a full video from a script and voice.
 ---
 
 # رسم الفيديو وإخراجه («إيه الحكاية؟»)
@@ -8,7 +8,11 @@ description: Turns an Arabic explainer script into a finished vertical animated 
 الـskill ده بياخد **السكريبت + صوت المستخدم**، ويرسم مشهد متحرك لكل سطر، ويركّب الترجمة والمؤثرات، ويطلع فيديو MP4 عمودي جاهز للنشر.
 
 - `ENGINE` = فولدر `engine` اللي جنب الملف ده (`<base directory of this skill>/engine`).
-- `API.md` في نفس الفولدر فيه كل دوال الرسم. **اقراه قبل ما تكتب أي مشهد.**
+- **الستايلات الجاهزة** في `ENGINE/styles/`:
+  - `cartoon`: أنيميشن كرتون. لوحة عرضية فيها شخصيات بتعبيرات، وعناوين بفرشاة، وترجمة كلمة بكلمة.
+  - `sketch`: سكتش / رسم هندسي. ورق كريمي، ورسم مسطّح بتظليل، وأسماء الأجزاء بخطوط إشارة، وكارت بداية وكارت ملخص.
+- كل ستايل جواه `API.md` فيه كل دوال الرسم. **اقرا API.md بتاع الستايل اللي اخترته قبل ما تكتب أي مشهد.**
+- أمثلة كاملة: `example-cartoon/` و`example-sketch/` (نفس السكريبت بالستايلين).
 - كلّم المستخدم بالعامية المصرية.
 
 ## 0. التجهيز: اعرف إنت شغال فين الأول
@@ -44,10 +48,14 @@ pip install numpy
 - **الإخراج بياخد دقايق:** شغّله في الخلفية لو تقدر، وقول للمستخدم المدة.
 - **الجلسة مؤقتة:** بعد ما تخلص، اعمل commit لفولدر الفيديو (من غير `build/`) عشان يقدر يعدّل بعدين. والفيديو نفسه لازم يتبعت قبل ما الجلسة تقفل.
 
-## 1. فولدر الفيديو
-```
-python3 "ENGINE/video.py" init videos/<اسم-قصير-بالإنجليزي>
-```
+## 1. الستايل وفولدر الفيديو
+اسأل المستخدم سؤال واحد: **أنيميشن (كرتون) ولا سكتش (رسم هندسي) ولا عنده فيديو عايز يعمل زيه؟**
+- لو قال كرتون أو سكتش:
+  ```
+  python3 "ENGINE/video.py" init videos/<اسم-قصير-بالإنجليزي> --style cartoon
+  ```
+  (أو `--style sketch`)
+- لو عنده فيديو مرجع، اعمل الفولدر بالستايل الأقرب للمرجع، وبعدين اتّبع **"وضع: اعمل زي الفيديو ده"** اللي تحت.
 هيعمل: `script.txt`، و`config.json`، و`shots.js`، و`sfx.json`، وفولدر `voice/`.
 
 ## 2. السكريبت
@@ -73,13 +81,47 @@ python3 "ENGINE/video.py" timing videos/<slug>
 - `brand`: اسم القناة تحت (أو سيبه فاضي).
 - `keywords`: الكلمات اللي هتتلوّن أصفر في الترجمة، لكل سطر كلمة أو اتنين، **مكتوبة زي ما هي في السكريبت بالظبط بعلامات الترقيم**. مثال: `{"0": ["أزرق؟"], "6": ["قصيرة،"]}`.
 - `music`: `true` لموسيقى خفيفة تحت الكلام، أو `false`.
+- **في السكتش:** الكلمات بتتلوّن بـ`o` (برتقالي) أو `b` (أزرق) أو `g` (زيتوني)، وفيه جزء `sketch` لكارت البداية والملخص. التفاصيل في `styles/sketch/API.md`.
 
 ## 5. الرسم (`shots.js`)، وده أهم جزء
-1. اقرا `API.md`، وشوف المثال الكامل في `example/shots.js`.
-2. اكتب `shot(...)` واحد لكل سطر (من 0 لآخر سطر).
+1. اقرا `API.md` بتاع الستايل (`ENGINE/styles/<style>/API.md`)، وشوف المثال الكامل (`example-cartoon/shots.js` أو `example-sketch/shots.js`).
+2. اكتب `shot(...)` واحد لكل سطر: في الكرتون من 0 لآخر سطر، وفي السكتش من 1 لقبل الأخير، ومعاهم `intro(...)` و`outro(...)` و`sketch` في `config.json`.
 3. لكل سطر فكّر: إيه اللي المشاهد لازم **يشوفه** وهو بيسمع الجملة دي؟ ارسمه بشكل قريب من الحقيقة.
 4. لو محتاج شكل مش موجود في المكتبة (طيارة، موتور، قلب...)، اكتب دالة جديدة في أول `shots.js` بنفس الأسلوب: خط أسود، تدرج ألوان، حركة بـ`t`.
 5. اتّبع **قواعد المشاهد** اللي في آخر `API.md`، وأهمها: **مفيش مشهد واقف**.
+
+## وضع: اعمل زي الفيديو ده (فيديو مرجع)
+المستخدم بيبعت فيديو بستايل عاجبه، وإحنا بنعمل **نفس الشكل** بمحتوى المستخدم.
+
+1. **طلّع لقطات من المرجع:**
+   ```
+   python3 "ENGINE/video.py" frames <الفيديو> videos/<slug>/ref
+   ```
+   هيطلع 16 لقطة و`ref/sheet.png` فيهم كلهم. **افتح الصورة وبصّ عليها**، وكمان على 3 أو 4 لقطات لوحدهم.
+2. **اكتب وصف الستايل** في `videos/<slug>/style-notes.md`:
+   - **التقسيم:** فين الرسم، وفين الترجمة، وفين العنوان، ومقاس اللوحة (عرضية ولا عمودية).
+   - **الألوان:** الخلفية، والخطوط، ولون كلمات الترجمة المهمة (بأكواد hex تقريبية).
+   - **الخط:** تقيل ولا خفيف، وحجمه. المتاح جوه الحزمة Noto Sans Arabic بكل الأوزان.
+   - **أسلوب الرسم:** مسطّح ولا مجسّم، شخصيات ولا لأ، خطوط تخينة ولا رفيعة، تظليل، أسهم وأسماء أجزاء.
+   - **الترجمة:** كلمة بكلمة ولا جملة كاملة، ومكانها.
+   - **الإيقاع:** طول المشهد، والقطع، وحركة الكاميرا.
+
+   اعرض الوصف على المستخدم في نقط قصيرة، واسأله: "ده الستايل اللي عايزه؟"
+3. **انسخ أقرب ستايل جاهز لفولدر الفيديو:**
+   ```
+   python3 "ENGINE/video.py" style videos/<slug> --from cartoon
+   ```
+   (أو `--from sketch`). ده بيعمل `videos/<slug>/style/` وبيخلي `config.json` يستخدمه.
+4. **عدّل `style/template.html`** (الألوان، والأماكن، والأحجام في الـCSS)، و**`style/helpers.js`** (الألوان، ودوال رسم جديدة بنفس أسلوب المرجع)، عشان يقرّبوا من الوصف.
+5. اكتب `shots.js` بالدوال دي، وشغّل check، وبعدين:
+   ```
+   python3 "ENGINE/video.py" compare videos/<slug> videos/<slug>/ref/sheet.png
+   ```
+   افتح `build/compare.png` (المرجع شمال ورسمنا يمين)، وقرّب الفرق، وكرر لحد ما الشكل يبقى قريب.
+
+**حدود لازم تقولها للمستخدم:**
+- إحنا بنقلّد **الشكل** (الألوان والتقسيم وأسلوب الرسم)، مش بننسخ **المحتوى**. ممنوع ننسخ شخصيات أو لوجو أو اسم قناة أو رسمة بعينها من المرجع.
+- الرسم بيتعمل بالكود، فلو المرجع رسم يدوي معقّد أو تصوير حقيقي أو 3D، هنطلع أقرب شكل مبسّط، مش نسخة طبق الأصل.
 
 ## 6. المراجعة
 ```

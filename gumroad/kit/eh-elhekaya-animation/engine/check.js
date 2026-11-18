@@ -17,9 +17,14 @@ const [, , html, sheet] = process.argv;
   for (let i = 0; i < T.length; i++) {
     for (const k of [0.15, 0.5, 0.9]) {
       const t = T[i][0] + (T[i][1] - T[i][0]) * k;
-      const r = await p.evaluate(t => { try { renderAt(t); const s = document.getElementById('panel').innerHTML; return /NaN|undefined/.test(s) ? 'bad' : (s.length < 200 ? 'empty' : 'ok'); } catch (e) { return 'err:' + e.message; } }, t);
+      const r = await p.evaluate(t => { try { renderAt(t); const s = [...document.querySelectorAll('.canvas svg')].filter(e => e.offsetParent !== null || e.closest('.over') === null).map(e => e.innerHTML).join(''); return /NaN|undefined/.test(s) ? 'bad' : (s.length < 200 ? 'empty' : 'ok'); } catch (e) { return 'err:' + e.message; } }, t);
       if (r !== 'ok') { bad++; errs.push(`السطر ${i} عند ${t.toFixed(1)}ث: ${r === 'bad' ? 'فيه NaN أو undefined في الرسم' : r === 'empty' ? 'المشهد فاضي' : r}`); }
-      if (k === 0.5) shots.push('data:image/jpeg;base64,' + (await p.screenshot({ type: 'jpeg', quality: 70 })).toString('base64'));
+      if (k === 0.5) {
+        const shot = await p.screenshot({ type: 'png' });
+        shots.push('data:image/png;base64,' + shot.toString('base64'));
+        await p.evaluate(t => renderAt(t), t + 0.4);
+        if (shot.equals(await p.screenshot({ type: 'png' }))) errs.push(`السطر ${i}: المشهد واقف (مفيش حاجة بتتحرك). ضيف حركة بـt`);
+      }
     }
   }
   const cols = 6, W = 180, H = 320;
