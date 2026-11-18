@@ -269,7 +269,7 @@ function banana() { return '<path d="M-44 -18 C-30 30 30 36 48 -8 C36 4 0 14 -32
 function inPath(d, x, y) { try { var c = document.createElement("canvas").getContext("2d"); return c.isPointInPath(new Path2D(d), x, y); } catch (e) { return false; } }
 // ── reflux: the valve (lower oesophageal sphincter) at the foot of the gullet, the acid cells in the body of the stomach,
 // the diaphragm with its opening, the fat of the belly pressing in. Shapes on the traced plates (refs/SOURCES.md).
-var ACIDC = "#d9772c", DIA = "#b9775e", DIAD = "#7c4a38", FAT = "#ecd38f",
+var ACIDC = "#d9772c", DIA = "#c98f7a", DIAD = "#7c4a38", FAT = "#ecd38f",
     VALVE_K = .80, UP = rev(OESC);
 function valveAt() { var p = along(OESC, VALVE_K), q = along(OESC, VALVE_K + .02); return { p: p, a: Math.atan2(q[1] - p[1], q[0] - p[0]) * 180 / Math.PI }; }
 // the sphincter: two olive pads across the gullet; open 0 (shut) .. 1 (wide); weak = it sags open
@@ -291,10 +291,11 @@ function mitt2(x, y, sq) { return G("translate(" + x + " " + y + ")", '<path d="
 // the diaphragm across the top of the belly, with its opening (hiatus) round the gullet; gap 0 (snug) .. 1 (wide)
 function diaphragm(gap, stitch) {
   var gx = 232, g = 16 + 40 * clamp(gap), s = "";
-  s += '<path d="M-120 330 C-40 170 120 120 ' + (gx - g) + ' 128" stroke="' + INK + '" stroke-width="30" fill="none" stroke-linecap="round"/><path d="M-120 330 C-40 170 120 120 ' + (gx - g) + ' 128" stroke="' + DIA + '" stroke-width="25" fill="none" stroke-linecap="round"/>';
-  s += '<path d="M' + (gx + 34 + g) + ' 124 C380 110 600 150 760 330" stroke="' + INK + '" stroke-width="30" fill="none" stroke-linecap="round"/><path d="M' + (gx + 34 + g) + ' 124 C380 110 600 150 760 330" stroke="' + DIA + '" stroke-width="25" fill="none" stroke-linecap="round"/>';
+  s += '<path d="M-120 330 C-40 170 120 120 ' + (gx - g) + ' 128" stroke="' + INK + '" stroke-width="40" fill="none" stroke-linecap="round"/><path d="M-120 330 C-40 170 120 120 ' + (gx - g) + ' 128" stroke="' + DIA + '" stroke-width="35" fill="none" stroke-linecap="round"/>';
+  s += '<path d="M' + (gx + 34 + g) + ' 124 C380 110 600 150 760 330" stroke="' + INK + '" stroke-width="40" fill="none" stroke-linecap="round"/><path d="M' + (gx + 34 + g) + ' 124 C380 110 600 150 760 330" stroke="' + DIA + '" stroke-width="35" fill="none" stroke-linecap="round"/>';
   for (var i = 0; i < 9; i++) s += '<path d="M' + (-60 + i * 30) + ' ' + (250 - i * 13) + ' l14 -14" stroke="' + DIAD + '" stroke-width="2" opacity=".6"/><path d="M' + (360 + i * 40) + ' ' + (120 + i * 18) + ' l14 14" stroke="' + DIAD + '" stroke-width="2" opacity=".6"/>';
-  if (stitch) for (var j = 0; j < 3; j++) s += G("", '<path d="M' + (gx - g - 6) + ' ' + (122 + j * 9) + ' C' + gx + ' ' + (112 + j * 9) + ' ' + (gx + 34) + ' ' + (112 + j * 9) + ' ' + (gx + 40 + g) + ' ' + (120 + j * 9) + '" stroke="' + BLUE + '" stroke-width="3" fill="none"/>', clamp(stitch * 3 - j));
+  for (var m = 0; m < 6; m++) { s += '<path d="M' + (gx - g - 8 - m * 16) + ' ' + (116 + m * 4) + ' l6 22" stroke="' + DIAD + '" stroke-width="2" opacity=".7"/><path d="M' + (gx + 42 + g + m * 16) + ' ' + (112 + m * 2) + ' l-6 22" stroke="' + DIAD + '" stroke-width="2" opacity=".7"/>'; }
+  if (stitch) for (var j = 0; j < 3; j++) s += G("", '<path d="M' + (gx - g - 6) + ' ' + (122 + j * 9) + ' C' + gx + ' ' + (112 + j * 9) + ' ' + (gx + 34) + ' ' + (112 + j * 9) + ' ' + (gx + 40 + g) + ' ' + (120 + j * 9) + '" stroke="' + BLUE + '" stroke-width="4.5" fill="none"/>', clamp(stitch * 3 - j));
   return s;
 }
 // the belly from the side with a fat layer; fat 0..1 how much, push: arrows pressing on the stomach
@@ -315,7 +316,7 @@ function bellySide(t, fat, push) {   // a side cut of the belly (front to the ri
 function personCut(t, o) {
   o = o || {}; var fat = o.fat == null ? 1 : o.fat, sc = o.s || 1.6, fl = o.floor || 760, sh = o.shirt || SKIN;
   var p = fig({ x: o.x || 330, y: fl - 212 * sc, s: sc, lean: 0, shirt: sh, hands: [null, null], bend: [-1, -1], belly: fat > .4 });
-  var bl = p.at(40, 18 + 14 * fat), c = p.at(60, 12 + 16 * fat), rx = (30 + 14 * fat) * sc, ry = (38 + 8 * fat) * sc;
+  var bl = p.at(40, 18 + 14 * fat), c = p.at(50, 14 + 18 * fat), rx = (30 + 14 * fat) * sc, ry = (38 + 8 * fat) * sc;
   var s = floor(fl) + p.far;
   // the belly grows forward with the fat (same skin as the trunk)
   s += '<ellipse cx="' + f(bl[0]) + '" cy="' + f(bl[1]) + '" rx="' + f((18 + 30 * fat) * sc) + '" ry="' + f((40 + 24 * fat) * sc) + '" fill="' + sh + '" stroke="' + INK + '" stroke-width="2.2"/>' + p.body + p.near;
@@ -345,9 +346,10 @@ shot(6, push(290, 200, 1.2, 1.1), function (u, d, t) {
   return paper() + stomachFull(t, { open: .5 + .1 * Math.sin(t * 2), weak: 1, hlG: k }) + fillIn(P_FULL, .35, t, 100, 610, "#d9a441") + reflux(t, k, 10) + G("", flame(150, 60, 1.3, t), at(u, cf(6, 2), .3)) + label(valveAt().p[0] - 20, valveAt().p[1] + 4, 160, 190, "ضعيف", ORANGE, at(u, .3, .4), 24);
 });
 // 7 · belly fat presses on the stomach from outside, like squeezing a tube of toothpaste
-shot(7, push(330, 400, 1.0, 1.05), function (u, d, t) {
+shot(7, push(320, 380, 1.12, 1.18), function (u, d, t) {
   var c3 = cf(7, 3) || cf(7, 2), sq = .5 + .5 * Math.sin(t * 3);
-  return paper() + bellySide(t, 1, at(u, .8, .5)) + G("translate(150 120) scale(.5)", reflux(t, at(u, 1.2, .8), 7)) + label(500, 250, 470, 70, "الدهون", "#9a7420", at(u, .3, .4), 26) +
+  var pc = personCut(t, { fat: 1, push: at(u, .8, .5), acid: at(u, 1.2, .8), x: 380, s: 1.7, floor: 770 });
+  return paper() + pc.svg + label(pc.c[0] - pc.rx + 10, pc.c[1] + 10, 150, 200, "الدهون", "#9a7420", at(u, .3, .4), 26) +
     iconBox(140, 640, 170, toothpaste(t, sq), at(u, c3, .3));
 });
 // 8 · why a sleeve can make it worse: the narrow tube is under high pressure, the acid is pushed up
@@ -392,13 +394,17 @@ shot(15, push(360, 290, 1.25, 1.18), function (u, d, t) {
   return paper() + gutCloseup(t, { after: 1, hlPouch: 1, fill: .2 + .1 * Math.sin(t * 4), dimRem: .3 }) + flow(OESC.concat(rev(ROUX)), t, 9, .3, FOODC, 11, 1, 1) + G("", tag("بسرعة", 510, 420, 1, 28, ORANGE), at(u, cf(15, 1), .3)) + G("", T("ضغط", 150, 330, 26, MUTE, 800) + cross(150, 320, .7, at(u, cf(15, 2) + .4, .4)), at(u, cf(15, 2), .3));
 });
 // 16 · and the weight goes down, so the pressure on the belly eases
-shot(16, push(330, 400, 1.0, 1.05), function (u, d, t) {
-  var k = at(u, .3, 2.0); return paper() + bellySide(t, 1 - k, 1 - k) + G("", tag("ضغط أقل", 470, 120, 1, 30, BLUE), at(u, cf(16, 1), .3));
+shot(16, push(320, 380, 1.12, 1.18), function (u, d, t) {
+  var k = at(u, .3, 2.0); return paper() + personCut(t, { fat: 1 - k, push: 1 - k, x: 380, s: 1.7, floor: 770 }).svg + G("", tag("ضغط أقل", 170, 160, 1, 30, BLUE), at(u, cf(16, 1), .3)) + G("", arrow(150, 260, 150, 380, ORANGE, 8, 1) + T("وزن", 150, 420, 26, ORANGE, 800), at(u, .4, .3));
 });
-// 17 · the surgeon sometimes tightens a wide opening in the diaphragm in the same operation
-shot(17, push(260, 200, 1.1, 1.18), function (u, d, t) {
-  var c1 = cf(17, 1), gap = 1 - at(u, c1 + .4, 1.4);
-  return paper() + gutCloseup(t, { after: 1, dimRem: .2 }) + diaphragm(gap, at(u, c1 + .4, 1.4)) + label(80, 160, 140, 40, "الحجاب الحاجز", DIAD, at(u, .3, .4), 22) + G("", tag(gap > .5 ? "فتحة واسعة" : "اتصلّحت", 430, 40, 1, 24, gap > .5 ? ORANGE : OLIVE), at(u, .6, .3));
+// 17 · close-up on the diaphragm opening round the gullet: wide at first (the top of the stomach slips up through it),
+// then the surgeon pulls it snug with stitches
+shot(17, push(250, 150, 2.0, 2.3), function (u, d, t) {
+  var c1 = cf(17, 1), k = at(u, c1 + .2, 1.6), gap = 1 - k, slip = 26 * gap * (1 + .1 * Math.sin(t * 3));
+  var s = paper() + dim(.45, G("translate(0 " + f(-slip) + ")", gutCloseup(t, { after: 1, dimRem: .15 }))) + G("translate(0 " + f(-slip) + ")", gullet() + organ(POUCH, POUCHC, WALLD)) + diaphragm(gap, k);
+  s += G("", arrow(190, 60, 215, 100, ORANGE, 4, 1) + arrow(300, 60, 275, 100, ORANGE, 4, 1), gap > .4 ? at(u, .4, .3) : 0);
+  s += G("", tag("الحجاب الحاجز", 165, 60, 1, 17, DIAD), at(u, .2, .3)) + G("", tag(k < .5 ? "فتحة واسعة" : "اتقفلت", 330, 20, 1, 18, k < .5 ? ORANGE : OLIVE), at(u, .6, .3));
+  return s + (k > 0 && k < 1 ? G("translate(" + f(232 + 30 * Math.sin(t * 8)) + " 112)", '<path d="M0 -14 q6 14 0 28" stroke="' + STEEL + '" stroke-width="3" fill="none"/><circle cy="-16" r="3" fill="' + INK + '"/>') : "");
 }, { tr: "in" });
 // 18 · so many stop their heartburn pills afterwards
 shot(18, push(320, 400, 1.04, 1.0), function (u, d, t) {
@@ -445,7 +451,7 @@ shot(23, push(320, 400, 1.04, 1.0), function (u, d, t) {
 window.SCENE = window.SCENE || {};
 SCENE.intro = function (svg, t, li) {
   var s = "", u = t - LN[li].start;
-  if (li === 0) s += G("translate(30 20) scale(.85)", bellySide(t, 1, ease(u / .6))) + G("", flame(430, 120, 1.4, t), ease((u - .8) / .3));
+  if (li === 0) { var pc = personCut(t, { fat: 1, push: ease(u / .6), acid: ease((u - .6) / .8), x: 330, s: 1.45, floor: 640 }); s += pc.svg + G("", flame(pc.p.at(100, 30)[0] - 20, pc.p.at(100, 30)[1], 1.1, t), ease((u - .8) / .3)); }
   if (li === 1) s += G("translate(120 40) scale(.6)", gutCloseup(t, { after: 1 }) + flow(FOOD_NEW, t, 9, .15, FOODC, 12, 1, 1)) + check(500, 150, 1.4, ease((u - .5) / .4), OLIVE);
   if (li >= 2) s += G("translate(120 40) scale(.68)", sleeveOnly(t, {}) + reflux(t, 1, 8)) + cross(470, 160, 1.4, ease((u - .1) / .3));
   return s;
