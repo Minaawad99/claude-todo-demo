@@ -507,10 +507,9 @@ shot(6, push(290, 200, 1.2, 1.1), function (u, d, t) {
   return paper() + stomachFull(t, { open: .5 + .1 * Math.sin(t * 2), weak: 1, hlG: k }) + fillIn(P_FULL, .35, t, 100, 610, "#d9a441") + reflux(t, k, 10) + G("", flame(150, 60, 1.3, t), at(u, cf(6, 2), .3)) + label(valveAt().p[0] - 20, valveAt().p[1] + 4, 160, 190, "ضعيف", ORANGE, at(u, .3, .4), 24);
 });
 // 7 · belly fat presses on the stomach from outside, like squeezing a tube of toothpaste
-shot(7, push(320, 380, 1.12, 1.18), function (u, d, t) {
+shot(7, push(330, 400, 1.0, 1.05), function (u, d, t) {
   var c3 = cf(7, 3) || cf(7, 2), sq = .5 + .5 * Math.sin(t * 3);
-  var pc = personCut(t, { fat: 1, push: at(u, .8, .5), acid: at(u, 1.2, .8), x: 380, s: 1.7, floor: 770 });
-  return paper() + pc.svg + label(pc.c[0] - pc.rx + 10, pc.c[1] + 10, 150, 200, "الدهون", "#9a7420", at(u, .3, .4), 26) +
+  return paper() + bellySide(t, 1, at(u, .8, .5)) + G("translate(150 120) scale(.5)", reflux(t, at(u, 1.2, .8), 7)) + label(500, 250, 470, 70, "الدهون", "#9a7420", at(u, .3, .4), 26) +
     iconBox(140, 640, 170, toothpaste(t, sq), at(u, c3, .3));
 });
 // 8 · why a sleeve can make it worse: the narrow tube is under high pressure, the acid is pushed up
@@ -555,8 +554,8 @@ shot(15, push(360, 290, 1.25, 1.18), function (u, d, t) {
   return paper() + gutCloseup(t, { after: 1, hlPouch: 1, fill: .2 + .1 * Math.sin(t * 4), dimRem: .3 }) + flow(OESC.concat(rev(ROUX)), t, 9, .3, FOODC, 11, 1, 1) + G("", tag("بسرعة", 510, 420, 1, 28, ORANGE), at(u, cf(15, 1), .3)) + G("", T("ضغط", 150, 330, 26, MUTE, 800) + cross(150, 320, .7, at(u, cf(15, 2) + .4, .4)), at(u, cf(15, 2), .3));
 });
 // 16 · and the weight goes down, so the pressure on the belly eases
-shot(16, push(320, 380, 1.12, 1.18), function (u, d, t) {
-  var k = at(u, .3, 2.0); return paper() + personCut(t, { fat: 1 - k, push: 1 - k, x: 380, s: 1.7, floor: 770 }).svg + G("", tag("ضغط أقل", 170, 160, 1, 30, BLUE), at(u, cf(16, 1), .3)) + G("", arrow(150, 260, 150, 380, ORANGE, 8, 1) + T("وزن", 150, 420, 26, ORANGE, 800), at(u, .4, .3));
+shot(16, push(330, 400, 1.0, 1.05), function (u, d, t) {
+  var k = at(u, .3, 2.0); return paper() + bellySide(t, 1 - k, 1 - k) + G("", tag("ضغط أقل", 470, 120, 1, 30, BLUE), at(u, cf(16, 1), .3));
 });
 // 17 · close-up on the diaphragm opening round the gullet: wide at first (the top of the stomach slips up through it),
 // then the surgeon pulls it snug with stitches
@@ -612,7 +611,7 @@ shot(23, push(320, 400, 1.04, 1.0), function (u, d, t) {
 window.SCENE = window.SCENE || {};
 SCENE.intro = function (svg, t, li) {
   var s = "", u = t - LN[li].start;
-  if (li === 0) { var pc = personCut(t, { fat: 1, push: ease(u / .6), acid: ease((u - .6) / .8), x: 330, s: 1.45, floor: 640 }); s += pc.svg + G("", flame(pc.p.at(100, 30)[0] - 20, pc.p.at(100, 30)[1], 1.1, t), ease((u - .8) / .3)); }
+  if (li === 0) s += G("translate(30 20) scale(.85)", bellySide(t, 1, ease(u / .6)) + G("translate(150 120) scale(.5)", reflux(t, ease((u - .6) / .8), 7))) + G("", flame(430, 120, 1.4, t), ease((u - .8) / .3));
   if (li === 1) s += G("translate(120 40) scale(.6)", gutCloseup(t, { after: 1 }) + flow(FOOD_NEW, t, 9, .15, FOODC, 12, 1, 1)) + check(500, 150, 1.4, ease((u - .5) / .4), OLIVE);
   if (li >= 2) s += G("translate(120 40) scale(.68)", sleeveOnly(t, {}) + reflux(t, 1, 8)) + cross(470, 160, 1.4, ease((u - .1) / .3));
   return s;
