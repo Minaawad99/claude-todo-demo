@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>الناصور العصعصي: بييجي منين ونتجنبه إزاي؟ — إيه الحكاية؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&family=Noto+Serif:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* «إيه الحكاية؟» — the «الرسم الهندسي» look, measured from 20 reference videos (videos/_reference/tabizzay/STYLE.md).
+     360×640 canvas (render.js SCALE 3 → 1080×1920). Reference sizes are at 720 wide, so here they are halved.
+     Phases, all driven by TIMING: intro card (hook lines) → bumper (promise line) → panel + captions → summary card → ask box. */
+  :root { --paper: #eee5d0; --ink: #2a2016; --mute: #8f8576; --orange: #bd552f; --blue: #4a6f8a; --olive: #5e653a; --tan: #ddd2b8; }
+  html, body { margin: 0; background: var(--paper); }
+  .canvas { position: relative; width: 360px; height: 640px; background: var(--paper); overflow: hidden; font-family: "Noto Sans Arabic", sans-serif; color: var(--ink); }
+  .layer { position: absolute; inset: 0; }
+  /* the main card: one 1px frame 14px in, the panel fills its top, a rule, the caption */
+  #frame { position: absolute; left: 14px; top: 14px; width: 332px; height: 612px; box-sizing: border-box; border: 1.1px solid var(--ink); }
+  .panel { position: absolute; left: 15px; top: 15px; width: 330px; height: 405px; overflow: hidden; }
+  .panel svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #rule { position: absolute; left: 32px; right: 32px; top: 431px; border-top: .6px solid var(--ink); }
+  #wm { position: absolute; left: 0; right: 0; top: 440px; text-align: center; font: 500 8.5px "Noto Sans Arabic"; color: #b3a995; }
+  #cap { position: absolute; left: 30px; right: 30px; top: 458px; text-align: center; font: 700 14px/1.75 "Noto Sans Arabic", sans-serif; }
+  .k-o { color: var(--orange); } .k-b { color: var(--blue); } .k-g { color: var(--olive); } .k-gr { color: var(--mute); }
+  .k-u { text-decoration: underline; text-decoration-thickness: 1.2px; text-underline-offset: 4px; }
+  /* cards (intro + summary): paper, double frame drawn as SVG so it can draw itself in, crop marks outside the corners */
+  .card { position: absolute; inset: 0; background: var(--paper); display: none; }
+  .card .chrome { position: absolute; inset: 0; width: 360px; height: 640px; }
+  .logo { position: absolute; right: 30px; top: 28px; display: flex; align-items: center; gap: 4px; font: 500 8px "Noto Sans Arabic"; color: #6f6556; }
+  .logo svg { width: 11px; height: 11px; }
+  #intro .cat { position: absolute; left: 0; right: 0; top: 100px; text-align: center; font: 600 8px "Noto Sans Arabic"; color: var(--orange); }
+  #intro .r { position: absolute; left: 157px; width: 46px; border-top: .6px solid var(--ink); }
+  #intro .hook { position: absolute; left: 26px; right: 26px; top: 124px; min-height: 80px; text-align: center; font: 800 17px/1.6 "Noto Sans Arabic"; }
+  #intro .hook span { transition: none; }
+  #introArt { position: absolute; left: 28px; top: 236px; width: 304px; height: 330px; }
+  #bumper { position: absolute; inset: 0; display: none; background: var(--paper); }
+  #bumper svg { position: absolute; left: 90px; top: 98px; width: 180px; height: 200px; }
+  #bumper .name { position: absolute; left: 0; right: 0; top: 310px; text-align: center; font: 700 22px "Noto Sans Arabic"; }
+  #bumper .sub { position: absolute; left: 0; right: 0; top: 352px; text-align: center; font: 600 9.5px "Noto Sans Arabic"; }
+  /* summary card */
+  #outro .q { position: absolute; left: 28px; right: 28px; top: 50px; font: 800 12.5px/1.55 "Noto Sans Arabic"; }
+  #outro .art { position: absolute; left: 28px; right: 28px; top: 98px; height: 140px; background: var(--tan); overflow: hidden; }
+  #outro .art svg { width: 100%; height: 100%; display: block; }
+  #outro .leg { position: absolute; left: 28px; right: 28px; top: 246px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font: 600 7.5px "Noto Sans Arabic"; }
+  #outro .leg b { display: inline-grid; place-items: center; width: 10px; height: 10px; border: .8px solid var(--ink); border-radius: 50%; font: 700 6px "Noto Serif"; margin-left: 4px; vertical-align: -2px; }
+  #outro .stat { position: absolute; left: 28px; right: 28px; top: 290px; display: flex; align-items: center; gap: 9px; }
+  #outro .stat .n { font: 800 34px/1 "Noto Serif", serif; color: var(--orange); direction: ltr; white-space: nowrap; }
+  #outro .stat .t { font: 700 8px/1.55 "Noto Sans Arabic"; }
+  #outro .pts { position: absolute; left: 28px; right: 28px; top: 342px; border-top: .6px solid var(--ink); padding-top: 7px; font: 600 7.5px/1.75 "Noto Sans Arabic"; }
+  #outro .more { margin-top: 5px; font: 500 6.8px/1.6 "Noto Sans Arabic"; color: var(--mute); }
+  #outro .ask { position: absolute; left: 34px; right: 34px; top: 448px; height: 120px; border: 1px solid var(--ink); text-align: center; display: none; }
+  #outro .ask::after { content: ""; position: absolute; inset: 3px; border: .5px solid var(--ink); }
+  #outro .ask .l1 { margin-top: 20px; font: 600 9px "Noto Sans Arabic"; }
+  #outro .ask .l2 { margin-top: 6px; font: 700 12px "Noto Sans Arabic"; }
+  #outro .ask .l3 { margin-top: 8px; font: 700 13px "Noto Sans Arabic"; color: var(--orange); }
+  #outro .ask .blank { display: inline-block; width: 64px; border-bottom: 1.2px solid var(--orange); margin: 0 4px; position: relative; height: 14px; vertical-align: -2px; }
+  #outro .ask .caret { position: absolute; left: 4px; bottom: 2px; width: 1.4px; height: 13px; background: var(--ink); }
+</style></head>
+<body>
+<div class="canvas">
+  <div class="layer" id="main">
+    <div class="panel"><svg id="panelA" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg><svg id="panelB" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg></div>
+    <div id="frame"></div><div id="rule"></div><div id="wm"></div><div id="cap"></div>
+  </div>
+  <div class="card" id="intro"><svg class="chrome" id="introChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="cat">جسم الإنسان · صحة</div><div class="r" style="top:118px"></div><div class="hook" id="hook"></div><div class="r" id="hookRule" style="top:214px"></div>
+    <svg id="introArt" viewBox="0 0 608 660"></svg></div>
+  <div id="bumper"><svg id="bumperArt" viewBox="0 0 180 200"></svg><div class="name">إيه الحكاية؟</div><div class="sub">هشرحهالك في <span class="k-o">دقيقة.</span></div></div>
+  <div class="card" id="outro"><svg class="chrome" id="outroChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="q">الناصور العصعصي بييجي منين؟</div><div class="art"><svg id="outroArt" viewBox="0 0 600 280"></svg></div><div class="leg"><span><b>1</b>شعر سايب</span><span><b>2</b>حك الأرداف</span><span><b>3</b>شق عميق</span><span><b>4</b>جيب تحت الجلد</span></div><div class="stat"><div class="n">3×</div><div class="t">الرجالة أكتر من الستات،<br>وغالبًا من 15 لـ 30 سنة</div></div><div class="pts">1. الشعر المقصوص بيتلم في الشق، والحك بيزقه جوه الجلد، وقشوره بتمنعه يرجع.<br>2. الجسم بيعمل حواليه جيب يتملي صديد: ده الخراج. والعملية بتشيل الجيب، وأحسن طرقها بتقفل بعيد عن نص الشق.<br>3. الوقاية: شيل الشعر (الليزر بيقلل الرجوع)، ونضافة وجفاف، وقوم كل ساعة.<div class="more">معلومة زيادة: في الحرب العالمية التانية دخل المستشفى بسببه حوالي 77 ألف جندي أمريكي، وسمّوه «مرض الجيب».</div></div>
+    <div class="ask" id="ask"><div class="l1">قولولنا…</div><div class="l2">عايزين تعرفوا</div><div class="l3">حكاية<span class="blank"><span class="caret" id="caret"></span></span>؟</div></div>
+  </div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="mark"><rect x="84" y="4" width="32" height="10" fill="#2a2016"/><rect x="94" y="14" width="12" height="14" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" fill="#f4ecdb" stroke="#2a2016" stroke-width="9" stroke-linejoin="round"/><text x="106" y="140" text-anchor="middle" style="font:800 120px Noto Sans Arabic;fill:#bd552f">؟</text></g>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".15"/></pattern>
+  <pattern id="hatchW" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#fff" stroke-width="1" opacity=".25"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#e1d5ba" stroke-width="1.3" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .05 0"/></filter>
+</defs></svg>
+<script src="../timing.js"></script>
+<script>window.DATA = {"caps": [[{"f": 0.0, "h": "لو حسيت <span class=\"k-o\">بورم</span> صغير فوق <span class=\"k-g\">العصعص،</span>"}, {"f": 0.625, "h": "بيوجعك كل ما <span class=\"k-u\">تقعد…</span>"}], [{"f": 0.0, "h": "وبعد كام يوم بقى يطلّع <span class=\"k-o\">صديد…</span>"}], [{"f": 0.0, "h": "ولما الدكتور فتحه،"}, {"f": 0.5938, "h": "لقى جواه <span class=\"k-o\">شعر!</span>"}], [{"f": 0.0, "h": "إيه الحكاية؟"}, {"f": 0.4194, "h": "هشرحهالك في دقيقة."}], [{"f": 0.0, "h": "ده اسمه <span class=\"k-g\">الناصور</span> <span class=\"k-g\">العصعصي،</span>"}, {"f": 0.4545, "h": "واسمه العلمي معناه «عش <span class=\"k-o\">الشعر».</span>"}], [{"f": 0.0, "h": "طب الشعر ده جه منين؟"}, {"f": 0.2561, "h": "<span class=\"k-o\">شعر</span> <span class=\"k-o\">مقصوص</span> بيقع من راسك وضهرك،"}, {"f": 0.622, "h": "ويتلم في <span class=\"k-g\">الشق</span> اللي بين الأرداف."}], [{"f": 0.0, "h": "والشعرة عليها <span class=\"k-g\">قشور</span> صغيرة،"}, {"f": 0.5306, "h": "كلها متجهة <span class=\"k-o\">ناحية</span> <span class=\"k-o\">واحدة.</span>"}], [{"f": 0.0, "h": "ومع القعدة والحركة،"}, {"f": 0.2597, "h": "الأرداف <span class=\"k-o\">بتحك</span> في بعض،"}, {"f": 0.5325, "h": "فتزق الشعرة <span class=\"k-o\">جوه</span> <span class=\"k-o\">الجلد،</span>"}, {"f": 0.8312, "h": "ومتعرفش <span class=\"k-u\">ترجع.</span>"}], [{"f": 0.0, "h": "زي <span class=\"k-g\">سنبلة</span> <span class=\"k-g\">القمح</span> لما تدخل في كمّك،"}, {"f": 0.55, "h": "كل ما تتحرك تطلع <span class=\"k-o\">لفوق</span> أكتر."}], [{"f": 0.0, "h": "طب وبعدين؟"}, {"f": 0.1594, "h": "الجسم بيعتبر الشعرة جسم <span class=\"k-o\">غريب،</span>"}, {"f": 0.5942, "h": "<span class=\"k-o\">فيلتهب،</span> ويعمل <span class=\"k-g\">جيب</span> تحت الجلد."}], [{"f": 0.0, "h": "والجيب ده يلم شعر أكتر،"}, {"f": 0.4068, "h": "ويتملي <span class=\"k-o\">صديد،</span>"}, {"f": 0.6271, "h": "وده <span class=\"k-o\">الخراج</span> اللي بيوجع."}], [{"f": 0.0, "h": "طب مين أكتر ناس بيجيلهم؟"}, {"f": 0.3125, "h": "<span class=\"k-b\">الرجالة،</span> حوالي <span class=\"k-o\">3</span> <span class=\"k-o\">أضعاف</span> الستات،"}, {"f": 0.7, "h": "وغالباً من <span class=\"k-o\">15</span> لـ <span class=\"k-o\">30</span> سنة."}], [{"f": 0.0, "h": "وخصوصاً اللي <span class=\"k-u\">شعرهم</span> كتير،"}, {"f": 0.4167, "h": "<span class=\"k-u\">ووزنهم</span> زيادة،"}, {"f": 0.65, "h": "وبيقعدوا <span class=\"k-o\">ساعات</span> <span class=\"k-o\">طويلة.</span>"}], [{"f": 0.0, "h": "طب والعملية بتتعمل إزاي؟"}, {"f": 0.3472, "h": "لو فيه <span class=\"k-o\">خراج،</span>"}, {"f": 0.5278, "h": "الدكتور <span class=\"k-o\">يفتحه</span> الأول ويصفّي <span class=\"k-o\">الصديد.</span>"}], [{"f": 0.0, "h": "وبعدين يشيل <span class=\"k-g\">الجيب</span> <span class=\"k-g\">كله،</span>"}, {"f": 0.575, "h": "باللي فيه من شعر."}], [{"f": 0.0, "h": "زمان كان بيسيب الجرح <span class=\"k-u\">مفتوح</span> يلم لوحده،"}, {"f": 0.6333, "h": "وده بياخد <span class=\"k-o\">أسابيع</span> غيار."}], [{"f": 0.0, "h": "دلوقتي بيقفل الجرح <span class=\"k-o\">بعيد</span> عن <span class=\"k-o\">نص</span> <span class=\"k-g\">الشق،</span>"}, {"f": 0.4235, "h": "ويخلي الشق <span class=\"k-b\">أقل</span> <span class=\"k-b\">عمق،</span>"}, {"f": 0.6588, "h": "فالشعر ميلاقيش مكان يتلم فيه."}], [{"f": 0.0, "h": "وللحالات الصغيرة فيه طرق <span class=\"k-b\">بالمنظار</span> أو <span class=\"k-o\">بالليزر.</span>"}], [{"f": 0.0, "h": "طب نتجنبه إزاي؟"}, {"f": 0.2623, "h": "<span class=\"k-o\">شيل</span> <span class=\"k-o\">الشعر</span> من المنطقة،"}, {"f": 0.623, "h": "<span class=\"k-b\">والليزر</span> بيقلل إنه يرجع."}], [{"f": 0.0, "h": "وخلي المكان <span class=\"k-b\">نضيف</span> <span class=\"k-b\">وناشف،</span>"}, {"f": 0.4, "h": "ومتقعدش أكتر من <span class=\"k-o\">ساعة</span> من غير ما تقوم."}], [{"f": 0.0, "h": "وناس كتير فاكرة إنه واصل"}, {"f": 0.5319, "h": "<span class=\"k-u\">للعضمة</span> أو <span class=\"k-u\">للمصران.</span> <span class=\"k-o\">لأ.</span>"}], [{"f": 0.0, "h": "هو جيب <span class=\"k-g\">تحت</span> <span class=\"k-g\">الجلد</span> بس،"}, {"f": 0.525, "h": "والعصعص مجرد <span class=\"k-o\">عنوان.</span>"}], [{"f": 0.0, "h": "يعني من الآخر:"}, {"f": 0.2542, "h": "شعر <span class=\"k-o\">سايب،</span>"}, {"f": 0.4237, "h": "<span class=\"k-o\">وحك،</span> وشق <span class=\"k-o\">عميق…</span>"}, {"f": 0.678, "h": "فالجلد <span class=\"k-g\">يبلع</span> الشعرة."}], [{"f": 0.0, "h": "والأغرب إن في الحرب العالمية التانية،"}, {"f": 0.2754, "h": "أكتر من <span class=\"k-o\">70,000</span> جندي أمريكي دخلوا المستشفى بسببه،"}, {"f": 0.6304, "h": "وسمّوه <span class=\"k-o\">«مرض</span> <span class=\"k-o\">الجيب»،</span>"}, {"f": 0.7754, "h": "من كتر القعدة على عربيات الجيب."}], [{"f": 0.0, "h": "ودي كانت حكاية الناصور العصعصي."}], [{"f": 0.0, "h": "قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟"}]], "hook": [[{"w": "لو", "c": "", "f": 0.0}, {"w": "حسيت", "c": "", "f": 0.0625}, {"w": "بورم", "c": "k-o", "f": 0.1667}, {"w": "صغير", "c": "", "f": 0.2708}, {"w": "فوق", "c": "", "f": 0.375}, {"w": "العصعص،", "c": "k-g", "f": 0.4583}, {"w": "بيوجعك", "c": "", "f": 0.625}, {"w": "كل", "c": "", "f": 0.7708}, {"w": "ما", "c": "", "f": 0.8333}, {"w": "تقعد…", "c": "k-u", "f": 0.8958}], [{"w": "وبعد", "c": "", "f": 0.0}, {"w": "كام", "c": "", "f": 0.1786}, {"w": "يوم", "c": "", "f": 0.3214}, {"w": "بقى", "c": "", "f": 0.4643}, {"w": "يطلّع", "c": "", "f": 0.6071}, {"w": "صديد…", "c": "k-o", "f": 0.8214}], [{"w": "ولما", "c": "", "f": 0.0}, {"w": "الدكتور", "c": "", "f": 0.1562}, {"w": "فتحه،", "c": "", "f": 0.4062}, {"w": "لقى", "c": "", "f": 0.5938}, {"w": "جواه", "c": "", "f": 0.7188}, {"w": "شعر!", "c": "k-o", "f": 0.875}]], "introLines": 3, "promise": 3, "summary": 24, "cta": 25, "watermark": ""};</script>
+
+<script src="scenes.js"></script>
+<script src="../../_templates/sketch/engine.js"></script>
+</body></html>
