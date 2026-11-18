@@ -415,6 +415,7 @@ shot(23, push(320, 400, 1.04, 1.0), function (u, d, t) {
   var c1 = cf(23, 1) || 2.4, s = paper();
   s += G("translate(" + f(-10 + 6 * Math.sin(t * 2)) + " " + f(150 + 8 * Math.sin(t * 1.6)) + ") scale(.46)", sleeveOnly(t, {}) + reflux(t, 1, 9)) + G("", flame(150, 140, .8 + .15 * Math.sin(t * 5), t), at(u, .4, .3));
   s += G("translate(" + f(10 * Math.sin(t * 4)) + " 0)", arrow(270, 400, 380, 400, ORANGE, 8, at(u, c1 - .3, .5)));
+  s += G("translate(" + f(470 + 8 * Math.sin(t * 3)) + " 380) scale(" + f(1 + .08 * Math.sin(t * 5)) + ")", T("؟", 0, 40, 150, ORANGE, 800), 1 - at(u, c1 - .2, .3));
   s += G("translate(350 170) scale(.32)", gutCloseup(t, { after: 1 }) + flow(FOOD_NEW, t, 9, .15, FOODC, 12, 1, 1), at(u, c1, .4)) + check(490, 650, 1.4, at(u, c1 + .8, .4), OLIVE);
   return s;
 });
