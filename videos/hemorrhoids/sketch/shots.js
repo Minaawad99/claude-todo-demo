@@ -168,12 +168,29 @@ function fig(o) {
     '<ellipse rx="' + f(rx) + '" ry="' + f(ry) + '" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2.2"/>' +
     '<path d="M' + f(-rx * .2) + ' ' + f(-ry * .98) + ' C' + f(rx * .6) + ' ' + f(-ry * 1.12) + ' ' + f(rx * 1.12) + ' ' + f(-ry * .5) + ' ' + f(rx) + ' ' + f(ry * .25) + ' L' + f(rx * .45) + ' ' + f(ry * .05) + ' Q' + f(rx * .2) + ' ' + f(-ry * .55) + ' ' + f(-rx * .78) + ' ' + f(-ry * .6) + ' Z" fill="' + (o.hair || HAIR) + '" stroke="' + INK + '" stroke-width="1.6"/>' +
     '<path d="M' + f(-rx * .97) + ' ' + f(-ry * .12) + ' l' + f(-rx * .26) + ' ' + f(ry * .3) + ' l' + f(rx * .26) + ' ' + f(ry * .05) + '" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="1.8" stroke-linejoin="round"/>' +
-    '<ellipse cx="' + f(rx * .2) + '" cy="' + f(ry * .08) + '" rx="' + f(rx * .14) + '" ry="' + f(ry * .2) + '" fill="' + SKIN2 + '" stroke="' + INK + '" stroke-width="1.2"/>');
+    '<ellipse cx="' + f(rx * .2) + '" cy="' + f(ry * .08) + '" rx="' + f(rx * .14) + '" ry="' + f(ry * .2) + '" fill="' + SKIN2 + '" stroke="' + INK + '" stroke-width="1.2"/>' + (o.face ? faceSVG(rx, ry, o.face) : ""));
   out.body = leg(0) + tor + neck + head;
   out.near = arm(0);
   out.sh = sh; out.hd = hd; out.hip = hip; out.up = up; out.at = atF;
   return out;
 }
+// a face in side view, looking left: one eye, its brow, the mouth (used where the line asks for a reaction)
+// e: {eye 0 shut … 1 normal … 1.6 wide, brow −1 frown … 0 … 1 raised, worry 0..1 (inner end up), mouth "smile" | "flat" | "down" | "o", open 0..1, sweat 0..1, look −1..1 (down … up)}
+function faceSVG(rx, ry, e) {
+  var ex = -rx * .5, ey = -ry * .1, s = "", w = e.eye == null ? 1 : e.eye, b = e.brow || 0, look = e.look || 0;
+  if (w < .25) s += '<path d="M' + f(ex - 5) + ' ' + f(ey + 1) + ' Q' + f(ex) + ' ' + f(ey + 4) + ' ' + f(ex + 5) + ' ' + f(ey + 1) + '" stroke="' + INK + '" stroke-width="2" fill="none" stroke-linecap="round"/>';
+  else s += '<ellipse cx="' + f(ex) + '" cy="' + f(ey) + '" rx="' + f(3.6 + 1.6 * (w - 1)) + '" ry="' + f(4.4 * w) + '" fill="#fbf7ee" stroke="' + INK + '" stroke-width="1.5"/><circle cx="' + f(ex - 1.6) + '" cy="' + f(ey - look * 1.6) + '" r="' + f(w > 1.3 ? 1.9 : 2.4) + '" fill="' + INK + '"/>';
+  var by = ey - 9 - b * 5, wy = (e.worry || 0) * 5;
+  s += '<path d="M' + f(ex - 7) + ' ' + f(by - wy) + ' Q' + f(ex) + ' ' + f(by - 3 - b * 2) + ' ' + f(ex + 7) + ' ' + f(by + 1 + wy * .3) + '" stroke="' + (e.hair || INK) + '" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+  var mx = -rx * .66, my = ry * .5, m = e.mouth || "flat";
+  if (m === "smile") s += '<path d="M' + f(mx - 5) + ' ' + f(my - 2) + ' Q' + f(mx + 1) + ' ' + f(my + 4) + ' ' + f(mx + 7) + ' ' + f(my - 3) + '" stroke="' + INK + '" stroke-width="2" fill="none" stroke-linecap="round"/>';
+  else if (m === "down") s += '<path d="M' + f(mx - 5) + ' ' + f(my + 2) + ' Q' + f(mx + 1) + ' ' + f(my - 3) + ' ' + f(mx + 6) + ' ' + f(my + 2) + '" stroke="' + INK + '" stroke-width="2" fill="none" stroke-linecap="round"/>';
+  else if (m === "o") s += '<ellipse cx="' + f(mx) + '" cy="' + f(my + 1) + '" rx="' + f(3 + (e.open || 1) * 1.2) + '" ry="' + f(2.5 + (e.open || 1) * 3.5) + '" fill="#5a2a22" stroke="' + INK + '" stroke-width="1.5"/>';
+  else s += '<path d="M' + f(mx - 5) + ' ' + f(my) + ' L' + f(mx + 5) + ' ' + f(my) + '" stroke="' + INK + '" stroke-width="2" stroke-linecap="round"/>';
+  if (e.sweat) s += G("", '<path d="M' + f(-rx * 1.2) + ' ' + f(-ry * .75) + ' q5 8 5 12 a5 5 0 0 1 -10 0 q0 -4 5 -12 z" fill="#9fc0d4" stroke="' + INK + '" stroke-width="1.2"/>', e.sweat);
+  return s;
+}
+function blink(t) { var p = t % 3.3; return p < .12 ? .1 : 1; }
 function rel(h, side) { return { rel: 1, h: h, side: side }; }
 function whole(fg) { return fg.far + fg.body + fg.near; }
 function floor(y, x0, x1) { x0 = x0 == null ? -400 : x0; x1 = x1 == null ? 1040 : x1; return '<path d="M' + x0 + ' ' + y + ' H' + x1 + '" stroke="' + INK + '" stroke-width="2.4"/>' + R(x0, y, x1 - x0, 300, "#e3d7bd", 0) + '<rect x="' + x0 + '" y="' + y + '" width="' + (x1 - x0) + '" height="300" fill="url(#hatch)" opacity=".35"/>'; }
@@ -245,7 +262,7 @@ shot(6, push(320, 560, 1.25, 1.18), function (u, d, t) {
 // 7 · the first cause: straining on the toilet
 shot(7, push(330, 440, 1.0, 1.12), function (u, d, t) {
   var st = at(u, .6, .4), b = .5 + .5 * Math.sin(t * 7), lean = 16 + 14 * st, s = paper() + floor(690);
-  var m = fig({ x: 330, y: 562, lean: lean, shirt: SHIRT_V, hands: [rel(40, 64), rel(40, 60)], bend: [1, 1], legs: [[84, -88], [80, -84]], tilt: 6 });
+  var m = fig({ x: 330, y: 562, lean: lean, shirt: SHIRT_V, hands: [rel(10, 74), rel(10, 70)], bend: [-1, -1], legs: [[84, -88], [80, -84]], tilt: 6, face: { eye: st > .3 ? .15 : blink(t), brow: -st, mouth: st > .3 ? "down" : "flat" } });
   s += toilet(340, 576, 690) + m.far + m.body + m.near;
   var hd = m.hd; s += G("", '<path d="M' + f(hd[0] - 34) + ' ' + f(hd[1] - 46) + ' l-14 -14 M' + f(hd[0] - 6) + ' ' + f(hd[1] - 56) + ' l0 -18 M' + f(hd[0] + 22) + ' ' + f(hd[1] - 50) + ' l12 -14" stroke="' + ORANGE + '" stroke-width="4" stroke-linecap="round"/>', st * (.5 + .5 * b));
   s += arrow(360, 470, 360, 540 + 6 * b, ORANGE, 7, st) + G("", T("حزق", 440, 470, 34, ORANGE, 800), at(u, .9, .3));
@@ -262,8 +279,8 @@ shot(8, push(320, 520, 1.3, 1.42), function (u, d, t) {
 // 9 · the causes: constipation, no fibre, the phone on the toilet
 shot(9, push(320, 430, 1.04, 1.0), function (u, d, t) {
   var c1 = chunkAt(9, 1), c2 = chunkAt(9, 2), s = paper() + floor(690);
-  var m = fig({ x: 300, y: 562, lean: 18, shirt: SHIRT_V, hands: [rel(64, 52), rel(60, 50)], bend: [1, 1], legs: [[84, -88], [80, -84]], tilt: 22 });
-  s += toilet(310, 576, 690) + m.far + m.body + m.near + phoneS(m.at(64, 60)[0] - 6, m.at(64, 60)[1] - 14, -30);
+  var m = fig({ x: 300, y: 562, lean: 18, shirt: SHIRT_V, hands: [rel(96, 50), rel(92, 46)], bend: [-1, -1], legs: [[84, -88], [80, -84]], tilt: 22, face: { eye: blink(t) * .8, look: -1, mouth: "flat" } });
+  s += toilet(310, 576, 690) + m.far + m.body + m.near + phoneS(m.at(98, 56)[0] - 4, m.at(98, 56)[1] - 12, -30);
   s += iconBox(110, 120, 130, '<path d="M-36 20 q-6 -30 20 -34 q4 -24 30 -16 q26 -8 28 20 q16 10 4 30 Z" fill="#8a5a3c" stroke="' + INK + '" stroke-width="2"/>' + cross(0, 0, .9, at(u, .9, .4)) + T("إمساك", 0, 52, 18, ORANGE, 800), at(u, .4, .3));
   s += iconBox(320, 120, 130, '<ellipse cx="0" cy="12" rx="48" ry="16" fill="#f4efe3" stroke="' + INK + '" stroke-width="2"/><circle cx="-16" cy="0" r="12" fill="#6a8a4a" stroke="' + INK + '" stroke-width="1.6"/><circle cx="4" cy="-6" r="13" fill="#7f9c55" stroke="' + INK + '" stroke-width="1.6"/><circle cx="22" cy="2" r="10" fill="#c45a3a" stroke="' + INK + '" stroke-width="1.6"/>' + cross(0, 0, .9, at(u, c1 + .4, .4)) + T("ألياف", 0, 52, 18, OLIVE, 800), at(u, c1, .3));
   var tk = clamp((u - c2) / 3);
@@ -274,16 +291,17 @@ shot(9, push(320, 430, 1.04, 1.0), function (u, d, t) {
 shot(10, push(320, 400, 1.0, 1.05), function (u, d, t) {
   var c = window.CHUNKS[10], D = LN[10].end - LN[10].start, s = paper(), b = .5 + .5 * Math.sin(t * 3);
   var boxes = [
-    [180, 230, fig({ x: 0, y: 0, belly: 2, shirt: "#a38aa0", hands: [rel(40, 52), null], bend: [1, -1], hair: "#5a4636" }), "الحمل"],
-    [460, 230, fig({ x: 0, y: 24 * b, lean: 30, shirt: SHIRT_R, hands: [[-80, 70 + 24 * b], [-74, 66 + 24 * b]], bend: [1, 1], legs: [[34, -50], [26, -44]] }), "الشيل التقيل"],
-    [180, 560, fig({ x: 0, y: 0, belly: 2, shirt: "#8f9a7a" }), "الوزن الزيادة"],
-    [460, 560, fig({ x: 0, y: 0, lean: 14, shirt: "#9a8a7a", hair: "#d8d4cc", hands: [[-70, 210], null], bend: [-1, -1] }), "السن"]];
+    [180, 230, fig({ x: 0, y: 0, belly: 2, shirt: "#a38aa0", hands: [rel(52, 30), rel(30, 40)], bend: [-1, -1], hair: "#5a4636", face: { eye: blink(t), mouth: "smile" } }), "الحمل"],
+    [460, 230, fig({ x: 0, y: 6 * b, lean: -8, shirt: SHIRT_R, hands: [rel(46, 52), rel(42, 48)], bend: [-1, -1], legs: [[16, -24], [10, -18]], face: { eye: .2, brow: -1, mouth: "down" } }), "الشيل التقيل"],
+    [180, 560, fig({ x: 0, y: 0, belly: 2, shirt: "#8f9a7a", face: { eye: blink(t + 1), mouth: "flat" } }), "الوزن الزيادة"],
+    [460, 560, fig({ x: 0, y: 0, lean: 14, shirt: "#9a8a7a", hair: "#d8d4cc", hands: [rel(14, 46), null], bend: [-1, -1], face: { eye: blink(t + 2) * .7, mouth: "flat", hair: "#d8d4cc" } }), "السن"]];
   boxes.forEach(function (q, i) {
-    var k = at(u, D * (c[i] || i * .22) - .1, .3), extra = "";
-    if (i === 1) extra = R(-118, 46 + 24 * b, 64, 56, "#c9a46a", 2) + '<path d="M-118 66 h64" stroke="' + INK + '" stroke-width="1.4"/>';
-    if (i === 3) extra = '<path d="M-70 200 L-76 212" stroke="' + WOOD_D + '" stroke-width="7" stroke-linecap="round"/><path d="M-66 196 L-80 212" stroke="' + WOOD_D + '" stroke-width="0"/>' + '<path d="M-68 150 L-82 212" stroke="' + INK + '" stroke-width="8" stroke-linecap="round"/><path d="M-68 150 L-82 212" stroke="' + WOOD_D + '" stroke-width="5" stroke-linecap="round"/>';
+    var k = at(u, D * (c[i] || i * .22) - .1, .3), extra = "", fg = q[2];
+    if (i === 1) { var bx = fg.at(46, 62); extra = R(bx[0] - 44, bx[1] - 30, 64, 56, "#c9a46a", 2) + '<path d="M' + f(bx[0] - 44) + ' ' + f(bx[1] - 10) + ' h64" stroke="' + INK + '" stroke-width="1.4"/>' + G("", '<path d="M' + f(fg.hd[0] - 30) + ' ' + f(fg.hd[1] - 34) + ' l-10 -12 M' + f(fg.hd[0]) + ' ' + f(fg.hd[1] - 44) + ' l0 -14" stroke="' + ORANGE + '" stroke-width="4" stroke-linecap="round"/>', .4 + .6 * b); }
+    if (i === 3) { var hp = fg.at(14, 52); extra = '<path d="M' + f(hp[0]) + ' ' + f(hp[1] - 6) + ' L' + f(hp[0] - 10) + ' 212" stroke="' + INK + '" stroke-width="8" stroke-linecap="round"/><path d="M' + f(hp[0]) + ' ' + f(hp[1] - 6) + ' L' + f(hp[0] - 10) + ' 212" stroke="' + WOOD_D + '" stroke-width="5" stroke-linecap="round"/><path d="M' + f(hp[0] + 12) + ' ' + f(hp[1] - 10) + ' Q' + f(hp[0]) + ' ' + f(hp[1] - 22) + ' ' + f(hp[0]) + ' ' + f(hp[1] - 6) + '" stroke="' + WOOD_D + '" stroke-width="5" fill="none"/>'; }
     if (i === 2) extra = R(-50, 212, 100, 18, "#d9d4c8", 2, 4) + N(String(Math.round(90 + 20 * b)), 0, 226, 13, ORANGE);
-    s += iconBox(q[0], q[1], 250, G("scale(.55) translate(10 -10)", '<path d="M-200 ' + (i === 2 ? 230 : 212) + ' H200" stroke="' + INK + '" stroke-width="2"/>' + extra + whole(q[2])) + T(q[3], 0, -100, 26, INK, 800), k);
+    var body = i === 1 ? fg.far + fg.body + extra + fg.near : (i === 3 ? fg.far + fg.body + fg.near + extra : extra + whole(fg));
+    s += iconBox(q[0], q[1], 250, G("scale(.47) translate(0 22)", '<path d="M-200 ' + (i === 2 ? 230 : 212) + ' H200" stroke="' + INK + '" stroke-width="2"/>' + body) + T(q[3], 0, -100, 24, INK, 800), k);
   });
   return s;
 });
@@ -437,15 +455,24 @@ shot(26, push(320, 420, 1.0, 1.05), function (u, d, t) {
 window.SCENE = window.SCENE || {};
 SCENE.intro = function (svg, t, li) {
   // line 0: someone on the sofa watching the video on the phone. line 1: «أنا كويس». line 2: everyone is born with the cushions
-  var s = '<path d="M-20 600 H640" stroke="' + INK + '" stroke-width="2.4"/>' + R(-20, 600, 660, 80, "#e3d7bd", 0);
-  s += R(150, 440, 330, 60, "#9a7f62", 2.4, 10) + R(380, 300, 110, 200, "#9a7f62", 2.4, 14) + R(130, 410, 60, 110, "#8a6f52", 2.4, 14) + R(170, 500, 20, 100, WOOD_D, 2) + R(450, 500, 20, 100, WOOD_D, 2);
-  var m = fig({ x: 360, y: 442, lean: -8, shirt: SHIRT_V, hands: [rel(80, 64), rel(76, 60)], bend: [1, 1], legs: [[84, -84], [80, -80]], tilt: 14 });
-  s += m.far + m.body + m.near + phoneS(m.at(80, 64)[0] - 8, m.at(80, 64)[1] - 18, -20);
+  var s = '', sc = '';
+  sc += '<path d="M-20 600 H640" stroke="' + INK + '" stroke-width="2.4"/>' + R(-20, 600, 660, 80, "#e3d7bd", 0);
+  sc += R(150, 440, 330, 60, "#9a7f62", 2.4, 10) + R(380, 300, 110, 200, "#9a7f62", 2.4, 14) + R(130, 410, 60, 110, "#8a6f52", 2.4, 14) + R(170, 500, 20, 100, WOOD_D, 2) + R(450, 500, 20, 100, WOOD_D, 2);
+  // the face follows the hook: calm on the phone → shocked at «بواسير» → smug «أنا كويس» → worried at «بيتولد بيها»
+  var ts = LN[0].start + (LN[0].end - LN[0].start) * .36, sk = ease((t - ts) / .25), ph = lerp(108, 74, sk), tilt = lerp(16, -6, sk), face;
+  if (li === 0) face = sk > .3 ? { eye: 1.6, brow: 1, mouth: "o", open: 1 } : { eye: blink(t), look: -1, mouth: "smile" };
+  else if (li === 1) { ph = 84; tilt = -10; face = { eye: .45, brow: -.2, mouth: "smile" }; }
+  else { var wk = ease((t - LN[2].start - .6) / .4); ph = lerp(84, 70, wk); tilt = lerp(-10, 4, wk); face = wk > .3 ? { eye: 1.4, brow: .5, worry: 1, mouth: "down", sweat: wk } : { eye: .45, brow: -.2, mouth: "smile" }; }
+  var m = fig({ x: 360, y: 442, lean: -6, shirt: SHIRT_V, hands: [rel(ph, 58), rel(ph - 4, 54)], bend: [-1, -1], legs: [[84, -84], [80, -80]], tilt: tilt + 2 * Math.sin(t * 1.3), face: face });
+  var pp = m.at(ph + 6, 62);
+  sc += m.far + m.body + phoneS(pp[0], pp[1], -20 + 30 * (li === 0 ? sk : 1)) + m.near;
+  if (li === 0 && sk > 0) { var hd = m.hd; sc += G("", '<path d="M' + f(hd[0] - 40) + ' ' + f(hd[1] - 40) + ' l-14 -12 M' + f(hd[0] - 10) + ' ' + f(hd[1] - 52) + ' l-2 -18 M' + f(hd[0] + 20) + ' ' + f(hd[1] - 46) + ' l10 -14" stroke="' + ORANGE + '" stroke-width="4" stroke-linecap="round"/>' + T("!", hd[0] - 60, hd[1] - 30, 44, ORANGE, 800), sk); }
+  s += G("translate(264 600) scale(1.22) translate(-304 -600)", sc);
   if (li >= 1) { var u = t - LN[1].start;
-    s += G("", '<path d="M150 150 h170 a18 18 0 0 1 18 18 v50 a18 18 0 0 1 -18 18 h-40 l10 30 l-40 -30 h-100 a18 18 0 0 1 -18 -18 v-50 a18 18 0 0 1 18 -18 z" fill="#f4ecdb" stroke="' + INK + '" stroke-width="2.2"/>' + T("أنا كويس", 236, 214, 34, INK, 800), ease(u / .3)) + check(380, 196, .9, ease((u - .4) / .4), BLUE);
+    s += G("", '<path d="M30 110 h170 a18 18 0 0 1 18 18 v50 a18 18 0 0 1 -18 18 h-40 l40 34 l-74 -34 h-96 a18 18 0 0 1 -18 -18 v-50 a18 18 0 0 1 18 -18 z" fill="#f4ecdb" stroke="' + INK + '" stroke-width="2.2"/>' + T("أنا كويس", 116, 174, 34, INK, 800), ease(u / .3)) + check(250, 150, .9, ease((u - .4) / .4), BLUE);
   }
   if (li >= 2) { var v = t - LN[2].start;
-    s += inset(500, 150, 110, G("translate(-320 -560) scale(1)", canal(t, {})), ease(v / .4)) + G("", T("عند كل الناس", 500, 290, 24, ORANGE, 800), ease((v - .6) / .3));
+    s += inset(500, 140, 96, G("translate(-320 -560) scale(1)", canal(t, {})), ease(v / .4)) + G("", TH("عند كل الناس", 500, 266, 24, ORANGE, 800), ease((v - .6) / .3));
   }
   return s;
 };
