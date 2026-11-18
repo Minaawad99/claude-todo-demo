@@ -1,0 +1,6 @@
+{
+  "name": "eh-elhekaya-engine",
+  "private": true,
+  "description": "محرك رسم ورندر فيديوهات الأنيميشن",
+  "dependencies": { "playwright": "^1.47.0" }
+}

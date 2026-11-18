@@ -1,0 +1,112 @@
+---
+name: eh-elhekaya-animation
+description: Turns an Arabic explainer script into a finished vertical animated video (1080×1920 MP4) in the "إيه الحكاية؟" cartoon-panel style - draws one animated scene per line, syncs word-by-word captions to the user's voice recording, adds sound effects and a light music bed, and renders. Use when the user asks to draw, animate, make or render the video ("ارسم الفيديو", "اعمل الأنيميشن", "طلّع الفيديو") after a script exists, or asks for a full video from a script and voice.
+---
+
+# رسم الفيديو وإخراجه («إيه الحكاية؟»)
+
+الـskill ده بياخد **السكريبت + صوت المستخدم**، ويرسم مشهد متحرك لكل سطر، ويركّب الترجمة والمؤثرات، ويطلع فيديو MP4 عمودي جاهز للنشر.
+
+- `ENGINE` = فولدر `engine` اللي جنب الملف ده (`<base directory of this skill>/engine`).
+- `API.md` في نفس الفولدر فيه كل دوال الرسم. **اقراه قبل ما تكتب أي مشهد.**
+- كلّم المستخدم بالعامية المصرية.
+
+## 0. التجهيز (أول مرة بس)
+
+اتأكد إن الأدوات دي موجودة:
+```
+node -v          # 18 أو أحدث
+python3 --version
+ffmpeg -version
+```
+
+لو ناقص حاجة، قول للمستخدم يسطّبها:
+- **Mac:** `brew install node python ffmpeg`
+- **Windows:** `winget install OpenJS.NodeJS Python.Python.3.12 Gyan.FFmpeg` (ويقفل الترمينال ويفتحه تاني)
+- **Linux:** `sudo apt install nodejs npm python3 ffmpeg`
+
+وبعدين في فولدر `ENGINE`:
+```
+cd "ENGINE"
+npm install
+npx playwright install chromium
+pip install numpy        # للمؤثرات والموسيقى (اختياري)
+```
+
+على Windows استخدم `python` بدل `python3` في كل الأوامر.
+
+## 1. فولدر الفيديو
+```
+python3 "ENGINE/video.py" init videos/<اسم-قصير-بالإنجليزي>
+```
+هيعمل: `script.txt`، و`config.json`، و`shots.js`، و`sfx.json`، وفولدر `voice/`.
+
+## 2. السكريبت
+- لو المستخدم معاه سكريبت، حطه في `script.txt` (سطر لكل جملة).
+- لو مش معاه، استخدم مهارة `eh-elhekaya-script` الأول.
+
+## 3. الصوت (المستخدم بيسجّله)
+قول للمستخدم يحط صوته في `voice/` بطريقة من دول:
+- **ملف لكل سطر** (الأدق): `01.wav`، `02.wav`... بنفس ترتيب السكريبت. أي صيغة شغالة (wav، mp3، m4a).
+- **ملف واحد للسكريبت كله:** بشرط يسكت نص ثانية تقريباً بين كل جملة والتانية.
+
+ممكن يسجّل بصوته، أو يولّد الصوت من Google AI Studio (نص الستايل في `prompts/03-voice-style.txt`).
+
+وبعدين:
+```
+python3 "ENGINE/video.py" timing videos/<slug>
+```
+اقرا الجدول اللي بيطلع. لو سطر عليه "← راجع السطر ده"، غالباً التقسيم غلط هناك. اطلب من المستخدم يطوّل السكتة بين الجمل، أو يسجّل كل سطر لوحده.
+
+## 4. الإعدادات (`config.json`)
+- `title`: عنوان الفيديو (قصير، يبان فوق).
+- `sub`: سطر أصفر تحت العنوان.
+- `brand`: اسم القناة تحت (أو سيبه فاضي).
+- `keywords`: الكلمات اللي هتتلوّن أصفر في الترجمة، لكل سطر كلمة أو اتنين، **مكتوبة زي ما هي في السكريبت بالظبط بعلامات الترقيم**. مثال: `{"0": ["أزرق؟"], "6": ["قصيرة،"]}`.
+- `music`: `true` لموسيقى خفيفة تحت الكلام، أو `false`.
+
+## 5. الرسم (`shots.js`), وده أهم جزء
+1. اقرا `API.md`، وشوف المثال الكامل في `example/shots.js`.
+2. اكتب `shot(...)` واحد لكل سطر (من 0 لآخر سطر).
+3. لكل سطر فكّر: إيه اللي المشاهد لازم **يشوفه** وهو بيسمع الجملة دي؟ ارسمه بشكل قريب من الحقيقة.
+4. لو محتاج شكل مش موجود في المكتبة (طيارة، موتور، قلب...)، اكتب دالة جديدة في أول `shots.js` بنفس الأسلوب: خط أسود، تدرج ألوان، حركة بـ`t`.
+5. اتّبع **قواعد المشاهد** اللي في آخر `API.md`، وأهمها: **مفيش مشهد واقف**.
+
+## 6. المراجعة
+```
+python3 "ENGINE/video.py" check videos/<slug>
+```
+- لو طلع أخطاء، صلّحها في `shots.js` وشغّل check تاني.
+- افتح `build/sheet.png` (لقطة من نص كل مشهد) **وبصّ عليها فعلاً**، ودوّر على: عنوان متقطّع أو خارج اللوحة، أشكال فوق بعض، مشهد فاضي أو غامق زيادة، أو رسم مش مفهوم. صلّح وأعد.
+- ابعت `sheet.png` للمستخدم يشوفها قبل الـrender، لأن الـrender بياخد وقت.
+
+## 7. المؤثرات الصوتية (`sfx.json`)
+المحرك بيحط صوت "whoosh" قبل كل سطر لوحده. ضيف مؤثرات مع الحركة:
+```json
+[{"line": 3, "at": 0.8, "fx": "pop", "gain": 0.6}]
+```
+- `line`: رقم السطر.
+- `at`: الثانية من أول السطر.
+- `fx`: اسم المؤثر.
+- `gain`: العلو (0.3 لـ0.8).
+
+**المؤثرات المتاحة:** `pop`، `tick`، `chime`، `bell`، `notify`، `ping`، `beep`، `whoosh`، `wipe`، `zap`، `spark`، `thud`، `clank`، `clink`، `splash`، `drop`، `waves`، `wind`، `hum`، `motor`، `gear`، `servo`، `idle`، `rev`، `boom`، `jet`، `steam`، `fizz`، `creak`، `drip`.
+
+لو المستخدم معاه صوت حقيقي (mp3 أو wav)، حطه في فولدر الفيديو واستخدمه كده:
+`{"line": 5, "at": 0.2, "file": "sfx/train.mp3", "gain": 0.8, "dur": 3}`
+
+## 8. الإخراج
+```
+python3 "ENGINE/video.py" render videos/<slug>
+```
+- بيطلع `build/video.mp4` بمقاس 1080×1920 و30 فريم/ثانية.
+- قول للمستخدم إن ده بياخد وقت: حوالي 5 لـ15 دقيقة لفيديو دقيقتين، حسب سرعة الجهاز. البرنامج بيطبع الوقت الفاضل.
+- `--fps 60` بيطلع حركة أنعم بس بياخد ضعف الوقت.
+
+## 9. التسليم
+قول للمستخدم مكان `build/video.mp4`. لو عايز يغيّر مشهد، عدّل `shots.js` وارجع لخطوة 6.
+
+## ممنوعات
+- ماتنسخش رسم أو مشاهد من فيديوهات حد تاني.
+- ماتغيّرش كلام السكريبت جوه الترجمة: الترجمة بتطلع من `script.txt` نفسه، والصوت لازم يطابقه.
+- ماتعملش render قبل ما check يعدّي من غير أخطاء.

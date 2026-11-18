@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>video</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  /* شكل الفيديو: إطار أسود، عنوان فوق، لوحة متحركة 16:9 في النص، وترجمة كلمة بكلمة تحتها */
+  html, body { margin: 0; background: #000; }
+  .canvas { position: relative; width: 360px; height: 640px; background: #000; overflow: hidden; }
+  .title { position: absolute; left: 12px; right: 12px; top: 92px; text-align: center; font: 900 28px/1.25 "Noto Sans Arabic", sans-serif; color: #fff; }
+  .sub { position: absolute; left: 12px; right: 12px; top: 138px; text-align: center; font: 800 18px/1.25 "Noto Sans Arabic", sans-serif; color: #f2c230; }
+  .panel { position: absolute; left: 0; right: 0; top: 196px; height: 203px; overflow: hidden; }
+  .panel svg { display: block; width: 100%; height: 100%; }
+  .cap { position: absolute; left: 16px; right: 16px; top: 426px; text-align: center; font: 800 20px/1.65 "Noto Sans Arabic", sans-serif; color: #fff; }
+  .cap span { opacity: .18; } .cap span.on { opacity: 1; } .cap span.k { color: #f2c230; }
+  .tag { font-family: "Noto Sans Arabic", sans-serif; font-weight: 800; fill: #2b2016; }
+  .brand { position: absolute; left: 0; right: 0; bottom: 70px; text-align: center; font: 600 12px "Noto Sans Arabic", sans-serif; color: #9a958c; }
+</style></head>
+<body>
+<div class="canvas">
+  <div class="title" id="title"></div>
+  <div class="sub" id="sub"></div>
+  <div class="panel"><svg id="panel" viewBox="0 0 640 360"></svg></div>
+  <div class="cap" id="cap"></div>
+  <div class="brand" id="brand"></div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter>
+  <filter id="soft2" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="1.8"/></filter>
+  <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3"/></filter>
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .45  0 0 0 0 .4  0 0 0 .08 0"/></filter>
+  <linearGradient id="sky-day" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fb7e0"/><stop offset=".55" stop-color="#b9d8ec"/><stop offset="1" stop-color="#f3dfc2"/></linearGradient>
+  <linearGradient id="sky-dusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9a06e"/><stop offset=".5" stop-color="#f7d0a0"/><stop offset="1" stop-color="#fbe9cc"/></linearGradient>
+  <linearGradient id="sky-night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1730"/><stop offset=".6" stop-color="#1e3458"/><stop offset="1" stop-color="#2f4a72"/></linearGradient>
+  <linearGradient id="sky-dawn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4a7a"/><stop offset=".55" stop-color="#c98aa0"/><stop offset="1" stop-color="#f6c99a"/></linearGradient>
+  <linearGradient id="grass-day" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9dbb6e"/><stop offset="1" stop-color="#6f9548"/></linearGradient>
+  <linearGradient id="grass-dusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b3a66a"/><stop offset="1" stop-color="#857a44"/></linearGradient>
+  <linearGradient id="grass-night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b4a35"/><stop offset="1" stop-color="#16281c"/></linearGradient>
+  <linearGradient id="grass-dawn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a9a5a"/><stop offset="1" stop-color="#5a6a3a"/></linearGradient>
+  <linearGradient id="road" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6d6a66"/><stop offset="1" stop-color="#3f3d3a"/></linearGradient>
+  <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4fb3d9"/><stop offset=".5" stop-color="#2b86b5"/><stop offset="1" stop-color="#123f66"/></linearGradient>
+  <linearGradient id="screen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0f2a3a"/><stop offset="1" stop-color="#06141e"/></linearGradient>
+  <linearGradient id="gMetal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a8f96"/><stop offset="1" stop-color="#4b5056"/></linearGradient>
+  <linearGradient id="gGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9eef7"/><stop offset=".6" stop-color="#8fc2da"/><stop offset="1" stop-color="#5d93ad"/></linearGradient>
+  <linearGradient id="gGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3dc9e"/><stop offset=".5" stop-color="#c9a04e"/><stop offset="1" stop-color="#7a5a24"/></linearGradient>
+  <clipPath id="win"><rect x="430" y="40" width="150" height="110" rx="6"/></clipPath>
+  <path id="swash" d="M6 14 C40 4 120 2 196 8 C214 10 222 20 214 30 C206 44 140 46 70 44 C30 44 4 40 2 30 C0 24 2 18 6 14 Z"/>
+  <!--DEFS-->
+</defs></svg>
+<script src="timing.js"></script>
+<script>/*DATA*/</script>
+<script src="scenes.js"></script>
+<script>
+  (function () {
+    document.getElementById("title").textContent = CFG.title || "";
+    document.getElementById("sub").textContent = CFG.sub || "";
+    document.getElementById("brand").textContent = CFG.brand || "";
+    var LN = TIMING.lines, cap = document.getElementById("cap"), panel = document.getElementById("panel"), cur = -1;
+    window.VIDEO_END = TIMING.duration;
+    window.renderAt = function (t) {
+      window.__panel(panel, t);
+      var i = 0; while (i < LN.length - 1 && LN[i + 1].start - 0.05 <= t) i++;
+      var c = CAPS[i], l = LN[i];
+      if (i !== cur) { cap.style.fontSize = c.w.join(" ").length > 72 ? "17px" : ""; cap.innerHTML = c.w.map(function (w, k) { return '<span class="' + (c.k[k] ? "k" : "") + '">' + w + '</span>'; }).join(" "); cur = i; }
+      // الكلام بيظهر مع الصوت كلمة بكلمة (على حسب طول الكلمة)
+      var tot = c.w.join("").length, acc = 0, sp = cap.children;
+      for (var k = 0; k < sp.length; k++) { var at = l.start + (l.end - l.start) * (acc / tot) - 0.05; sp[k].classList.toggle("on", t >= at); acc += c.w[k].length; }
+    };
+    var q = location.hash.match(/t=([\d.]+)/); renderAt(q ? +q[1] : 0.5);
+  })();
+</script>
+</body></html>

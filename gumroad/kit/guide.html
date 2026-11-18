@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>دليل الاستخدام: حزمة فيديوهات الأنيميشن بالذكاء الاصطناعي</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Noto Sans Arabic", sans-serif; color: #15192b; background: #fff; font-size: 16px; line-height: 1.9; }
+.page { width: 210mm; height: 297mm; padding: 22mm 20mm; position: relative; page-break-after: always; overflow: hidden; }
+.page:last-child { page-break-after: auto; }
+.cover { background: #0b1020; color: #f4f1ea; display: flex; flex-direction: column; justify-content: center; }
+.cover h1 { font-size: 40px; font-weight: 900; line-height: 1.4; margin-bottom: 16px; }
+.cover h1 span { color: #ffd23f; }
+.cover p { color: #a9b0c4; font-size: 18px; }
+.tag { display: inline-block; color: #ffd23f; border: 2px solid #ffd23f; border-radius: 999px; padding: 4px 18px; font-weight: 700; font-size: 14px; margin-bottom: 26px; }
+h2 { font-size: 26px; font-weight: 900; margin-bottom: 14px; color: #0b1020; border-bottom: 3px solid #ffd23f; display: inline-block; padding-bottom: 4px; }
+h3 { font-size: 19px; font-weight: 700; margin: 18px 0 6px; color: #0b1020; }
+p { margin-bottom: 10px; }
+ul, ol { padding-right: 22px; margin-bottom: 10px; }
+li { margin-bottom: 4px; }
+.box { background: #f6f3ec; border-right: 5px solid #ffd23f; padding: 12px 16px; border-radius: 8px; margin: 14px 0; }
+.box.warn { background: #fdf0ec; border-color: #d9472b; }
+pre { background: #0b1020; color: #f4f1ea; direction: ltr; text-align: left; padding: 14px 16px; border-radius: 10px; font-family: monospace; font-size: 13px; line-height: 1.6; white-space: pre-wrap; margin: 10px 0; }
+code { font-family: monospace; direction: ltr; unicode-bidi: embed; background: #efebe1; padding: 1px 6px; border-radius: 4px; font-size: 14px; }
+table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 15px; }
+th, td { border: 1px solid #e3ddcf; padding: 8px 10px; text-align: right; vertical-align: top; }
+th { background: #f6f3ec; }
+.step { display: flex; gap: 14px; margin-bottom: 12px; }
+.num { min-width: 34px; height: 34px; border-radius: 50%; background: #ffd23f; color: #0b1020; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+.footer { position: absolute; bottom: 12mm; left: 20mm; right: 20mm; font-size: 12px; color: #8a90a3; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<section class="page cover">
+  <span class="tag">دليل الاستخدام</span>
+  <h1>حزمة فيديوهات <span>الأنيميشن</span><br>بالذكاء الاصطناعي</h1>
+  <p>اعمل سكريبت وstoryboard وعناوين فيديو شرح بالعامية المصرية، باستخدام المهارة والبرومبتات اللي في الحزمة.</p>
+</section>
+
+<section class="page">
+  <h2>أولاً: محتويات الحزمة</h2>
+  <table>
+    <tr><th>الملف أو المجلد</th><th>بيعمل إيه</th></tr>
+    <tr><td><code>eh-elhekaya-script/</code></td><td>المهارة اللي بتكتب السكريبت والـstoryboard والعناوين.</td></tr>
+    <tr><td><code>eh-elhekaya-animation/</code></td><td>المهارة اللي بترسم الفيديو وتركّب صوتك والترجمة والمؤثرات وتطلّع MP4.</td></tr>
+    <tr><td><code>eh-elhekaya-animation/example/</code></td><td>فيديو مثال كامل جاهز، ناقصه صوتك بس.</td></tr>
+    <tr><td><code>prompts/01-script.md</code></td><td>برومبت كتابة السكريبت.</td></tr>
+    <tr><td><code>prompts/02-storyboard.md</code></td><td>برومبت تقسيم السكريبت لمشاهد.</td></tr>
+    <tr><td><code>prompts/03-voice-style.txt</code></td><td>نص طريقة النطق لأداة الصوت.</td></tr>
+    <tr><td><code>prompts/04-titles-cover.md</code></td><td>برومبتات العناوين والـCover.</td></tr>
+    <tr><td><code>examples/</code></td><td>سكريبت كامل ومثال لـstoryboard.</td></tr>
+  </table>
+
+  <div class="box">
+    <strong>فيها مهارتين لـClaude Code:</strong> واحدة بتكتب السكريبت، والتانية بترسم الفيديو وتطلّعه. إنت بتسجّل الصوت وتراجع الرسم، وClaude بيعمل الباقي. ومش محتاج تكتب كود بنفسك.
+  </div>
+
+  <h2>ثانياً: اللي هتحتاجه</h2>
+  <ul>
+    <li><strong>Claude Code</strong> على كمبيوتر (Mac أو Windows أو Linux). الرسم بيتعمل على جهازك، فالموبايل مش هينفع.</li>
+    <li><strong>Node.js وPython وffmpeg:</strong> برامج مجانية، وخطوات تسطيبها في الفصل السابع.</li>
+    <li><strong>الصوت:</strong> بصوتك، أو من Google AI Studio (فيه نسخة مجانية محدودة).</li>
+    <li><strong>من غير Claude Code:</strong> البرومبتات بتشتغل مع أي AI، والرسم ساعتها هيبقى بإيدك بأي أداة زي Canva أو CapCut.</li>
+  </ul>
+</section>
+
+<section class="page">
+  <h2>ثالثاً: تحميل المهارة واستخدامها</h2>
+  <p>المهارة (Skill) هي ملف تعليمات بيقول لـClaude إزاي يكتب فيديو الشرح بالشكل الصح. فيه طريقتين للاستخدام:</p>
+
+  <h3>1. لو بتستخدم Claude Code</h3>
+  <div class="step"><div class="num">1</div><div>فك ضغط ملف الحزمة (ZIP) على الكمبيوتر.</div></div>
+  <div class="step"><div class="num">2</div><div>انسخ المجلدين <code>eh-elhekaya-script</code> و<code>eh-elhekaya-animation</code> للمسار:<br><code>~/.claude/skills/</code><br>(على Windows: <code>C:\Users\اسمك\.claude\skills\</code>)</div></div>
+  <div class="step"><div class="num">3</div><div>افتح Claude Code واكتب: «اكتب فيديو شرح عن [الموضوع]». المهارة هتتفعّل لوحدها.</div></div>
+
+  <h3>2. لو بتستخدم تطبيق Claude أو الموقع</h3>
+  <p>مهارة السكريبت ممكن ترفعها من إعدادات الـSkills (شكل الخيار بيختلف حسب الخطة)، أو تستخدم البرومبتات بدلها. أما مهارة الرسم فمحتاجة Claude Code على كمبيوتر، لأنها بتشغّل برامج على الجهاز.</p>
+
+  <div class="box warn">
+    <strong>مهم:</strong> لو الـSkill مش بيظهر، اتأكد إن اسم المجلد هو <code>eh-elhekaya-script</code> وإن الملف اسمه <code>SKILL.md</code> بالظبط، بحروف كبيرة.
+  </div>
+</section>
+
+<section class="page">
+  <h2>رابعاً: كتابة السكريبت</h2>
+  <p>افتح ملف <code>prompts/01-script.md</code>، وانسخ البرومبت، وغيّر <code>[الموضوع]</code> باسم الشيء اللي عايز تشرحه. مثلاً: «مين حفر نفق قناة السويس؟»</p>
+
+  <h3>الشكل اللي المفروض يطلع:</h3>
+  <table>
+    <tr><th>السطر</th><th>المحتوى</th></tr>
+    <tr><td>0</td><td>hook عن حاجة الناس بتشوفها أو بتستخدمها كل يوم.</td></tr>
+    <tr><td>1 و2</td><td>اللغز على شكل أسئلة.</td></tr>
+    <tr><td>3</td><td>«إيه الحكاية؟ هشرحهالك في دقيقة.»</td></tr>
+    <tr><td>4 لـ22</td><td>الشرح، فكرة واحدة في كل سطر، وفيه أرقام حقيقية.</td></tr>
+    <tr><td>23</td><td>الخاتمة اللي بترجع للـhook.</td></tr>
+    <tr><td>24</td><td>«قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟»</td></tr>
+  </table>
+
+  <div class="box">
+    <strong>قاعدة مهمة:</strong> اتأكد من كل حقيقة وكل رقم في السكريبت قبل ما تنشره. الـAI ممكن يغلط، وإنت اللي هتتحاسب على المحتوى.
+  </div>
+  <p>السكريبت المثالي 25 لـ29 سطر، حوالي 230 لـ280 كلمة، وده بيطلع حوالي دقيقة وأربعين لدقيقتين من الصوت.</p>
+</section>
+
+<section class="page">
+  <h2>خامساً: الـStoryboard</h2>
+  <p>بعد السكريبت، افتح <code>prompts/02-storyboard.md</code> وانسخ البرومبت. هيطلعلك جدول لكل سطر، فيه:</p>
+  <ul>
+    <li><strong>المشهد:</strong> الشخصيات والمكان، وإيه اللي بيتحرك طول الوقت.</li>
+    <li><strong>الكاميرا:</strong> ثابتة، أو بتقرب، أو بتبعد.</li>
+    <li><strong>الكلمات المفتاحية:</strong> الكلمات اللي هتتلوّن أصفر في الترجمة.</li>
+    <li><strong>المؤثر الصوتي:</strong> صوت قبل كل سطر، وبعدين مؤثر حسب الحركة.</li>
+  </ul>
+  <div class="box">
+    <strong>قاعدة الحركة:</strong> ممنوع مشهد واقف. لازم فيه حاجة بتتحرك طول الوقت، زي عربيات أو أمواج أو أضواء بتومض.
+  </div>
+  <p>شوف ملف <code>examples/storyboard-example.md</code> عشان تفهم الشكل قبل ما تبدأ.</p>
+</section>
+
+<section class="page">
+  <h2>سادساً: الصوت</h2>
+  <h3>باستخدام Google AI Studio</h3>
+  <div class="step"><div class="num">1</div><div>افتح Google AI Studio، واختار <strong>Generate speech</strong>.</div></div>
+  <div class="step"><div class="num">2</div><div>اختار صوت واحد (Single speaker)، واختار صوت <strong>Puck</strong> أو أي صوت يعجبك.</div></div>
+  <div class="step"><div class="num">3</div><div>في خانة <strong>Style instructions</strong> انسخ نص <code>prompts/03-voice-style.txt</code>، وغيّر الأماكن بين <code>&lt; &gt;</code> بالموضوع والكلمات اللي تتقال بقوة.</div></div>
+  <div class="step"><div class="num">4</div><div>الصق السكريبت في خانة النص، وضبط الـTemperature على <strong>1</strong>.</div></div>
+  <div class="step"><div class="num">5</div><div>اضغط Generate، وحمّل الصوت بصيغة WAV.</div></div>
+
+  <div class="box warn">
+    <strong>انتبه:</strong> أحياناً الصوت بيضيف جمل مش موجودة في السكريبت. اسمع الصوت كله قبل ما تستخدمه، ولو لقيت جمل زيادة، اعمله تاني.
+  </div>
+  <div class="box">
+    <strong>ما تسرّعش الصوت:</strong> السرعة الطبيعية أحسن من أي سرعة مصطنعة، والمشاهد بيحس بالفرق.
+  </div>
+</section>
+
+<section class="page">
+  <h2>سابعاً: تجهيز الكمبيوتر (مرة واحدة)</h2>
+  <p>مهارة الرسم محتاجة 3 برامج مجانية. أسهل طريقة: افتح Claude Code واكتب <strong>«جهّز مهارة eh-elhekaya-animation»</strong>، وهو هيكشف الناقص ويقولك تعمل إيه. ولو حابب تسطّب بنفسك:</p>
+  <table>
+    <tr><th>الجهاز</th><th>الأمر</th></tr>
+    <tr><td>Mac</td><td><code>brew install node python ffmpeg</code></td></tr>
+    <tr><td>Windows</td><td><code>winget install OpenJS.NodeJS Python.Python.3.12 Gyan.FFmpeg</code></td></tr>
+    <tr><td>Linux</td><td><code>sudo apt install nodejs npm python3 ffmpeg</code></td></tr>
+  </table>
+  <p>وبعدين في فولدر <code>eh-elhekaya-animation/engine</code> شغّل:</p>
+  <pre>npm install
+npx playwright install chromium
+pip install numpy</pre>
+  <div class="box"><strong>ليه البرامج دي؟</strong> Node بيرسم المشاهد ويصوّرها فريم فريم، وffmpeg بيجمعها فيديو، وPython بيظبط التوقيت والمؤثرات.</div>
+  <div class="box warn"><strong>على Windows:</strong> بعد التسطيب اقفل الترمينال وافتحه تاني عشان البرامج تبان.</div>
+</section>
+
+<section class="page">
+  <h2>ثامناً: رسم الفيديو وإخراجه</h2>
+  <div class="step"><div class="num">1</div><div><strong>السكريبت:</strong> اكتبه بالمهارة الأولى أو حط سكريبتك.</div></div>
+  <div class="step"><div class="num">2</div><div><strong>الصوت:</strong> سجّل كل سطر في ملف لوحده (<code>01.wav</code>، <code>02.wav</code>...) في فولدر <code>voice</code>، أو ملف واحد بسكتة نص ثانية بين كل جملة والتانية.</div></div>
+  <div class="step"><div class="num">3</div><div>قول لـClaude: <strong>«ارسم الفيديو»</strong>. هيظبط التوقيت على صوتك، ويرسم مشهد متحرك لكل سطر، ويوريك صورة فيها لقطة من كل مشهد.</div></div>
+  <div class="step"><div class="num">4</div><div><strong>راجع الصورة</strong> واطلب تعديلات: «المشهد 5 خلّي فيه عربية»، «كبّر العنوان في المشهد 9».</div></div>
+  <div class="step"><div class="num">5</div><div>قول: <strong>«طلّع الفيديو»</strong>. هيطلع <code>build/video.mp4</code> بمقاس 1080×1920، بالترجمة كلمة بكلمة والمؤثرات وموسيقى خفيفة. ده بياخد حوالي 5 لـ15 دقيقة حسب جهازك.</div></div>
+  <div class="box"><strong>جرّب الأول على المثال:</strong> في <code>example/</code> فيديو «ليه السما لونها أزرق؟» جاهز. سجّل الـ25 سطر بصوتك، وقول لـClaude «طلّع فيديو المثال».</div>
+  <div class="box warn"><strong>ما تنسخش:</strong> ماتطلبش رسم شخصيات أو مشاهد من فيديوهات حد تاني. المحتوى لازم يكون من عندك.</div>
+</section>
+
+<section class="page">
+  <h2>تاسعاً: العناوين والـCover</h2>
+  <p>افتح <code>prompts/04-titles-cover.md</code>، وانسخ البرومبت، وحط السكريبت بتاعك في آخره.</p>
+  <table>
+    <tr><th>المنصة</th><th>المطلوب</th></tr>
+    <tr><td>TikTok</td><td>3 عناوين، ووصف فيه <code>#إيه_الحكاية</code> في الأول.</td></tr>
+    <tr><td>فيسبوك</td><td>عنوان، ووصف طويل فيه نقاط وسؤال في الآخر.</td></tr>
+    <tr><td>YouTube Shorts</td><td>عنوان ينتهي بـ<code>#shorts</code>، ووصف من سطرين.</td></tr>
+  </table>
+  <p>الـCover: اعمله بأي أداة تصميم، بمقاس 1080×1920، وخلي الشيء الرئيسي كبير في النص، وحط رقم مهم بخط كبير.</p>
+</section>
+
+<section class="page">
+  <h2>عاشراً: أسئلة شائعة</h2>
+  <h3>هل لازم أعرف برمجة؟</h3>
+  <p>لا. إنت بتطلب بالكلام، وClaude Code هو اللي بيكتب الكود ويشغّله. محتاج بس تسطّب البرامج مرة واحدة (الفصل السابع).</p>
+  <h3>هل الحزمة بتعمل الفيديو كامل لوحدها؟</h3>
+  <p>تقريباً. Claude بيكتب السكريبت ويرسم المشاهد ويطلّع الفيديو، وإنت عليك تسجّل الصوت وتراجع الرسم وتطلب التعديلات. الرسم بأسلوب كرتوني ثابت، وجودته بتتحسن كل ما توصف المشهد أكتر.</p>
+  <h3>الـSkill مش بيشتغل عندي، أعمل إيه؟</h3>
+  <p>اتأكد من مكان المجلد واسمه، وإن ملف <code>SKILL.md</code> موجود جواه. ولو لسه مش شغال، استخدم البرومبتات في مجلد <code>prompts/</code>.</p>
+  <h3>الصوت طلع فيه جمل مش موجودة؟</h3>
+  <p>اعمل الصوت تاني. ولو مستمر، قلل طول السكريبت.</p>
+  <h3>ينفع أستخدم السكريبت في فيديو بموضوع تاني؟</h3>
+  <p>أيوه، بس لازم السكريبت يكون متكتب من جديد بالموضوع الجديد، والحقايق تتأكد.</p>
+</section>
+
+<section class="page">
+  <h2>حادي عشر: نصايح أخيرة</h2>
+  <ul>
+    <li>ابدأ بفيديو واحد كامل، وبعد كده كرر الخطوات على مواضيع تانية.</li>
+    <li>اعرف الجمهور اللي بتكلمه، واختار مواضيع بتفضوله.</li>
+    <li>ركّز على أول 3 ثواني، لأنها اللي بتخلي الناس تكمل.</li>
+    <li>سجّل الوقت اللي بتاخده في كل فيديو، عشان تعرف تقدّر المجهود.</li>
+  </ul>
+  <div class="box">
+    <strong>الخلاصة:</strong> السكريبت هو الأساس. لو السكريبت قوي، الباقي بيبقى أسهل.
+  </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+[
+  {"line": 0, "at": 0.6, "fx": "pop", "gain": 0.5},
+  {"line": 1, "at": 0.8, "fx": "chime", "gain": 0.5},
+  {"line": 3, "at": 0.2, "fx": "notify", "gain": 0.6},
+  {"line": 5, "at": 0.6, "fx": "zap", "gain": 0.4},
+  {"line": 9, "at": 0.5, "fx": "chime", "gain": 0.5},
+  {"line": 21, "at": 0.4, "fx": "ping", "gain": 0.4},
+  {"line": 24, "at": 0.3, "fx": "notify", "gain": 0.6}
+]
