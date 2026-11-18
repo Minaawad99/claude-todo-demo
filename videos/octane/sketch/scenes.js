@@ -1,4 +1,4 @@
-window.CHUNKS = [[0.0, 0.775], [0.0, 0.54], [0.0], [0.0, 0.4194], [0.0, 0.7647], [0.0, 0.6522], [0.0, 0.3056], [0.0, 0.3333], [0.0, 0.5672, 0.8358], [0.0, 0.2688, 0.7849], [0.0, 0.5738], [0.0], [0.0, 0.3243, 0.7027], [0.0, 0.6512], [0.0, 0.4561], [0.0, 0.5405], [0.0, 0.64], [0.0, 0.3214, 0.8214], [0.0, 0.2222, 0.5, 0.75], [0.0, 0.5957, 0.7872], [0.0, 0.5], [0.0, 0.5172], [0.0, 0.2394, 0.4085, 0.7042], [0.0, 0.1899, 0.3671, 0.4937, 0.7975], [0.0, 0.3519, 0.6389, 0.9074], [0.0], [0.0]];
+window.CHUNKS = [[0.0, 0.6154, 0.8205], [0.0, 0.7143], [0.0, 0.7727], [0.0, 0.4194], [0.0, 0.7647], [0.0, 0.6522], [0.0, 0.3056], [0.0, 0.3333], [0.0, 0.5672, 0.8358], [0.0, 0.2688, 0.7849], [0.0, 0.5738], [0.0], [0.0, 0.3243, 0.7027], [0.0, 0.6512], [0.0, 0.4561], [0.0, 0.5405], [0.0, 0.64], [0.0, 0.3214, 0.8214], [0.0, 0.2222, 0.5, 0.75], [0.0, 0.5957, 0.7872], [0.0, 0.5], [0.0, 0.5172], [0.0, 0.2394, 0.4085, 0.7042], [0.0, 0.1899, 0.3671, 0.4937, 0.7975], [0.0, 0.3519, 0.6389, 0.9074], [0.0], [0.0]];
 /* «إيه الحكاية؟» — «الرسم الهندسي» drawing helpers. build.py puts this file in front of the episode's shots.js, so every
    name here is in scope for the shots. The panel world is 640×786 (portrait, the panel's own aspect); a shot's camera
    [cx, cy, zoom] picks what is in view. Everything is redrawn every frame from t, so the render is deterministic.
@@ -612,8 +612,8 @@ window.SCENE = window.SCENE || {};
 SCENE.intro = function (svg, t, li) {
   // line 0: three pumps, one per grade, lighting one by one. line 1: the 95 sticker grows — «أقوى؟». line 2: «قوة» crossed out
   var u0 = t - LN[0].start, s = G("translate(0 10) scale(.7)", station(t, li === 0 ? clamp((u0 - .6) / 2.6) : 1, li >= 1 ? 2 : -1, li >= 1 ? ease((t - LN[1].start) / .6) : 0));
-  if (li >= 1) { var u1 = t - LN[1].start; s += arrow(380, 330, 452 + 4 * Math.sin(t * 4), 222, ORANGE, 6, ease((u1 - .3) / .4)) + tag("أقوى؟", 490, 180, ease(u1 / .4), 40, ORANGE); }
-  if (li >= 2) { var u2 = t - LN[2].start; s += cross(490, 180, 1.6, ease((u2 - .5) / .4)); }
+  if (li === 1) { var u1 = t - LN[1].start; s += arrow(380, 330, 452 + 4 * Math.sin(t * 4), 222, ORANGE, 6, ease((u1 - .3) / .4)) + tag("أحسن للموتور؟", 470, 150, ease(u1 / .4), 30, OLIVE) + tag("أوفر؟", 500, 250, ease((u1 - 1.2) / .4), 34, ORANGE) + G("translate(400 250)", coin(0, 4 * Math.sin(t * 5), 18), ease((u1 - 1.4) / .3)); }
+  if (li >= 2) { var u2 = t - LN[2].start; s += tag("أعلى ≠ أحسن", 430, 190, ease(u2 / .4), 40, ORANGE) + G("", T("!", 560, 140, 70, ORANGE, 900), ease((u2 - .3) / .3)); }
   return s;
 };
 SCENE.bumper = function (u, t) { return G("translate(90 192) scale(.4)", egyPump(0, 0, 1, "95", t, { big: .5 + .5 * Math.sin(t * 3) })); };

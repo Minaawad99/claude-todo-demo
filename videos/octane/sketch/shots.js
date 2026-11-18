@@ -451,8 +451,8 @@ window.SCENE = window.SCENE || {};
 SCENE.intro = function (svg, t, li) {
   // line 0: three pumps, one per grade, lighting one by one. line 1: the 95 sticker grows — «أقوى؟». line 2: «قوة» crossed out
   var u0 = t - LN[0].start, s = G("translate(0 10) scale(.7)", station(t, li === 0 ? clamp((u0 - .6) / 2.6) : 1, li >= 1 ? 2 : -1, li >= 1 ? ease((t - LN[1].start) / .6) : 0));
-  if (li >= 1) { var u1 = t - LN[1].start; s += arrow(380, 330, 452 + 4 * Math.sin(t * 4), 222, ORANGE, 6, ease((u1 - .3) / .4)) + tag("أقوى؟", 490, 180, ease(u1 / .4), 40, ORANGE); }
-  if (li >= 2) { var u2 = t - LN[2].start; s += cross(490, 180, 1.6, ease((u2 - .5) / .4)); }
+  if (li === 1) { var u1 = t - LN[1].start; s += arrow(380, 330, 452 + 4 * Math.sin(t * 4), 222, ORANGE, 6, ease((u1 - .3) / .4)) + tag("أحسن للموتور؟", 470, 150, ease(u1 / .4), 30, OLIVE) + tag("أوفر؟", 500, 250, ease((u1 - 1.2) / .4), 34, ORANGE) + G("translate(400 250)", coin(0, 4 * Math.sin(t * 5), 18), ease((u1 - 1.4) / .3)); }
+  if (li >= 2) { var u2 = t - LN[2].start; s += tag("أعلى ≠ أحسن", 430, 190, ease(u2 / .4), 40, ORANGE) + G("", T("!", 560, 140, 70, ORANGE, 900), ease((u2 - .3) / .3)); }
   return s;
 };
 SCENE.bumper = function (u, t) { return G("translate(90 192) scale(.4)", egyPump(0, 0, 1, "95", t, { big: .5 + .5 * Math.sin(t * 3) })); };
