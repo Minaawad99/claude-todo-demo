@@ -135,7 +135,7 @@
     cough: { lean: 26, head: 18, aN: [44, 168], aF: [30, 70], lN: [10, 0], lF: [-6, -4] },
     push: { lean: 22, head: 4, aN: [82, 92], aF: [76, 86], lN: [20, 4], lF: [-24, -16] },
     breathe: { lean: -10, head: -16, aN: [108, 118], aF: [-70, -60], lN: [4, 2], lF: [-4, -2] },
-    shrug: { lean: 0, head: 8, aN: [36, 120], aF: [-30, -110], lN: [4, 2], lF: [-4, -2] },
+    shrug: { lean: 0, head: 8, aN: [36, 120], aF: [-24, 60], lN: [4, 2], lF: [-4, -2] },
     collar: { lean: 8, head: 12, aN: [36, 172], aF: [10, 30], lN: [6, 2], lF: [-4, -2] },
     wave: { lean: -4, head: -4, aN: [150, 190], aF: [-6, -2], lN: [4, 2], lF: [-4, -2] },
     reach: { lean: -6, head: -24, aN: [158, 160], aF: [20, 40], lN: [4, 2], lF: [-4, -2] },
@@ -146,7 +146,11 @@
     hush: { lean: 6, head: 6, aN: [30, 172], aF: [-6, -2], lN: [4, 2], lF: [-4, -2] }
   };
   function walkP(ph) { var a = Math.sin(ph * Math.PI * 2) * 26, b = Math.sin(ph * Math.PI * 2 + Math.PI) * 26; return { lean: 4, head: 0, aN: [-a * 0.8, -a * 0.6 + 14], aF: [-b * 0.8, -b * 0.6 + 14], lN: [a, a - Math.max(0, -Math.sin(ph * Math.PI * 2)) * 34], lF: [b, b - Math.max(0, Math.sin(ph * Math.PI * 2)) * 34] }; }
-  function digP(ph) { var s = Math.sin(ph * Math.PI * 2); return { lean: 24 + s * 12, head: 10, aN: [70 + s * 30, 110 + s * 20], aF: [40 + s * 30, 90 + s * 20], lN: [24, 4], lF: [-18, -8], shovel: 1 }; }
+  // digging: the top (far) hand at the chest, the lower (near) hand forward and low on the handle, so the shaft runs down and
+  // forward and the blade is in the ground in front of the feet. The cycle: push the blade down (0–0.5), lever it up and
+  // toss the earth back (0.5–1).
+  function digP(ph) { var c = ph % 1, dn = c < 0.5 ? Math.sin(c * 2 * Math.PI) : 0, up = c >= 0.5 ? Math.sin((c - 0.5) * 2 * Math.PI) : 0;
+    return { lean: 30 + dn * 10 - up * 12, head: 14 - up * 6, aN: [34 + dn * 8 - up * 14, 30 + dn * 6 - up * 30], aF: [16 + dn * 6 - up * 10, 96 - up * 20], lN: [26 + dn * 6, 6], lF: [-14, -10], shovel: 1, lift: up }; }
   function climbP(ph) { var s = Math.sin(ph * Math.PI * 2); return { lean: 0, head: -6, aN: [160 + s * 14, 170 + s * 10], aF: [150 - s * 14, 165 - s * 10], lN: [50 + s * 40, -10 + s * 10], lF: [50 - s * 40, -10 - s * 10] }; }
   function hammerP(ph) { var s = Math.sin(ph * Math.PI * 2); return { lean: 10, head: 4, aN: [110 + s * 40, 150 + s * 50], aF: [60, 80], lN: [8, 2], lF: [-8, -4], hammer: 1 }; }
   function caulkP(ph) { var s = Math.sin(ph * Math.PI * 2); return { lean: 34, head: 14, aN: [80 + s * 10, 100 + s * 10], aF: [60, 90], lN: [96, -6], lF: [70, -24], caulk: 1 }; }
@@ -184,7 +188,11 @@
   function man(o) {
     var fc = o.f || 1, s = o.s || 1, p = o.pose, mood = o.mood || "n", t = o.t || 0;
     var Lt = 112, Lth = 84, Lsh = 80, Lu = 64, Ll = 60;
-    var H = [0, 0], S = add(H, dirv(180 + p.lean, fc), Lt), N = add(S, dirv(180 + p.lean, fc), 14), Hd = add(N, dirv(180 + p.lean + p.head, fc), 34);
+    // joint limits (angles from straight down, + = towards where he faces): an elbow only folds the forearm forward/up
+    // (forearm ≥ upper arm, at most 165° more), a knee only folds the shin backward (shin ≤ thigh, at most 160° less)
+    p = Object.assign({}, p); ["aN", "aF"].forEach(function (k) { var a = p[k]; p[k] = [a[0], Math.min(a[0] + 165, Math.max(a[0], a[1]))]; });
+    ["lN", "lF"].forEach(function (k) { var a = p[k]; p[k] = [a[0], Math.max(a[0] - 160, Math.min(a[0], a[1]))]; });
+    var H = [0, 0], S = add(H, dirv(180 - p.lean, fc), Lt), N = add(S, dirv(180 - p.lean, fc), 14), Hd = add(N, dirv(180 - p.lean - p.head, fc), 34);
     function leg(a) { var K = add(H, dirv(a[0], fc), Lth), A = add(K, dirv(a[1], fc), Lsh); return [H, K, A]; }
     function arm(a) { var E = add(S, dirv(a[0], fc), Lu), W = add(E, dirv(a[1], fc), Ll); return [S, E, W]; }
     var lN = leg(p.lN), lF = leg(p.lF), aN = arm(p.aN), aF = arm(p.aF);
@@ -197,7 +205,7 @@
     g += limb([lF[0], lF[1], lF[2]], 34, 26, "#3e372c", "#3e372c") + shoe(lF[2], p.lF[1]);
     g += armDraw(aF, true);
     // torso: a tapered shape from the hips to the shoulders, shirt with a collar and a belt
-    var tv = dirv(180 + p.lean, fc), nv = [tv[1] * fc, -tv[0] * fc], wS = 30, wH = 26;
+    var tv = dirv(180 - p.lean, fc), nv = [tv[1] * fc, -tv[0] * fc], wS = 30, wH = 26;
     var p1 = [H[0] + nv[0] * wH * fc, H[1] + nv[1] * wH * fc], p2 = [H[0] - nv[0] * wH * fc, H[1] - nv[1] * wH * fc], p3 = [S[0] - nv[0] * wS * fc, S[1] - nv[1] * wS * fc], p4 = [S[0] + nv[0] * wS * fc, S[1] + nv[1] * wS * fc];
     g += F("M" + f(p1[0]) + " " + f(p1[1]) + " L" + f(p2[0]) + " " + f(p2[1]) + " L" + f(p3[0]) + " " + f(p3[1]) + " Q" + f(S[0] + tv[0] * 14) + " " + f(S[1] + tv[1] * 14) + " " + f(p4[0]) + " " + f(p4[1]) + " Z", shirt);
     g += P("M" + f(p1[0]) + " " + f(p1[1]) + " L" + f(p2[0]) + " " + f(p2[1]), "#3a2c20", 9);
@@ -208,8 +216,9 @@
     if (o.hat) g += F("M" + f(Hd[0] - 36) + " " + f(Hd[1] - 14) + " Q" + f(Hd[0]) + " " + f(Hd[1] - 70) + " " + f(Hd[0] + 36) + " " + f(Hd[1] - 14) + " Z", "#f2c230") + R(Hd[0] - 44, Hd[1] - 18, 88, 10, "#d9a820", { rx: 4, sw: 2.4 });
     g += armDraw(aN, false);
     if (p.thumb) g += R(aN[2][0] - 4, aN[2][1] - 26, 9, 18, "url(#skin)", { rx: 4, sw: 2.4 });
-    if (p.shovel) { var a2 = aN[2], b2 = aF[2], dv = [a2[0] - b2[0], a2[1] - b2[1]], ln = Math.hypot(dv[0], dv[1]) || 1, u = [dv[0] / ln, dv[1] / ln], tip = [a2[0] + u[0] * 90, a2[1] + u[1] * 90], back = [b2[0] - u[0] * 60, b2[1] - u[1] * 60];
-      g += P("M" + f(back[0]) + " " + f(back[1]) + " L" + f(tip[0]) + " " + f(tip[1]), "#8a5a30", 9) + '<g transform="translate(' + f(tip[0]) + ' ' + f(tip[1]) + ') rotate(' + f(Math.atan2(u[1], u[0]) * 180 / Math.PI - 90) + ')">' + F("M-20 0 L20 0 L16 40 Q0 52 -16 40 Z", "#9aa2ac") + '</g>'; }
+    if (p.shovel) { var top = aF[2], low = aN[2], dv = [low[0] - top[0], low[1] - top[1]], ln = Math.hypot(dv[0], dv[1]) || 1, u = [dv[0] / ln, dv[1] / ln], back = [top[0] - u[0] * 26, top[1] - u[1] * 26], tip = [low[0] + u[0] * 120, low[1] + u[1] * 120];
+      if (u[1] < 0.2) { u = [fc * 0.5, 0.87]; tip = [low[0] + u[0] * 120, low[1] + u[1] * 120]; }   // a shovel blade always points at the ground
+      g += P("M" + f(back[0]) + " " + f(back[1]) + " L" + f(tip[0]) + " " + f(tip[1]), "#8a5a30", 9) + '<g transform="translate(' + f(tip[0]) + ' ' + f(tip[1]) + ') rotate(' + f(Math.atan2(u[1], u[0]) * 180 / Math.PI - 90) + ')">' + F("M-20 0 L20 0 L16 40 Q0 52 -16 40 Z", "#9aa2ac") + (p.lift > 0.2 ? C(0, 30, 16, "#7a4c2a", { st: INK, sw: 2 }) : "") + '</g>'; }
     if (p.hammer) { var hw = aN[2]; g += '<g transform="translate(' + f(hw[0]) + ' ' + f(hw[1]) + ') rotate(' + f((p.aN[1]) * fc + 180) + ')">' + R(-5, 0, 10, 60, "#8a5a30", { sw: 2 }) + R(-20, 54, 40, 18, "#5a6068", { sw: 2 }) + '</g>'; }
     if (p.caulk) { var cw = aN[2]; g += '<g transform="translate(' + f(cw[0]) + ' ' + f(cw[1]) + ') rotate(' + f(fc * 70) + ')">' + R(-8, -10, 16, 56, "#e2b035", { sw: 2 }) + F("M-4 46 L4 46 L0 62 Z", "#ddd", { sw: 2 }) + '</g>'; }
     if (o.phone) { var pw = aN[2]; g += R(pw[0] - 10, pw[1] - 30, 20, 34, "#1e2226", { rx: 3, sw: 2 }) + R(pw[0] - 7, pw[1] - 27, 14, 26, "#7ac8ff", { sw: 0 }); }
@@ -435,7 +444,7 @@
   });
 
   function at(t) { var i = 0; while (i < SH.length - 1 && SH[i + 1].a <= t) i++; return i; }
-  window.__parts = { world: world, man: man, act: act, POSES: POSES, has: has, setLine: function (n) { CUR = n; }, pill: pill, xmark: xmark, ring: ring, G: { GY: GY, BX0: BX0, BX1: BX1, BY0: BY0, BY1: BY1, FL: BY1 - 16 } };
+  window.__parts = { world: world, man: man, act: act, pose: pose, POSES: POSES, has: has, setLine: function (n) { CUR = n; }, pill: pill, xmark: xmark, ring: ring, G: { GY: GY, BX0: BX0, BX1: BX1, BY0: BY0, BY1: BY1, FL: BY1 - 16 } };
   window.__scene = function (svg, t) {
     var i = at(t); CUR = i; var sh = SH[i], next = i + 1 < SH.length ? SH[i + 1].a : L(LN.length), u = t - sh.a, d = Math.max(0.5, next - sh.a), k = ease(u / d);
     var cx = lerp(sh.c0[0], sh.c1[0], k) + 10 * Math.sin(t * 0.9), cy = lerp(sh.c0[1], sh.c1[1], k) + 8 * Math.cos(t * 0.8), z = lerp(sh.c0[2], sh.c1[2], k) * (1 + 0.012 * Math.sin(t * 1.1));

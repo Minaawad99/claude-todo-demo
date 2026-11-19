@@ -90,6 +90,21 @@ fixed rule after the first «قبو سري» cut, which used the cartoon panel a
   up, pulls the book, sits on the sofa. On every «بس…» problem he reacts to the failure (startled, jumps back, covers his
   head, coughs, panics); on every «عشان كده…» fix he reacts to the success (relieved, thumbs up, nods, tries the new part).
   He is never frozen through a line, and no part of him ever passes through a wall, floor or piece of furniture.
+- **Joints and actions must be physically right (the user's fixed rule, after the digging in «قبو سري» went up instead of
+  down).** Start the man from `videos/secret-basement/law/scene.js` (`man()`, `POSES`, `act()`), never from scratch:
+  - angles are measured from straight down, + towards where he faces; the torso leans forward with + `lean` (a man who
+    digs, coughs, pushes, crouches or picks something up leans FORWARD, head over his hands);
+  - an elbow only folds the forearm forward/up (forearm angle ≥ upper-arm angle), a knee only folds the shin backward
+    (shin angle ≤ thigh angle); `man()` clamps both, so a pose can never bend a joint the wrong way;
+  - a tool's working end points at what it works on: the shovel blade goes DOWN into the ground in front of his feet
+    (top hand at the chest, lower hand forward on the handle), a hammer head hits the nail, a caulk gun's nozzle touches
+    the crack, a hand reaching for a book ends on the book; every action has a working stroke and a return stroke
+    (dig: push down, then lever up and toss);
+  - feet stand on the floor of where he is (never floating, never sunk), he sits on the seat, climbs on the rungs, and no
+    part of him passes through a wall, floor, ceiling or furniture;
+  - **check before rendering:** open `videos/_templates/law/poses.html?ep=<slug>` (every pose and the phases of dig, walk,
+    climb on one page), screenshot it and look; then look at a frame of every line in the full-frame sheet. Fix any joint,
+    tool or contact that is wrong before the render.
 - **Brand**: a small «إيه الحكاية؟» badge in a corner.
 - **The payoff line** pulls back to the whole build, every part in place, the man happy inside.
 - Motion and QA rules as in the animation skill (qa.py must PASS).
