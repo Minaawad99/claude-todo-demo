@@ -2,11 +2,14 @@
 <html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — جريمة بني مزار</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;800;900&display=swap" rel="stylesheet">
 <style>
-  /* stand-in art: the film's frame of the three houses at night (shot 5), until the user's Gemini painting arrives;
-     then swap the img src. 540×960 at 2x; text inside the 3:4 crop (y 120–840), away from TikTok's right-hand buttons. */
+  /* the user's Gemini painting (three village houses, one door ajar, a bulb on a pole), letterbox cropped off and
+     blended into a dark sky above and dark ground below. 540×960 at 2x; text inside the 3:4 crop (y 120–840), away from TikTok's right-hand buttons. */
   body { margin: 0; background: #000; }
   .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #000; }
-  .art { position: absolute; left: 0; top: 0; width: 540px; height: 960px; object-fit: cover; object-position: 50% 55%; }
+  .art { position: absolute; left: -36px; top: 196px; width: 612px; height: 618px; object-fit: cover; }
+  .bg { position: absolute; inset: 0; background: linear-gradient(#05070c 0, #0b1424 196px, #0b1424 230px, #0a0c10 760px, #050505 960px); }
+  .eT { position: absolute; left: 0; right: 0; top: 196px; height: 90px; background: linear-gradient(#0b1424, rgba(11,20,36,0)); }
+  .eB { position: absolute; left: 0; right: 0; top: 724px; height: 90px; background: linear-gradient(rgba(10,12,16,0), #0a0c10); }
   .fT { position: absolute; left: 0; right: 0; top: 0; height: 320px; background: linear-gradient(rgba(0,0,0,.85), rgba(0,0,0,0)); }
   .fB { position: absolute; left: 0; right: 0; bottom: 0; height: 330px; background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.6) 35%, rgba(0,0,0,.9)); }
   .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 14px rgba(0,0,0,.9), 0 0 3px rgba(0,0,0,.8); }
@@ -14,7 +17,7 @@
   .rec i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #e23a2a; margin-left: 8px; }
 </style></head><body>
 <div class="cover">
-  <img class="art" src="beni-mazar-cover-art.jpg">
+  <div class="bg"></div><img class="art" src="beni-mazar-cover-art.jpg"><div class="eT"></div><div class="eB"></div>
   <div class="fT"></div><div class="fB"></div>
   <p class="t" style="top:118px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
   <p class="t" style="top:146px;font:900 44px/1.2 'Noto Sans Arabic';color:#fff">جريمة بني مزار</p>
