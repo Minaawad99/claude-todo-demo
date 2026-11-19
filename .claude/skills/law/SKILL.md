@@ -20,7 +20,7 @@ Talk to the user in Egyptian Arabic. This file is complete on its own: a new ses
 - `videos/secret-basement/` «تعمل قبو سري إزاي؟» — the first one; its `law/scene.js` is where the kit came from.
 
 **The user's fixed rules for this style (never break them):**
-1. **Look like the reference videos** in `videos/_reference/law/` (never ask the user for them again; never copy a drawing
+1. **Look like the reference videos** in `videos/_reference/law/`, all 14 opened before every topic (never ask the user for them again; never copy a drawing
    or a script line from them).
 2. **Full-screen 9:16 "2.5D" drawing**, not a cartoon panel, not three.js, not a black frame with a title.
 3. **A real-proportion man reacts to every step**: shocked on each «بس…», relieved on each «عشان كده…», going into the build
@@ -39,8 +39,13 @@ Talk to the user in Egyptian Arabic. This file is complete on its own: a new ses
 
 14 videos (`videos/rNN.mp4`, 720×1280), a 16-frame sheet each (`sheets/rNN.jpg`), rough transcripts
 (`transcripts/rNN.txt`) and `README.md` (what each builds, the measured look, the script shape). Before a new topic:
-read the README, open the sheet of the closest video, and pull frames with ffmpeg
-(`ffmpeg -ss 30 -i videos/r09.mp4 -frames:v 1 /tmp/x.jpg`).
+read the README, then **open all 14 sheets, every time** (the user's rule: the look comes from all 14, never from one
+video or from our earlier episodes), and pull full-size frames with ffmpeg from the videos closest to the new topic, its
+kind of place (roof, desert, street, inside a house, underground) and its main problem
+(`ffmpeg -ss 30 -i videos/r09.mp4 -frames:v 1 /tmp/x.jpg`). Write in `refs/SOURCES.md` what the drawing takes from which
+reference (e.g. "r13: the part lowered on a crane hook; r08: the cut-open tank with a label pill; r01: the close-up
+cross-section of the valve"), so each episode borrows from several of the 14 and doesn't just repeat the kit's look of
+the last episode (same sky, same palms, same light). The kit is the code to draw with, not the look to copy.
 
 **If a reference video covers the same topic** (r02 = home solar, r09 = a hideout under the bed, r04 = a toilet, r13 = a
 crane, r14 = drainage…), read its transcript first and make ours different on purpose: other steps, another order,
