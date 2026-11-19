@@ -16,4 +16,7 @@
   matching `sheets/vNN.jpg`, or pull frames and motion strips from `videos/vNN.mp4` with ffmpeg. `STYLE.md` has the
   measured rules (narration, layout, colours, fonts, motion, sound). They are references to look at: draw in the
   same hand, with real shapes from reference photos, and never copy a drawing or a script.
+- **Stories («اعملي قصة», «حكاية…») use `.claude/skills/story-2d/SKILL.md`, and every story opens on a real recording or
+  real footage of the event, with more real clips inside it** (the user's rule after «عبّارة السلام 98», `videos/salam98/`):
+  see its section 0a. Propose story topics only where such real material exists, and say what it is.
 - Other styles only when named: `animation` (cartoon panel), `law` («لو»), the old `diagram-v1` build for the X-ray video.
