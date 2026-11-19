@@ -256,7 +256,7 @@
   var SH = [];
   function shot(i, cam, draw, o) { SH.push({ i: i, a: L(i) - 0.25, cam: cam, draw: draw, o: o || {} }); }
   function at(t) { var i = 0; while (i < SH.length - 1 && SH[i + 1].a <= t) i++; return i; }
-  function push(a, b, z0, z1) { return function (u, d) { var k = ease(u / d); return [lerp(a[0], b[0], k), lerp(a[1], b[1], k), lerp(z0, z1, k)]; }; }
+  function push(a, b, z0, z1) { return function (u, d) { var k = .55 * ease(u / d) + .45 * clamp(u / d); return [lerp(a[0], b[0], k), lerp(a[1], b[1], k), lerp(z0, z1, k)]; }; }
   function D(i) { return LN[i].end - LN[i].start; }
   var YEL = "#f2c230", RED = "#c8261e", WOOD = "#6b4a30", WOOD_D = "#4a3220", PAPER = "#efe6d0", BULB = "#ffe7a8";
   var WALLS = ["#9fb3c4", "#c9c2b0", "#b9a68a", "#8fa6b8", "#d2cbb8"];
@@ -368,7 +368,7 @@
   // 6 — four of them children, the eldest eleven: four small candles
   shot(6, push([180, 330], [180, 320], 1.1, 1.2), function (u, d, t) { return R(-220, -220, 800, 1300, "#060505", { s: 0 }) + P('M-220 400 L580 400 V900 H-220Z', "#120e0a", { s: 0 }) + candles(t, 4, 396, 1.6, clamp(u / 1.2)) + bigNum("4", 180, 200, u, .3, 70, "#e9e2d2") + label("أكبرهم 11 سنة", 180, 252, u, 1.4, 20, YEL) + dust(t, 20, "#ffe7a8", .3, 6); }, { tr: "dip" });
   // 7 — who walks into three houses in one night and leaves, unknown to this day? a door left ajar, the dark inside
-  shot(7, push([180, 320], [180, 300], 1.0, 1.5), function (u, d, t) { var s = sky("skyVillage") + stars(t, 30, 160) + vHouse(40, 470, 280, 360, { wall: WALLS[0], dark: .55, door: lerp(.12, .42, clamp(u / d)) + .05 * Math.sin(t * 1.3), doorX: .37 }) + ground(t, 470, "#0e0c09") + fog(t, 460, .45) + dust(t, 40, "#cfd8ea", .45, 11); return s + '<path d="M150 470 L60 640 L120 640 Z" fill="#000" opacity=".5"/>' ; }, { ov: function (u) { return label("مين؟", 180, 200, u, D(7) * .55, 40, "#e9e2d2"); } });
+  shot(7, push([180, 320], [180, 300], 1.0, 1.5), function (u, d, t) { var s = sky("skyVillage") + stars(t, 30, 160) + vHouse(40, 470, 280, 360, { wall: WALLS[0], dark: .55, door: lerp(.12, .42, clamp(u / d)) + .05 * Math.sin(t * 1.3), doorX: .37 }) + ground(t, 470, "#0e0c09") + fog(t * 2, 460, .45) + dust(t * 2, 40, "#cfd8ea", .45, 11) + '<circle cx="' + f(180 + 90 * Math.sin(t * 1.1)) + '" cy="' + f(300 + 40 * Math.cos(t * .8)) + '" r="150" fill="url(#lamp)" opacity="' + f2(.16 * flick(t, 5)) + '"/>'; return s + '<path d="M150 470 L60 640 L120 640 Z" fill="#000" opacity=".5"/>' ; }, { ov: function (u) { return label("مين؟", 180, 200, u, D(7) * .55, 40, "#e9e2d2"); } });
   // 8 — and why did the court call the only accused innocent? the empty cage
   shot(8, push([240, 330], [270, 340], 1.1, 1.3), function (u, d, t) { return court(t) + label("بريء؟", 260, 216, u, D(8) * .45, 34, YEL); }, { tr: "glitch" });
   // 9 — the story of that night and the twenty years after; we start at dawn
@@ -393,7 +393,7 @@
   // 18 — the hamlet turned over: police, prosecutors, journalists (camera flashes)
   shot(18, push([180, 330], [190, 330], 1.0, 1.1), function (u, d, t) { var s = three(t, { sky: "skyDawnGrey", noMoon: true, dark: .3, lampOff: true }) + policeTruck(240, 470, 1.0, t); for (var i = 0; i < 4; i++) s += person(30 + i * 40, 486, 1.3, t, { view: "back", top: i === 1 ? "#1c2230" : "#d8d0bc", dress: i === 1 ? null : "#d8d0bc", pants: "#1c2230", cap: i === 1 ? "#1c2230" : null, hat: i === 1 ? null : "turban" }); var fl = (t * 3) % 1 < .06 ? 1 : 0; return s + (fl ? '<rect x="-220" y="-220" width="800" height="1300" fill="#fff" opacity=".22"/>' : "") + dust(t, 20, "#fff", .3, 9); }, { tr: "smash" });
   // 19–22 — the rumours: feud, sorcery, buried treasure — none proven
-  function rumours(t, u, ks, x2) { var s = R(-220, -220, 800, 1300, "#07070a", { s: 0 }) + G('translate(' + f(-30 * Math.sin(t * .6)) + ' 0)', fog(t * 3, 300, .26, "#6a6a7a") + fog(t * 3, 420, .22, "#5a5a6a")) + dust(t * 2, 60, "#dcd6ea", .55, 5); s += smokeWord("تار", 92, 230, t, ks[0], x2) + smokeWord("سحر", 268, 300, t, ks[1], x2) + smokeWord("كنز", 140, 380, t, ks[2], x2); return s; }
+  function rumours(t, u, ks, x2) { var s = R(-220, -220, 800, 1300, "#07070a", { s: 0 }) + G('translate(' + f(-30 * Math.sin(t * .6)) + ' 0)', fog(t * 5, 300, .26, "#6a6a7a") + fog(t * 5, 420, .22, "#5a5a6a") + '<circle cx="' + f(180 + 110 * Math.sin(t * .9)) + '" cy="320" r="170" fill="url(#lamp)" opacity=".12"/>') + dust(t * 2, 60, "#dcd6ea", .55, 5); s += smokeWord("تار", 92, 230, t, ks[0], x2) + smokeWord("سحر", 268, 300, t, ks[1], x2) + smokeWord("كنز", 140, 380, t, ks[2], x2); return s; }
   shot(19, push([180, 320], [180, 310], 1.0, 1.08), function (u, d, t) { return rumours(t, u, [0, 0, 0]) + label("الحكايات", 180, 300, u, .1, 34, "#e9e2d2"); }, { tr: "dip" });
   shot(20, push([180, 310], [180, 320], 1.0, 1.1), function (u, d, t) { var dd = D(20); return rumours(t, u, [clamp(u / .5), clamp((u - dd * .38) / .5), clamp((u - dd * .7) / .5)]); });
   shot(21, push([180, 320], [180, 320], 1.1, 1.14), function (u, d, t) { return rumours(t, u, [1, 1, 1], clamp(u / .8)); });
@@ -445,7 +445,7 @@
   // 45 — the recording: «everyone ends where they began… at point zero» — the TV, static creeping in
   shot(45, push([180, 330], [180, 330], 1.2, 1.36), function (u, d, t) { return room(t) + tv(180, 330, 1.3, t, { screen: screenVillage, static: clamp(u / d) * .9 }) + rec(t, 112); }, { tr: "flick" });
   // 46 — remember the rumours? none proven, to this day
-  shot(46, push([180, 320], [180, 310], 1.0, 1.1), function (u, d, t) { var k = clamp(1 - (u - D(46) * .6) / 1.2); return rumours(t, u, [k, k, k], 1); }, { tr: "dip" });
+  shot(46, push([180, 320], [180, 310], 1.0, 1.1), function (u, d, t) { var k = .35 + .65 * clamp(1 - (u - D(46) * .6) / 1.2); return rumours(t, u, [k, k, k], 1) + G('translate(' + f(90 * Math.sin(t * 1.1)) + ' 0)', '<circle cx="180" cy="300" r="170" fill="url(#lamp)" opacity=".2"/>'); }, { tr: "dip" });
   // 47 — the file is closed, two words written on it: «ضد مجهول»
   shot(47, push([180, 320], [180, 320], 1.05, 1.15), function (u, d, t) { return R(-220, -220, 800, 1300, "#15120f", { s: 0 }) + '<circle cx="180" cy="300" r="200" fill="url(#warm)" opacity=".18"/>' + folder(180, 320, 1.15, t, clamp((u - D(47) * .55) / .25)); }, { tr: "smash" });
   // 48 — in Ezbet Shams El-Din, three houses still remember the night of 28 December
@@ -456,7 +456,7 @@
   shot(50, push([180, 320], [180, 316], 1.0, 1.06), function (u, d, t) { return villageNight(t, { lights: function (k) { return .5; } }) + label("قولولنا!", 180, 180, u, .3, 34, "#fff"); }, { tr: "dip" });
 
   window.__chip = function (t) { var i = 0; while (i < LN.length - 1 && LN[i + 1].start - .05 <= t) i++; return (i >= 2 && i <= 9) ? .9 : 0; };
-  function drawShot(sh, t, next) { var u = t - sh.a, d = Math.max(.6, next - sh.a), c = sh.cam(u, d), cx = c[0] + 7 * Math.sin(t * .9) + 3 * Math.sin(t * 2.1), cy = c[1] + 6 * Math.cos(t * .8), z = c[2] * (1 + .02 * Math.sin(t * .7)); return '<g transform="translate(180 320) rotate(' + f(.4 * Math.sin(t * .5)) + ') scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g>'; }
+  function drawShot(sh, t, next) { var u = t - sh.a, d = Math.max(.6, next - sh.a), c = sh.cam(u, d), cx = c[0] + 9 * Math.sin(t * 1.1) + 3 * Math.sin(t * 2.3), cy = c[1] + 7 * Math.cos(t * 1.0), z = c[2] * (1 + .02 * Math.sin(t * .7)); return '<g transform="translate(180 320) rotate(' + f(.4 * Math.sin(t * .5)) + ') scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g>'; }
   // the horror cuts
   function trans(kind, u, prev, cur) {
     if (kind === "smash") {   // a white crack (with moving rays), then black, then the new frame stutters on
