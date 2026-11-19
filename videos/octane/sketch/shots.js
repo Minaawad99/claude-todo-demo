@@ -480,7 +480,7 @@ window.SCENE = window.SCENE || {};
 SCENE.intro = function (svg, t, li) {
   // line 0: two identical engines appear and run in step. line 1: 92 in the left, 95 in the right, «؟».
   // line 2: the gauges stop at the same power, «=», money flies off the 95. line 3: the left one gets 80 and starts knocking.
-  var u = t - LN[li].start, k0 = clamp((t - LN[0].start - .3) / .8), s = "";
+  var u = t - LN[li].start, k0 = clamp(.75 + (t - LN[0].start) / .6), s = "";
   var o = { sc: .56, ty: 150, gy: 700, gr: 58, gauge: li >= 1 ? ease((t - LN[1].start - .6) / .5) : 0, lv: .62 + .02 * Math.sin(t * 3), rv: .62 + .02 * Math.sin(t * 3 + .4), glab: "القوة" };
   if (li >= 1) { o.lg = "92"; o.rg = "95"; o.lgk = ease((t - LN[1].start) / .3); o.rgk = ease((t - LN[1].start - .9) / .3); o.q = li === 1 ? ease((u - 1.8) / .3) : 0; }
   if (li === 2) o.eq = ease((u - .6) / .3);
