@@ -139,6 +139,8 @@ function gasPath(top) { return "M" + E.x0 + " " + f(top) + " V" + E.deck + " L30
 function heatCol(h) { h = clamp(h); var a = [235, 228, 210], b = [231, 170, 125], c = a.map(function (v, i) { return Math.round(lerp(v, b[i], h)); }); return "rgb(" + c.join(",") + ")"; }
 function hatchR(x, y, w, h, fill, sw) { return R(x, y, w, h, fill, sw) + '<rect x="' + f(x) + '" y="' + f(y) + '" width="' + f(w) + '" height="' + f(h) + '" fill="url(#hatch)"/>'; }
 function hatchP(d, fill, sw) { return P(d, fill, sw) + '<path d="' + d + '" fill="url(#hatch)"/>'; }
+// a point along a port's centre line, from the valve (k 0) out to the side of the head (k 1); side −1 exhaust, +1 intake
+function portPt(side, k) { var a = [320 + side * 52, 90], b = [320 + side * 96, 40], c = [320 + side * 190, 12], u = 1 - k; return [u * u * a[0] + 2 * u * k * b[0] + k * k * c[0], u * u * a[1] + 2 * u * k * b[1] + k * k * c[1]]; }
 // a flame ball: orange body, a lighter core, a ragged front that flickers with t
 function flameBall(x, y, r, t, col) {
   if (r <= 1) return ""; var d = "", n = 26;
@@ -178,7 +180,7 @@ function engine(o) {
   s += hatchP("M146 -20 V-120 Q146 -150 176 -150 H464 Q494 -150 494 -120 V-20 Z", "#bdb6a4", 2.4) + R(296, -150, 48, 230, CAVITY, 1.8);
   // the gas in the cylinder: tint by heat, fuel (orange) and air (blue) dots squeezed between roof and piston, the flames
   var gp = gasPath(top), id = "gas" + (++CLIPN);
-  s += '<clipPath id="' + id + '"><path d="' + gp + '"/></clipPath><path d="' + gp + '" fill="' + heatCol(o.heat || 0) + '" stroke="' + INK + '" stroke-width="2"/>';
+  s += '<clipPath id="' + id + '"><path d="' + gp + '"/></clipPath><path d="' + gp + '" fill="' + (o.gasCol || heatCol(o.heat || 0)) + '" stroke="' + INK + '" stroke-width="2"/>';
   var g = "";
   if (o.mix) { for (var i = 0; i < 46; i++) { var u = hash(i), v = hash(i + 50), x = lerp(E.x0 + 10, E.x1 - 10, u) + 4 * Math.sin(t * 3 + i), y = lerp(E.roof + 6, top - 8, v) + 4 * Math.cos(t * 2.6 + i * 1.7);
       g += i % 3 ? '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="4.5" fill="none" stroke="' + BLUE + '" stroke-width="1.8"/>' : '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="5" fill="' + ORANGE + '" stroke="' + INK + '" stroke-width="1"/>'; }
@@ -187,18 +189,21 @@ function engine(o) {
   if (o.knock) g += flameBall(E.x0 + 18, top - 14, o.knock * 120, t + 1, "#c9643a");
   if (o.hl === "far") g += '<circle cx="' + (E.x0 + 26) + '" cy="' + f(top - 20) + '" r="' + f(34 + 4 * Math.sin(t * 5)) + '" fill="none" stroke="' + ORANGE + '" stroke-width="3" stroke-dasharray="7 5"/>';
   s += '<g clip-path="url(#' + id + ')">' + g + '</g>';
+  // flows in the ports: fresh mixture drawn in on the right, burnt gas pushed out on the left
+  if (o.inflow) for (var q2 = 0; q2 < 12; q2++) { var pp = (t * 1.3 + q2 / 12) % 1, ip = portPt(1, pp); s += '<circle cx="' + f(ip[0]) + '" cy="' + f(ip[1]) + '" r="4.5" fill="' + (q2 % 3 ? "none" : ORANGE) + '" stroke="' + (q2 % 3 ? BLUE : INK) + '" stroke-width="' + (q2 % 3 ? 1.8 : 1) + '" opacity="' + f(clamp(o.inflow)) + '"/>'; }
+  if (o.outflow) for (var q3 = 0; q3 < 9; q3++) { var pe = (t * 1.1 + q3 / 9) % 1, ep = portPt(-1, 1 - pe); s += '<circle cx="' + f(ep[0]) + '" cy="' + f(ep[1]) + '" r="' + f(6 + 6 * pe) + '" fill="#8d8478" opacity="' + f(clamp(o.outflow) * (.75 - .5 * pe)) + '"/>'; }
   if (o.clash) s += impact(lerp(E.x0 + 60, 300, .3), top - 26, o.clash, ORANGE);
   // valves: discs seated on the roof slopes, stems up at 23°, springs, bucket tappets, the camshafts turning at half speed
-  [[263, 96, -1, PORT_EX], [377, 96, 1, PORT_IN]].forEach(function (v) {
-    var ux = .4 * v[2], uy = -.917, nx = .917 * v[2], ny = .4, lift = 0;
-    var ca = (180 + cyc / 2) * Math.PI / 180 + (v[2] > 0 ? .5 : -.5), cc = [v[0] + ux * 196, v[1] + uy * 196];
+  [[263, 96, -1, PORT_EX], [377, 96, 1, PORT_IN]].forEach(function (v, vi) {
+    var ux = .4 * v[2], uy = -.917, nx = .917 * v[2], ny = .4, lift = o.lift ? o.lift[vi] : 0, cc = [v[0] + ux * 196, v[1] + uy * 196];
+    var toward = Math.atan2(-uy, -ux), ca = o.cam != null ? toward + (o.cam - (vi ? 45 : 315)) * Math.PI / 180 : toward + Math.PI + (cyc / 2) * Math.PI / 180 * .2;
     var head = [v[0] - ux * lift, v[1] - uy * lift];
     s += '<path d="M' + f(head[0] - nx * 32) + ' ' + f(head[1] - ny * 32) + ' L' + f(head[0] + nx * 32) + ' ' + f(head[1] + ny * 32) + ' L' + f(head[0] + nx * 12 + ux * 14) + ' ' + f(head[1] + ny * 12 + uy * 14) + ' L' + f(head[0] - nx * 12 + ux * 14) + ' ' + f(head[1] - ny * 12 + uy * 14) + ' Z" fill="' + METAL + '" stroke="' + INK + '" stroke-width="2.2" stroke-linejoin="round"/>';
     s += '<path d="M' + f(head[0] + ux * 12) + ' ' + f(head[1] + uy * 12) + ' L' + f(head[0] + ux * 150) + ' ' + f(head[1] + uy * 150) + '" stroke="' + INK + '" stroke-width="11"/><path d="M' + f(head[0] + ux * 12) + ' ' + f(head[1] + uy * 12) + ' L' + f(head[0] + ux * 150) + ' ' + f(head[1] + uy * 150) + '" stroke="' + METAL + '" stroke-width="6"/>';
-    s += coil(head[0] + ux * 104, head[1] + uy * 104, ux, uy, 50, 36, 5);
-    s += '<path d="M' + f(head[0] + ux * 154 - nx * 24) + ' ' + f(head[1] + uy * 154 - ny * 24) + ' l' + f(nx * 48) + ' ' + f(ny * 48) + ' l' + f(ux * 18) + ' ' + f(uy * 18) + ' l' + f(-nx * 48) + ' ' + f(-ny * 48) + ' Z" fill="' + METAL_D + '" stroke="' + INK + '" stroke-width="2"/>';   // bucket
-    var lobe = "M" + f(cc[0] + Math.cos(ca) * 38) + " " + f(cc[1] + Math.sin(ca) * 38) + " L" + f(cc[0] + Math.cos(ca + 1.2) * 23) + " " + f(cc[1] + Math.sin(ca + 1.2) * 23) + " A23 23 0 1 1 " + f(cc[0] + Math.cos(ca - 1.2) * 23) + " " + f(cc[1] + Math.sin(ca - 1.2) * 23) + " Z";
-    s += P(lobe, METAL, 2.2) + C(cc[0], cc[1], 9, METAL_D, 1.6) + C(cc[0], cc[1], 3, INK, 0);
+    s += coil(v[0] + ux * 100, v[1] + uy * 100, ux, uy, 50 - lift, 36, 5);
+    s += '<path d="M' + f(head[0] + ux * 150 - nx * 24) + ' ' + f(head[1] + uy * 150 - ny * 24) + ' l' + f(nx * 48) + ' ' + f(ny * 48) + ' l' + f(ux * 22) + ' ' + f(uy * 22) + ' l' + f(-nx * 48) + ' ' + f(-ny * 48) + ' Z" fill="' + METAL_D + '" stroke="' + INK + '" stroke-width="2"/>';   // bucket
+    var lobe = "M" + f(cc[0] + Math.cos(ca) * 45) + " " + f(cc[1] + Math.sin(ca) * 45) + " L" + f(cc[0] + Math.cos(ca + 1.15) * 23) + " " + f(cc[1] + Math.sin(ca + 1.15) * 23) + " A23 23 0 1 1 " + f(cc[0] + Math.cos(ca - 1.15) * 23) + " " + f(cc[1] + Math.sin(ca - 1.15) * 23) + " Z";
+    s += P(lobe, METAL, 2.2) + C(cc[0], cc[1], 9, METAL_D, 1.6) + '<path d="M' + f(cc[0]) + ' ' + f(cc[1]) + ' L' + f(cc[0] + Math.cos(ca) * 8) + ' ' + f(cc[1] + Math.sin(ca) * 8) + '" stroke="' + INK + '" stroke-width="2.4"/>';
   });
   // piston: hollow cut section, flat crown, three ring grooves (the notches at both sides), the pin boss
   var pk = "", pc = o.hl === "piston" ? "#c8a184" : METAL, L0 = E.x0 + 3, L1 = E.x1 - 3;
@@ -229,6 +234,27 @@ function engine(o) {
     if (o.ear) for (var w = 0; w < 3; w++) { var p = (t * 1.6 + w / 3) % 1; s += '<path d="M' + f(556 + p * 70) + ' ' + f(302 - p * 30) + ' q' + f(16 + p * 10) + ' ' + f(30 + p * 30) + ' 0 ' + f(60 + p * 60) + '" stroke="' + ORANGE + '" stroke-width="3.4" fill="none" opacity="' + f((1 - p) * clamp(o.ear)) + '"/>'; } }
   return s;
 }
+// the real four-stroke cycle at cycle angle phi (deg, 0 = top dead centre at the start of the intake stroke):
+// intake 0–180 (intake valve open, mixture drawn in), compression 180–360, spark just before 360, power 360–540 (the flame
+// fills the chamber and pushes the piston down), exhaust 540–720 (exhaust valve open, burnt gas pushed out).
+// Cams turn at half the crank speed; each valve opens for about 240° of crank around its lobe (real timing, small overlap).
+// o: the usual engine options, plus knocking (the end gas lights by itself after the spark), sensor, ear, hl, drop…
+function cycle(phi, t, o) {
+  o = o || {}; var p = ((phi % 720) + 720) % 720, cam = p / 2, e = {};
+  for (var k in o) e[k] = o[k];
+  function lobe(peak) { var dd = ((cam - peak + 540) % 360) - 180; return Math.abs(dd) < 60 ? 22 * Math.pow(Math.cos(dd * 1.5 * Math.PI / 180), 2) : 0; }
+  e.th = p; e.cam = cam; e.lift = [lobe(315), lobe(45)]; e.t = t;
+  if (p < 180) { e.mix = p / 180; e.heat = 0; e.inflow = clamp(e.lift[1] / 20); }
+  else if (p < 360) { e.mix = 1; e.heat = (p - 180) / 180 * .6; e.spark = p > 344 ? 1 : 0; }
+  else if (p < 540) {
+    var fl = clamp((p - 352) / (o.knocking ? 70 : 34)); e.flame = .05 + fl; e.mix = 1 - fl; e.spark = p < 366 ? 1 : 0;
+    var burnt = clamp((p - 400) / 120); e.gasCol = burnt > 0 ? mixCol([231, 170, 125], [201, 186, 164], burnt) : null; e.heat = .85;
+    if (burnt > 0) e.flame = (.05 + fl) * (1 - burnt);
+    if (o.knocking) { var kn = clamp((p - 368) / 14); e.knock = kn * (1 - burnt) * .95; e.clash = p > 376 && p < 400 ? (p - 376) / 24 : 0; e.shake = p > 376 && p < 420 ? 4 * Math.sin(p * 2.1) * (420 - p) / 44 : 0; }
+  } else { var ex = (p - 540) / 180; e.gasCol = mixCol([201, 186, 164], [235, 228, 210], ex); e.outflow = clamp(e.lift[0] / 18); }
+  return engine(e);
+}
+function mixCol(a, b, k) { return "rgb(" + a.map(function (v, i) { return Math.round(lerp(v, b[i], clamp(k))); }).join(",") + ")"; }
 // the knock sensor face-on, as in the photos: ribbed aluminium block, a round black body, washer and hex bolt, the grey plug going sideways
 function knockSensorFront(t, ear) {
   var s = R(-200, -200, 400, 400, ALU, 0) + R(-200, -200, 400, 400, "none", 0, 0, ' fill="url(#hatch)" opacity=".4"');
@@ -332,132 +358,142 @@ function litre(x, y, g, col, k) { return R(x - 50, y - 160, 100, 160, "#f4efe3",
 
 // ── shots (one per idea; line numbers from script.txt) ──
 var ENG = function (z1, z2, cy) { return push(320, cy || 380, z1, z2); };
-// 4 · «قاعدة صغيرة»: a pinned rule card over a faint pump
-shot(4, push(320, 420, 1.0, 1.08), function (u, d, t) {
-  return paper() + dim(.8, bikePump(320, 700, .3, t, 0)) + G("", '<rect x="130" y="180" width="380" height="170" fill="#f4ecdb" stroke="' + INK + '" stroke-width="2.4" transform="rotate(-3 320 265)"/>' +
-    T("تضغطه بسرعة", 320, 246, 38, INK, 800) + T("يسخن", 320, 306, 44, ORANGE, 800) + C(320, 188, 9, ORANGE, 2), at(u, .3, .4));
+var RPM = 260;   // slow motion: cycle degrees per second (one full four-stroke cycle in about 2.8 s)
+// a fuel-grade badge (the colour of its pump sticker)
+function badge(g, x, y, k, sc) { k = pop(k == null ? 1 : k); if (k <= 0) return ""; var c = { "80": GCOL[0], "92": GCOL[1], "95": GCOL[2] }[g] || GCOL[1];
+  return G("translate(" + f(x) + " " + f(y) + ") scale(" + f(k * (sc || 1)) + ")", R(-46, -30, 92, 60, c, 2.4, 6) + N(g, 0, 13, 36, INK)); }
+// two engines side by side, running in step; o: {lg, rg (grades), lk / rk (knocking), gauge (0..1 show), lv, rv (needles), eq, coins, q, drop}
+function twin(t, u, o) {
+  var s = "", ph = t * RPM;
+  var sc = o.sc || .48, ty = o.ty || 120; s += G("translate(" + f(154 - 320 * sc) + " " + ty + ") scale(" + sc + ")", cycle(ph, t, { knocking: o.lk, drop: o.ldrop })) + G("translate(" + f(484 - 320 * sc) + " " + ty + ") scale(" + sc + ")", cycle(ph, t, { knocking: o.rk, drop: o.rdrop }));
+  var by = (o.ty || 120) - 150 * (o.sc || .48) + 34; if (o.lg) s += badge(o.lg, 154, by, o.lgk); if (o.rg) s += badge(o.rg, 484, by, o.rgk);
+  if (o.gauge) s += G("", gauge(154, o.gy || 650, o.gr || 70, o.lv, o.glab || "القوة", o.lk ? ORANGE : OLIVE) + gauge(484, o.gy || 650, o.gr || 70, o.rv, o.glab || "القوة", OLIVE), clamp(o.gauge));
+  if (o.eq) s += G("", T("=", 320, (o.gy || 650) - 10, 70, ORANGE, 900), clamp(o.eq));
+  if (o.q) s += G("", T("؟", 320, 380 + 8 * Math.sin(t * 3), 90, ORANGE, 900), clamp(o.q));
+  return s;
+}
+// 5 · «يعني إيه 92؟»: not strength — tolerance
+shot(5, push(320, 400, 1.04, .98), function (u, d, t) {
+  return paper() + G("rotate(" + f(4 * Math.sin(t * 2.4)) + " 320 " + f(200 + 10 * Math.sin(t * 3)) + ")", badge("92", 320, 200 + 10 * Math.sin(t * 3), at(u, .1, .3), 1.8 + .08 * Math.sin(t * 4))) + G("", T("؟", 430, 190 + 6 * Math.sin(t * 5), 70, ORANGE, 900), at(u, .3, .3) * (1 - at(u, d * .3, .3))) + G("", tag("قوة", 190, 420, 1, 40) + cross(190, 410, 1.1, at(u, d * .45, .4)), at(u, d * .3, .3)) +
+    G("", tag("تحمّل", 450, 420, 1, 40, BLUE) + check(450, 520, 1.2, at(u, d * .75, .4)), at(u, d * .65, .3));
 });
-// 5 · a bicycle pump: the plunger goes down, the air under it squeezes and the barrel warms
-shot(5, push(320, 470, 1.1, 1.0), function (u, d, t) {
+// 6 · inside the engine: the real cycle — the intake valve opens, the mixture comes in, then the piston squeezes it to a tenth
+shot(6, ENG(.8, .86, 330), function (u, d, t) {
+  var ph = lerp(0, 358, clamp(u / (d - .3)));
+  return paper() + appear(at(u, 0, .4), cycle(ph, t, { hl: ph > 180 ? "piston" : "" })) + label(410, pistonTop(ph) + 60, 500, pistonTop(ph) + 150, "المكبس", OLIVE, at(u, .4, .5), 26) +
+    label(470, 10, 540, -90, "الخليط داخل", BLUE, at(u, .3, .4) * (ph < 200 ? 1 : 0), 22) + G("", numBox("1/10", 560, 200, 1, 34), at(u, d - 1.2, .4));
+});
+// 7 · the squeeze heats it, like a bicycle pump in your hand
+shot(7, push(320, 470, 1.1, 1.0), function (u, d, t) {
   var p = .5 - .5 * Math.cos(u * 2.6), h = clamp(u / d * 1.3) * (.4 + .6 * p);
-  return paper() + bikePump(300, 720, p, t, h) + label(346, 600, 470, 640, "الهوا اتضغط", BLUE, at(u, .6, .5), 24) + label(300, 400, 470, 360, "سخن", ORANGE, at(u, 1.6, .5), 26);
+  return paper() + bikePump(300, 720, p, t, h) + label(346, 600, 470, 640, "الهوا اتعصر", BLUE, at(u, .6, .5), 24) + label(300, 400, 470, 360, "سخن", ORANGE, at(u, 1.6, .5), 26);
 }, { tr: "in" });
-// 6 · the engine: the piston rises from the bottom and squeezes fuel and air to about a tenth
-shot(6, ENG(.82, .88, 330), function (u, d, t) {
-  var k = clamp((u - .6) / (d - 1.2)), th = 180 + 180 * ease(k);
-  return paper() + appear(at(u, 0, .5), engine({ th: th, t: t, mix: 1, heat: k * .5, hl: "piston" })) +
-    label(410, pistonTop(th) + 60, 500, pistonTop(th) + 150, "المكبس", OLIVE, at(u, .3, .5), 26) + G("", numBox("1/10", 560, 200, 1, 34), at(u, d - 1.4, .4));
-});
-// 7 · the mixture is hot; the spark plug fires at the right moment
-shot(7, ENG(1.2, 1.3, 40), function (u, d, t) {
-  var sp = u > d * .45 ? Math.abs(Math.sin((u - d * .45) * 9)) : 0;
-  return paper() + engine({ th: 4 * Math.sin(t * 1.2), t: t, mix: 1, heat: .55 + .1 * Math.sin(t * 2), spark: sp, hl: u > d * .4 ? "plug" : "gas" }) +
-    label(336, -40, 440, -200, "البوجيه", OLIVE, at(u, d * .4, .5), 26) + label(370, 104, 440, 200, "سخن جامد", ORANGE, at(u, .3, .5), 22);
-});
-// 8 · normal burning: one flame spreads from the plug and pushes the piston down
-shot(8, ENG(.86, .82, 330), function (u, d, t) {
-  var k = clamp(u / (d * .7)), th = 150 * ease(clamp((u - .4) / (d - .8)));
-  return paper() + engine({ th: th, t: t, mix: 1 - k, heat: .7, flame: lerp(.05, 1, k) }) + arrow(320, pistonTop(th) + 40, 320, pistonTop(th) + 120, ORANGE, 8, at(u, 1, .4)) + check(540, 160, 1.4, at(u, d - 1, .5));
+// 8 · the spark at the right moment; the flame spreads calmly and pushes the piston down
+shot(8, ENG(1.15, .86, 200), function (u, d, t) {
+  var ph = lerp(330, 560, clamp(u / d));
+  return paper() + cycle(ph, t, { hl: ph < 372 ? "plug" : "" }) + label(336, -40, 440, -200, "البوجيه", OLIVE, at(u, .2, .4), 26) +
+    arrow(320, pistonTop(ph) + 40, 320, pistonTop(ph) + 120, ORANGE, 8, ph > 380 && ph < 540 ? 1 : 0) + check(560, 120, 1.3, at(u, d - .9, .5));
 }, { tr: "out" });
-// 9 · weak fuel: the far corner, squeezed and hot, lights by itself before the flame gets there
-shot(9, ENG(1.0, 1.1, 250), function (u, d, t) {
-  var kf = clamp(u / d) * .35, kn = clamp((u - d * .55) / (d * .35));
-  return paper() + engine({ th: 6, t: t, mix: 1 - kn * .5, heat: .8, flame: .05 + kf, knock: kn * .8, hl: kn < .1 && u > 1 ? "far" : "" }) +
-    label(E.x0 + 26, pistonTop(6) - 22, 200, 250, "الحتة البعيدة", ORANGE, at(u, 1, .5), 22) + G("", tag("ولّعت لوحدها", 440, 230, 1, 24, ORANGE), at(u, d * .65, .4));
+// 9 · fuel that can't take the squeeze: the far corner lights by itself before the flame gets there
+shot(9, ENG(1.0, 1.12, 250), function (u, d, t) {
+  var ph = lerp(318, 392, ease(clamp(u / (d - .4))));
+  return paper() + cycle(ph, t, { knocking: true, hl: ph < 366 ? "far" : "" }) + label(E.x0 + 26, pistonTop(ph) - 22, 200, 250, "الحتة البعيدة", ORANGE, at(u, .8, .5), 22) +
+    G("", tag("ولّعت لوحدها", 440, 230, 1, 24, ORANGE), ph > 372 ? 1 : 0);
 });
-// 10 · two flame fronts crash into each other: a hammer blow on the piston
-shot(10, ENG(1.2, 1.08, 250), function (u, d, t) {
-  var b = (u * 3) % 1, sh = u > .4 ? 5 * Math.sin(u * 60) * (1 - b) : 0;
-  return paper() + engine({ th: 6, t: t, heat: .9, flame: .55, knock: .9, clash: u > .3 ? b : 0, shake: sh, hl: "piston" }) +
-    iconBox(470, 520, 130, G("rotate(" + f(-30 + 30 * Math.abs(Math.sin(u * 6))) + " 20 40)", R(-8, -10, 16, 80, WOOD, 2) + R(-40, -36, 80, 30, "#5b5145", 2, 4)), at(u, .8, .3));
+// 10 · two flames crash: a hammer blow on the piston, cycle after cycle
+shot(10, ENG(1.18, 1.05, 260), function (u, d, t) {
+  return paper() + cycle(300 + u * RPM * .9, t, { knocking: true, hl: "piston" }) +
+    iconBox(470, 540, 130, G("rotate(" + f(-30 + 30 * Math.abs(Math.sin(u * 6))) + " 20 40)", R(-8, -10, 16, 80, WOOD, 2) + R(-40, -36, 80, 30, "#5b5145", 2, 4)), at(u, .6, .3));
 }, { tr: "in" });
-// 11 · the sound you hear going uphill: «تك تك»
+// 11 · climbing a bridge ramp: «تك تك»
 shot(11, push(320, 400, .82, .9), function (u, d, t) {
   var s = paper() + hill(8) + car({ x: 330, y: 382, pitch: 8, t: t, spin: 1, people: function () { return driver(0); } });
   for (var i = 0; i < 3; i++) { var k = at(u, .3 + i * .45, .25); if (k > 0) s += G("translate(" + (150 + i * 70) + " " + (250 - i * 40 + 4 * Math.sin(t * 8 + i)) + ")", tag("تك", 0, 0, k, 30, ORANGE)); }
   return s;
 });
-// 12 · the octane number: how much squeeze the fuel takes before it lights by itself
+// 12 · the octane number: how hard a squeeze the fuel takes before it lights by itself
 shot(12, push(320, 400, 1.0, 1.06), function (u, d, t) {
   var k = .5 - .5 * Math.cos(u * 2.2);
-  return paper() + G("translate(80 120) scale(.75)", bikePump(0, 560, k, t, k)) + tag("الأوكتان", 400, 210, at(u, .3, .4), 40, BLUE) + T("= قد إيه يستحمل", 400, 300, 32, INK, 800) + T("من غير ما يولّع لوحده", 400, 350, 26, MUTE, 700) +
-    G("", gauge(400, 520, 90, .25 + .6 * k, "ضغط"), at(u, 1, .4));
+  return paper() + G("translate(80 120) scale(.75)", bikePump(0, 560, k, t, k)) + tag("الأوكتين", 400, 210, at(u, .3, .4), 40, BLUE) + T("= قد إيه يستحمل", 400, 300, 32, INK, 800) + T("قبل ما يولّع لوحده", 400, 350, 26, MUTE, 700) +
+    G("", gauge(400, 520, 90, .25 + .6 * k, "العصرة"), at(u, 1, .4));
 });
-// 13 · 80 < 92 < 95: three tolerance bars
-shot(13, push(320, 400, 1.04, .98), function (u, d, t) {
-  return paper() + T("بيستحمل قد إيه؟", 320, 170, 34, INK, 800) + tolBar(60, 300, 260, at(u, .2, .8) * .55, "80", GCOL[0]) + tolBar(60, 420, 260, at(u, .9, .8) * .78, "92", GCOL[1]) + tolBar(60, 540, 260, at(u, 1.8, .8) * (.92 + .02 * Math.sin(t * 3)), "95", GCOL[2]);
+// 13 · why does one engine do with 80 and another want 95?
+shot(13, push(320, 400, .98, 1.03), function (u, d, t) {
+  return paper() + twin(t, u, { lg: "80", lgk: at(u, .2, .3), rg: "95", rgk: at(u, .9, .3), q: at(u, 1.4, .4), ldrop: 26 });
 });
-// 14 · every engine squeezes by a different amount: two cylinders side by side
-shot(14, push(320, 400, .98, 1.04), function (u, d, t) {
-  var th = 180 + 180 * (.5 - .5 * Math.cos(u * 1.8));
-  return paper() + G("translate(10 210) scale(.48)", engine({ th: th, t: t, mix: 1, heat: .3, drop: 26 })) + G("translate(320 210) scale(.48)", engine({ th: th, t: t + 1, mix: 1, heat: .7 })) +
-    G("", numBox("8:1", 165, 140, 1, 28) + numBox("11:1", 475, 140, 1, 28), at(u, .5, .4)) + T("ضغط قليل", 165, 650, 26, OLIVE, 800) + T("ضغط عالي", 475, 650, 26, ORANGE, 800);
+// 14 · every engine squeezes differently: old (low) vs modern and turbo (high)
+shot(14, push(320, 400, 1.03, .98), function (u, d, t) {
+  return paper() + twin(t, u, { ldrop: 26 }) + tag("قديم", 154, 70, at(u, .2, .3), 26) + tag("حديث · تيربو", 484, 70, at(u, d * .4, .3), 26) +
+    G("", numBox("8:1", 154, 650, 1, 30) + T("عصرة قليلة", 154, 720, 24, OLIVE, 800), at(u, .6, .4)) + G("", numBox("11:1", 484, 650, 1, 30) + T("عصرة أكتر", 484, 720, 24, ORANGE, 800), at(u, d * .5, .4));
 });
-// 15 · old engine → 80 is fine; modern and turbo → a higher number
-shot(15, push(320, 400, 1.04, .98), function (u, d, t) {
-  var th = 180 + 180 * (.5 - .5 * Math.cos(u * 1.8)), k = at(u, d * .45, .5);
-  return paper() + G("translate(10 210) scale(.48)", engine({ th: th, t: t, mix: 1, heat: .3, drop: 26 })) + G("translate(320 210) scale(.48)", engine({ th: th, t: t + 1, mix: 1, heat: .7 })) +
-    tag("قديم", 165, 120, 1, 26) + tag("حديث · تيربو", 475, 120, 1, 26) + numBox("80", 165, 680, at(u, .4, .3), 34) + check(240, 670, .8, at(u, .8, .4)) +
-    G("", numBox("92", 430, 680, 1, 34) + numBox("95", 530, 680, 1, 34), k);
+// 15 · like a glass: boiling tea needs glass that can take it, cold water is fine in any glass
+function teaGlass(x, y, t, k) { var s = P("M-44 -120 L44 -120 L34 60 Q0 70 -34 60 Z", "#e7eef0", 2.6) + P("M-40 -84 L40 -84 L34 56 Q0 66 -34 56 Z", "#b5562a", 0, ' opacity=".85"') + '<path d="M-38 -84 H38" stroke="#e8c39a" stroke-width="3"/>' + R(-60, 60, 120, 14, "#d8ccae", 2, 6);
+  for (var i = 0; i < 3; i++) { var p = (t * .8 + i / 3) % 1; s += '<path d="M' + (-20 + i * 20) + ' ' + f(-130 - p * 60) + ' q-10 -16 0 -32 q10 -16 0 -32" stroke="' + MUTE + '" stroke-width="3" fill="none" opacity="' + f((1 - p) * k) + '"/>'; }
+  return G("translate(" + f(x) + " " + f(y) + ")", s); }
+function waterGlass(x, y, t) { var s = P("M-44 -120 L44 -120 L34 60 Q0 70 -34 60 Z", "#e7eef0", 2.6) + P("M-40 -60 L40 -60 L34 56 Q0 66 -34 56 Z", "#a9c4d2", 0, ' opacity=".85"');
+  [[-14, -48, 8], [12, -40, -10]].forEach(function (c, i) { s += G("translate(" + c[0] + " " + f(c[1] + 3 * Math.sin(t * 2 + i)) + ") rotate(" + c[2] + ")", R(-11, -11, 22, 22, "#f4f8fa", 1.6, 4)); });
+  return G("translate(" + f(x) + " " + f(y) + ")", s); }
+shot(15, push(320, 420, 1.05, .98), function (u, d, t) {
+  return paper() + teaGlass(180, 470, t, 1) + waterGlass(460, 470, t) + G("", T("شاي مغلي", 180, 600, 26, ORANGE, 800) + badge("95", 180, 680, 1, .8), at(u, .4, .4)) +
+    G("", T("مية ساقعة", 460, 600, 26, BLUE, 800) + badge("80", 460, 680, 1, .8), at(u, d * .55, .4)) + label(220, 400, 320, 250, "إزاز يستحمل", OLIVE, at(u, .9, .5), 22);
 });
-// 16 · your number: in the manual, and on the filler flap
-shot(16, push(320, 400, 1.0, 1.06), function (u, d, t) {
-  return paper() + manual(170, 380, 1.1 + .02 * Math.sin(t * 2)) + fuelDoor(450, 400, .62, at(u, .6, 1.2), "95") + label(400, 330, 470, 560, "غطا التانك", OLIVE, at(u, 1.4, .4), 22);
-});
-// 17 · lower than asked: the knock sensor hears it and moves the spark later
-shot(17, ENG(.84, .9, 360), function (u, d, t) {
-  var late = at(u, d * .55, .8), sp = Math.abs(Math.sin(u * 5)) * late;
-  return paper() + engine({ th: lerp(4, 20, late), t: t, mix: .6, heat: .7, flame: .2 + .1 * Math.sin(t * 4) * (1 - late), knock: (1 - late) * .5, sensor: at(u, .4, .5), ear: 1 - late, spark: sp }) +
+// 16 · lower than asked: the knock sensor hears it and moves the spark later
+shot(16, ENG(.84, .9, 360), function (u, d, t) {
+  var late = at(u, d * .55, .8), ph = 300 + u * RPM * .9;
+  return paper() + cycle(ph, t, { knocking: late < .5, sensor: at(u, .4, .5), ear: 1 - late }) +
     label(503, 360, 470, 470, "حساس التكتكة", OLIVE, at(u, .8, .5), 22) + inset(130, 130, 105, G("scale(.62)", knockSensorFront(t, 1 - late)), at(u, 1.2, .4)) + G("", tag("الشرارة تتأخر", 470, 690, 1, 24, ORANGE), late);
 });
-// 18 · safe, but weaker and thirstier; keep knocking and the piston crown can crack
-shot(18, push(320, 400, 1.0, 1.04), function (u, d, t) {
-  var k = at(u, .3, 1.4), cr = at(u, d * .55, .5);
-  return paper() + G("", gauge(170, 300, 110, lerp(.8, .45, k), "العزم") + gauge(470, 300, 110, lerp(.4, .8, k), "الصرف"), 1 - cr * .7) +
-    appear(cr, pistonBroken(320, 520, 1.25, at(u, d * .6, .6)));
+// 17 · heavier and thirstier; knock long enough and it holes the piston at the edge
+shot(17, push(320, 400, 1.0, 1.04), function (u, d, t) {
+  var k = at(u, .3, 1.4), cr = at(u, d * .5, .5);
+  return paper() + G("", gauge(170, 300, 110, lerp(.8, .45, k), "العزم") + gauge(470, 300, 110, lerp(.4, .8, k), "الصرف"), 1 - cr * .7) + appear(cr, pistonBroken(320, 520, 1.25, at(u, d * .55, .6)));
 });
-// 19 · higher than asked: no harm… and no benefit
-shot(19, push(320, 400, 1.04, .98), function (u, d, t) {
-  return paper() + egyPump(320, 740, 1.05, "95", t, { big: .6 }) + G("", tag("ضرر", 160, 150, 1, 32) + cross(160, 230, .9, at(u, d * .4, .4)), at(u, d * .3, .3)) + G("", tag("فايدة", 480, 150, 1, 32) + cross(480, 230, .9, at(u, d * .75, .4)), at(u, d * .65, .3));
-});
-// 20 · the myth: «more energy» — crossed out
-shot(20, push(320, 400, 1.06, .98), function (u, d, t) {
-  return paper() + litre(320, 520, "95", GCOL[2], 1) + G("", tag("طاقة أكتر؟", 320, 220, 1, 40, ORANGE), at(u, .2, .4)) + arrow(320, 330, 320, 290 - 8 * Math.sin(t * 4), ORANGE, 6, 1) + cross(320, 240, 1.8, at(u, d * .7, .5));
-});
-// 21 · a litre of each holds about the same energy; the extra money buys nothing
-shot(21, push(320, 400, 1.0, 1.05), function (u, d, t) {
-  var k = at(u, .2, 1.2), s = paper() + litre(200, 480, "92", GCOL[1], k) + litre(440, 480, "95", GCOL[2], k) + T("≈", 320, 420, 70, ORANGE, 800);
-  for (var i = 0; i < 4; i++) { var p = clamp((u - d * .55 - i * .2) / 1); if (p > 0) s += coin(440 + 60 * p + i * 10, 240 - 140 * p + 10 * Math.sin(t * 5 + i), 22); }
+// 18 · higher than asked: the engine can't use the extra tolerance — only your money flies
+shot(18, push(320, 400, 1.02, .98), function (u, d, t) {
+  var s = paper() + G("translate(0 60) scale(.6)", cycle(t * RPM, t, {})) + badge("95", 420, 150, at(u, .2, .3)) + G("", tag("مش هيستغل الزيادة", 440, 300, 1, 24), at(u, d * .3, .3));
+  for (var i = 0; i < 5; i++) { var p = clamp((u - d * .6 - i * .18) / 1); if (p > 0) s += coin(470 + 70 * p + i * 8, 560 - 260 * p + 8 * Math.sin(t * 5 + i), 22); }
   return s;
 });
-// 22 · 98 abroad: same idea, for engines that squeeze harder (sports cars)
-shot(22, push(320, 420, .92, 1.0), function (u, d, t) {
-  return paper() + R(-400, 470, 1440, 30, "#6a665e", 2.4) + R(-400, 500, 1440, 400, "#d9cfb6", 0) + car({ x: 330 - 30 * u, y: 430, pitch: 0, t: t, spin: 1 }) + numBox("98", 320, 200, at(u, .3, .3), 54) + T("في دول برا", 320, 270, 26, MUTE, 700) + G("", numBox("12:1", 530, 330, 1, 26), at(u, d * .55, .4));
+// 19 · the myth: 95 has more energy — no, a litre holds about the same
+shot(19, push(320, 400, 1.04, .98), function (u, d, t) {
+  var k2 = at(u, d * .5, 1);
+  return paper() + G("", tag("طاقة أكتر؟", 320, 160, 1, 38, ORANGE) + cross(320, 150, 1.6, at(u, d * .4, .4)), at(u, .2, .3)) + litre(200, 560, "92", GCOL[1], k2) + litre(440, 560, "95", GCOL[2], k2) + G("", T("≈", 320, 500, 70, ORANGE, 800), k2);
 });
-// 23 · «يعني من الآخر»: not strength, tolerance — the number in the manual, no less, no more
-shot(23, push(320, 400, .98, 1.04), function (u, d, t) {
-  return paper() + G("", T("قوة", 190, 215, 44, INK, 800) + cross(190, 185, 1, at(u, .5, .4)), at(u, .1, .3)) + G("", tag("تحمّل", 450, 200, 1, 44, BLUE), at(u, 1, .3)) +
+// 20 · your number: in the manual, and inside the filler door
+shot(20, push(320, 400, 1.0, 1.06), function (u, d, t) {
+  return paper() + manual(170, 380, 1.1 + .02 * Math.sin(t * 2)) + fuelDoor(450, 400, .62, at(u, .6, 1.2), "92") + label(400, 330, 470, 560, "غطا التانك", OLIVE, at(u, 1.4, .4), 22);
+});
+// 21 · «يعني من الآخر»: not strength, tolerance — what your car asks for, no less, no more
+shot(21, push(320, 400, .98, 1.04), function (u, d, t) {
+  return paper() + G("", T("قوة", 190, 215, 44, INK, 800) + cross(190, 200, 1, at(u, .5, .4)), at(u, .1, .3)) + G("", tag("تحمّل", 450, 200, 1, 44, BLUE), at(u, 1, .3)) +
     manual(320, 470, .9) + G("", T("لا أقل", 150, 470, 30, INK, 800) + T("ولا أكتر", 490, 470, 30, INK, 800), at(u, d * .55, .4));
 });
-// 24 · the odd fact: 100-octane fuel let the RAF raise the boost of its fighters
-shot(24, push(320, 400, 1.0, 1.06), function (u, d, t) {
+// 22 · the odd fact: 100-octane fuel let the RAF raise the boost of its fighters
+shot(22, push(320, 400, 1.0, 1.06), function (u, d, t) {
   var k = at(u, d * .45, 1.5);
   return paper() + spitfire(60 - 120 * k, 400 + 8 * Math.sin(t * 2), .9, t) + numBox("100", 320, 170, at(u, .6, .3), 50) + T("1940", 320, 640, 30, MUTE, 800) +
     G("", wave(620 - 120 * k, 370, 700, 370, t, MUTE, 4, 30, 1, 2) + wave(620 - 120 * k, 420, 700, 420, t, MUTE, 4, 30, 1, 2), k);
 });
 
-// ── opening card, bumper and summary art ──
+// ── opening card: two identical engines, 92 vs 95, then 80 ──
 window.SCENE = window.SCENE || {};
 SCENE.intro = function (svg, t, li) {
-  // line 0: three pumps, one per grade, lighting one by one. line 1: the 95 sticker grows — «أقوى؟». line 2: «قوة» crossed out
-  var u0 = t - LN[0].start, s = G("translate(0 10) scale(.7)", station(t, li === 0 ? clamp((u0 - .6) / 2.6) : 1, li >= 1 ? 2 : -1, li >= 1 ? ease((t - LN[1].start) / .6) : 0));
-  if (li === 1) { var u1 = t - LN[1].start; s += arrow(380, 330, 452 + 4 * Math.sin(t * 4), 222, ORANGE, 6, ease((u1 - .3) / .4)) + tag("أحسن للموتور؟", 470, 150, ease(u1 / .4), 30, OLIVE) + tag("أوفر؟", 500, 250, ease((u1 - 1.2) / .4), 34, ORANGE) + G("translate(400 250)", coin(0, 4 * Math.sin(t * 5), 18), ease((u1 - 1.4) / .3)); }
-  if (li >= 2) { var u2 = t - LN[2].start; s += tag("أعلى ≠ أحسن", 430, 190, ease(u2 / .4), 40, ORANGE) + G("", T("!", 560, 140, 70, ORANGE, 900), ease((u2 - .3) / .3)); }
+  // line 0: two identical engines appear and run in step. line 1: 92 in the left, 95 in the right, «؟».
+  // line 2: the gauges stop at the same power, «=», money flies off the 95. line 3: the left one gets 80 and starts knocking.
+  var u = t - LN[li].start, k0 = clamp((t - LN[0].start - .3) / .8), s = "";
+  var o = { sc: .56, ty: 150, gy: 700, gr: 58, gauge: li >= 1 ? ease((t - LN[1].start - .6) / .5) : 0, lv: .62 + .02 * Math.sin(t * 3), rv: .62 + .02 * Math.sin(t * 3 + .4), glab: "القوة" };
+  if (li >= 1) { o.lg = "92"; o.rg = "95"; o.lgk = ease((t - LN[1].start) / .3); o.rgk = ease((t - LN[1].start - .9) / .3); o.q = li === 1 ? ease((u - 1.8) / .3) : 0; }
+  if (li === 2) o.eq = ease((u - .6) / .3);
+  if (li >= 3) { o.lg = "80"; o.lgk = ease(u / .3); o.lk = u > .8; o.lv = u > .8 ? .4 + .06 * Math.sin(t * 23) : .62; }
+  s += G("translate(-16 -60) scale(.95)", appear(k0, twin(t, u, o)));
+  if (li === 0) s += G("", tag("الاتنين معمولين على 92", 304, 620, 1, 26), ease((u - 1.2) / .4));
+  if (li === 2) for (var i = 0; i < 4; i++) { var p = clamp((u - 1.8 - i * .2) / 1); if (p > 0) s += coin(470 + 70 * p, 120 - 80 * p + 6 * Math.sin(t * 5 + i), 18); }
+  if (li >= 3 && u > .9) s += G("translate(150 250)", tag("تك", 0, 0, ease((u - .9) / .2), 26, ORANGE)) + G("translate(56 330)", tag("تك", 0, 0, ease((u - 1.3) / .2), 22, ORANGE));
   return s;
 };
-SCENE.bumper = function (u, t) { return G("translate(90 192) scale(.4)", egyPump(0, 0, 1, "95", t, { big: .5 + .5 * Math.sin(t * 3) })); };
+SCENE.bumper = function (u, t) { return G("translate(" + f(30 + 3 * Math.sin(t * 2)) + " 34) scale(.18)", cycle(t * RPM * 1.6, t, {})); };
 SCENE.outro = function (svg, u, t) {
-  return G("translate(170 60) scale(.27)", engine({ th: 6, t: t, heat: .6, flame: .3, knock: .5, sensor: 1 })) +
+  return G("translate(170 60) scale(.27)", cycle(375, t, { knocking: true, sensor: 1 })) +
     callout("1", 256, 30, ease(u / .3)) + callout("2", 300, 120, ease(u / .3 - .5)) + callout("3", 214, 84, ease(u / .3 - 1)) + callout("4", 330, 150, ease(u / .3 - 1.5)) +
     numBox("80", 440, 70, 1, 22) + numBox("92", 440, 140, 1, 22) + numBox("95", 440, 210, 1, 22) + '<path d="M500 60 V220" stroke="' + ORANGE + '" stroke-width="4"/>' + arrow(520, 220, 520, 70, ORANGE, 4, 1);
 };
