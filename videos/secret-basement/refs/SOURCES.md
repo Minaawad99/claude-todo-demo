@@ -17,3 +17,8 @@ Style: «لو» (built like `videos/nuclear-shelter/`). Script and drawings are 
   https://www.who.int/news/item/21-09-2009-who-calls-for-tighter-standards-on-indoor-radon
 - Rock wool (mineral wool) as acoustic insulation; an independent emergency exit (egress) for any habitable basement.
 - Digging under an existing house affects its foundations: needs a structural engineer and a permit.
+
+## Cover
+- The seated person on the 3D cover is the Ready Player Me avatar shipped with the three.js examples
+  (`examples/models/gltf/readyplayer.me.glb`, copied to `brand/eh-elhekaya/models/person.glb`), posed by rotating its
+  skeleton's joints in the cover page.
