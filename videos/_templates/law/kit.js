@@ -74,7 +74,10 @@
   function digP(ph) { var c = ph % 1, dn = c < 0.5 ? Math.sin(c * 2 * Math.PI) : 0, up = c >= 0.5 ? Math.sin((c - 0.5) * 2 * Math.PI) : 0;
     return { lean: 30 + dn * 10 - up * 12, head: 14 - up * 6, aN: [34 + dn * 8 - up * 14, 30 + dn * 6 - up * 30], aF: [16 + dn * 6 - up * 10, 96 - up * 20], lN: [26 + dn * 6, 6], lF: [-14, -10], shovel: 1, lift: up }; }
   function climbP(ph) { var s = Math.sin(ph * Math.PI * 2); return { lean: 0, head: -6, aN: [160 + s * 14, 170 + s * 10], aF: [150 - s * 14, 165 - s * 10], lN: [50 + s * 40, -10 + s * 10], lF: [50 - s * 40, -10 - s * 10] }; }
-  function hammerP(ph) { var s = Math.sin(ph * Math.PI * 2); return { lean: 10, head: 4, aN: [110 + s * 40, 150 + s * 50], aF: [60, 80], lN: [8, 2], lF: [-8, -4], hammer: 1 }; }
+  // hammering: lift the hammer over the shoulder (0–0.65), strike down fast (0.65–0.8), the head rests on the nail (0.8–1).
+  // The handle points "forearm − 80°", so at impact it hangs straight down from the hand and the head lands below it.
+  function hammerP(ph) { var c = ph % 1, k = c < 0.65 ? ease(c / 0.65) : c < 0.8 ? 1 - (c - 0.65) / 0.15 : 0;
+    return { lean: 14 - k * 6, head: 10 - k * 8, aN: [lerp(58, 150, k), lerp(72, 205, k)], aF: [44, 70], lN: [10, 2], lF: [-10, -4], hammer: 1, hit: c >= 0.8 }; }
   function caulkP(ph) { var s = Math.sin(ph * Math.PI * 2); return { lean: 34, head: 14, aN: [80 + s * 10, 100 + s * 10], aF: [60, 90], lN: [96, -6], lF: [70, -24], caulk: 1 }; }
   function mixPose(a, b, k) { var o = {}; for (var key in a) { var va = a[key], vb = b[key] == null ? va : b[key]; o[key] = Array.isArray(va) ? [lerp(va[0], vb[0], k), lerp(va[1], vb[1], k)] : (typeof va === "number" ? lerp(va, vb, k) : (k < 0.5 ? va : vb)); } for (var k2 in b) if (o[k2] == null) o[k2] = b[k2]; return o; }
   function pose(name, ph) { if (typeof name === "object") return name; if (name === "walk") return walkP(ph); if (name === "dig") return digP(ph); if (name === "climb") return climbP(ph); if (name === "hammer") return hammerP(ph); if (name === "caulk") return caulkP(ph); return POSES[name] || POSES.stand; }
@@ -141,7 +144,9 @@
     if (p.shovel) { var top = aF[2], low = aN[2], dv = [low[0] - top[0], low[1] - top[1]], ln = Math.hypot(dv[0], dv[1]) || 1, u = [dv[0] / ln, dv[1] / ln], back = [top[0] - u[0] * 26, top[1] - u[1] * 26], tip = [low[0] + u[0] * 120, low[1] + u[1] * 120];
       if (u[1] < 0.2) { u = [fc * 0.5, 0.87]; tip = [low[0] + u[0] * 120, low[1] + u[1] * 120]; }   // a shovel blade always points at the ground
       g += P("M" + f(back[0]) + " " + f(back[1]) + " L" + f(tip[0]) + " " + f(tip[1]), "#8a5a30", 9) + '<g transform="translate(' + f(tip[0]) + ' ' + f(tip[1]) + ') rotate(' + f(Math.atan2(u[1], u[0]) * 180 / Math.PI - 90) + ')">' + F("M-20 0 L20 0 L16 40 Q0 52 -16 40 Z", "#9aa2ac") + (p.lift > 0.2 ? C(0, 30, 16, "#7a4c2a", { st: INK, sw: 2 }) : "") + '</g>'; }
-    if (p.hammer) { var hw = aN[2]; g += '<g transform="translate(' + f(hw[0]) + ' ' + f(hw[1]) + ') rotate(' + f((p.aN[1]) * fc + 180) + ')">' + R(-5, 0, 10, 60, "#8a5a30", { sw: 2 }) + R(-20, 54, 40, 18, "#5a6068", { sw: 2 }) + '</g>'; }
+    if (p.hammer) { var hw = aN[2], ha = (p.aN[1] - 80) * Math.PI / 180, hd = [fc * Math.sin(ha), Math.cos(ha)], he = [hw[0] + hd[0] * 62, hw[1] + hd[1] * 62];
+      g += P("M" + f(hw[0]) + " " + f(hw[1]) + " L" + f(he[0]) + " " + f(he[1]), "#8a5a30", 9) + '<g transform="translate(' + f(he[0]) + ' ' + f(he[1]) + ') rotate(' + f(Math.atan2(hd[1], hd[0]) * 180 / Math.PI) + ')">' + R(-6, -22, 18, 44, "#5a6068", { sw: 2.4, rx: 3 }) + '</g>';
+      window.LAW_TOOL = [ox + (he[0] + hd[0] * 12) * s, oy + (he[1] + hd[1] * 12) * s]; }
     if (p.caulk) { var cw = aN[2]; g += '<g transform="translate(' + f(cw[0]) + ' ' + f(cw[1]) + ') rotate(' + f(fc * 70) + ')">' + R(-8, -10, 16, 56, "#e2b035", { sw: 2 }) + F("M-4 46 L4 46 L0 62 Z", "#ddd", { sw: 2 }) + '</g>'; }
     if (o.phone) { var pw = aN[2]; g += R(pw[0] - 10, pw[1] - 30, 20, 34, "#1e2226", { rx: 3, sw: 2 }) + R(pw[0] - 7, pw[1] - 27, 14, 26, "#7ac8ff", { sw: 0 }); }
     return g + '</g>';
