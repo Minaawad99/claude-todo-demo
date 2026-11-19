@@ -1,0 +1,956 @@
+{
+ "bed": false,
+ "cues": [
+  {
+   "t": 8.14,
+   "file": "sfx/hz-flicker.wav",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 0.9
+  },
+  {
+   "t": 12.77,
+   "file": "sfx/hz-breath.wav",
+   "gain": 0.25,
+   "from": 0,
+   "dur": 1.6
+  },
+  {
+   "t": 24.14,
+   "file": "sfx/hz-breath.wav",
+   "gain": 0.25,
+   "from": 0,
+   "dur": 1.6
+  },
+  {
+   "t": 26.93,
+   "file": "sfx/hz-suck.wav",
+   "gain": 0.5,
+   "from": 0
+  },
+  {
+   "t": 28.48,
+   "file": "sfx/hz-hit.wav",
+   "gain": 0.9,
+   "from": 0,
+   "duck": 0.3
+  },
+  {
+   "t": 32.81,
+   "file": "sfx/hz-breath.wav",
+   "gain": 0.25,
+   "from": 0,
+   "dur": 1.6
+  },
+  {
+   "t": 44.01,
+   "file": "sfx/hz-flicker.wav",
+   "gain": 0.4,
+   "from": 0.35,
+   "dur": 0.5
+  },
+  {
+   "t": 44.01,
+   "file": "sfx/hz-hit.wav",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 1.6
+  },
+  {
+   "t": 48.69,
+   "file": "sfx/hz-breath.wav",
+   "gain": 0.25,
+   "from": 0,
+   "dur": 1.6
+  },
+  {
+   "t": 54.1,
+   "file": "sfx/hz-flicker.wav",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 0.9
+  },
+  {
+   "t": 61.33,
+   "file": "sfx/hz-flicker.wav",
+   "gain": 0.4,
+   "from": 0.35,
+   "dur": 0.5
+  },
+  {
+   "t": 61.33,
+   "file": "sfx/hz-hit.wav",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 1.6
+  },
+  {
+   "t": 65.34,
+   "file": "sfx/hz-breath.wav",
+   "gain": 0.25,
+   "from": 0,
+   "dur": 1.6
+  },
+  {
+   "t": 71.31,
+   "file": "sfx/hz-flicker.wav",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 0.9
+  },
+  {
+   "t": 83.28,
+   "file": "sfx/hz-flicker.wav",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 0.9
+  },
+  {
+   "t": 92.44,
+   "file": "sfx/hz-suck.wav",
+   "gain": 0.5,
+   "from": 0
+  },
+  {
+   "t": 93.99,
+   "file": "sfx/hz-hit.wav",
+   "gain": 0.9,
+   "from": 0,
+   "duck": 0.3
+  },
+  {
+   "t": 99.99,
+   "file": "sfx/hz-breath.wav",
+   "gain": 0.25,
+   "from": 0,
+   "dur": 1.6
+  },
+  {
+   "t": 110.17,
+   "file": "sfx/hz-suck.wav",
+   "gain": 0.5,
+   "from": 0
+  },
+  {
+   "t": 111.72,
+   "file": "sfx/hz-hit.wav",
+   "gain": 0.9,
+   "from": 0,
+   "duck": 0.3
+  },
+  {
+   "t": 118.93,
+   "file": "sfx/hz-flicker.wav",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 0.9
+  },
+  {
+   "t": 122.2,
+   "file": "sfx/hz-breath.wav",
+   "gain": 0.25,
+   "from": 0,
+   "dur": 1.6
+  },
+  {
+   "t": 126.98,
+   "file": "sfx/hz-breath.wav",
+   "gain": 0.25,
+   "from": 0,
+   "dur": 1.6
+  },
+  {
+   "t": 129.89,
+   "file": "sfx/hz-flicker.wav",
+   "gain": 0.4,
+   "from": 0.35,
+   "dur": 0.5
+  },
+  {
+   "t": 129.89,
+   "file": "sfx/hz-hit.wav",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 1.6
+  },
+  {
+   "t": 140.17,
+   "file": "sfx/hz-suck.wav",
+   "gain": 0.5,
+   "from": 0
+  },
+  {
+   "t": 141.72,
+   "file": "sfx/hz-hit.wav",
+   "gain": 0.9,
+   "from": 0,
+   "duck": 0.3
+  },
+  {
+   "t": 143.18,
+   "file": "sfx/hz-flicker.wav",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 0.9
+  },
+  {
+   "t": 151.09,
+   "file": "sfx/hz-breath.wav",
+   "gain": 0.25,
+   "from": 0,
+   "dur": 1.6
+  },
+  {
+   "t": 157.61,
+   "file": "sfx/hz-flicker.wav",
+   "gain": 0.4,
+   "from": 0.35,
+   "dur": 0.5
+  },
+  {
+   "t": 157.61,
+   "file": "sfx/hz-hit.wav",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 1.6
+  },
+  {
+   "t": 167.54,
+   "file": "sfx/hz-flicker.wav",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 0.9
+  },
+  {
+   "t": 172.58,
+   "file": "sfx/hz-breath.wav",
+   "gain": 0.25,
+   "from": 0,
+   "dur": 1.6
+  },
+  {
+   "t": 174.74,
+   "file": "sfx/hz-suck.wav",
+   "gain": 0.5,
+   "from": 0
+  },
+  {
+   "t": 176.29,
+   "file": "sfx/hz-hit.wav",
+   "gain": 0.9,
+   "from": 0,
+   "duck": 0.3
+  },
+  {
+   "t": 177.22,
+   "file": "sfx/hz-flicker.wav",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 0.9
+  },
+  {
+   "t": 180.06,
+   "file": "sfx/hz-breath.wav",
+   "gain": 0.25,
+   "from": 0,
+   "dur": 1.6
+  },
+  {
+   "t": 190.3,
+   "file": "sfx/hz-flicker.wav",
+   "gain": 0.4,
+   "from": 0.35,
+   "dur": 0.5
+  },
+  {
+   "t": 190.3,
+   "file": "sfx/hz-hit.wav",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 1.6
+  },
+  {
+   "t": 190.19,
+   "file": "sfx/hz-suck.wav",
+   "gain": 0.5,
+   "from": 0
+  },
+  {
+   "t": 191.74,
+   "file": "sfx/hz-hit.wav",
+   "gain": 0.9,
+   "from": 0,
+   "duck": 0.3
+  },
+  {
+   "t": 192.92,
+   "file": "sfx/hz-flicker.wav",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 0.9
+  },
+  {
+   "t": 200.69,
+   "file": "sfx/hz-breath.wav",
+   "gain": 0.25,
+   "from": 0,
+   "dur": 1.6
+  },
+  {
+   "t": 206.03,
+   "file": "sfx/hz-suck.wav",
+   "gain": 0.5,
+   "from": 0
+  },
+  {
+   "t": 207.58,
+   "file": "sfx/hz-hit.wav",
+   "gain": 0.9,
+   "from": 0,
+   "duck": 0.3
+  },
+  {
+   "t": 211.71,
+   "file": "sfx/hz-breath.wav",
+   "gain": 0.25,
+   "from": 0,
+   "dur": 1.6
+  },
+  {
+   "t": 220.89,
+   "file": "sfx/hz-breath.wav",
+   "gain": 0.25,
+   "from": 0,
+   "dur": 1.6
+  },
+  {
+   "t": 0,
+   "file": "sfx/hz-drone.wav",
+   "gain": 0.32,
+   "from": 0,
+   "dur": 22,
+   "duck": 0.4
+  },
+  {
+   "t": 22,
+   "file": "sfx/hz-drone.wav",
+   "gain": 0.32,
+   "from": 0,
+   "dur": 4.78,
+   "duck": 0.4
+  },
+  {
+   "t": 28.88,
+   "file": "sfx/hz-drone.wav",
+   "gain": 0.32,
+   "from": 0,
+   "dur": 22,
+   "duck": 0.4
+  },
+  {
+   "t": 50.88,
+   "file": "sfx/hz-drone.wav",
+   "gain": 0.32,
+   "from": 0,
+   "dur": 22,
+   "duck": 0.4
+  },
+  {
+   "t": 72.88,
+   "file": "sfx/hz-drone.wav",
+   "gain": 0.32,
+   "from": 0,
+   "dur": 19.41,
+   "duck": 0.4
+  },
+  {
+   "t": 94.39,
+   "file": "sfx/hz-drone.wav",
+   "gain": 0.32,
+   "from": 0,
+   "dur": 15.63,
+   "duck": 0.4
+  },
+  {
+   "t": 112.12,
+   "file": "sfx/hz-drone.wav",
+   "gain": 0.32,
+   "from": 0,
+   "dur": 22,
+   "duck": 0.4
+  },
+  {
+   "t": 134.12,
+   "file": "sfx/hz-drone.wav",
+   "gain": 0.32,
+   "from": 0,
+   "dur": 5.9,
+   "duck": 0.4
+  },
+  {
+   "t": 142.12,
+   "file": "sfx/hz-drone.wav",
+   "gain": 0.32,
+   "from": 0,
+   "dur": 22,
+   "duck": 0.4
+  },
+  {
+   "t": 164.12,
+   "file": "sfx/hz-drone.wav",
+   "gain": 0.32,
+   "from": 0,
+   "dur": 10.47,
+   "duck": 0.4
+  },
+  {
+   "t": 176.69,
+   "file": "sfx/hz-drone.wav",
+   "gain": 0.32,
+   "from": 0,
+   "dur": 13.35,
+   "duck": 0.4
+  },
+  {
+   "t": 192.14,
+   "file": "sfx/hz-drone.wav",
+   "gain": 0.32,
+   "from": 0,
+   "dur": 13.74,
+   "duck": 0.4
+  },
+  {
+   "t": 207.98,
+   "file": "sfx/hz-drone.wav",
+   "gain": 0.32,
+   "from": 0,
+   "dur": 13.55,
+   "duck": 0.4
+  },
+  {
+   "t": 0.25,
+   "file": "sfx/px-news-hook.mp3",
+   "gain": 1,
+   "from": 0,
+   "duck": false
+  },
+  {
+   "t": 83.48,
+   "file": "sfx/px-news-ten.mp3",
+   "gain": 1,
+   "from": 0,
+   "duck": false
+  },
+  {
+   "t": 193.12,
+   "file": "sfx/px-news-zero.mp3",
+   "gain": 1,
+   "from": 0,
+   "duck": false
+  },
+  {
+   "t": 0,
+   "file": "sfx/hz-crickets.wav",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 20
+  },
+  {
+   "t": 0.1,
+   "fx": "wind",
+   "gain": 0.12,
+   "dur": 28.43
+  },
+  {
+   "t": 19.83,
+   "file": "sfx/hz-breath.wav",
+   "gain": 0.4,
+   "from": 0
+  },
+  {
+   "t": 21.51,
+   "fx": "snip",
+   "gain": 0.15
+  },
+  {
+   "t": 22.51,
+   "fx": "snip",
+   "gain": 0.15
+  },
+  {
+   "t": 23.5,
+   "fx": "snip",
+   "gain": 0.15
+  },
+  {
+   "t": 25.09,
+   "fx": "tick",
+   "gain": 0.3
+  },
+  {
+   "t": 25.59,
+   "fx": "tick",
+   "gain": 0.3
+  },
+  {
+   "t": 26.09,
+   "fx": "tick",
+   "gain": 0.3
+  },
+  {
+   "t": 28.93,
+   "file": "sfx/hz-riser.wav",
+   "gain": 0.45,
+   "from": 0,
+   "dur": 2.24
+  },
+  {
+   "t": 31.17,
+   "file": "sfx/hz-hit.wav",
+   "gain": 1,
+   "from": 0,
+   "duck": 0.3
+  },
+  {
+   "t": 33.66,
+   "fx": "bell",
+   "gain": 0.25,
+   "dur": 2.5,
+   "f": 220
+  },
+  {
+   "t": 36.58,
+   "file": "sfx/hz-heart-slow.wav",
+   "gain": 0.55,
+   "from": 0,
+   "dur": 12.46
+  },
+  {
+   "t": 36.98,
+   "fx": "creak",
+   "gain": 0.45,
+   "dur": 2.6
+  },
+  {
+   "t": 40.8,
+   "fx": "wind",
+   "gain": 0.2,
+   "dur": 2
+  },
+  {
+   "t": 46.41,
+   "file": "sfx/hz-knock.wav",
+   "gain": 0.5,
+   "from": 0
+  },
+  {
+   "t": 49.04,
+   "file": "sfx/hz-crickets.wav",
+   "gain": 0.25,
+   "from": 3,
+   "dur": 5.31
+  },
+  {
+   "t": 54.35,
+   "fx": "wind",
+   "gain": 0.2,
+   "dur": 7.23
+  },
+  {
+   "t": 57.41,
+   "file": "sfx/hz-breath.wav",
+   "gain": 0.3,
+   "from": 0
+  },
+  {
+   "t": 61.78,
+   "fx": "creak",
+   "gain": 0.35,
+   "dur": 2.4
+  },
+  {
+   "t": 61.78,
+   "file": "sfx/hz-heart-slow.wav",
+   "gain": 0.45,
+   "from": 0,
+   "dur": 4.11
+  },
+  {
+   "t": 66.29,
+   "fx": "bell",
+   "gain": 0.3,
+   "dur": 2.5,
+   "f": 220
+  },
+  {
+   "t": 68.69,
+   "fx": "bell",
+   "gain": 0.2,
+   "dur": 2.5,
+   "f": 165
+  },
+  {
+   "t": 71.86,
+   "file": "../_templates/sketch/sfx/px-paper.mp3",
+   "gain": 0.4,
+   "from": 0,
+   "dur": 0.6
+  },
+  {
+   "t": 72.81,
+   "file": "sfx/hz-knock.wav",
+   "gain": 0.45,
+   "from": 0
+  },
+  {
+   "t": 77.39,
+   "fx": "beep",
+   "gain": 0.08
+  },
+  {
+   "t": 77.84,
+   "fx": "beep",
+   "gain": 0.08
+  },
+  {
+   "t": 78.29,
+   "fx": "beep",
+   "gain": 0.08
+  },
+  {
+   "t": 78.74,
+   "fx": "beep",
+   "gain": 0.08
+  },
+  {
+   "t": 79.19,
+   "fx": "beep",
+   "gain": 0.08
+  },
+  {
+   "t": 79.64,
+   "fx": "beep",
+   "gain": 0.08
+  },
+  {
+   "t": 81.54,
+   "file": "sfx/hz-flicker.wav",
+   "gain": 0.25,
+   "from": 1.2,
+   "dur": 1.2
+  },
+  {
+   "t": 94.54,
+   "file": "sfx/hz-siren.wav",
+   "gain": 0.45,
+   "from": 0
+  },
+  {
+   "t": 95.44,
+   "fx": "snip",
+   "gain": 0.3
+  },
+  {
+   "t": 96.54,
+   "fx": "snip",
+   "gain": 0.3
+  },
+  {
+   "t": 97.64,
+   "fx": "snip",
+   "gain": 0.3
+  },
+  {
+   "t": 94.24,
+   "fx": "wind",
+   "gain": 0.15,
+   "dur": 6.1
+  },
+  {
+   "t": 100.34,
+   "fx": "wind",
+   "gain": 0.2,
+   "dur": 11.63
+  },
+  {
+   "t": 102.24,
+   "file": "sfx/hz-breath.wav",
+   "gain": 0.4,
+   "from": 0,
+   "dur": 1.4
+  },
+  {
+   "t": 104.46,
+   "file": "sfx/hz-breath.wav",
+   "gain": 0.4,
+   "from": 0,
+   "dur": 1.4
+  },
+  {
+   "t": 106.33,
+   "file": "sfx/hz-breath.wav",
+   "gain": 0.4,
+   "from": 0,
+   "dur": 1.4
+  },
+  {
+   "t": 108.28,
+   "fx": "wipe",
+   "gain": 0.3
+  },
+  {
+   "t": 110.31,
+   "file": "sfx/hz-heart-slow.wav",
+   "gain": 0.4,
+   "from": 0,
+   "dur": 2.06
+  },
+  {
+   "t": 111.72,
+   "file": "sfx/hz-siren.wav",
+   "gain": 0.5,
+   "from": 0
+  },
+  {
+   "t": 112.97,
+   "fx": "clank",
+   "gain": 0.35
+  },
+  {
+   "t": 113.97,
+   "fx": "thud",
+   "gain": 0.3
+  },
+  {
+   "t": 119.48,
+   "fx": "paper",
+   "gain": 0.25,
+   "dur": 2.97
+  },
+  {
+   "t": 122.55,
+   "file": "sfx/hz-crickets.wav",
+   "gain": 0.2,
+   "from": 6,
+   "dur": 4.78
+  },
+  {
+   "t": 125.42,
+   "fx": "tick",
+   "gain": 0.3
+  },
+  {
+   "t": 127.33,
+   "fx": "wind",
+   "gain": 0.2,
+   "dur": 2.81
+  },
+  {
+   "t": 130.14,
+   "file": "../_templates/sketch/sfx/px-paper.mp3",
+   "gain": 0.4,
+   "from": 0,
+   "dur": 0.8
+  },
+  {
+   "t": 131.34,
+   "file": "../_templates/sketch/sfx/px-paper.mp3",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 0.8
+  },
+  {
+   "t": 130.14,
+   "file": "sfx/hz-heart-fast.wav",
+   "gain": 0.45,
+   "from": 0,
+   "dur": 6.06
+  },
+  {
+   "t": 133.57,
+   "file": "sfx/hz-riser.wav",
+   "gain": 0.4,
+   "from": 0,
+   "dur": 2.63
+  },
+  {
+   "t": 136.5,
+   "fx": "pop",
+   "gain": 0.3
+  },
+  {
+   "t": 146.24,
+   "fx": "ping",
+   "gain": 0.25
+  },
+  {
+   "t": 149.78,
+   "fx": "ping",
+   "gain": 0.25
+  },
+  {
+   "t": 151.44,
+   "file": "sfx/hz-heart-slow.wav",
+   "gain": 0.4,
+   "from": 0,
+   "dur": 6.42
+  },
+  {
+   "t": 157.86,
+   "file": "sfx/hz-heart-slow.wav",
+   "gain": 0.5,
+   "from": 0,
+   "dur": 6.48
+  },
+  {
+   "t": 158.46,
+   "fx": "tick",
+   "gain": 0.25
+  },
+  {
+   "t": 165.14,
+   "fx": "snip",
+   "gain": 0.4
+  },
+  {
+   "t": 165.39,
+   "fx": "snip",
+   "gain": 0.4
+  },
+  {
+   "t": 170.36,
+   "file": "sfx/hz-knock.wav",
+   "gain": 0.55,
+   "from": 0
+  },
+  {
+   "t": 167.79,
+   "file": "sfx/hz-heart-fast.wav",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 5.14
+  },
+  {
+   "t": 172.93,
+   "file": "sfx/hz-heart-fast.wav",
+   "gain": 0.55,
+   "from": 0,
+   "dur": 3.31
+  },
+  {
+   "t": 173.23,
+   "file": "sfx/hz-riser.wav",
+   "gain": 0.5,
+   "from": 0,
+   "dur": 3.01
+  },
+  {
+   "t": 176.44,
+   "file": "sfx/hz-knock.wav",
+   "gain": 0.9,
+   "from": 0
+  },
+  {
+   "t": 177.04,
+   "fx": "bell",
+   "gain": 0.25,
+   "dur": 2.5,
+   "f": 220
+  },
+  {
+   "t": 177.57,
+   "file": "sfx/hz-knock.wav",
+   "gain": 0.45,
+   "from": 0
+  },
+  {
+   "t": 178.94,
+   "file": "sfx/hz-knock.wav",
+   "gain": 0.45,
+   "from": 0
+  },
+  {
+   "t": 180.41,
+   "fx": "wind",
+   "gain": 0.15,
+   "dur": 6.79
+  },
+  {
+   "t": 183.81,
+   "file": "sfx/hz-knock.wav",
+   "gain": 0.5,
+   "from": 0
+  },
+  {
+   "t": 187.6,
+   "fx": "ping",
+   "gain": 0.2
+  },
+  {
+   "t": 190.55,
+   "file": "sfx/hz-heart-slow.wav",
+   "gain": 0.55,
+   "from": 0,
+   "dur": 1.64
+  },
+  {
+   "t": 190.55,
+   "fx": "creak",
+   "gain": 0.5,
+   "dur": 2.2
+  },
+  {
+   "t": 201.04,
+   "file": "sfx/hz-breath.wav",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 1.8
+  },
+  {
+   "t": 201.04,
+   "fx": "wind",
+   "gain": 0.2,
+   "dur": 6.79
+  },
+  {
+   "t": 210.16,
+   "file": "sfx/hz-knock.wav",
+   "gain": 1,
+   "from": 0
+  },
+  {
+   "t": 210.16,
+   "file": "sfx/hz-hit.wav",
+   "gain": 0.5,
+   "from": 0,
+   "dur": 2.5
+  },
+  {
+   "t": 212.06,
+   "file": "sfx/hz-crickets.wav",
+   "gain": 0.3,
+   "from": 2,
+   "dur": 12.67
+  },
+  {
+   "t": 212.06,
+   "fx": "wind",
+   "gain": 0.12,
+   "dur": 9.18
+  },
+  {
+   "t": 217.89,
+   "fx": "bell",
+   "gain": 0.3,
+   "dur": 2.5,
+   "f": 220
+  },
+  {
+   "t": 221.44,
+   "fx": "bell",
+   "gain": 0.2,
+   "dur": 2.5,
+   "f": 330
+  }
+ ]
+}
