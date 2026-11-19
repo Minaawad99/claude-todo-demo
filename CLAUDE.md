@@ -17,7 +17,8 @@
   measured rules (narration, layout, colours, fonts, motion, sound). They are references to look at: draw in the
   same hand, with real shapes from reference photos, and never copy a drawing or a script.
 - Other styles only when named: `animation` (cartoon panel), `law` («لو»), the old `diagram-v1` build for the X-ray video.
-- **Every «لو» video is 3D (three.js), never 2D,** like the 3D reference video the user sent for that style
-  (`videos/_reference/law/`), and has a real rigged person (face, joints, real proportions) who acts out and reacts to every
-  step: shocked on each «بس…» failure, relieved on each «عشان كده…» fix, going down into the build and back up. See
-  `.claude/skills/law/SKILL.md` section 4.
+- **Every «لو» video looks like the 14 reference videos the user sent (`videos/_reference/law/`, read its README; never ask
+  for them again):** full-screen 9:16 "2.5D" vector drawings (gradients, shading, soft shadows, a cut-open scene that
+  grows), one big word of caption at a time, and their script shape («لو… بس المشكلة… عشان كده… وده اسمه… ومبروك عليك»)
+  in casual Egyptian Arabic. A man in real body proportions acts out and reacts to every step: shocked on each «بس…»
+  failure, relieved on each «عشان كده…» fix, going down into the build and back up. See `.claude/skills/law/SKILL.md`.
