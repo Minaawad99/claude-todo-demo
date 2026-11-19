@@ -127,8 +127,18 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
     - big serif numbers that count up (`count`, `bigNum`, `numBox`);
     - Arabic words in a box (`tag`);
     - dimension lines (`measure`).
-- **People: real body proportions** (the user's rule). Never stick figures or guessed sizes. Copy `fig()`, `limb()`, `ik()`,
-  `rel()` and the `HB` table from `videos/choking/sketch/shots.js`. They follow Drillis & Contini segment lengths as
+- **People: real body proportions and joints that bend the right way** (the user's rule, repeated after «العماص» because
+  arms and knees came out bent backwards). Never stick figures or guessed sizes. **Use the shared `fig()` in
+  `videos/_templates/sketch/_helpers.js`; never copy `fig()` into an episode.** It holds `limb()`, `ik()`, `rel()`, `whole()`,
+  `floor()` and the `HB` table, and it enforces the joints whatever the episode passes:
+  - **elbows** always take the anatomical bend: the elbow sits behind/below the shoulder→hand line and the forearm folds
+    toward the front (`bend` is ignored);
+  - **knees** point forward and the shin folds back (the shin angle relative to the thigh is clamped to 0…−150°);
+  - **lying on the back:** `lean: -90` (head to the right, face up), legs `[[90, 0], [90, 0]]`, hands resting on the body
+    (`rel(20, 6)`), never in the air.
+
+  **Before any render, look at a 2x still of every shot with a person** and check each elbow and knee against your own:
+  an elbow never bends forward, a knee never bends backward, a hand lands on a real spot. They follow Drillis & Contini segment lengths as
   fractions of the height H (H = 400 units):
   - heights: ankle 0.039H, knee 0.285H, hip joint 0.52H, shoulder 0.818H, chin 0.87H;
   - segment lengths: thigh 0.245H, shank 0.246H, foot 0.152H, upper arm 0.186H, forearm 0.146H, hand 0.108H;

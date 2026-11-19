@@ -2,77 +2,9 @@
 // (almond opening, iris, the pink caruncle at the inner corner, the two puncta on the lid margins near it), the tear
 // film as three layers on the cornea (mucin, water, lipid), the meibomian glands as vertical rows of grape-like lobes
 // in the lid opening at the margin, and the tear drain (puncta → canaliculi → lacrimal sac → nasolacrimal duct → nose).
-// People are flat side-view figures with real body proportions (copied from videos/choking/sketch/shots.js).
+// People use the shared fig() in videos/_templates/sketch/_helpers.js (real proportions, joints that bend the right way).
 
-var SHIRT_V = "#7f97a6", SHIRT_R = "#b9a98a", PANTS = "#5b5145", HAIR = "#3e3128";
 var CRUST = "#e2cf8f", CRUST_D = "#c9b06a", SCLERA = "#f4f0e6", IRIS = "#7a6440", TEARC = "#9fc0d2", OILC = "#e3b64f", MUCC = "#a9ad78", CORNEA = "#e8d6c2";
-function pathPts(pts) { return pts.map(function (p, i) { return (i ? "L" : "M") + f(p[0]) + " " + f(p[1]); }).join(" "); }
-function limb(pts, w, col) { var d = pathPts(pts); return '<path d="' + d + '" stroke="' + INK + '" stroke-width="' + f(w + 4) + '" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="' + d + '" stroke="' + col + '" stroke-width="' + f(w) + '" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'; }
-function dirv(a) { a = a * Math.PI / 180; return [-Math.sin(a), Math.cos(a)]; }
-function ik(sh, tg, l1, l2, bend) {   // elbow for a two-bone arm reaching tg; bend +1 / -1 picks the side
-  var dx = tg[0] - sh[0], dy = tg[1] - sh[1], d = Math.min(Math.hypot(dx, dy), l1 + l2 - .01), a = Math.atan2(dy, dx), c = Math.acos(clamp((l1 * l1 + d * d - l2 * l2) / (2 * l1 * d)));
-  return [sh[0] + Math.cos(a + bend * c) * l1, sh[1] + Math.sin(a + bend * c) * l1];
-}
-// Proportions from real body measurements (Drillis & Contini segment lengths as fractions of the standing height H,
-// side-view depths from adult anthropometry). H = 400 units at s = 1:
-//   ankle 0.039H · knee 0.285H · hip joint 0.52H · navel 0.60H · shoulder 0.818H · chin 0.87H · top of head 1.0H
-//   thigh 0.245H · shank 0.246H · foot 0.152H · upper arm 0.186H · forearm 0.146H · hand 0.108H
-//   side depths: chest 0.13H · waist 0.115H · seat 0.14H · head 0.115H deep by 0.13H tall · neck 0.06H
-var HB = { thigh: 98, shin: 98, foot: 61, ankle: 16, sh: 119, chin: 140, head: 166, ua: 74, fa: 58, hand: 43 };
-// o: {x, y (hip joint), s, lean, shirt, hair, legs: [[thigh, shin], [thigh, shin]], hands: [[x,y] | rel(), …], bend: [±1, ±1], belly, mouth, tilt}
-// returns {far, body, near}: draw far, then whatever goes between, then body, then near. at(h, side): a point h above the hip
-// along the trunk and side units to the front (+) or back (−).
-function fig(o) {
-  var s = o.s || 1, up = dirv(180 - (o.lean || 0)), hip = [o.x, o.y], fw = [up[1], -up[0]];
-  function atF(h, side) { return [hip[0] + up[0] * h * s + fw[0] * side * s, hip[1] + up[1] * h * s + fw[1] * side * s]; }
-  var sh = atF(HB.sh, -2), hd = atF(HB.head, 3);
-  var legs = o.legs || [[8, -4], [-8, 4]], arms = o.hands || [null, null], bend = o.bend || [-1, -1], out = { far: "", body: "", near: "" };
-  function seg2(a1, b1, w1, a2, b2, w2, c1, c2) {   // two tapered segments: ink outlines first, then fills, so the joint stays clean
-    var d1 = "M" + f(a1[0]) + " " + f(a1[1]) + " L" + f(b1[0]) + " " + f(b1[1]), d2 = "M" + f(a2[0]) + " " + f(a2[1]) + " L" + f(b2[0]) + " " + f(b2[1]);
-    return '<path d="' + d1 + '" stroke="' + INK + '" stroke-width="' + f(w1 + 4) + '" stroke-linecap="round"/><path d="' + d2 + '" stroke="' + INK + '" stroke-width="' + f(w2 + 4) + '" stroke-linecap="round"/>' +
-      '<path d="' + d1 + '" stroke="' + c1 + '" stroke-width="' + f(w1) + '" stroke-linecap="round"/><path d="' + d2 + '" stroke="' + c2 + '" stroke-width="' + f(w2) + '" stroke-linecap="round"/>';
-  }
-  function leg(i) {
-    var a = dirv(legs[i][0]), b = dirv(legs[i][0] + legs[i][1]), kn = [hip[0] + a[0] * HB.thigh * s, hip[1] + a[1] * HB.thigh * s], an = [kn[0] + b[0] * HB.shin * s, kn[1] + b[1] * HB.shin * s];
-    var sole = [-b[1], b[0]];   // the foot points to the front, square to the shank
-    var toe = [an[0] - Math.abs(sole[0]) * HB.foot * .78 * s, an[1] + b[1] * 0 + 0], heel = [an[0] + 12 * s, an[1]];
-    var shoe = '<path d="M' + f(heel[0]) + ' ' + f(an[1] - 8 * s) + ' L' + f(heel[0]) + ' ' + f(an[1] + HB.ankle * s) + ' L' + f(toe[0] - 6 * s) + ' ' + f(an[1] + HB.ankle * s) + ' Q' + f(toe[0] - 10 * s) + ' ' + f(an[1] + 2 * s) + ' ' + f(toe[0] + 8 * s) + ' ' + f(an[1] - 2 * s) + ' L' + f(an[0] - 4 * s) + ' ' + f(an[1] - 10 * s) + ' Z" fill="' + INK + '"/>';
-    if (o.kneel) shoe = "";
-    return seg2(hip, kn, 36 * s, kn, an, 25 * s, PANTS, PANTS) + shoe;
-  }
-  function arm(i) {
-    var sp = atF(HB.sh - 8, i ? 2 : -2), tg = arms[i] && arms[i].rel ? atF(arms[i].h, arms[i].side) : arms[i] || [sp[0] - 8 * s, sp[1] + (HB.ua + HB.fa) * s * .97];
-    var el = ik(sp, tg, HB.ua * s, HB.fa * s, bend[i]), dx = tg[0] - el[0], dy = tg[1] - el[1], dl = Math.hypot(dx, dy) || 1, wr = [el[0] + dx / dl * Math.min(dl, HB.fa * s), el[1] + dy / dl * Math.min(dl, HB.fa * s)];
-    var ang = Math.atan2(dy, dx) * 180 / Math.PI, hand = G("translate(" + f(wr[0]) + " " + f(wr[1]) + ") rotate(" + f(ang) + ")", '<path d="M-4 -9 C10 -11 ' + f(HB.hand * .62 * s) + ' -8 ' + f(HB.hand * .66 * s) + ' 0 C' + f(HB.hand * .62 * s) + ' 8 10 11 -4 9 Z" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2"/>');
-    return seg2(sp, el, 22 * s, el, wr, 17 * s, o.shirt || SHIRT_V, SKIN) + '<path d="M' + f(el[0] + (wr[0] - el[0]) * .55) + ' ' + f(el[1] + (wr[1] - el[1]) * .55) + ' L' + f(el[0]) + ' ' + f(el[1]) + '" stroke="' + (o.shirt || SHIRT_V) + '" stroke-width="' + f(19 * s) + '" stroke-linecap="butt"/>' + hand;
-  }
-  out.far = arm(1) + leg(1);
-  // trunk outline: front then back, measured depths (chest 0.13H, waist 0.115H, seat 0.14H)
-  var fr = [[-6, 18], [24, 22], [46, 22], [70, 27], [92, 28], [110, 22], [120, 10]], bk = [[120, -12], [104, -24], [80, -24], [52, -19], [26, -27], [4, -30], [-10, -18]];
-  if (o.belly) fr = [[-6, 18], [14, 34], [34, 46], [56, 40], [76, 30], [92, 28], [110, 22], [120, 10]];
-  var pts = fr.concat(bk).map(function (q) { return atF(q[0], q[1]); }), d = "M" + f(pts[0][0]) + " " + f(pts[0][1]);
-  for (var i = 1; i < pts.length; i++) { var m = [(pts[i - 1][0] + pts[i][0]) / 2, (pts[i - 1][1] + pts[i][1]) / 2]; d += " Q" + f(pts[i - 1][0]) + " " + f(pts[i - 1][1]) + " " + f(m[0]) + " " + f(m[1]); }
-  d += " Q" + f(pts[pts.length - 1][0]) + " " + f(pts[pts.length - 1][1]) + " " + f(pts[0][0]) + " " + f(pts[0][1]) + " Z";
-  var belt = atF(10, 0), tor = '<path d="' + d + '" fill="' + (o.shirt || SHIRT_V) + '" stroke="' + INK + '" stroke-width="2.2" stroke-linejoin="round"/>';
-  var pd = [atF(-6, 18), atF(14, 20), atF(14, -28), atF(-10, -18)];
-  tor += '<path d="M' + pd.map(function (q) { return f(q[0]) + " " + f(q[1]); }).join(" L") + ' Z" fill="' + PANTS + '" stroke="' + INK + '" stroke-width="2"/>';
-  var n0 = atF(HB.sh - 4, 2), n1 = atF(HB.chin + 6, 4), neck = limb([n0, n1], 24 * s, SKIN);
-  // head: 0.115H deep, 0.13H tall, face to the front; nose, ear, hair at the back and top
-  var rx = 23 * s, ry = 26 * s, ang = -(o.lean || 0) + (o.tilt || 0), head = G("translate(" + f(hd[0]) + " " + f(hd[1]) + ") rotate(" + f(ang) + ")",
-    '<ellipse rx="' + f(rx) + '" ry="' + f(ry) + '" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2.2"/>' +
-    '<path d="M' + f(-rx * .2) + ' ' + f(-ry * .98) + ' C' + f(rx * .6) + ' ' + f(-ry * 1.12) + ' ' + f(rx * 1.12) + ' ' + f(-ry * .5) + ' ' + f(rx) + ' ' + f(ry * .25) + ' L' + f(rx * .45) + ' ' + f(ry * .05) + ' Q' + f(rx * .2) + ' ' + f(-ry * .55) + ' ' + f(-rx * .78) + ' ' + f(-ry * .6) + ' Z" fill="' + (o.hair || HAIR) + '" stroke="' + INK + '" stroke-width="1.6"/>' +
-    '<path d="M' + f(-rx * .97) + ' ' + f(-ry * .12) + ' l' + f(-rx * .26) + ' ' + f(ry * .3) + ' l' + f(rx * .26) + ' ' + f(ry * .05) + '" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="1.8" stroke-linejoin="round"/>' +
-    '<ellipse cx="' + f(rx * .2) + '" cy="' + f(ry * .08) + '" rx="' + f(rx * .14) + '" ry="' + f(ry * .2) + '" fill="' + SKIN2 + '" stroke="' + INK + '" stroke-width="1.2"/>' +
-    (o.mouth ? '<ellipse cx="' + f(-rx * .82) + '" cy="' + f(ry * .48) + '" rx="' + f(rx * .13) + '" ry="' + f(ry * .08 + ry * .08 * o.mouth) + '" fill="' + INK + '"/>' : ""));
-  out.body = leg(0) + tor + neck + head;
-  out.near = arm(0);
-  out.sh = sh; out.hd = hd; out.hip = hip; out.up = up; out.at = atF;
-  return out;
-}
-function rel(h, side) { return { rel: 1, h: h, side: side }; }
-var THROAT = [rel(130, 16), rel(124, 18)];   // the neck, just under the chin
-function whole(fg) { return fg.far + fg.body + fg.near; }
-function floor(y, x0, x1) { return '<path d="M' + (x0 || -400) + ' ' + y + ' H' + (x1 || 1040) + '" stroke="' + INK + '" stroke-width="2.4"/>' + R(x0 || -400, y, (x1 || 1040) - (x0 || -400), 300, "#e3d7bd", 0) + '<rect x="' + (x0 || -400) + '" y="' + y + '" width="' + ((x1 || 1040) - (x0 || -400)) + '" height="300" fill="url(#hatch)" opacity=".35"/>'; }
 
 // ── the eye from the front: the person's left eye, outer corner on the left, inner corner (nose side) on the right ──
 // o: {open 0..1, crust 0..1, wet 0..1, green, red 0..1, dots: [[x,y,col,r]], puncta 0..1 (highlight), tearLine, lashes, t}
@@ -182,7 +114,7 @@ function bed(t, o) {
   o = o || {}; var s = "", y = o.y || 520, bx = o.x || 80;
   s += R(bx - 20, y + 30, 560, 60, "#a9784d", 2.4) + R(bx - 40, y - 120, 30, 260, "#7c5434", 2.4, 6) + R(bx + 540, y - 60, 30, 200, "#7c5434", 2.4, 6);
   s += R(bx - 10, y - 4, 550, 38, "#efe6d2", 2.2, 8) + '<ellipse cx="' + (bx + 470) + '" cy="' + (y - 10) + '" rx="74" ry="26" fill="#f4ecdb" stroke="' + INK + '" stroke-width="2.2"/>';
-  var br = Math.sin(t * 1.6) * 2, p = fig({ x: bx + 300, y: y - 30 + br * .2, lean: -90, s: .95, shirt: o.shirt || SHIRT_V, hair: o.hair, legs: [[90, 0], [92, 0]], hands: [rel(50, 24), rel(56, 26)], bend: [1, 1], tilt: 0 });
+  var br = Math.sin(t * 1.6) * 2, p = fig({ x: bx + 300, y: y - 30 + br * .2, lean: -90, s: .95, shirt: o.shirt || SHIRT_V, hair: o.hair, legs: [[90, 0], [92, 0]], hands: [rel(20, 6), rel(22, 4)], tilt: 0 });
   s += p.far + p.body + p.near;
   s += '<path d="M' + (bx) + ' ' + (y - 6) + ' C' + (bx + 80) + ' ' + f(y - 66 + br) + ' ' + (bx + 300) + ' ' + f(y - 70 + br) + ' ' + (bx + 380) + ' ' + f(y - 42 + br) + ' L' + (bx + 392) + ' ' + (y + 20) + ' L' + bx + ' ' + (y + 20) + ' Z" fill="#8fa38a" stroke="' + INK + '" stroke-width="2.4"/>';
   for (var i = 0; i < 6; i++) s += '<path d="M' + (bx + 30 + i * 60) + ' ' + f(y - 40 + br) + ' l20 50" stroke="#6f8468" stroke-width="2"/>';
@@ -327,7 +259,7 @@ shot(24, push(330, 440, 1.0, 1.08), function (u, d, t) {
   for (var i = 0; i < 18; i++) s += C(hash(i) * 640, 80 + hash(i + 40) * 280, 2, "#e9dfb8", 0);
   s += floor(690, -200, 900) + bed(t, { y: 600, x: 40, shirt: "#c9a35e", hair: "#5a4636" });
   var hd = bed.head, hand = [hd[0] - 20, hd[1] - 150 + 6 * Math.sin(t * 3)];
-  var m = fig({ x: 560, y: 478, lean: 18, s: 1, shirt: "#5e653a", hair: "#9a9488", hands: [hand, rel(60, 30)], bend: [1, 1], legs: [[10, -4], [-8, 4]] });
+  var m = fig({ x: 560, y: 478, lean: 18, s: 1, shirt: "#5e653a", hair: "#9a9488", hands: [hand, rel(64, 30)], legs: [[12, -6], [-6, -2]] });
   s += m.far + m.body + m.near + '<path d="M' + f(m.at(60, 30)[0] - 26) + ' ' + f(m.at(60, 30)[1]) + ' q-10 60 26 66 q40 -4 30 -66 Z" fill="#c69a6c" stroke="' + INK + '" stroke-width="2.2"/>';
   for (i = 0; i < 14; i++) { var p = (t * .7 + i / 14) % 1; s += C(hand[0] - 10 + (hash(i) - .5) * 30 * p, hand[1] + 14 + p * (hd[1] - hand[1] - 14), 2.6, "#e2c27a", 0); }
   return s + tag("رجل الرمل", 200, 140, at(u, .4, .3), 32, ORANGE) + inset(130, 470, 90, G("scale(1.9) translate(-200 -30)", R(100, -60, 200, 160, SKIN, 0) + '<path d="' + bzd(lids(0).up) + '" stroke="' + INK + '" stroke-width="5" fill="none"/>' + crustBlob(206, 30, 1)), at(u, d * .65, .4));
