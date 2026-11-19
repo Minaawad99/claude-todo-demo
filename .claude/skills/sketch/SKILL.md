@@ -40,7 +40,7 @@ and fix them.
 
 ## 1. Script → `videos/<slug>/script.txt`
 
-**Length:** about 25–27 lines and 260–280 words. The voice comes out about 1:55, and about 1:45 after tightening.
+**Length:** about 25–27 lines and 260–280 words. The voice comes out about 2:00, and about 1:35 after tightening to 0.1 s.
 
 **The fixed spine:**
 1. **Hook:** a fact from the viewer's own life, then its contradiction, spoken to «you», over 2–3 lines. These lines are
@@ -82,15 +82,16 @@ Speak in casual Egyptian Arabic (Cairo dialect), like a calm, confident teacher 
 
 ```
 M=<scratchpad>/asr/sherpa-onnx-whisper-small   # small-encoder.int8.onnx, small-decoder.int8.onnx, small-tokens.txt from huggingface.co/csukuangfj/sherpa-onnx-whisper-small
-python3 ../audio/tighten.py voice-raw.wav voice.wav --max 0.3
+python3 ../audio/tighten.py voice-raw.wav voice.wav --max 0.1 --db -34
 python3 ../align_asr.py voice-raw.wav script.txt raw-timing.json --model $M --gap 0.08 --db -34
-python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max 0.3 --tempo 1.0
+python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max 0.1 --tempo 1.0 --db -34
 ```
 
 - **Check the whole take with the stronger model** to catch invented sentences and misread numbers:
   `~/.cache/hyperframes/whisper/whisper.cpp/build/bin/whisper-cli -m ~/.cache/hyperframes/whisper/models/ggml-large-v3-turbo.bin -l ar` (16 kHz mono).
 - **Fix line boundaries by hand** in `raw-timing.json` where whisper-small drifts. Tides: line 23 started 0.7 s early.
-- **Never speed the voice up.** Tightening the pauses is all.
+- **Never speed the voice up.** Tightening the pauses is all, and **the user wants them cut as far as they go**: `--max 0.1`
+  (asked again for «العماص»: 2:03 raw → 1:34). Ask the TTS for a brisk, flowing pace in `style.txt` too.
 - Tell the user any second that needs their ear (tides: «4 سنتي» heard as «4 سنة»).
 
 ## 3. Drawings: real shapes, the reference's hand

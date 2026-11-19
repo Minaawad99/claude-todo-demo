@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>ليه بنصحى بعماص في عينينا؟ — إيه الحكاية؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&family=Noto+Serif:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* «إيه الحكاية؟» — the «الرسم الهندسي» look, measured from 20 reference videos (videos/_reference/tabizzay/STYLE.md).
+     360×640 canvas (render.js SCALE 3 → 1080×1920). Reference sizes are at 720 wide, so here they are halved.
+     Phases, all driven by TIMING: intro card (hook lines) → bumper (promise line) → panel + captions → summary card → ask box. */
+  :root { --paper: #eee5d0; --ink: #2a2016; --mute: #8f8576; --orange: #bd552f; --blue: #4a6f8a; --olive: #5e653a; --tan: #ddd2b8; }
+  html, body { margin: 0; background: var(--paper); }
+  .canvas { position: relative; width: 360px; height: 640px; background: var(--paper); overflow: hidden; font-family: "Noto Sans Arabic", sans-serif; color: var(--ink); }
+  .layer { position: absolute; inset: 0; }
+  /* the main card: one 1px frame 14px in, the panel fills its top, a rule, the caption */
+  #frame { position: absolute; left: 14px; top: 14px; width: 332px; height: 612px; box-sizing: border-box; border: 1.1px solid var(--ink); }
+  .panel { position: absolute; left: 15px; top: 15px; width: 330px; height: 405px; overflow: hidden; }
+  .panel svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #rule { position: absolute; left: 32px; right: 32px; top: 431px; border-top: .6px solid var(--ink); }
+  #wm { position: absolute; left: 0; right: 0; top: 440px; text-align: center; font: 500 8.5px "Noto Sans Arabic"; color: #b3a995; }
+  #cap { position: absolute; left: 30px; right: 30px; top: 458px; text-align: center; font: 700 14px/1.75 "Noto Sans Arabic", sans-serif; }
+  .k-o { color: var(--orange); } .k-b { color: var(--blue); } .k-g { color: var(--olive); } .k-gr { color: var(--mute); }
+  .k-u { text-decoration: underline; text-decoration-thickness: 1.2px; text-underline-offset: 4px; }
+  /* cards (intro + summary): paper, double frame drawn as SVG so it can draw itself in, crop marks outside the corners */
+  .card { position: absolute; inset: 0; background: var(--paper); display: none; }
+  .card .chrome { position: absolute; inset: 0; width: 360px; height: 640px; }
+  .logo { position: absolute; right: 30px; top: 28px; display: flex; align-items: center; gap: 4px; font: 500 8px "Noto Sans Arabic"; color: #6f6556; }
+  .logo svg { width: 11px; height: 11px; }
+  #intro .cat { position: absolute; left: 0; right: 0; top: 100px; text-align: center; font: 600 8px "Noto Sans Arabic"; color: var(--orange); }
+  #intro .r { position: absolute; left: 157px; width: 46px; border-top: .6px solid var(--ink); }
+  #intro .hook { position: absolute; left: 26px; right: 26px; top: 124px; min-height: 80px; text-align: center; font: 800 17px/1.6 "Noto Sans Arabic"; }
+  #intro .hook span { transition: none; }
+  #introArt { position: absolute; left: 28px; top: 236px; width: 304px; height: 330px; }
+  #bumper { position: absolute; inset: 0; display: none; background: var(--paper); }
+  #bumper svg { position: absolute; left: 90px; top: 98px; width: 180px; height: 200px; }
+  #bumper .name { position: absolute; left: 0; right: 0; top: 310px; text-align: center; font: 700 22px "Noto Sans Arabic"; }
+  #bumper .sub { position: absolute; left: 0; right: 0; top: 352px; text-align: center; font: 600 9.5px "Noto Sans Arabic"; }
+  /* summary card */
+  #outro .q { position: absolute; left: 28px; right: 28px; top: 50px; font: 800 12.5px/1.55 "Noto Sans Arabic"; }
+  #outro .art { position: absolute; left: 28px; right: 28px; top: 98px; height: 140px; background: var(--tan); overflow: hidden; }
+  #outro .art svg { width: 100%; height: 100%; display: block; }
+  #outro .leg { position: absolute; left: 28px; right: 28px; top: 246px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font: 600 7.5px "Noto Sans Arabic"; }
+  #outro .leg b { display: inline-grid; place-items: center; width: 10px; height: 10px; border: .8px solid var(--ink); border-radius: 50%; font: 700 6px "Noto Serif"; margin-left: 4px; vertical-align: -2px; }
+  #outro .stat { position: absolute; left: 28px; right: 28px; top: 290px; display: flex; align-items: center; gap: 9px; }
+  #outro .stat .n { font: 800 34px/1 "Noto Serif", serif; color: var(--orange); direction: ltr; white-space: nowrap; }
+  #outro .stat .t { font: 700 8px/1.55 "Noto Sans Arabic"; }
+  #outro .pts { position: absolute; left: 28px; right: 28px; top: 342px; border-top: .6px solid var(--ink); padding-top: 7px; font: 600 7.5px/1.75 "Noto Sans Arabic"; }
+  #outro .more { margin-top: 5px; font: 500 6.8px/1.6 "Noto Sans Arabic"; color: var(--mute); }
+  #outro .ask { position: absolute; left: 34px; right: 34px; top: 448px; height: 120px; border: 1px solid var(--ink); text-align: center; display: none; }
+  #outro .ask::after { content: ""; position: absolute; inset: 3px; border: .5px solid var(--ink); }
+  #outro .ask .l1 { margin-top: 20px; font: 600 9px "Noto Sans Arabic"; }
+  #outro .ask .l2 { margin-top: 6px; font: 700 12px "Noto Sans Arabic"; }
+  #outro .ask .l3 { margin-top: 8px; font: 700 13px "Noto Sans Arabic"; color: var(--orange); }
+  #outro .ask .blank { display: inline-block; width: 64px; border-bottom: 1.2px solid var(--orange); margin: 0 4px; position: relative; height: 14px; vertical-align: -2px; }
+  #outro .ask .caret { position: absolute; left: 4px; bottom: 2px; width: 1.4px; height: 13px; background: var(--ink); }
+</style></head>
+<body>
+<div class="canvas">
+  <div class="layer" id="main">
+    <div class="panel"><svg id="panelA" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg><svg id="panelB" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg></div>
+    <div id="frame"></div><div id="rule"></div><div id="wm"></div><div id="cap"></div>
+  </div>
+  <div class="card" id="intro"><svg class="chrome" id="introChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="cat">جسم الإنسان</div><div class="r" style="top:118px"></div><div class="hook" id="hook"></div><div class="r" id="hookRule" style="top:214px"></div>
+    <svg id="introArt" viewBox="0 0 608 660"></svg></div>
+  <div id="bumper"><svg id="bumperArt" viewBox="0 0 180 200"></svg><div class="name">إيه الحكاية؟</div><div class="sub">هشرحهالك في <span class="k-o">دقيقة.</span></div></div>
+  <div class="card" id="outro"><svg class="chrome" id="outroChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="q">ليه بنصحى بعماص في عينينا؟</div><div class="art"><svg id="outroArt" viewBox="0 0 600 280"></svg></div><div class="leg"><span><b>1</b>غدد الزيت</span><span><b>2</b>طبقة الدموع</span><span><b>3</b>فتحة التصريف</span><span><b>4</b>العماص</span></div><div class="stat"><div class="n">15</div><div class="t">مرة بترمش في الدقيقة وإنت صاحي،<br>وكل رمشة بتمسح العين</div></div><div class="pts">1. العين متغطية بطبقة دموع فيها مية ومخاط وزيت، وبيتلم عليها تراب وخلايا ميتة.<br>2. بالنهار الرمش بيزق الفضلات للركن، والدموع بتنزل على الأنف.<br>3. وإنت نايم الرمش بيقف والدموع بتقل، فالفضلات تتجمع في الركن والمية تنشف.<div class="more">معلومة زيادة: لو العماص كتير وأصفر أو أخضر والعين حمرا، روح لدكتور.</div></div>
+    <div class="ask" id="ask"><div class="l1">قولولنا…</div><div class="l2">عايزين تعرفوا</div><div class="l3">حكاية<span class="blank"><span class="caret" id="caret"></span></span>؟</div></div>
+  </div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="mark"><rect x="84" y="4" width="32" height="10" fill="#2a2016"/><rect x="94" y="14" width="12" height="14" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" fill="#f4ecdb" stroke="#2a2016" stroke-width="9" stroke-linejoin="round"/><text x="106" y="140" text-anchor="middle" style="font:800 120px Noto Sans Arabic;fill:#bd552f">؟</text></g>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".15"/></pattern>
+  <pattern id="hatchW" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#fff" stroke-width="1" opacity=".25"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#e1d5ba" stroke-width="1.3" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .05 0"/></filter>
+</defs></svg>
+<script src="../timing.js"></script>
+<script>window.DATA = {"caps": [[{"f": 0.0, "h": "كل يوم الصبح،"}, {"f": 0.4516, "h": "أول ما تفتح عينك…"}], [{"f": 0.0, "h": "تلاقي حاجة <span class=\"k-o\">ناشفة</span> لازقة في ركن عينك،"}, {"f": 0.7347, "h": "اسمها <span class=\"k-o\">العماص.</span>"}], [{"f": 0.0, "h": "مع إنك طول الليل كنت"}, {"f": 0.5, "h": "<span class=\"k-u\">مغمّض</span> ومش بتعمل حاجة."}], [{"f": 0.0, "h": "إيه الحكاية؟"}, {"f": 0.4194, "h": "هشرحهالك في دقيقة."}], [{"f": 0.0, "h": "طب العماص ده معمول من إيه؟"}], [{"f": 0.0, "h": "عينك طول الوقت متغطية بطبقة رفيعة من <span class=\"k-b\">الدموع،</span>"}, {"f": 0.75, "h": "مش بس لما <span class=\"k-u\">تعيط.</span>"}], [{"f": 0.0, "h": "الطبقة دي فيها <span class=\"k-b\">مية،</span>"}, {"f": 0.3125, "h": "<span class=\"k-g\">ومخاط</span> بيلزّقها على العين،"}, {"f": 0.7188, "h": "<span class=\"k-o\">وزيت</span> بيمنعها تنشف."}], [{"f": 0.0, "h": "والزيت ده طالع من عشرات"}, {"f": 0.4706, "h": "<span class=\"k-o\">الغدد</span> الصغيرة في طرف <span class=\"k-g\">الجفن.</span>"}], [{"f": 0.0, "h": "وبيتلم عليها <span class=\"k-o\">تراب،</span>"}, {"f": 0.3115, "h": "وخلايا <span class=\"k-o\">ميتة،</span>"}, {"f": 0.5246, "h": "وأي حاجة دخلت عينك طول اليوم."}], [{"f": 0.0, "h": "طب ليه مبنشوفهوش <span class=\"k-u\">بالنهار؟</span>"}], [{"f": 0.0, "h": "لأنك <span class=\"k-b\">بترمش</span> حوالي <span class=\"k-o\">15</span> <span class=\"k-o\">مرة</span> في الدقيقة."}], [{"f": 0.0, "h": "وكل رمشة بتمسح العين زي <span class=\"k-o\">مساحة</span> العربية،"}, {"f": 0.4815, "h": "وتزق الفضلات ناحية <span class=\"k-g\">الركن</span> اللي جنب مناخيرك."}], [{"f": 0.0, "h": "وهناك فيه <span class=\"k-g\">فتحة</span> صغيرة في كل جفن،"}, {"f": 0.5, "h": "بتشرب الدموع وتنزّلها على <span class=\"k-b\">الأنف.</span>"}], [{"f": 0.0, "h": "عشان كده مناخيرك <span class=\"k-b\">بتسيل</span> لما تعيط."}], [{"f": 0.0, "h": "طب وإنت <span class=\"k-u\">نايم</span> بيحصل إيه؟"}], [{"f": 0.0, "h": "مفيش <span class=\"k-o\">رمش</span> <span class=\"k-o\">خالص،</span>"}, {"f": 0.3125, "h": "والعين <span class=\"k-b\">بتقلل</span> الدموع اللي بتعملها."}], [{"f": 0.0, "h": "فالمخاط والزيت والتراب <span class=\"k-o\">يتجمعوا</span> في <span class=\"k-g\">الركن،</span>"}, {"f": 0.7593, "h": "ومحدش يمسحهم."}], [{"f": 0.0, "h": "ومع ساعات النوم المية <span class=\"k-o\">تنشف،</span>"}, {"f": 0.2979, "h": "ويفضل الباقي لازق،"}, {"f": 0.5, "h": "زي بقعة مية على الأرض"}, {"f": 0.734, "h": "تنشف وتسيب <span class=\"k-o\">التراب</span> مكانها."}], [{"f": 0.0, "h": "ولو صحيت والعماص لسه <span class=\"k-b\">طري،</span>"}, {"f": 0.5417, "h": "يبقى المية لسه <span class=\"k-b\">منشفتش.</span>"}], [{"f": 0.0, "h": "والعماص بيزيد مع <span class=\"k-b\">البرد</span> <span class=\"k-o\">والحساسية،</span>"}, {"f": 0.6415, "h": "أو لو نمت <span class=\"k-g\">بالعدسات.</span>"}], [{"f": 0.0, "h": "لكن لو كتير <span class=\"k-o\">وأصفر</span> أو <span class=\"k-o\">أخضر،</span>"}, {"f": 0.2872, "h": "والعين <span class=\"k-o\">حمرا</span> والجفون لازقة في بعض،"}, {"f": 0.6489, "h": "ده ممكن يبقى <span class=\"k-o\">التهاب،</span>"}, {"f": 0.8723, "h": "ولازم <span class=\"k-u\">دكتور.</span>"}], [{"f": 0.0, "h": "وناس كتير فاكرة إن العماص ده <span class=\"k-b\">دموع،</span>"}, {"f": 0.5469, "h": "وإننا <span class=\"k-u\">بنعيط</span> واحنا نايمين. <span class=\"k-o\">لأ.</span>"}], [{"f": 0.0, "h": "بالعكس، الدموع <span class=\"k-b\">بتقل</span> وإنت نايم،"}, {"f": 0.4306, "h": "والعماص ده <span class=\"k-o\">فضلات</span> العين اللي ملحقتش تتمسح."}], [{"f": 0.0, "h": "يعني من الآخر:"}, {"f": 0.15, "h": "عينك بتعمل <span class=\"k-b\">دموع</span> طول اليوم،"}, {"f": 0.42, "h": "والرمش <span class=\"k-g\">بيمسحها،</span>"}, {"f": 0.58, "h": "ولما تنام الرمش <span class=\"k-o\">يقف،</span>"}, {"f": 0.79, "h": "فالفضلات تتجمع <span class=\"k-o\">وتنشف.</span>"}], [{"f": 0.0, "h": "والأغرب إن زمان في أوروبا كانوا"}, {"f": 0.2581, "h": "بيحكوا للعيال عن <span class=\"k-o\">رجل</span> <span class=\"k-o\">الرمل،</span>"}, {"f": 0.4839, "h": "اللي بيرش <span class=\"k-o\">رمل</span> في عينيهم عشان يناموا…"}, {"f": 0.7823, "h": "ويصحوا يلاقوه في <span class=\"k-g\">ركن</span> عينهم."}], [{"f": 0.0, "h": "ودي كانت حكاية العماص."}], [{"f": 0.0, "h": "قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟"}]], "hook": [[{"w": "كل", "c": "", "f": 0.0}, {"w": "يوم", "c": "", "f": 0.0968}, {"w": "الصبح،", "c": "", "f": 0.2258}, {"w": "أول", "c": "", "f": 0.4516}, {"w": "ما", "c": "", "f": 0.5806}, {"w": "تفتح", "c": "", "f": 0.6774}, {"w": "عينك…", "c": "", "f": 0.8387}], [{"w": "تلاقي", "c": "", "f": 0.0}, {"w": "حاجة", "c": "", "f": 0.1224}, {"w": "ناشفة", "c": "k-o", "f": 0.2245}, {"w": "لازقة", "c": "", "f": 0.3469}, {"w": "في", "c": "", "f": 0.4694}, {"w": "ركن", "c": "", "f": 0.5306}, {"w": "عينك،", "c": "", "f": 0.6122}, {"w": "اسمها", "c": "", "f": 0.7347}, {"w": "العماص.", "c": "k-o", "f": 0.8571}], [{"w": "مع", "c": "", "f": 0.0}, {"w": "إنك", "c": "", "f": 0.0714}, {"w": "طول", "c": "", "f": 0.1667}, {"w": "الليل", "c": "", "f": 0.2619}, {"w": "كنت", "c": "", "f": 0.4048}, {"w": "مغمّض", "c": "k-u", "f": 0.5}, {"w": "ومش", "c": "", "f": 0.6429}, {"w": "بتعمل", "c": "", "f": 0.7381}, {"w": "حاجة.", "c": "", "f": 0.881}]], "introLines": 3, "promise": 3, "summary": 25, "cta": 26, "watermark": ""};</script>
+
+<script src="scenes.js"></script>
+<script src="../../_templates/sketch/engine.js"></script>
+</body></html>
