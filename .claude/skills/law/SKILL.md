@@ -1,90 +1,217 @@
 ---
 name: law
 description: >
-  Make an «إيه الحكاية؟» explainer video in the «لو» style the user picked (built like the nuclear shelter video «تعمل ملجأ
-  نووي إزاي؟»): the video opens with «لو عملت كذا… يبقى عملت كذا؟», then builds the thing step by step as a chain of
-  «بس… (problem)» → «عشان كده… (fix)», on one cross-section drawing that grows part by part, and ends with «ومبروك، كده إنت
-  عملت…». Use when the user says "بأسلوب لو", "بطريقة لو", "زي فيديو الملجأ", "law style" or "build-along style". Every
-  other step (voice, references, sounds, render, QA, cover, titles) follows the animation skill.
+  Make an «إيه الحكاية؟» build-along explainer in the user's «لو» style, end to end, matching the 14 reference videos the
+  user sent (videos/_reference/law/, series «ابنيها بنفسك!»): a full-screen 9:16 "2.5D" vector drawing of one cut-open scene
+  that grows part by part, one big caption word at a time, a real-proportion man who acts out and reacts to every step,
+  and the script shape «لو… يبقى عندك…» → «بس المشكلة إن…» → «عشان كده…» → «وده اسمه…» → «والغريب إن…» → «ومبروك عليك،
+  عملت … بنفسك» in casual Cairo Egyptian Arabic. Covers topic choice, script, Gemini voice, alignment, the scene on the
+  shared kit, joint-correct acting, checks, sound effects (no music), 1080×1920 render, qa.py, the reel cover and the
+  TikTok / Instagram+Facebook / YouTube Shorts titles. Use when the user says "لو", "بأسلوب لو", "بطريقة لو",
+  "اعملها بنفسك", "زي فيديو القبو", "زي فيديو الطاقة الشمسية", "build-along" or "law style".
 ---
 
-# «إيه الحكاية؟» — the «لو» style
+# «إيه الحكاية؟» — the «لو» style (build it yourself, step by step)
 
-**Sound without asking: sound effects only (the user's fixed rule, for every video in every skill).** Without the user's
-permission you may add only sound effects (swipes, ticks, dings, whooshes, and effects you synthesize such as a buzz).
-Never add background music of any kind (a kit track, a synthesized bed, a generated or licensed track) unless the user
-asks for it for that video; asking once does not carry over to the next video. `videos/audio/sfx.py` leaves all music
-out unless run with `--music`, so pass that flag only when the user asked.
+Talk to the user in Egyptian Arabic. This file is complete on its own: a new session can make a «لو» video from it alone.
 
-The user's name for this style is **«لو»**. The reference build is the nuclear shelter video: `videos/nuclear-shelter/`
-(script, voice, `cartoon/`, 26 lines, 276 words, 1:45) and its cover `brand/eh-elhekaya/cover-nuclear-shelter-3d-tiktok.html`.
-Its structure came from a video the user sent (a 3D back-garden shelter explainer, "but… so you add…"); the script and the
-drawings are our own.
+**Worked examples to copy from (both pass qa.py):**
+- `videos/solar-building/` «تنوّر عمارة بالشمس إزاي؟» — **the template to copy**: built on the shared kit.
+- `videos/secret-basement/` «تعمل قبو سري إزاي؟» — the first one; its `law/scene.js` is where the kit came from.
 
-It is not a replacement for the «إيه الحكاية؟» animation style: use it only when the user asks for «لو».
+**The user's fixed rules for this style (never break them):**
+1. **Look like the reference videos** in `videos/_reference/law/` (never ask the user for them again; never copy a drawing
+   or a script line from them).
+2. **Full-screen 9:16 "2.5D" drawing**, not a cartoon panel, not three.js, not a black frame with a title.
+3. **A real-proportion man reacts to every step**: shocked on each «بس…», relieved on each «عشان كده…», going into the build
+   and back out.
+4. **Joints and tools physically right** (section 6): he digs DOWN, leans forward to work, elbows and knees never bend the
+   wrong way, nothing passes through walls.
+5. **Sound effects only, no music of any kind** unless the user asks for music for that video (`videos/audio/sfx.py` leaves
+   music out unless run with `--music`; never pass it on your own).
+6. **Ask before every new topic** whether to run in quick mode or with the full checks (one short question). Full checks
+   (the user's usual answer): pose sheet, a frame of every line, motion check, fix, then render. Quick: only the NaN
+   check and qa.py.
+7. **Don't re-render without the user's OK** once a video has been delivered; fix the code and say what changed.
+8. Every video ends with the reel cover and the three platforms' titles, without being asked.
 
-Talk to the user in Egyptian Arabic. Ask the quick-mode question first, as in the animation skill. Voice (Gemini Puck),
-reference research, audio pipeline, sounds, render, QA, cover and titles all work exactly as in
-`.claude/skills/animation/SKILL.md`. Only the script shape, the voice style text, the on-screen title and the way the
-shots build up change.
+## 0. The reference videos (`videos/_reference/law/`)
+
+14 videos (`videos/rNN.mp4`, 720×1280), a 16-frame sheet each (`sheets/rNN.jpg`), rough transcripts
+(`transcripts/rNN.txt`) and `README.md` (what each builds, the measured look, the script shape). Before a new topic:
+read the README, open the sheet of the closest video, and pull frames with ffmpeg
+(`ffmpeg -ss 30 -i videos/r09.mp4 -frames:v 1 /tmp/x.jpg`).
+
+**If a reference video covers the same topic** (r02 = home solar, r09 = a hideout under the bed, r04 = a toilet, r13 = a
+crane, r14 = drainage…), read its transcript first and make ours different on purpose: other steps, another order,
+another «والغريب» fact. Note in `refs/SOURCES.md` what was avoided (see `videos/solar-building/refs/SOURCES.md`).
 
 ## 1. Topics that fit
 
-Something the viewer could, in theory, build or set up themselves, where each part exists to solve a problem: a shelter,
-a house that survives an earthquake, a well, a raft, a pyramid, a space suit, a city on Mars. If the topic is "how does X
-work" with no building, use the animation style instead and say why.
+Something the viewer could, in theory, build or set up, where each part exists to fix a problem: a basement, a solar
+system, a well, a desert cooler, a fridge, a lift, a bridge, a safe, a bakery oven, a desalination plant, a house that
+survives an earthquake. Start from the simplest version («لوح واحد ولمبة», «حفرة وسجادة»). If the topic is "how does X
+work" with nothing to build, say so and suggest the animation or sketch style.
+
+When the user asks for topic ideas, give a table: topic, then its hook line «لو …، يبقى عندك …» plus the first «بس…»; mark
+the two you recommend and why (things Egyptians see every day, many problem → fix rounds).
 
 ## 2. Script → `videos/<slug>/script.txt`
 
-- 24–28 lines, one sentence per line, about 240–280 words → 1:40–1:50 of voice.
-- Casual Cairo Egyptian Arabic, speaking to the viewer as «إنت» («بتنزّل», «بتحفر», «بتركب»).
-- **No «إيه الحكاية؟ هشرحهالك في دقيقة.» line.** The hook question does that job.
-- Fixed shape:
-  - line 0: the naive idea as a question: «لو <عملت الحاجة البسيطة>، يبقى عملت <الحاجة>؟»;
-  - line 1: why it fails: «للأسف لأ، …»;
-  - line 2: the first real step: «عشان كده بتـ…», with a real number;
-  - the middle: 5–7 rounds of **«بس <مشكلة جديدة>.» → «عشان كده <الحل>.»**. A round may get one extra line for a number or
-    the reason the fix works («والخبر الحلو إن…», «فالـ… بيوقفوا…»). Each fix adds one visible part to the build;
-  - one misconception pair near the end: «ناس كتير فاكرة إن…» → «والحقيقة إن…», with the surprising number;
-  - one line of finishing touches: «ضيف …، و…، و…»;
-  - the payoff: «ومبروك، كده إنت عملت <الحاجة>.»;
+- 23–26 lines, one sentence per line, 270–290 words → 1:45–1:55 of voice. Casual Cairo Egyptian Arabic, «إنت» throughout
+  («بتحط», «بتركّب», «بتحفر»).
+- Shape (from the reference transcripts, in our dialect):
+  - line 0: «لو <the naive simple version>، يبقى عندك <the thing>.» (a statement, can be a question);
+  - line 1: «بس المشكلة إن …» (why it fails);
+  - then 6–9 rounds of **«بس …» → «عشان كده بت… …»**, each fix adding ONE visible part, many with a real number, and some
+    naming the part: «…، وده اسمه منظّم الشحن» / «ودي اسمها طلمبة الرشح»;
+  - one surprise pair near the end: «والغريب إن ناس كتير فاكرة إن …» → «والحقيقة إن …» with the number, then its fix;
+  - one line of finishing touches: «وكده فاضل عليك …، و…، و…»;
+  - the payoff: «ومبروك عليك، عملت <the thing> بنفسك.»;
   - last line, exactly: «قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟».
-- Write numbers as words when the voice must say them («تسعين سنتي», «تسعة وتسعين وتسعة من عشرة في المية»).
-- Verify every fact and list the sources in `refs/SOURCES.md`. Tell the user which facts are surprising and that they were
-  checked.
-- Run it through the `humanizer` skill, keeping the «بس / عشان كده» pattern and the last line word for word. Give the script
-  in one copy-ready code block, commit it, then give the voice settings.
+- No mid-video plug (theirs says "الرابط في البايو"; we don't). No «إيه الحكاية؟ هشرحهالك في دقيقة.» line.
+- Numbers the voice must say are written as words («خمسمية وات», «ستاشر في المية»).
+- Verify every fact (WebSearch), write `refs/SOURCES.md` with links, and leave out what can't be confirmed (say so there).
+  Tell the user which facts are surprising and that they were checked.
+- Keep it natural (the `humanizer` skill's rules), keep the «بس / عشان كده» chain and the last line word for word.
+  Show the script in one copy-ready code block and commit it.
 
-## 3. Voice style text (`videos/<slug>/style.txt`)
+## 3. Voice (generated here with Gemini TTS; the key comes from the environment, never read or print it)
 
-Same voice and model as the animation skill (Puck, gemini-3.8-flash-tts, temperature 1). Fill in the topic and the key
-words:
+`videos/<slug>/style.txt` (fill in the topic and the key words):
 
 ```
-Speak in casual Egyptian Arabic (Cairo dialect), like a friendly YouTuber walking the viewer step by step through building <the thing>, each problem followed by its fix. Warm, confident and curious, with real amazement on the surprising facts and numbers, and a little suspense on each "بس" problem before the "عشان كده" fix. Natural, relaxed conversational speed, not rushed. Take a short natural breath between sentences, and don't stop at commas. Emphasize key words like <word>, <word>, <word>. Make the opening question intriguing and the final "ومبروك" proud and playful. Never use Modern Standard Arabic pronunciation; pronounce ق as a glottal stop like Cairenes.
+Speak in casual Egyptian Arabic (Cairo dialect), like a friendly YouTuber walking the viewer step by step through <building the thing>, each problem followed by its fix. Warm, confident and curious, with real amazement on the surprising facts and numbers, and a little suspense on each "بس" problem before the "عشان كده" fix. Natural, relaxed conversational speed, not rushed. Take a short natural breath between sentences, and don't stop at commas. Emphasize key words like <word>, <word>, <word>. Make the opening line intriguing and the final "ومبروك عليك" proud and playful. Never use Modern Standard Arabic pronunciation; pronounce ق as a glottal stop like Cairenes.
 ```
 
-## 4. Screen
+From `videos/<slug>/`:
 
-The same cartoon panel as the animation style (black frame, Noto title, one 16:9 panel, word-by-word captions with yellow
-keywords, the «إيه الحكاية؟» brand at the bottom). Start from a copy of `videos/nuclear-shelter/cartoon/`.
+```
+python3 ../tools/tts.py script.txt style.txt voice-raw.wav --voice Puck --model gemini-3.8-flash-tts
+M=<scratchpad>/asr/sherpa-onnx-whisper-small   # once: curl -L https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-whisper-small.tar.bz2 | tar xj
+python3 ../audio/tighten.py voice-raw.wav voice.wav --max 0.3
+python3 ../align_asr.py voice-raw.wav script.txt raw-timing.json --model $M --gap 0.08 --db -34
+python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max 0.3 --tempo 1.0
+```
 
-- **Title:** «تعمل <الحاجة> إزاي؟» (Noto 900), with a short yellow sub-title giving the setting or the twist («في جنينة
-  بيتك!»).
-- **One build that grows.** Draw the thing once, in cross-section, as a function that takes the parts built so far (the
-  shelter: `pipeShelter(t, {parts: {turns, air, valve, door, escape, beds, food, radio, geiger}})`, plus `entrance`,
-  `airPipe`, `escape`). Every «عشان كده» shot turns on one more part, so the viewer watches the thing get built. Keep
-  parts from earlier shots on screen in later ones.
-- **Problem shots («بس…»)** show the danger hitting the build so far: the blast wave, the dust falling, the rays coming in
-  through the door, people sweating. Use a red ✗ or a shocked character on what fails.
-- **Fix shots («عشان كده…»)** push in on the new part as it appears, with a brush tag naming it and the number.
-- **The payoff shot** pulls back to show the whole build at once, every part in place, the people inside happy.
-- Motion and QA rules as in the animation skill.
+- If `voice-raw.wav` is missing after tts.py, run it once more (it can fail silently). A 429 = daily quota: tell the user.
+- Read the heard-text column: a line that heard far more words than it has means invented text → generate again. Natural
+  speed only, never atempo. Too long → shorten the script.
 
-## 5. Cover
+## 4. The look (measured from the references; `videos/_reference/law/README.md`)
 
-Same rules as the animation skill (full bleed, dark top and bottom, a warm glow behind the subject, Noto text, safe area
-y 120–840). The «لو» reference is the shelter cover: a 3D (three.js) diorama of the finished build cut open, with one
-or two tags for the key numbers. The hook title is the on-screen title («تعمل … إزاي؟»), the yellow sub-title the setting,
-and the punch line is the misconception fact («هتقعد فيه أسبوعين بس / مش سنين زي ما فاكر!»). Serve the repo with
-`python3 -m http.server` from the root to shoot a three.js cover.
+- **Full bleed 9:16**: one SVG `viewBox="0 0 1080 1920"` redrawn every frame; the page is 360×640 CSS px rendered ×3.
+- **"2.5D" vector**: gradients, inner shading, soft drop shadow (`filter="url(#sh)"`), highlights on glass/metal, thin dark
+  outlines (`INK #2a2522`). A sky with a big soft sun glow and drifting clouds, a faded far town and palms, the ground
+  line with grass, the earth cut open below with a stony soil texture; buildings cut open to show inside.
+- **One scene that grows**: the build is drawn once with every part as a switch; each «عشان كده» line brings its part in
+  with motion (lowered, poured, slid, drawn along its path) and it stays in later lines.
+- **Camera**: always moving inside the scene, `[cx, cy, zoom]` from → to per line with a slow drift and a 0.35 s
+  cross-zoom from the last shot. Frame the action: the man and the new part fill the frame (roof shots ≈ zoom 1.5–1.9).
+  The payoff pulls back to the whole build.
+- **Caption: one word at a time**, white, Noto Sans Arabic 900 40 px CSS, 7 px dark stroke, soft shadow, low on the
+  screen (`top: 536px`) so it never covers the man; keywords in yellow (`K` in `build.py`).
+- **Labels**: dark rounded pills with a pointer (`pill()`), yellow/green text for fixes, a red pill for failures
+  («هيقع عليك!», «محبوس!»); a red ✗ in a circle (`xmark`) on what fails, a green ✓ (`vmark`), a yellow pulsing ring
+  (`ring`) on the new part. Night (`sky(t, true)`) for "no power at night"-type problems; confetti on the payoff.
+- **Brand**: the small red «إيه الحكاية؟» badge top-left (in the template).
+- Sizes are real: the man is ≈1.75 m against the build (a 3 m floor ≈ 230–280 units → man scale ≈ 0.56 next to a
+  building; scale 1 inside a 460-unit-high basement).
+
+## 5. Build: copy the template episode
+
+```
+mkdir -p videos/<slug>/law && cp videos/solar-building/law/{template.html,build.py,scene.js} videos/<slug>/law/
+```
+
+- `template.html`: the 9:16 page, gradients in `<defs>`, then `../timing.js`, `window.LAW_GY = <ground y>`, the kit
+  `../../_templates/law/kit.js`, then `scene.js`. Set the `<title>`; add gradients the new objects need.
+- `build.py`: set `K` (caption keywords). `python3 build.py` → `index.html` with word timings spread over each line.
+- `scene.js` (the episode): draw the place as functions (`building()`, `flat()`, `panel()`…), a `scene(t, o, h)` that
+  stacks `K.sky`, palms, `K.ground`, the place and the parts from `K.has(o)`; `K.steps([[line, {part: 1}], …])` turns a part
+  on from the line AFTER the one that adds it (that line draws it arriving itself); then exactly one
+  `K.shot(line, [cx, cy, z], [cx, cy, z], function (u, d, t) { … })` per script line (`u` time into the line, `d` its
+  length, `t` absolute). Export what the cover needs (e.g. `window.__solar = { scene: scene }`).
+- **The kit** (`videos/_templates/law/kit.js`, `window.LAW`): helpers `R P F C T clamp ease lerp hash pop`, `sky`, `palm`,
+  `bush`, `ground`, the man (`man`, `POSES`, `pose`, `mixPose`, `act`), `pill`, `xmark`, `vmark`, `ring`, `confetti`,
+  `arrowH`, `arrowV`, `shot`, `steps`, `has`, `setLine`. Improve the kit rather than copying code into an episode.
+
+### Acting with `act(u, keys, t)`
+
+`keys = [[u0, {x, y, f, p, mood, …}], [u1, {…}], …]`: position eases between keys, the pose blends over the last 0.45 s.
+`y` is the floor his feet stand on; `hip: [x, y]` instead for sitting or climbing; `f` 1/−1 facing; `jump: 1` on a key =
+cut to that position (moving to another room/floor); `s` scale; `shirt`/`vest`/`hat` for other people (visitor,
+engineer). A key with a different `x` and no pose walks him there. Poses: `stand walk dig hammer caulk climb shock cover
+cheer thumbs point pointUp worry cough push breathe shrug collar wave reach crouch sit sitDesk ear hush`; moods:
+`n happy proud shock worry dizzy sick`.
+
+Each line needs both: **«بس…» lines** end on a failure reaction (`shock`, `cover`, `worry`, `cough`, `collar`+`dizzy`),
+**«عشان كده…» lines** show him doing the fix (`push`, `hammer`, `reach`, `caulk`, `crouch`) then a success reaction
+(`thumbs`, `cheer`, `breathe`+`happy`). He is never frozen through a line.
+
+## 6. Joints and actions must be physically right
+
+- Angles are from straight down, + towards where he faces; `lean` + leans the torso FORWARD (working, digging,
+  coughing, pushing, crouching, picking up = forward, head over the hands).
+- An elbow only folds forward/up (forearm ≥ upper arm), a knee only folds backward (shin ≤ thigh); `man()` clamps both.
+- A tool's working end points at what it works on: the shovel blade goes down into the ground in front of his feet (top
+  hand at the chest, lower hand forward on the handle) with a push-down stroke and a lift-and-toss stroke; a hammer head
+  hits the nail; a caulk nozzle touches the crack; a reaching hand ends on the book or the box.
+- Feet on the floor he stands on (never floating or sunk), sitting on the seat, climbing on the rungs; no body part
+  through a wall, floor, ceiling or furniture; people stay in frame.
+
+## 7. Checks (full mode) — all before rendering
+
+```
+cd videos/<slug>/law && python3 build.py
+node -e "global.window={};const fs=require('fs');eval(fs.readFileSync('../timing.js','utf8'));window.LAW_GY=<GY>;eval(fs.readFileSync('../../_templates/law/kit.js','utf8'));eval(fs.readFileSync('scene.js','utf8'));let n=0;const s={set innerHTML(v){if(/NaN|undefined/.test(v))n++}};for(let t=0;t<window.TIMING.duration;t+=0.2)window.__scene(s,t);console.log('bad frames',n)"
+node ../../tools/fsheet.js $PWD/index.html <scratch>/sheet 2.2     # one frame per line; tile with ffmpeg and LOOK
+# poses: open videos/_templates/law/poses.html?ep=<slug> in playwright at 2000×1650, screenshot, LOOK
+node ../../tools/motion.js $PWD/index.html 0 <duration>             # aim ≤ 0.3 s still
+```
+
+Tile the sheet: `ffmpeg -framerate 1 -i sheet/%02d.png -vf "tile=8x3:padding=4" -frames:v 1 sheet.png`. Look for:
+a man too big/small for the build, a man at the frame edge, labels cut off or over his face, empty graphs, parts drawn
+before their line, overlaps (screens on batteries), wrong joints. Fix and look again (usually 2–3 rounds).
+
+## 8. Sound effects (no music)
+
+`videos/<slug>/cues.js` → `cues.json` (copy `videos/solar-building/cues.js`): a whoosh before every line, then effects
+on the actions with `a(t, fx, gain, dur)`; synthesized `fx_*` in `videos/audio/sfx.py` (pop, chime, ping, beep, tick,
+whoosh, wipe, thud, clank, creak, motor, hum, zap, spark, sizzle, charge, servo, boom, drip, fill, slosh, steam, spin,
+bell, notify…). Recorded clips with `rec(t, file, gain, from, dur, duck)` from `videos/*/sfx/px-*.mp3` and the kit
+`videos/_templates/sketch/sfx/` (ding, water-rush, wind-gust, clock-ticking, swipe, paper; the cough, exhale and heartbeat
+clips sit in `videos/secret-basement/sfx/`). Never the `px-music-*` files. Missing real sounds: ask the user for Pixabay
+clips (they download them; never get around the bot check).
+
+```
+node cues.js && python3 ../audio/sfx.py voice.wav cues.json <scratch>/<slug>-mix.wav
+```
+
+## 9. Render and QA (from `videos/`, in the background; ~40–60 min for this look)
+
+```
+TAIL=1.5 node render.js $PWD/<slug>/law/index.html <mix.wav> <scratch>/<slug>-raw.mp4
+ffmpeg -y -i <raw.mp4> -c:v copy -af "alimiter=limit=0.6:level=false:attack=1:release=60" -c:a aac -b:a 192k -ar 48000 <final.mp4>
+python3 qa.py <final.mp4>     # must say PASS: no still > 0.75 s, frozen total in budget, ≈ −14 LUFS
+```
+
+A render loads `scene.js` once at the start: finish every edit before starting it (if you edit after, stop it and
+restart). Send the mp4 with SendUserFile; keep mixes and mp4s in the scratchpad, never in git.
+
+## 10. Cover and titles (always)
+
+- **Cover** `brand/eh-elhekaya/cover-<slug>-tiktok.html` (copy `cover-solar-building-tiktok.html`): 540×960, the video's own
+  scene (load timing.js, the kit, the episode's scene.js, `K.setLine(<last line>)`) zoomed on the finished build with the
+  man reacting and one or two pills with the key numbers; dark fades top (0–330) and bottom (660–960); text in Noto Sans
+  Arabic: «إيه الحكاية؟» 15 px at 132, the hook title 900 34–42 px at 154 (one line), a yellow 800 24 px sub-title at 214,
+  the surprise punch line 800 34 px at 722 with the number in yellow (Arabic digits «١٦٪» so it reads right-to-left) and a
+  grey 24 px second line. Keep all text inside y 120–840 and `left: 24px; right: 64px`.
+  `node videos/tools/cover.js $PWD/<html> $PWD/brand/eh-elhekaya/tiktok-cover-<slug>-1080x1920.png`, look, fix, send.
+- **Titles** in `videos/<slug>/titles.md` and in the reply, each in its own code block: TikTok 3 hook titles + a short
+  description with hashtags (#إيه_الحكاية first); Instagram (shared to Facebook) one title + a longer description with 3–4
+  emoji bullets and the closing question; YouTube Shorts one title ending in #shorts + a two-line description.
+
+## 11. Git
+
+Commit and push each step on the session's branch (script + voice; scene + cues; cover + titles), never the mp4s or mixes.
