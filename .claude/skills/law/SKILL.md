@@ -23,7 +23,8 @@ drawings are our own.
 
 It is not a replacement for the «إيه الحكاية؟» animation style: use it only when the user asks for «لو».
 
-Talk to the user in Egyptian Arabic. Ask the quick-mode question first, as in the animation skill. Voice (Gemini Puck),
+Talk to the user in Egyptian Arabic. Ask the quick-mode question first, as in the animation skill. **The screen is 3D with a reacting character (section 4), in
+every «لو» video.** Voice (Gemini Puck),
 reference research, audio pipeline, sounds, render, QA, cover and titles all work exactly as in
 `.claude/skills/animation/SKILL.md`. Only the script shape, the voice style text, the on-screen title and the way the
 shots build up change.
@@ -64,22 +65,34 @@ words:
 Speak in casual Egyptian Arabic (Cairo dialect), like a friendly YouTuber walking the viewer step by step through building <the thing>, each problem followed by its fix. Warm, confident and curious, with real amazement on the surprising facts and numbers, and a little suspense on each "بس" problem before the "عشان كده" fix. Natural, relaxed conversational speed, not rushed. Take a short natural breath between sentences, and don't stop at commas. Emphasize key words like <word>, <word>, <word>. Make the opening question intriguing and the final "ومبروك" proud and playful. Never use Modern Standard Arabic pronunciation; pronounce ق as a glottal stop like Cairenes.
 ```
 
-## 4. Screen
+## 4. Screen — 3D, with a character who lives through every step (the user's fixed rule)
 
-The same cartoon panel as the animation style (black frame, Noto title, one 16:9 panel, word-by-word captions with yellow
-keywords, the «إيه الحكاية؟» brand at the bottom). Start from a copy of `videos/nuclear-shelter/cartoon/`.
+**Every «لو» video is 3D, never a flat 2D cartoon** (the user's decision after «تعمل قبو سري إزاي؟», whose first cut was 2D
+and was rejected). It must look like the 3D video the user sent as the style reference for «لو»: a 3D diorama of the build,
+cut open in section, with the camera moving around it. **Watch the reference before building** (see below); if it is not in
+the repo, ask the user to send it once and save it there.
 
-- **Title:** «تعمل <الحاجة> إزاي؟» (Noto 900), with a short yellow sub-title giving the setting or the twist («في جنينة
-  بيتك!»).
-- **One build that grows.** Draw the thing once, in cross-section, as a function that takes the parts built so far (the
-  shelter: `pipeShelter(t, {parts: {turns, air, valve, door, escape, beds, food, radio, geiger}})`, plus `entrance`,
-  `airPipe`, `escape`). Every «عشان كده» shot turns on one more part, so the viewer watches the thing get built. Keep
-  parts from earlier shots on screen in later ones.
-- **Problem shots («بس…»)** show the danger hitting the build so far: the blast wave, the dust falling, the rays coming in
-  through the door, people sweating. Use a red ✗ or a shocked character on what fails.
-- **Fix shots («عشان كده…»)** push in on the new part as it appears, with a brush tag naming it and the number.
-- **The payoff shot** pulls back to show the whole build at once, every part in place, the people inside happy.
-- Motion and QA rules as in the animation skill.
+- **Reference video:** `videos/_reference/law/` (the user's 3D build-along video; put it there with a `README.md` of what each
+  part shows the first time the user sends it, then never ask again). Pull frames and motion strips with ffmpeg and copy its
+  look: the materials, the lighting, the camera moves, how parts appear, how the character moves.
+- **Built in three.js**, like the shelter and basement covers (`brand/eh-elhekaya/cover-nuclear-shelter-3d-tiktok.html`,
+  `cover-secret-basement-3d-tiktok.html`): the same diorama scene is the video. One page renders every frame with
+  `renderAt(t)` (the same render/QA tools as the cartoon panel), in the 16:9 panel under the Noto title, with the
+  word-by-word captions and the brand.
+- **One build that grows.** The scene is built once with every part as an object; each «عشان كده» line turns one more part
+  on (it rises, slides or is poured into place) and parts stay on in later lines. The camera pushes in on the new part,
+  then pulls back.
+- **A real person who reacts to every step (the user's fixed rule).** A rigged human (a glTF with a skeleton, e.g.
+  `brand/eh-elhekaya/models/person.glb`, posed and animated by turning its joints; real proportions, a face, elbows and
+  knees, never primitive shapes), who **lives through each line**: digs, climbs down into the build and up out of it, walks,
+  sits, pulls the book, opens the door. On every «بس…» problem the person reacts to the failure (startled, steps back, covers
+  the head, coughs, panics); on every «عشان كده…» fix the person reacts to the success (relieved, thumbs up, tries the new
+  part, nods). Never leave the person standing still through a line, and never let any body part pass through a wall,
+  floor or piece of furniture: check from the front, the side and above.
+- **Problem lines** show the danger hitting the build in 3D (earth caving in, water rising, the gas rising) with a red ✗;
+  **fix lines** show the part arriving, with a brush tag naming it and the number.
+- **The payoff line** orbits the whole build, every part in place, the person happy inside.
+- Motion and QA rules as in the animation skill (qa.py must PASS).
 
 ## 5. Cover
 
