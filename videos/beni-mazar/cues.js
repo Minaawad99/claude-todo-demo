@@ -6,7 +6,11 @@ global.window = {}; eval(require('fs').readFileSync(__dirname + '/timing.js', 'u
 const T = window.TIMING.lines, END = window.TIMING.duration, L = i => i >= T.length ? END : T[i].start, D = i => L(i + 1) - L(i), c = [];
 const a = (t, fx, gain, dur, o) => c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), fx, gain }, dur ? { dur: +dur.toFixed(2) } : {}, o || {}));
 const r = (t, file, gain, from, dur, o) => c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), file, gain, from: from || 0 }, dur ? { dur: +dur.toFixed(2) } : {}, o || {}));
-const H = n => 'sfx/hz-' + n + '.wav';
+// real recordings from Pixabay (the user sent them; Pixabay Content License) replace the synthesized ones by name
+const PB = { scream: 'pb-scream.wav', crowd: 'pb-crowd.wav', 'crowd-agitated': 'pb-crowd-agitated.wav', dogs: 'pb-dogs.mp3', rooster: 'pb-rooster.mp3',
+  steps: 'pb-steps.mp3', radio: 'pb-radio.wav', shutters: 'pb-shutter.mp3', typewriter: 'pb-typewriter.mp3', 'door-bang': 'pb-door.wav', crickets: 'pb-crickets.mp3' };
+const PBDUR = { radio: 2.6, shutters: 2.4, dogs: 6, crowd: 8, 'crowd-agitated': 8, steps: 4, typewriter: 3, crickets: 20 };
+const H = n => 'sfx/' + (PB[n] || 'hz-' + n + '.wav');
 // the cut each shot opens with (same table as film/shots.js); a shot starts 0.25 s before its line
 const TR = { 1: 'flick', 2: 'dip', 4: 'dip', 5: 'smash', 6: 'dip', 8: 'glitch', 9: 'dip', 10: 'flick', 12: 'glitch', 13: 'smash', 15: 'glitch', 14: 'dip', 16: 'flick', 19: 'flick', 20: 'smash', 21: 'dip',
   25: 'smash', 27: 'flick', 28: 'dip', 29: 'dip', 30: 'glitch', 33: 'smash', 34: 'flick', 36: 'dip', 37: 'glitch', 39: 'flick', 40: 'dip', 41: 'smash', 42: 'flick', 43: 'dip',
@@ -85,4 +89,5 @@ r(L(41) + 0.45, H('crowd-agitated'), 0.5, 2, 3.2); r(L(42), H('wail'), 0.35, 0, 
 r(L(43), H('steps'), 0.25, 0, 3); r(L(43), H('court-murmur'), 0.15, 2, D(43));
 r(L(50) + 1.0, H('dogs'), 0.15, 0, 5);
 const out = c.filter(q => !(q.fx === 'knock'));
+out.forEach(q => { if (!q.file) return; const k = Object.keys(PB).find(n => q.file === 'sfx/' + PB[n]); if (k && !q.dur && PBDUR[k]) q.dur = PBDUR[k]; });
 require('fs').writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: out }, null, 1)); console.log(out.length, 'cues');

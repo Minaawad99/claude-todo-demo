@@ -485,7 +485,7 @@
   },
   {
    "t": 0,
-   "file": "sfx/hz-crickets.wav",
+   "file": "sfx/pb-crickets.mp3",
    "gain": 0.35,
    "from": 0,
    "dur": 20
@@ -580,7 +580,7 @@
   },
   {
    "t": 49.04,
-   "file": "sfx/hz-crickets.wav",
+   "file": "sfx/pb-crickets.mp3",
    "gain": 0.25,
    "from": 3,
    "dur": 5.31
@@ -790,7 +790,7 @@
   },
   {
    "t": 130.76,
-   "file": "sfx/hz-crickets.wav",
+   "file": "sfx/pb-crickets.mp3",
    "gain": 0.2,
    "from": 6,
    "dur": 4.79
@@ -988,7 +988,7 @@
   },
   {
    "t": 220.28,
-   "file": "sfx/hz-crickets.wav",
+   "file": "sfx/pb-crickets.mp3",
    "gain": 0.3,
    "from": 2,
    "dur": 12.66
@@ -1015,34 +1015,34 @@
   },
   {
    "t": 14.32,
-   "file": "sfx/hz-dogs.wav",
+   "file": "sfx/pb-dogs.mp3",
    "gain": 0.22,
    "from": 0,
    "dur": 6
   },
   {
    "t": 37.58,
-   "file": "sfx/hz-steps.wav",
+   "file": "sfx/pb-steps.mp3",
    "gain": 0.35,
    "from": 0,
    "dur": 6.18
   },
   {
    "t": 40.08,
-   "file": "sfx/hz-dogs.wav",
+   "file": "sfx/pb-dogs.mp3",
    "gain": 0.18,
    "from": 3,
    "dur": 4
   },
   {
    "t": 53.65,
-   "file": "sfx/hz-rooster.wav",
+   "file": "sfx/pb-rooster.mp3",
    "gain": 0.35,
    "from": 0
   },
   {
    "t": 54.85,
-   "file": "sfx/hz-scream.wav",
+   "file": "sfx/pb-scream.wav",
    "gain": 0.5,
    "from": 0
   },
@@ -1054,7 +1054,7 @@
   },
   {
    "t": 56.91,
-   "file": "sfx/hz-crowd-agitated.wav",
+   "file": "sfx/pb-crowd-agitated.wav",
    "gain": 0.5,
    "from": 0,
    "dur": 8.78
@@ -1075,93 +1075,97 @@
   },
   {
    "t": 80.17,
-   "file": "sfx/hz-shutters.wav",
+   "file": "sfx/pb-shutter.mp3",
    "gain": 0.3,
-   "from": 0
+   "from": 0,
+   "dur": 2.4
   },
   {
    "t": 82.37,
-   "file": "sfx/hz-shutters.wav",
+   "file": "sfx/pb-shutter.mp3",
    "gain": 0.25,
    "from": 1.2,
    "dur": 1.2
   },
   {
    "t": 85.21,
-   "file": "sfx/hz-crowd.wav",
+   "file": "sfx/pb-crowd.wav",
    "gain": 0.25,
    "from": 0,
    "dur": 4.64
   },
   {
    "t": 102.44,
-   "file": "sfx/hz-crowd-agitated.wav",
+   "file": "sfx/pb-crowd-agitated.wav",
    "gain": 0.45,
    "from": 0,
    "dur": 6.11
   },
   {
    "t": 102.84,
-   "file": "sfx/hz-radio.wav",
+   "file": "sfx/pb-radio.wav",
    "gain": 0.4,
-   "from": 0
+   "from": 0,
+   "dur": 2.6
   },
   {
    "t": 103.64,
-   "file": "sfx/hz-shutters.wav",
+   "file": "sfx/pb-shutter.mp3",
    "gain": 0.4,
-   "from": 0
+   "from": 0,
+   "dur": 2.4
   },
   {
    "t": 102.64,
-   "file": "sfx/hz-steps.wav",
+   "file": "sfx/pb-steps.mp3",
    "gain": 0.3,
    "from": 0,
    "dur": 6.11
   },
   {
    "t": 120.78,
-   "file": "sfx/hz-radio.wav",
+   "file": "sfx/pb-radio.wav",
    "gain": 0.45,
-   "from": 0
+   "from": 0,
+   "dur": 2.6
   },
   {
    "t": 121.98,
-   "file": "sfx/hz-door-bang.wav",
+   "file": "sfx/pb-door.wav",
    "gain": 0.5,
    "from": 0
   },
   {
    "t": 120.38,
-   "file": "sfx/hz-crowd.wav",
+   "file": "sfx/pb-crowd.wav",
    "gain": 0.3,
    "from": 3,
    "dur": 7.21
   },
   {
    "t": 122.58,
-   "file": "sfx/hz-steps.wav",
+   "file": "sfx/pb-steps.mp3",
    "gain": 0.35,
    "from": 0,
    "dur": 3
   },
   {
    "t": 127.59,
-   "file": "sfx/hz-typewriter.wav",
+   "file": "sfx/pb-typewriter.mp3",
    "gain": 0.4,
    "from": 0,
    "dur": 3.37
   },
   {
    "t": 135.55,
-   "file": "sfx/hz-crowd.wav",
+   "file": "sfx/pb-crowd.wav",
    "gain": 0.25,
    "from": 6,
    "dur": 2.81
   },
   {
    "t": 135.85,
-   "file": "sfx/hz-steps.wav",
+   "file": "sfx/pb-steps.mp3",
    "gain": 0.3,
    "from": 0,
    "dur": 2.81
@@ -1231,7 +1235,7 @@
   },
   {
    "t": 185.2,
-   "file": "sfx/hz-crowd-agitated.wav",
+   "file": "sfx/pb-crowd-agitated.wav",
    "gain": 0.5,
    "from": 2,
    "dur": 3.2
@@ -1245,7 +1249,7 @@
   },
   {
    "t": 188.63,
-   "file": "sfx/hz-steps.wav",
+   "file": "sfx/pb-steps.mp3",
    "gain": 0.25,
    "from": 0,
    "dur": 3
@@ -1259,7 +1263,7 @@
   },
   {
    "t": 221.28,
-   "file": "sfx/hz-dogs.wav",
+   "file": "sfx/pb-dogs.mp3",
    "gain": 0.15,
    "from": 0,
    "dur": 5
