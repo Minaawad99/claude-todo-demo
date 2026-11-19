@@ -9,11 +9,11 @@ look, then draw and write our own. `videos/rNN.mp4` (720×1280), `sheets/rNN.jpg
 |---|---|---|---|---|
 | r01 | a hydraulic car jack | | r08 | a nuclear power plant |
 | r02 | home solar power | | r09 | a secret hideout under the bed (closest to «قبو سري») |
-| r03 | a pit barbecue | | r10 | a solar/sand oven-brick? (desert) |
+| r03 | a pit roasting oven (meat in an underground fire pit) | | r10 | a mud-brick desert house kept cool (thick walls, wind tower) |
 | r04 | a flush toilet | | r11 | concrete |
-| r05 | a nail gun / hammering | | r12 | an electricity pole and grid |
+| r05 | a diesel pile hammer (nail → pile; explosives → petrol → diesel; seaside) | | r12 | an electricity pole and grid |
 | r06 | an oil well / refinery | | r13 | a tower crane |
-| r07 | a drill | | r14 | a septic tank / home drainage |
+| r07 | a bored/auger pile (drill rig, soil layers) | | r14 | a septic tank / home drainage |
 
 ## The look (measured from the frames)
 

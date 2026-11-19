@@ -47,7 +47,7 @@ reference (e.g. "r13: the part lowered on a crane hook; r08: the cut-open tank w
 cross-section of the valve"), so each episode borrows from several of the 14 and doesn't just repeat the kit's look of
 the last episode (same sky, same palms, same light). The kit is the code to draw with, not the look to copy.
 
-**If a reference video covers the same topic** (r02 = home solar, r09 = a hideout under the bed, r04 = a toilet, r13 = a
+**If a reference video covers the same topic** (r02 = home solar, r05 = a diesel pile hammer, r07 = a bored pile, r09 = a hideout under the bed, r04 = a toilet, r13 = a
 crane, r14 = drainage…), read its transcript first and make ours different on purpose: other steps, another order,
 another «والغريب» fact. Note in `refs/SOURCES.md` what was avoided (see `videos/solar-building/refs/SOURCES.md`).
 
