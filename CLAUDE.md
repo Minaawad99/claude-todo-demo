@@ -21,4 +21,5 @@
   for them again):** full-screen 9:16 "2.5D" vector drawings (gradients, shading, soft shadows, a cut-open scene that
   grows), one big word of caption at a time, and their script shape («لو… بس المشكلة… عشان كده… وده اسمه… ومبروك عليك»)
   in casual Egyptian Arabic. A man in real body proportions acts out and reacts to every step: shocked on each «بس…»
-  failure, relieved on each «عشان كده…» fix, going down into the build and back up. See `.claude/skills/law/SKILL.md`.
+  failure, relieved on each «عشان كده…» fix, going down into the build and back up. The whole method is the `law` skill (`.claude/skills/law/SKILL.md`, run it with `/law`); copy `videos/solar-building/` and build on
+  the shared kit `videos/_templates/law/kit.js`.
