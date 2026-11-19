@@ -1,0 +1,19 @@
+<!doctype html><html dir="rtl"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&family=Noto+Serif:wght@700;800&display=swap" rel="stylesheet">
+<style>:root { --paper: #eee5d0; --ink: #2a2016; --mute: #8f8576; --orange: #bd552f; --blue: #4a6f8a; --olive: #5e653a; }
+body{margin:0;background:#eee5d0} .canvas{position:relative;width:360px;height:640px;background:var(--paper);overflow:hidden;font-family:"Noto Sans Arabic";color:var(--ink)}
+.fr{position:absolute;left:14px;top:14px;width:332px;height:612px;box-sizing:border-box;border:1.1px solid var(--ink)}
+.panel{position:absolute;left:15px;top:15px;width:330px;height:405px;overflow:hidden}.panel svg{width:100%;height:100%;display:block}
+.rule{position:absolute;left:32px;right:32px;top:431px;border-top:.6px solid var(--ink)}
+.cap{position:absolute;left:30px;right:30px;top:458px;text-align:center;font:700 14px/1.75 "Noto Sans Arabic"}
+.k-o{color:var(--orange)}.k-b{color:var(--blue)}.k-g{color:var(--olive)}.k-gr{color:var(--mute);font-size:11px}</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="mark"><rect x="84" y="4" width="32" height="10" fill="#2a2016"/><rect x="94" y="14" width="12" height="14" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" fill="#f4ecdb" stroke="#2a2016" stroke-width="9" stroke-linejoin="round"/><text x="106" y="140" text-anchor="middle" style="font:800 120px Noto Sans Arabic;fill:#bd552f">؟</text></g>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".15"/></pattern>
+  <pattern id="hatchW" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#fff" stroke-width="1" opacity=".25"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#e1d5ba" stroke-width="1.3" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .05 0"/></filter>
+</defs></svg>
+<div id="root"></div><script>window.TIMING={lines:[],duration:1};window.__t=0;</script><script src="../../_templates/sketch/_helpers.js"></script><script src="fig.js"></script><script src="boards.js"></script>
+<script>document.getElementById("root").innerHTML=BOARDS.map(function(b,i){return '<div class="canvas" id="b'+i+'"><div class="fr"></div><div class="panel"><svg viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice">'+b.svg+'</svg></div><div class="rule"></div><div class="cap">'+b.cap+'</div></div>'}).join("");</script></body></html>
