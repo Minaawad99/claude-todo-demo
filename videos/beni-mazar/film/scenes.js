@@ -459,7 +459,17 @@
   // 48 — in Ezbet Shams El-Din, three houses still remember the night of 28 December
   shot(50, push([180, 320], [180, 330], 1.0, 1.12), function (u, d, t) { return three(t, { lit: function (k) { return .55 + .1 * Math.sin(t + k); }, dark: .55 }) + label("عزبة شمس الدين", 180, 176, u, .4, 26, "#fff"); }, { tr: "dip" });
   // 49 — their families still wait for an answer, twenty years on
-  shot(51, push([180, 330], [180, 320], 1.1, 1.2), function (u, d, t) { return R(-220, -220, 800, 1300, "#060505", { s: 0 }) + P('M-220 400 L580 400 V900 H-220Z', "#120e0a", { s: 0 }) + candles(t, 10, 392, 1.0, 1) + bigNum("20 سنة", 180, 220, u, .6, 46, "#e9e2d2") + dust(t, 20, "#ffe7a8", .3, 7); });
+  // 51 — the families still wait, twenty years on: ten empty frames on a wall, each with a black mourning ribbon
+  //       (four smaller for the children); no faces, no names, candle light flickering over them
+  function frames(t, k) {
+    var s = R(-220, -220, 800, 1300, "#1a1410", { s: 0 }) + R(-220, 380, 800, 600, "#0e0a08", { s: 0 }), fl = .8 + .2 * Math.sin(t * 7) * Math.sin(t * 3.1);
+    s += '<circle cx="' + f(180 + 30 * Math.sin(t * .7)) + '" cy="300" r="230" fill="url(#warm)" opacity="' + f2(.22 * fl) + '"/>';
+    var spots = [[60, 170, 1], [130, 160, 1], [200, 170, 1], [270, 160, 1], [95, 265, 1], [235, 265, 1], [40, 345, 0], [110, 352, 0], [250, 352, 0], [320, 345, 0]];
+    spots.forEach(function (q, n) { var kk = clamp(k * 10 - n), w = q[2] ? 52 : 38, h = q[2] ? 66 : 48; if (kk <= 0) return;
+      s += G('translate(' + q[0] + ' ' + f(q[1] + (1 - eout(kk)) * 8) + ') rotate(' + f((hash(n) - .5) * 4) + ')', R(-w / 2 - 5, -h / 2 - 5, w + 10, h + 10, "#5a4026", { w: 1.4 }) + R(-w / 2, -h / 2, w, h, "#2a2622", { w: 1 }) + '<ellipse cx="0" cy="' + f(h * .12) + '" rx="' + f(w * .26) + '" ry="' + f(h * .3) + '" fill="#1c1916"/><circle cx="0" cy="' + f(-h * .18) + '" r="' + f(w * .17) + '" fill="#1c1916"/>' + P('M' + f(w / 2 - 14) + ' ' + f(-h / 2 - 5) + ' L' + f(w / 2 + 5) + ' ' + f(-h / 2 + 14) + ' L' + f(w / 2 + 5) + ' ' + f(-h / 2 + 4) + ' L' + f(w / 2 - 4) + ' ' + f(-h / 2 - 5) + 'Z', "#050505", { w: .6 }), kk); });
+    return s + candles(t, 3, 420, .9, 1) + dust(t * 2, 40, "#ffe7a8", .4, 7);
+  }
+  shot(51, push([180, 300], [180, 290], 1.0, 1.08), function (u, d, t) { return frames(t, clamp(u / 1.6)) + bigNum("20 سنة", 180, 100, u, 1.8, 40, "#e9e2d2"); });
   // 50 — tell us: which story next time?
   shot(52, push([180, 320], [180, 316], 1.0, 1.06), function (u, d, t) { return villageNight(t, { lights: function (k) { return .5; } }) + label("قولولنا!", 180, 180, u, .3, 34, "#fff"); }, { tr: "dip" });
 

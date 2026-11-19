@@ -1012,6 +1012,257 @@
    "gain": 0.2,
    "dur": 2.5,
    "f": 330
+  },
+  {
+   "t": 14.32,
+   "file": "sfx/hz-dogs.wav",
+   "gain": 0.22,
+   "from": 0,
+   "dur": 6
+  },
+  {
+   "t": 37.58,
+   "file": "sfx/hz-steps.wav",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 6.18
+  },
+  {
+   "t": 40.08,
+   "file": "sfx/hz-dogs.wav",
+   "gain": 0.18,
+   "from": 3,
+   "dur": 4
+  },
+  {
+   "t": 53.65,
+   "file": "sfx/hz-rooster.wav",
+   "gain": 0.35,
+   "from": 0
+  },
+  {
+   "t": 54.85,
+   "file": "sfx/hz-scream.wav",
+   "gain": 0.5,
+   "from": 0
+  },
+  {
+   "t": 55.25,
+   "file": "sfx/hz-run.wav",
+   "gain": 0.4,
+   "from": 0
+  },
+  {
+   "t": 56.91,
+   "file": "sfx/hz-crowd-agitated.wav",
+   "gain": 0.5,
+   "from": 0,
+   "dur": 8.78
+  },
+  {
+   "t": 57.51,
+   "file": "sfx/hz-wail.wav",
+   "gain": 0.45,
+   "from": 0,
+   "dur": 8.78
+  },
+  {
+   "t": 65.69,
+   "file": "sfx/hz-wail.wav",
+   "gain": 0.2,
+   "from": 2,
+   "dur": 5
+  },
+  {
+   "t": 80.17,
+   "file": "sfx/hz-shutters.wav",
+   "gain": 0.3,
+   "from": 0
+  },
+  {
+   "t": 82.37,
+   "file": "sfx/hz-shutters.wav",
+   "gain": 0.25,
+   "from": 1.2,
+   "dur": 1.2
+  },
+  {
+   "t": 85.21,
+   "file": "sfx/hz-crowd.wav",
+   "gain": 0.25,
+   "from": 0,
+   "dur": 4.64
+  },
+  {
+   "t": 102.44,
+   "file": "sfx/hz-crowd-agitated.wav",
+   "gain": 0.45,
+   "from": 0,
+   "dur": 6.11
+  },
+  {
+   "t": 102.84,
+   "file": "sfx/hz-radio.wav",
+   "gain": 0.4,
+   "from": 0
+  },
+  {
+   "t": 103.64,
+   "file": "sfx/hz-shutters.wav",
+   "gain": 0.4,
+   "from": 0
+  },
+  {
+   "t": 102.64,
+   "file": "sfx/hz-steps.wav",
+   "gain": 0.3,
+   "from": 0,
+   "dur": 6.11
+  },
+  {
+   "t": 120.78,
+   "file": "sfx/hz-radio.wav",
+   "gain": 0.45,
+   "from": 0
+  },
+  {
+   "t": 121.98,
+   "file": "sfx/hz-door-bang.wav",
+   "gain": 0.5,
+   "from": 0
+  },
+  {
+   "t": 120.38,
+   "file": "sfx/hz-crowd.wav",
+   "gain": 0.3,
+   "from": 3,
+   "dur": 7.21
+  },
+  {
+   "t": 122.58,
+   "file": "sfx/hz-steps.wav",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 3
+  },
+  {
+   "t": 127.59,
+   "file": "sfx/hz-typewriter.wav",
+   "gain": 0.4,
+   "from": 0,
+   "dur": 3.37
+  },
+  {
+   "t": 135.55,
+   "file": "sfx/hz-crowd.wav",
+   "gain": 0.25,
+   "from": 6,
+   "dur": 2.81
+  },
+  {
+   "t": 135.85,
+   "file": "sfx/hz-steps.wav",
+   "gain": 0.3,
+   "from": 0,
+   "dur": 2.81
+  },
+  {
+   "t": 138.36,
+   "file": "sfx/hz-court-murmur.wav",
+   "gain": 0.18,
+   "from": 3,
+   "dur": 3.22
+  },
+  {
+   "t": 141.58,
+   "file": "sfx/hz-court-murmur.wav",
+   "gain": 0.18,
+   "from": 4.300000000000004,
+   "dur": 2.84
+  },
+  {
+   "t": 150.19,
+   "file": "sfx/hz-court-murmur.wav",
+   "gain": 0.18,
+   "from": 0.8999999999999986,
+   "dur": 1.45
+  },
+  {
+   "t": 151.64,
+   "file": "sfx/hz-court-murmur.wav",
+   "gain": 0.18,
+   "from": 2.200000000000003,
+   "dur": 4.69
+  },
+  {
+   "t": 156.33,
+   "file": "sfx/hz-court-murmur.wav",
+   "gain": 0.18,
+   "from": 3.5,
+   "dur": 3.32
+  },
+  {
+   "t": 166.07,
+   "file": "sfx/hz-court-murmur.wav",
+   "gain": 0.18,
+   "from": 0.10000000000000142,
+   "dur": 6.49
+  },
+  {
+   "t": 172.56,
+   "file": "sfx/hz-court-murmur.wav",
+   "gain": 0.18,
+   "from": 1.3999999999999986,
+   "dur": 3.45
+  },
+  {
+   "t": 176.01,
+   "file": "sfx/hz-court-murmur.wav",
+   "gain": 0.18,
+   "from": 2.700000000000003,
+   "dur": 5.13
+  },
+  {
+   "t": 181.14,
+   "file": "sfx/hz-court-murmur.wav",
+   "gain": 0.18,
+   "from": 4,
+   "dur": 3.61
+  },
+  {
+   "t": 185.2,
+   "file": "sfx/hz-crowd-agitated.wav",
+   "gain": 0.5,
+   "from": 2,
+   "dur": 3.2
+  },
+  {
+   "t": 185.69,
+   "file": "sfx/hz-wail.wav",
+   "gain": 0.35,
+   "from": 0,
+   "dur": 3.94
+  },
+  {
+   "t": 188.63,
+   "file": "sfx/hz-steps.wav",
+   "gain": 0.25,
+   "from": 0,
+   "dur": 3
+  },
+  {
+   "t": 188.63,
+   "file": "sfx/hz-court-murmur.wav",
+   "gain": 0.15,
+   "from": 2,
+   "dur": 6.79
+  },
+  {
+   "t": 221.28,
+   "file": "sfx/hz-dogs.wav",
+   "gain": 0.15,
+   "from": 0,
+   "dur": 5
   }
  ]
 }

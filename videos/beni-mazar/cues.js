@@ -68,5 +68,21 @@ r(L(49) + D(49) * 0.55, H('knock'), 1.0); r(L(49) + D(49) * 0.55, H('hit'), 0.5,
 // 48–50 the hamlet today
 r(L(50), H('crickets'), 0.3, 2, D(50) + D(51) + D(52) + 1.5); a(L(50), 'wind', 0.12, D(50) + D(51));
 c.push({ t: +(L(51) + 0.6).toFixed(2), fx: 'bell', gain: 0.3, dur: 2.5, f: 220 }); c.push({ t: +(L(52) + 0.2).toFixed(2), fx: 'bell', gain: 0.2, dur: 2.5, f: 330 });
+// ── people and place, so every moment is heard (the user's ask): dogs, a rooster, a scream, running, the crowd,
+//    women keening, cameras, police radio, the typewriter, the court. All synthesized in make_sfx.py; real recordings,
+//    when the user sends them, replace the same names.
+r(L(2) + 1.2, H('dogs'), 0.22, 0, 6); r(L(7) + 1.0, H('steps'), 0.35, 0, D(7) - 1.5); r(L(7) + 3.5, H('dogs'), 0.18, 3, 4);
+r(L(10) - 0.7, H('rooster'), 0.35); r(L(10) + 0.5, H('scream'), 0.5); r(L(10) + 0.9, H('run'), 0.4);
+r(L(11), H('crowd-agitated'), 0.5, 0, D(11) + D(12)); r(L(11) + 0.6, H('wail'), 0.45, 0, D(11) + D(12));
+r(L(13), H('wail'), 0.2, 2, 5); r(L(16) + 0.4, H('shutters'), 0.3); r(L(16) + 2.6, H('shutters'), 0.25, 1.2, 1.2);
+r(L(17), H('crowd'), 0.25, 0, D(17));
+r(L(20), H('crowd-agitated'), 0.45, 0, D(20)); r(L(20) + 0.4, H('radio'), 0.4); r(L(20) + 1.2, H('shutters'), 0.4); r(L(20) + 0.2, H('steps'), 0.3, 0, D(20));
+r(L(25) + 0.6, H('radio'), 0.45); r(L(25) + 1.8, H('door-bang'), 0.5); r(L(25) + 0.2, H('crowd'), 0.3, 3, D(25) + D(26)); r(L(25) + 2.4, H('steps'), 0.35, 0, 3);
+r(L(27) + 0.2, H('typewriter'), 0.4, 0, D(27));
+r(L(29), H('crowd'), 0.25, 6, D(29)); r(L(29) + 0.3, H('steps'), 0.3, 0, D(29));
+[30, 31, 33, 34, 35, 37, 38, 39, 40].forEach(k => r(L(k), H('court-murmur'), 0.18, (k * 1.3) % 6, D(k)));
+r(L(41) + 0.45, H('crowd-agitated'), 0.5, 2, 3.2); r(L(42), H('wail'), 0.35, 0, D(42) + 1);
+r(L(43), H('steps'), 0.25, 0, 3); r(L(43), H('court-murmur'), 0.15, 2, D(43));
+r(L(50) + 1.0, H('dogs'), 0.15, 0, 5);
 const out = c.filter(q => !(q.fx === 'knock'));
 require('fs').writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: out }, null, 1)); console.log(out.length, 'cues');
