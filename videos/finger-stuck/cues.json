@@ -1,0 +1,372 @@
+{
+ "bed": false,
+ "cues": [
+  {
+   "t": 0.35,
+   "fx": "chime",
+   "gain": 0.3
+  },
+  {
+   "t": 5.21,
+   "file": "../_templates/sketch/sfx/px-swipe.mp3",
+   "gain": 0.3,
+   "from": 0.6,
+   "dur": 0.42,
+   "duck": 1
+  },
+  {
+   "t": 7.33,
+   "file": "../_templates/sketch/sfx/px-swipe.mp3",
+   "gain": 0.3,
+   "from": 0.6,
+   "dur": 0.42,
+   "duck": 1
+  },
+  {
+   "t": 9.2,
+   "file": "../_templates/sketch/sfx/px-swipe.mp3",
+   "gain": 0.3,
+   "from": 0.6,
+   "dur": 0.42,
+   "duck": 1
+  },
+  {
+   "t": 10.63,
+   "file": "../_templates/sketch/sfx/px-swipe.mp3",
+   "gain": 0.3,
+   "from": 0.6,
+   "dur": 0.42,
+   "duck": 1
+  },
+  {
+   "t": 12.34,
+   "file": "../_templates/sketch/sfx/px-swipe.mp3",
+   "gain": 0.3,
+   "from": 0.6,
+   "dur": 0.42,
+   "duck": 1
+  },
+  {
+   "t": 14.48,
+   "file": "../_templates/sketch/sfx/px-swipe.mp3",
+   "gain": 0.3,
+   "from": 0.6,
+   "dur": 0.42,
+   "duck": 1
+  },
+  {
+   "t": 16.28,
+   "file": "../_templates/sketch/sfx/px-swipe.mp3",
+   "gain": 0.3,
+   "from": 0.6,
+   "dur": 0.42,
+   "duck": 1
+  },
+  {
+   "t": 20.29,
+   "file": "../_templates/sketch/sfx/px-swipe.mp3",
+   "gain": 0.3,
+   "from": 0.6,
+   "dur": 0.42,
+   "duck": 1
+  },
+  {
+   "t": 25.36,
+   "file": "../_templates/sketch/sfx/px-swipe.mp3",
+   "gain": 0.3,
+   "from": 0.6,
+   "dur": 0.42,
+   "duck": 1
+  },
+  {
+   "t": 29.06,
+   "file": "../_templates/sketch/sfx/px-swipe.mp3",
+   "gain": 0.3,
+   "from": 0.6,
+   "dur": 0.42,
+   "duck": 1
+  },
+  {
+   "t": 31.38,
+   "fx": "chime",
+   "gain": 0.35
+  },
+  {
+   "t": 31.58,
+   "fx": "tick",
+   "gain": 0.16
+  },
+  {
+   "t": 31.73,
+   "fx": "tick",
+   "gain": 0.16
+  },
+  {
+   "t": 31.88,
+   "fx": "tick",
+   "gain": 0.16
+  },
+  {
+   "t": 32.03,
+   "fx": "tick",
+   "gain": 0.16
+  },
+  {
+   "t": 32.18,
+   "fx": "tick",
+   "gain": 0.16
+  },
+  {
+   "t": 33.87,
+   "file": "../_templates/sketch/sfx/px-paper.mp3",
+   "gain": 0.4,
+   "from": 0,
+   "dur": 0.5,
+   "duck": 1
+  },
+  {
+   "t": 34.07,
+   "fx": "pop",
+   "gain": 0.4
+  },
+  {
+   "t": 2.46,
+   "file": "../_templates/sketch/sfx/px-swipe.mp3",
+   "gain": 0.3,
+   "from": 0.6,
+   "dur": 0.42,
+   "duck": 1
+  },
+  {
+   "t": 3.29,
+   "fx": "thud",
+   "gain": 0.35
+  },
+  {
+   "t": 3.84,
+   "file": "../_templates/sketch/sfx/px-paper.mp3",
+   "gain": 0.4,
+   "from": 0,
+   "dur": 0.5,
+   "duck": 1
+  },
+  {
+   "t": 5.64,
+   "fx": "whoosh",
+   "gain": 0.12,
+   "dur": 0.6
+  },
+  {
+   "t": 6.44,
+   "fx": "bump",
+   "gain": 0.25
+  },
+  {
+   "t": 6.19,
+   "fx": "tick",
+   "gain": 0.2
+  },
+  {
+   "t": 7.61,
+   "fx": "pop",
+   "gain": 0.22
+  },
+  {
+   "t": 7.71,
+   "fx": "whoosh",
+   "gain": 0.1,
+   "dur": 0.4
+  },
+  {
+   "t": 8.44,
+   "file": "../_templates/sketch/sfx/px-ding.mp3",
+   "gain": 0.3,
+   "from": 0.1,
+   "dur": 1.4,
+   "duck": 1
+  },
+  {
+   "t": 8.49,
+   "file": "../_templates/sketch/sfx/px-pencil-scribble.mp3",
+   "gain": 0.45,
+   "from": 0.75,
+   "dur": 0.7,
+   "duck": 1
+  },
+  {
+   "t": 9.48,
+   "fx": "pop",
+   "gain": 0.22
+  },
+  {
+   "t": 9.58,
+   "fx": "whoosh",
+   "gain": 0.1,
+   "dur": 0.4
+  },
+  {
+   "t": 10.07,
+   "file": "../_templates/sketch/sfx/px-ding.mp3",
+   "gain": 0.3,
+   "from": 0.1,
+   "dur": 1.4,
+   "duck": 1
+  },
+  {
+   "t": 10.12,
+   "file": "../_templates/sketch/sfx/px-pencil-scribble.mp3",
+   "gain": 0.45,
+   "from": 0.75,
+   "dur": 0.7,
+   "duck": 1
+  },
+  {
+   "t": 10.91,
+   "fx": "pop",
+   "gain": 0.22
+  },
+  {
+   "t": 11.01,
+   "fx": "whoosh",
+   "gain": 0.1,
+   "dur": 0.4
+  },
+  {
+   "t": 11.65,
+   "file": "../_templates/sketch/sfx/px-ding.mp3",
+   "gain": 0.3,
+   "from": 0.1,
+   "dur": 1.4,
+   "duck": 1
+  },
+  {
+   "t": 11.7,
+   "file": "../_templates/sketch/sfx/px-pencil-scribble.mp3",
+   "gain": 0.45,
+   "from": 0.75,
+   "dur": 0.7,
+   "duck": 1
+  },
+  {
+   "t": 12.72,
+   "fx": "pop",
+   "gain": 0.3
+  },
+  {
+   "t": 13.32,
+   "fx": "tick",
+   "gain": 0.2
+  },
+  {
+   "t": 14.61,
+   "fx": "beep",
+   "gain": 0.35
+  },
+  {
+   "t": 14.71,
+   "fx": "thud",
+   "gain": 0.3
+  },
+  {
+   "t": 14.96,
+   "fx": "servo",
+   "gain": 0.12,
+   "dur": 1
+  },
+  {
+   "t": 16.41,
+   "fx": "whoosh",
+   "gain": 0.18,
+   "dur": 0.7
+  },
+  {
+   "t": 17.95,
+   "fx": "tick",
+   "gain": 0.2
+  },
+  {
+   "t": 17.5,
+   "fx": "pop",
+   "gain": 0.25
+  },
+  {
+   "t": 18.55,
+   "file": "../_templates/sketch/sfx/px-paper.mp3",
+   "gain": 0.4,
+   "from": 0,
+   "dur": 0.5,
+   "duck": 1
+  },
+  {
+   "t": 20.67,
+   "fx": "tick",
+   "gain": 0.2
+  },
+  {
+   "t": 21.07,
+   "fx": "tick",
+   "gain": 0.2
+  },
+  {
+   "t": 21.37,
+   "fx": "tick",
+   "gain": 0.2
+  },
+  {
+   "t": 21.97,
+   "fx": "pop",
+   "gain": 0.2
+  },
+  {
+   "t": 22.97,
+   "fx": "pop",
+   "gain": 0.2
+  },
+  {
+   "t": 22.57,
+   "file": "../_templates/sketch/sfx/px-pencil-scribble.mp3",
+   "gain": 0.45,
+   "from": 0.75,
+   "dur": 0.7,
+   "duck": 1
+  },
+  {
+   "t": 23.57,
+   "file": "../_templates/sketch/sfx/px-pencil-scribble.mp3",
+   "gain": 0.45,
+   "from": 0.75,
+   "dur": 0.7,
+   "duck": 1
+  },
+  {
+   "t": 25.64,
+   "fx": "whoosh",
+   "gain": 0.12,
+   "dur": 0.6
+  },
+  {
+   "t": 26.14,
+   "fx": "creak",
+   "gain": 0.12,
+   "dur": 0.8
+  },
+  {
+   "t": 27.04,
+   "fx": "clink",
+   "gain": 0.25
+  },
+  {
+   "t": 29.44,
+   "fx": "notify",
+   "gain": 0.3
+  },
+  {
+   "t": 0,
+   "file": "../_templates/sketch/sfx/px-music-soft.mp3",
+   "gain": 0.42,
+   "from": 0,
+   "dur": 38.54,
+   "duck": 0.6
+  }
+ ]
+}
