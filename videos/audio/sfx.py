@@ -310,6 +310,14 @@ def fx_fade(d=1.6):           # scent evaporating: a soft airy hiss that thins o
 def fx_count(d=0.04):         # an odometer digit: a dry plastic click
     t = t_(d); return (np.sin(2 * np.pi * 3400 * t) * np.exp(-t * 260) + 0.4 * noise(len(t)) * np.exp(-t * 400)).astype(np.float32)
 
+def fx_rub(d=0.9):            # a fingertip / cloth rubbing across a hard smooth top: soft swish with skin squeak
+    t = t_(d); sh = np.sin(np.pi * t / d) ** 2; nz = noise(len(t))
+    sq = 0.15 * np.sin(2 * np.pi * (900 + 300 * np.sin(2 * np.pi * 3 * t)) * t) * sh
+    return (lp_fast(hp_fast(nz, 600), 3500, 1) * sh + sq).astype(np.float32)
+def fx_suds(d=1.4):           # soapy sponge: wet swish + tiny popping bubbles
+    t = t_(d); sh = np.sin(np.pi * t / d) ** 2
+    return (0.6 * lp_fast(hp_fast(noise(len(t)), 400), 2500, 1) * sh + 0.5 * bubbles(d, rate=40, lo=1800, hi=4200, decay=False)).astype(np.float32)
+
 FX = {k[3:]: v for k, v in globals().items() if k.startswith("fx_")}
 
 # ── music bed: soft chords + plucks, 84 bpm, voice band carved out ──

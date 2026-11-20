@@ -99,10 +99,24 @@ a(L(21) + 0.2, 'skitter', 0.3, D(21) - 0.3); lab(21, 0.8); lab(21, 1.0); a(L(21)
 a(L(22) + 0.3, 'whoosh', 0.15, 0.8); scribble(L(22) + 2.0); a(L(22) + D(22) * 0.62, 'shimmer', 0.3, 1.2); scribble(L(22) + D(22) * 0.62 + 0.4);
 // 23 · sugar gone, the scent evaporates, the line melts away
 a(L(23) + 0.3, 'pop', 0.3); a(L(23) + 1.2, 'fade', 0.45, D(23) - 1.4); a(L(23) + 1.2, 'skitter', 0.25, D(23) - 1.4);
-// 24 · the recap: numbered steps pop in
-for (const u of [0.2, 1.2, 2.4, 3.5]) a(L(24) + u, 'pop', 0.35); a(L(24), 'skitter', 0.18, D(24));
-// 25 · the death spiral: ants circling and circling
-a(L(25) + 0.3, 'swarm', 0.4, D(25) - 0.4); a(L(25) + 1.0, 'whoosh', 0.15, 0.8); a(L(25) + 2.2, 'pop', 0.3); ding(L(25) + D(25) - 2.6);
+// 24 · a fingertip wipes a strip of the trail
+a(L(24) + 0.3, 'skitter', 0.3, D(24)); a(L(24) + 0.5, 'rub', 0.6, 1.1); lab(24, 0.1);
+// 25 · the ants reach the wiped strip and circle, lost
+a(L(25), 'skitter', 0.3, D(25)); a(L(25) + 0.6, 'swarm', 0.2, D(25) - 0.8); a(L(25) + 1.2, 'pop', 0.3); a(L(25) + 1.3, 'pop', 0.25);
+// 26 · one crosses and lays fresh scent, the queue carries on ✓
+a(L(26) + 0.2, 'skitter', 0.35, D(26) - 0.3); a(L(26) + 0.4, 'shimmer', 0.3, D(26) - 1); scribble(L(26) + D(26) - 0.9);
+// 27 · oily scent: tissue and water take only part of it
+a(L(27) + 0.1, 'pop', 0.3); a(L(27) + 1.6, 'rub', 0.45, 1.3); a(L(27) + 3.0, 'drip', 0.35); a(L(27) + 3.05, 'slosh', 0.3, 1.2); a(L(27) + 3.0, 'pop', 0.25); a(L(27) + D(27) - 0.5, 'pop', 0.25);
+// 28 · water and soap take it all ✓
+a(L(28) + 0.2, 'suds', 0.5, 1.6); scribble(L(28) + 1.9); ding(L(28) + 2.0);
+// 29 · while the sugar is there, a scout finds it and draws the line again
+a(L(29), 'skitter', 0.3, 1.6); a(L(29) + 1.6, 'shimmer', 0.35, D(29) - 1.8); a(L(29) + 1.8, 'pop', 0.3);
+// 30 · lift the food first, then wipe with water and soap
+a(L(30) + 0.1, 'clink', 0.2); a(L(30) + 0.2, 'pop', 0.3); a(L(30) + 1.3, 'suds', 0.45, D(30) - 1.5); a(L(30) + 1.4, 'pop', 0.3); scribble(L(30) + D(30) - 0.7);
+// 31 · the recap: numbered steps pop in
+for (const u of [0.2, 1.2, 2.4, 3.5]) a(L(31) + u, 'pop', 0.35); a(L(31), 'skitter', 0.18, D(31));
+// 32 · the death spiral: ants circling and circling
+a(L(32) + 0.3, 'swarm', 0.4, D(32) - 0.4); a(L(32) + 1.0, 'whoosh', 0.15, 0.8); a(L(32) + 2.2, 'pop', 0.3); ding(L(32) + D(32) - 2.6);
 
 // music plays only when sfx.py is run with --music, and that only when the user asked for music in this video
 const MUSIC = has('music-soft') ? 'music-soft' : null;
