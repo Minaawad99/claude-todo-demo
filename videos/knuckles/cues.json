@@ -253,31 +253,78 @@
    "gain": 0.15
   },
   {
-   "t": 2.62,
-   "fx": "knuckle",
-   "gain": 0.5850000000000001,
-   "dur": 0.35
-  },
-  {
-   "t": 3.72,
+   "t": 1.45,
    "fx": "knuckle",
    "gain": 0.49500000000000005,
    "dur": 0.35
   },
   {
-   "t": 4.82,
+   "t": 1.75,
    "fx": "knuckle",
    "gain": 0.405,
    "dur": 0.35
   },
   {
-   "t": 6.4,
-   "fx": "creak",
-   "gain": 0.08,
-   "dur": 0.8
+   "t": 2.7,
+   "fx": "squeeze",
+   "gain": 0.06,
+   "dur": 0.3
   },
   {
-   "t": 6.8,
+   "t": 2.97,
+   "fx": "knuckle",
+   "gain": 0.63,
+   "dur": 0.35
+  },
+  {
+   "t": 3.5,
+   "fx": "squeeze",
+   "gain": 0.06,
+   "dur": 0.3
+  },
+  {
+   "t": 3.77,
+   "fx": "knuckle",
+   "gain": 0.585,
+   "dur": 0.35
+  },
+  {
+   "t": 4.3,
+   "fx": "squeeze",
+   "gain": 0.06,
+   "dur": 0.3
+  },
+  {
+   "t": 4.57,
+   "fx": "knuckle",
+   "gain": 0.54,
+   "dur": 0.35
+  },
+  {
+   "t": 5.1,
+   "fx": "squeeze",
+   "gain": 0.06,
+   "dur": 0.3
+  },
+  {
+   "t": 5.37,
+   "fx": "knuckle",
+   "gain": 0.49499999999999994,
+   "dur": 0.35
+  },
+  {
+   "t": 7.2,
+   "fx": "squeeze",
+   "gain": 0.06,
+   "dur": 0.4
+  },
+  {
+   "t": 7.45,
+   "fx": "bump",
+   "gain": 0.08
+  },
+  {
+   "t": 7.7,
    "file": "../_templates/sketch/sfx/px-pencil-scribble.mp3",
    "gain": 0.45,
    "from": 0.75,

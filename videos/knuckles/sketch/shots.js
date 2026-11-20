@@ -168,11 +168,12 @@ function hand(o) {
   // contact shadows: a lifted finger's shadow stays on the table and slides away from it
   skin += '<path d="' + back + '" transform="translate(9 12)" fill="' + INK + '" opacity=".13"/>';
   for (k in J) { var q = F[k] || {}; if ((q.fold || 0) > .7) continue; var lj = q.lift ? fingerJ(k, { fold: q.fold }) : J[k]; skin += shadowOf(lj, 8 + (q.lift || 0) * 6, 12 + (q.lift || 0) * 30, f(.13 + (q.lift || 0) * .07)); }
-  // the middle finger: straight, folding, or folded under
-  var mf = (F.middle || {}).fold || 0, mk = clamp((mf - .45) / .4);
-  if (mk > 0) skin += G("", drawFolded(FG.middle[0], FG.middle[1], FG.middle[2], 62, 52), mk);
-  ["pinky", "ring", "index"].forEach(function (k) { skin += drawFinger(J[k], F[k]); });
-  if (mk < 1) skin += G("", drawFinger(J.middle, F.middle), 1 - mk);
+  // every finger: straight, folding, or folded under (the bent knuckle facing the camera)
+  ["pinky", "ring", "middle", "index"].forEach(function (k) {
+    var fk = clamp((((F[k] || {}).fold || 0) - .45) / .4), g = FG[k];
+    if (fk > 0) skin += G("", drawFolded(g[0], g[1], g[2], g[3][0] * .66, g[4][0] * 1.05), fk);
+    if (fk < 1) skin += G("", drawFinger(J[k], F[k]), 1 - fk);
+  });
   // the thumb sits under the edge of the hand
   var th = F.thumb || {}, TJ = thumbJ(th), TJ0 = th.lift ? thumbJ({}) : TJ;
   skin += shadowOf(TJ0, 8 + (th.lift || 0) * 6, 12 + (th.lift || 0) * 30, f(.13 + (th.lift || 0) * .07)) + drawFinger(TJ, th);
@@ -474,15 +475,56 @@ shot(24, push(320, 430, 1.0, 1.05), function (u, d, t) {
 });
 
 // ── opening card, bumper and summary art ──
+// the stretch: both hands interlaced, palms turned out, seen from the side (facing left). Local units: the hand length ≈ 100.
+// push 0..1: the fingers are bent back over the other hand's knuckles as the arms straighten.
+function clasp(x, y, sc, push) {
+  var s = "", rows = [-40, -18, 4, 26], i;
+  function fing(i, near) {
+    var y0 = rows[i], a = 96 - 18 * push - i * 2, bend = -(46 - 22 * push);
+    var j = joints(20, y0, a, [30, 20, 15], [21, 19, 17, 15], 0, bend, 0);
+    return drawFinger(j, {});
+  }
+  // the far hand's fingers first (rows 1 and 3), a little darker
+  s += G("", fing(1) + fing(3), 1) + '<g opacity=".25">' + '<rect x="18" y="-56" width="80" height="110" fill="' + SKIN2 + '" style="mix-blend-mode:multiply" opacity="0"/></g>';
+  // the two palms pressed outward: a rounded block at the front, the thumbs pointing down
+  s += '<path d="M24 -58 Q2 -58 2 -36 L2 34 Q2 54 24 54 L40 54 L40 -58 Z" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/>';
+  s += '<path d="M10 -40 Q6 -8 10 30" stroke="' + SKIN2 + '" stroke-width="5" fill="none" opacity=".5"/>';
+  s += drawFinger(joints(16, 46, 14, [22, 22, 4], [24, 22, 20, 18], 0, 8, 0), {});
+  // the near hand's fingers on top (rows 0 and 2)
+  s += fing(0) + fing(2);
+  return G("translate(" + f(x) + " " + f(y) + ") scale(" + f(sc) + ")", s);
+}
 SCENE.intro = function (svg, t, li) {
-  // line 0: a man at a desk pushes his clasped hands forward. line 1: «طق» at the knuckles. line 2: the same finger again, no sound
-  var fl = 600, s = "";
-  if (li < 2) {
-    var k = clamp((t - LN[0].start) / 1.6), hx = lerp(250, 150, k), h = [[hx, 360], [hx + 4, 364]];
-    s += floor(fl) + desk(40, 200, fl) + chair(330, fl) + whole(sitter(330, fl, h, 0, { bend: [1, 1] }));
-    if (li === 1) { var u = t - LN[1].start; s += burst(hx - 20, 360, (u % 1.1) / .7, 60) + G("", T("طق طق", 160, 230, 44, ORANGE, 800), clamp(u / .3)); }
+  var s = "";
+  if (li === 0) {
+    // line 0: the man stretches his arms out, fingers interlaced, palms out: the fingers bend back
+    var u = t - LN[0].start, k = at(u, .25, 1.2), sc = 2.6, hip = [480, 720];
+    var cx = lerp(330, 92, k), cy = lerp(470, 396, k), w = [cx + 34 * 1.1, cy + 8 * 1.1];
+    var man = fig({ x: hip[0], y: hip[1], s: sc, lean: 4 + 6 * k, shirt: SHIRT_V, hands: [w, [w[0] + 6, w[1] - 4]], bend: [-1, -1], legs: [[88, -86], [86, -86]] });
+    s += man.far + man.body + man.near + clasp(cx, cy, 1.3, k);
+    s += burst(cx + 8, cy - 30, (u - 1.45) / .5, 46) + burst(cx + 8, cy + 10, (u - 1.75) / .5, 40);
+    s += draw("M" + f(cx + 120) + " " + f(cy - 110) + " L" + f(cx + 40) + " " + f(cy - 110), at(u, .3, .5), ORANGE, 5) + arrow(cx + 60, cy - 110, cx + 10, cy - 110, ORANGE, 5, at(u, .7, .3));
   } else {
-    var u2 = t - LN[2].start; s += HAND(300, 360, 1.0, 180, { f: { index: { pull: 12 * Math.abs(Math.sin(u2 * 2)) } }, hl: "index" }) + speaker(480, 150, 1, false, t) + cross(480, 150, 1.1, clamp((u2 - .8) / .4));
+    // lines 1–2: close up from above. The right hand's fingers fold one by one into a fist while the left hand,
+    // palm down over them, presses them in: each knuckle cracks («طق»). Then the same finger again: no sound.
+    var u1 = t - LN[1].start, F = {}, order = ["index", "middle", "ring", "pinky"], press = 0, X = 330, Y = 300, S = 1.0;
+    if (li === 1) {
+      order.forEach(function (k, i) { var t0 = .15 + i * .8; F[k] = { fold: at(u1, t0 + .1, .22) }; press = Math.max(press, Math.sin(clamp((u1 - t0) / .6) * Math.PI)); });
+    } else {
+      var u2 = t - LN[2].start, back = 1 - at(u2, .1, .5);
+      order.forEach(function (k) { F[k] = { fold: back }; });
+      F.index = { fold: Math.max(back, at(u2, 1.3, .3) * (1 - at(u2, 2.6, .4))) }; press = Math.sin(clamp((u2 - 1.2) / .7) * Math.PI);
+    }
+    s += HAND(X, Y, S, 0, { f: F });
+    var nf = 0; order.forEach(function (k) { nf += clamp((F[k].fold - .45) / .4); });
+    var Lx = X + 150, Ly = Y + 190 + 140 * (1 - at(u1, 0, .35)) - 10 * press - (li === 1 ? nf * 3 : 0);
+    s += HAND(Lx, Ly, 1.0, 90, { sleeve: SHIRT_V }, true);
+    if (li === 1) {
+      order.forEach(function (k, i) { var t0 = .15 + i * .8 + .22, gk = FG[k], kn = HP(X, Y, S, 0, gk[0], gk[1] + gk[3][0] * .62); s += burst(kn[0], kn[1], (u1 - t0) / .5, 50); });
+      s += G("", T("طق!", 120, 150, 58, ORANGE, 800), clamp((u1 - .37) / .2) * (1 - clamp((u1 - 3.4) / .3)));
+    } else {
+      var u3 = t - LN[2].start; s += speaker(500, 120, 1, false, t) + cross(500, 120, 1.1, clamp((u3 - 1.7) / .4));
+    }
   }
   return s;
 };

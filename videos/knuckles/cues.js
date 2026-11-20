@@ -47,8 +47,9 @@ const crack = (t, g) => rec(t, 'knuckle', g || 0.6, 0, 0.35, 1.0, 'knuckle', (g 
 const pop = (t, g) => a(t, 'pop', g || 0.3);
 // 0–2 · hook: the hands push out; «طق طق» (the burst repeats every 1.1 s); the same finger again, no sound (✗)
 a(L(0) + 0.5, 'whoosh', 0.15);
-for (let k = 0; k < 3; k++) if (L(1) + k * 1.1 < L(2) - 0.2) crack(L(1) + k * 1.1 + 0.02, 0.65 - k * 0.1);
-a(L(2) + 0.4, 'creak', 0.08, 0.8); scribble(L(2) + 0.8);
+crack(L(0) + 1.45, 0.55); crack(L(0) + 1.75, 0.45);                                                   // the stretch: two pops as the arms straighten
+for (let k = 0; k < 4; k++) { a(L(1) + 0.1 + k * 0.8, 'squeeze', 0.06, 0.3); crack(L(1) + 0.37 + k * 0.8, 0.7 - k * 0.05); }   // close-up: the other hand presses each finger in, one crack each
+a(L(2) + 1.2, 'squeeze', 0.06, 0.4); a(L(2) + 1.45, 'bump', 0.08); scribble(L(2) + 1.7);   // the same finger again: only a dull bump, no crack
 // 4–6 · the rule: the tag, the plunger pulled (a rising hiss, bubbles), the soda cap off (pop and fizz)
 pop(L(4) + 0.3);
 a(L(5) + 0.6, 'intake', 0.18, 1.6); a(L(5) + 1.4, 'fizz', 0.22, 1.6); lab(5, 2.4);
