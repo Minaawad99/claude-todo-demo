@@ -23,12 +23,20 @@
     for (var k = 0; k < 70; k++) { var gx = -600 + hash(k + 400) * 2300, gy = GY + 60 + hash(k + 500) * 1400, d = "M" + f(gx) + " " + f(gy); for (var j = 1; j < 6; j++) d += " q" + f(8 - hash(k + j) * 16) + " 22 " + f(4 - hash(k + j + 3) * 8) + " 44"; s += P(d, "#4a2c16", 2.4, ' opacity=".35"'); }
     for (var q = 0; q < 50; q++) { var sx = -600 + hash(q + 700) * 2300, sy = GY + 120 + hash(q + 800) * 1400, r = 8 + hash(q + 900) * 18; s += '<ellipse cx="' + f(sx) + '" cy="' + f(sy) + '" rx="' + f(r * 1.3) + '" ry="' + f(r) + '" fill="#a8927a" stroke="#5a4636" stroke-width="2" opacity=".75"/>'; }
     return s; })();
-  function sky(t, night) {
+  // the desert under the sky and in the cut: pale wind-rippled sand with pebbles and a few dry tufts (o.sand in ground())
+  var SANDTEX = (function () { var s = ""; for (var i = 0; i < 200; i++) { var x = -800 + hash(i + 31) * 2700, y = GY + 40 + hash(i + 37) * 1500, rx = 10 + hash(i + 41) * 40; s += '<ellipse cx="' + f(x) + '" cy="' + f(y) + '" rx="' + f(rx) + '" ry="' + f(rx * 0.35) + '" fill="' + (hash(i + 43) > 0.5 ? "#b8854a" : "#f0cf96") + '" opacity="' + f(0.25 + hash(i + 47) * 0.3) + '"/>'; }
+    for (var k = 0; k < 40; k++) { var gx = -800 + hash(k + 600) * 2700, gy = GY + 80 + hash(k + 610) * 1400; s += P("M" + f(gx) + " " + f(gy) + " q40 -12 80 0 t80 0", "#a87440", 3, ' opacity=".35"'); }
+    for (var q = 0; q < 46; q++) { var sx = -800 + hash(q + 720) * 2700, sy = GY + 60 + hash(q + 730) * 1400, r = 6 + hash(q + 740) * 12; s += '<ellipse cx="' + f(sx) + '" cy="' + f(sy) + '" rx="' + f(r * 1.3) + '" ry="' + f(r) + '" fill="#c9a77e" stroke="#7a5a3a" stroke-width="2" opacity=".7"/>'; }
+    return s; })();
+  // o.far: "town" (default) or "desert" (layered far mountains and dunes instead of the town)
+  function sky(t, night, o) { o = o || {};
     var s = '<rect x="-800" y="-900" width="2700" height="' + (GY + 900) + '" fill="url(#' + (night ? "skyN" : "sky") + ')"/>';
     if (!night) s += '<circle cx="880" cy="120" r="' + f(330 + 10 * Math.sin(t * 0.7)) + '" fill="url(#sun)"/>';
     else for (var i = 0; i < 40; i++) s += C(-500 + hash(i + 40) * 2100, -600 + hash(i + 60) * 900, 2 + hash(i) * 2, "#fff", { op: 0.4 + 0.5 * Math.abs(Math.sin(t * 2 + i)) });
     for (var c = 0; c < 6; c++) { var cx = ((-300 + c * 420 + t * 14) % 2400) - 600, cy = -300 + hash(c + 20) * 380, sc = 0.8 + hash(c + 30) * 0.7;
       s += '<g transform="translate(' + f(cx) + ' ' + f(cy) + ') scale(' + f(sc) + ')" opacity="' + (night ? 0.25 : 0.95) + '"><path d="M-90 30 C-110 30 -110 0 -86 -2 C-84 -30 -40 -40 -24 -18 C-10 -44 40 -40 44 -10 C70 -14 84 6 74 24 C80 30 70 38 60 36 Z" fill="#fff" stroke="#c9d6e2" stroke-width="3"/><path d="M-80 30 H60" stroke="#dfe7ef" stroke-width="6"/></g>'; }
+    if (o.far === "desert") { s += F("M-800 " + (GY - 60) + " L-560 " + (GY - 330) + " L-380 " + (GY - 210) + " L-180 " + (GY - 420) + " L80 " + (GY - 240) + " L260 " + (GY - 360) + " L520 " + (GY - 180) + " L760 " + (GY - 390) + " L1000 " + (GY - 230) + " L1240 " + (GY - 340) + " L1500 " + (GY - 160) + " L1900 " + (GY - 300) + " L1900 " + GY + " L-800 " + GY + " Z", night ? "#3a4060" : "#d7b48e", { sw: 0, op: 0.8 });
+      s += F("M-800 " + (GY - 40) + " Q-400 " + (GY - 150) + " 0 " + (GY - 60) + " Q400 " + (GY - 170) + " 800 " + (GY - 70) + " Q1200 " + (GY - 160) + " 1900 " + (GY - 60) + " L1900 " + GY + " L-800 " + GY + " Z", night ? "#4a4a64" : "#e6c08a", { sw: 0, op: 0.9 }); return s; }
     // far town, faded
     for (var b = 0; b < 16; b++) { var bx = -700 + b * 160, bh = 120 + hash(b + 70) * 180; s += R(bx, GY - bh, 130, bh, night ? "#3a4560" : "#d9cfc0", { sw: 0, op: 0.7 }); for (var w = 0; w < 4; w++) s += R(bx + 18 + (w % 2) * 56, GY - bh + 24 + Math.floor(w / 2) * 50, 34, 26, night ? (hash(b + w) > 0.5 ? "#ffd27a" : "#2a3348") : "#c4b8a6", { sw: 0, op: 0.7 }); }
     return s;
@@ -37,7 +45,10 @@
     for (var k = 0; k < 6; k++) { var a = -150 + k * 60 + Math.sin(t * 1.4 + k) * 4; g += '<path d="M16 -300 Q' + f(16 + Math.cos(a * Math.PI / 180) * 80) + ' ' + f(-330 + Math.sin(a * Math.PI / 180) * 40) + ' ' + f(16 + Math.cos(a * Math.PI / 180) * 150) + ' ' + f(-300 + Math.sin(a * Math.PI / 180) * 90 + 50) + '" stroke="#3f7f2e" stroke-width="16" fill="none" stroke-linecap="round"/>'; }
     return g + '</g>'; }
   function bush(x, s) { return '<g transform="translate(' + x + ' ' + GY + ') scale(' + s + ')"><circle cx="-30" cy="-26" r="34" fill="#5a9a3e" stroke="' + INK + '" stroke-width="3"/><circle cx="18" cy="-38" r="42" fill="#6aae48" stroke="' + INK + '" stroke-width="3"/><circle cx="54" cy="-22" r="28" fill="#4f8a34" stroke="' + INK + '" stroke-width="3"/></g>'; }
-  function ground(t) {
+  function ground(t, o) { o = o || {};
+    if (o.sand) { var d = '<rect x="-800" y="' + GY + '" width="2700" height="1900" fill="url(#sand)"/>' + SANDTEX + R(-800, GY - 6, 2700, 14, "url(#sandTop)", { sw: 3 });
+      for (var j = 0; j < 14; j++) { var tx = -700 + hash(j + 900) * 2500; d += P("M" + f(tx) + " " + (GY - 4) + " l-10 -20 M" + f(tx + 4) + " " + (GY - 4) + " l2 -26 M" + f(tx + 8) + " " + (GY - 4) + " l12 -18", "#9a8a4a", 3); }
+      return d; }
     var s = '<rect x="-800" y="' + GY + '" width="2700" height="1900" fill="url(#soil)"/>' + SOILTEX;
     s += '<rect x="-800" y="' + (GY - 10) + '" width="2700" height="22" fill="url(#grass)" stroke="' + INK + '" stroke-width="3"/>';
     for (var g = -790; g < 1900; g += 18) s += P("M" + g + " " + (GY - 8) + " l4 -14 M" + (g + 7) + " " + (GY - 8) + " l-3 -10", "#4f8a34", 3);

@@ -24,3 +24,11 @@ regenerative-brake step.
 ## Not used
 - 25 kV (Egyptian sources give 27.5 kV); "no level crossings at all" stated as fact (we say roads cross on bridges);
   opening date; station count (sources disagree: 15 vs 21).
+
+## What the drawing borrows (from all 14 `_reference/law` sheets)
+- r14 / r09: the ground cut open below the scene, layers visible (here: sand, then the ballast bank).
+- r13: parts arriving with motion and staying (rails slide in, sleepers slide in, masts rise, the bridge deck drops in).
+- r06 / r10: a desert backdrop with layered far mountains and a big hazy sun (here our own desert, not their city).
+- r01 / r12: close-ups on one mechanism (the rail joint, the wheel cone) then pulling back to the whole build.
+- r11: a floating info card over the scene (our top-view curve, turnout and the cab screen).
+- From the user's Haramain clip: only the general idea of a side-view railway; no drawing, step or line copied.
