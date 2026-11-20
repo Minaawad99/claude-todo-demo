@@ -21,7 +21,9 @@ every episode.
    The one exception is the user asking for music in a specific video (section 5); it doesn't carry over to the next one.
 3. **You make the sound effects** from the kit, the episode's own clips and `audio/sfx.py`'s synthesized ones. When a moment
    needs a real recording the kit doesn't have, ask the user for it by name with Pixabay search terms; they fetch it.
-4. **Always finish with the reel cover and the titles** (section 7), without being asked: TikTok, Instagram (shared to the
+4. **Hands are drawn with the hand rig, and hand actions are seen from above** (locked after «ليه صوابعك بتطقطق؟»,
+   `videos/knuckles/`): see section 3, "Hands".
+5. **Always finish with the reel cover and the titles** (section 7), without being asked: TikTok, Instagram (shared to the
    Facebook page) and YouTube Shorts. It copies the look, pacing and narration of the «طب إزاي؟» series: 20 reference videos, measured in
 `videos/_reference/tabizzay/STYLE.md`, with contact sheets, motion strips and transcripts. We make it under our own name.
 
@@ -138,6 +140,23 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
   spot: throat, between the shoulder blades, above the navel, mid-chest. People are flat salmon-skinned side views as in
   reference v20, with no faces beyond a nose, an ear and a hair cap. A body cut uses the real anatomy from a reference
   picture (`throat()` in the same file: windpipe in front, gullet behind, epiglottis on the voice box).
+- **Hands: the rig, from above** (the user's rule after «ليه صوابعك بتطقطق؟», `videos/knuckles/`, whose drawings they
+  called the way to draw every video). Every hand is `HAND()` from `videos/_templates/sketch/body.js`, which `build.py`
+  loads by default: the hand from «ليه البنصر مش بيترفع؟» (`videos/finger-stuck/`), with three phalanges per finger, joints
+  wider than the shafts, nails, knuckle wrinkles, a shaded side, knuckle domes, tendon lines and contact shadows. Never a
+  mitten, a blob or a plain outline.
+  - A hand that does something (cracks, presses, folds, points at a detail) is a **close-up from above**, like the knuckles
+    hook: both hands interlaced and pushed forward (`interlaced()`), then the other hand pressing the fingers in one by
+    one (`fold`), with a `burst()` on the knuckle that cracks. Don't draw hands in action from the side: the user
+    rejected the side view of a man stretching his interlaced hands, because the fingers looked unnatural.
+  - The insides go on the same rig: `bones` lays the skeleton over the hand (reference v07), `xray` + `tend` shows the
+    tendons, `hl` rings a knuckle, `pull` / `fold` / `lift` / `red` move or colour one finger. `HP()` gives a rig point
+    on the panel for labels, bursts and insets.
+  - A cut through a body part follows real anatomy at close-up size, like the knuckle cut `joint()` in
+    `videos/knuckles/sketch/shots.js` (bone with a spongy core, cartilage caps, the capsule, the fluid, the tendons).
+  - Whole people stay the real-proportion side figures, `fig()` in the same `body.js`.
+  - Show the user a contact sheet of the drawings, one frame per shot, before any render, and the hook frames again
+    whenever they change.
 - **Shots:** one `shot()` per idea, usually per line, sometimes per caption chunk (`[line, chunk]`).
   - Transitions: `tr: "fade"`, or `"in"` / `"out"` when the camera flies into a detail or pulls back. There are no hard cuts.
   - `hud(from, to, draw)` holds a dial, chip or checklist over several shots.

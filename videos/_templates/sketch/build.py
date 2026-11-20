@@ -5,6 +5,8 @@ with this episode's title, category, summary card and caption data). The page lo
 episode.py sets:
   CFG = {"title": …, "category": …, "outro": <summary-card HTML>, "watermark": "" or "إيه الحكاية؟ | @handle"}
         optional: "libs": extra scripts loaded before scenes.js (default ["../../lib/geo.min.js"], which globe() needs)
+        optional: "parts": shared drawing files from _templates/sketch put before shots.js (default ["body"]: the hand rig
+                  and the real-proportion people; see body.js)
         optional: "intro_lines" (how many hook lines before the promise), "promise", "summary", "cta" (line indexes)
   K   = {line: {word: "o" | "b" | "g" | "u" | "gr" | "o u"}}   key words in the caption / hook:
         o orange (action, danger, heat, numbers) · b blue (water, air, cold, the technical term) · g olive (the named part)
@@ -78,6 +80,7 @@ chunks = [[c["f"] for c in cs] for cs in caps]
 
 open(os.path.join(HERE, "scenes.js"), "w", encoding="utf-8").write(
     "window.CHUNKS = " + json.dumps(chunks) + ";\n" + open(os.path.join(TPL, "_helpers.js"), encoding="utf-8").read() + "\n" +
+    "".join(open(os.path.join(TPL, part + ".js"), encoding="utf-8").read() + "\n" for part in CFG.get("parts", ["body"])) +
     open(os.path.join(HERE, "shots.js"), encoding="utf-8").read())
 page = open(os.path.join(TPL, "template.html"), encoding="utf-8").read()
 for k, v in [("/*TITLE*/", CFG.get("title", "")), ("/*CATEGORY*/", CFG.get("category", "")), ("/*OUTRO*/", CFG.get("outro", "")),
