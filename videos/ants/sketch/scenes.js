@@ -418,16 +418,16 @@ shot(7, push(260, 520, 1.25, 1.15), function (u, d, t) {
 }, { tr: "in" });
 // 8 · they loop and zigzag … most come back with nothing
 shot(8, push(320, 520, 1.15, 1.05), function (u, d, t) {
-  var s = paper() + plan(t), T0 = 3.6;
+  var s = paper() + plan(t), T0 = 3.0;
   WALKS.forEach(function (w, i) { var k = clamp((u + 1.2 - i * .25) / T0); s += G("", draw(polyD(w, 1), k, INK, 1.8, ' stroke-dasharray="4 5"'), .55); var p = ptAt(w, k); s += antTop(p[0], p[1], headingAt(w, k), 1.0, t + i); });
   return s + cross(470, 520, 1, at(u, d - 1.3, .5));
 });
 // 9 · one bumps into the sugar, tastes it and picks up a crystal (side view on the counter)
 shot(9, push(320, 420, 1.02, 1.12), function (u, d, t) {
-  var g = at(u, 2.2, .6), x = lerp(440, 400, at(u, 0, 1.4)), s = paper() + R(-600, 540, 1840, 400, MARBLE, 0) + '<path d="M-600 540 H1240" stroke="' + INK + '" stroke-width="2.6"/><path d="M-100 600 Q100 580 300 620 T700 600" stroke="#cfc8b8" stroke-width="3" fill="none"/>';
+  var g = at(u, 1.9, .5), x = lerp(440, 400, at(u, 0, 1.4)), s = paper() + R(-600, 540, 1840, 400, MARBLE, 0) + '<path d="M-600 540 H1240" stroke="' + INK + '" stroke-width="2.6"/><path d="M-100 600 Q100 580 300 620 T700 600" stroke="#cfc8b8" stroke-width="3" fill="none"/>';
   // the sugar heap: cubic crystals
   for (var i = 0; i < 26; i++) { var cx = 80 + (i % 9) * 22 + hash(i) * 8, cy = 540 - 14 - Math.floor(i / 9) * 22 - (i % 9 > 2 && i % 9 < 7 ? 8 : 0); if (i === 4 && g > 0) continue; s += G("translate(" + f(cx) + " " + f(cy) + ") rotate(" + f(hash(i + 2) * 30 - 15) + ")", R(-10, -10, 20, 20, SUGARC, 1.6)); }
-  return s + ant(x + 60, 540, 1.05, t, { walk: u < 1.4 ? .5 : 0, crystal: g > 0, sniff: u > 1.0 && u < 2.3 }) + label(170, 470, 140, 300, "سكر", OLIVE, at(u, .3, .5), 26) + (g > 0 ? label(x + 60 - 156 * 1.05, 540 - 42 * 1.05, 330, 330, "حباية", ORANGE, at(u, 2.6, .5), 24) : "");
+  return s + ant(x + 60, 540, 1.05, t, { walk: u < 1.4 ? .5 : 0, crystal: g > 0, sniff: u > .9 && u < 2.0 }) + label(170, 470, 140, 300, "سكر", OLIVE, at(u, .3, .5), 26) + (g > 0 ? label(x + 60 - 156 * 1.05, 540 - 42 * 1.05, 330, 330, "حباية", ORANGE, at(u, 2.3, .4), 24) : "");
 }, { tr: "in" });
 // 10 · it got there by wandering: how does it get back?
 shot(10, push(300, 430, 1.0, 0.94), function (u, d, t) {
@@ -436,23 +436,23 @@ shot(10, push(300, 430, 1.0, 0.94), function (u, d, t) {
 }, { tr: "out" });
 // 11 · the whole way it counts how far it walked and which way: the scout runs the path, a home vector follows it
 hud(11, 12, function (u, t) {
-  var k = clamp(u / 3.2), n = Math.floor(k * 1460);
+  var k = clamp(u / 2.6), n = Math.floor(k * 1460);
   return R(440, 30, 180, 86, "#f4ecdb", 2) + T("خطوات", 530, 62, 22, INK, 700) + N(String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ","), 530, 102, 32, ORANGE) +
     C(76, 76, 48, "#f4ecdb", 2) + T("ش", 76, 44, 14, INK, 800) + G("rotate(" + f(headingAt(SCOUT, k) + 90) + " 76 76)", '<path d="M76 40 L84 76 L76 112 L68 76 Z" fill="' + ORANGE + '" stroke="' + INK + '" stroke-width="1.4"/>');
 });
 shot(11, push(300, 420, 0.94, 1.0), function (u, d, t) {
-  var k = clamp(u / 3.2), p = ptAt(SCOUT, k);
+  var k = clamp(u / 2.6), p = ptAt(SCOUT, k);
   return paper() + plan(t) + draw(polyD(SCOUT, k), 1, INK, 2, ' stroke-dasharray="4 5"') +
     '<path d="M' + f(p[0]) + ' ' + f(p[1]) + ' L' + NEST[0] + ' ' + NEST[1] + '" stroke="' + ORANGE + '" stroke-width="3.4" stroke-dasharray="10 7"/>' + C(NEST[0], NEST[1], 7, ORANGE, 2) +
     antTop(p[0], p[1], headingAt(SCOUT, k), 1.2, t);
 });
 // 12 · like walking in the dark and counting: 20 steps right, 10 forward; footprints on the plan, a man in the dark in the corner
 shot(12, push(320, 430, 1.0, 1.06), function (u, d, t) {
-  var s = paper() + R(30, 150, 580, 580, "#3a3530", 2.4) + '<rect x="30" y="150" width="580" height="580" fill="url(#grid)" opacity=".25"/>', start = [520, 640], k1 = at(u, .1, 1.6), k2 = at(u, 1.8, 1.2), i;
+  var s = paper() + R(30, 150, 580, 580, "#3a3530", 2.4) + '<rect x="30" y="150" width="580" height="580" fill="url(#grid)" opacity=".25"/>', start = [520, 640], k1 = at(u, .1, 1.3), k2 = at(u, 1.5, 1.0), i;
   for (i = 0; i < 20; i++) { if (i / 20 > k1) break; var x = start[0] - i * 20; s += '<ellipse cx="' + f(x) + '" cy="' + f(start[1] + (i % 2 ? 9 : -9)) + '" rx="7" ry="4.5" fill="#e9e1cc" opacity=".85"/>'; }
   for (i = 0; i < 10; i++) { if (i / 10 > k2) break; var y = start[1] - 40 - i * 32; s += '<ellipse cx="' + f(start[0] - 400 + (i % 2 ? 9 : -9)) + '" cy="' + f(y) + '" rx="4.5" ry="7" fill="#e9e1cc" opacity=".85"/>'; }
   s += G("", N(String(Math.round(20 * k1)), 320, 700, 40, ORANGE), clamp(k1 * 3)) + G("", N(String(Math.round(10 * k2)), 70, 460, 40, ORANGE), clamp(k2 * 3));
-  s += draw("M" + (start[0] - 400) + " " + (start[1] - 360) + " L" + start[0] + " " + start[1], at(u, 3.0, .8), ORANGE, 3, ' stroke-dasharray="10 7"') + C(start[0], start[1], 9, ORANGE, 2);
+  s += draw("M" + (start[0] - 400) + " " + (start[1] - 360) + " L" + start[0] + " " + start[1], at(u, 2.5, .5), ORANGE, 3, ' stroke-dasharray="10 7"') + C(start[0], start[1], 9, ORANGE, 2);
   var ph = t * 3.4, sw = 16 * Math.sin(ph), man = fig({ x: 10, y: 72 - 212 * .4 + 2 * Math.abs(Math.cos(ph)), s: .4, legs: [[sw, -4], [-sw, -4]], hands: [[-48, -38], [-44, -34]], bend: [BENDX, BENDX] });
   return s + iconBox(470, 300, 200, '<rect x="-85" y="-85" width="170" height="170" fill="#2e2a26"/><circle cx="-50" cy="-50" r="60" fill="#fff" opacity=".05"/>' + whole(man) + '<path d="M-85 72 H85" stroke="#8f8576" stroke-width="2"/>' + T("؟", 50, -50, 40, "#e9e1cc", 800), at(u, .2, .3));
 });
