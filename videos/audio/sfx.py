@@ -270,6 +270,46 @@ def fx_rotor(d=4.0, rate=6.5):   # main rotor "chop": low thumps per blade pass 
 def fx_windmill(d=3.0):          # rotor coasting without the engine: slower chop, airy
     return fx_rotor(d, 4.2) * 0.6 + lp_fast(noise(int(d * SR)), 1200, 1) * 0.3 * env(int(d * SR), .5, .5)
 
+# ── ants («النمل بيعرف مكان السكر إزاي؟») ─────────────
+def clicks(d, rate, lo, hi, g=(0.3, 1.0), dec=900):
+    n = int(d * SR); x = np.zeros(n, np.float32); L = int(0.012 * SR); tt = np.arange(L) / SR
+    for _ in range(int(rate * d)):
+        st = int(rng.random() * max(1, n - L)); f = rng.uniform(lo, hi)
+        x[st:st + L] += rng.uniform(*g) * (np.sin(2 * np.pi * f * tt) * np.exp(-tt * dec)).astype(np.float32)
+    return x
+def fx_skitter(d=1.2):        # tiny ant feet on a hard floor: fast, light, high clicks
+    x = clicks(d, 46, 2600, 6200); return hp_fast(x, 1800) * env(int(d * SR), .08, .2)
+def fx_swarm(d=3.0):          # many ants circling: dense skitter with a slow swirl
+    t = t_(d); x = clicks(d, 220, 2200, 6500, (0.15, 0.7)) * (0.65 + 0.35 * np.sin(2 * np.pi * 0.7 * t))
+    return (hp_fast(x, 1500) + 0.25 * hp_fast(lp_fast(noise(len(t)), 5000, 1), 2500) * 0.3).astype(np.float32) * env(len(t), .5, .6)
+def fx_crunch(d=0.35):        # a sugar crystal snapped up: a grainy crunch
+    t = t_(d); x = clicks(d, 120, 1800, 7000, (0.4, 1.0), 600) * np.exp(-t * 9)
+    return (x + 0.4 * hp_fast(noise(len(t)), 3000) * np.exp(-t * 30)).astype(np.float32)
+def fx_dab(d=0.35):           # the gaster tip taps the floor: a soft little knock with a damp touch
+    t = t_(d); k = np.sin(2 * np.pi * (300 * np.exp(-t * 30) + 180) * t) * np.exp(-t * 34)
+    return (k + 0.25 * lp_fast(noise(len(t)), 2500, 1) * np.exp(-t * 50)).astype(np.float32)
+def fx_shimmer(d=1.2):        # scent: a soft sparkle of high glassy notes, rising then fading
+    n = int(d * SR); x = np.zeros(n, np.float32); L = int(0.35 * SR); tt = np.arange(L) / SR
+    notes = [1568, 1760, 2093, 2349, 2637, 3136]
+    for k in range(int(9 * d)):
+        st = int(k / (9 * d) * (n - L)); f = notes[int(rng.random() * len(notes))] * rng.uniform(.995, 1.005)
+        x[st:st + L] += rng.uniform(.4, 1) * (np.sin(2 * np.pi * f * tt) * np.exp(-tt * 9)).astype(np.float32)
+    return x * env(n, .05, .3)
+def fx_sniff(d=0.7):          # two quick sniffs: short rising filtered breaths
+    t = t_(d); x = np.zeros(len(t), np.float32)
+    for t0 in (0.0, 0.28):
+        m = (t >= t0) & (t < t0 + 0.2); u = (t[m] - t0) / 0.2
+        x[m] += (np.sin(np.pi * u) ** 2).astype(np.float32)
+    return lp_fast(hp_fast(noise(len(t)), 900), 4500, 1) * x
+def fx_step(d=0.28):          # a shoe on pavement: low thud + grit
+    t = t_(d); th = np.sin(2 * np.pi * (110 * np.exp(-t * 25) + 60) * t) * np.exp(-t * 28)
+    return (th + 0.35 * lp_fast(hp_fast(noise(len(t)), 700), 4000, 1) * np.exp(-t * 40)).astype(np.float32)
+def fx_fade(d=1.6):           # scent evaporating: a soft airy hiss that thins out upward
+    t = t_(d); nz = noise(len(t)); x = lp_fast(nz, 2000, 1) * (1 - t / d) + hp_fast(nz, 5000) * (t / d) * .6
+    return (x * np.sin(np.pi * t / d) ** 2).astype(np.float32)
+def fx_count(d=0.04):         # an odometer digit: a dry plastic click
+    t = t_(d); return (np.sin(2 * np.pi * 3400 * t) * np.exp(-t * 260) + 0.4 * noise(len(t)) * np.exp(-t * 400)).astype(np.float32)
+
 FX = {k[3:]: v for k, v in globals().items() if k.startswith("fx_")}
 
 # ── music bed: soft chords + plucks, 84 bpm, voice band carved out ──

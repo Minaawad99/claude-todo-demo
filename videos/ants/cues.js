@@ -16,6 +16,9 @@
 // for any real recording a moment needs (Pixabay search terms) and put it in <episode>/sfx/px-<name>.mp3.
 const fs = require('fs');
 global.window = {}; eval(fs.readFileSync(__dirname + '/timing.js', 'utf8'));
+// caption-chunk start fractions as build.py writes them into the page
+const PAGE = fs.readFileSync(__dirname + '/sketch/scenes.js', 'utf8'), CHM = PAGE.match(/^window\.CHUNKS = (.*);$/m);
+window.CHUNK_F = (i, k) => { try { return JSON.parse(CHM[1])[i][k] || 0; } catch (e) { return 0.55; } };
 const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration : T[i].start, D = i => L(i + 1) - L(i), c = [];
 // a clip lives in the episode's sfx/ (gitignored, one-off sounds) or in the shared «اسكتش» kit (committed)
 const KIT = '../_templates/sketch/sfx/', where = n => fs.existsSync(__dirname + '/sfx/px-' + n + '.mp3') ? 'sfx/px-' + n + '.mp3' : fs.existsSync(__dirname + '/' + KIT + 'px-' + n + '.mp3') ? KIT + 'px-' + n + '.mp3' : null;
@@ -43,7 +46,63 @@ a(L(SUMMARY) + 0.1, 'chime', 0.35); for (let k = 0; k < 5; k++) a(L(SUMMARY) + 0
 paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                                                       // ask box
 
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
-// e.g. lab(5, 0.4); ding(L(6) + 1.6); scribble(L(9) + 1.2); sea(L(0), L(PROMISE) - L(0) + 0.6, 0.45);
+// All the ant sounds here are synthesized in audio/sfx.py (made for this episode, no recordings): skitter (tiny feet),
+// swarm (many ants), crunch (a sugar crystal), dab (the gaster tip taps the floor), shimmer (scent), sniff, step (a shoe),
+// fade (scent evaporating), count (odometer click). The kit keeps only the series' own page flips, ding and scribble.
+const CH = (i, k) => L(i) + (L(i + 1) - L(i)) * window.CHUNK_F(i, k);
+// 0–2 · hook: the kitchen, then the line of ants marching to the sugar; eye and nose crossed out
+a(L(1) + 0.1, 'skitter', 0.35, D(1) + D(2) - 0.2);
+a(L(2) + 0.1, 'pop', 0.3); scribble(L(2) + 0.45); a(L(2) + 1.3, 'pop', 0.3); a(L(2) + 1.4, 'sniff', 0.3); scribble(L(2) + 1.65);
+// bumper: the ant carrying its crystal
+a(L(3) + 0.3, 'skitter', 0.25, 1.2);
+// 4 · the rule card is pinned
+paper(L(4) + 0.3); a(L(4) + 0.45, 'pop', 0.35);
+// 5 · no sound (a wave crossed out), scent between the antennae
+a(L(5) + 0.2, 'beep', 0.18); scribble(L(5) + 0.9); a(L(5) + 1.6, 'shimmer', 0.4, 1.4); a(L(5) + 1.9, 'pop', 0.3);
+// 6 · 10 m on the plan, 3 mm inset; then the man walking 6 km
+a(L(6) + 0.4, 'whoosh', 0.15, 1.2); a(L(6) + 1.2, 'pop', 0.3); lab(6, 0.25); lab(6, 0.65);
+const m6 = CH(6, 2); for (let s = m6 + 0.3; s < L(7) - 0.1; s += 0.6) a(s, 'step', 0.3); ding(m6 + 1.0);
+// 7–8 · scouts wander out, most come back with nothing
+a(L(7) + 0.1, 'skitter', 0.35, D(7) + D(8) - 0.3); a(L(7) + 1.4, 'pop', 0.3);
+scribble(L(8) + D(8) - 1.3);
+// 9 · one bumps into the sugar, tastes it, takes a crystal
+a(L(9) + 0.05, 'skitter', 0.3, 1.3); a(L(9) + 1.0, 'sniff', 0.2); a(L(9) + 1.9, 'crunch', 0.45); lab(9, 0.3); lab(9, 2.3);
+// 10 · how will it get back? the winding path draws, a question mark
+a(L(10) + 0.1, 'whoosh', 0.15, 1.1); a(L(10) + 0.5, 'pop', 0.3);
+// 11 · it counts: odometer clicks and the home vector
+for (let s = L(11) + 0.15; s < L(11) + 2.6; s += 0.09) a(s, 'count', 0.12); a(L(11) + 0.1, 'skitter', 0.25, 2.6);
+// 12 · walking in the dark and counting: 20 steps right, 10 forward, then the straight way home
+for (let k = 0; k < 10; k++) a(L(12) + 0.15 + k * 0.13, 'step', 0.22); for (let k = 0; k < 5; k++) a(L(12) + 1.55 + k * 0.19, 'step', 0.22);
+a(L(12) + 2.5, 'whoosh', 0.15, 0.6); a(L(12) + 0.2, 'pop', 0.25);
+// 13 · straight back to the nest ✓
+a(L(13) + 0.5, 'skitter', 0.3, D(13) - 1.2); scribble(L(13) + D(13) - 0.8);
+// 14 · the gaster tip taps the floor, again and again
+for (const u of [0.37, 1.87]) { a(L(14) + u, 'dab', 0.55); a(L(14) + u + 0.05, 'shimmer', 0.18, 0.6); }
+a(L(14), 'skitter', 0.22, D(14)); lab(14, 0.6);
+// 15 · dab after dab, a line grows from the sugar
+a(L(15) + 0.2, 'shimmer', 0.35, D(15) - 0.6); a(L(15) + 0.3, 'pop', 0.25);
+for (let s = L(15); s < L(16); s += 0.1) { const ph = (s * 4.2) % (2 * Math.PI); if (Math.abs(ph - Math.PI / 2) < 0.21) a(s, 'dab', 0.3); }
+// 16 · breadcrumbs, but scent
+a(L(16) + 0.2, 'pop', 0.3); for (let k = 0; k < 4; k++) a(L(16) + 0.35 + k * 0.12, 'crunch', 0.15, 0.12); a(L(16) + D(16) - 1.2, 'pop', 0.3);
+// 17 · the antennae: sniffing the trail
+a(L(17) + 0.2, 'sniff', 0.4); a(L(17) + 1.0, 'sniff', 0.3); a(L(17) + 0.4, 'shimmer', 0.25, 1.6); lab(17, 0.3);
+// 18 · the others follow the line out
+a(L(18) + 0.1, 'skitter', 0.4, D(18) - 0.2);
+// 19 · each one lays its own scent: dabs from two ants, the scent meter rises
+for (const u of [0.02, 0.37, 1.51, 1.87, 3.0]) if (u < D(19) - 0.1) a(L(19) + u, 'dab', 0.45);
+a(L(19) + 0.3, 'shimmer', 0.3, D(19) - 0.4);
+// 20 · the line gets stronger, more and more ants
+a(L(20) + 0.1, 'swarm', 0.35, D(20)); a(L(20) + 0.2, 'shimmer', 0.3, D(20) - 0.3);
+// 21 · two routes: the short one wins
+a(L(21) + 0.2, 'skitter', 0.3, D(21) - 0.3); lab(21, 0.8); lab(21, 1.0); a(L(21) + 1.3, 'shimmer', 0.35, D(21) - 2); ding(L(21) + D(21) - 1.2);
+// 22 · the myth: a sight line crossed out, then the trail ✓
+a(L(22) + 0.3, 'whoosh', 0.15, 0.8); scribble(L(22) + 2.0); a(L(22) + D(22) * 0.62, 'shimmer', 0.3, 1.2); scribble(L(22) + D(22) * 0.62 + 0.4);
+// 23 · sugar gone, the scent evaporates, the line melts away
+a(L(23) + 0.3, 'pop', 0.3); a(L(23) + 1.2, 'fade', 0.45, D(23) - 1.4); a(L(23) + 1.2, 'skitter', 0.25, D(23) - 1.4);
+// 24 · the recap: numbered steps pop in
+for (const u of [0.2, 1.2, 2.4, 3.5]) a(L(24) + u, 'pop', 0.35); a(L(24), 'skitter', 0.18, D(24));
+// 25 · the death spiral: ants circling and circling
+a(L(25) + 0.3, 'swarm', 0.4, D(25) - 0.4); a(L(25) + 1.0, 'whoosh', 0.15, 0.8); a(L(25) + 2.2, 'pop', 0.3); ding(L(25) + D(25) - 2.6);
 
 // music plays only when sfx.py is run with --music, and that only when the user asked for music in this video
 const MUSIC = has('music-soft') ? 'music-soft' : null;
