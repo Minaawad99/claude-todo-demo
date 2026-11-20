@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>السكر بييجي منين؟ وتحمي نفسك إزاي؟ — إيه الحكاية؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&family=Noto+Serif:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* «إيه الحكاية؟» — the «الرسم الهندسي» look, measured from 20 reference videos (videos/_reference/tabizzay/STYLE.md).
+     360×640 canvas (render.js SCALE 3 → 1080×1920). Reference sizes are at 720 wide, so here they are halved.
+     Phases, all driven by TIMING: intro card (hook lines) → bumper (promise line) → panel + captions → summary card → ask box. */
+  :root { --paper: #eee5d0; --ink: #2a2016; --mute: #8f8576; --orange: #bd552f; --blue: #4a6f8a; --olive: #5e653a; --tan: #ddd2b8; }
+  html, body { margin: 0; background: var(--paper); }
+  .canvas { position: relative; width: 360px; height: 640px; background: var(--paper); overflow: hidden; font-family: "Noto Sans Arabic", sans-serif; color: var(--ink); }
+  .layer { position: absolute; inset: 0; }
+  /* the main card: one 1px frame 14px in, the panel fills its top, a rule, the caption */
+  #frame { position: absolute; left: 14px; top: 14px; width: 332px; height: 612px; box-sizing: border-box; border: 1.1px solid var(--ink); }
+  .panel { position: absolute; left: 15px; top: 15px; width: 330px; height: 405px; overflow: hidden; }
+  .panel svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #rule { position: absolute; left: 32px; right: 32px; top: 431px; border-top: .6px solid var(--ink); }
+  #wm { position: absolute; left: 0; right: 0; top: 440px; text-align: center; font: 500 8.5px "Noto Sans Arabic"; color: #b3a995; }
+  #cap { position: absolute; left: 30px; right: 30px; top: 458px; text-align: center; font: 700 14px/1.75 "Noto Sans Arabic", sans-serif; }
+  .k-o { color: var(--orange); } .k-b { color: var(--blue); } .k-g { color: var(--olive); } .k-gr { color: var(--mute); }
+  .k-u { text-decoration: underline; text-decoration-thickness: 1.2px; text-underline-offset: 4px; }
+  /* cards (intro + summary): paper, double frame drawn as SVG so it can draw itself in, crop marks outside the corners */
+  .card { position: absolute; inset: 0; background: var(--paper); display: none; }
+  .card .chrome { position: absolute; inset: 0; width: 360px; height: 640px; }
+  .logo { position: absolute; right: 30px; top: 28px; display: flex; align-items: center; gap: 4px; font: 500 8px "Noto Sans Arabic"; color: #6f6556; }
+  .logo svg { width: 11px; height: 11px; }
+  #intro .cat { position: absolute; left: 0; right: 0; top: 100px; text-align: center; font: 600 8px "Noto Sans Arabic"; color: var(--orange); }
+  #intro .r { position: absolute; left: 157px; width: 46px; border-top: .6px solid var(--ink); }
+  #intro .hook { position: absolute; left: 26px; right: 26px; top: 124px; min-height: 80px; text-align: center; font: 800 17px/1.6 "Noto Sans Arabic"; }
+  #intro .hook span { transition: none; }
+  #introArt { position: absolute; left: 28px; top: 236px; width: 304px; height: 330px; }
+  #bumper { position: absolute; inset: 0; display: none; background: var(--paper); }
+  #bumper svg { position: absolute; left: 90px; top: 98px; width: 180px; height: 200px; }
+  #bumper .name { position: absolute; left: 0; right: 0; top: 310px; text-align: center; font: 700 22px "Noto Sans Arabic"; }
+  #bumper .sub { position: absolute; left: 0; right: 0; top: 352px; text-align: center; font: 600 9.5px "Noto Sans Arabic"; }
+  /* summary card */
+  #outro .q { position: absolute; left: 28px; right: 28px; top: 50px; font: 800 12.5px/1.55 "Noto Sans Arabic"; }
+  #outro .art { position: absolute; left: 28px; right: 28px; top: 98px; height: 140px; background: var(--tan); overflow: hidden; }
+  #outro .art svg { width: 100%; height: 100%; display: block; }
+  #outro .leg { position: absolute; left: 28px; right: 28px; top: 246px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font: 600 7.5px "Noto Sans Arabic"; }
+  #outro .leg b { display: inline-grid; place-items: center; width: 10px; height: 10px; border: .8px solid var(--ink); border-radius: 50%; font: 700 6px "Noto Serif"; margin-left: 4px; vertical-align: -2px; }
+  #outro .stat { position: absolute; left: 28px; right: 28px; top: 290px; display: flex; align-items: center; gap: 9px; }
+  #outro .stat .n { font: 800 34px/1 "Noto Serif", serif; color: var(--orange); direction: ltr; white-space: nowrap; }
+  #outro .stat .t { font: 700 8px/1.55 "Noto Sans Arabic"; }
+  #outro .pts { position: absolute; left: 28px; right: 28px; top: 342px; border-top: .6px solid var(--ink); padding-top: 7px; font: 600 7.5px/1.75 "Noto Sans Arabic"; }
+  #outro .more { margin-top: 5px; font: 500 6.8px/1.6 "Noto Sans Arabic"; color: var(--mute); }
+  #outro .ask { position: absolute; left: 34px; right: 34px; top: 448px; height: 120px; border: 1px solid var(--ink); text-align: center; display: none; }
+  #outro .ask::after { content: ""; position: absolute; inset: 3px; border: .5px solid var(--ink); }
+  #outro .ask .l1 { margin-top: 20px; font: 600 9px "Noto Sans Arabic"; }
+  #outro .ask .l2 { margin-top: 6px; font: 700 12px "Noto Sans Arabic"; }
+  #outro .ask .l3 { margin-top: 8px; font: 700 13px "Noto Sans Arabic"; color: var(--orange); }
+  #outro .ask .blank { display: inline-block; width: 64px; border-bottom: 1.2px solid var(--orange); margin: 0 4px; position: relative; height: 14px; vertical-align: -2px; }
+  #outro .ask .caret { position: absolute; left: 4px; bottom: 2px; width: 1.4px; height: 13px; background: var(--ink); }
+</style></head>
+<body>
+<div class="canvas">
+  <div class="layer" id="main">
+    <div class="panel"><svg id="panelA" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg><svg id="panelB" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg></div>
+    <div id="frame"></div><div id="rule"></div><div id="wm"></div><div id="cap"></div>
+  </div>
+  <div class="card" id="intro"><svg class="chrome" id="introChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="cat">جسم الإنسان · صحة</div><div class="r" style="top:118px"></div><div class="hook" id="hook"></div><div class="r" id="hookRule" style="top:214px"></div>
+    <svg id="introArt" viewBox="0 0 608 660"></svg></div>
+  <div id="bumper"><svg id="bumperArt" viewBox="0 0 180 200"></svg><div class="name">إيه الحكاية؟</div><div class="sub">هشرحهالك في <span class="k-o">دقيقة.</span></div></div>
+  <div class="card" id="outro"><svg class="chrome" id="outroChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="q">السكر بييجي منين؟ وتحمي نفسك إزاي؟</div><div class="art"><svg id="outroArt" viewBox="0 0 600 280"></svg></div><div class="leg"><span><b>1</b>الإنسولين مفتاح الخلية</span><span><b>2</b>الكالون بيصدّي</span><span><b>3</b>البنكرياس بيتعب</span><span><b>4</b>المشي بيفتح الباب</span></div><div class="stat"><div class="n">58%</div><div class="t">أقل خطر للسكر، بالمشي<br>ونزول 7% من الوزن</div></div><div class="pts">1. السكر مبيدخلش الخلية من غير الإنسولين، والبنكرياس هو اللي بيعمله.<br>2. النوع الأول من المناعة ومش ذنب حد. النوع التاني (90%): الكرش والقعدة والمسكّر بيصدّوا الكالون.<br>3. امشي نص ساعة 5 أيام في الأسبوع، وقلّل الساقع والعصير المعلّب والعيش الأبيض والحلويات، وبطّل السجاير.<div class="more">معلومة زيادة: أكتر من نص مرضى السكر في مصر ميعرفوش. تحليل سكر صايم بيكشفه.</div></div>
+    <div class="ask" id="ask"><div class="l1">قولولنا…</div><div class="l2">عايزين تعرفوا</div><div class="l3">حكاية<span class="blank"><span class="caret" id="caret"></span></span>؟</div></div>
+  </div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="mark"><rect x="84" y="4" width="32" height="10" fill="#2a2016"/><rect x="94" y="14" width="12" height="14" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" fill="#f4ecdb" stroke="#2a2016" stroke-width="9" stroke-linejoin="round"/><text x="106" y="140" text-anchor="middle" style="font:800 120px Noto Sans Arabic;fill:#bd552f">؟</text></g>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".15"/></pattern>
+  <pattern id="hatchW" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#fff" stroke-width="1" opacity=".25"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#e1d5ba" stroke-width="1.3" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .05 0"/></filter>
+</defs></svg>
+<script src="../timing.js"></script>
+<script>window.DATA = {"caps": [[{"f": 0.0, "h": "كل لقمة عيش أو رز بتاكلها…"}, {"f": 0.6, "h": "بتتحول <span class=\"k-o\">سكر</span> في <span class=\"k-b\">دمك.</span>"}], [{"f": 0.0, "h": "وجسمك بيتصرف فيه في <span class=\"k-g\">ساعتين</span> <span class=\"k-g\">تلاتة.</span>"}], [{"f": 0.0, "h": "بس عند <span class=\"k-o\">13</span> <span class=\"k-o\">مليون</span> واحد في مصر،"}, {"f": 0.5918, "h": "السكر <span class=\"k-u\">بيفضل</span> في الدم."}], [{"f": 0.0, "h": "إيه الحكاية؟"}, {"f": 0.4194, "h": "هشرحهالك في دقيقة."}], [{"f": 0.0, "h": "قبل ما نشرح محتاجين نوضّح <span class=\"k-u\">قاعدة</span> صغيرة…"}, {"f": 0.7647, "h": "خليك فاكرها."}], [{"f": 0.0, "h": "السكر <span class=\"k-o\">مبيدخلش</span> <span class=\"k-g\">الخلية</span> لوحده،"}, {"f": 0.5091, "h": "محتاج <span class=\"k-u\">مفتاح</span> اسمه <span class=\"k-g\">الإنسولين.</span>"}], [{"f": 0.0, "h": "طب مين بيعمل <span class=\"k-u\">المفتاح</span> ده؟"}, {"f": 0.4386, "h": "<span class=\"k-g\">البنكرياس،</span> غدة صغيرة ورا <span class=\"k-u\">المعدة.</span>"}], [{"f": 0.0, "h": "أول ما السكر <span class=\"k-o\">يعلى،</span>"}, {"f": 0.2533, "h": "البنكرياس يطلّع <span class=\"k-g\">إنسولين،</span>"}, {"f": 0.5867, "h": "والخلايا <span class=\"k-b\">تفتح</span> وتحرق السكر <span class=\"k-o\">طاقة.</span>"}], [{"f": 0.0, "h": "زي <span class=\"k-g\">بوّاب</span> العمارة،"}, {"f": 0.36, "h": "من غيره الضيوف يفضلوا في <span class=\"k-o\">الشارع.</span>"}], [{"f": 0.0, "h": "طب <span class=\"k-o\">مرض</span> <span class=\"k-o\">السكر</span> بييجي منين؟"}], [{"f": 0.0, "h": "في النوع <span class=\"k-u\">الأول،</span>"}, {"f": 0.2319, "h": "<span class=\"k-b\">المناعة</span> بتهاجم البنكرياس <span class=\"k-o\">بالغلط،</span>"}, {"f": 0.7101, "h": "فالإنسولين يقف <span class=\"k-o\">خالص.</span>"}], [{"f": 0.0, "h": "وده مالوش علاقة <span class=\"k-u\">بالأكل،</span>"}, {"f": 0.6857, "h": "ومش <span class=\"k-o\">ذنب</span> حد."}], [{"f": 0.0, "h": "أما النوع <span class=\"k-u\">التاني،</span>"}, {"f": 0.2571, "h": "وده <span class=\"k-o\">90%</span> من الحالات،"}, {"f": 0.5429, "h": "فالمفتاح <span class=\"k-g\">موجود…</span>"}, {"f": 0.7714, "h": "بس <span class=\"k-o\">الكالون</span> <span class=\"k-o\">صدّي.</span>"}], [{"f": 0.0, "h": "الخلايا مبقتش <span class=\"k-u\">بتسمع</span> كلام الإنسولين،"}, {"f": 0.5, "h": "فالبنكرياس يشتغل <span class=\"k-o\">زيادة…</span>"}, {"f": 0.8333, "h": "لحد ما <span class=\"k-o\">يتعب.</span>"}], [{"f": 0.0, "h": "طب إيه اللي بيصدّي <span class=\"k-o\">الكالون؟</span>"}, {"f": 0.3836, "h": "<span class=\"k-o\">الكرش،</span> <span class=\"k-o\">والقعدة</span> الكتير،"}, {"f": 0.6986, "h": "والأكل والشرب <span class=\"k-o\">المسكّر.</span>"}], [{"f": 0.0, "h": "طب <span class=\"k-u\">أحمي</span> نفسي إزاي؟"}, {"f": 0.5429, "h": "أول حاجة: <span class=\"k-o\">اتحرك.</span>"}], [{"f": 0.0, "h": "<span class=\"k-o\">العضلة</span> وهي شغالة <span class=\"k-o\">بتسحب</span> السكر من الدم،"}, {"f": 0.5938, "h": "من غير ما تستنى <span class=\"k-g\">الإنسولين.</span>"}], [{"f": 0.0, "h": "<span class=\"k-o\">نص</span> <span class=\"k-o\">ساعة</span> مشي في اليوم،"}, {"f": 0.55, "h": "<span class=\"k-o\">5</span> <span class=\"k-o\">أيام</span> في الأسبوع."}], [{"f": 0.0, "h": "تاني حاجة:"}, {"f": 0.2683, "h": "لو وزنك زيادة،"}, {"f": 0.6341, "h": "نزّل <span class=\"k-o\">7%</span> بس منه."}], [{"f": 0.0, "h": "تجربة كبيرة في أمريكا لقت إن"}, {"f": 0.5088, "h": "ده مع المشي بيقلل الخطر <span class=\"k-o\">58%.</span>"}], [{"f": 0.0, "h": "وتتجنب إيه؟"}, {"f": 0.1538, "h": "الحاجة <span class=\"k-o\">الساقعة</span> والعصير <span class=\"k-o\">المعلّب،</span>"}, {"f": 0.5641, "h": "والعيش <span class=\"k-o\">الأبيض</span> <span class=\"k-o\">والحلويات،</span> <span class=\"k-o\">والسجاير.</span>"}], [{"f": 0.0, "h": "وناس كتير فاكرة إن السكر بييجي"}, {"f": 0.5082, "h": "بس من السكر اللي <span class=\"k-u\">بالمعلقة.</span> <span class=\"k-o\">لأ.</span>"}], [{"f": 0.0, "h": "الرز والعيش والمكرونة كلهم بيتحولوا <span class=\"k-o\">سكر،</span>"}, {"f": 0.6508, "h": "<span class=\"k-u\">والكمية</span> هي اللي بتفرق."}], [{"f": 0.0, "h": "وأكتر من <span class=\"k-o\">نص</span> المرضى في مصر <span class=\"k-o\">ميعرفوش،</span>"}, {"f": 0.3763, "h": "فلو <span class=\"k-b\">عطشان</span> على طول وبتدخل <span class=\"k-b\">الحمام</span> كتير،"}, {"f": 0.7849, "h": "اعمل تحليل سكر <span class=\"k-o\">صايم.</span>"}], [{"f": 0.0, "h": "يعني من الآخر:"}, {"f": 0.1765, "h": "الإنسولين <span class=\"k-g\">مفتاح،</span>"}, {"f": 0.3765, "h": "والكرش والقعدة بيصدّوا <span class=\"k-o\">الكالون،</span>"}, {"f": 0.7529, "h": "والحركة بترجّعه <span class=\"k-b\">يفتح.</span>"}], [{"f": 0.0, "h": "والأغرب إن دمك كله فيه"}, {"f": 0.2771, "h": "حوالي <span class=\"k-o\">معلقة</span> <span class=\"k-o\">صغيرة</span> سكر بس،"}, {"f": 0.5904, "h": "وعلبة الحاجة الساقعة فيها <span class=\"k-o\">9</span> <span class=\"k-o\">معالق.</span>"}], [{"f": 0.0, "h": "ربنا <span class=\"k-g\">يشفي</span> كل مريض سكر،"}, {"f": 0.4694, "h": "ويحفظكم كلكم ويديكم <span class=\"k-g\">الصحة.</span>"}], [{"f": 0.0, "h": "ودي كانت حكاية السكر."}], [{"f": 0.0, "h": "قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟"}]], "hook": [[{"w": "كل", "c": "", "f": 0.0}, {"w": "لقمة", "c": "", "f": 0.0667}, {"w": "عيش", "c": "", "f": 0.1778}, {"w": "أو", "c": "", "f": 0.2667}, {"w": "رز", "c": "", "f": 0.3333}, {"w": "بتاكلها…", "c": "", "f": 0.4}, {"w": "بتتحول", "c": "", "f": 0.6}, {"w": "سكر", "c": "k-o", "f": 0.7556}, {"w": "في", "c": "", "f": 0.8444}, {"w": "دمك.", "c": "k-b", "f": 0.9111}], [{"w": "وجسمك", "c": "", "f": 0.0}, {"w": "بيتصرف", "c": "", "f": 0.1818}, {"w": "فيه", "c": "", "f": 0.3939}, {"w": "في", "c": "", "f": 0.5152}, {"w": "ساعتين", "c": "k-g", "f": 0.6061}, {"w": "تلاتة.", "c": "k-g", "f": 0.8182}], [{"w": "بس", "c": "", "f": 0.0}, {"w": "عند", "c": "", "f": 0.0556}, {"w": "تلاتاشر", "c": "", "f": 0.1296}, {"w": "مليون", "c": "k-o", "f": 0.2778}, {"w": "واحد", "c": "", "f": 0.3889}, {"w": "في", "c": "", "f": 0.4815}, {"w": "مصر،", "c": "", "f": 0.537}, {"w": "السكر", "c": "", "f": 0.6296}, {"w": "بيفضل", "c": "k-u", "f": 0.7407}, {"w": "في", "c": "", "f": 0.8519}, {"w": "الدم.", "c": "", "f": 0.9074}]], "introLines": 3, "promise": 3, "summary": 27, "cta": 28, "watermark": ""};</script>
+
+<script src="scenes.js"></script>
+<script src="../../_templates/sketch/engine.js"></script>
+</body></html>
