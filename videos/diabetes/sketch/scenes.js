@@ -1,4 +1,4 @@
-window.CHUNKS = [[0.0, 0.6], [0.0], [0.0, 0.5918], [0.0, 0.4194], [0.0, 0.7647], [0.0, 0.5091], [0.0, 0.4386], [0.0, 0.2533, 0.5867], [0.0, 0.36], [0.0], [0.0, 0.2319, 0.7101], [0.0, 0.6857], [0.0, 0.2571, 0.5429, 0.7714], [0.0, 0.5, 0.8333], [0.0, 0.3836, 0.6986], [0.0, 0.5429], [0.0, 0.5938], [0.0, 0.55], [0.0, 0.2683, 0.6341], [0.0, 0.5088], [0.0, 0.1538, 0.5641], [0.0, 0.5082], [0.0, 0.6508], [0.0, 0.3763, 0.7849], [0.0, 0.1765, 0.3765, 0.7529], [0.0, 0.2771, 0.5904], [0.0, 0.4694], [0.0], [0.0]];
+window.CHUNKS = [[0.0, 0.6], [0.0], [0.0, 0.569], [0.0, 0.4194], [0.0, 0.7647], [0.0, 0.5424], [0.0, 0.4386], [0.0, 0.2533, 0.5867], [0.0, 0.36], [0.0, 0.75], [0.0], [0.0, 0.5926], [0.0, 0.381, 0.5714], [0.0, 0.1895, 0.3895, 0.6316, 0.8, 0.8737], [0.0, 0.3816, 0.7763], [0.0, 0.4107, 0.6429], [0.0, 0.322, 0.7627], [0.0, 0.6863], [0.0, 0.5938], [0.0, 0.55], [0.0, 0.321, 0.5185, 0.8272], [0.0, 0.1538, 0.5641], [0.0, 0.5082], [0.0, 0.6508], [0.0, 0.3763, 0.7849], [0.0, 0.1596, 0.4787, 0.7766], [0.0, 0.2771, 0.5904], [0.0, 0.4694], [0.0], [0.0]];
 /* «إيه الحكاية؟» — «الرسم الهندسي» drawing helpers. build.py puts this file in front of the episode's shots.js, so every
    name here is in scope for the shots. The panel world is 640×786 (portrait, the panel's own aspect); a shot's camera
    [cx, cy, zoom] picks what is in view. Everything is redrawn every frame from t, so the render is deterministic.
@@ -408,7 +408,7 @@ function meter(x, y, s, txt, t) { return G("translate(" + f(x) + " " + f(y) + ")
 function sofaMan(x, floorY, t, o) {
   o = o || {}; var s = "", seat = floorY - 100;
   s += R(x - 150, seat, 260, 50, "#8a7a62", 2.4, 10) + R(x + 70, seat - 170, 50, 220, "#8a7a62", 2.4, 14) + R(x - 150, seat + 50, 20, 50, WOOD_D, 2) + R(x + 90, seat + 50, 20, 50, WOOD_D, 2) + R(x - 170, seat - 50, 40, 100, "#8a7a62", 2.4, 14);
-  var hip = [x + 40, seat - 6], m = fig({ x: hip[0], y: hip[1], lean: -14, belly: o.belly, shirt: o.shirt || SHIRT_T, legs: [[86, -84], [90, -88]], hands: [o.cup ? rel(70, 46) : rel(30, 30), rel(30, 24)], bend: [1, 1], tilt: 4 });
+  var hip = [x + 40, seat - 6], m = fig({ x: hip[0], y: hip[1], lean: -14, belly: o.belly, hair: o.hair, shirt: o.shirt || SHIRT_T, legs: [[86, -84], [90, -88]], hands: [o.cup ? rel(70, 46) : rel(30, 30), rel(30, 24)], bend: [1, 1], tilt: 4 });
   s += m.far + m.body + m.near;
   if (o.cup) { var hp = m.at(70, 46); s += G("translate(" + f(hp[0] - 10) + " " + f(hp[1] - 20) + ")", P("M-16 -30 L16 -30 L12 34 L-12 34 Z", CAN, 2) + R(-16, -8, 32, 16, "#f4ecdb", 1.4) + '<path d="M6 -30 L14 -56" stroke="' + INK + '" stroke-width="3"/>'); }
   return s;
@@ -458,108 +458,136 @@ shot(8, push(320, 420, 1.06, 1.0), function (u, d, t) {
   s += G("", key(445, 420, 1, 0), op) + label(540, 470, 470, 380, "البوّاب", OLIVE, at(u, .4, .5), 24) + cross(445, 560, .9, at(u, c1 + .6, .4)) + iconBox(130, 150, 150, G("scale(.32) translate(-320 -560)", cell(320, 560, 190, t, { open: 1 - gone })), at(u, .6, .3));
   return s;
 });
-// 9 · so where does the disease come from? sugar piling up in the blood, the door shut
+// 9 · so where do diabetes patients get it from? sugar piling up in the blood, the door shut; «two types» at the end
 shot(9, push(320, 360, 1.12, 1.0), function (u, d, t) {
-  return paper() + rule(t, u, { n: 16 }) + G("", T("؟", 320, 560, 200, ORANGE, 800), at(u, .2, .4)) + G("", tag("مرض السكر", 320, 60, 1, 32, ORANGE), at(u, .4, .3));
+  var c1 = chunkAt(9, 1);
+  return paper() + rule(t, u, { n: 16 }) + G("", T("؟", 320, 560, 200, ORANGE, 800), at(u, .2, .4) * (1 - at(u, c1, .3))) + G("", tag("مرضى السكر", 320, 60, 1, 32, ORANGE), at(u, .4, .3)) +
+    tag("النوع الأول", 200, 560, at(u, c1, .3), 34, INK) + tag("النوع التاني", 440, 620, at(u, c1 + .3, .3), 34, INK);
 });
-// 10 · type 1: the immune system attacks the insulin cells by mistake, and insulin stops
-shot(10, push(320, 400, 1.0, 1.1), function (u, d, t) {
-  var c1 = chunkAt(10, 1), c2 = chunkAt(10, 2), att = at(u, c1, .6), dead = at(u, c1 + .6, d - c1 - 1);
-  return paper() + G("translate(320 400) scale(1.25)", islet(t, 1 - at(u, c2, .6), { attack: att, dead: dead })) + tag("النوع الأول", 320, 90, at(u, .2, .3), 34, INK) +
+// the type stays written at the top while we talk about it
+function typeChip(txt) { return function (u, t) { return tag(txt, 320, 52, 1, 30, ORANGE); }; }
+hud(10, 13, typeChip("النوع الأول"));
+hud(13, 16, typeChip("النوع التاني"));
+// 10 · type 1 usually shows up young: a child next to a grown-up, real proportions (the child is about 0.6 of the height)
+shot(10, push(320, 450, 1.08, 1.0), function (u, d, t) {
+  var s = paper() + floor(700);
+  s += whole(fig({ x: 220, y: 700 - 212, shirt: SHIRT_T, tilt: -4 }));
+  s += whole(fig({ x: 420, y: 700 - 212 * .6 + 3 * Math.abs(Math.sin(t * 2.4)), s: .6, shirt: "#d98a4a", hair: "#4a3628", tilt: -6 + 4 * Math.sin(t * 1.7) }));
+  s += label(410, 470, 330, 210, "من وهو صغير", ORANGE, at(u, .6, .5), 28);
+  return s;
+});
+// 11 · type 1: the immune system attacks the insulin cells by mistake, and insulin stops
+shot(11, push(320, 400, 1.0, 1.1), function (u, d, t) {
+  var c1 = .3, c2 = chunkAt(11, 1), att = at(u, c1, .6), dead = at(u, c1 + .6, Math.max(.6, c2 - c1));
+  return paper() + G("translate(320 400) scale(1.25)", islet(t, 1 - at(u, c2, .6), { attack: att, dead: dead })) + 
     label(320 + Math.cos(1) * 150 * 1.25 * .8, 400 + Math.sin(1) * 150 * 1.25 * .8, 330, 720, "المناعة", BLUE, at(u, c1 + .4, .5), 28) + G("", key(520, 200, 1.2, 0) + cross(520, 200, .8, at(u, c2 + .3, .4)), at(u, c2, .3));
 }, { tr: "in" });
-// 11 · nothing to do with food, and nobody's fault
-shot(11, push(320, 420, 1.0, 1.05), function (u, d, t) {
-  var c1 = chunkAt(11, 1);
-  return paper() + pastaPlate(150, 330, 1) + draw("M250 330 L400 330", at(u, .4, .5), INK, 3) + arrow(380, 330, 420, 330, INK, 3, at(u, .8, .2)) + G("translate(320 -60) scale(.6)", pancreas(true, false, t), at(u, .6, .3)) +
-    cross(320, 330, .9, at(u, 1.0, .4)) + G("", heart(320, 580, 1.4 * (1 + .05 * Math.sin(t * 4)), ORANGE) + tag("مش ذنب حد", 320, 700, 1, 32, INK), at(u, c1, .4));
+// 12 · nothing to do with food, nobody's fault, and the patient takes insulin by injection
+shot(12, push(320, 420, 1.0, 1.05), function (u, d, t) {
+  var c1 = chunkAt(12, 1), c2 = chunkAt(12, 2);
+  return paper() + pastaPlate(150, 250, 1) + draw("M250 250 L400 250", at(u, .4, .5), INK, 3) + arrow(380, 250, 420, 250, INK, 3, at(u, .8, .2)) + G("translate(320 -140) scale(.6)", pancreas(true, false, t), at(u, .6, .3)) +
+    cross(320, 250, .9, at(u, 1.0, .4)) + G("", heart(170, 470, 1.2 * (1 + .05 * Math.sin(t * 4)), ORANGE) + tag("مش ذنب حد", 170, 580, 1, 28, INK), at(u, c1, .4)) +
+    G("translate(470 480) rotate(" + f(-30 + 3 * Math.sin(t * 2)) + ")", R(-18, -110, 36, 170, "#e9ecea", 2.4, 8) + R(-18, -40, 36, 70, KEYC, 2) + '<path d="M0 60 V100" stroke="' + INK + '" stroke-width="3"/>' + R(-10, -130, 20, 22, "#7f97a6", 2, 3) + key(0, -6, .55, 0), at(u, c2, .4)) +
+    G("", T("إنسولين حقن", 470, 640, 26, OLIVE, 800), at(u, c2 + .3, .3));
 });
-// 12 · type 2: 90% of cases. the key is there, but the lock has rusted
-shot(12, push(320, 380, 1.0, 1.08), function (u, d, t) {
-  var c1 = chunkAt(12, 1), c2 = chunkAt(12, 2), c3 = chunkAt(12, 3), rust = at(u, c3, 1.0);
-  var s = paper() + rule(t, u, { n: 12, key: u > c2 ? at(u, c2, 1.2) : null, rust: u > c3 ? .2 + .8 * rust : 0, jiggle: u > c3 + .6 });
-  s += tag("النوع التاني", 160, 300, at(u, .2, .3), 28, INK) + G("", bigNum(count(90, at(u, c1, 1.0)) + "%", "من الحالات", 500, 330, 1, ORANGE, 60), at(u, c1, .3) * (1 - at(u, c2 + .2, .3)));
-  s += label(358, 360, 470, 300, "الكالون", RUST, at(u, c3 + .3, .5), 26);
-  return s;
-});
-// 13 · the cells stop listening, so the pancreas works overtime… until it gets tired
-shot(13, push(320, 420, 1.04, 1.0), function (u, d, t) {
-  var c1 = chunkAt(13, 1), c2 = chunkAt(13, 2), tired = at(u, c2 - .3, .8), work = u > c1 ? 1 - tired : 0;
-  var s = paper() + G("translate(0 120) scale(1)", rule(t, u, { n: 14, key: .6, rust: .9, jiggle: true }));
-  for (var i = 0; i < 4; i++) s += key(250 - i * 40 + 6 * Math.sin(t * 7 + i), 330 - (i % 2) * 34, .8, 10 * Math.sin(t * 8 + i), KEYC);
-  s += iconBox(150, 140, 200, G("scale(.55) translate(-340 -470)", pancreas(true, tired > .5, t)) + (work ? [0, 1, 2].map(function (j) { var p = (t * 1.2 + j / 3) % 1; return '<path d="M' + (40 + j * 20) + ' ' + f(-60 + p * 70) + ' q6 10 0 14 q-6 -4 0 -14" fill="' + BLUE + '" stroke="' + INK + '" stroke-width="1" opacity="' + f(1 - p) + '"/>'; }).join("") : ""), at(u, c1 - .2, .3));
-  s += G("", tag("شغال زيادة", 420, 120, 1, 28, ORANGE), at(u, c1, .3) * (1 - tired)) + G("", tag("تعب", 420, 120, 1, 30, INK), tired);
-  return s;
-});
-// 14 · what rusts the lock? the belly fat, sitting all day, sugary food and drink
-shot(14, push(330, 450, 1.0, 1.08), function (u, d, t) {
-  var c1 = chunkAt(14, 1), c2 = chunkAt(14, 2), c3 = chunkAt(14, 3);
-  var s = paper() + floor(700) + sofaMan(300, 700, t, { belly: true, cup: true });
+// 13 · type 2: 90% of patients, usually with age, from eating a lot, the belly and sitting all day
+shot(13, push(330, 450, 1.0, 1.08), function (u, d, t) {
+  var c1 = chunkAt(13, 1), c2 = chunkAt(13, 2), c3 = chunkAt(13, 3), c4 = chunkAt(13, 4), c5 = chunkAt(13, 5);
+  var s = paper() + floor(700) + sofaMan(300, 700, t, { belly: true, cup: true, hair: u > c2 ? "#b8b2a6" : null });
   s += R(500, 380, 120, 90, "#3a342c", 2.4, 6) + R(510, 390, 100, 70, "#7f97a6", 0) + '<rect x="510" y="390" width="100" height="70" fill="#fff" opacity="' + f(.1 + .1 * Math.sin(t * 9)) + '"/>' + R(540, 470, 40, 230, WOOD_D, 2);
-  s += label(260, 460, 200, 300, "الكرش", ORANGE, at(u, c1, .5), 28) + label(240, 580, 190, 650, "القعدة", ORANGE, at(u, c2, .5), 28) + label(296, 330, 400, 200, "المسكّر", ORANGE, at(u, c3, .5), 28);
-  s += inset(120, 130, 80, G("scale(.9) translate(0 30)", door(0, 0, 0, at(u, .6, d - 1), t)), at(u, .3, .3));
+  s += G("", bigNum(count(90, at(u, c1, .8)) + "%", "من المرضى", 160, 220, 1, ORANGE, 60), at(u, c1, .3) * (1 - at(u, c3 - .2, .3)));
+  s += label(385, 345, 470, 210, "مع السن", INK, at(u, c2, .5), 26);
+  s += label(310, 420, 200, 190, "الأكل الكتير", ORANGE, at(u, c3, .5), 26) + label(260, 460, 200, 330, "الكرش", ORANGE, at(u, c4, .5), 28) + label(240, 580, 190, 650, "قلة الحركة", ORANGE, at(u, c5, .5), 26);
   return s;
 });
-// 15 · how do I protect myself? first: move
-shot(15, push(320, 430, 1.1, 1.0), function (u, d, t) {
-  var c1 = chunkAt(15, 1), x = lerp(520, 180, clamp(u / d));
+// 14 · the pancreas makes insulin, but the cells stop listening, as if the lock had rusted
+shot(14, push(320, 380, 1.0, 1.08), function (u, d, t) {
+  var c1 = chunkAt(14, 1), c2 = chunkAt(14, 2), rust = at(u, c2, 1.0);
+  var s = paper() + rule(t, u, { n: 12, key: at(u, .4, 1.2), rust: u > c1 ? .2 + .8 * rust : 0, jiggle: u > c1 + .3 });
+  s += iconBox(110, 640, 140, G("scale(.36) translate(-340 -470)", pancreas(true, false, t)) + T("البنكرياس", 0, 60, 18, OLIVE, 800), at(u, .2, .3)) + label(230, 372, 180, 470, "الإنسولين", OLIVE, at(u, .9, .5), 24);
+  s += label(358, 360, 470, 300, "الكالون", RUST, at(u, c2 + .3, .5), 26) + G("", tag("صدّي", 470, 470, 1, 30, RUST), at(u, c2 + .8, .3));
+  return s;
+}, { tr: "in" });
+// 15 · so the pancreas works overtime until it tires, and the sugar stays in the blood
+shot(15, push(320, 420, 1.04, 1.0), function (u, d, t) {
+  var c1 = chunkAt(15, 1), c2 = chunkAt(15, 2), tired = at(u, c1 - .2, .8), work = 1 - tired;
+  var s = paper() + G("translate(0 120)", rule(t, u, { n: 10 + Math.floor(8 * at(u, c2, 1)), key: .6, rust: .9, jiggle: true }));
+  for (var i = 0; i < 4; i++) s += key(250 - i * 40 + 6 * Math.sin(t * 7 + i), 330 - (i % 2) * 34, .8, 10 * Math.sin(t * 8 + i), KEYC);
+  s += iconBox(150, 140, 200, G("scale(.55) translate(-340 -470)", pancreas(true, tired > .5, t)) + (work > .05 ? [0, 1, 2].map(function (j) { var p = (t * 1.2 + j / 3) % 1; return '<path d="M' + (40 + j * 20) + ' ' + f(-60 + p * 70) + ' q6 10 0 14 q-6 -4 0 -14" fill="' + BLUE + '" stroke="' + INK + '" stroke-width="1" opacity="' + f((1 - p) * work) + '"/>'; }).join("") : ""), at(u, .1, .3));
+  s += G("", tag("شغال زيادة", 430, 150, 1, 28, ORANGE), work * at(u, .3, .3)) + G("", tag("تعب", 430, 150, 1, 30, INK), tired);
+  s += G("", tag("السكر عالي", 430, 260, 1, 28, ORANGE), at(u, c2, .3));
+  return s;
+});
+// 16 · heredity plays a part: a family tree, one parent with diabetes, you under them
+shot(16, push(320, 400, 1.0, 1.06), function (u, d, t) {
+  var c1 = chunkAt(16, 1), s = paper(), hl = function (on) { return on ? [SKIN, ORANGE] : [SKIN, SHIRT_B]; };
+  s += draw("M200 430 V470 H440 V430", at(u, .3, .5), INK, 2.4) + draw("M320 470 V540", at(u, .6, .4), INK, 2.4);
+  s += people(1, 200, 380, 0, 1.3, function () { return hl(true); }) + people(1, 440, 380, 0, 1.3, function () { return hl(false); });
+  s += G("", tag("عنده سكر", 200, 160, 1, 26, ORANGE), at(u, .5, .3)) + T("الأب", 200, 420, 24, INK, 800) + T("الأم", 440, 420, 24, INK, 800);
+  s += G("", people(1, 320, 700, 0, 1.2, function () { return [SKIN, SHIRT_G]; }) + T("إنت", 320, 745, 28, INK, 800), at(u, .8, .3));
+  s += G("", T("خلي بالك", 470, 620, 30, ORANGE, 800) + '<path d="M410 590 q-30 0 -40 30" stroke="' + ORANGE + '" stroke-width="3" fill="none"/>', at(u, c1, .3)) + tag("الوراثة", 320, 70, at(u, .2, .3), 34, INK);
+  return s;
+});
+// 17 · how do I protect myself? first: move
+shot(17, push(320, 430, 1.1, 1.0), function (u, d, t) {
+  var c1 = chunkAt(17, 1), x = lerp(520, 180, clamp(u / d));
   return paper() + floor(660) + walker(x, 660, t, 1, SHIRT_G) + G("", T("؟", 320, 200, 120, ORANGE, 800), at(u, .2, .3) * (1 - at(u, c1, .3))) + G("", tag("اتحرك", 320, 150, 1, 44, ORANGE), at(u, c1, .3)) + check(500, 150, 1.3, at(u, c1 + .4, .4), OLIVE);
 });
-// 16 · a working muscle pulls sugar out of the blood without waiting for insulin
-shot(16, push(320, 380, 1.0, 1.08), function (u, d, t) {
-  var c2 = chunkAt(16, 2);
+// 18 · a working muscle pulls sugar out of the blood without waiting for insulin
+shot(18, push(320, 380, 1.0, 1.08), function (u, d, t) {
+  var c2 = chunkAt(18, 2);
   return paper() + muscle(t, { pull: at(u, .8, .6), work: 1 }) + label(480, 520, 420, 690, "العضلة", ORANGE, at(u, .3, .5), 28) + label(240, 200, 120, 60, "الدم", INK, at(u, .9, .5), 24) +
     G("", key(470, 60, 1, 0) + cross(470, 60, .7, at(u, c2 + .3, .4)), at(u, c2, .3)) + iconBox(120, 690, 140, G("scale(.36) translate(-320 -560)", walker(320, 760, t, 1, SHIRT_G)), at(u, .4, .3));
 }, { tr: "in" });
-// 17 · half an hour of walking a day, five days a week
-hud(17, 18, function (u, t) { var on = Math.min(5, Math.floor(clamp((u - chunkAt(17, 1)) / 2.2) * 5.99)); return chips(5, on, 320, 64); });
-shot(17, push(320, 420, 1.0, 1.06), function (u, d, t) {
+// 19 · half an hour of walking a day, five days a week
+hud(19, 20, function (u, t) { var on = Math.min(5, Math.floor(clamp((u - chunkAt(19, 1)) / 2.2) * 5.99)); return chips(5, on, 320, 64); });
+shot(19, push(320, 420, 1.0, 1.06), function (u, d, t) {
   var k = at(u, .2, 1.6) * .5;
   return paper() + floor(700) + walker(200 + 30 * Math.sin(t * .6), 700, t, .9, SHIRT_G) + dial(450, 330, 120, k, t) + bigNum(String(Math.round(k * 60)), "دقيقة", 450, 520, at(u, .4, .3), ORANGE, 56);
 });
-// 18 · if you're overweight, lose just 7% of it (90 kg → about 84)
-shot(18, push(320, 440, 1.0, 1.06), function (u, d, t) {
-  var c1 = chunkAt(18, 1), k = at(u, c1 + .2, 1.6), kg = Math.round(90 - 6 * k);
+// 20 · if you're overweight, lose just 7% of it (90 kg → about 84)
+shot(20, push(320, 440, 1.0, 1.06), function (u, d, t) {
+  var c1 = chunkAt(20, 1), k = at(u, c1 + .2, 1.6), kg = Math.round(90 - 6 * k);
   var s = paper() + floor(700) + scaleBox(300, 700, kg + " كجم");
   s += whole(fig({ x: 300, y: 700 - 212, belly: k < .6, shirt: SHIRT_T, hands: [rel(40, 20), rel(40, 16)], legs: [[4, -2], [-4, 2]] }));
   s += bigNum(String(kg), "كيلو", 500, 300, at(u, .4, .3), INK, 70) + numBox("−7%", 500, 440, at(u, c1, .3), 34, true) + arrow(500, 180, 500, 230, ORANGE, 5, k);
   return s;
 });
-// 19 · a big trial in America: this plus walking cut the risk by 58%
-shot(19, push(320, 420, 1.04, 1.0), function (u, d, t) {
-  var c2 = chunkAt(19, 2), k = at(u, c2, 1.0), base = 600, h1 = 380, h2 = 380 * (1 - .58 * k);
+// 20b · a big trial in America: this plus walking cut the risk by 58%
+shot([20, 2], push(320, 420, 1.04, 1.0), function (u, d, t) {
+  var c2 = .5, k = at(u, c2, 1.0), base = 600, h1 = 380, h2 = 380 * (1 - .58 * k);
   var s = paper() + '<path d="M90 ' + base + ' H560" stroke="' + INK + '" stroke-width="2.4"/>';
   s += sweep(130, base - h1, 140, h1, at(u, .5, .8), "u", R(130, base - h1, 140, h1, GREY, 2.2)) + sweep(370, base - h2, 140, h2, at(u, .9, .8), "u", R(370, base - h2, 140, h2, OLIVE, 2.2));
   s += T("من غير", 200, base + 40, 24, INK, 700) + T("مشي ووزن أقل", 440, base + 40, 24, OLIVE, 800) + measure(560, base - h1, 560, base - h2, at(u, c2 + .6, .5), "", 30);
   s += numBox("−58%", 440, base - h2 - 60, at(u, c2 + .8, .3), 34, true) + tag("تجربة 3,234 واحد", 320, 120, at(u, .2, .3), 26, INK) + people(6, 120, 760, 80, .5, function () { return [SKIN, SHIRT_B]; });
   return s;
 });
-// 20 · what to avoid: soda, boxed juice, white bread and sweets, and cigarettes (one per caption chunk, each crossed out)
-shot(20, push(320, 400, 1.0, 1.05), function (u, d, t) {
-  var c = window.CHUNKS[20], D = LN[20].end - LN[20].start, k1 = at(u, D * (c[1] || .2), .3), k2 = at(u, D * (c[2] || .5), .3), k3 = at(u, D * (c[3] || .8), .3);
+// 21 · what to avoid: soda, boxed juice, white bread and sweets, and cigarettes (one per caption chunk, each crossed out)
+shot(21, push(320, 400, 1.0, 1.05), function (u, d, t) {
+  var c = window.CHUNKS[21], D = LN[21].end - LN[21].start, k1 = at(u, D * (c[1] || .2), .3), k2 = at(u, D * (c[2] || .5), .3), k3 = at(u, D * (c[3] || .8), .3);
   var s = paper() + tag("تتجنب إيه؟", 320, 90, at(u, .1, .3), 36, INK);
   s += appear(k1, sodaCan(170, 280, 1) + juiceBox(330, 290, 1)) + cross(250, 280, 1.4, at(u, D * (c[1] || .2) + .6, .4));
   s += appear(k2, loaf(170, 520, 1) + sweets(400, 520, 1)) + cross(290, 510, 1.4, at(u, D * (c[2] || .5) + .5, .4));
   s += appear(k3, cigarette(320, 700, 1.2, t)) + cross(320, 690, 1.1, at(u, D * (c[3] || .8) + .4, .4));
   return s;
 });
-// 21 · the myth: diabetes only comes from the sugar you spoon in — no
-shot(21, push(320, 400, 1.08, 1.0), function (u, d, t) {
-  var c1 = chunkAt(21, 1);
+// 22 · the myth: diabetes only comes from the sugar you spoon in — no
+shot(22, push(320, 400, 1.08, 1.0), function (u, d, t) {
+  var c1 = chunkAt(22, 1);
   return paper() + G("rotate(" + f(-8 + 3 * Math.sin(t * 1.6)) + " 320 400)", spoon(260, 400, 1.6, true)) + G("", sugar(240, 300 + 10 * Math.sin(t * 3), 18) + sugar(300, 280 + 10 * Math.sin(t * 3 + 1), 14), at(u, .4, .3)) +
     cross(260, 400, 2.2, at(u, c1, .5)) + tag("لأ", 320, 640, at(u, c1 + .2, .3), 50, ORANGE);
 });
-// 22 · rice, bread and pasta all turn into sugar; the amount is what matters
-shot(22, push(320, 420, 1.0, 1.06), function (u, d, t) {
-  var c1 = chunkAt(22, 1), c2 = chunkAt(22, 2), s = paper(), items = [riceBowl(130, 200, 1), loaf(320, 190, .9), pastaPlate(510, 210, .9)];
+// 23 · rice, bread and pasta all turn into sugar; the amount is what matters
+shot(23, push(320, 420, 1.0, 1.06), function (u, d, t) {
+  var c1 = chunkAt(23, 1), c2 = chunkAt(23, 2), s = paper(), items = [riceBowl(130, 200, 1), loaf(320, 190, .9), pastaPlate(510, 210, .9)];
   items.forEach(function (it, i) { s += appear(at(u, .2 + i * .4, .3), it) + arrow(130 + i * 190, 270, 130 + i * 190, 330, ORANGE, 5, at(u, c1 + i * .2, .3));
     for (var j = 0; j < 3; j++) s += G("", sugar(100 + i * 190 + j * 30, 380 + 8 * Math.sin(t * 3 + j + i), 12), at(u, c1 + .3 + i * .2, .3)); });
   s += G("", riceBowl(190, 600, .7) + riceBowl(450, 600, 1.35) + T("شوية", 190, 700, 26, OLIVE, 800) + T("كتير", 450, 720, 26, ORANGE, 800) + tag("الكمية", 320, 480, 1, 30, ORANGE), at(u, c2, .4));
   return s;
 });
-// 23 · more than half of patients in Egypt don't know (62%); thirsty, running to the toilet: get a fasting sugar test
-shot(23, push(320, 420, 1.0, 1.04), function (u, d, t) {
-  var c = window.CHUNKS[23], D = LN[23].end - LN[23].start, k2 = D * (c[2] || .4), k3 = D * (c[3] || .6), k4 = D * (c[c.length - 1] || .8), s = paper();
+// 24 · more than half of patients in Egypt don't know (62%); thirsty, running to the toilet: get a fasting sugar test
+shot(24, push(320, 420, 1.0, 1.04), function (u, d, t) {
+  var c = window.CHUNKS[24], D = LN[24].end - LN[24].start, k2 = D * (c[2] || .4), k3 = D * (c[3] || .6), k4 = D * (c[c.length - 1] || .8), s = paper();
   var g1 = 1 - at(u, k2 - .3, .4);
   s += G("", people(10, 90, 300, 52, .62, function (i) { return i < 6 ? [GREY, "#d8d4cc", T("؟", 0, -160, 30, ORANGE, 800)] : [SKIN, SHIRT_B]; }) + numBox("62%", 220, 400, at(u, .6, .3), 34, true) + T("ميعرفوش", 220, 470, 26, ORANGE, 800), g1 * at(u, .1, .3));
   s += G("", glassW(170, 400, 1.3, .3 + .2 * Math.sin(t * 2)) + T("عطشان", 170, 540, 28, BLUE, 800), at(u, k2 - .2, .3) * (1 - at(u, k4 - .3, .3)));
@@ -567,17 +595,17 @@ shot(23, push(320, 420, 1.0, 1.04), function (u, d, t) {
   s += G("", meter(320, 380, 1.3, count(126, at(u, k4, 1)), t) + tag("تحليل سكر صايم", 320, 650, 1, 30, ORANGE), at(u, k4 - .1, .3));
   return s;
 });
-// 24 · recap: insulin is the key, belly and sitting rust the lock, moving opens it again (one panel per chunk)
-shot(24, push(320, 400, 0.98, 1.04), function (u, d, t) {
-  var c = window.CHUNKS[24], D = LN[24].end - LN[24].start, k1 = at(u, D * (c[1] || .25), .4), k2 = at(u, D * (c[2] || .5), .4), k3 = at(u, D * (c[3] || .75), .4), s = paper();
-  s += G("", key(320, 160, 2.0, 8 * Math.sin(t * 2)) + T("الإنسولين = مفتاح", 320, 250, 30, OLIVE, 800), Math.max(at(u, .2, .3), k1));
-  s += G("translate(170 420) scale(2)", door(0, 0, 0, 1, t), k2) + G("translate(100 560) scale(.4)", sofaMan(0, 0, t, { belly: true }), k2);
-  s += G("", T("بيصدّي", 170, 620, 28, RUST, 800), k2) + G("translate(470 420) scale(2)", door(0, 0, k3 * (.5 + .5 * Math.abs(Math.sin(t * 2))), 0, t), k3) + G("", walker(470, 620, t, .4, SHIRT_G) + T("بيفتح", 470, 660, 28, OLIVE, 800), k3);
+// 25 · recap: type 1, the key is missing; type 2, the lock rusted; moving opens it again (one panel per chunk)
+shot(25, push(320, 400, 0.98, 1.04), function (u, d, t) {
+  var k1 = at(u, .15, .4), k2 = at(u, chunkAt(25, 2), .4), k3 = at(u, chunkAt(25, 3), .4), s = paper();
+  s += G("", tag("النوع الأول", 170, 120, 1, 28, INK) + key(170, 240 + 6 * Math.sin(t * 3), 1.6, 6 * Math.sin(t * 2)) + cross(170, 240, 1.1, at(u, chunkAt(25, 1) + .5, .4)) + T("المفتاح مش موجود", 170, 330, 24, ORANGE, 800), k1);
+  s += G("", tag("النوع التاني", 470, 120, 1, 28, INK) + G("translate(470 240) scale(2)", door(0, 0, 0, 1, t)) + T("الكالون صدّي", 470, 330, 24, RUST, 800), k2);
+  s += G("", G("translate(380 520) scale(2)", door(0, 0, .5 + .5 * Math.abs(Math.sin(t * 2)), 0, t)) + walker(230, 700, t, .45, SHIRT_G) + T("الحركة بتفتحه", 320, 740, 28, OLIVE, 800), k3);
   return s;
 }, { tr: "out" });
-// 25 · the odd fact: all your blood holds about one teaspoon of sugar; a can of soda holds nine
-shot(25, push(320, 420, 1.0, 1.05), function (u, d, t) {
-  var c = window.CHUNKS[25], D = LN[25].end - LN[25].start, k2 = D * (c[c.length - 1] || .55), s = paper();
+// 26 · the odd fact: all your blood holds about one teaspoon of sugar; a can of soda holds nine
+shot(26, push(320, 420, 1.0, 1.05), function (u, d, t) {
+  var c = window.CHUNKS[26], D = LN[26].end - LN[26].start, k2 = D * (c[c.length - 1] || .55), s = paper();
   s += R(70, 160, 180, 380, "#f4ecdb", 2.4, 16) + sweep(70, 200, 180, 340, at(u, .3, 1.0), "u", R(70, 200, 180, 340, RBC, 2.4, 16)) + wave(76, 204, 244, 204, t, "#8f3a32", 4, 40, at(u, 1.0, .3), 2.5) + T("دمك كله", 160, 140, 26, INK, 800) + T("5 لتر", 160, 580, 26, INK, 800);
   s += G("", spoon(160, 650, .7, true) + T("1", 260, 660, 40, ORANGE, 800), at(u, D * (c[1] || .3), .4));
   s += G("", sodaCan(440, 300, 1.1) + T("علبة واحدة", 440, 160, 26, INK, 800), at(u, k2 - .2, .3));
@@ -585,9 +613,9 @@ shot(25, push(320, 420, 1.0, 1.05), function (u, d, t) {
   s += G("", N(count(9, at(u, k2 + .3, 1.4)), 590, 560, 70, ORANGE), at(u, k2 + .3, .3));
   return s;
 });
-// 26 · the prayer: a man with his hands raised, a soft light, a heart for every patient
-shot(26, push(320, 430, 1.05, 1.0), function (u, d, t) {
-  var c1 = chunkAt(26, 1), s = paper();
+// 27 · the prayer: a man with his hands raised, a soft light, a heart for every patient
+shot(27, push(320, 430, 1.05, 1.0), function (u, d, t) {
+  var c1 = chunkAt(27, 1), s = paper();
   for (var i = 0; i < 9; i++) { var a = -Math.PI / 2 + (i - 4) * .22 + .02 * Math.sin(t + i); s += '<path d="M320 120 L' + f(320 + Math.cos(a) * 700) + ' ' + f(120 - Math.sin(a) * 700) + '" stroke="#e8c98a" stroke-width="14" opacity=".35"/>'; }
   s += floor(700) + whole(fig({ x: 320, y: 700 - 212, lean: 0, shirt: "#efe6cf", hands: [rel(72, 62), rel(68, 54)], bend: [-1, -1], tilt: -6 }));
   s += heart(140, 220, .9 * (1 + .06 * Math.sin(t * 3)), ORANGE) + G("", T("كل مريض سكر", 140, 300, 24, ORANGE, 800), at(u, .6, .3));
@@ -599,7 +627,7 @@ shot(26, push(320, 430, 1.05, 1.0), function (u, d, t) {
 window.SCENE = window.SCENE || {};
 SCENE.intro = function (svg, t, li) {
   // line 0: bread and rice turn into sugar in the blood. line 1: the sugar curve rises and is back down in 2–3 hours.
-  // line 2: in 13 million people in Egypt it stays up
+  // line 2: in Egypt's 13 million diabetes patients it stays up
   var s = "", u0 = t - LN[0].start;
   s += G("translate(0 -40)", vessel(120, 120, t, { n: li >= 0 ? Math.min(10, Math.floor(u0 * 3)) : 0, x0: -20, x1: 640 }));
   s += loaf(140, 400, .9) + riceBowl(400, 410, .9) + arrow(140, 330, 140, 230, ORANGE, 6, clamp(u0 / 1.2)) + arrow(400, 330, 400, 230, ORANGE, 6, clamp(u0 / 1.2 - .3));
@@ -609,7 +637,7 @@ SCENE.intro = function (svg, t, li) {
     var d = ""; for (var i = 0; i <= 40; i++) { var x = i / 40, y = Math.exp(-Math.pow((x - .3) / .16, 2)); d += (i ? "L" : "M") + f(gx + x * gw) + " " + f(gy - 20 - y * gh * .9); }
     s += draw(d, li >= 2 ? 1 : k, OLIVE, 5) + T("سكر الدم", gx + 60, gy - gh - 30, 20, INK, 700) + T("ساعتين تلاتة", gx + gw * .55, gy + 30, 22, OLIVE, 800);
     if (li >= 2) { var u2 = t - LN[2].start, d2 = ""; for (i = 0; i <= 40; i++) { x = i / 40; y = x < .3 ? Math.exp(-Math.pow((x - .3) / .16, 2)) : 1 - .1 * Math.sin(x * 9 + t); d2 += (i ? "L" : "M") + f(gx + x * gw) + " " + f(gy - 20 - y * gh * .9); }
-      s += draw(d2, clamp(u2 / 1.4), ORANGE, 5) + G("", N(count(13000000, clamp((u2 - .3) / 1.4)), 300, 330, 54, ORANGE) + T("واحد في مصر", 300, 380, 26, INK, 800), clamp(u2 / .3)); }
+      s += draw(d2, clamp(u2 / 1.4), ORANGE, 5) + G("", N(count(13000000, clamp((u2 - .3) / 1.4)), 300, 330, 54, ORANGE) + T("مريض سكر في مصر", 300, 380, 26, INK, 800), clamp(u2 / .3)); }
   }
   return s;
 };

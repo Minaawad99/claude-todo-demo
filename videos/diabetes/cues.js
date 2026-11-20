@@ -61,43 +61,45 @@ water(L(7), D(7), 0.12); a(L(7) + 0.3, 'whoosh', 0.12); for (let k = 0; k < 3; k
 a(F(7, .62), 'servo', 0.18); for (let k = 0; k < 3; k++) a(F(7, .62) + 1.0 + k * 0.3, 'drop', 0.15); a(F(7, .62) + 1.6, 'sizzle', 0.12, 1.2);
 // 8 · the doorman: footsteps in, then he's gone and the door is crossed out
 for (let k = 0; k < 6; k++) a(L(8) + 0.2 + k * 0.33, 'thud', 0.1); a(F(8, .45), 'creak', 0.12, 0.8); scribble(F(8, .45) + 0.6);
-// 9 · the question
-water(L(9), D(9), 0.14); a(L(9) + 0.2, 'pop', 0.4);
-// 10 · type 1: immune cells hit the islet
-for (let k = 0; k < 5; k++) a(F(10, .25) + k * 0.33, 'thud', 0.2); a(F(10, .7) + 0.3, 'whoosh', 0.12); scribble(F(10, .7) + 0.4);
-// 11 · not food's fault: the arrow crossed, the heart
-a(L(11) + 0.4, 'whoosh', 0.12); scribble(L(11) + 1.0); rec(F(11, .45), 'heartbeat', 0.22, 0, 1.6, 1.0, 'bump', 0.18);
-// 12 · type 2: 90% counts up, the key arrives, the lock rusts and the key rattles
-a(F(12, .2), 'tick', 0.15); ding(F(12, .2) + 1.0); a(F(12, .5), 'clink', 0.2); a(F(12, .72), 'creak', 0.14, 1.2);
-for (let k = 0; k < 5; k++) a(F(12, .72) + 0.7 + k * 0.12, 'clank', 0.08);
-// 13 · keys pile up, the pancreas pumps, then it tires
-for (let k = 0; k < 8; k++) a(F(13, .45) + k * 0.25, 'clink', 0.1); a(F(13, .8), 'creak', 0.12, 1.0);
-// 14 · the sofa, the TV, the soda: labels
-a(L(14) + 0.3, 'fizz', 0.12, 1.2); lab(14, D(14) * .4); lab(14, D(14) * .62); lab(14, D(14) * .82); a(L(14) + 0.8, 'creak', 0.1, 1.2);
-// 15 · walking
-for (let k = 0; k < 8; k++) a(L(15) + 0.2 + k * 0.6, 'thud', 0.12); a(F(15, .6), 'pop', 0.35); scribble(F(15, .6) + 0.4);
-// 16 · the muscle opens its own doors and pulls sugar in
-water(L(16), D(16), 0.12); a(L(16) + 0.8, 'servo', 0.15); for (let k = 0; k < 4; k++) a(L(16) + 1.2 + k * 0.4, 'drop', 0.13); scribble(F(16, .7) + 0.3);
-// 17 · the dial runs to 30 minutes, five days tick on
-rec(L(17) + 0.2, 'clock-ticking', 0.22, 0.1, D(17) - 0.2, 1.0, null); ding(L(17) + 1.9); for (let k = 0; k < 5; k++) a(F(17, .5) + k * 0.44, 'pop', 0.22);
-// 18 · the scale counts down, −7% lands
-a(L(18) + 0.3, 'thud', 0.18); for (let k = 0; k < 6; k++) a(F(18, .45) + 0.2 + k * 0.27, 'tick', 0.14); ding(F(18, .45) + 1.9);
-// 19 · the bars rise, the gap is measured, −58%
-a(L(19) + 0.5, 'whoosh', 0.14, 0.8); a(L(19) + 0.9, 'whoosh', 0.14, 0.8); lab(19, D(19) * .6 + 0.6); ding(F(19, .6) + 0.8);
-// 20 · what to avoid: a fizz, a crunch, a lighter; each crossed out
-a(F(20, .2), 'fizz', 0.18, 1.0); scribble(F(20, .2) + 0.6); a(F(20, .5), 'pop', 0.25); scribble(F(20, .5) + 0.5); a(F(20, .8), 'spark', 0.12); scribble(F(20, .8) + 0.4);
-// 21 · the spoon of sugar: no
-a(L(21) + 0.4, 'pop', 0.2); scribble(F(21, .8)); a(F(21, .8) + 0.2, 'pop', 0.35);
-// 22 · rice, bread, pasta → sugar; the amount
-for (let k = 0; k < 3; k++) a(L(22) + 0.2 + k * 0.4, 'pop', 0.22); a(F(22, .35), 'whoosh', 0.14); for (let k = 0; k < 3; k++) a(F(22, .35) + 0.3 + k * 0.2, 'drop', 0.12); paper(F(22, .7));
-// 23 · 62%, the glass, the toilet, the test meter counting
-ding(L(23) + 0.7); rec(F(23, .42), 'pour', 0.25, 0, 1.4, 1.0, 'slosh', 0.15); a(F(23, .62), 'whoosh', 0.12); a(F(23, .8), 'beep', 0.18); a(F(23, .8) + 1.0, 'beep', 0.18);
-// 24 · recap: key, rusty lock, the door opening
-a(L(24) + 0.3, 'clink', 0.2); a(F(24, .5), 'creak', 0.12, 1.0); a(F(24, .75), 'servo', 0.18); lab(24, D(24) * .75 + 0.5);
-// 25 · the blood jar fills, one spoon, the can, nine spoons
-water(L(25) + 0.3, 1.2, 0.14); a(F(25, .3), 'clink', 0.2); a(F(25, .55), 'fizz', 0.15, 1.0); for (let k = 0; k < 9; k++) a(F(25, .55) + 0.3 + k * 0.15, 'tick', 0.15); ding(F(25, .55) + 1.8);
-// 26 · the prayer: a calm heartbeat and a soft chime
-rec(L(26), 'heartbeat', 0.2, 0, D(26), 1.0, 'bump', 0.15); a(L(26) + 0.3, 'chime', 0.22); a(F(26, .5), 'chime', 0.18);
+// 9 · the question, then the two types
+water(L(9), D(9), 0.14); a(L(9) + 0.2, 'pop', 0.4); paper(F(9, .75)); a(F(9, .75) + 0.3, 'pop', 0.3);
+// 10 · type 1 starts young: a child next to a grown-up
+paper(L(10) + 0.1); lab(10, 0.7);
+// 11 · immune cells hit the islet; no more keys
+for (let k = 0; k < 5; k++) a(L(11) + 0.4 + k * 0.33, 'thud', 0.2); a(F(11, .55) + 0.2, 'whoosh', 0.12); scribble(F(11, .55) + 0.4);
+// 12 · not food's fault (crossed arrow, a heartbeat), insulin by injection
+a(L(12) + 0.4, 'whoosh', 0.12); scribble(L(12) + 1.0); rec(F(12, .3), 'heartbeat', 0.22, 0, 1.6, 1.0, 'bump', 0.18); a(F(12, .62), 'clink', 0.18);
+// 13 · type 2: 90% counts up, the sofa, the soda, the labels
+a(L(13) + 0.3, 'fizz', 0.1, 1.2); a(F(13, .15), 'tick', 0.15); ding(F(13, .15) + 0.9); lab(13, D(13) * .38); lab(13, D(13) * .62); lab(13, D(13) * .78); lab(13, D(13) * .88);
+// 14 · the key arrives, the lock rusts and the key rattles
+a(L(14) + 0.5, 'clink', 0.2); a(F(14, .7), 'creak', 0.14, 1.2); for (let k = 0; k < 5; k++) a(F(14, .7) + 0.7 + k * 0.12, 'clank', 0.08);
+// 15 · keys pile up, the pancreas pumps, then it tires; sugar stays high
+for (let k = 0; k < 8; k++) a(L(15) + 0.2 + k * 0.22, 'clink', 0.1); a(F(15, .4), 'creak', 0.12, 1.0); water(F(15, .6), D(15) * .4, 0.14);
+// 16 · the family tree draws
+a(L(16) + 0.3, 'whoosh', 0.1); paper(L(16) + 0.5); a(L(16) + 0.9, 'pop', 0.25); a(F(16, .5), 'pop', 0.3);
+// 17 · walking
+for (let k = 0; k < 6; k++) a(L(17) + 0.2 + k * 0.6, 'thud', 0.12); a(F(17, .65), 'pop', 0.35); scribble(F(17, .65) + 0.4);
+// 18 · the muscle opens its own doors and pulls sugar in
+water(L(18), D(18), 0.12); a(L(18) + 0.8, 'servo', 0.15); for (let k = 0; k < 4; k++) a(L(18) + 1.2 + k * 0.4, 'drop', 0.13); scribble(F(18, .7) + 0.3);
+// 19 · the dial runs to 30 minutes, five days tick on
+rec(L(19) + 0.2, 'clock-ticking', 0.22, 0.1, D(19) - 0.2, 1.0, null); ding(L(19) + 1.9); for (let k = 0; k < 5; k++) a(F(19, .5) + k * 0.3, 'pop', 0.22);
+// 20 · the scale counts down, −7%, then the bars and −58%
+a(L(20) + 0.3, 'thud', 0.18); for (let k = 0; k < 6; k++) a(F(20, .3) + 0.2 + k * 0.27, 'tick', 0.14); ding(F(20, .3) + 1.9);
+a(F(20, .55) + 0.5, 'whoosh', 0.14, 0.8); a(F(20, .55) + 0.9, 'whoosh', 0.14, 0.8); ding(F(20, .55) + 1.4);
+// 21 · what to avoid: a fizz, a crunch, a lighter; each crossed out
+a(F(21, .2), 'fizz', 0.18, 1.0); scribble(F(21, .2) + 0.6); a(F(21, .5), 'pop', 0.25); scribble(F(21, .5) + 0.5); a(F(21, .8), 'spark', 0.12); scribble(F(21, .8) + 0.4);
+// 22 · the spoon of sugar: no
+a(L(22) + 0.4, 'pop', 0.2); scribble(F(22, .8)); a(F(22, .8) + 0.2, 'pop', 0.35);
+// 23 · rice, bread, pasta → sugar; the amount
+for (let k = 0; k < 3; k++) a(L(23) + 0.2 + k * 0.4, 'pop', 0.22); a(F(23, .35), 'whoosh', 0.14); for (let k = 0; k < 3; k++) a(F(23, .35) + 0.3 + k * 0.2, 'drop', 0.12); paper(F(23, .7));
+// 24 · 62%, the glass, the toilet, the test meter counting
+ding(L(24) + 0.7); rec(F(24, .42), 'pour', 0.25, 0, 1.4, 1.0, 'slosh', 0.15); a(F(24, .62), 'whoosh', 0.12); a(F(24, .8), 'beep', 0.18); a(F(24, .8) + 1.0, 'beep', 0.18);
+// 25 · recap: no key, rusty lock, the door opening
+a(F(25, .25), 'clink', 0.2); scribble(F(25, .25) + 0.5); a(F(25, .55), 'creak', 0.12, 1.0); a(F(25, .8), 'servo', 0.18);
+// 26 · the blood jar fills, one spoon, the can, nine spoons
+water(L(26) + 0.3, 1.2, 0.14); a(F(26, .3), 'clink', 0.2); a(F(26, .55), 'fizz', 0.15, 1.0); for (let k = 0; k < 9; k++) a(F(26, .55) + 0.3 + k * 0.15, 'tick', 0.15); ding(F(26, .55) + 1.8);
+// 27 · the prayer: a calm heartbeat and a soft chime
+rec(L(27), 'heartbeat', 0.2, 0, D(27), 1.0, 'bump', 0.15); a(L(27) + 0.3, 'chime', 0.22); a(F(27, .5), 'chime', 0.18);
 
 // music plays only when sfx.py is run with --music, and that only when the user asked for music in this video
 const MUSIC = has('music-soft') ? 'music-soft' : null;
