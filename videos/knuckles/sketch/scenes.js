@@ -239,42 +239,173 @@ function gauge(x, y, r, val, k) {
   return appear(k, s + T("الضغط", x, y + 30, r * .32, INK, 800));
 }
 
-// ── a hand seen from the back (fingers up, wrist at 0,0); proportions of a real adult hand ──
-// palm (wrist → knuckles) ≈ 0.55 of the hand length, middle finger ≈ 0.45; phalanges about 1 : 0.6 : 0.45.
-// o: {x, y, s, rot, mirror, bones 0..1 (X-ray overlay), pull: [finger, gap], hl: finger (knuckle highlight), swell: finger, sleeve}
-var FING = [ { x: -50, y: -160, w: 31, L: [56, 34, 27] }, { x: -17, y: -166, w: 32, L: [62, 40, 30] },
-             { x: 17, y: -162, w: 30, L: [58, 37, 28] }, { x: 49, y: -148, w: 25, L: [45, 27, 24] } ];
-function handTop(o) {
-  var s = "", i, sk = o.skin || SKIN;
-  if (o.sleeve !== false) s += R(-62, 10, 124, 260, o.sleeve || SHIRT_V, 2.4) + '<path d="M-62 34 H62" stroke="' + INK + '" stroke-width="1.4"/>';
-  s += '<path d="M-58 14 L-60 -20 L-70 -80 L-68 -150 Q-60 -170 -36 -172 L40 -166 Q64 -160 66 -140 L64 -60 L58 14 Z" fill="' + sk + '" stroke="' + INK + '" stroke-width="2.4" stroke-linejoin="round"/>';
-  // thumb: from the wrist side, angled out
-  s += G("translate(-58 -52) rotate(-38)", '<path d="M-16 0 L-15 -58 Q-14 -96 0 -98 Q15 -96 16 -58 L16 0 Z" fill="' + sk + '" stroke="' + INK + '" stroke-width="2.4"/><path d="M-12 -52 h24" stroke="' + INK + '" stroke-width="1.4"/><path d="M-8 -86 q8 -6 16 0 v8 h-16 z" fill="#efd2c2" stroke="' + INK + '" stroke-width="1.2"/>');
-  for (i = 0; i < 4; i++) {
-    var F = FING[i], gap = o.pull && o.pull[0] === i ? o.pull[1] : 0, L = F.L[0] + F.L[1] + F.L[2], w = F.w, x = F.x, y0 = F.y - gap, top = y0 - L;
-    var fill = o.swell === i ? "#e08a74" : sk;
-    if (gap) s += '<path d="M' + f(x - w / 2 + 1) + ' ' + f(F.y + 6) + ' L' + f(x - w / 2 + 2) + ' ' + f(y0) + ' M' + f(x + w / 2 - 1) + ' ' + f(F.y + 6) + ' L' + f(x + w / 2 - 2) + ' ' + f(y0) + '" stroke="' + INK + '" stroke-width="2"/>' + R(x - w / 2 + 2, y0 - 2, w - 4, gap + 10, fill, 0);
-    s += '<path d="M' + f(x - w / 2) + ' ' + f(y0 + 8) + ' L' + f(x - w * .42) + ' ' + f(top + w * .4) + ' Q' + f(x) + ' ' + f(top - w * .25) + ' ' + f(x + w * .42) + ' ' + f(top + w * .4) + ' L' + f(x + w / 2) + ' ' + f(y0 + 8) + '" fill="' + fill + '" stroke="' + INK + '" stroke-width="2.4" stroke-linejoin="round"/>';
-    var yp = y0 - F.L[0], yd = yp - F.L[1];
-    s += '<path d="M' + f(x - w * .3) + ' ' + f(yp) + ' q' + f(w * .3) + ' -4 ' + f(w * .6) + ' 0 M' + f(x - w * .28) + ' ' + f(yp + 5) + ' q' + f(w * .28) + ' -3 ' + f(w * .56) + ' 0 M' + f(x - w * .26) + ' ' + f(yd) + ' q' + f(w * .26) + ' -3 ' + f(w * .52) + ' 0" stroke="' + INK + '" stroke-width="1.4" fill="none"/>';
-    s += '<path d="M' + f(x - w * .28) + ' ' + f(top + 8) + ' q' + f(w * .28) + ' -9 ' + f(w * .56) + ' 0 v' + f(F.L[2] * .45) + ' h' + f(-w * .56) + ' z" fill="#efd2c2" stroke="' + INK + '" stroke-width="1.2"/>';
-    // the knuckle bump on the back of the hand
-    s += '<path d="M' + f(x - w * .34) + ' ' + f(F.y + 10) + ' q' + f(w * .34) + ' -10 ' + f(w * .68) + ' 0" stroke="' + (o.hl === i ? ORANGE : INK) + '" stroke-width="' + (o.hl === i ? 4 : 1.6) + '" fill="none"/>';
+// ── the hand: the rig from «ليه البنصر مش بيترفع؟» (videos/finger-stuck), approved by the user ──
+var LIT = "#efc0a4", NAIL = "#efcdb9", WOODT = "#d9c29b", WOODG = "#c4a97c", TENDR = "#f4eee2";
+
+// ── curve helpers ──
+function smooth(pts, closed) {   // Catmull-Rom → cubic Bézier through the points
+  var n = pts.length, d = "M" + f(pts[0][0]) + " " + f(pts[0][1]);
+  for (var i = 0; i < (closed ? n : n - 1); i++) {
+    var p0 = pts[(i - 1 + n) % n], p1 = pts[i], p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n];
+    if (!closed) { if (i == 0) p0 = p1; if (i == n - 2) p3 = p2; }
+    d += " C" + f(p1[0] + (p2[0] - p0[0]) / 6) + " " + f(p1[1] + (p2[1] - p0[1]) / 6) + " " + f(p2[0] - (p3[0] - p1[0]) / 6) + " " + f(p2[1] - (p3[1] - p1[1]) / 6) + " " + f(p2[0]) + " " + f(p2[1]);
   }
-  if (o.bones) s += G("", handBones(o), o.bones);
-  return G("translate(" + f(o.x) + " " + f(o.y) + ") rotate(" + f(o.rot || 0) + ") scale(" + f((o.mirror ? -1 : 1) * (o.s || 1)) + " " + f(o.s || 1) + ")", s);
+  return d + (closed ? " Z" : "");
 }
-// the bones of the hand laid over it (reference v07): carpals, metacarpals, three phalanges per finger, two in the thumb
-function handBones(o) {
-  var s = "", i, j; function bone(x1, y1, x2, y2, w) { return '<path d="M' + f(x1) + ' ' + f(y1) + ' L' + f(x2) + ' ' + f(y2) + '" stroke="' + INK + '" stroke-width="' + f(w + 3) + '" stroke-linecap="round"/><path d="M' + f(x1) + ' ' + f(y1) + ' L' + f(x2) + ' ' + f(y2) + '" stroke="' + BONEC + '" stroke-width="' + f(w) + '" stroke-linecap="round"/>' + C(x1, y1, w * .62, BONEC, 1.4) + C(x2, y2, w * .62, BONEC, 1.4); }
-  [[-34, -30, 11, 9], [-12, -34, 10, 9], [10, -33, 10, 9], [32, -28, 9, 8], [-30, -10, 12, 9], [-8, -12, 10, 8], [13, -11, 9, 8], [33, -8, 8, 9]].forEach(function (c, j) { s += '<ellipse cx="' + c[0] + '" cy="' + c[1] + '" rx="' + c[2] + '" ry="' + c[3] + '" transform="rotate(' + (j * 23 % 40 - 20) + ' ' + c[0] + ' ' + c[1] + ')" fill="' + BONEC + '" stroke="' + INK + '" stroke-width="1.6"/>'; });
-  for (i = 0; i < 4; i++) { var F = FING[i], gap = o.pull && o.pull[0] === i ? o.pull[1] : 0, y = F.y - gap, mx = F.x * .7;
-    s += bone(mx, -50, F.x, F.y - 6, 11);
-    s += bone(F.x, y - 8, F.x, y - F.L[0] + 4, 10) + bone(F.x, y - F.L[0] - 3, F.x, y - F.L[0] - F.L[1] + 4, 9) + bone(F.x, y - F.L[0] - F.L[1] - 3, F.x, y - F.L[0] - F.L[1] - F.L[2] + 8, 8);
-    if (o.hl === i) s += '<circle cx="' + f(F.x) + '" cy="' + f(F.y - 6 - gap / 2) + '" r="' + f(14 + gap / 2) + '" fill="none" stroke="' + ORANGE + '" stroke-width="3.5"/>'; }
-  s += G("translate(-58 -52) rotate(-38)", bone(0, 6, 0, -44, 11) + bone(0, -52, 0, -76, 10) + bone(0, -84, 0, -92, 8));
+function sline(pts, col, w, op, ex) { return '<path d="' + smooth(pts, false) + '" fill="none" stroke="' + col + '" stroke-width="' + w + '" stroke-linecap="round" stroke-linejoin="round"' + (op != null ? ' opacity="' + op + '"' : "") + (ex || "") + '/>'; }
+
+// a jointed digit outline from joints [[x, y, width], …] (root → tip centre)
+function digit(j) {
+  var L = [], R = [], n = j.length;
+  function nrm(i) { var a = j[Math.max(0, i - 1)], b = j[Math.min(n - 1, i + 1)], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1; return [dy / l, -dx / l, dx / l, dy / l]; }
+  for (var i = 0; i < n; i++) { var q = nrm(i), w = j[i][2] / 2; L.push([j[i][0] + q[0] * w, j[i][1] + q[1] * w]); R.push([j[i][0] - q[0] * w, j[i][1] - q[1] * w]); }
+  var e = nrm(n - 1), tw = j[n - 1][2] / 2, tip = [];
+  for (var k = 1; k < 6; k++) { var th = Math.PI * k / 6, c = Math.cos(th), s = Math.sin(th); tip.push([j[n - 1][0] + e[0] * tw * c + e[2] * tw * s, j[n - 1][1] + e[1] * tw * c + e[3] * tw * s]); }
+  return { d: smooth(L.concat(tip, R.reverse()), true), at: function (i, off) { var q = nrm(i), w = j[i][2] / 2; return [j[i][0] + q[0] * w * off, j[i][1] + q[1] * w * off]; }, nrm: nrm };
+}
+// joints of a finger: root (x,y), direction a (deg, 0 = down), phalanx lengths, widths at root / PIP / DIP / tip.
+// lift 0..1 tips it toward the camera (segments foreshorten, the far end grows); fold 0..1 curls it under the palm.
+function joints(x, y, a, ls, ws, lift, bend, fold) {
+  lift = lift || 0; fold = fold || 0;
+  var out = [], r = a * Math.PI / 180, px = x, py = y, sc = [1, 1 - 0.30 * lift, 1 - 0.45 * lift, 1 - 0.55 * lift], fs = [1 - 0.35 * fold, 1 - 0.85 * fold, 1 - 0.85 * fold];
+  var W = [ws[0], ws[0] * 0.92, ws[1] * 1.03, ws[1] * 0.9, ws[2] * 1.02, ws[2] * 0.94, ws[3]];
+  out.push([px, py, W[0]]);
+  for (var s = 0; s < 3; s++) {
+    var L = Math.max(2, ls[s] * sc[s + 1] * fs[s]), gr = 1 + 0.18 * lift * (s + 1) / 3;
+    out.push([px + Math.sin(r) * L / 2, py + Math.cos(r) * L / 2, W[1 + 2 * s] * gr]);
+    px += Math.sin(r) * L; py += Math.cos(r) * L; r += (bend || 0) * Math.PI / 180;
+    out.push([px, py, (s < 2 ? W[2 + 2 * s] : W[6]) * gr]);
+  }
+  return out;   // 0 root, 2 PIP, 4 DIP, 6 tip centre
+}
+function wrinkles(D, i, count, len, op) {
+  var s = "", q = D.nrm(i);
+  for (var k = 0; k < count; k++) { var o = (k - (count - 1) / 2) * 5, c = D.at(i, 0), cx = c[0] + q[2] * o, cy = c[1] + q[3] * o, w = len * (1 - Math.abs(k - (count - 1) / 2) * 0.25);
+    s += '<path d="M' + f(cx + q[0] * w / 2) + ' ' + f(cy + q[1] * w / 2) + ' Q' + f(cx + q[2] * 3.5) + ' ' + f(cy + q[3] * 3.5) + ' ' + f(cx - q[0] * w / 2) + ' ' + f(cy - q[1] * w / 2) + '" fill="none" stroke="' + INK + '" stroke-width="1.5" stroke-linecap="round" opacity="' + (op || .5) + '"/>'; }
   return s;
 }
+// a finger: body, shaded side (its thickness), lit ridge, knuckle wrinkles, nail. o: {red 0..1}
+function drawFinger(j, o) {
+  o = o || {}; var D = digit(j), s = '<path d="' + D.d + '" fill="' + SKIN + '"/>';
+  if (o.red) s += '<path d="' + D.d + '" fill="' + ORANGE + '" opacity="' + f(.55 * o.red) + '"/>';
+  var sh = [], i; for (i = 0; i < j.length; i++) sh.push(D.at(i, -1)); for (i = j.length - 1; i >= 0; i--) sh.push(D.at(i, -0.25));
+  s += '<path d="' + smooth(sh, true) + '" fill="' + SKIN2 + '" opacity=".5"/>';
+  var hl = []; for (i = 1; i < j.length - 1; i++) hl.push(D.at(i, 0.5));
+  s += sline(hl, LIT, f(j[3][2] * 0.16), .75);
+  s += '<path d="' + D.d + '" fill="none" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/>';
+  s += wrinkles(D, 2, 3, j[2][2] * 0.55, .55) + wrinkles(D, 4, 2, j[4][2] * 0.45, .45);
+  var a = j[5], b = j[6], ang = Math.atan2(b[0] - a[0], b[1] - a[1]) * 180 / Math.PI, nw = b[2] * 0.62, nl = Math.hypot(b[0] - a[0], b[1] - a[1]) * 1.05 + b[2] * 0.25;
+  if (nl > 8) s += G('translate(' + f(a[0]) + ' ' + f(a[1]) + ') rotate(' + f(-ang) + ')', '<path d="M' + f(-nw / 2) + ' 2 Q0 -4 ' + f(nw / 2) + ' 2 L' + f(nw / 2) + ' ' + f(nl - nw * 0.45) + ' Q' + f(nw / 2) + ' ' + f(nl) + ' 0 ' + f(nl) + ' Q' + f(-nw / 2) + ' ' + f(nl) + ' ' + f(-nw / 2) + ' ' + f(nl - nw * 0.45) + ' Z" fill="' + NAIL + '" stroke="' + INK + '" stroke-width="1.8"/><path d="M' + f(-nw * 0.28) + ' 6 L' + f(-nw * 0.28) + ' ' + f(nl * 0.6) + '" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".55"/>');
+  return s;
+}
+function shadowOf(j, dx, dy, op) { var J = j.map(function (p) { return [p[0] + dx, p[1] + dy, p[2]]; }); return '<path d="' + digit(J).d + '" fill="' + INK + '" opacity="' + op + '"/>'; }
+// folded under: the first phalanx dips to the table and the bent middle knuckle faces the camera
+function drawFolded(x, y, a, len, w) {
+  var r = a * Math.PI / 180, ex = x + Math.sin(r) * len, ey = y + Math.cos(r) * len, s = "";
+  var j = [[x, y, w], [x + Math.sin(r) * len * .5, y + Math.cos(r) * len * .5, w], [ex, ey, w * 1.12]], D = digit(j), sh = [], i;
+  s += '<ellipse cx="' + f(ex + 6) + '" cy="' + f(ey + 12) + '" rx="' + f(w * 0.62) + '" ry="' + f(w * 0.34) + '" fill="' + INK + '" opacity=".28"/>';
+  s += '<path d="' + D.d + '" fill="' + SKIN + '"/>';
+  for (i = 0; i < 3; i++) sh.push(D.at(i, -1)); for (i = 2; i >= 0; i--) sh.push(D.at(i, -0.2));
+  s += '<path d="' + smooth(sh, true) + '" fill="' + SKIN2 + '" opacity=".55"/><path d="' + D.d + '" fill="none" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/>';
+  for (var k = 0; k < 3; k++) { var rr = w * (0.16 + 0.1 * k); s += '<path d="M' + f(ex - rr) + ' ' + f(ey - 2 + k * 2) + ' Q' + f(ex) + ' ' + f(ey + rr * 0.9) + ' ' + f(ex + rr) + ' ' + f(ey - 2 + k * 2) + '" fill="none" stroke="' + INK + '" stroke-width="1.5" opacity="' + (.55 - k * .12) + '" stroke-linecap="round"/>'; }
+  return s + '<ellipse cx="' + f(ex - w * 0.12) + '" cy="' + f(ey - w * 0.05) + '" rx="' + f(w * 0.12) + '" ry="' + f(w * 0.07) + '" fill="' + LIT + '" opacity=".8"/>';
+}
+function padThumb(TJ) { var a = TJ[0], b = TJ[2], c = TJ[4]; function mid(p, q, k) { return [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2, (p[2] + q[2]) / 2 * (k || 1)]; }
+  var m1 = mid(a, b, .95); return [a, mid(a, m1), m1, mid(m1, b), b, mid(b, c, .96), c]; }
+
+// ── the hand (hand units: the wrist cuff at the top ≈ y 75, fingertips ≈ y 620) ──
+var FG = { pinky: [148, 330, -11, [74, 46, 38], [42, 38, 34, 30]], ring: [203, 350, -4, [92, 58, 44], [48, 43, 39, 34]], middle: [262, 356, 1, [98, 64, 46], [50, 45, 41, 35]], index: [320, 344, 7, [90, 56, 42], [48, 43, 39, 34]] };
+var BEND = { pinky: -2, ring: 0, middle: 0, index: 2 };
+// tendon start points under the cuff, one per finger
+var TW = { pinky: [206, 120], ring: [228, 120], middle: [250, 120], index: [272, 120] };
+function fingerJ(k, q) { var g = FG[k], pl = q.pull || 0, r = g[2] * Math.PI / 180; return joints(g[0] + Math.sin(r) * pl, g[1] + Math.cos(r) * pl, g[2], g[3], g[4], q.lift || 0, BEND[k], q.fold || 0); }
+function thumbJ(q) { var TJ = joints(350, 228, 30, [0, 66, 52], [62, 50, 44, 38], q.lift || 0, 8).slice(2); TJ[0][2] = 66; return padThumb(TJ); }
+// o: {f: {pinky|ring|middle|index|thumb: {lift, fold, red, jit}}, xray 0..1, tend: {...} tendon options}
+function hand(o) {
+  o = o || {}; var F = o.f || {}, s = "", J = {}, x = o.xray || 0, k;
+  ["pinky", "ring", "middle", "index"].forEach(function (k) { J[k] = fingerJ(k, F[k] || {}); });
+  var back = 'M154 118 C146 190 130 262 122 322 C120 336 128 346 142 350 C176 368 216 372 262 374 C312 374 348 362 362 342 C374 318 378 296 376 270 C372 236 358 180 344 118 Z';
+  var skin = "";
+  // contact shadows: a lifted finger's shadow stays on the table and slides away from it
+  skin += '<path d="' + back + '" transform="translate(9 12)" fill="' + INK + '" opacity=".13"/>';
+  for (k in J) { var q = F[k] || {}; if ((q.fold || 0) > .7) continue; var lj = q.lift ? fingerJ(k, { fold: q.fold }) : J[k]; skin += shadowOf(lj, 8 + (q.lift || 0) * 6, 12 + (q.lift || 0) * 30, f(.13 + (q.lift || 0) * .07)); }
+  // the middle finger: straight, folding, or folded under
+  var mf = (F.middle || {}).fold || 0, mk = clamp((mf - .45) / .4);
+  if (mk > 0) skin += G("", drawFolded(FG.middle[0], FG.middle[1], FG.middle[2], 62, 52), mk);
+  ["pinky", "ring", "index"].forEach(function (k) { skin += drawFinger(J[k], F[k]); });
+  if (mk < 1) skin += G("", drawFinger(J.middle, F.middle), 1 - mk);
+  // the thumb sits under the edge of the hand
+  var th = F.thumb || {}, TJ = thumbJ(th), TJ0 = th.lift ? thumbJ({}) : TJ;
+  skin += shadowOf(TJ0, 8 + (th.lift || 0) * 6, 12 + (th.lift || 0) * 30, f(.13 + (th.lift || 0) * .07)) + drawFinger(TJ, th);
+  // back of the hand over the finger roots
+  skin += '<path d="' + back + '" fill="' + SKIN + '"/>';
+  skin += '<path d="M154 118 C146 190 130 262 122 322 C120 336 128 346 142 350 L162 340 C158 270 168 190 180 118 Z" fill="' + SKIN2 + '" opacity=".5"/>';
+  [[204, 150, 146, 318], [226, 150, 203, 338], [248, 150, 262, 344], [272, 150, 320, 330]].forEach(function (t) { skin += sline([[t[0], t[1]], [(t[0] * 2 + t[2]) / 3, 230], [t[2], t[3]]], SKIN2, 3.2, .5); });
+  [[148, 330, 40], [203, 350, 46], [262, 356, 48], [320, 344, 46]].forEach(function (p) {
+    skin += '<ellipse cx="' + p[0] + '" cy="' + (p[1] - 12) + '" rx="' + f(p[2] * 0.26) + '" ry="6" fill="' + LIT + '" opacity=".45"/>';
+    skin += '<path d="M' + f(p[0] - p[2] * 0.35) + ' ' + (p[1] - 2) + ' q' + f(p[2] * 0.35) + ' -12 ' + f(p[2] * 0.7) + ' 0" fill="none" stroke="' + INK + '" stroke-width="1.6" opacity=".45"/>'; });
+  [[176, 352], [233, 364], [292, 362]].forEach(function (p) { skin += '<path d="M' + (p[0] - 7) + ' ' + (p[1] - 6) + ' q7 12 14 0" fill="none" stroke="' + INK + '" stroke-width="2.2" opacity=".6"/>'; });
+  skin += '<path d="M154 118 C146 190 130 262 122 322 C120 336 126 344 134 348" fill="none" stroke="' + INK + '" stroke-width="3" stroke-linecap="round"/>';
+  skin += '<path d="M344 118 C350 150 356 176 366 200" fill="none" stroke="' + INK + '" stroke-width="3" stroke-linecap="round"/>';
+  skin += '<path d="M370 268 C384 282 388 300 382 316" fill="none" stroke="' + INK + '" stroke-width="2" stroke-linecap="round" opacity=".45"/>';
+  s += x > 0 ? '<g opacity="' + f(1 - .68 * x) + '" style="filter:saturate(' + f(1 - .6 * x) + ')">' + skin + '</g>' : skin;
+  if (x > 0) s += '<g opacity="' + f(x) + '">' + tendons(J, F, o.tend || {}) + '</g>';
+  if (o.bones) s += '<g opacity="' + f(o.bones) + '">' + rigBones(J, F) + '</g>';
+  if (o.hl) { var hg = FG[o.hl], hq = (F[o.hl] || {}).pull || 0; s += '<ellipse cx="' + f(hg[0]) + '" cy="' + f(hg[1] - 6 + hq / 2) + '" rx="' + f(hg[4][0] * .62) + '" ry="' + f(22 + hq / 2) + '" fill="none" stroke="' + ORANGE + '" stroke-width="5"/>'; }
+  // sleeve cuff (always on top: the tendons run in from under it)
+  s += '<path d="M136 74 L362 74 L358 128 C298 138 206 138 144 128 Z" fill="' + (o.sleeve || BLUE) + '" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/>';
+  s += '<path d="M146 116 C206 124 298 124 356 116" fill="none" stroke="' + INK + '" stroke-width="1.5" opacity=".4"/>';
+  return s;
+}
+// the extensor tendons. opt: {pull: 0..1 (the middle tendon dragged toward the fingertip), band 0..1 highlight,
+// own 0..1 (the extra muscles of index and pinky in olive), lock 0..1 (the ring tendon held), col: {finger: colour}}
+function tendonPts(k, J, F) {
+  var w = TW[k], q = F[k] || {}, j = J[k];
+  if ((q.fold || 0) > .45) { var g = FG[k], r = g[2] * Math.PI / 180; return [w, [(w[0] * 2 + g[0]) / 3, 240], [g[0], g[1]], [g[0] + Math.sin(r) * 58, g[1] + Math.cos(r) * 58]]; }
+  return [w, [(w[0] * 2 + j[0][0]) / 3, 240], [j[0][0], j[0][1]], [j[2][0], j[2][1]], [j[4][0], j[4][1]], [j[5][0], j[5][1]]];
+}
+function tendons(J, F, o) {
+  var s = "", col = o.col || {}, pull = o.pull || 0;
+  // the extra muscles: a second tendon beside the index and the little finger, joining at the knuckle
+  if (o.own) {
+    s += sline([[TW.pinky[0] - 14, 120], [180, 240], [FG.pinky[0] - 4, FG.pinky[1] - 6]], OLIVE, 6, o.own);
+    s += sline([[TW.index[0] + 16, 120], [300, 240], [FG.index[0] + 6, FG.index[1] - 6]], OLIVE, 6, o.own);
+  }
+  ["pinky", "ring", "middle", "index"].forEach(function (k) {
+    var p = tendonPts(k, J, F), c = col[k] || TENDR;
+    s += sline(p, INK, 10) + sline(p, c, 6);
+  });
+  // the band (juncturae tendinum) between the ring and middle tendons, just above the knuckles
+  var by = 300 + 14 * pull, b1 = [210, by + 2], b2 = [258, by + 6];
+  s += '<path d="M' + f(b1[0]) + ' ' + f(b1[1]) + ' L' + f(b2[0]) + ' ' + f(b2[1]) + '" stroke="' + INK + '" stroke-width="15" stroke-linecap="round"/>';
+  s += '<path d="M' + f(b1[0]) + ' ' + f(b1[1]) + ' L' + f(b2[0]) + ' ' + f(b2[1]) + '" stroke="' + (o.band ? ORANGE : "#e3cdb6") + '" stroke-width="10" stroke-linecap="round"/>';
+  return s;
+}
+// the bones laid over the rig (reference v07): carpals under the cuff, a metacarpal to each knuckle, three phalanges per finger
+function rigBones(J, F) {
+  var s = "";
+  function bone(p, q, w) { return '<path d="M' + f(p[0]) + ' ' + f(p[1]) + ' L' + f(q[0]) + ' ' + f(q[1]) + '" stroke="' + INK + '" stroke-width="' + f(w + 4) + '" stroke-linecap="round"/><path d="M' + f(p[0]) + ' ' + f(p[1]) + ' L' + f(q[0]) + ' ' + f(q[1]) + '" stroke="' + BONEC + '" stroke-width="' + f(w) + '" stroke-linecap="round"/>' +
+    '<ellipse cx="' + f(q[0]) + '" cy="' + f(q[1]) + '" rx="' + f(w * .62) + '" ry="' + f(w * .5) + '" fill="' + BONEC + '" stroke="' + INK + '" stroke-width="1.6"/>'; }
+  function toward(p, q, k) { return [lerp(p[0], q[0], k), lerp(p[1], q[1], k)]; }
+  [[196, 150, 15, 11], [226, 146, 15, 12], [256, 147, 15, 12], [286, 152, 14, 11], [204, 176, 15, 11], [234, 178, 15, 12], [264, 178, 14, 11], [292, 182, 14, 12]].forEach(function (c, i) {
+    s += '<ellipse cx="' + c[0] + '" cy="' + c[1] + '" rx="' + c[2] + '" ry="' + c[3] + '" transform="rotate(' + (i * 23 % 40 - 20) + ' ' + c[0] + ' ' + c[1] + ')" fill="' + BONEC + '" stroke="' + INK + '" stroke-width="1.8"/>'; });
+  var base = { pinky: [196, 196], ring: [222, 198], middle: [250, 198], index: [280, 196] };
+  ["pinky", "ring", "middle", "index"].forEach(function (k) {
+    var j = J[k], q = F[k] || {}, g = FG[k];
+    if ((q.fold || 0) > .45) { s += bone(base[k], [g[0], g[1] - 8], 18); return; }
+    s += bone(base[k], toward(base[k], [j[0][0], j[0][1]], .94), 18);
+    s += bone(toward([j[0][0], j[0][1]], [j[2][0], j[2][1]], .08), toward([j[0][0], j[0][1]], [j[2][0], j[2][1]], .92), 16);
+    s += bone(toward([j[2][0], j[2][1]], [j[4][0], j[4][1]], .1), toward([j[2][0], j[2][1]], [j[4][0], j[4][1]], .9), 14);
+    s += bone(toward([j[4][0], j[4][1]], [j[6][0], j[6][1]], .12), toward([j[4][0], j[4][1]], [j[6][0], j[6][1]], .78), 12);
+  });
+  var T = thumbJ((F.thumb) || {});
+  s += bone([300, 186], toward([300, 186], [T[0][0], T[0][1]], .9), 18) + bone(toward([T[0][0], T[0][1]], [T[4][0], T[4][1]], .1), toward([T[0][0], T[0][1]], [T[4][0], T[4][1]], .88), 16) + bone(toward([T[4][0], T[4][1]], [T[6][0], T[6][1]], .14), toward([T[4][0], T[4][1]], [T[6][0], T[6][1]], .75), 13);
+  return s;
+}
+// place the rig: (x, y) = the middle of the hand, s scale, rot (0 = fingers down toward you, 180 = fingers up), mirror = the left hand
+function HAND(x, y, s, rot, o, mirror) { return G("translate(" + f(x) + " " + f(y) + ") rotate(" + f(rot || 0) + ") scale(" + f((mirror ? -1 : 1) * s) + " " + f(s) + ") translate(-250 -350)", hand(o || {})); }
+// a panel point for a rig point
+function HP(x, y, s, rot, px, py, mirror) { var a = (rot || 0) * Math.PI / 180, dx = (px - 250) * s * (mirror ? -1 : 1), dy = (py - 350) * s; return [x + dx * Math.cos(a) - dy * Math.sin(a), y + dx * Math.sin(a) + dy * Math.cos(a)]; }
 
 // ── people: flat side-view figures facing left, real proportions (Drillis & Contini; see videos/choking/sketch/shots.js) ──
 function limb(pts, w, col) { var d = pathPts(pts); return '<path d="' + d + '" stroke="' + INK + '" stroke-width="' + f(w + 4) + '" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="' + d + '" stroke="' + col + '" stroke-width="' + f(w) + '" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'; }
@@ -388,7 +519,7 @@ shot(6, push(320, 420, 1.0, 1.06), function (u, d, t) {
 }, { tr: "out" });
 // 7 · inside the finger: the hand with its bones (reference v07), the knuckle ringed, then a cut through it
 shot(7, push(320, 420, 0.96, 1.08), function (u, d, t) {
-  return paper() + handTop({ x: 320, y: 610, s: 1.75, bones: at(u, .4, .8), hl: at(u, 1.2, .2) > 0 ? 0 : null }) + label(232, 316, 470, 120, "مفصل", OLIVE, at(u, 1.4, .5), 30);
+  var mk = HP(320, 420, 1.15, 180, 262, 342); return paper() + HAND(320, 420, 1.15, 180, { bones: at(u, .4, .8), hl: at(u, 1.2, .2) > 0 ? "middle" : null }) + label(mk[0], mk[1], 150, 120, "مفصل", OLIVE, at(u, 1.4, .5), 30);
 });
 shot([7, 2], push(330, 400, 0.9, 1.0), function (u, d, t) {
   return paper() + J(330, 400, 1.15, { g: 0, cap: 0, fl: 0, hl: at(u, .2, .3) > 0 ? "cart" : null }) +
@@ -408,8 +539,8 @@ shot(9, push(330, 400, 1.06, 1.18), function (u, d, t) {
 });
 // 10 · pulling the finger: the bones part, the capsule stretches
 shot(10, push(320, 400, 1.0, 1.04), function (u, d, t) {
-  var g = 4 + 2 * Math.sin(t * 3); return paper() + handTop({ x: 330, y: 650, s: 1.55, pull: [1, at(u, .6, 1) * 16], hl: 1 }) +
-    arrow(304, 120, 304, 40, ORANGE, 7, at(u, .5, .4)) + inset(500, 560, 110, J(-10, 0, .55, { g: at(u, .8, 1) * 24, gas: 1 }), at(u, 1.4, .3));
+  var pl = at(u, .6, 1) * 16, tip = HP(320, 440, 1.1, 180, 262, 640); return paper() + HAND(320, 440, 1.1, 180, { f: { middle: { pull: pl } }, hl: "middle" }) +
+    arrow(tip[0], tip[1] - 20, tip[0], tip[1] - 90 - 6 * Math.sin(t * 6), ORANGE, 7, at(u, .5, .4)) + inset(530, 650, 105, J(-10, 0, .55, { g: at(u, .8, 1) * 24, gas: 1 }), at(u, 1.4, .3));
 });
 shot([10, 1], push(330, 400, 1.04, 1.1), function (u, d, t) {
   var g = at(u, .2, 1.6) * 30; return paper() + J(330, 400, 1.15, { g: g, gas: 1, hl: "cap" }) + arrow(110, 400, 20, 400, ORANGE, 7, at(u, .3, .4)) + arrow(560, 400, 630, 400, ORANGE, 7, at(u, .3, .4)) +
@@ -468,13 +599,13 @@ shot(19, push(320, 410, 1.06, 0.98), function (u, d, t) {
 // 20 · Donald Unger: the left hand only, every day, for more than 60 years
 shot(20, push(320, 430, 1.0, 1.05), function (u, d, t) {
   var cr = Math.sin(t * 4) > .6 ? 1 : 0;
-  return paper() + handTop({ x: 170, y: 640, s: .95, mirror: true, hl: 1, sleeve: SHIRT_R }) + handTop({ x: 470, y: 640, s: .95, sleeve: SHIRT_R }) +
-    T("الشمال", 170, 140, 32, ORANGE, 800) + T("اليمين", 470, 140, 32, INK, 800) + burst(185, 470, ((t * 4 / (Math.PI * 2)) % 1) * 1.4, 50) +
+  return paper() + HAND(160, 420, .72, 180, { hl: "middle", sleeve: SHIRT_R }, true) + HAND(480, 420, .72, 180, { sleeve: SHIRT_R }) +
+    T("الشمال", 170, 140, 32, ORANGE, 800) + T("اليمين", 470, 140, 32, INK, 800) + burst(HP(160, 420, .72, 180, 262, 342, true)[0], HP(160, 420, .72, 180, 262, 342, true)[1], ((t * 4 / (Math.PI * 2)) % 1) * 1.4, 50) +
     numBox("+" + count(60, at(u, 1.2, 1.4)), 320, 730, at(u, 1, .3), 44) + G("", T("سنة", 450, 744, 30, INK, 800), at(u, 1.4, .3));
 });
 // 21 · in the end neither hand had arthritis; studies on hundreds of people agree
 shot(21, push(320, 420, 1.04, 0.98), function (u, d, t) {
-  var s = paper() + handTop({ x: 190, y: 450, s: .75, mirror: true, bones: 1, sleeve: SHIRT_R }) + handTop({ x: 450, y: 450, s: .75, bones: 1, sleeve: SHIRT_R }) + R(-100, 636, 840, 300, PAPER, 0) + '<path d="M40 636 H600" stroke="' + INK + '" stroke-width="1.6"/>' +
+  var s = paper() + HAND(165, 400, .66, 180, { bones: 1, sleeve: SHIRT_R }, true) + HAND(475, 400, .66, 180, { bones: 1, sleeve: SHIRT_R }) + R(-100, 636, 840, 300, PAPER, 0) + '<path d="M40 636 H600" stroke="' + INK + '" stroke-width="1.6"/>' +
     check(190, 120, 1.2, at(u, .4, .4), OLIVE) + check(450, 120, 1.2, at(u, .8, .4), OLIVE);
   var k = at(u, d * .35, 1.2); for (var i = 0; i < 30; i++) s += G("", personIcon(68 + (i % 15) * 36, 680 + Math.floor(i / 15) * 44, .8, i % 3 ? GREY : KHAKI), clamp(k * 30 - i));
   return s;
@@ -482,7 +613,7 @@ shot(21, push(320, 420, 1.04, 0.98), function (u, d, t) {
 // 22 · but pain or swelling is something else: see a doctor
 shot(22, push(320, 420, 1.0, 1.06), function (u, d, t) {
   var p = .5 + .5 * Math.sin(t * 5);
-  return paper() + handTop({ x: 320, y: 640, s: 1.4, swell: 1, hl: 1 }) + '<circle cx="296" cy="398" r="' + f(36 + 8 * p) + '" fill="none" stroke="' + ORANGE + '" stroke-width="4" opacity="' + f(.4 + .5 * p) + '"/>' +
+  var mk = HP(320, 430, 1.15, 180, 262, 342); return paper() + HAND(320, 430, 1.15, 180, { f: { middle: { red: .45 + .4 * p } } }) + '<circle cx="' + f(mk[0]) + '" cy="' + f(mk[1]) + '" r="' + f(40 + 8 * p) + '" fill="none" stroke="' + ORANGE + '" stroke-width="4" opacity="' + f(.4 + .5 * p) + '"/>' +
     tag("وجع / ورم", 470, 150, at(u, .3, .3), 32, ORANGE) +
     iconBox(110, 150, 130, '<path d="M-30 -36 V0 Q-30 26 0 26 Q30 26 30 0 V-36" stroke="' + INK + '" stroke-width="5" fill="none"/><path d="M0 26 V40 Q0 52 18 52 Q34 52 34 36" stroke="' + INK + '" stroke-width="5" fill="none"/>' + C(34, 30, 9, GREY, 2.4), at(u, 1.4, .3));
 });
@@ -512,7 +643,7 @@ SCENE.intro = function (svg, t, li) {
     s += floor(fl) + desk(40, 200, fl) + chair(330, fl) + whole(sitter(330, fl, h, 0, { bend: [1, 1] }));
     if (li === 1) { var u = t - LN[1].start; s += burst(hx - 20, 360, (u % 1.1) / .7, 60) + G("", T("طق طق", 160, 230, 44, ORANGE, 800), clamp(u / .3)); }
   } else {
-    var u2 = t - LN[2].start; s += handTop({ x: 300, y: 600, s: 1.45, pull: [0, 10 * Math.abs(Math.sin(u2 * 2))], hl: 0, bones: 0 }) + speaker(480, 150, 1, false, t) + cross(480, 150, 1.1, clamp((u2 - .8) / .4));
+    var u2 = t - LN[2].start; s += HAND(300, 360, 1.0, 180, { f: { index: { pull: 12 * Math.abs(Math.sin(u2 * 2)) } }, hl: "index" }) + speaker(480, 150, 1, false, t) + cross(480, 150, 1.1, clamp((u2 - .8) / .4));
   }
   return s;
 };
