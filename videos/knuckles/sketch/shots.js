@@ -497,13 +497,18 @@ function clasp(x, y, sc, push) {
 SCENE.intro = function (svg, t, li) {
   var s = "";
   if (li === 0) {
-    // line 0: the man stretches his arms out, fingers interlaced, palms out: the fingers bend back
-    var u = t - LN[0].start, k = at(u, .25, 1.2), sc = 2.6, hip = [480, 720];
-    var cx = lerp(330, 92, k), cy = lerp(470, 396, k), w = [cx + 34 * 1.1, cy + 8 * 1.1];
-    var man = fig({ x: hip[0], y: hip[1], s: sc, lean: 4 + 6 * k, shirt: SHIRT_V, hands: [w, [w[0] + 6, w[1] - 4]], bend: [-1, -1], legs: [[88, -86], [86, -86]] });
-    s += man.far + man.body + man.near + clasp(cx, cy, 1.3, k);
-    s += burst(cx + 8, cy - 30, (u - 1.45) / .5, 46) + burst(cx + 8, cy + 10, (u - 1.75) / .5, 40);
-    s += draw("M" + f(cx + 120) + " " + f(cy - 110) + " L" + f(cx + 40) + " " + f(cy - 110), at(u, .3, .5), ORANGE, 5) + arrow(cx + 60, cy - 110, cx + 10, cy - 110, ORANGE, 5, at(u, .7, .3));
+    // line 0, from above like the close-up after it: the two hands come in, the fingers interlace, and the pair is pushed
+    // forward (up the screen) palms out; two cracks as the arms straighten
+    var u = t - LN[0].start, kin = at(u, 0, .7), k = at(u, .8, .6), sc = .74;
+    var push = -70 * k, gap = lerp(130, -74, kin);
+    var R = [409 + gap, 560 + push], Lh = [201 - gap, 560 + push], rr = 132, rl = 228;
+    function tf(c, rot, m) { return "translate(" + f(c[0]) + " " + f(c[1]) + ") rotate(" + rot + ") scale(" + f((m ? -1 : 1) * sc) + " " + sc + ") translate(-250 -350)"; }
+    s += HAND(Lh[0], Lh[1], sc, rl, {}, true) + HAND(R[0], R[1], sc, rr, {});
+    // interlaced: the left hand's middle and little fingers lie over the right hand's fingers
+    s += G(tf(Lh, rl, true), drawFinger(fingerJ("middle", {})) + drawFinger(fingerJ("pinky", {})));
+    var kn = [(R[0] + Lh[0]) / 2, R[1] - 150];
+    s += burst(kn[0] - 30, kn[1], (u - 1.45) / .5, 50) + burst(kn[0] + 30, kn[1] + 10, (u - 1.75) / .5, 46);
+    s += arrow(kn[0], kn[1] - 110, kn[0], kn[1] - 190, ORANGE, 7, at(u, .8, .4));
   } else {
     // lines 1–2: close up from above. The right hand's fingers fold one by one into a fist while the left hand,
     // palm down over them, presses them in: each knuckle cracks («طق»). Then the same finger again: no sound.
