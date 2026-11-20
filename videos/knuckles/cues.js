@@ -15,7 +15,7 @@
 // NO MUSIC: the user removed the background music for good (after «لو حد شرق قدامك»). Sound effects only; ask the user
 // for any real recording a moment needs (Pixabay search terms) and put it in <episode>/sfx/px-<name>.mp3.
 const fs = require('fs');
-global.window = {}; eval(fs.readFileSync(__dirname + '/timing.js', 'utf8'));
+global.window = {}; eval(fs.readFileSync(__dirname + '/timing.js', 'utf8')); window.CHK = JSON.parse(fs.readFileSync(__dirname + '/sketch/scenes.js', 'utf8').match(/window.CHUNKS = (.*);/)[1]); window.CH7 = window.CHK[7][2];
 const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration : T[i].start, D = i => L(i + 1) - L(i), c = [];
 // a clip lives in the episode's sfx/ (gitignored, one-off sounds) or in the shared «اسكتش» kit (committed)
 const KIT = '../_templates/sketch/sfx/', where = n => fs.existsSync(__dirname + '/sfx/px-' + n + '.mp3') ? 'sfx/px-' + n + '.mp3' : fs.existsSync(__dirname + '/' + KIT + 'px-' + n + '.mp3') ? KIT + 'px-' + n + '.mp3' : null;
@@ -43,10 +43,47 @@ a(L(SUMMARY) + 0.1, 'chime', 0.35); for (let k = 0; k < 5; k++) a(L(SUMMARY) + 0
 paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                                                       // ask box
 
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
-// e.g. lab(5, 0.4); ding(L(6) + 1.6); scribble(L(9) + 1.2); sea(L(0), L(PROMISE) - L(0) + 0.6, 0.45);
+const crack = (t, g) => rec(t, 'knuckle', g || 0.6, 0, 0.35, 1.0, 'knuckle', (g || 0.6) * 0.9);   // a real clip in sfx/px-knuckle.mp3 wins over the synthesized one
+const pop = (t, g) => a(t, 'pop', g || 0.3);
+// 0–2 · hook: the hands push out; «طق طق» (the burst repeats every 1.1 s); the same finger again, no sound (✗)
+a(L(0) + 0.5, 'whoosh', 0.15);
+for (let k = 0; k < 3; k++) if (L(1) + k * 1.1 < L(2) - 0.2) crack(L(1) + k * 1.1 + 0.02, 0.65 - k * 0.1);
+a(L(2) + 0.4, 'creak', 0.08, 0.8); scribble(L(2) + 0.8);
+// 4–6 · the rule: the tag, the plunger pulled (a rising hiss, bubbles), the soda cap off (pop and fizz)
+pop(L(4) + 0.3);
+a(L(5) + 0.6, 'intake', 0.18, 1.6); a(L(5) + 1.4, 'fizz', 0.22, 1.6); lab(5, 2.4);
+a(L(6) + 1.2, 'pop', 0.45); a(L(6) + 1.3, 'fizz', 0.3, 1.6);
+// 7–9 · inside: the bones show, the cut, the capsule and fluid, the gas
+a(L(7) + 0.4, 'whoosh', 0.12); lab(7, 1.4);
+{ const c7 = L(7) + (T[7].end - T[7].start) * window.CH7; rec(c7 - 0.08, 'swipe', 0.3, 0.6, 0.42, 1.0, 'whoosh', 0.2); lab(7, c7 - L(7) + 0.3); lab(7, c7 - L(7) + 0.5); lab(7, c7 - L(7) + 1.0); }
+lab(8, 0.9); paper(L(8) + 1.8); a(L(8) + 1.4, 'slosh', 0.12, 1.0); lab(8, 2.6);
+a(L(9) + 1.6, 'fizz', 0.14, 1.2); lab(9, 2.2); pop(L(9) + 2.8);
+// 10–11 · the pull: the finger stretches, the capsule tightens, the gauge falls
+a(L(10) + 0.6, 'creak', 0.1, 1.2); { const c10 = L(10) + (T[10].end - T[10].start) * window.CHK[10][1]; rec(c10 - 0.08, 'swipe', 0.3, 0.6, 0.42, 1.0, 'whoosh', 0.2); a(c10 + 0.3, 'creak', 0.1, 1.4); } pop(L(10) + 1.4);
+a(L(11) + 0.4, 'servo', 0.12, 1.6);
+// 12 · the crack, on the spoken «طق!»
+crack(T[12].end - 0.36, 0.85); a(T[12].end - 0.33, 'pop', 0.25);
+// 13 · the MRI loop: a low hum, a soft click each time the cavity appears
+a(L(13), 'hum', 0.06, D(13)); for (let u = 1.1; u < D(13) - 0.2; u += 2) crack(L(13) + u, 0.25);
+// 14–15 · no sound the second time (✗); the 20-minute clock
+scribble(L(14) + 0.8);
+rec(L(15) + 0.3, 'clock-ticking', 0.25, 0.1, D(15) - 0.4, 1.0, 'tick', 0.15); ding(L(15) + D(15) - 0.6);
+// 16–18 · why we do it: looser joint (✓), a habit (the leg bouncing)
+pop(L(17) + 0.9); scribble(L(17) + 1.8);
+pop(L(18) + 0.3); for (let k = 0; k < 6; k++) a(L(18) + 0.8 + k * 0.29, 'tick', 0.08); paper(L(18) + 1.6);
+// 19–22 · the myth crossed out; Unger's left hand cracking, +60; ✓ ✓ and the crowd; pain or swelling
+pop(L(19) + 0.3); scribble(L(19) + D(19) - 1.4);
+for (let k = Math.ceil(L(20) / 1.5708); k * 1.5708 < L(21) - 0.3; k++) crack(k * 1.5708, 0.3);
+ding(L(20) + 2.6);
+scribble(L(21) + 0.4); scribble(L(21) + 0.8); for (let k = 0; k < 6; k++) a(L(21) + D(21) * 0.35 + k * 0.2, 'tick', 0.1);
+pop(L(22) + 0.3); paper(L(22) + 1.4);
+// 23 · recap: the numbers, the crack, the clock
+pop(L(23) + 0.3, 0.25); pop(L(23) + 0.9, 0.25); crack(L(23) + 1.6, 0.5); pop(L(23) + 2.4, 0.25); a(L(23) + 2.6, 'tick', 0.12); a(L(23) + 3.1, 'tick', 0.12);
+// 24 · «هتجيلك خشونة!» and the prize
+paper(L(24) + 0.2); for (let k = 0; k < 3; k++) crack(L(24) + 1.2 + k * 0.77, 0.2); a(T[24].end - 1.6, 'chime', 0.3); ding(T[24].end - 1.5);
 
 // music plays only when sfx.py is run with --music, and that only when the user asked for music in this video
-const MUSIC = has('music-soft') ? 'music-soft' : null;
+const MUSIC = null;   // no music in this episode (sound effects only)
 if (MUSIC) rec(0, MUSIC, 0.42, 0, window.TIMING.duration + 2.5, 0.6);
-fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: !MUSIC, cues: c }, null, 1));
+fs.writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: c }, null, 1));
 console.log(c.length + ' cues; kit clips here: ' + (['swipe', 'paper', 'pencil-scribble', 'ding', 'clock-ticking', 'space-drone', 'ocean-waves', 'water-rush', 'wind-gust', 'music-soft'].filter(has).join(', ') || 'none'));

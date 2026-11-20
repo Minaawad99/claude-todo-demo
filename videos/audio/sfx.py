@@ -256,6 +256,12 @@ def fx_chime(d=1.0):          # docked / charging: rising three-note chime
     return x
 def fx_bell(d=0.9, f=880):    # a soft bell note at pitch f (a scale: pass "f" in the cue)
     t = t_(d); return (np.sin(2 * np.pi * f * t) + 0.3 * np.sin(2 * np.pi * 2 * f * t) * np.exp(-t * 4)) * np.exp(-t * 5) * env(len(t), .004, .05)
+def fx_knuckle(d=0.22):        # a knuckle crack: a very short dry click with a little hollow body, then a second smaller one
+    t = t_(d); n = len(t)
+    c1 = hp_fast(noise(n), 1800) * np.exp(-t * 260) * 0.9
+    body = np.sin(2 * np.pi * 520 * t) * np.exp(-t * 90) * 0.35
+    c2 = np.zeros(n, np.float32); o = int(0.045 * SR); c2[o:] = (hp_fast(noise(n - o), 2400) * np.exp(-t[:n - o] * 320) * 0.4)
+    return (c1 + body + c2).astype(np.float32)
 def fx_notify(d=0.6):         # phone notification: two soft bubbles
     t = t_(d); x = np.zeros(len(t), np.float32)
     for t0, f in [(0, 880), (0.14, 1175)]:

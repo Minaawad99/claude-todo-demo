@@ -552,7 +552,7 @@ shot(11, push(330, 420, 1.1, 1.0), function (u, d, t) {
 });
 // 12 · the crack: in a split second the gas comes out as one bubble — «طق!»
 shot(12, push(330, 410, 1.0, 1.12), function (u, d, t) {
-  var tc = d * .62, b = clamp((u - tc) / .12), g = 30 + 4 * at(u, tc, .15);
+  var tc = LN[12].end - LN[12].start - 0.36, b = clamp((u - tc) / .12), g = 30 + 4 * at(u, tc, .15);
   return paper() + J(330, 410, 1.15, { g: g, gas: 1, bub: b }) + gauge(500, 170, 80, .1, 1) + burst(300, 410, (u - tc) / .8, 110) +
     G("translate(140 640) scale(" + f(pop(clamp((u - tc) / .5))) + ")", T("طق!", 0, 0, 84, ORANGE, 800)) + (b >= 1 ? label(300, 380, 450, 640, "فقاعة", BLUE, at(u, tc + .4, .4), 30) : "");
 });
