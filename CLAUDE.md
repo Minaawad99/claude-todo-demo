@@ -20,9 +20,9 @@
   real footage of the event, with more real clips inside it** (the user's rule after «عبّارة السلام 98», `videos/salam98/`):
   see its section 0a. Propose story topics only where such real material exists, and say what it is.
 - Other styles only when named: `animation` (cartoon panel), `law` («لو»), the old `diagram-v1` build for the X-ray video.
-- **Every «لو» video looks like the 14 reference videos the user sent (`videos/_reference/law/`, read its README; never ask
+- **Every «لو» video looks like the 15 reference videos the user sent (`videos/_reference/law/`, read its README; never ask
   for them again):** full-screen 9:16 "2.5D" vector drawings (gradients, shading, soft shadows, a cut-open scene that
   grows), one big word of caption at a time, and their script shape («لو… بس المشكلة… عشان كده… وده اسمه… ومبروك عليك»)
   in casual Egyptian Arabic. A man in real body proportions acts out and reacts to every step: shocked on each «بس…»
-  failure, relieved on each «عشان كده…» fix, going down into the build and back up. The whole method is the `law` skill (`.claude/skills/law/SKILL.md`, run it with `/law`); copy `videos/solar-building/` and build on
+  failure, relieved on each «عشان كده…» fix, going down into the build and back up. The whole method is the `law` skill (`.claude/skills/law/SKILL.md`, run it with `/law`); copy `videos/solar-building/` (or `videos/airport/` for a wide build) and build on
   the shared kit `videos/_templates/law/kit.js`.

@@ -1,26 +1,31 @@
 ---
 name: law
 description: >
-  Make an «إيه الحكاية؟» build-along explainer in the user's «لو» style, end to end, matching the 14 reference videos the
+  Make an «إيه الحكاية؟» build-along explainer in the user's «لو» style, end to end, matching the 15 reference videos the
   user sent (videos/_reference/law/, series «ابنيها بنفسك!»): a full-screen 9:16 "2.5D" vector drawing of one cut-open scene
   that grows part by part, one big caption word at a time, a real-proportion man who acts out and reacts to every step,
   and the script shape «لو… يبقى عندك…» → «بس المشكلة إن…» → «عشان كده…» → «وده اسمه…» → «والغريب إن…» → «ومبروك عليك،
   عملت … بنفسك» in casual Cairo Egyptian Arabic. Covers topic choice, script, Gemini voice, alignment, the scene on the
   shared kit, joint-correct acting, checks, sound effects (no music), 1080×1920 render, qa.py, the reel cover and the
   TikTok / Instagram+Facebook / YouTube Shorts titles. Use when the user says "لو", "بأسلوب لو", "بطريقة لو",
-  "اعملها بنفسك", "زي فيديو القبو", "زي فيديو الطاقة الشمسية", "build-along" or "law style".
+  "اعملها بنفسك", "ابنيها بنفسك", "زي فيديو القبو", "زي فيديو الطاقة الشمسية", "زي فيديو المطار", "build-along" or "law style".
 ---
 
 # «إيه الحكاية؟» — the «لو» style (build it yourself, step by step)
 
 Talk to the user in Egyptian Arabic. This file is complete on its own: a new session can make a «لو» video from it alone.
 
-**Worked examples to copy from (both pass qa.py):**
-- `videos/solar-building/` «تنوّر عمارة بالشمس إزاي؟» — **the template to copy**: built on the shared kit.
+**Worked examples to copy from (all pass qa.py):**
+- `videos/solar-building/` «تنوّر عمارة بالشمس إزاي؟» — **the template to copy** for a scene that fits one frame (a
+  building, a room, a basement): built on the shared kit.
+- `videos/airport/` «تعمل مطار إزاي؟» — **the template to copy for a wide or huge build** (an airport, a bridge, a dam, a
+  port, a railway): a world many frames wide at real scale (50 units = 1 m, man at scale 0.25 next to a 45 m jet), zooms
+  from 0.27 to 2.9, desert ground, day and night, two planes at once, cards and labels in screen space (HUD), a second
+  person inside the build (the controller in the tower). Its reference r15 is the user's airport video from the series.
 - `videos/secret-basement/` «تعمل قبو سري إزاي؟» — the first one; its `law/scene.js` is where the kit came from.
 
 **The user's fixed rules for this style (never break them):**
-1. **Look like the reference videos** in `videos/_reference/law/`, all 14 opened before every topic (never ask the user for them again; never copy a drawing
+1. **Look like the reference videos** in `videos/_reference/law/`, all 15 opened before every topic (never ask the user for them again; never copy a drawing
    or a script line from them).
 2. **Full-screen 9:16 "2.5D" drawing**, not a cartoon panel, not three.js, not a black frame with a title.
 3. **A real-proportion man reacts to every step**: shocked on each «بس…», relieved on each «عشان كده…», going into the build
@@ -37,18 +42,18 @@ Talk to the user in Egyptian Arabic. This file is complete on its own: a new ses
 
 ## 0. The reference videos (`videos/_reference/law/`)
 
-14 videos (`videos/rNN.mp4`, 720×1280), a 16-frame sheet each (`sheets/rNN.jpg`), rough transcripts
+15 videos (`videos/rNN.mp4`, 720×1280), a 16-frame sheet each (`sheets/rNN.jpg`), rough transcripts
 (`transcripts/rNN.txt`) and `README.md` (what each builds, the measured look, the script shape). Before a new topic:
-read the README, then **open all 14 sheets, every time** (the user's rule: the look comes from all 14, never from one
+read the README, then **open all 15 sheets, every time** (the user's rule: the look comes from all 15, never from one
 video or from our earlier episodes), and pull full-size frames with ffmpeg from the videos closest to the new topic, its
 kind of place (roof, desert, street, inside a house, underground) and its main problem
 (`ffmpeg -ss 30 -i videos/r09.mp4 -frames:v 1 /tmp/x.jpg`). Write in `refs/SOURCES.md` what the drawing takes from which
 reference (e.g. "r13: the part lowered on a crane hook; r08: the cut-open tank with a label pill; r01: the close-up
-cross-section of the valve"), so each episode borrows from several of the 14 and doesn't just repeat the kit's look of
+cross-section of the valve"; `videos/airport/refs/SOURCES.md` is a full example), so each episode borrows from several of the 15 and doesn't just repeat the kit's look of
 the last episode (same sky, same palms, same light). The kit is the code to draw with, not the look to copy.
 
 **If a reference video covers the same topic** (r02 = home solar, r09 = a hideout under the bed, r04 = a toilet, r13 = a
-crane, r14 = drainage…), read its transcript first and make ours different on purpose: other steps, another order,
+crane, r14 = drainage, r15 = an airport…), read its transcript first and make ours different on purpose: other steps, another order,
 another «والغريب» fact. Note in `refs/SOURCES.md` what was avoided (see `videos/solar-building/refs/SOURCES.md`).
 
 ## 1. Topics that fit
@@ -139,7 +144,18 @@ mkdir -p videos/<slug>/law && cp videos/solar-building/law/{template.html,build.
   length, `t` absolute). Export what the cover needs (e.g. `window.__solar = { scene: scene }`).
 - **The kit** (`videos/_templates/law/kit.js`, `window.LAW`): helpers `R P F C T clamp ease lerp hash pop`, `sky`, `palm`,
   `bush`, `ground`, the man (`man`, `POSES`, `pose`, `mixPose`, `act`), `pill`, `xmark`, `vmark`, `ring`, `confetti`,
-  `arrowH`, `arrowV`, `shot`, `steps`, `has`, `setLine`. Improve the kit rather than copying code into an episode.
+  `arrowH`, `arrowV`, `shot`, `steps`, `has`, `setLine`, plus `cam`, `scr(x, y)` and `HUD`. Improve the kit rather than
+  copying code into an episode.
+- **A wide or huge build** (see `videos/airport/`): set in the template, before the kit, `window.LAW_X0` / `LAW_XW` (the
+  world's left edge and width), `LAW_YTOP` (top of the sky), `LAW_DEPTH` (depth of the earth) so sky, town, clouds and
+  soil cover every zoom; `LAW_DESERT = 1` for a sand band instead of grass; `LAW_SUNCAM = 1` keeps the sun at one place on
+  screen whatever the camera does; `LAW_SOILSZ` (e.g. 0.45) makes the stones smaller for close zooms. Keep real scale (the
+  man ≈ 87 units at s 0.25 when 50 units = 1 m) and squeeze only the build's length (a 3 km runway shown short), with a
+  top-view card for the real distances.
+- **Screen-space overlays**: a shot may return `world + K.HUD + screen`; everything after `K.HUD` is drawn in the
+  1080×1920 frame at a fixed size, so pills, ✗/✓, speedometers, stopwatches and top-view cards keep their size at any zoom.
+  `K.scr(x, y)` maps a world point to the screen with the current camera (`K.cam = {cx, cy, z}`), to pin a pill on a part
+  (`hp()` in `videos/airport/law/scene.js`).
 
 ### Acting with `act(u, keys, t)`
 
