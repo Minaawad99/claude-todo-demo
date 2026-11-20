@@ -253,16 +253,20 @@
    "gain": 0.15
   },
   {
-   "t": 1.45,
-   "fx": "knuckle",
-   "gain": 0.49500000000000005,
-   "dur": 0.35
+   "t": 1.43,
+   "file": "sfx/px-finger-crack.mp3",
+   "gain": 1.4,
+   "from": 0.135,
+   "dur": 0.35,
+   "duck": 0.25
   },
   {
-   "t": 1.75,
-   "fx": "knuckle",
-   "gain": 0.405,
-   "dur": 0.35
+   "t": 1.73,
+   "file": "sfx/px-bone-crack.mp3",
+   "gain": 1.1,
+   "from": 0.12,
+   "dur": 0.3,
+   "duck": 0.25
   },
   {
    "t": 2.7,
@@ -271,10 +275,12 @@
    "dur": 0.3
   },
   {
-   "t": 2.97,
-   "fx": "knuckle",
-   "gain": 0.63,
-   "dur": 0.35
+   "t": 2.95,
+   "file": "sfx/px-knuckles-series.mp3",
+   "gain": 1.5,
+   "from": 2.625,
+   "dur": 0.3,
+   "duck": 0.25
   },
   {
    "t": 3.5,
@@ -283,10 +289,12 @@
    "dur": 0.3
   },
   {
-   "t": 3.77,
-   "fx": "knuckle",
-   "gain": 0.585,
-   "dur": 0.35
+   "t": 3.75,
+   "file": "sfx/px-knuckles-series.mp3",
+   "gain": 1.5,
+   "from": 3.735,
+   "dur": 0.3,
+   "duck": 0.25
   },
   {
    "t": 4.3,
@@ -295,10 +303,12 @@
    "dur": 0.3
   },
   {
-   "t": 4.57,
-   "fx": "knuckle",
-   "gain": 0.54,
-   "dur": 0.35
+   "t": 4.55,
+   "file": "sfx/px-knuckles-series.mp3",
+   "gain": 1.5,
+   "from": 4.86,
+   "dur": 0.3,
+   "duck": 0.25
   },
   {
    "t": 5.1,
@@ -307,10 +317,12 @@
    "dur": 0.3
   },
   {
-   "t": 5.37,
-   "fx": "knuckle",
-   "gain": 0.49499999999999994,
-   "dur": 0.35
+   "t": 5.35,
+   "file": "sfx/px-knuckles-series.mp3",
+   "gain": 2.2,
+   "from": 6.19,
+   "dur": 0.3,
+   "duck": 0.25
   },
   {
    "t": 7.2,
@@ -469,15 +481,12 @@
    "dur": 1.6
   },
   {
-   "t": 49.01,
-   "fx": "knuckle",
-   "gain": 0.765,
-   "dur": 0.35
-  },
-  {
-   "t": 49.04,
-   "fx": "pop",
-   "gain": 0.25
+   "t": 48.99,
+   "file": "sfx/px-knuckle.mp3",
+   "gain": 1.8,
+   "from": 0.26,
+   "dur": 0.32,
+   "duck": 0.25
   },
   {
    "t": 49.71,
@@ -486,22 +495,28 @@
    "dur": 5.62
   },
   {
-   "t": 50.81,
-   "fx": "knuckle",
-   "gain": 0.225,
-   "dur": 0.35
+   "t": 50.79,
+   "file": "sfx/px-knuckle.mp3",
+   "gain": 0.7,
+   "from": 0.26,
+   "dur": 0.32,
+   "duck": 0.25
   },
   {
-   "t": 52.81,
-   "fx": "knuckle",
-   "gain": 0.225,
-   "dur": 0.35
+   "t": 52.79,
+   "file": "sfx/px-knuckle.mp3",
+   "gain": 0.7,
+   "from": 0.26,
+   "dur": 0.32,
+   "duck": 0.25
   },
   {
-   "t": 54.81,
-   "fx": "knuckle",
-   "gain": 0.225,
-   "dur": 0.35
+   "t": 54.79,
+   "file": "sfx/px-knuckle.mp3",
+   "gain": 0.7,
+   "from": 0.26,
+   "dur": 0.32,
+   "duck": 0.25
   },
   {
    "t": 56.13,
@@ -597,22 +612,28 @@
    "duck": 1
   },
   {
-   "t": 76.97,
-   "fx": "knuckle",
-   "gain": 0.27,
-   "dur": 0.35
+   "t": 76.95,
+   "file": "sfx/px-knuckles-series.mp3",
+   "gain": 0.8,
+   "from": 3.735,
+   "dur": 0.3,
+   "duck": 0.25
   },
   {
-   "t": 78.54,
-   "fx": "knuckle",
-   "gain": 0.27,
-   "dur": 0.35
+   "t": 78.52,
+   "file": "sfx/px-knuckles-series.mp3",
+   "gain": 0.8,
+   "from": 4.86,
+   "dur": 0.3,
+   "duck": 0.25
   },
   {
-   "t": 80.11,
-   "fx": "knuckle",
-   "gain": 0.27,
-   "dur": 0.35
+   "t": 80.09,
+   "file": "sfx/px-knuckles-series.mp3",
+   "gain": 0.8,
+   "from": 6.19,
+   "dur": 0.3,
+   "duck": 0.25
   },
   {
    "t": 78.18,
@@ -692,10 +713,12 @@
    "gain": 0.25
   },
   {
-   "t": 91.12,
-   "fx": "knuckle",
-   "gain": 0.45,
-   "dur": 0.35
+   "t": 91.1,
+   "file": "sfx/px-knuckle.mp3",
+   "gain": 1.2,
+   "from": 0.26,
+   "dur": 0.32,
+   "duck": 0.25
   },
   {
    "t": 91.92,
@@ -721,22 +744,28 @@
    "duck": 1
   },
   {
-   "t": 97.49,
-   "fx": "knuckle",
-   "gain": 0.18000000000000002,
-   "dur": 0.35
+   "t": 97.47,
+   "file": "sfx/px-knuckles-series.mp3",
+   "gain": 0.6,
+   "from": 2.625,
+   "dur": 0.3,
+   "duck": 0.25
   },
   {
-   "t": 98.26,
-   "fx": "knuckle",
-   "gain": 0.18000000000000002,
-   "dur": 0.35
+   "t": 98.24,
+   "file": "sfx/px-knuckles-series.mp3",
+   "gain": 0.6,
+   "from": 3.735,
+   "dur": 0.3,
+   "duck": 0.25
   },
   {
-   "t": 99.03,
-   "fx": "knuckle",
-   "gain": 0.18000000000000002,
-   "dur": 0.35
+   "t": 99.01,
+   "file": "sfx/px-knuckles-series.mp3",
+   "gain": 0.6,
+   "from": 4.86,
+   "dur": 0.3,
+   "duck": 0.25
   },
   {
    "t": 99.94,

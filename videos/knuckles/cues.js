@@ -43,12 +43,18 @@ a(L(SUMMARY) + 0.1, 'chime', 0.35); for (let k = 0; k < 5; k++) a(L(SUMMARY) + 0
 paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                                                       // ask box
 
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
-const crack = (t, g) => rec(t, 'knuckle', g || 0.6, 0, 0.35, 1.0, 'knuckle', (g || 0.6) * 0.9);   // a real clip in sfx/px-knuckle.mp3 wins over the synthesized one
+// real cracks the user picked on Pixabay (sfx/, credited in refs/SOURCES.md); each slice starts 20 ms before its crack.
+// They are barely ducked under the narrator (duck 0.25) so every crack is heard, as the user asked.
+const SER = [2.645, 3.755, 4.88, 6.21];                                                                  // «human cracking knuckles»: four loud cracks
+const crack = (t, g) => rec(t - 0.02, 'knuckle', g || 0.6, 0.26, 0.32, 0.25, 'knuckle', (g || 0.6) * 0.9);                 // «knuckle cracking»: one sharp crack
+const crackN = (t, g, i) => rec(t - 0.02, 'knuckles-series', g || 0.6, SER[i % 4] - 0.02, 0.3, 0.25, 'knuckle', (g || 0.6) * 0.9);
+const crackBig = (t, g) => rec(t - 0.02, 'finger-crack', g || 0.6, 0.135, 0.35, 0.25, 'knuckle', (g || 0.6) * 0.9);         // «finger bones crack»
+const crackBone = (t, g) => rec(t - 0.02, 'bone-crack', g || 0.5, 0.12, 0.3, 0.25, 'knuckle', (g || 0.5) * 0.9);            // «bone crack»
 const pop = (t, g) => a(t, 'pop', g || 0.3);
 // 0–2 · hook: the hands push out; «طق طق» (the burst repeats every 1.1 s); the same finger again, no sound (✗)
 a(L(0) + 0.5, 'whoosh', 0.15);
-crack(L(0) + 1.45, 0.55); crack(L(0) + 1.75, 0.45);                                                   // the stretch: two pops as the arms straighten
-for (let k = 0; k < 4; k++) { a(L(1) + 0.1 + k * 0.8, 'squeeze', 0.06, 0.3); crack(L(1) + 0.37 + k * 0.8, 0.7 - k * 0.05); }   // close-up: the other hand presses each finger in, one crack each
+crackBig(L(0) + 1.45, 1.4); crackBone(L(0) + 1.75, 1.1);                                                   // the stretch: two pops as the arms straighten
+for (let k = 0; k < 4; k++) { a(L(1) + 0.1 + k * 0.8, 'squeeze', 0.06, 0.3); crackN(L(1) + 0.37 + k * 0.8, k === 3 ? 2.2 : 1.5, k); }   // close-up: the other hand presses each finger in, one crack each
 a(L(2) + 1.2, 'squeeze', 0.06, 0.4); a(L(2) + 1.45, 'bump', 0.08); scribble(L(2) + 1.7);   // the same finger again: only a dull bump, no crack
 // 4–6 · the rule: the tag, the plunger pulled (a rising hiss, bubbles), the soda cap off (pop and fizz)
 pop(L(4) + 0.3);
@@ -63,9 +69,9 @@ a(L(9) + 1.6, 'fizz', 0.14, 1.2); lab(9, 2.2); pop(L(9) + 2.8);
 a(L(10) + 0.6, 'creak', 0.1, 1.2); { const c10 = L(10) + (T[10].end - T[10].start) * window.CHK[10][1]; rec(c10 - 0.08, 'swipe', 0.3, 0.6, 0.42, 1.0, 'whoosh', 0.2); a(c10 + 0.3, 'creak', 0.1, 1.4); } pop(L(10) + 1.4);
 a(L(11) + 0.4, 'servo', 0.12, 1.6);
 // 12 · the crack, on the spoken «طق!»
-crack(T[12].end - 0.36, 0.85); a(T[12].end - 0.33, 'pop', 0.25);
+crack(T[12].end - 0.36, 1.8);
 // 13 · the MRI loop: a low hum, a soft click each time the cavity appears
-a(L(13), 'hum', 0.06, D(13)); for (let u = 1.1; u < D(13) - 0.2; u += 2) crack(L(13) + u, 0.25);
+a(L(13), 'hum', 0.06, D(13)); for (let u = 1.1; u < D(13) - 0.2; u += 2) crack(L(13) + u, 0.7);
 // 14–15 · no sound the second time (✗); the 20-minute clock
 scribble(L(14) + 0.8);
 rec(L(15) + 0.3, 'clock-ticking', 0.25, 0.1, D(15) - 0.4, 1.0, 'tick', 0.15); ding(L(15) + D(15) - 0.6);
@@ -74,14 +80,14 @@ pop(L(17) + 0.9); scribble(L(17) + 1.8);
 pop(L(18) + 0.3); for (let k = 0; k < 6; k++) a(L(18) + 0.8 + k * 0.29, 'tick', 0.08); paper(L(18) + 1.6);
 // 19–22 · the myth crossed out; Unger's left hand cracking, +60; ✓ ✓ and the crowd; pain or swelling
 pop(L(19) + 0.3); scribble(L(19) + D(19) - 1.4);
-for (let k = Math.ceil(L(20) / 1.5708); k * 1.5708 < L(21) - 0.3; k++) crack(k * 1.5708, 0.3);
+for (let k = Math.ceil(L(20) / 1.5708); k * 1.5708 < L(21) - 0.3; k++) crackN(k * 1.5708, 0.8, k);
 ding(L(20) + 2.6);
 scribble(L(21) + 0.4); scribble(L(21) + 0.8); for (let k = 0; k < 6; k++) a(L(21) + D(21) * 0.35 + k * 0.2, 'tick', 0.1);
 pop(L(22) + 0.3); paper(L(22) + 1.4);
 // 23 · recap: the numbers, the crack, the clock
-pop(L(23) + 0.3, 0.25); pop(L(23) + 0.9, 0.25); crack(L(23) + 1.6, 0.5); pop(L(23) + 2.4, 0.25); a(L(23) + 2.6, 'tick', 0.12); a(L(23) + 3.1, 'tick', 0.12);
+pop(L(23) + 0.3, 0.25); pop(L(23) + 0.9, 0.25); crack(L(23) + 1.6, 1.2); pop(L(23) + 2.4, 0.25); a(L(23) + 2.6, 'tick', 0.12); a(L(23) + 3.1, 'tick', 0.12);
 // 24 · «هتجيلك خشونة!» and the prize
-paper(L(24) + 0.2); for (let k = 0; k < 3; k++) crack(L(24) + 1.2 + k * 0.77, 0.2); a(T[24].end - 1.6, 'chime', 0.3); ding(T[24].end - 1.5);
+paper(L(24) + 0.2); for (let k = 0; k < 3; k++) crackN(L(24) + 1.2 + k * 0.77, 0.6, k); a(T[24].end - 1.6, 'chime', 0.3); ding(T[24].end - 1.5);
 
 // music plays only when sfx.py is run with --music, and that only when the user asked for music in this video
 const MUSIC = null;   // no music in this episode (sound effects only)

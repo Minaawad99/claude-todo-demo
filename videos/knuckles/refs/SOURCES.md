@@ -25,7 +25,14 @@
 - People with real body proportions (Drillis & Contini), copied from `videos/choking/sketch/shots.js`.
 
 ## Sound
+- Real knuckle cracks the user picked on Pixabay (freesound_community uploads, Pixabay Content License), in `sfx/`:
+  - `px-knuckle.mp3` «knuckle cracking» (97875): one sharp crack at 0.28 s → «طق!», the MRI clicks, the recap.
+  - `px-knuckles-series.mp3` «human cracking knuckles» (062747, 80359): cracks at 2.645, 3.755, 4.88, 6.21 s → the four
+    fingers pressed in the hook, Unger's left hand, the mother scene.
+  - `px-finger-crack.mp3` «finger bones crack» (97273): the crack at 0.155 s → the stretch in the hook.
+  - `px-bone-crack.mp3` «bone crack 1» (84755): the crack at 0.14 s → the second crack of the stretch.
+  Each slice starts 20 ms before its crack and is barely ducked under the narrator (duck 0.25) so every crack is heard.
 - Kit clips from `videos/_templates/sketch/sfx/`: swipe, paper, pencil-scribble, ding, clock-ticking.
-- Synthesized in `videos/audio/sfx.py`: knuckle (new: a dry click with a small hollow body and a second click), pop,
+- Synthesized in `videos/audio/sfx.py`: knuckle (a stand-in only if a clip above is missing), pop,
   whoosh, tick, chime, ping, creak, intake, fizz, slosh, servo, hum.
 - No music.
