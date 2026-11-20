@@ -402,10 +402,10 @@ shot(6, function (u, d) { var x = walkX(u, K6); return [x + 40, walkY(x) - 80, 1
 }, { tr: "in" });
 // 7 · then up to the dream landing; the whole cycle is about 90 minutes
 var K7 = [[.2, SPOT.deep], [2.2, SPOT.rem]];
-shot(7, function (u, d) { var x = walkX(u, K7); return [lerp(560, 760, ease(u / d)), 250, .88]; }, function (u, d, t) {
+shot(7, function (u, d) { return [lerp(560, 800, u / d), 250, lerp(.86, .98, u / d)]; }, function (u, d, t) {
   var x = walkX(u, K7), cl = at(u, 2.2, .4);
-  return paper() + stairs({ hl: x < 700 ? 3 : 4 }) + manOn(x, t, { walk: moving(u, K7) }) +
-    G("", P("M820 70 C800 40 840 20 860 36 C870 10 920 14 924 40 C950 36 964 70 940 84 C944 104 900 110 890 96 C870 112 830 104 836 86 C810 90 806 74 820 70 Z", "#f4ecdb", 2.2) + T("حلم", 880, 76, 26, ORANGE, 800) + C(860, 130, 7, "#f4ecdb", 1.8) + C(866, 152, 4.5, "#f4ecdb", 1.6), cl);
+  return paper() + stairs({ hl: x < 700 ? 3 : 4 }) + manOn(x, t, { walk: moving(u, K7) }) + (u > 2.2 ? zzz(x + 24, 140, t, 26) : "") +
+    G("translate(" + f(8 * Math.sin(t * 1.7)) + " " + f(6 * Math.sin(t * 2.3)) + ")", P("M820 70 C800 40 840 20 860 36 C870 10 920 14 924 40 C950 36 964 70 940 84 C944 104 900 110 890 96 C870 112 830 104 836 86 C810 90 806 74 820 70 Z", "#f4ecdb", 2.2) + T("حلم", 880, 76, 26, ORANGE, 800) + C(860, 130, 7, "#f4ecdb", 1.8) + C(866, 152, 4.5, "#f4ecdb", 1.6), cl);
 });
 // 6–7 · a minutes counter that runs while he goes down and up
 hud(6, 8, function (u, t) {
