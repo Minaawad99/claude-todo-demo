@@ -263,13 +263,13 @@
   S(2, [330, 770, 2.0], [340, 780, 1.8], function (u, d, t) {
     var bk = ease(clamp(u / 1.0)), s = scene(t, {}, { pile: Math.max(0, 14 - Math.floor(clamp((u - 1.2) / 2.4) * 14)) });
     s += '<g transform="translate(' + f((1 - bk) * 700) + ' 0)">' + box(160, GY, BW * 2 + 10, "#c7432c", { glow: u > 3.6 ? 0.5 + 0.4 * Math.sin(t * 6) : 0 }) + '</g>';
-    s += act(u, [[0, { x: 60, y: GY, f: 1, p: "push", mood: "n" }], [3.4, { x: 60, y: GY, f: 1, p: "thumbs", mood: "happy" }]], t);
+    s += act(u, [[0, { x: 60, y: GY, f: 1, p: "push", mood: "n" }], [3.4, { x: 60, y: GY, f: 1, p: "thumbs", mood: "happy" }], [4.6, { x: 60, y: GY, f: 1, p: "cheer", mood: "proud" }], [5.6, { x: 60, y: GY, f: 1, p: "point", mood: "happy" }]], t);
     return s + pill("مقاس واحد", 470, GY - 230, u, 1.6) + pill("الكونتينر", 470, GY - 380, u, 4.0, { col: "#ffd23a" });
   });
   // 3 — but a full container can weigh thirty tonnes; no man can lift it
   S(3, [320, 770, 1.9], [320, 780, 2.05], function (u, d, t) {
-    var s = scene(t, {}, {}) + box(160, GY, BW * 2 + 10, "#c7432c", {});
-    s += act(u, [[0, { x: 110, y: GY, f: 1, p: MAN.lift, mood: "n" }], [1.4, { x: 110, y: GY, f: 1, p: MAN.lift, mood: "sick" }], [2.6, { x: 90, y: GY, f: 1, p: "shock", mood: "shock" }]], t);
+    var s = scene(t, {}, {}) + '<g transform="translate(' + f(u < 2.6 ? Math.sin(t * 40) * 2 : 0) + ' 0)">' + box(160, GY, BW * 2 + 10, "#c7432c", {}) + '</g>';
+    s += act(u, [[0, { x: 110, y: GY, f: 1, p: "push", mood: "n" }], [0.7, { x: 110, y: GY, f: 1, p: MAN.lift, mood: "n" }], [1.4, { x: 110, y: GY, f: 1, p: MAN.lift, mood: "sick" }], [2.6, { x: 90, y: GY, f: 1, p: "shock", mood: "shock" }]], t);
     return s + pill("30 طن", 470, GY - 250, u, 0.8, { bg: "#c7321f" }) + xmark(470, GY - 430, u, 2.6);
   });
   // 4 — so you put up a giant crane on rails; its boom reaches over the ship; about thirty boxes an hour
