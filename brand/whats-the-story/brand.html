@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>What's the Story? — brand</title>
+<link rel="stylesheet" href="../../design-system/tokens.css">
+<link rel="stylesheet" href="../../design-system/components/bundle.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@500;600;800;900&display=swap">
+<style>
+  /* What's the Story?: the English twin of «إيه الحكاية؟», same bubble, same stopwatch crown, Latin ? inside. */
+  :root { --font-sans: "Noto Sans", system-ui, sans-serif; }
+  body { margin: 0; background: var(--paper); font-family: var(--font-sans); }
+  .grid { background-color: var(--paper); background-image: linear-gradient(to right, var(--paper-grid) 1px, transparent 1px), linear-gradient(to bottom, var(--paper-grid) 1px, transparent 1px); }
+  .sq { position: relative; width: 540px; height: 540px; background-size: 45px 45px; background-position: 22px 22px; }
+  .bubble { fill: var(--paper-raised); stroke: var(--ink); stroke-linejoin: round; }
+  .shadow, .crown { fill: var(--ink); }
+  .q { font-family: var(--font-sans); font-weight: 900; fill: var(--heat); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs>
+  <g id="mark">
+    <rect class="crown" x="84" y="4" width="32" height="10"/><rect class="crown" x="94" y="14" width="12" height="14"/>
+    <path class="shadow" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)"/>
+    <path class="bubble" style="stroke-width:7" d="M30 40 H182 V150 H96 L60 186 V150 H30 Z"/>
+    <text class="q" x="106" y="137" text-anchor="middle" style="font-size:110px">?</text>
+  </g>
+</defs></svg>
+
+<div id="profile" class="grid sq">
+  <svg viewBox="0 0 540 540" width="540" height="540"><g transform="translate(74 70) scale(1.9)"><use href="#mark"/></g></svg>
+</div>
+
+<div id="profile-name" class="grid sq">
+  <svg viewBox="0 0 540 540" width="540" height="540" style="position:absolute;inset:0"><g transform="translate(168 70) scale(1.04)"><use href="#mark"/></g></svg>
+  <p style="position:absolute;left:0;right:0;top:292px;margin:0;text-align:center;font:900 60px/1.02 var(--font-sans);color:var(--ink);letter-spacing:-.01em">What's the<br><span style="color:var(--heat)">Story?</span></p>
+  <p style="position:absolute;left:0;right:0;top:430px;margin:0;text-align:center;font:600 24px/1 var(--font-sans);color:var(--ink-muted)">in one minute</p>
+</div>
+</body>
+</html>
