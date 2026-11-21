@@ -4,7 +4,9 @@
 - **People in every video, in every skill (sketch, animation, story-2d, law, and any skill made later): always the shared
   person kit** `videos/_templates/people/person.js`, following its `README.md` (demo `videos/person-demo/`). It gives real
   proportions, joints hidden in flowing limbs, straight reaching arms, five-finger hands and a face that acts; front view
-  and side view (walking, lying flat). No other way of drawing people.
+  and side view (walking, lying flat). No other way of drawing people. **The clothes change with every topic** (doctor's lab
+  coat, worker's vest and hard hat, pilot's uniform, period clothes in a story): pick an `outfit` preset or build one, and add
+  any missing outfit to the kit; the body, face and hands stay the same.
 - **New videos are made in the «اسكتش» style unless the user names another:** `.claude/skills/sketch/SKILL.md`.
   **Locked for every sketch episode:** the drawing style of «لو حد شرق قدامك» (`videos/choking/`) with people from the
   shared person kit; **no background music** (narrator plus sound effects only, unless the user asks for music in that video); Claude makes the effects and asks the user

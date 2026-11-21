@@ -25,6 +25,7 @@ It is self-contained (its own helpers) and exposes `window.PERSON`:
 | `PERSON.mix(a, b, k)` | tween two `front()` poses |
 | `PERSON.sofaFront(cx, floorY, w, s)` | a sofa at the same scale |
 | `PERSON.hand(...)`, `PERSON.head(...)` | a hand or a head alone, for close-ups |
+| `PERSON.outfits` | the outfit presets (see «Clothes follow the topic») |
 | `PERSON.colors`, `PERSON.setInk(c)` | the palette (skin, hair, shirt, trousers, socks) and the outline colour, to match the skill's look |
 
 The same names are also plain globals (`person`, `personSide`, `walkPose`…) where the name is free. The story kit has
@@ -67,6 +68,33 @@ its own `person()`, so in `story-2d` always call `PERSON.front` / `PERSON.side`.
    - walking uses `walkPose` and `sideHipY`. The leg on the floor stays straight, the other bends just after it leaves
      the floor, and the arms swing against the legs.
 7. **Alive in every frame**: breathing (`breath`), a small head sway, blinks. He is never frozen through a line.
+
+## Clothes follow the topic (the user's rule)
+
+The body, face, hands and proportions never change; **the clothes change with every topic**. Before drawing, decide who
+each person is in that story and dress them for it: a doctor in a lab coat, a site worker in a hi-vis vest and hard hat,
+a pilot in a uniform and cap, a cook in an apron, someone at home in a sweater and socks.
+
+```js
+PERSON.front({ ..., outfit: "doctor" })                                    // a preset
+PERSON.side({ ..., outfit: { base: "worker", colors: { vest: "#e2c12a" } } })   // a preset with changes
+PERSON.front({ ..., outfit: { top: "shirt", tie: true, over: "labcoat", hat: null, feet: "shoes", colors: {...} } })
+```
+
+- **Presets** (`PERSON.outfits`): `home` (sweater, socks; the default), `casual` (T-shirt, shoes), `office` (shirt and tie),
+  `doctor` (shirt, tie, lab coat), `worker` (T-shirt, hi-vis vest, hard hat, boots), `pilot` (white shirt, tie, epaulettes,
+  pilot's cap), `chef` (shirt, apron, cap). See them all, front and side: `videos/person-demo/outfits.html`.
+- **The parts:**
+  - `top`: `sweater`, `tshirt` (bare forearms), `shirt` (collar, buttons, pocket, cuffs);
+  - `over`: `labcoat`, `vest`, `apron`;
+  - `tie`, `epaulettes`;
+  - `hat`: `hardhat`, `cap`, `pilot`;
+  - `feet`: `socks`, `shoes`, `boots`;
+  - `colors` for any of them (shirt, pants, tie, vest, coat, hat, shoes…).
+- **The time and place:** clothes match the setting too. Period clothes in a story, the right uniform for the job, the
+  weather, the country.
+- **A missing outfit:** a firefighter, police, a nurse, a galabeya, a woman's dress, a child, a diver. Add it to
+  `person.js` as a new part or preset, front and side, and add it to `outfits.html`. Never draw a different body for it.
 
 ## In each skill
 

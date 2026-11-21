@@ -28,8 +28,35 @@ function clamp(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
 function lerp(a, b, k) { return a + (b - a) * k; }
 function G(tr, inner, op) { return '<g' + (tr ? ' transform="' + tr + '"' : "") + (op != null && op < 1 ? ' opacity="' + op.toFixed(3) + '"' : "") + '>' + inner + '</g>'; }
 function R(x, y, w, h, fill, sw, rx, ex) { return '<rect x="' + f(x) + '" y="' + f(y) + '" width="' + f(w) + '" height="' + f(h) + '"' + (rx ? ' rx="' + rx + '"' : "") + ' fill="' + fill + '" stroke="' + INK + '" stroke-width="' + (sw == null ? 2 : sw) + '"' + (ex || "") + '/>'; }
+// outfits: the body never changes, the clothes follow the topic. o.outfit = a preset name or {base, top, over, tie, epaulettes, hat, feet, colors}
+//   top: "sweater" (ribbed) | "tshirt" (short sleeves) | "shirt" (collar, buttons, cuffs) · over: "labcoat" | "vest" (hi-vis) | "apron"
+//   hat: "hardhat" | "cap" | "pilot" · feet: "socks" | "shoes" | "boots" · tie, epaulettes: true
+var OUTFITS = {
+  home:   { top: "sweater", feet: "socks" },
+  casual: { top: "tshirt", feet: "shoes", colors: { shirt: "#c9a77c", shirtD: "#a5845c", pants: "#4b5a6e", pantsD: "#38445a" } },
+  office: { top: "shirt", tie: true, feet: "shoes", colors: { shirt: "#e8eef3", shirtD: "#bccbd6", pants: "#3b3f4a", pantsD: "#2a2d36", tie: "#7a2e2e" } },
+  doctor: { top: "shirt", tie: true, over: "labcoat", feet: "shoes", colors: { shirt: "#cfe0ee", shirtD: "#a6bfd3", tie: "#4a6f8a", pants: "#3d4656", pantsD: "#2b3240" } },
+  worker: { top: "tshirt", over: "vest", hat: "hardhat", feet: "boots", colors: { shirt: "#7f97a6", shirtD: "#61798a", pants: "#4b5a6e", pantsD: "#38445a" } },
+  pilot:  { top: "shirt", tie: true, epaulettes: true, hat: "pilot", feet: "shoes", colors: { shirt: "#f4f2ec", shirtD: "#d6d2c6", pants: "#262a36", pantsD: "#191c25", tie: "#262a36" } },
+  chef:   { top: "shirt", over: "apron", hat: "cap", feet: "shoes", colors: { shirt: "#f4f2ec", shirtD: "#d6d2c6", pants: "#3b3f4a", pantsD: "#2a2d36", hat: "#f4f2ec", hatD: "#d6d2c6" } }
+};
+function pOutfit(o, c) {
+  var x = o.outfit, of = {}, k;
+  if (typeof x === "string") x = { base: x };
+  x = x || {};
+  var b = OUTFITS[x.base || "home"] || OUTFITS.home;
+  for (k in b) if (k !== "colors") of[k] = b[k];
+  for (k in x) if (k !== "colors" && k !== "base") of[k] = x[k];
+  var cols = Object.assign({}, b.colors || {}, x.colors || {});
+  for (k in cols) c[k] = cols[k];
+  if (o.colors) for (k in o.colors) c[k] = o.colors[k];
+  of.top = of.top || "sweater"; of.feet = of.feet || "socks";
+  return of;
+}
 var PSN = { skin: "#e0a98a", skinD: "#c07f62", skinL: "#efc3a8", lip: "#b56b5c", hair: "#2f2620", hairL: "#4d3f34",
-  shirt: "#a9c3dc", shirtD: "#7f9bb6", pants: "#3d3c3f", pantsD: "#2a292c", socks: "#56565c", white: "#fbf8f1", iris: "#4a3426" };
+  shirt: "#a9c3dc", shirtD: "#7f9bb6", pants: "#3d3c3f", pantsD: "#2a292c", socks: "#56565c", white: "#fbf8f1", iris: "#4a3426",
+  coat: "#f6f4ee", coatD: "#d8d4c8", vest: "#f08a24", vestD: "#c96a14", reflect: "#e9eef0", tie: "#7a2e2e", hat: "#f2c230", hatD: "#c99a20",
+  shoes: "#2e2a26", apron: "#f4f2ec", apronD: "#d6d2c6", button: "#f4f2ec" };
 function pPath(pts, close) { var d = "M" + f(pts[0][0]) + " " + f(pts[0][1]); for (var i = 1; i < pts.length; i++) { var m = [(pts[i - 1][0] + pts[i][0]) / 2, (pts[i - 1][1] + pts[i][1]) / 2]; d += " Q" + f(pts[i - 1][0]) + " " + f(pts[i - 1][1]) + " " + f(m[0]) + " " + f(m[1]); } var L = pts[pts.length - 1]; return d + (close ? " Q" + f(L[0]) + " " + f(L[1]) + " " + f(pts[0][0]) + " " + f(pts[0][1]) + " Z" : " L" + f(L[0]) + " " + f(L[1])); }
 function pLine(pts, col, w, ex) { return '<path d="M' + pts.map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + '" stroke="' + col + '" stroke-width="' + f(w) + '" fill="none" stroke-linecap="round" stroke-linejoin="round"' + (ex || "") + '/>'; }
 function L2p(a, b, k, off) { var dx = b[0] - a[0], dy = b[1] - a[1], d = Math.hypot(dx, dy) || 1; return [a[0] + dx * k - dy / d * (off || 0), a[1] + dy * k + dx / d * (off || 0)]; }
@@ -163,11 +190,27 @@ function pHead(hc, s, rot, o, c) {
   g += M[mo] || M.neutral;
   // jaw shadow and chin line
   g += '<path d="M' + f(X(-3)) + ' 22.5 Q' + f(X(0)) + ' 23.8 ' + f(X(3)) + ' 22.5" stroke="' + c.skinD + '" stroke-width="1" fill="none"/>';
+  g += pHat(o._of && o._of.hat, c, false);
   return G("translate(" + f(hc[0]) + " " + f(hc[1]) + ") rotate(" + f(rot) + ") scale(" + f(s) + ")", g);
+}
+function pHat(kind, c, side) {
+  if (!kind) return "";
+  var st = ' stroke="' + INK + '" stroke-width="2" stroke-linejoin="round"';
+  if (kind === "hardhat") return side
+    ? '<path d="M-24 -11 C-25 -30 -10 -39 2 -39 C16 -39 25 -28 23 -11 Z" fill="' + c.hat + '"' + st + '/><path d="M-27 -11 L30 -10" stroke="' + INK + '" stroke-width="4.2" stroke-linecap="round"/><path d="M-27 -11 L30 -10" stroke="' + c.hatD + '" stroke-width="2" stroke-linecap="round"/><path d="M-8 -37 C-2 -30 2 -20 3 -12" stroke="' + c.hatD + '" stroke-width="2.2" fill="none"/>'
+    : '<path d="M-22 -13 C-23 -32 -12 -40 0 -40 C12 -40 23 -32 22 -13 Z" fill="' + c.hat + '"' + st + '/><ellipse cx="0" cy="-13" rx="27" ry="4.2" fill="' + c.hatD + '"' + st + '/><path d="M0 -40 V-15 M-9 -38 C-11 -30 -12 -22 -12 -15 M9 -38 C11 -30 12 -22 12 -15" stroke="' + c.hatD + '" stroke-width="1.8" fill="none"/>';
+  if (kind === "cap") return side
+    ? '<path d="M-22 -14 C-23 -30 -10 -36 2 -36 C14 -36 21 -28 20 -14 Z" fill="' + c.hat + '"' + st + '/><path d="M16 -15 Q28 -15 34 -11 Q26 -9 16 -11 Z" fill="' + c.hatD + '"' + st + '/>'
+    : '<path d="M-20 -15 C-21 -31 -10 -37 0 -37 C10 -37 21 -31 20 -15 Z" fill="' + c.hat + '"' + st + '/><path d="M-19 -15 Q0 -9 19 -15 Q0 -12 -19 -15 Z" fill="' + c.hatD + '"' + st + '/><circle cx="0" cy="-36" r="1.8" fill="' + c.hatD + '"/>';
+  if (kind === "pilot") return side
+    ? '<path d="M-20 -18 L-24 -34 Q2 -42 24 -33 L20 -18 Z" fill="' + c.pants + '"' + st + '/><path d="M-20 -18 L20 -18 L20 -13 L-20 -13 Z" fill="#14161c"' + st + '/><path d="M14 -14 Q26 -14 31 -9 Q24 -8 14 -10 Z" fill="#14161c"' + st + '/><circle cx="12" cy="-27" r="2.6" fill="#d9a72e" stroke="' + INK + '" stroke-width="1"/>'
+    : '<path d="M-19 -18 L-26 -35 Q0 -43 26 -35 L19 -18 Z" fill="' + c.pants + '"' + st + '/><path d="M-19 -18 L19 -18 L19 -12.5 L-19 -12.5 Z" fill="#14161c"' + st + '/><path d="M-17 -12.5 Q0 -6 17 -12.5 Z" fill="#14161c"' + st + '/><path d="M-4 -30 L0 -34 L4 -30 L0 -25 Z" fill="#d9a72e" stroke="' + INK + '" stroke-width="1"/><path d="M-12 -30 Q-6 -33 -4 -30 M12 -30 Q6 -33 4 -30" stroke="#d9a72e" stroke-width="1.6" fill="none"/>';
+  return "";
 }
 var PLEGS = { stand: { k: [[-1.5, 98], [1.5, 98]], a: [[-1, 196], [1, 196]] }, sit: { k: [[-10, 18], [10, 18]], a: [[-11, 102], [11, 102]] } };
 function person(o) {
-  var s = o.s || 1, c = {}, k; for (k in PSN) c[k] = PSN[k]; if (o.colors) for (k in o.colors) c[k] = o.colors[k];
+  var s = o.s || 1, c = {}, k; for (k in PSN) c[k] = PSN[k];
+  var OF = pOutfit(o, c); o = Object.assign({}, o, { _of: OF });
   var lean = (o.lean || 0) * Math.PI / 180, sl = o.slump || 0, br = (o.breath || 0) * 1.6;
   var up = [Math.sin(lean), -Math.cos(lean)], rt = [Math.cos(lean), Math.sin(lean)], H = [o.x, o.y];
   function T(h, x) { return [H[0] + (up[0] * h + rt[0] * x) * s, H[1] + (up[1] * h + rt[1] * x) * s]; }   // trunk frame: h up from the hips, x to the viewer's right
@@ -194,10 +237,11 @@ function person(o) {
     }
     legSvg += g;
     var fx = an[0] + sd * 3 * s, fy = an[1] + 14 * s;
-    feet += '<path d="M' + f(an[0] - 10 * s) + ' ' + f(an[1] - 6 * s) + ' L' + f(an[0] + 10 * s) + ' ' + f(an[1] - 6 * s) + ' L' + f(fx + 13 * s + sd * 3 * s) + ' ' + f(fy - 3 * s) + ' Q' + f(fx + 14 * s + sd * 4 * s) + ' ' + f(fy + 2 * s) + ' ' + f(fx + 6 * s) + ' ' + f(fy + 2 * s) + ' L' + f(fx - 8 * s) + ' ' + f(fy + 2 * s) + ' Q' + f(fx - 15 * s + sd * 2 * s) + ' ' + f(fy + 1 * s) + ' ' + f(fx - 13 * s + sd * 2 * s) + ' ' + f(fy - 4 * s) + ' Z" fill="' + c.socks + '" stroke="' + INK + '" stroke-width="' + f(2 * s) + '" stroke-linejoin="round"/>' +
-             pLine([[fx - 9 * s, fy - 2 * s], [fx + 8 * s, fy - 2 * s]], "#6e6e75", 1.2 * s);
+    feet += '<path d="M' + f(an[0] - 10 * s) + ' ' + f(an[1] - 6 * s) + ' L' + f(an[0] + 10 * s) + ' ' + f(an[1] - 6 * s) + ' L' + f(fx + 13 * s + sd * 3 * s) + ' ' + f(fy - 3 * s) + ' Q' + f(fx + 14 * s + sd * 4 * s) + ' ' + f(fy + 2 * s) + ' ' + f(fx + 6 * s) + ' ' + f(fy + 2 * s) + ' L' + f(fx - 8 * s) + ' ' + f(fy + 2 * s) + ' Q' + f(fx - 15 * s + sd * 2 * s) + ' ' + f(fy + 1 * s) + ' ' + f(fx - 13 * s + sd * 2 * s) + ' ' + f(fy - 4 * s) + ' Z" fill="' + (OF.feet === "socks" ? c.socks : c.shoes) + '" stroke="' + INK + '" stroke-width="' + f(2 * s) + '" stroke-linejoin="round"/>' +
+             pLine([[fx - 9 * s, fy - 2 * s], [fx + 8 * s, fy - 2 * s]], OF.feet === "socks" ? "#6e6e75" : "#5a534c", 1.2 * s) +
+             (OF.feet === "boots" ? '<path d="M' + f(an[0] - 12 * s) + ' ' + f(an[1] - 6 * s) + ' L' + f(an[0] - 12 * s) + ' ' + f(an[1] - 24 * s) + ' L' + f(an[0] + 12 * s) + ' ' + f(an[1] - 24 * s) + ' L' + f(an[0] + 12 * s) + ' ' + f(an[1] - 6 * s) + ' Z" fill="' + c.shoes + '" stroke="' + INK + '" stroke-width="' + f(2 * s) + '"/>' + pLine([[an[0] - 12 * s, an[1] - 20 * s], [an[0] + 12 * s, an[1] - 20 * s]], "#5a534c", 1.2 * s) : "");
   });
-  svg += feet + legSvg;
+  svg += OF.feet === "boots" ? legSvg + feet : feet + legSvg;
   // ── trunk: sweater with ribbed hem, crew collar, side folds; the trousers' waist under the hem ──
   var wy = 7 + br * .3;
   svg += '<path d="' + pPath([T(-8, -40), T(10, -38), T(10, 38), T(-8, 40), T(-16, 0)], true) + '" fill="' + c.pants + '" stroke="' + INK + '" stroke-width="' + f(2.2 * s) + '"/>';
@@ -207,14 +251,38 @@ function person(o) {
   svg += pLine([T(60, -20), T(52, -6), T(56, 6)], c.shirtD, 1.4 * s) + pLine([T(34, 8), T(26, 18)], c.shirtD, 1.3 * s) + pLine([T(40, -26), T(30, -16)], c.shirtD, 1.3 * s);
   var hem = [T(wy, -37), T(wy + 9, -36), T(wy + 9, 36), T(wy, 37)];
   svg += '<path d="M' + hem.map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + ' Z" fill="' + c.shirt + '" stroke="' + INK + '" stroke-width="' + f(2 * s) + '"/>';
-  for (var r = -32; r <= 32; r += 4) svg += pLine([T(wy + 1, r), T(wy + 8, r)], c.shirtD, .9 * s);
+  if (OF.top === "sweater") for (var r = -32; r <= 32; r += 4) svg += pLine([T(wy + 1, r), T(wy + 8, r)], c.shirtD, .9 * s);
+  else svg += pLine([T(wy + 2, -34), T(wy + 2, 34)], c.shirtD, 1.1 * s);
+  if (OF.top === "shirt") {   // button placket, buttons, a chest pocket
+    svg += pLine([T(hNeck - 6, 1.5), T(wy + 9, 1.5)], c.shirtD, 1.2 * s);
+    for (var bh = 96; bh > 14; bh -= 20) { var bp = T(bh, 4.5); svg += '<circle cx="' + f(bp[0]) + '" cy="' + f(bp[1]) + '" r="' + f(1.7 * s) + '" fill="' + c.button + '" stroke="' + INK + '" stroke-width="' + f(.8 * s) + '"/>'; }
+    svg += '<path d="M' + [T(96, -30), T(96, -14), T(78, -14), T(78, -30)].map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + ' Z" fill="none" stroke="' + c.shirtD + '" stroke-width="' + f(1.2 * s) + '"/>';
+  }
   // collar (crew neck, ribbed) and neck with the shadow under the chin
   var nb = [T(hNeck - 2, -14), T(hNeck + 4, -12), T(hNeck + 4, 12), T(hNeck - 2, 14)];
   var hc0 = T(166 - 10 * sl - 26 * nod + br, 0), tilt = (hd.tilt || 0) + (o.lean || 0);
   svg += '<path d="M' + f(T(hNeck - 4, -11)[0]) + ' ' + f(T(hNeck - 4, -11)[1]) + ' L' + f(hc0[0] - 10 * s) + ' ' + f(hc0[1] + 18 * s) + ' L' + f(hc0[0] + 10 * s) + ' ' + f(hc0[1] + 18 * s) + ' L' + f(T(hNeck - 4, 11)[0]) + ' ' + f(T(hNeck - 4, 11)[1]) + ' Z" fill="' + c.skin + '" stroke="' + INK + '" stroke-width="' + f(2 * s) + '"/>';
   svg += '<path d="M' + f(T(hNeck - 1, -11)[0]) + ' ' + f(T(hNeck - 1, -11)[1]) + ' Q' + f(T(hNeck + 6, 0)[0]) + ' ' + f(T(hNeck + 6, 0)[1]) + ' ' + f(T(hNeck - 1, 11)[0]) + ' ' + f(T(hNeck - 1, 11)[1]) + '" stroke="' + c.skinD + '" stroke-width="' + f(4 * s) + '" fill="none" opacity=".6"/>';
   svg += '<path d="' + pPath([T(hNeck - 4, -17), T(hNeck + 2, -15), T(hNeck - 5, 0), T(hNeck + 2, 15), T(hNeck - 4, 17), T(hNeck - 9, 0)], true) + '" fill="' + c.shirt + '" stroke="' + INK + '" stroke-width="' + f(2 * s) + '"/>';
-  svg += pLine([T(hNeck - 4.5, -13), T(hNeck - 8, 0), T(hNeck - 4.5, 13)], c.shirtD, 1.1 * s);
+  if (OF.top === "sweater") svg += pLine([T(hNeck - 4.5, -13), T(hNeck - 8, 0), T(hNeck - 4.5, 13)], c.shirtD, 1.1 * s);
+  if (OF.top === "shirt") {
+    if (OF.tie) svg += '<path d="' + pPath([T(hNeck - 5, -3), T(hNeck - 5, 3), T(hNeck - 10, 2.5), T(hNeck - 10, -2.5)], true) + '" fill="' + c.tie + '" stroke="' + INK + '" stroke-width="' + f(1.4 * s) + '"/>' +
+                       '<path d="M' + [T(hNeck - 10, -2.5), T(hNeck - 10, 2.5), T(62, 6), T(56, 0), T(62, -6)].map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + ' Z" fill="' + c.tie + '" stroke="' + INK + '" stroke-width="' + f(1.4 * s) + '" stroke-linejoin="round"/>';
+    [-1, 1].forEach(function (sd) { svg += '<path d="M' + [T(hNeck + 3, sd * 3), T(hNeck + 3, sd * 15), T(hNeck - 12, sd * 9), T(hNeck - 6, sd * 2)].map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + ' Z" fill="' + c.shirt + '" stroke="' + INK + '" stroke-width="' + f(1.6 * s) + '" stroke-linejoin="round"/>'; });
+  }
+  if (OF.epaulettes) [-1, 1].forEach(function (sd) { svg += '<path d="M' + [T(hSh + 6, sd * 24), T(hSh + 4, sd * 44), T(hSh - 2, sd * 44), T(hSh, sd * 24)].map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + ' Z" fill="#262a36" stroke="' + INK + '" stroke-width="' + f(1.2 * s) + '"/>' + pLine([T(hSh + 3, sd * 31), T(hSh + 2, sd * 41)], "#d9a72e", 1.6 * s); });
+  if (OF.over === "vest") [-1, 1].forEach(function (sd) {
+    var v = [T(hSh + 4, sd * 20), T(hSh, sd * 38), T(84, sd * 40), T(14, sd * 38), T(12, sd * 4), T(70, sd * 6), T(hNeck - 6, sd * 12)];
+    svg += '<path d="' + pPath(v, true) + '" fill="' + c.vest + '" stroke="' + INK + '" stroke-width="' + f(2 * s) + '"/>';
+    [36, 66].forEach(function (h) { svg += '<path d="M' + [T(h + 4, sd * 5), T(h + 4, sd * 39), T(h - 4, sd * 39), T(h - 4, sd * 5)].map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + ' Z" fill="' + c.reflect + '" stroke="' + INK + '" stroke-width="' + f(1.1 * s) + '"/>'; });
+  });
+  if (OF.over === "apron") svg += '<path d="' + pPath([T(104, -20), T(104, 20), T(60, 28), T(-64, 36), T(-64, -36), T(60, -28)], true) + '" fill="' + c.apron + '" stroke="' + INK + '" stroke-width="' + f(2 * s) + '"/>' + pLine([T(104, -18), T(hNeck - 4, -12)], INK, 1.6 * s) + pLine([T(104, 18), T(hNeck - 4, 12)], INK, 1.6 * s) + pLine([T(20, -38), T(20, 38)], c.apronD, 3 * s);
+  if (OF.over === "labcoat") [-1, 1].forEach(function (sd) {   // an open white coat to mid-thigh: panel, lapel, pocket
+    var pan = [T(hSh + 4, sd * 44), T(hNeck + 2, sd * 15), T(86, sd * 9), T(-66, sd * 12), T(-68, sd * 48), T(40, sd * 46), T(96, sd * 46)];
+    svg += '<path d="' + pPath(pan, true) + '" fill="' + c.coat + '" stroke="' + INK + '" stroke-width="' + f(2.2 * s) + '"/>';
+    svg += '<path d="M' + [T(hNeck + 2, sd * 15), T(92, sd * 26), T(86, sd * 9)].map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + '" fill="' + c.coatD + '" stroke="' + INK + '" stroke-width="' + f(1.6 * s) + '" stroke-linejoin="round"/>';
+    svg += '<path d="M' + [T(-18, sd * 20), T(-18, sd * 40), T(-40, sd * 40), T(-40, sd * 20)].map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + ' Z" fill="none" stroke="' + c.coatD + '" stroke-width="' + f(1.4 * s) + '"/>' + pLine([T(60, sd * 40), T(-50, sd * 44)], c.coatD, 1.2 * s);
+  });
   J.head = hc0;
   var headSvg = pHead(hc0, s, tilt, o, c);
   // ── arms: sleeve to the wrist with a ribbed cuff, the hand ──
@@ -229,7 +297,12 @@ function person(o) {
     var cuff = [wr[0] - dx / dl * 8 * s, wr[1] - dy / dl * 8 * s], sp0 = [sp[0] - sd * 3 * s, sp[1] - 4 * s];
     var ang1 = Math.atan2(el[1] - sp[1], el[0] - sp[0]), ang2 = Math.atan2(dy, dx), bendA = Math.abs(((ang2 - ang1 + 3 * Math.PI) % (2 * Math.PI)) - Math.PI);
     var ap = [sp0, L2p(sp, el, .3, 0), L2p(sp, el, .75, 0), el, L2p(el, cuff, .35, 0), cuff], aw = [27 * s, 24.5 * s, 21.5 * s, 20.5 * s, 20 * s, 16.5 * s];
-    var sleeve = pLimbDraw(pLimb(ap, aw, false), c.shirt, s, pShade(ap, aw, c.shirtD, s), 2.3);
+    var coat = OF.over === "labcoat", sc = coat ? c.coat : c.shirt, scD = coat ? c.coatD : c.shirtD, sleeve;
+    if (OF.top === "tshirt" && !coat) {   // bare arm, the short sleeve over its top
+      var bare = [sp0, L2p(sp, el, .3, 0), L2p(sp, el, .75, 0), el, L2p(el, wr, .35, 0), wr], bw = [24 * s, 21 * s, 18 * s, 16.5 * s, 17 * s, 13 * s];
+      var sv = [sp0, L2p(sp, el, .25, 0), L2p(sp, el, .5, 0)], sw2 = [28 * s, 26 * s, 25 * s];
+      sleeve = pLimbDraw(pLimb(bare, bw, false), c.skin, s, pShade(bare, bw, c.skinD, s, .45), 2.2) + pLimbDraw(pLimb(sv, sw2, false), sc, s, "", 2.3);
+    } else sleeve = pLimbDraw(pLimb(ap, aw, false), sc, s, pShade(ap, aw, scD, s), 2.3);
     // fabric bunching at the elbow: more folds the more the arm is bent, on the inside of the bend
     // the inside of the bend points from the elbow toward the middle of shoulder and wrist; folds sit there, inside the sleeve
     var mx = (sp[0] + wr[0]) / 2 - el[0], my = (sp[1] + wr[1]) / 2 - el[1], ml = Math.hypot(mx, my) || 1, vi = [mx / ml, my / ml], folds = "", nf = bendA > .35 ? 3 : 1;
@@ -237,11 +310,12 @@ function person(o) {
       folds += '<path d="M' + f(bx + vi[0] * 5 * s) + ' ' + f(by + vi[1] * 5 * s) + ' Q' + f(bx - Math.cos(ang2) * 2.5 * s) + ' ' + f(by - Math.sin(ang2) * 2.5 * s) + ' ' + f(bx - vi[0] * 5 * s) + ' ' + f(by - vi[1] * 5 * s) + '" stroke="' + c.shirtD + '" stroke-width="' + f(1.3 * s) + '" fill="none" stroke-linecap="round"/>'; }
     folds += '<path d="' + pPath([L2p(sp, el, .2, 4 * s), L2p(sp, el, .5, 6 * s)], false) + '" stroke="' + c.shirtD + '" stroke-width="' + f(1.1 * s) + '" fill="none" opacity=".7"/>';
     // ribbed cuff, a little wider than the wrist, then the hand
-    var cp = [cuff, [wr[0] + dx / dl * 1.5 * s, wr[1] + dy / dl * 1.5 * s]], cuffSvg = pLimbDraw(pLimb(cp, [17.5 * s, 16.5 * s], false), c.shirt, s, "", 2), rib = "";
-    for (var qq = -6; qq <= 6; qq += 3) { var nx2 = -dy / dl, ny2 = dx / dl; rib += pLine([[cuff[0] + nx2 * qq * s, cuff[1] + ny2 * qq * s], [cuff[0] + nx2 * qq * s + dx / dl * 8 * s, cuff[1] + ny2 * qq * s + dy / dl * 8 * s]], c.shirtD, .9 * s); }
+    var cp = [cuff, [wr[0] + dx / dl * 1.5 * s, wr[1] + dy / dl * 1.5 * s]], cuffSvg = OF.top === "tshirt" && !coat ? "" : pLimbDraw(pLimb(cp, [17.5 * s, 16.5 * s], false), coat ? c.shirt : sc, s, "", 2), rib = "";
+    if (OF.top === "sweater" && !coat) for (var qq = -6; qq <= 6; qq += 3) { var nx2 = -dy / dl, ny2 = dx / dl; rib += pLine([[cuff[0] + nx2 * qq * s, cuff[1] + ny2 * qq * s], [cuff[0] + nx2 * qq * s + dx / dl * 8 * s, cuff[1] + ny2 * qq * s + dy / dl * 8 * s]], c.shirtD, .9 * s); }
     var ha = A.rot != null ? A.rot * Math.PI / 180 : Math.atan2(dy, dx), side = A.side || (sd * (Math.cos(ha) >= 0 ? -1 : 1));
     var hand = pHand([wr[0] - Math.cos(ha) * 1 * s, wr[1] - Math.sin(ha) * 1 * s], ha, A.hand || "relaxed", side, s, c, A.palm);
-    armSvg[i] = sleeve + folds + hand + cuffSvg + rib;
+    if (OF.top === "tshirt" && !coat) folds = "";
+    armSvg[i] = sleeve + folds.replace(new RegExp(c.shirtD, "g"), scD) + hand + cuffSvg + rib;
   });
   // arms reaching up over the head (a stretch, a hand on the forehead) are drawn after the head
   var front = [arms[0] && arms[0].front, arms[1] && arms[1].front];
@@ -287,7 +361,8 @@ function walkPose(ph, amp) {   // a walking cycle: ph in radians, both legs and 
   return { legs: [leg(ph), leg(ph + Math.PI)], arms: [{ sh: -20 * Math.sin(ph) * amp, el: (16 + 10 * Math.max(0, -Math.sin(ph))) * amp + 6, hand: "relaxed" }, { sh: 20 * Math.sin(ph) * amp, el: (16 + 10 * Math.max(0, Math.sin(ph))) * amp + 6, hand: "relaxed" }] };
 }
 function personSide(o) {
-  var c = {}, k; for (k in PSN) c[k] = PSN[k]; if (o.colors) for (k in o.colors) c[k] = o.colors[k];
+  var c = {}, k; for (k in PSN) c[k] = PSN[k];
+  var OF = pOutfit(o, c);
   var lean = (o.lean || 0) * Math.PI / 180, br = (o.breath || 0) * 1.4, fc = o.face || {}, hd = o.head || {};
   function T(h, x) { return [x * Math.cos(lean) + h * Math.sin(lean), -h * Math.cos(lean) + x * Math.sin(lean)]; }   // trunk frame: h up, x forward
   function V(a) { a = a * Math.PI / 180; return [Math.sin(a), Math.cos(a)]; }
@@ -303,7 +378,9 @@ function personSide(o) {
     // the foot: heel behind the ankle, sole along fw, toes 47 ahead (foot 61 = 0.152H)
     var P = function (u, v) { return [an[0] + fw[0] * u + dn[0] * v, an[1] + fw[1] * u + dn[1] * v]; };
     var foot = [P(-14, -4), P(-15, 8), P(-10, 14), P(30, 14), P(46, 12), P(48, 6), P(40, 0), P(22, -6), P(6, -10), P(-8, -10)];
-    g = '<path d="' + pPath(foot, true) + '" fill="' + (i ? "#46464b" : c.socks) + '" stroke="' + INK + '" stroke-width="2" stroke-linejoin="round"/>' + pLine([P(-12, 12), P(44, 11)], "#6e6e75", 1.1) + g;
+    var fcol = OF.feet === "socks" ? (i ? "#46464b" : c.socks) : (i ? "#1e1b18" : c.shoes);
+    var boot = OF.feet === "boots" ? '<path d="' + pPath([P(-15, 6), P(-15, -24), P(12, -24), P(14, 0)], false) + '" fill="' + fcol + '" stroke="' + INK + '" stroke-width="2"/>' : "";
+    g = '<path d="' + pPath(foot, true) + '" fill="' + fcol + '" stroke="' + INK + '" stroke-width="2" stroke-linejoin="round"/>' + pLine([P(-12, 12), P(44, 11)], OF.feet === "socks" ? "#6e6e75" : "#5a534c", 1.1) + g + boot;
     part.leg[i] = g; if (!i) { J.knee = kn; J.ankle = an; J.toe = P(48, 6); J.heel = P(-14, 13); }
     J["foot" + i] = [P(-14, 14), P(48, 13)];
   });
@@ -313,7 +390,13 @@ function personSide(o) {
   var trunk = '<path d="' + pPath(torso, true) + '" fill="' + c.shirt + '" stroke="' + INK + '" stroke-width="2.4"/>';
   trunk += '<path d="' + pPath([T(112, -16), T(86, -20), T(60, -15), T(30, -18), T(8, -22), T(8, -10), T(40, -8), T(80, -10)], true) + '" fill="' + c.shirtD + '" opacity=".45"/>';
   trunk += '<path d="' + pPath([T(2, 27), T(10, 27.5), T(10, -28), T(1, -28)], false) + '" stroke="' + INK + '" stroke-width="1.8" fill="none"/>';
-  for (var r = -24; r <= 24; r += 4) trunk += pLine([T(2.5, r), T(9, r)], c.shirtD, .9);
+  if (OF.top === "sweater") for (var r = -24; r <= 24; r += 4) trunk += pLine([T(2.5, r), T(9, r)], c.shirtD, .9);
+  if (OF.top === "shirt") { for (var bh = 96; bh > 14; bh -= 20) { var bp = T(bh, [26, 30, 28, 26, 27][Math.round((96 - bh) / 20)] - 3); trunk += '<circle cx="' + f(bp[0]) + '" cy="' + f(bp[1]) + '" r="1.6" fill="' + c.button + '" stroke="' + INK + '" stroke-width=".8"/>'; }
+    if (OF.tie) trunk += '<path d="' + pPath([T(116, 12), T(110, 16), T(62, 31), T(58, 27), T(108, 11)], true) + '" fill="' + c.tie + '" stroke="' + INK + '" stroke-width="1.3"/>'; }
+  if (OF.epaulettes) trunk += '<path d="M' + [T(121, -10), T(121, 10), T(116, 10), T(116, -10)].map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + ' Z" fill="#262a36" stroke="' + INK + '" stroke-width="1.1"/>';
+  if (OF.over === "vest") { trunk += '<path d="' + pPath([T(116, -14), T(116, 6), T(98, 31), T(14, 30), T(12, -30), T(96, -28)], true) + '" fill="' + c.vest + '" stroke="' + INK + '" stroke-width="2"/>';
+    [36, 66].forEach(function (h) { trunk += '<path d="M' + [T(h + 4, -30), T(h + 4, 31), T(h - 4, 31), T(h - 4, -30)].map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + ' Z" fill="' + c.reflect + '" stroke="' + INK + '" stroke-width="1"/>'; }); }
+  if (OF.over === "apron") trunk += '<path d="' + pPath([T(104, 30), T(104, 34), T(-64, 40), T(-66, 34)], true) + '" fill="' + c.apron + '" stroke="' + INK + '" stroke-width="2"/>' + pLine([T(104, 30), T(120, 12)], INK, 1.6) + pLine([T(20, 32), T(22, -30)], c.apronD, 3);
   trunk += pLine([T(60, 6), T(52, 14), T(48, 22)], c.shirtD, 1.3) + pLine([T(30, 2), T(24, 12)], c.shirtD, 1.2);
   // ── neck and head in profile, facing +x ──
   var tilt = (hd.tilt || 0) + (o.lean || 0), hc = T(166 + br * .5, 6);
@@ -335,20 +418,28 @@ function personSide(o) {
     o: '<ellipse cx="21.6" cy="15" rx="1.6" ry="2.3" fill="#5a2a22" stroke="' + INK + '" stroke-width="1.3"/>', frown: '<path d="M17.5 15.6 Q20 13.6 22.6 14.6" stroke="' + INK + '" stroke-width="1.5" fill="none" stroke-linecap="round"/>',
     yawn: '<path d="M18 12.8 Q23.6 12 23.6 14.8 Q23 20.6 18.6 19.4 Z" fill="#5a2a22" stroke="' + INK + '" stroke-width="1.5"/>' };
   h += M[mo] || M.neutral;
+  h += pHat(OF.hat, c, true);
   var head = G("translate(" + f(hc[0]) + " " + f(hc[1]) + ") rotate(" + f(tilt) + ")", h);
   J.head = hc;
   // ── arms: sleeve from the shoulder joint (0.818H) through the elbow to the cuff, the hand turned to its side ──
   arms.forEach(function (A, i) {
     var sp = T(117, -2), ua = (A.sh || 0) + (o.lean || 0), el = [sp[0] + V(ua)[0] * 74, sp[1] + V(ua)[1] * 74], fa = ua + (A.el || 0), wr = [el[0] + V(fa)[0] * 58, el[1] + V(fa)[1] * 58];
     var cuff = [el[0] + V(fa)[0] * 50, el[1] + V(fa)[1] * 50], ap = [T(124, -4), L2p(sp, el, .35, 0), el, L2p(el, cuff, .35, 0), cuff], aw = [26, 23, 20, 20, 16.5];
-    var g = pLimbDraw(pLimb(ap, aw, false), i ? c.shirtD : c.shirt, 1, pShade(ap, aw, c.shirtD, 1, i ? .3 : .55), 2.3);
-    g += pLimbDraw(pLimb([cuff, [el[0] + V(fa)[0] * 59, el[1] + V(fa)[1] * 59]], [17.5, 16.5], false), i ? c.shirtD : c.shirt, 1, "", 2);
+    var coat = OF.over === "labcoat", sc = coat ? (i ? c.coatD : c.coat) : (i ? c.shirtD : c.shirt), g;
+    if (OF.top === "tshirt" && !coat) {
+      var bare = [T(124, -4), L2p(sp, el, .35, 0), el, L2p(el, wr, .35, 0), wr], bw = [24, 21, 17, 17, 13];
+      g = pLimbDraw(pLimb(bare, bw, false), i ? c.skinD : c.skin, 1, pShade(bare, bw, c.skinD, 1, .4), 2.2) + pLimbDraw(pLimb([T(124, -4), L2p(sp, el, .3, 0), L2p(sp, el, .5, 0)], [28, 26, 25], false), sc, 1, "", 2.3);
+    } else {
+      g = pLimbDraw(pLimb(ap, aw, false), sc, 1, pShade(ap, aw, coat ? c.coatD : c.shirtD, 1, i ? .3 : .55), 2.3);
+      g += pLimbDraw(pLimb([cuff, [el[0] + V(fa)[0] * 59, el[1] + V(fa)[1] * 59]], [17.5, 16.5], false), coat ? (i ? c.shirtD : c.shirt) : sc, 1, "", 2);
+    }
     if ((A.el || 0) > 25) g += '<path d="' + pPath([L2p(el, sp, .12, 6), [el[0] + 4, el[1] + 2], L2p(el, wr, .12, -6)], false) + '" stroke="' + c.shirtD + '" stroke-width="1.3" fill="none"/>';
     var ha = Math.atan2(V(fa + (A.wrist || 0))[1], V(fa + (A.wrist || 0))[0]);
     g = G("", pHand([wr[0] - Math.cos(ha) * 1, wr[1] - Math.sin(ha) * 1], ha, A.hand || "relaxed", -1, 1, i ? Object.assign({}, c, { skin: c.skinD }) : c, false)) + g;
     part.arm[i] = g; if (!i) { J.wrist = wr; J.elbow = el; }
   });
-  var body = part.arm[1] + part.leg[1] + trunk + part.leg[0] + neck + head + part.arm[0];
+  var coatSvg = OF.over === "labcoat" ? '<path d="' + pPath([T(121, -14), T(121, 16), T(96, 34), T(30, 32), T(-66, 38), T(-68, -34), T(30, -32), T(96, -30)], true) + '" fill="' + c.coat + '" stroke="' + INK + '" stroke-width="2.2"/>' + pLine([T(112, 18), T(70, 30), T(60, 33)], c.coatD, 2) + pLine([T(-10, 30), T(-60, 34)], c.coatD, 1.3) : "";
+  var body = part.arm[1] + part.leg[1] + trunk + part.leg[0] + coatSvg + neck + head + part.arm[0];
   var s = o.s || 1, dir = o.dir || 1;
   J.toLocal = function (p) { return p; };
   var tr = "translate(" + f(o.x) + " " + f(o.y) + ") rotate(" + f(o.rot || 0) + ") scale(" + f(s * dir) + " " + f(s) + ")";
@@ -361,7 +452,7 @@ function personSide(o) {
 function sideHipY(o, floorY) { var p = personSide(Object.assign({}, o, { y: 0 })), lo = -1e9; ["foot0", "foot1"].forEach(function (k) { p.joints[k].forEach(function (q) { lo = Math.max(lo, q[1]); }); }); return floorY - lo; }
 
 // export: window.PERSON for every skill; plain globals too where the name is free (the story kit has its own person())
-var API = { front: person, side: personSide, walkPose: walkPose, sideHipY: sideHipY, mix: personMix, sofaFront: sofaFront, hand: pHand, head: pHead, colors: PSN,
+var API = { outfits: OUTFITS, front: person, side: personSide, walkPose: walkPose, sideHipY: sideHipY, mix: personMix, sofaFront: sofaFront, hand: pHand, head: pHead, colors: PSN,
   setInk: function (c) { INK = c; } };
 window.PERSON = API;
 [["person", person], ["personSide", personSide], ["walkPose", walkPose], ["sideHipY", sideHipY], ["personMix", personMix], ["sofaFront", sofaFront], ["pHand", pHand], ["pHead", pHead], ["PSN", PSN]].forEach(function (q) { if (!(q[0] in window)) window[q[0]] = q[1]; });

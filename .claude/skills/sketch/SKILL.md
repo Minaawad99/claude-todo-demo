@@ -136,6 +136,9 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
   - **Hands and face:** five-finger hands with nails, in the right pose. The face shows every reaction.
   - **Placing him:** put hands on the real spot (forehead, throat, belly). Furniture is to the same scale. Keep him
     breathing and blinking.
+  - **Clothes follow the topic:** dress every person for who they are in this video with `outfit` (presets `home`,
+    `casual`, `office`, `doctor`, `worker`, `pilot`, `chef`, or your own parts and colours; see
+    `videos/person-demo/outfits.html`). Add a missing outfit to the kit, front and side.
 
   The old flat salmon `fig()` from `videos/choking/` is retired for new episodes. A body cut (throat, lungs) still uses
   the real anatomy from a reference picture (`throat()` in `videos/choking/sketch/shots.js`), placed in or beside this person.
