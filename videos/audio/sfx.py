@@ -243,6 +243,15 @@ def fx_vac(d=3.0):            # vacuum fan: airy hiss + a high motor whine, slow
 def fx_bump(d=0.3):           # plastic bumper knocks into something
     t = t_(d); x = np.sin(2 * np.pi * (220 * np.exp(-t * 20) + 140) * t) * np.exp(-t * 28) + 0.4 * lp_fast(noise(len(t)), 2500, 1) * np.exp(-t * 60)
     return x.astype(np.float32)
+def fx_typekey(d=0.16):        # typewriter key: a hard type slug hitting platen + ribbon (bright clack and a short metal ring)
+    t = t_(d); n = noise(len(t)); x = 0.9 * hp_fast(lp_fast(n, 6000, 1), 900) * np.exp(-t * 90)
+    x += 0.35 * sum(a * np.sin(2 * np.pi * f * t) * np.exp(-t * 60) for f, a in [(2300, 1), (3700, .6), (5200, .3)])
+    x += 0.5 * np.sin(2 * np.pi * (180 * np.exp(-t * 30) + 70) * t) * np.exp(-t * 45)
+    return x.astype(np.float32)
+def fx_jam(d=0.35):            # two typebars clashing: a metal clank and a short rattle
+    t = t_(d); x = sum(a * np.sin(2 * np.pi * 900 * r * t) * np.exp(-t * k) for r, a, k in [(1, 1, 14), (2.3, .7, 18), (3.7, .4, 26)])
+    x += 0.5 * hp_fast(noise(len(t)), 1500) * np.exp(-t * 30) * (1 + np.sin(2 * np.pi * 38 * t))
+    return x.astype(np.float32)
 def fx_ping(d=0.5):           # sonar: short high ping with an echo
     t = t_(d); p = lambda t0, a: a * np.sin(2 * np.pi * 2600 * (t - t0)) * np.exp(-np.maximum(0, t - t0) * 40) * (t >= t0)
     return (p(0, 1) + p(0.16, 0.35)).astype(np.float32)
