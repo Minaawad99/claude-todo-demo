@@ -203,7 +203,7 @@ if (!window.PERSON && document.currentScript) document.write('<script src="' + d
     var bk = clamp((u - (ub - 0.45)) / 0.45), pz = mixPose(pa, pb, ease(bk));
     if (!moving && (a.p || "stand") === "stand") { pz = mixPose(pz, { lean: Math.sin(t * 1.6) * 2, head: Math.sin(t * 1.1) * 3 }, 0.5); }
     var hip = a.hip ? [lerp(a.hip[0], (b.hip || a.hip)[0], kpos), lerp(a.hip[1], (b.hip || a.hip)[1], kpos)] : null;
-    return man({ x: x, y: y + Math.abs(Math.sin(u * 5)) * (moving ? 4 : 0), f: (kpos > 0.5 && b.f ? b.f : a.f) || 1, pose: pz, mood: u > ub - 0.3 && b.mood ? b.mood : a.mood, t: t, hip: hip, s: a.s || 1, shirt: a.shirt, shirtD: a.shirtD, vest: a.vest, hat: a.hat, phone: a.phone });
+    return man({ x: x, y: y + Math.abs(Math.sin(u * 5)) * (moving ? 4 : 0), f: (kpos > 0.5 && b.f ? b.f : a.f) || 1, pose: pz, mood: u > ub - 0.3 && b.mood ? b.mood : a.mood, t: t, hip: hip, s: a.s || 1, shirt: a.shirt, shirtD: a.shirtD, vest: a.vest, hat: a.hat, phone: a.phone, outfit: a.outfit });
   }
   // ── overlays: a dark pill label with a pointer, a red ✗, a green ✓, a yellow ring ──
   function pill(text, x, y, u, u0, o) { o = o || {}; var k = clamp((u - u0) / 0.35); if (k <= 0) return ""; var sz = o.sz || 40, w = text.length * sz * 0.52 + 44, col = o.bg || "#262a30";
