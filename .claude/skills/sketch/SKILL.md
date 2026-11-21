@@ -12,6 +12,8 @@ description: >
 
 # «إيه الحكاية؟» — the «اسكتش» style
 
+**Reference before every drawing (the user's rule for every skill):** before you draw any object, body part, machine, place or scene, look it up in `videos/_reference/README.md` (a subject index of the 34 reference videos and of our own episodes), open the frames that show it and see how it was cut open, labelled and framed. Then draw it in this skill's own style. Never copy a drawing.
+
 **The user named this style «اسكتش»** and locked it after «المد والجزر». Use the same drawings, narration and sounds in
 every episode.
 
@@ -128,7 +130,7 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
     - Arabic words in a box (`tag`);
     - dimension lines (`measure`).
 - **People: the shared person kit, always** (the user's fixed rule after the person demo, for every skill). Load
-  `videos/_templates/people/person.js` and read its `README.md`. `PERSON.front()` gives the front or three-quarter view,
+  `videos/_templates/people/person.js` (the template's `build.py` always loads it) and read its `README.md`. `PERSON.front()` gives the front or three-quarter view,
   `PERSON.side()` the profile, for walking and for lying flat on the back with `rot: -90`.
   - **Real proportions:** the wrist sits at the top of the thigh and the fingertips at mid-thigh.
   - **Flowing limbs:** each limb is one outline with the joints hidden inside it, never circles. A reaching arm is

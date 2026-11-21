@@ -4,7 +4,8 @@ with this episode's title, category, summary card and caption data). The page lo
 
 episode.py sets:
   CFG = {"title": …, "category": …, "outro": <summary-card HTML>, "watermark": "" or "إيه الحكاية؟ | @handle"}
-        optional: "libs": extra scripts loaded before scenes.js (default ["../../lib/geo.min.js"], which globe() needs)
+        optional: "libs": extra scripts loaded before scenes.js (default ["../../lib/geo.min.js"], which globe() needs).
+        The shared person kit ../../_templates/people/person.js is always loaded first (the user's rule: every person is drawn with it)
         optional: "intro_lines" (how many hook lines before the promise), "promise", "summary", "cta" (line indexes)
   K   = {line: {word: "o" | "b" | "g" | "u" | "gr" | "o u"}}   key words in the caption / hook:
         o orange (action, danger, heat, numbers) · b blue (water, air, cold, the technical term) · g olive (the named part)
@@ -82,7 +83,7 @@ open(os.path.join(HERE, "scenes.js"), "w", encoding="utf-8").write(
 page = open(os.path.join(TPL, "template.html"), encoding="utf-8").read()
 for k, v in [("/*TITLE*/", CFG.get("title", "")), ("/*CATEGORY*/", CFG.get("category", "")), ("/*OUTRO*/", CFG.get("outro", "")),
              ("/*WATERMARK*/", html.escape(CFG.get("watermark", ""))),
-             ("/*LIBS*/", "".join('<script src="%s"></script>' % src for src in CFG.get("libs", ["../../lib/geo.min.js"]))), ("/*DATA*/", "window.DATA = " + json.dumps(data, ensure_ascii=False) + ";")]:
+             ("/*LIBS*/", "".join('<script src="%s"></script>' % src for src in ["../../_templates/people/person.js"] + [l for l in CFG.get("libs", ["../../lib/geo.min.js"]) if "people/person.js" not in l])), ("/*DATA*/", "window.DATA = " + json.dumps(data, ensure_ascii=False) + ";")]:
     page = page.replace(k, v)
 open(os.path.join(HERE, "index.html"), "w", encoding="utf-8").write(page)
 print("built: %d lines, %d caption chunks · hook lines 0-%d · promise %d · summary %d · ask %d"
