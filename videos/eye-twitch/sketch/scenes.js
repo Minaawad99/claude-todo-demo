@@ -405,7 +405,8 @@ shot(16, push(320, 400, 1.02, 1.06), function (u, d, t) {
     [460, 230, brain(0, -8, .8) + '<path d="M-60 -60 l14 18 l-10 4 l14 18 M60 -60 l-14 18 l10 4 l-14 18" stroke="' + ORANGE + '" stroke-width="4" fill="none" stroke-linecap="round"/>', "التوتر", ORANGE],
     [180, 520, [-44, 0, 44].map(function (x, i) { return G("translate(" + x + " 10)", R(-18, -30, 36, 46, i === 2 ? ORANGE : "#f4ecdb", 2.2, 4) + '<path d="M18 -18 q14 0 14 12 q0 12 -14 12" stroke="' + INK + '" stroke-width="2.4" fill="none"/>' + '<path d="M-6 -40 q-6 -8 0 -16 M6 -40 q-6 -8 0 -16" stroke="' + MUTE + '" stroke-width="2" fill="none" opacity="' + f(.5 + .5 * Math.sin(t * 3 + i)) + '"/>'); }).join(""), "القهوة التالتة", ORANGE],
     [460, 520, R(-36, -64, 72, 120, "#3d3a34", 2.4, 10) + R(-28, -54, 56, 96, "#9db3c2", 0, 3) + '<rect x="-28" y="-54" width="56" height="96" fill="#fff" opacity="' + f(.15 + .15 * Math.sin(t * 4)) + '"/>', "الموبايل", BLUE]];
-  boxes.forEach(function (b, i) { var k = at(u, chunkAt(16, i) - .1, .35); s += iconBox(b[0], b[1], 220, G("translate(0 -10)", b[2]) + T(b[3], 0, 92, 24, b[4], 800), k); });
+  var T16 = [chunkAt(16, 0), chunkAt(16, 0) + .75, chunkAt(16, 1), chunkAt(16, 2)];
+  boxes.forEach(function (b, i) { var k = at(u, T16[i] - .1, .35); s += iconBox(b[0], b[1], 220, G("translate(0 -10)", b[2]) + T(b[3], 0, 92, 24, b[4], 800), k); });
   return s;
 });
 // 17 · it usually settles by itself in days or weeks: the twitch bursts shrink along a calendar strip
@@ -453,8 +454,8 @@ shot(22, push(320, 420, 1.0, 1.05), function (u, d, t) {
 shot(23, push(300, 440, .88, .96), function (u, d, t) { return skin() + ghostEye(EX, EY) + muscle(EX, EY, { t: t, fire: 1 }) + nerves(EX, EY, "tw", { t: t, k: 1, sig: 1 }) + tag("كام عصب صاحيين", EX + 60, EY - 290, at(u, .4, .3), 30, ORANGE); }, { tr: "out" });
 // 24 · the recap: the ring, the teams, the lone nerves, the flicking patch
 shot(24, push(300, 420, .82, .88), function (u, d, t) {
-  return skin() + ghostEye(EX, EY) + muscle(EX, EY, { t: t, fire: at(u, chunkAt(24, 3), .3) }) + nerves(EX, EY, "tw", { t: t, k: at(u, chunkAt(24, 2), .6), sig: 1 }) +
-    callout("1", EX + 250, EY - 200, at(u, chunkAt(24, 0) + .2, .3), 22) + callout("2", EX + 300, EY + 60, at(u, chunkAt(24, 1), .3), 22) + callout("3", EX - 300, EY + 250, at(u, chunkAt(24, 2), .3), 22) + callout("4", EX - 150, EY + 200, at(u, chunkAt(24, 3), .3), 22);
+  return skin() + ghostEye(EX, EY) + muscle(EX, EY, { t: t, fire: at(u, chunkAt(24, 4), .3) }) + nerves(EX, EY, "tw", { t: t, k: at(u, chunkAt(24, 3), .6), sig: 1 }) +
+    callout("1", EX + 250, EY - 200, at(u, chunkAt(24, 1), .3), 22) + callout("2", EX + 300, EY + 60, at(u, chunkAt(24, 2), .3), 22) + callout("3", EX - 300, EY + 250, at(u, chunkAt(24, 3), .3), 22) + callout("4", EX - 150, EY + 200, at(u, chunkAt(24, 4), .3), 22);
 }, { tr: "out" });
 // 25 · the odd fact: you blink about 15,000 times a day without noticing
 shot(25, push(320, 400, 1.0, 1.05), function (u, d, t) {

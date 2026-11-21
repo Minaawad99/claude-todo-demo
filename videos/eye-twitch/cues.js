@@ -45,13 +45,16 @@ paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                               
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
 // e.g. lab(5, 0.4); ding(L(6) + 1.6); scribble(L(9) + 1.2); sea(L(0), L(PROMISE) - L(0) + 0.6, 0.45);
 // shot changes inside a line (caption-chunk shots: the ring view, the fibre bundle, Botox blocking)
-[11.13, 15.58, 72.88].forEach(t => rec(t - 0.08, 'swipe', 0.3, 0.6, 0.42, 1.0, 'whoosh', 0.2));
+const CH = JSON.parse(fs.readFileSync(__dirname + '/sketch/scenes.js', 'utf8').match(/window\.CHUNKS = (\[.*?\]);/)[1]);
+const LC = (i, k) => T[i].start + (T[i].end - T[i].start) * CH[i][k];   // start of caption chunk k of line i
+const S4 = LC(4, 1), S5 = LC(5, 1), S21 = LC(21, 1);
+[S4, S5, S21].forEach(t => rec(t - 0.08, 'swipe', 0.3, 0.6, 0.42, 1.0, 'whoosh', 0.2));
 // the twitch itself: small fast flicks of the lid (a burst of soft ticks), used wherever the lid flickers
 const flicker = (t, n) => { for (let k = 0; k < (n || 6); k++) a(t + k * 0.15, 'tick', 0.1); };
 const fire = (t, n) => { for (let k = 0; k < (n || 4); k++) a(t + k * 0.3, 'zap', 0.12); };      // a nerve firing on its own
 flicker(L(0) + 0.6); flicker(L(1) + 0.4, 4); paper(L(1) + 0.2); scribble(L(1) + 1.0); a(L(2) + 0.3, 'pop', 0.3);
-flicker(L(4) + 0.3, 5); lab(4, 0.4); a(11.13 + 0.2, 'wipe', 0.25); lab(4, 2.9);                    // 4 · the ring muscle shows
-a(15.58 + 0.2, 'wipe', 0.2); lab(5, 2.3); ding(15.58 + 1.5);                                       // 5 · fibres pulled out, «1000s»
+flicker(L(4) + 0.3, 5); lab(4, 0.4); a(S4 + 0.2, 'wipe', 0.25); a(S4 + 1.2, 'tick', 0.2);                    // 4 · the ring muscle shows
+a(S5 + 0.2, 'wipe', 0.2); a(S5 + 0.4, 'tick', 0.2); ding(S5 + 1.4);                                       // 5 · fibres pulled out, «1000s»
 a(L(6) + 0.3, 'pop', 0.3); a(L(6) + 2.2, 'charge', 0.15); lab(6, 2.7);                            // 6 · teams, one nerve
 for (let k = 0; k < 5; k++) a(L(7) + 0.6 + k * 0.45, 'tick', 0.3);                                // 7 · floor switches click on
 a(L(8) + 0.6, 'charge', 0.2); a(L(8) + 1.4, 'pop', 0.3);                                         // 8 · the brain fires all at once
@@ -63,16 +66,16 @@ a(L(13) + 0.1, 'hum', 0.1, 3); fire(L(13) + 0.3, 6); lab(13, 0.6);              
 paper(L(14) + 0.3); scribble(L(14) + 1.6); flicker(L(14) + 0.5, 5);                                // 14 · «اقفي بقى!» ✗
 a(L(15) + 0.2, 'spark', 0.15); lab(15, 0.3);                                                      // 15 · the nerve ending
 // 16 · the four triggers, one per caption chunk (chunk starts read from the page)
-[0, 1.3, 2.4, 3.7].forEach((dt, i) => a(L(16) + dt, 'pop', 0.3)); a(L(16) + 2.6, 'clink', 0.2);
+[LC(16, 0), LC(16, 0) + 0.75, LC(16, 1), LC(16, 2)].forEach(t => a(t - 0.1, 'pop', 0.3)); a(LC(16, 2) + 0.2, 'clink', 0.2);
 a(L(17) + 0.3, 'tick', 0.15); a(L(17) + D(17) - 1.1, 'pop', 0.3);                                 // 17 · it settles: ✓
-a(L(18) + 0.2, 'pop', 0.3); a(L(18) + 2.0, 'pop', 0.3); paper(L(18) + 3.6);                        // 18 · doctor
+a(LC(18, 0), 'pop', 0.3); a(LC(18, 1), 'pop', 0.3); paper(LC(18, 2));                        // 18 · doctor
 paper(L(19) + 0.2); a(L(19) + 1.6, 'whoosh', 0.2); a(L(19) + 2.7, 'squeeze', 0.12);                // 19 · Botox syringe
 a(L(20) + 0.5, 'wipe', 0.2); a(L(20) + 0.4, 'pop', 0.25);                                         // 20 · wrinkles smooth out
 fire(L(21) + 0.3, 6); lab(21, 0.3); lab(21, 0.6); lab(21, 1.0);                                   // 21 · the junction works
-scribble(72.88 + 0.6); ding(72.88 + 1.2);                                                          // 21b · blocked, 3 months
+scribble(S21 + 0.6); ding(S21 + 1.2);                                                          // 21b · blocked, 3 months
 a(L(22) + 0.3, 'whoosh', 0.25); scribble(L(22) + D(22) - 1.1);                                     // 22 · the «news» myth ✗
 fire(L(23) + 0.2, 5); a(L(23) + 0.4, 'pop', 0.3);                                                 // 23 · a few nerves awake
-[0.2, 1.6, 3.2, 5.0].forEach(dt => a(L(24) + dt, 'pop', 0.3));                                    // 24 · recap callouts
+[1, 2, 3, 4].forEach(k => a(LC(24, k), 'pop', 0.3));                                    // 24 · recap callouts
 for (let k = 0; k < 4; k++) a(L(25) + 0.3 + k * 1.1, 'wipe', 0.12); ding(L(25) + D(25) - 0.7);    // 25 · blinks counting up
 
 // music plays only when sfx.py is run with --music, and that only when the user asked for music in this video
