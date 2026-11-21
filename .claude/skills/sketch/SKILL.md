@@ -130,7 +130,7 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
     - Arabic words in a box (`tag`);
     - dimension lines (`measure`).
 - **People: the shared person kit, always** (the user's fixed rule after the person demo, for every skill). Load
-  `videos/_templates/people/person.js` and read its `README.md`. `PERSON.front()` gives the front or three-quarter view,
+  `videos/_templates/people/person.js` (the template's `build.py` always loads it) and read its `README.md`. `PERSON.front()` gives the front or three-quarter view,
   `PERSON.side()` the profile, for walking and for lying flat on the back with `rot: -90`.
   - **Real proportions:** the wrist sits at the top of the thigh and the fingertips at mid-thigh.
   - **Flowing limbs:** each limb is one outline with the joints hidden inside it, never circles. A reaching arm is

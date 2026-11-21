@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- «لو» pose sheet: every pose of the jointed man on one page, to look at BEFORE any render.
+<!-- «لو» pose sheet: every pose of the man (drawn with the shared person kit, videos/_templates/people/person.js) on one page, to look at BEFORE any render.
      Open: videos/_templates/law/poses.html?ep=secret-basement (loads videos/<ep>/timing.js and videos/<ep>/law/scene.js).
      Shoot: node -e "…page.goto('file://…/poses.html?ep=<ep>'); page.screenshot(…)" at 2000×1650. -->
 <html><head><meta charset="utf-8"><title>Pose sheet</title><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@800&display=swap" rel="stylesheet"></head>
@@ -38,9 +38,9 @@
 <script>
   var ep = (location.search.match(/ep=([\w-]+)/) || [])[1] || "secret-basement";
   function load(src, cb) { var e = document.createElement("script"); e.src = src; e.onload = cb; document.body.appendChild(e); }
-  load("../../" + ep + "/timing.js", function () { load("kit.js", function () { load("../../" + ep + "/law/scene.js", draw); }); });
+  load("../../" + ep + "/timing.js", function () { load("../people/person.js", function () { load("kit.js", function () { load("../../" + ep + "/law/scene.js", draw); }); }); });
   function draw() {
-    var P = window.LAW || window.__parts, s = "", names = ["dig@0", "dig@0.25", "dig@0.5", "dig@0.75", "walk@0", "walk@0.5", "climb@0"].concat(Object.keys(P.POSES));
+    var P = window.LAW || window.__parts, s = "", names = ["dig@0", "dig@0.25", "dig@0.5", "dig@0.75", "walk@0.25", "walk@0.75", "climb@0"].concat(Object.keys(P.POSES));
     names.forEach(function (n, i) { var x = 110 + (i % 9) * 215, y = 470 + Math.floor(i / 9) * 540, nm = n.split("@")[0], ph = +(n.split("@")[1] || 0);
       s += '<line x1="' + (x - 100) + '" y1="' + y + '" x2="' + (x + 100) + '" y2="' + y + '" stroke="#6a4a2a" stroke-width="6"/><text x="' + x + '" y="' + (y + 56) + '" text-anchor="middle" style="font:800 30px Noto Sans Arabic">' + n + '</text>';
       var p = P.pose(nm, ph), sit = /^sit/.test(nm), air = nm === "climb";

@@ -3,6 +3,9 @@
    arrows, confetti, and the shot runner with the build-that-grows state. Load it after ../timing.js and before the
    episode's scene.js; set window.LAW_GY (ground line, default 900) first if the episode needs another.
    Built from «تعمل قبو سري إزاي؟» (videos/secret-basement/law/scene.js). Check every pose with poses.html before rendering. */
+// The user's rule: every person in every skill is drawn with the shared person kit. Load it from next to this kit
+// (videos/_templates/people/person.js) when the page has not, so man() and act() below always draw that person.
+if (!window.PERSON && document.currentScript) document.write('<script src="' + document.currentScript.src.replace(/law\/kit\.js(\?.*)?$/, "people/person.js") + '"><\/script>');
 (function () {
   var LN = window.TIMING.lines;
   function L(i) { return i >= LN.length ? window.TIMING.duration + 1.5 : LN[i].start; }
@@ -67,7 +70,7 @@
     ear: { lean: 30, head: 30, aN: [20, 170], aF: [-10, 0], lN: [10, 0], lF: [-10, -6] },
     hush: { lean: 6, head: 6, aN: [30, 172], aF: [-6, -2], lN: [4, 2], lF: [-4, -2] }
   };
-  function walkP(ph) { var a = Math.sin(ph * Math.PI * 2) * 26, b = Math.sin(ph * Math.PI * 2 + Math.PI) * 26; return { lean: 4, head: 0, aN: [-a * 0.8, -a * 0.6 + 14], aF: [-b * 0.8, -b * 0.6 + 14], lN: [a, a - Math.max(0, -Math.sin(ph * Math.PI * 2)) * 34], lF: [b, b - Math.max(0, Math.sin(ph * Math.PI * 2)) * 34] }; }
+  function walkP(ph) { var a = Math.sin(ph * Math.PI * 2) * 26, b = Math.sin(ph * Math.PI * 2 + Math.PI) * 26; return { walk: ph, lean: 4, head: 0, aN: [-a * 0.8, -a * 0.6 + 14], aF: [-b * 0.8, -b * 0.6 + 14], lN: [a, a - Math.max(0, -Math.sin(ph * Math.PI * 2)) * 34], lF: [b, b - Math.max(0, Math.sin(ph * Math.PI * 2)) * 34] }; }
   // digging: the top (far) hand at the chest, the lower (near) hand forward and low on the handle, so the shaft runs down and
   // forward and the blade is in the ground in front of the feet. The cycle: push the blade down (0–0.5), lever it up and
   // toss the earth back (0.5–1).
@@ -76,7 +79,7 @@
   function climbP(ph) { var s = Math.sin(ph * Math.PI * 2); return { lean: 0, head: -6, aN: [160 + s * 14, 170 + s * 10], aF: [150 - s * 14, 165 - s * 10], lN: [50 + s * 40, -10 + s * 10], lF: [50 - s * 40, -10 - s * 10] }; }
   function hammerP(ph) { var s = Math.sin(ph * Math.PI * 2); return { lean: 10, head: 4, aN: [110 + s * 40, 150 + s * 50], aF: [60, 80], lN: [8, 2], lF: [-8, -4], hammer: 1 }; }
   function caulkP(ph) { var s = Math.sin(ph * Math.PI * 2); return { lean: 34, head: 14, aN: [80 + s * 10, 100 + s * 10], aF: [60, 90], lN: [96, -6], lF: [70, -24], caulk: 1 }; }
-  function mixPose(a, b, k) { var o = {}; for (var key in a) { var va = a[key], vb = b[key] == null ? va : b[key]; o[key] = Array.isArray(va) ? [lerp(va[0], vb[0], k), lerp(va[1], vb[1], k)] : (typeof va === "number" ? lerp(va, vb, k) : (k < 0.5 ? va : vb)); } for (var k2 in b) if (o[k2] == null) o[k2] = b[k2]; return o; }
+  function mixPose(a, b, k) { var o = {}; for (var key in a) { if (key === "walk") { if (b.walk != null || k < 0.5) o.walk = b.walk != null ? b.walk : a.walk; continue; } var va = a[key], vb = b[key] == null ? va : b[key]; o[key] = Array.isArray(va) ? [lerp(va[0], vb[0], k), lerp(va[1], vb[1], k)] : (typeof va === "number" ? lerp(va, vb, k) : (k < 0.5 ? va : vb)); } for (var k2 in b) if (o[k2] == null) o[k2] = b[k2]; return o; }
   function pose(name, ph) { if (typeof name === "object") return name; if (name === "walk") return walkP(ph); if (name === "dig") return digP(ph); if (name === "climb") return climbP(ph); if (name === "hammer") return hammerP(ph); if (name === "caulk") return caulkP(ph); return POSES[name] || POSES.stand; }
   function dirv(a, fc) { var r = a * Math.PI / 180; return [fc * Math.sin(r), Math.cos(r)]; }
   function add(p, d, l) { return [p[0] + d[0] * l, p[1] + d[1] * l]; }
@@ -107,7 +110,51 @@
     return s;
   }
   // o: x, y (feet on ground y), f (facing ±1), p (pose name/obj), ph, mood, s (scale), hip ([x,y] fixed hip, for sitting/climbing), shirt
+  // man(o): the «لو» man, drawn with the shared person kit (PERSON.side) in the same pose language as before:
+  // POSES angles are from straight down, + towards where he faces; aN/aF = [upper arm, forearm], lN/lF = [thigh, shin].
+  // o: x, y (feet on ground y), f (facing ±1), pose, mood, t, s (scale), hip ([x,y] fixed hip), shirt, shirtD, vest, hat,
+  // phone, outfit (a PERSON outfit preset or object; vest/hat give the worker outfit). The old drawing stays as manOld().
+  var MOODFACE = { n: {}, happy: { mouth: "smile" }, proud: { mouth: "grin" }, shock: { brows: "raised", mouth: "open", eyes: 1.25 },
+    worry: { brows: "worried", mouth: "frown" }, dizzy: { brows: "worried", mouth: "frown", tired: true, eyes: 0.6 }, sick: { brows: "worried", mouth: "o", tired: true } };
+  var PS = 0.84;   // the old man's legs were 164 units, the kit's 196: same height on screen
   function man(o) {
+    if (!window.PERSON) return manOld(o);
+    if (!man.ink) { window.PERSON.setInk(INK); man.ink = 1; }
+    var fc = o.f || 1, s = (o.s || 1) * PS, t = o.t || 0, mood = o.mood || "n";
+    var p = Object.assign({}, o.pose || POSES.stand);
+    ["aN", "aF"].forEach(function (k) { var a = p[k]; p[k] = [a[0], Math.min(a[0] + 165, Math.max(a[0], a[1]))]; });
+    ["lN", "lF"].forEach(function (k) { var a = p[k]; p[k] = [a[0], Math.max(a[0] - 160, Math.min(a[0], a[1]))]; });
+    var lean = p.lean || 0;
+    function arm(a, hand) { return { sh: a[0] - lean, el: a[1] - a[0], hand: hand }; }
+    var handN = p.thumb ? "thumb" : p.point || (p.aN[0] > 80 && p.aN[0] < 110 && p.aN[1] - p.aN[0] < 12) ? "point" : (p.hammer || p.caulk || p.shovel || o.phone) ? "fist" : "relaxed";
+    var face = Object.assign({}, MOODFACE[mood] || {});
+    if (((t * 0.31 + (o.x || 0) * 0.001) % 1) < 0.035) face.eyes = 0.05;   // a blink now and then
+    var outfit = o.outfit || ((o.vest || o.hat) ? { base: "worker" } : { base: "casual" });
+    if (typeof outfit === "string") outfit = { base: outfit };
+    outfit = Object.assign({}, outfit, { colors: Object.assign({ shirt: o.shirt || "#4a8ccc", shirtD: o.shirtD || "#2a5f92", pants: "#5a5142", pantsD: "#3e372c" }, outfit.colors || {}) });
+    if (!o.vest && outfit.base === "worker" && !outfit.over) outfit.over = "none";
+    if (!o.hat && outfit.base === "worker" && !outfit.hat) outfit.hat = "none";
+    var q = { s: s, dir: fc, lean: lean, breath: (Math.sin(t * 1.6) + 1) / 2, head: { tilt: (p.head || 0) - lean * 0.3 }, face: face, outfit: outfit,
+      legs: [{ hip: p.lN[0], knee: p.lN[0] - p.lN[1] }, { hip: p.lF[0], knee: p.lF[0] - p.lF[1] }], arms: [arm(p.aN, handN), arm(p.aF, p.shovel ? "fist" : "relaxed")] };
+    if (p.walk != null) { var W = window.PERSON.walkPose(p.walk * Math.PI * 2, 1); q.legs = W.legs; q.arms = W.arms; q.lean = 3; }   // the kit's own gait: the foot on the floor straight, the other bends after toe-off
+    q.x = o.hip ? o.hip[0] : o.x; q.y = o.hip ? o.hip[1] : window.PERSON.sideHipY(Object.assign({ x: 0 }, q), o.y);
+    var P = window.PERSON.side(q), J = P.joints;
+    // world points of both wrists, for the tools (the kit only reports the near arm)
+    function wrist(a) { var L = lean * Math.PI / 180, sp = [-2 * Math.cos(L) + 117 * Math.sin(L), -117 * Math.cos(L) - 2 * Math.sin(L)], ua = a.sh + lean, fa = ua + a.el;
+      function V(d) { d = d * Math.PI / 180; return [Math.sin(d), Math.cos(d)]; }
+      var w = [sp[0] + V(ua)[0] * 74 + V(fa)[0] * 58, sp[1] + V(ua)[1] * 74 + V(fa)[1] * 58]; return [q.x + w[0] * s * fc, q.y + w[1] * s]; }
+    var wN = wrist(q.arms[0]), wF = wrist(q.arms[1]), g = '<g filter="url(#sh)">' + P.svg;
+    if (mood === "shock" || mood === "worry" || mood === "dizzy") { var sw = (t * 1.3) % 1, hc = J.head; g += F("M" + f(hc[0] - fc * 40 * s) + " " + f(hc[1] - 20 + sw * 20) + " q-7 12 0 15 q7 -3 0 -15 Z", "#9fd6ff", { sw: 1.6, op: 1 - sw }); }
+    if (p.shovel) { var dv = [wN[0] - wF[0], wN[1] - wF[1]], ln = Math.hypot(dv[0], dv[1]) || 1, u = [dv[0] / ln, dv[1] / ln], back = [wF[0] - u[0] * 26, wF[1] - u[1] * 26], tip = [wN[0] + u[0] * 120, wN[1] + u[1] * 120];
+      if (u[1] < 0.2) { u = [fc * 0.5, 0.87]; tip = [wN[0] + u[0] * 120, wN[1] + u[1] * 120]; }
+      g += P_("M" + f(back[0]) + " " + f(back[1]) + " L" + f(tip[0]) + " " + f(tip[1]), "#8a5a30", 9) + '<g transform="translate(' + f(tip[0]) + ' ' + f(tip[1]) + ') rotate(' + f(Math.atan2(u[1], u[0]) * 180 / Math.PI - 90) + ')">' + F("M-20 0 L20 0 L16 40 Q0 52 -16 40 Z", "#9aa2ac") + (p.lift > 0.2 ? C(0, 30, 16, "#7a4c2a", { st: INK, sw: 2 }) : "") + '</g>'; }
+    if (p.hammer) g += '<g transform="translate(' + f(wN[0]) + ' ' + f(wN[1]) + ') rotate(' + f(p.aN[1] * fc + 180) + ')">' + R(-5, 0, 10, 60, "#8a5a30", { sw: 2 }) + R(-20, 54, 40, 18, "#5a6068", { sw: 2 }) + '</g>';
+    if (p.caulk) g += '<g transform="translate(' + f(wN[0]) + ' ' + f(wN[1]) + ') rotate(' + f(fc * 70) + ')">' + R(-8, -10, 16, 56, "#e2b035", { sw: 2 }) + F("M-4 46 L4 46 L0 62 Z", "#ddd", { sw: 2 }) + '</g>';
+    if (o.phone) g += R(wN[0] - 10, wN[1] - 30, 20, 34, "#1e2226", { rx: 3, sw: 2 }) + R(wN[0] - 7, wN[1] - 27, 14, 26, "#7ac8ff", { sw: 0 });
+    return g + '</g>';
+  }
+  function P_(d, col, w) { return P(d, col, w); }
+  function manOld(o) {
     var fc = o.f || 1, s = o.s || 1, p = o.pose, mood = o.mood || "n", t = o.t || 0;
     var Lt = 112, Lth = 84, Lsh = 80, Lu = 64, Ll = 60;
     // joint limits (angles from straight down, + = towards where he faces): an elbow only folds the forearm forward/up
@@ -182,7 +229,7 @@
     return i;
   };
   window.LAW = { L: L, clamp: clamp, ease: ease, lerp: lerp, hash: hash, f: f, pop: pop, INK: INK, R: R, P: P, F: F, C: C, T: T, GY: GY,
-    sky: sky, palm: palm, bush: bush, ground: ground, POSES: POSES, pose: pose, mixPose: mixPose, man: man, act: act,
+    sky: sky, palm: palm, bush: bush, ground: ground, POSES: POSES, pose: pose, mixPose: mixPose, man: man, manOld: manOld, act: act,
     pill: pill, xmark: xmark, vmark: vmark, ring: ring, confetti: confetti, arrowH: arrowH, arrowV: arrowV,
     shot: shot, steps: steps, has: has, setLine: function (n) { CUR = n; } };
   window.__parts = window.LAW;
