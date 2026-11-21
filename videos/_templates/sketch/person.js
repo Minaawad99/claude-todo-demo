@@ -211,9 +211,11 @@ function person(o) {
   // ── arms: sleeve to the wrist with a ribbed cuff, the hand ──
   var arms = o.arms || [{}, {}], armSvg = ["", ""];
   [-1, 1].forEach(function (sd, i) {
-    var A = arms[i] || {}, sp = T(hSh - 4, sd * 40);
+    var A = arms[i] || {}, sp = T(hSh + 3, sd * 40);   // shoulder joint at 0.818H (119 units above the hip joints, less a slump)
     var tg = A.to || (A.rel ? [sp[0] + A.rel[0] * s, sp[1] + A.rel[1] * s] : [sp[0] + sd * 10 * s, sp[1] + 128 * s]);
-    var el = pIK(sp, tg, 74 * s, 58 * s, A.bend == null ? -sd : A.bend), dx = tg[0] - el[0], dy = tg[1] - el[1], dl = Math.hypot(dx, dy) || 1, wr = [el[0] + dx / dl * Math.min(dl, 58 * s), el[1] + dy / dl * Math.min(dl, 58 * s)];
+    // straight: a reaching arm (a stretch overhead) is one straight line from the shoulder through the elbow to the wrist
+    if (A.straight) { var rdx = tg[0] - sp[0], rdy = tg[1] - sp[1], rdl = Math.hypot(rdx, rdy) || 1; tg = [sp[0] + rdx / rdl * 132 * s, sp[1] + rdy / rdl * 132 * s]; }
+    var el = A.straight ? [sp[0] + (tg[0] - sp[0]) * 74 / 132, sp[1] + (tg[1] - sp[1]) * 74 / 132] : pIK(sp, tg, 74 * s, 58 * s, A.bend == null ? -sd : A.bend), dx = tg[0] - el[0], dy = tg[1] - el[1], dl = Math.hypot(dx, dy) || 1, wr = [el[0] + dx / dl * Math.min(dl, 58 * s), el[1] + dy / dl * Math.min(dl, 58 * s)];
     J.sh.push(sp); J.el.push(el); J.wr.push(wr);
     var cuff = [wr[0] - dx / dl * 8 * s, wr[1] - dy / dl * 8 * s], sp0 = [sp[0] - sd * 3 * s, sp[1] - 4 * s];
     var ang1 = Math.atan2(el[1] - sp[1], el[0] - sp[0]), ang2 = Math.atan2(dy, dx), bendA = Math.abs(((ang2 - ang1 + 3 * Math.PI) % (2 * Math.PI)) - Math.PI);
@@ -260,3 +262,91 @@ function sofaFront(cx, fl, w, s) {
   g += R(x0 + 6 * s, fl - 18 * s, 12 * s, 18 * s, "#6a4a32", 1.6 * s) + R(x1 - 18 * s, fl - 18 * s, 12 * s, 18 * s, "#6a4a32", 1.6 * s);
   return g;
 }
+
+/* ── the same person from the side (profile), for walking, bending and lying down ──
+   personSide(o): o.x, o.y the hip joint, o.s scale, o.dir 1 = facing right, -1 = facing left, o.rot rotates the whole body
+   about the hip (deg; -90 with dir 1 lays him on his back, head to the left).
+     o.lean: trunk angle from upright (deg, + forward) · o.breath 0..1
+     o.legs: [near, far], each {hip: thigh angle from straight down (+ forward), knee: flexion (+ bends the shin back), ankle: foot tilt}
+     o.arms: [near, far], each {sh: upper-arm angle from straight down (+ forward), el: elbow flexion (+ brings the forearm forward/up), hand}
+     o.head: {tilt (+ nods forward)} · o.face: {eyes, brows, mouth} as in person()
+   Same segment lengths as person(): thigh 98, shank 98, foot 61, upper arm 74, forearm 58, hand 43; side depths chest 52,
+   waist 46, seat 56, head 52 tall × 48 deep (H = 400). Drawn in local units facing right, then placed with one transform. */
+function walkPose(ph, amp) {   // a walking cycle: ph in radians, both legs and arms; amp 0..1 (0 = standing)
+  amp = amp == null ? 1 : amp;
+  function leg(p) { var sw = Math.sin(p), k = Math.max(0, Math.sin(p + 2.07));   /* the knee bends most just after toe-off, straight while the foot is on the floor */ return { hip: 19 * sw * amp, knee: (6 + 58 * k * k) * amp, ankle: (sw > 0 ? -8 * sw : 14 * -sw) * amp }; }
+  return { legs: [leg(ph), leg(ph + Math.PI)], arms: [{ sh: -20 * Math.sin(ph) * amp, el: (16 + 10 * Math.max(0, -Math.sin(ph))) * amp + 6, hand: "relaxed" }, { sh: 20 * Math.sin(ph) * amp, el: (16 + 10 * Math.max(0, Math.sin(ph))) * amp + 6, hand: "relaxed" }] };
+}
+function personSide(o) {
+  var c = {}, k; for (k in PSN) c[k] = PSN[k]; if (o.colors) for (k in o.colors) c[k] = o.colors[k];
+  var lean = (o.lean || 0) * Math.PI / 180, br = (o.breath || 0) * 1.4, fc = o.face || {}, hd = o.head || {};
+  function T(h, x) { return [x * Math.cos(lean) + h * Math.sin(lean), -h * Math.cos(lean) + x * Math.sin(lean)]; }   // trunk frame: h up, x forward
+  function V(a) { a = a * Math.PI / 180; return [Math.sin(a), Math.cos(a)]; }
+  var legs = o.legs || [{ hip: 0, knee: 0 }, { hip: 0, knee: 0 }], arms = o.arms || [{ sh: 2, el: 12 }, { sh: -2, el: 12 }], part = { leg: ["", ""], arm: ["", ""] }, J = {};
+  // ── legs: one trouser outline hip → thigh → knee → calf → hem, then the sock-foot in profile ──
+  legs.forEach(function (L, i) {
+    var hp = [0, 2], kn = [hp[0] + V(L.hip)[0] * 98, hp[1] + V(L.hip)[1] * 98], b = L.hip - (L.knee || 0), an = [kn[0] + V(b)[0] * 98, kn[1] + V(b)[1] * 98];
+    var fw = [Math.cos((b - (L.ankle || 0)) * Math.PI / 180), -Math.sin((b - (L.ankle || 0)) * Math.PI / 180)], dn = [-fw[1], fw[0]];
+    var hem = [an[0] - V(b)[0] * 6, an[1] - V(b)[1] * 6], top = [hp[0] + 4, hp[1] - 14];
+    var pts = [top, L2p(top, kn, .45, 0), kn, L2p(kn, hem, .35, 0), hem], ws = [46, 39, 30, 31, 23];
+    var g = pLimbDraw(pLimb(pts, ws, false), i ? c.pantsD : c.pants, 1, pShade(pts, ws, c.pantsD, 1, i ? .3 : .55), 2.3);
+    g += '<path d="' + pPath([L2p(kn, top, .08, -10), L2p(kn, hem, .1, -8)], false) + '" stroke="' + c.pantsD + '" stroke-width="1.3" fill="none"/>';   // crease behind the knee
+    // the foot: heel behind the ankle, sole along fw, toes 47 ahead (foot 61 = 0.152H)
+    var P = function (u, v) { return [an[0] + fw[0] * u + dn[0] * v, an[1] + fw[1] * u + dn[1] * v]; };
+    var foot = [P(-14, -4), P(-15, 8), P(-10, 14), P(30, 14), P(46, 12), P(48, 6), P(40, 0), P(22, -6), P(6, -10), P(-8, -10)];
+    g = '<path d="' + pPath(foot, true) + '" fill="' + (i ? "#46464b" : c.socks) + '" stroke="' + INK + '" stroke-width="2" stroke-linejoin="round"/>' + pLine([P(-12, 12), P(44, 11)], "#6e6e75", 1.1) + g;
+    part.leg[i] = g; if (!i) { J.knee = kn; J.ankle = an; J.toe = P(48, 6); J.heel = P(-14, 13); }
+    J["foot" + i] = [P(-14, 14), P(48, 13)];
+  });
+  // ── trunk in profile: chest, back, the sweater's hem and collar ──
+  var fr = [[-4, 27], [10, 28], [30, 25], [56, 27 + br], [80, 31 + br], [98, 30], [110, 23], [120, 13]], bk = [[121, -13], [110, -25], [88, -28], [62, -23], [38, -25], [16, -30], [-2, -29]];
+  var torso = fr.concat(bk).map(function (q) { return T(q[0], q[1]); });
+  var trunk = '<path d="' + pPath(torso, true) + '" fill="' + c.shirt + '" stroke="' + INK + '" stroke-width="2.4"/>';
+  trunk += '<path d="' + pPath([T(112, -16), T(86, -20), T(60, -15), T(30, -18), T(8, -22), T(8, -10), T(40, -8), T(80, -10)], true) + '" fill="' + c.shirtD + '" opacity=".45"/>';
+  trunk += '<path d="' + pPath([T(2, 27), T(10, 27.5), T(10, -28), T(1, -28)], false) + '" stroke="' + INK + '" stroke-width="1.8" fill="none"/>';
+  for (var r = -24; r <= 24; r += 4) trunk += pLine([T(2.5, r), T(9, r)], c.shirtD, .9);
+  trunk += pLine([T(60, 6), T(52, 14), T(48, 22)], c.shirtD, 1.3) + pLine([T(30, 2), T(24, 12)], c.shirtD, 1.2);
+  // ── neck and head in profile, facing +x ──
+  var tilt = (hd.tilt || 0) + (o.lean || 0), hc = T(166 + br * .5, 6);
+  var neck = '<path d="M' + f(T(116, -8)[0]) + ' ' + f(T(116, -8)[1]) + ' L' + f(T(146, -10)[0]) + ' ' + f(T(146, -10)[1]) + ' L' + f(T(146, 10)[0]) + ' ' + f(T(146, 10)[1]) + ' L' + f(T(116, 13)[0]) + ' ' + f(T(116, 13)[1]) + ' Z" fill="' + c.skin + '" stroke="' + INK + '" stroke-width="2"/>' +
+             '<path d="' + pPath([T(118, -11), T(124, 2), T(118, 15)], false) + '" stroke="' + INK + '" stroke-width="2" fill="' + c.shirt + '"/>' + pLine([T(119.5, -8), T(123, 2), T(119.5, 12)], c.shirtD, 1);
+  var eo = fc.eyes == null ? 1 : fc.eyes, mo = fc.mouth || "neutral", h = "";
+  var shape = [[-23, -4], [-19, -20], [-6, -28], [8, -26], [17, -18], [20.5, -8], [20.5, -4], [22, 0], [27.5, 7.5], [23, 10], [22.5, 12.5], [23, 15], [22, 17.5], [21, 22], [16, 25.5], [6, 25], [-2, 20], [-10, 15], [-17, 12], [-22, 6]];
+  h += '<path d="' + pPath(shape, true) + '" fill="' + c.skin + '" stroke="' + INK + '" stroke-width="2.2"/>';
+  h += '<path d="M10 8 C14 16 14 21 8 24 C14 24 19 21 20 14 Z" fill="' + c.skinD + '" opacity=".35"/>';   // jaw shade
+  h += '<path d="M-5 -4 C3 -6 5 8 -3 10 C-1 6 -1 0 -5 -4 Z" fill="' + c.skin + '" stroke="' + INK + '" stroke-width="1.7"/><path d="M-2.5 -1 C1 -1 1.5 5 -1.5 6" stroke="' + c.skinD + '" stroke-width="1.1" fill="none"/>';   // ear
+  h += '<path d="' + pPath([[-23.5, 6], [-24, -10], [-17, -25], [-4, -31], [10, -29], [18, -21], [16, -15], [9, -18], [2, -16], [-6, -14], [-12, -8], [-10, -2], [-16, 4], [-19, 12]], true) + '" fill="' + c.hair + '" stroke="' + INK + '" stroke-width="1.8"/>' + pLine([[-16, -20], [-6, -24], [4, -25]], c.hairL, 1.2) + pLine([[-20, -6], [-17, 2]], c.hairL, 1.1);
+  var bv = { neutral: 0, raised: -2.6, worried: -1.2, angry: 1.6 }[fc.brows || "neutral"] || 0;
+  h += '<path d="M9 ' + f(-8 + bv) + ' Q14 ' + f(-10 + bv) + ' 18.5 ' + f(-7.5 + bv * .4) + '" stroke="' + c.hair + '" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+  if (eo < .12) h += '<path d="M10.5 -2 Q14 0.6 17.5 -1.2" stroke="' + INK + '" stroke-width="1.6" fill="none" stroke-linecap="round"/>';
+  else { var eh = 2.8 * eo; h += '<path d="M10.5 -1.5 Q14.5 ' + f(-1.5 - eh) + ' 18 -2.6 Q17 ' + f(-1.5 + eh * .5) + ' 13 ' + f(-1 + eh * .45) + ' Z" fill="' + PSN.white + '" stroke="' + INK + '" stroke-width="1.2"/><circle cx="16.2" cy="' + f(-2 + eh * .05) + '" r="' + f(Math.min(1.9, eh * .7)) + '" fill="' + PSN.iris + '"/><path d="M10.5 -1.5 Q14.5 ' + f(-1.7 - eh) + ' 18.3 -2.6" stroke="' + INK + '" stroke-width="1.8" fill="none" stroke-linecap="round"/>'; }
+  h += '<path d="M21 -1 C22.5 3 25.5 6 27.4 7.6 C26 9.4 23.5 9.6 22.5 9" stroke="' + INK + '" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M23 7.6 q1.2 .3 1.8 1.4" stroke="' + INK + '" stroke-width="1" fill="none"/>';
+  var M = { neutral: '<path d="M18 14.6 L22.6 14.4" stroke="' + INK + '" stroke-width="1.5" stroke-linecap="round"/>', smile: '<path d="M17 13.2 Q19.5 15.6 22.8 14.2" stroke="' + INK + '" stroke-width="1.6" fill="none" stroke-linecap="round"/>',
+    grin: '<path d="M16.8 13 Q19.5 17.4 22.9 14 Z" fill="#fff" stroke="' + INK + '" stroke-width="1.4"/>', open: '<path d="M18.5 13.6 Q22.8 13 22.8 14.6 Q22.4 17.6 19 17 Z" fill="#5a2a22" stroke="' + INK + '" stroke-width="1.4"/>',
+    o: '<ellipse cx="21.6" cy="15" rx="1.6" ry="2.3" fill="#5a2a22" stroke="' + INK + '" stroke-width="1.3"/>', frown: '<path d="M17.5 15.6 Q20 13.6 22.6 14.6" stroke="' + INK + '" stroke-width="1.5" fill="none" stroke-linecap="round"/>',
+    yawn: '<path d="M18 12.8 Q23.6 12 23.6 14.8 Q23 20.6 18.6 19.4 Z" fill="#5a2a22" stroke="' + INK + '" stroke-width="1.5"/>' };
+  h += M[mo] || M.neutral;
+  var head = G("translate(" + f(hc[0]) + " " + f(hc[1]) + ") rotate(" + f(tilt) + ")", h);
+  J.head = hc;
+  // ── arms: sleeve from the shoulder joint (0.818H) through the elbow to the cuff, the hand turned to its side ──
+  arms.forEach(function (A, i) {
+    var sp = T(117, -2), ua = (A.sh || 0) + (o.lean || 0), el = [sp[0] + V(ua)[0] * 74, sp[1] + V(ua)[1] * 74], fa = ua + (A.el || 0), wr = [el[0] + V(fa)[0] * 58, el[1] + V(fa)[1] * 58];
+    var cuff = [el[0] + V(fa)[0] * 50, el[1] + V(fa)[1] * 50], ap = [T(124, -4), L2p(sp, el, .35, 0), el, L2p(el, cuff, .35, 0), cuff], aw = [26, 23, 20, 20, 16.5];
+    var g = pLimbDraw(pLimb(ap, aw, false), i ? c.shirtD : c.shirt, 1, pShade(ap, aw, c.shirtD, 1, i ? .3 : .55), 2.3);
+    g += pLimbDraw(pLimb([cuff, [el[0] + V(fa)[0] * 59, el[1] + V(fa)[1] * 59]], [17.5, 16.5], false), i ? c.shirtD : c.shirt, 1, "", 2);
+    if ((A.el || 0) > 25) g += '<path d="' + pPath([L2p(el, sp, .12, 6), [el[0] + 4, el[1] + 2], L2p(el, wr, .12, -6)], false) + '" stroke="' + c.shirtD + '" stroke-width="1.3" fill="none"/>';
+    var ha = Math.atan2(V(fa + (A.wrist || 0))[1], V(fa + (A.wrist || 0))[0]);
+    g = G("", pHand([wr[0] - Math.cos(ha) * 1, wr[1] - Math.sin(ha) * 1], ha, A.hand || "relaxed", -1, 1, i ? Object.assign({}, c, { skin: c.skinD }) : c, false)) + g;
+    part.arm[i] = g; if (!i) { J.wrist = wr; J.elbow = el; }
+  });
+  var body = part.arm[1] + part.leg[1] + trunk + part.leg[0] + neck + head + part.arm[0];
+  var s = o.s || 1, dir = o.dir || 1;
+  J.toLocal = function (p) { return p; };
+  var tr = "translate(" + f(o.x) + " " + f(o.y) + ") rotate(" + f(o.rot || 0) + ") scale(" + f(s * dir) + " " + f(s) + ")";
+  // world positions of the joints, for props and the floor contact
+  function W(p) { var a = (o.rot || 0) * Math.PI / 180, x = p[0] * s * dir, y = p[1] * s; return [o.x + x * Math.cos(a) - y * Math.sin(a), o.y + x * Math.sin(a) + y * Math.cos(a)]; }
+  var JW = {}; for (k in J) if (Array.isArray(J[k]) && typeof J[k][0] === "number") JW[k] = W(J[k]); JW.foot0 = J.foot0.map(W); JW.foot1 = J.foot1.map(W);
+  return { svg: '<g transform="' + tr + '">' + body + '</g>', joints: JW };
+}
+// how high the hips must be so the lower foot stands on the floor (for walking: no sinking, no floating)
+function sideHipY(o, floorY) { var p = personSide(Object.assign({}, o, { y: 0 })), lo = -1e9; ["foot0", "foot1"].forEach(function (k) { p.joints[k].forEach(function (q) { lo = Math.max(lo, q[1]); }); }); return floorY - lo; }

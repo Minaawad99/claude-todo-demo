@@ -1,0 +1,20 @@
+<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;700;800&family=Noto+Serif:wght@800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#eee5d0}svg{display:block}</style></head><body>
+<svg id="s" width="1600" height="1100" viewBox="0 0 1600 1100"></svg>
+<script>window.TIMING={lines:[],duration:30};</script>
+<script src="../_templates/sketch/_helpers.js"></script><script src="../_templates/sketch/person.js"></script>
+<script>
+var out = '<path d="M0 470 H1600" stroke="#2a2016" stroke-width="2"/>';
+for (var i=0;i<8;i++){ var w=walkPose(i/8*Math.PI*2), o=Object.assign({x:90+i*190,s:.95,face:{mouth:"smile"}},w); o.y=sideHipY(o,470); out += personSide(o).svg; }
+// lying on the sofa, side view, flat on his back
+var fl=1060, s=1.05, st=fl-104*s;
+out += sofaFront(560, fl, 620, s);
+var LY=personSide({x:600,y:st-29*s,s:s,dir:1,rot:-90,legs:[{hip:0,knee:4,ankle:-10},{hip:2,knee:6,ankle:-8}],arms:[{sh:-4,el:135},{sh:4,el:20}],face:{eyes:0,mouth:"neutral"}});
+out += '<ellipse cx="'+(LY.joints.head[0]-6)+'" cy="'+(st-12)+'" rx="58" ry="18" fill="#efe6d2" stroke="#2a2016" stroke-width="2"/>' + LY.svg;
+// front, straight arms up, and arms down to check proportions
+var fy=1060-210*1.1;
+out += person({x:1200,y:fy,s:1.1,legs:"stand",face:{mouth:"smile"},arms:[{to:[1200-60,fy-300],straight:true,hand:"open",front:true},{to:[1200+60,fy-300],straight:true,hand:"open",front:true}]}).svg;
+out += person({x:1450,y:fy,s:1.1,legs:"stand",face:{mouth:"neutral"},arms:[{to:[1450-55,fy+60],hand:"relaxed",bend:1},{to:[1450+55,fy+60],hand:"relaxed",bend:-1}]}).svg;
+out += '<path d="M1380 '+(fy+98*1.1*.5)+' H1520" stroke="#bd552f" stroke-dasharray="6 5" stroke-width="2"/>';
+document.getElementById("s").innerHTML = '<defs><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".18"/></pattern></defs>' + out;
+</script></body></html>
