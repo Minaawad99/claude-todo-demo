@@ -3,7 +3,7 @@
 CFG = {
     "title": "القيلولة المظبوطة قد إيه؟",
     "category": "جسم الإنسان",
-    "libs": [],
+    "libs": ["../../_templates/people/person.js"],
     "outro": '<div class="q">القيلولة المظبوطة قد إيه؟ وليه الساعة بتدوّخك؟</div><div class="art"><svg id="outroArt" viewBox="0 0 600 280"></svg></div>'
              '<div class="leg"><span><b>1</b>القيلولة السريعة: 10–20 دقيقة</span><span><b>2</b>النوم العميق: ممنوع تصحى منه</span><span><b>3</b>الدورة الكاملة: 90 دقيقة</span><span><b>4</b>مرحلة الأحلام</span></div>'
              '<div class="stat"><div class="n">90</div><div class="t">دقيقة: طول دورة النوم الواحدة،<br>من النوم الخفيف للعميق للأحلام</div></div>'

@@ -250,29 +250,43 @@ function sofa(x0, fl, w, s) {
   return r;
 }
 function seatTop(fl, s) { return fl - 104 * s; }
-// a man asleep on his back on the sofa: head to the right on a pillow, a blanket over the legs, a hand on the belly that rises with the breath
+// ── people: the shared person kit (videos/_templates/people/person.js, the user's rule for every skill). The napper is at
+// home, so the "home" outfit (sweater, socks); the NASA pilot wears the "pilot" outfit. LASTHEAD = the head of the last
+// person drawn, for props (the dizzy swirl, the EEG wire).
+var LASTHEAD = [0, 0];
+// asleep flat on his back on the sofa, head to the right on the pillow, a hand on the belly rising with the breath
 function sleeper(hx, fl, s, t, opt) {
-  opt = opt || {}; var st = seatTop(fl, s), br = Math.sin(t * 1.6), m = fig({ x: hx, y: st - 26 * s, s: s, lean: -90, legs: [[90, 0], [88, 2]], hands: [rel(40, 30 + 2 * br), rel(48, 26 + 2 * br)], bend: [-1, -1], shirt: opt.shirt || SHIRT_N });
-  var pil = '<ellipse cx="' + f(hx + 172 * s) + '" cy="' + f(st - 6 * s) + '" rx="' + f(46 * s) + '" ry="' + f(16 * s) + '" fill="' + PILLOW + '" stroke="' + INK + '" stroke-width="2"/>';
-  var bl = '<path d="M' + f(hx + 46 * s) + ' ' + f(st + 8 * s) + ' C' + f(hx + 50 * s) + ' ' + f(st - 52 * s - 2 * br * s) + ' ' + f(hx - 60 * s) + ' ' + f(st - 52 * s) + ' ' + f(hx - 150 * s) + ' ' + f(st - 42 * s) + ' C' + f(hx - 210 * s) + ' ' + f(st - 36 * s) + ' ' + f(hx - 250 * s) + ' ' + f(st - 40 * s) + ' ' + f(hx - 258 * s) + ' ' + f(st + 8 * s) + ' Z" fill="' + BLANKET + '" stroke="' + INK + '" stroke-width="2.2"/>' +
-    '<path d="M' + f(hx - 30 * s) + ' ' + f(st - 46 * s) + ' l-10 ' + f(52 * s) + ' M' + f(hx - 110 * s) + ' ' + f(st - 44 * s) + ' l-6 ' + f(52 * s) + ' M' + f(hx - 190 * s) + ' ' + f(st - 38 * s) + ' l-4 ' + f(46 * s) + '" stroke="#6f8796" stroke-width="3"/>';
-  return pil + m.far + m.body + bl + m.near;
+  opt = opt || {}; var st = seatTop(fl, s);
+  var P = PERSON.side({ x: hx, y: st - 29 * s, s: s, dir: -1, rot: 90, outfit: "home", breath: (Math.sin(t * 1.6) + 1) / 2, head: { tilt: opt.tilt || 0 },
+    legs: [{ hip: 0, knee: 5, ankle: -12 }, { hip: 3, knee: 8, ankle: -8 }], arms: [{ sh: -4, el: 135, wrist: 55 }, { sh: 4, el: 18 }],
+    face: { eyes: opt.eyes || 0, brows: opt.brows || "neutral", mouth: opt.mouth || "neutral" } });
+  LASTHEAD = P.joints.head;
+  return '<ellipse cx="' + f(P.joints.head[0] + 4 * s) + '" cy="' + f(st - 8 * s) + '" rx="' + f(46 * s) + '" ry="' + f(15 * s) + '" fill="' + PILLOW + '" stroke="' + INK + '" stroke-width="2"/>' + P.svg;
 }
-// the same man sitting on the edge of the sofa, slumped and groggy: hands on the knees, the head hanging and swaying
+// woken from deep sleep: sitting on the edge of the sofa, groggy, a hand on the forehead (elbow out), the other on the thigh
 function groggy(hx, fl, s, t) {
-  var sw = Math.sin(t * 1.3), y = fl - 105 * s, kn = [hx - 96 * s, y + 17 * s];
-  return whole(fig({ x: hx, y: y, s: s, lean: 22 + 3 * sw, legs: [[80, -80], [76, -76]], hands: [rel(176, 30), [kn[0] + 18 * s, kn[1] - 12 * s]], bend: [1, 1], tilt: -16 + 8 * sw }));
+  var y = fl - 114 * s, sw = Math.sin(t * 1.3);
+  var o = { x: hx, y: y, s: s, legs: "sit", slump: .6, outfit: "home", breath: (Math.sin(t * 1.7) + 1) / 2, head: { tilt: 10 + 3 * sw, turn: .25, nod: .1 },
+    face: { eyes: (t * 1000) % 3600 < 130 ? .05 : .4, brows: "worried", mouth: "frown", tired: true } };
+  var gh = PERSON.front(o).joints.head;
+  o.arms = [{ to: [hx - 40 * s, y + 2 * s], hand: "relaxed", bend: 1, rot: 70 }, { to: [gh[0] + 23 * s, gh[1] - 13 * s], bend: 1, hand: "flat", front: true, rot: -168, palm: true }];
+  var P = PERSON.front(o); LASTHEAD = P.joints.head; return P.svg;
 }
-// standing up with both arms stretched over the head, fresh
-function stretch(hx, fl, s, t) {
-  var b = Math.sin(t * 2) * 4;
-  return whole(fig({ x: hx, y: fl - 212 * s, s: s, lean: -4, hands: [rel(236 + b, 46), rel(240 - b, -36)], bend: [-1, 1], tilt: 8 }));
+// up and stretching: both arms straight overhead, open hands; mouth "yawn" or "smile"
+function stretch(hx, fl, s, t, mouth) {
+  var y = fl - 210 * s, b = Math.sin(t * 2) * 6, yawn = mouth === "yawn";
+  var P = PERSON.front({ x: hx, y: y, s: s, legs: "stand", outfit: "home", breath: (Math.sin(t * 1.7) + 1) / 2, head: { tilt: yawn ? -6 : 2 * Math.sin(t) },
+    face: { eyes: yawn ? 0 : 1, brows: "raised", mouth: mouth || "smile" },
+    arms: [{ to: [hx - 62 * s - b, y - 300 * s], straight: true, hand: "open", front: true }, { to: [hx + 62 * s + b, y - 300 * s], straight: true, hand: "open", front: true }] });
+  LASTHEAD = P.joints.head; return P.svg;
 }
-// a man walking (faces right when right = true), feet on the line y
+// walking in profile (faces right when right = true), the lower foot on the line y; ph = walking phase (radians), opt.still stands
 function walker(x, y, s, ph, right, opt) {
-  opt = opt || {}; var a = 18 * Math.sin(ph), m = fig({ x: x, y: y - 212 * s + 2 * Math.abs(Math.cos(ph)) * s, s: s, lean: 3, legs: [[a, -Math.max(0, a) * .2 - 4], [-a, -Math.max(0, -a) * .2 - 4]], hands: opt.hands, bend: [-1, -1], shirt: opt.shirt, tilt: opt.tilt });
-  var g = whole(m);
-  return right ? G("translate(" + f(2 * x) + " 0) scale(-1 1)", g) : g;
+  opt = opt || {};
+  var o = Object.assign({ x: x, s: s, dir: right ? 1 : -1, lean: 3, outfit: "home", breath: (Math.sin(ph * .5 + x) + 1) / 2,
+    face: { eyes: opt.eyes == null ? 1 : opt.eyes, brows: opt.brows || "neutral", mouth: opt.mouth || "neutral" } }, PERSON.walkPose(ph, opt.still ? 0 : 1));
+  o.y = PERSON.sideHipY(o, y);
+  var P = PERSON.side(o); LASTHEAD = P.joints.head; return P.svg;
 }
 
 // ── marks ──
@@ -350,7 +364,7 @@ function stairs(op) {
   if (op.dimDeep) s += '<rect x="300" y="300" width="1100" height="500" fill="' + PAPER + '" opacity="' + f(.6 * op.dimDeep) + '"/>';
   return op.k == null ? s : sweep(-300, 0, 1620, 900, op.k, "r", s);
 }
-function manOn(x, t, opt) { opt = opt || {}; return walker(x, walkY(x), ST.s, opt.walk ? t * 9 : 0, opt.left ? false : true, opt); }
+function manOn(x, t, opt) { opt = opt || {}; return walker(x, walkY(x), ST.s, t * 5.6, opt.left ? false : true, Object.assign({ still: !opt.walk }, opt)); }
 // eased walk through keyframes [[u, x], …]
 function walkX(u, keys) { if (u <= keys[0][0]) return keys[0][1]; for (var i = 1; i < keys.length; i++) if (u <= keys[i][0]) return lerp(keys[i - 1][1], keys[i][1], ease((u - keys[i - 1][0]) / (keys[i][0] - keys[i - 1][0]))); return keys[keys.length - 1][1]; }
 function moving(u, keys) { for (var i = 1; i < keys.length; i++) if (u > keys[i - 1][0] && u < keys[i][0] && keys[i][1] !== keys[i - 1][1]) return true; return false; }
@@ -423,7 +437,7 @@ shot(9, push(200, 250, 1.25, 1.15), function (u, d, t) {
 var K10 = [[1.2, SPOT.light], [2.4, SPOT.wake + 10]];
 shot(10, push(120, 230, 1.3, 1.2), function (u, d, t) {
   var x = walkX(u, K10);
-  return paper() + stairs({ hl: x < 100 ? 0 : 1, dimDeep: 1 }) + manOn(x, t, { left: true, walk: moving(u, K10) }) + bubble(-30, 70, 130, 62, "اصحى!", at(u, .3, .3)) + check(x - 70, 80, 1.2, at(u, 2.5, .4), OLIVE);
+  return paper() + stairs({ hl: x < 100 ? 0 : 1, dimDeep: 1 }) + manOn(x, t, { left: true, walk: moving(u, K10) }) + bubble(150, 40, 130, 62, "اصحى!", at(u, .3, .3)) + check(x - 70, 80, 1.2, at(u, 2.5, .4), OLIVE);
 });
 // 11 · the power nap, 10 to 20 minutes: a band on the graph, sharper focus, better mood
 shot(11, push(330, 400, 1.12, 1.18), function (u, d, t) {
@@ -436,8 +450,8 @@ shot(11, push(330, 400, 1.12, 1.18), function (u, d, t) {
 shot(12, push(320, 390, 1.1, 1.02), function (u, d, t) { return paper() + alarmClock(320, 380, 170, 60 * at(u, 0, .6), false, t) + G("", T("؟", 540, 300, 140, ORANGE, 800), at(u, .2, .3)) + numBox("60", 320, 640, at(u, .3, .3), 40); }, { tr: "out" });
 // 13 · down in deep sleep the brain runs slow, heavy waves (EEG strips from the sleeper's head)
 shot(13, push(380, 400, 1.02, 1.1), function (u, d, t) {
-  var hd = [260 + 166 * .9, seatTop(FL, .9) - 26 * .9];
-  return paper() + floor(FL) + sofa(10, FL, 600, .9) + sleeper(260, FL, .9, t) +
+  var sl = sleeper(260, FL, .9, t), hd = [LASTHEAD[0], LASTHEAD[1] + 16];
+  return paper() + floor(FL) + sofa(10, FL, 600, .9) + sl +
     draw("M" + f(hd[0] + 6) + " " + f(hd[1] - 24) + " C" + f(hd[0] + 40) + " 380 560 380 560 330", at(u, .1, .5), INK, 1.6) + C(hd[0] + 6, hd[1] - 24, 4, ORANGE, 1) +
     dim(at(u, 1.6, .5), eeg(70, 110, 500, 96, 12, 26, 140, t, OLIVE, "خفيف", at(u, .3, .4))) + eeg(70, 230, 500, 110, 34, 150, 60, t, BLUE, "عميق: موجات بطيئة", at(u, 1.4, .4));
 }, { tr: "in" });
@@ -446,12 +460,13 @@ shot(14, push(330, 300, .82, .9), function (u, d, t) {
   var k = at(u, 1.5, .45), x = lerp(SPOT.deep, SPOT.wake + 20, k), y = lerp(ST.L3, ST.W, k), s = paper() + stairs({ hl: k < .5 ? 3 : 0 });
   s += G("", alarmClock(600, 230, 40, 45, u > .5 && u < 1.6, t), at(u, .3, .3));
   if (k > 0 && k < 1) for (var i = 0; i < 4; i++) s += '<path d="M' + f(x - 30 + i * 20) + ' ' + f(y + 20) + ' l' + f((SPOT.deep - SPOT.wake) * .1) + ' ' + f((ST.L3 - ST.W) * .25) + '" stroke="' + ORANGE + '" stroke-width="3" stroke-linecap="round" opacity=".7"/>';
-  s += walker(x, y, ST.s, 0, true) + dizzy(x, y - 160, 26, t, at(u, 2.0, .4));
+  s += walker(x, y, ST.s, 0, true, { still: true, eyes: k > .3 ? 1.25 : 0, brows: "raised", mouth: k > .3 ? "o" : "neutral" }) + dizzy(x, y - 160, 26, t, at(u, 2.0, .4));
   return s + iconBox(500, 600, 150, '<path d="M-60 -40 H60 M-60 -40 V60 H60 V-40" stroke="' + INK + '" stroke-width="2.4" fill="#d9cba8"/><path d="M-40 -40 V40 H40 V-40" stroke="' + INK + '" stroke-width="1.6" fill="' + PAPER + '"/>' + T("البدروم", 0, 30, 20, INK, 800) + arrow(0, 10, 0, -66, ORANGE, 6, 1), at(u, 2.6, .3));
 });
 // 15 · sleep inertia: he sits on the edge of the sofa, groggy, for up to half an hour
-shot(15, push(300, 420, 1.0, 1.06), function (u, d, t) {
-  return paper() + floor(FL) + sofa(60, FL, 520, .9) + groggy(360, FL, .9, t) + dizzy(290, 210, 40, t, at(u, .3, .4)) +
+shot(15, push(330, 420, 1.2, 1.34), function (u, d, t) {
+  var gg = groggy(300, FL, .9, t);
+  return paper() + floor(FL) + sofa(60, FL, 520, .9) + gg + dizzy(LASTHEAD[0], LASTHEAD[1] - 70, 40, t, at(u, .3, .4)) +
     tag("خمول النوم", 300, 110, at(u, .5, .4), 34, ORANGE) + G("", alarmClock(530, 260, 54, 30 * at(u, 1.6, 1.6), false, t) + N("30", 530, 360, 34, ORANGE) + T("دقيقة", 530, 392, 20, INK, 700), at(u, 1.4, .3));
 }, { tr: "out" });
 // 16 · even half an hour can brush the deep step: better mood, a bit heavy
@@ -474,9 +489,9 @@ shot(18, function (u, d) { var x = walkX(u, K18); return [x + 40, walkY(x) - 140
 }, { tr: "out" });
 // 19 · creativity, calmer feelings, fully charged: he stands and stretches; a bulb, a heart and a battery light up
 shot(19, push(320, 420, 1.0, 1.05), function (u, d, t) {
-  return paper() + floor(FL) + dim(.5, sofa(10, FL, 560, .9)) + stretch(330, FL, .9, t) +
-    G("", bulb(120, 160, 1.1, true) + T("إبداع", 120, 240, 24, INK, 800), at(u, .3, .4)) + G("", heart(320, 130, 1.1, Math.sin(t * 6)) + T("مشاعر أهدى", 320, 200, 24, INK, 800), at(u, 1.3, .4)) +
-    G("", battery(520, 160, 1.3, at(u, 2.6, 1.2)) + T("مشحون", 520, 230, 24, INK, 800), at(u, 2.4, .4));
+  return paper() + floor(FL) + dim(.5, sofa(10, FL, 560, .9)) + stretch(330, FL, .9, t, u < 1.2 ? "yawn" : "smile") +
+    G("", bulb(95, 250, 1.1, true) + T("إبداع", 95, 330, 24, INK, 800), at(u, .3, .4)) + G("", heart(520, 240, 1.1, Math.sin(t * 6)) + T("مشاعر أهدى", 520, 310, 24, INK, 800), at(u, 1.3, .4)) +
+    G("", battery(530, 420, 1.3, at(u, 2.6, 1.2)) + T("مشحون", 530, 490, 24, INK, 800), at(u, 2.4, .4));
 });
 // 20 · not close to bedtime: on a noon-to-morning day line, a late nap pushes the night sleep later and shortens it
 shot(20, push(320, 400, 1.1, 1.16), function (u, d, t) {
@@ -520,7 +535,8 @@ function cockpit(t, k) {
   var sx = 470, st = 540;
   s += '<path d="M' + (sx - 30) + ' ' + (st - 10) + ' L' + (sx + 70) + ' 300 L' + (sx + 110) + ' 310 L' + (sx + 30) + ' ' + (st + 10) + ' Z" fill="#4c4a44" stroke="' + INK + '" stroke-width="2.4"/>';
   s += R(sx - 130, st, 170, 30, "#4c4a44", 2.4, 8) + R(sx - 40, st + 30, 24, 90, "#3a3833", 2);
-  s += whole(fig({ x: sx - 10, y: st - 10, s: .95, lean: -24, legs: [[78, -58], [74, -54]], hands: [[sx - 90, st - 6], [sx - 80, st - 12]], bend: [1, 1], shirt: "#e9e4d6", tilt: 30, hair: "#2e2620" }));
+  s += PERSON.side({ x: sx - 6, y: st - 26 * .95, s: .95, dir: -1, lean: -24, outfit: "pilot", breath: (Math.sin(t * 1.4) + 1) / 2, head: { tilt: -8 + 2 * Math.sin(t * .8) },
+    legs: [{ hip: 84, knee: 82, ankle: 4 }, { hip: 80, knee: 78, ankle: 2 }], arms: [{ sh: 34, el: 52, hand: "relaxed" }, { sh: 30, el: 48, hand: "relaxed" }], face: { eyes: 0, mouth: "neutral" } }).svg;
   return s + zzz(560, 350, t, 32);
 }
 shot(24, push(300, 420, .95, 1.02), function (u, d, t) {
@@ -540,9 +556,9 @@ SCENE.intro = function (svg, t, li) {
   var l = LN[li], u = t - l.start, wake = clamp((u - (l.end - l.start) * .55) / .5), mins = [15, 60, 90][li], prev = li ? [15, 60][li - 1] : 0;
   var m = li ? lerp(prev, mins, at(u, 0, 1.2)) : 15 * at(u, 0, 1.2);
   if (li === 0) s += wake < 1 ? sleeper(230, fl, .8, t) + zzz(410, 400, t) : "";
-  if (li === 0 && wake >= 1) s += G("", stretch(300, fl, .8, t), clamp((u - (l.end - l.start) * .55 - .5) / .3) + .2);
-  if (li === 1) s += wake < .5 ? sleeper(230, fl, .8, t) + zzz(410, 400, t) : groggy(330, fl, .8, t) + dizzy(268, 260, 34, t, wake * 2 - 1);
-  if (li === 2) s += wake < .5 ? sleeper(230, fl, .8, t) + zzz(410, 400, t) : stretch(300, fl, .8, t) + check(160, 260, 1.5, wake * 2 - 1, OLIVE);
+  if (li === 0 && wake >= 1) s += G("", stretch(300, fl, .8, t, "smile"), clamp((u - (l.end - l.start) * .55 - .5) / .3) + .2);
+  if (li === 1) s += wake < .5 ? sleeper(230, fl, .8, t) + zzz(410, 400, t) : groggy(290, fl, .8, t) + dizzy(LASTHEAD[0], LASTHEAD[1] - 60, 34, t, wake * 2 - 1);
+  if (li === 2) s += wake < .5 ? sleeper(230, fl, .8, t) + zzz(410, 400, t) : stretch(300, fl, .8, t, "smile") + check(150, 250, 1.5, wake * 2 - 1, OLIVE);
   s += alarmClock(500, 150, 64, m, wake > 0 && wake < .9, t) + N(Math.round(m) + "", 380, 166, 44, ORANGE) + T("دقيقة", 380, 204, 22, INK, 700);
   return s;
 };
