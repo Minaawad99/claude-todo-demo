@@ -1,12 +1,13 @@
 /* «إيه الحكاية؟» — the detailed person (front / three-quarter view), after the look the channel picked from its Gemini
-   cover (videos/person-demo): a face with eyes, brows, nose, mouth and expressions; hands with five fingers in poses;
+   cover (videos/person-demo; rules in videos/_templates/people/README.md): a face with eyes, brows, nose, mouth and expressions; hands with five fingers in poses;
    a sweater with ribbed collar, cuffs and hem; folds and soft shading. Joints keep the real body proportions used in every
    sketch episode (Drillis & Contini, H = 400 units at s = 1):
      hip joint 0.52H · shoulder 0.818H · chin 0.87H · top of head 1.0H
      thigh 0.245H · shank 0.246H · upper arm 0.186H · forearm 0.146H · hand 0.108H (palm 0.06H + middle finger 0.048H)
      shoulder joints 0.22H apart · hip joints 0.10H apart · head 0.13H tall, 0.093H wide · neck 0.065H wide
-   Needs the shared helpers (_helpers.js: f, G, C, lerp, clamp, ease, INK, SKIN…). Everything is redrawn from the pose, so a
-   pose can be tweened (personMix) and the render stays deterministic.
+   Self-contained (own helpers inside); loads in any skill's page. API: window.PERSON = {front, side, walkPose, sideHipY, mix,
+   sofaFront, hand, head, colors, setInk}; the same names are also plain globals (person, personSide…) where free.
+   Everything is redrawn from the pose, so a pose can be tweened (PERSON.mix) and the render stays deterministic.
 
    person(o) — o.x, o.y: the point between the hip joints; o.s: scale.
      o.lean (deg, + leans to the viewer's right) · o.slump (0..1: shoulders drop, head sinks) · o.breath (0..1)
@@ -19,6 +20,14 @@
              mouth: "neutral" | "smile" | "grin" | "open" | "o" | "frown" | "yawn", tired: bool}
      o.colors: {shirt, shirtD, pants, pantsD, hair, skin, skinD, socks}
    returns {svg, joints}: joints has the shoulder, elbow, wrist, hip, knee, ankle points and the head centre. */
+(function () {
+// own small helpers, so the kit works in any skill (sketch, animation, story-2d, law…) without the sketch helpers loaded
+var INK = (window.PERSON_INK || "#2a2016"), CLIPN = 0;
+function f(n) { return (+n).toFixed(1); }
+function clamp(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+function lerp(a, b, k) { return a + (b - a) * k; }
+function G(tr, inner, op) { return '<g' + (tr ? ' transform="' + tr + '"' : "") + (op != null && op < 1 ? ' opacity="' + op.toFixed(3) + '"' : "") + '>' + inner + '</g>'; }
+function R(x, y, w, h, fill, sw, rx, ex) { return '<rect x="' + f(x) + '" y="' + f(y) + '" width="' + f(w) + '" height="' + f(h) + '"' + (rx ? ' rx="' + rx + '"' : "") + ' fill="' + fill + '" stroke="' + INK + '" stroke-width="' + (sw == null ? 2 : sw) + '"' + (ex || "") + '/>'; }
 var PSN = { skin: "#e0a98a", skinD: "#c07f62", skinL: "#efc3a8", lip: "#b56b5c", hair: "#2f2620", hairL: "#4d3f34",
   shirt: "#a9c3dc", shirtD: "#7f9bb6", pants: "#3d3c3f", pantsD: "#2a292c", socks: "#56565c", white: "#fbf8f1", iris: "#4a3426" };
 function pPath(pts, close) { var d = "M" + f(pts[0][0]) + " " + f(pts[0][1]); for (var i = 1; i < pts.length; i++) { var m = [(pts[i - 1][0] + pts[i][0]) / 2, (pts[i - 1][1] + pts[i][1]) / 2]; d += " Q" + f(pts[i - 1][0]) + " " + f(pts[i - 1][1]) + " " + f(m[0]) + " " + f(m[1]); } var L = pts[pts.length - 1]; return d + (close ? " Q" + f(L[0]) + " " + f(L[1]) + " " + f(pts[0][0]) + " " + f(pts[0][1]) + " Z" : " L" + f(L[0]) + " " + f(L[1])); }
@@ -350,3 +359,10 @@ function personSide(o) {
 }
 // how high the hips must be so the lower foot stands on the floor (for walking: no sinking, no floating)
 function sideHipY(o, floorY) { var p = personSide(Object.assign({}, o, { y: 0 })), lo = -1e9; ["foot0", "foot1"].forEach(function (k) { p.joints[k].forEach(function (q) { lo = Math.max(lo, q[1]); }); }); return floorY - lo; }
+
+// export: window.PERSON for every skill; plain globals too where the name is free (the story kit has its own person())
+var API = { front: person, side: personSide, walkPose: walkPose, sideHipY: sideHipY, mix: personMix, sofaFront: sofaFront, hand: pHand, head: pHead, colors: PSN,
+  setInk: function (c) { INK = c; } };
+window.PERSON = API;
+[["person", person], ["personSide", personSide], ["walkPose", walkPose], ["sideHipY", sideHipY], ["personMix", personMix], ["sofaFront", sofaFront], ["pHand", pHand], ["pHead", pHead], ["PSN", PSN]].forEach(function (q) { if (!(q[0] in window)) window[q[0]] = q[1]; });
+})();

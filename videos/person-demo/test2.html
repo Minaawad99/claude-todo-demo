@@ -2,7 +2,7 @@
 <style>body{margin:0;background:#eee5d0}svg{display:block}</style></head><body>
 <svg id="s" width="1600" height="1100" viewBox="0 0 1600 1100"></svg>
 <script>window.TIMING={lines:[],duration:30};</script>
-<script src="../_templates/sketch/_helpers.js"></script><script src="../_templates/sketch/person.js"></script>
+<script src="../_templates/sketch/_helpers.js"></script><script src="../_templates/people/person.js"></script>
 <script>
 var out = '<path d="M0 470 H1600" stroke="#2a2016" stroke-width="2"/>';
 for (var i=0;i<8;i++){ var w=walkPose(i/8*Math.PI*2), o=Object.assign({x:90+i*190,s:.95,face:{mouth:"smile"}},w); o.y=sideHipY(o,470); out += personSide(o).svg; }

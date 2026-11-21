@@ -4,7 +4,7 @@ description: |
   Make an «إيه الحكاية؟» true-story video the way the Titanic video «تيتانيك» was made (the user's best-performing
   video, fixed as the standard for every story): a cinematic cold open that grabs the eye in the first second, a calm
   storyteller in Egyptian Arabic telling the night hour by hour, drawn as full-screen cinematic 2D frames — cel-shaded
-  SVG with dark outlines, hard light, light rays, dust and film grain, characters with real proportions and faces —
+  SVG with dark outlines, hard light, light rays, dust and film grain, characters drawn with the shared person kit (videos/_templates/people/person.js) —
   1080×1920 60 fps. Reference build `videos/titanic/`. Use whenever the user asks for a story: "اعملي قصة",
   "عايز أعمل قصة", "قصة عن…", "حكاية…", "القصة 2D", "زي فيديو تيتانيك", "زي فيديو هيروشيما الأولاني" or "story 2D style"
   (the 3D «القصة» skill only when the user says 3D). Every story opens on a REAL recording or real footage of the event
@@ -145,10 +145,7 @@ Audio pipeline as in the animation skill (section 4) with longer pauses kept: `t
 - **Painted, cinematic, cel-shaded** like the user's train pictures: flat colours, ink outlines (`INK #121419`), one hard
   shadow shape per part (`cel()` clips a darker copy to the side away from the light), warm light rays (`rays`), dust
   (`dust`), vignette and film grain on every frame, sky gradients per mood (morning, high altitude, fire, ash, dusk, today).
-- **Characters** (`person`, `portrait`, `face` in `_helpers.js`): real proportions (about 7 heads), faces with brows,
-  almond eyes with a highlight, a small nose line and a mouth, lashes for women, hair with volume (short, bob, bun, cap),
-  period clothes (monpe trousers), walking cycle, blinking close-ups, a child face option. Big figures in the foreground
-  (scale 2–2.6) and close portraits for the emotional lines (`portrait(... { rim: true })`).
+- **Characters:** **People: the shared person kit, always** (the user's fixed rule for every skill): every human is drawn with `videos/_templates/people/person.js` (read `videos/_templates/people/README.md`; demo `videos/person-demo/`). Use `PERSON.front()` for the front or three-quarter view and `PERSON.side()` for walking and for lying flat (`rot: -90`). It keeps real proportions (fingertips at mid-thigh), flowing limbs with the joints hidden in one outline, straight reaching arms, five-finger hands with nails, and a face that acts. Add a missing pose or costume to the kit; never draw a person another way. In this skill call `PERSON.front` and `PERSON.side`, because the film helpers have their own `person()`. Set `PERSON.setInk("#121419")`, dress each character with `colors` (period clothes), and lay the cel shadow, light rays and grain over them. Big figures in the foreground (scale 2–2.6). Close-ups use `PERSON.head` for the emotional lines. A costume or a child the kit lacks is added to `person.js`. The old `person`/`portrait`/`face` from `film/_helpers.js` are retired for people.
 - **Compositions:** wide establishing frames, interiors seen from behind a character (the tram cab), triptychs of three
   stacked panels (`tri()`, like the user's three-panel picture), split frames for "meanwhile", big quiet numbers
   (`bigNum`) and labels (`label`).

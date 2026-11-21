@@ -16,7 +16,8 @@ description: >
 every episode.
 
 **Locked by the user after «لو حد شرق قدامك» (`videos/choking/`), for every sketch episode from now on:**
-1. **The drawing style of that episode**, including people drawn with real body proportions (section 3).
+1. **The drawing style of that episode.** People are drawn only with the shared person kit `videos/_templates/people/person.js`
+   (section 3; the user's rule for every skill).
 2. **No background music.** Not the music box, not any other bed. The sound is the narrator plus sound effects only.
    The one exception is the user asking for music in a specific video (section 5); it doesn't carry over to the next one.
 3. **You make the sound effects** from the kit, the episode's own clips and `audio/sfx.py`'s synthesized ones. When a moment
@@ -126,18 +127,18 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
     - big serif numbers that count up (`count`, `bigNum`, `numBox`);
     - Arabic words in a box (`tag`);
     - dimension lines (`measure`).
-- **People: real body proportions** (the user's rule). Never stick figures or guessed sizes. Copy `fig()`, `limb()`, `ik()`,
-  `rel()` and the `HB` table from `videos/choking/sketch/shots.js`. They follow Drillis & Contini segment lengths as
-  fractions of the height H (H = 400 units):
-  - heights: ankle 0.039H, knee 0.285H, hip joint 0.52H, shoulder 0.818H, chin 0.87H;
-  - segment lengths: thigh 0.245H, shank 0.246H, foot 0.152H, upper arm 0.186H, forearm 0.146H, hand 0.108H;
-  - side depths: chest 0.13H, waist 0.115H, seat 0.14H; the head is 0.115H deep and 0.13H tall.
+- **People: the shared person kit, always** (the user's fixed rule after the person demo, for every skill). Load
+  `videos/_templates/people/person.js` and read its `README.md`. `PERSON.front()` gives the front or three-quarter view,
+  `PERSON.side()` the profile, for walking and for lying flat on the back with `rot: -90`.
+  - **Real proportions:** the wrist sits at the top of the thigh and the fingertips at mid-thigh.
+  - **Flowing limbs:** each limb is one outline with the joints hidden inside it, never circles. A reaching arm is
+    straight (`straight: true`).
+  - **Hands and face:** five-finger hands with nails, in the right pose. The face shows every reaction.
+  - **Placing him:** put hands on the real spot (forehead, throat, belly). Furniture is to the same scale. Keep him
+    breathing and blinking.
 
-  Furniture is to the same scale: a table 0.43H, a chair seat 0.25H. Put the hip at `floor − 212·s` so the feet stand on
-  the floor. Place hands with `rel(h, side)` (a point h above the hip, to the front or the back) so they land on the real
-  spot: throat, between the shoulder blades, above the navel, mid-chest. People are flat salmon-skinned side views as in
-  reference v20, with no faces beyond a nose, an ear and a hair cap. A body cut uses the real anatomy from a reference
-  picture (`throat()` in the same file: windpipe in front, gullet behind, epiglottis on the voice box).
+  The old flat salmon `fig()` from `videos/choking/` is retired for new episodes. A body cut (throat, lungs) still uses
+  the real anatomy from a reference picture (`throat()` in `videos/choking/sketch/shots.js`), placed in or beside this person.
 - **Shots:** one `shot()` per idea, usually per line, sometimes per caption chunk (`[line, chunk]`).
   - Transitions: `tr: "fade"`, or `"in"` / `"out"` when the camera flies into a detail or pulls back. There are no hard cuts.
   - `hud(from, to, draw)` holds a dial, chip or checklist over several shots.

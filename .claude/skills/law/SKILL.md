@@ -3,7 +3,7 @@ name: law
 description: >
   Make an «إيه الحكاية؟» build-along explainer in the user's «لو» style, end to end, matching the 14 reference videos the
   user sent (videos/_reference/law/, series «ابنيها بنفسك!»): a full-screen 9:16 "2.5D" vector drawing of one cut-open scene
-  that grows part by part, one big caption word at a time, a real-proportion man who acts out and reacts to every step,
+  that grows part by part, one big caption word at a time, a real-proportion man (the shared person kit, videos/_templates/people/person.js) who acts out and reacts to every step,
   and the script shape «لو… يبقى عندك…» → «بس المشكلة إن…» → «عشان كده…» → «وده اسمه…» → «والغريب إن…» → «ومبروك عليك،
   عملت … بنفسك» in casual Cairo Egyptian Arabic. Covers topic choice, script, Gemini voice, alignment, the scene on the
   shared kit, joint-correct acting, checks, sound effects (no music), 1080×1920 render, qa.py, the reel cover and the
@@ -24,7 +24,8 @@ Talk to the user in Egyptian Arabic. This file is complete on its own: a new ses
    or a script line from them).
 2. **Full-screen 9:16 "2.5D" drawing**, not a cartoon panel, not three.js, not a black frame with a title.
 3. **A real-proportion man reacts to every step**: shocked on each «بس…», relieved on each «عشان كده…», going into the build
-   and back out.
+   and back out. **People: the shared person kit, always** (the user's fixed rule for every skill): every human is drawn with `videos/_templates/people/person.js` (read `videos/_templates/people/README.md`; demo `videos/person-demo/`). Use `PERSON.front()` for the front or three-quarter view and `PERSON.side()` for walking and for lying flat (`rot: -90`). It keeps real proportions (fingertips at mid-thigh), flowing limbs with the joints hidden in one outline, straight reaching arms, five-finger hands with nails, and a face that acts. Add a missing pose or costume to the kit; never draw a person another way. Use `front()` for the reactions and `side()` when he walks, digs or climbs. The kit's `man()` and `POSES` from `kit.js` are
+   retired for drawing him: keep their timing and acting keys, and draw the body with the person kit.
 4. **Joints and tools physically right** (section 6): he digs DOWN, leans forward to work, elbows and knees never bend the
    wrong way, nothing passes through walls.
 5. **Sound effects only, no music of any kind** unless the user asks for music for that video (`videos/audio/sfx.py` leaves
