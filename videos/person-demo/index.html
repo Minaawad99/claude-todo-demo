@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>Person demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@500;600;700;800;900&family=Noto+Serif:wght@800&display=swap" rel="stylesheet">
+<style>
+  /* 30 s demo of the detailed person (vide../_templates/people/person.js) on the «اسكتش» paper card. render.js: 360×640 → 1080×1920. */
+  html, body { margin: 0; background: #eee5d0; }
+  svg { display: block; width: 360px; height: 640px; }
+</style></head><body>
+<svg id="v" viewBox="0 0 640 1138"></svg>
+<script>window.TIMING = { lines: [], duration: 30 }; window.VIDEO_END = 30;</script>
+<script src="../_templates/sketch/_helpers.js"></script>
+<script src="../_templates/people/person.js"></script>
+<script>
+// ── props (from the naps episode): a twin-bell alarm clock, a dizzy swirl, rising z's ──
+function alarmClock(x, y, r, min, ring, t) {
+  var sh = ring ? 3 * Math.sin(t * 40) : 0, s = "";
+  s += '<path d="M' + f(x - r * .55) + ' ' + f(y + r * .8) + ' l' + f(-r * .25) + ' ' + f(r * .35) + ' M' + f(x + r * .55) + ' ' + f(y + r * .8) + ' l' + f(r * .25) + ' ' + f(r * .35) + '" stroke="' + INK + '" stroke-width="' + f(r * .1) + '" stroke-linecap="round"/>';
+  [-1, 1].forEach(function (d) { s += G("rotate(" + f(d * 35 + sh * 2) + " " + f(x) + " " + f(y) + ")", '<path d="M' + f(x - r * .32) + ' ' + f(y - r * 1.02) + ' A' + f(r * .32) + ' ' + f(r * .32) + ' 0 0 1 ' + f(x + r * .32) + ' ' + f(y - r * 1.02) + ' Z" fill="#9aa0a4" stroke="' + INK + '" stroke-width="2"/>'); });
+  s += C(x, y, r, "#f4ecdb", Math.max(2, r * .08)) + C(x, y, r * .86, "none", 1.2);
+  if (min > .2) { var a1 = -Math.PI / 2 + Math.min(min, 59.9) / 60 * Math.PI * 2; s += '<path d="M' + f(x) + ' ' + f(y) + ' L' + f(x) + ' ' + f(y - r * .8) + ' A' + f(r * .8) + ' ' + f(r * .8) + ' 0 ' + (min > 30 ? 1 : 0) + ' 1 ' + f(x + Math.cos(a1) * r * .8) + ' ' + f(y + Math.sin(a1) * r * .8) + ' Z" fill="' + ORANGE + '" opacity=".3"/>'; }
+  for (var i = 0; i < 12; i++) { var b = i / 12 * Math.PI * 2; s += '<path d="M' + f(x + Math.cos(b) * r * .72) + ' ' + f(y + Math.sin(b) * r * .72) + ' L' + f(x + Math.cos(b) * r * .84) + ' ' + f(y + Math.sin(b) * r * .84) + '" stroke="' + INK + '" stroke-width="' + (i % 3 ? 1.6 : 3) + '"/>'; }
+  var am = -Math.PI / 2 + min / 60 * Math.PI * 2, ah = -Math.PI / 2 + (2 + min / 60) / 12 * Math.PI * 2;
+  s += '<path d="M' + f(x) + ' ' + f(y) + ' L' + f(x + Math.cos(ah) * r * .45) + ' ' + f(y + Math.sin(ah) * r * .45) + '" stroke="' + INK + '" stroke-width="' + f(r * .09) + '" stroke-linecap="round"/><path d="M' + f(x) + ' ' + f(y) + ' L' + f(x + Math.cos(am) * r * .7) + ' ' + f(y + Math.sin(am) * r * .7) + '" stroke="' + INK + '" stroke-width="' + f(r * .05) + '" stroke-linecap="round"/>' + C(x, y, r * .06, INK, 0);
+  if (ring) for (var k = 0; k < 3; k++) s += '<path d="M' + f(x + r * (1.25 + k * .18)) + ' ' + f(y - r * .9) + ' q' + f(r * .14) + ' ' + f(r * .3) + ' 0 ' + f(r * .6) + ' M' + f(x - r * (1.25 + k * .18)) + ' ' + f(y - r * .9) + ' q' + f(-r * .14) + ' ' + f(r * .3) + ' 0 ' + f(r * .6) + '" stroke="' + ORANGE + '" stroke-width="3" fill="none" opacity="' + f(.5 + .5 * Math.sin(t * 12 + k)) + '"/>';
+  return G("translate(" + f(sh) + " 0)", s);
+}
+function dizzy(x, y, r, t, k) {
+  k = clamp(k); if (k <= 0) return ""; var d = "";
+  for (var i = 0; i <= 60; i++) { var a = i / 60 * Math.PI * 4 + t * 4, rr = r * i / 60; d += (i ? " L" : "M") + f(x + Math.cos(a) * rr) + " " + f(y + Math.sin(a) * rr * .42); }
+  var st = ""; for (var j = 0; j < 3; j++) { var b = t * 3 + j * 2.1, sx = x + Math.cos(b) * r * 1.15, sy = y + Math.sin(b) * r * .48; st += '<path d="M' + f(sx) + ' ' + f(sy - 8) + ' L' + f(sx + 2.5) + ' ' + f(sy - 2.5) + ' L' + f(sx + 8) + ' ' + f(sy) + ' L' + f(sx + 2.5) + ' ' + f(sy + 2.5) + ' L' + f(sx) + ' ' + f(sy + 8) + ' L' + f(sx - 2.5) + ' ' + f(sy + 2.5) + ' L' + f(sx - 8) + ' ' + f(sy) + ' L' + f(sx - 2.5) + ' ' + f(sy - 2.5) + ' Z" fill="' + ORANGE + '" stroke="' + INK + '" stroke-width="1.2"/>'; }
+  return G("", '<path d="' + d + '" stroke="' + ORANGE + '" stroke-width="3.5" fill="none" stroke-linecap="round"/>' + st, k);
+}
+function zzz(x, y, t, sz) { var s = ""; for (var i = 0; i < 3; i++) { var p = (t * .45 + i / 3) % 1; s += G("", N("z", x + p * 40 + i * 4, y - p * 90, sz * (.6 + .5 * p), BLUE), Math.sin(p * Math.PI)); } return s; }
+function sideTable(x, fl) { return R(x - 52, fl - 190, 104, 14, "#c9b48c", 2.2) + R(x - 46, fl - 176, 10, 176, "#a8916a", 2) + R(x + 36, fl - 176, 10, 176, "#a8916a", 2) + '<path d="M' + (x - 36) + ' ' + (fl - 120) + ' H' + (x + 36) + '" stroke="' + INK + '" stroke-width="2"/>'; }
+
+// ── three scenes, crossfaded: L lying flat on the sofa (side view) · F the front view · W walking (side view) ──
+var FL = 820, CX = 548;
+// L: flat on his back on the sofa, head on the pillow, hand on the belly
+var SL = 1.0, SOFA_X = 300, SOFA_W = 560, LST = FL + 4 - 104 * SL, LHX = 352;
+function lyingPose(t) {
+  var awake = clamp((t - 4.7) / .4);
+  return { x: LHX, y: LST - 29 * SL, s: SL, dir: 1, rot: -90, breath: (Math.sin(t * 1.5) + 1) / 2, head: { tilt: -4 * awake - 3 * awake * Math.sin(t * 3) },
+    legs: [{ hip: 0, knee: 5, ankle: -12 }, { hip: 3, knee: 8, ankle: -8 }], arms: [{ sh: -4, el: 135, wrist: 55 }, { sh: 4, el: 18 }],
+    face: { eyes: awake < .5 ? 0 : 1.2, brows: awake < .5 ? "neutral" : "raised", mouth: awake < .5 ? "neutral" : "o" } };
+}
+function sceneL(t) {
+  var s = room(0) + sofaFront(SOFA_X, FL + 4, SOFA_W, SL), P = personSide(lyingPose(t)), hd = P.joints.head;
+  s += '<ellipse cx="' + f(hd[0] + 2) + '" cy="' + f(LST - 10) + '" rx="46" ry="15" fill="#efe6d2" stroke="' + INK + '" stroke-width="2"/>' + P.svg;
+  s += R(440, 470, 120, 10, "#c9b48c", 2) + alarmClock(500, 432, 30, 12 + t * 2, t > 4.4 && t < 5.9, t);
+  if (t < 4.6) s += zzz(hd[0] + 10, hd[1] - 40, t, 26);
+  return s;
+}
+// F: the front view (person()), sitting groggy, standing, stretching, the proportions, the face
+var S = 1.55, HX = 300, SIT_Y = FL - 114 * S, STAND_Y = FL - 210 * S;
+function headOf(p) { return person(p).joints.head; }
+function base(o) { return Object.assign({ x: HX, s: S }, o); }
+var KEYS = [];
+function key(t, o, dur) { KEYS.push({ t: t, o: base(o), dur: dur || .6 }); }
+var knees = function (y) { return [{ to: [HX - 40 * S, y + 2 * S], hand: "relaxed", bend: 1, rot: 70 }, { to: [HX + 40 * S, y + 2 * S], hand: "relaxed", bend: -1, rot: 110 }]; };
+var down = [{ to: [HX - 50 * S, STAND_Y + 60 * S], hand: "relaxed", bend: 1 }, { to: [HX + 50 * S, STAND_Y + 60 * S], hand: "relaxed", bend: -1 }];
+var G0 = base({ y: SIT_Y, legs: "sit", slump: .6, head: { tilt: 10, turn: .25, nod: .1 }, face: { eyes: .4, brows: "worried", mouth: "frown", tired: true }, arms: knees(SIT_Y) }), gh = headOf(G0);
+key(6.4, Object.assign({}, G0, { arms: [{ to: [HX - 40 * S, SIT_Y + 2 * S], hand: "relaxed", bend: 1, rot: 70 }, { to: [gh[0] + 23 * S, gh[1] - 13 * S], bend: 1, hand: "flat", front: true, rot: -168, palm: true }] }));
+key(11.2, { y: SIT_Y, legs: "sit", slump: .3, head: { tilt: 0, turn: 0 }, face: { eyes: .8, brows: "neutral", mouth: "neutral" }, arms: knees(SIT_Y) });
+key(11.9, { y: STAND_Y, legs: "stand", slump: 0, head: { tilt: 0 }, face: { eyes: .9, mouth: "neutral" }, arms: down }, 1.0);
+var up = [{ to: [HX - 60 * S, STAND_Y - 300 * S], straight: true, hand: "open", front: true }, { to: [HX + 60 * S, STAND_Y - 300 * S], straight: true, hand: "open", front: true }];
+key(12.9, { y: STAND_Y, legs: "stand", head: { tilt: -6 }, face: { eyes: 0, brows: "raised", mouth: "yawn" }, arms: up }, .8);
+key(14.3, { y: STAND_Y, legs: "stand", head: { tilt: 0 }, face: { eyes: 1, brows: "raised", mouth: "smile" }, arms: up });
+key(23.4, { y: STAND_Y, legs: "stand", head: { tilt: 0, turn: .1 }, face: { eyes: 1, mouth: "smile" }, arms: down });
+var EXPR = [["neutral", "neutral", 1], ["o", "raised", 1.25], ["frown", "worried", .7], ["grin", "raised", 1], ["neutral", "neutral", .3], ["smile", "raised", 1]];
+function poseAt(t) {
+  var i = 0; while (i < KEYS.length - 1 && KEYS[i + 1].t <= t) i++;
+  var cur = KEYS[i], prev = i ? KEYS[i - 1] : cur, k = ease((t - cur.t) / cur.dur);
+  var p = Object.assign({}, personMix(prev.o, cur.o, k));
+  p.breath = (Math.sin(t * 1.7) + 1) / 2; p.head = Object.assign({}, p.head || {}); p.head.tilt = (p.head.tilt || 0) + 1.6 * Math.sin(t * .9);
+  p.face = Object.assign({}, p.face || {});
+  var bl = (t * 1000) % 3700; if (p.face.eyes > .3 && bl < 130) p.face.eyes = .05;
+  if (t >= 26.4) { var e = EXPR[Math.min(EXPR.length - 1, Math.floor((t - 26.4) / .6))]; p.face.mouth = e[0]; p.face.brows = e[1]; p.face.eyes = e[2]; }
+  return p;
+}
+function sceneF(t) {
+  var s = room(0), sofaK = t < 11.2 || t > 23 ? 1 : 1 - clamp((t - 11.2) / 1.2) * .55;
+  if (t > 23) sofaK = .45;
+  s += G("", sofaFront(HX, FL + 4, 414, S), sofaK) + sideTable(CX, FL) + alarmClock(CX, FL - 230, 40, 24, false, t);
+  var pr = person(poseAt(t));
+  s += pr.svg;
+  if (t > 6.8 && t < 11.2) s += dizzy(pr.joints.head[0], pr.joints.head[1] - 58 * S, 30, t, ease((t - 6.8) / .4) * (1 - ease((t - 10.8) / .3)));
+  if (t > 8.8 && t < 11) { var w = pr.joints.wr[1]; s += label(w[0] + 12, w[1] - 30, w[0] + 70, w[1] - 70, "5 صوابع", OLIVE, ease((t - 9 ) / .6), 12); }
+  if (t > 23.9 && t < 26.4) {   // the proportion check: fingertips at mid-thigh, wrists at the top of the thigh
+    var k = ease((t - 24) / .6), mt = STAND_Y + 2 * S + 49 * S, wy = pr.joints.wr[0][1];
+    s += G("", draw("M" + f(HX - 140) + " " + f(mt) + " H" + f(HX + 110), k, ORANGE, 2.5, ' stroke-dasharray="8 6"') + draw("M" + f(HX - 140) + " " + f(wy) + " H" + f(HX + 110), k, BLUE, 2, ' stroke-dasharray="5 6"') +
+      T("نص الفخد", HX - 148, mt + 7, 20, ORANGE, 800, "start") + T("الرسغ", HX - 148, wy + 7, 20, BLUE, 800, "start"), 1);
+  }
+  return s;
+}
+// W: walking across the room in profile; the hips ride so the foot on the floor never sinks or floats
+var SW = 1.3, WALK0 = 15.4, SPEED = 300, CAD = .9;
+function walkState(t) {
+  var u = Math.max(0, t - WALK0), x = -120 + u * SPEED, ph = u * Math.PI * 2 * CAD, amp = clamp(u / .5), o = Object.assign({ x: x, s: SW, dir: 1, lean: 3, breath: (Math.sin(t * 2) + 1) / 2, head: { tilt: 2 * Math.sin(ph * 2) }, face: { eyes: 1, mouth: "smile", brows: "neutral" } }, walkPose(ph, amp));
+  var bl = (t * 1000) % 3100; if (bl < 120) o.face.eyes = .05;
+  o.y = sideHipY(o, FL); return o;
+}
+function sceneW(t) {
+  var o = walkState(t), s = room(1) + personSide(o).svg;
+  return s;
+}
+// the room behind: wall, skirting, a framed picture and a window repeating, floor planks (they show the walking speed)
+function room(kind) {
+  var s = '<rect x="-3000" y="-2000" width="8000" height="4800" fill="' + PAPER + '"/><rect x="-3000" y="-2000" width="8000" height="4800" fill="url(#grid)"/>';
+  if (kind) for (var x = -600; x < 4200; x += 520) s += R(x + 40, 330, 150, 190, "#dfe6e4", 2.4) + '<path d="M' + (x + 115) + ' 330 V520 M' + (x + 40) + ' 425 H' + (x + 190) + '" stroke="' + INK + '" stroke-width="2"/>' + R(x + 300, 380, 110, 80, "#efe6d2", 2.2) + '<path d="M' + (x + 312) + ' 448 l30 -30 l22 18 l18 -14 l26 26 Z" fill="' + OLIVE + '" opacity=".7"/>';
+  s += R(-3000, FL - 26, 8000, 26, "#e9dec6", 1.6) + '<rect x="-3000" y="' + FL + '" width="8000" height="1200" fill="#e3d7bd"/><rect x="-3000" y="' + FL + '" width="8000" height="1200" fill="url(#hatch)" opacity=".35"/><path d="M-3000 ' + FL + ' H5000" stroke="' + INK + '" stroke-width="2.4"/>';
+  if (kind) for (var px = -800; px < 4400; px += 140) s += '<path d="M' + px + ' ' + FL + ' l-40 160" stroke="#cbbd9e" stroke-width="2"/>';
+  return s;
+}
+// cameras: [t, cx, cy, zoom]
+var CAMF = [[6.4, 320, 520, 1.15], [8.4, 330, 420, 2.1], [10.8, 330, 430, 2.0], [11.4, 330, 560, 1.0], [12.6, 320, 380, .8], [15.4, 320, 380, .8], [23.4, 300, 520, 1.0], [26.2, 300, 520, 1.02], [26.6, 300, 210, 2.9], [30, 300, 205, 3.1]];
+function camAt(C, t) { var i = 0; while (i < C.length - 1 && C[i + 1][0] <= t) i++; var a = C[i], b = C[Math.min(i + 1, C.length - 1)], k = b === a ? 0 : ease((t - a[0]) / (b[0] - a[0])); return [lerp(a[1], b[1], k), lerp(a[2], b[2], k), lerp(a[3], b[3], k)]; }
+var SCN = [
+  { a: -1, b: 6.6, draw: sceneL, cam: function (t) { return [lerp(300, 250, t / 6.6), lerp(640, 600, t / 6.6), lerp(1.12, 1.6, t / 6.6)]; } },
+  { a: 6.4, b: 15.6, draw: sceneF, cam: function (t) { return camAt(CAMF, t); } },
+  { a: 15.4, b: 23.6, draw: sceneW, cam: function (t) { var o = walkState(t); return [o.x + 70, FL - 300, .95]; } },
+  { a: 23.4, b: 99, draw: sceneF, cam: function (t) { return camAt(CAMF, t); } }];
+var CAPS = [[0, "نايم على الكنبة: فارد ضهره"], [4.4, "المنبه رن!"], [6.6, "قام مدروخ: إيده على جبهته"], [8.6, "خمس صوابع، كل صباع بتلات عُقَل وضافر"], [11.2, "بيقوم ويقف"], [12.6, "ويتمطّع: الدراع خط مستقيم"], [15.6, "وماشي من الجنب"], [23.6, "طول الدراع: الصوابع عند نص الفخد"], [26.4, "والوش بيتكلم: تعبيرات من غير كلام"]];
+function capAt(t) { var i = 0; while (i < CAPS.length - 1 && CAPS[i + 1][0] <= t) i++; return [CAPS[i][1], t - CAPS[i][0]]; }
+function card(t) {
+  var s = '<rect width="640" height="1138" fill="' + PAPER + '"/><clipPath id="pc"><rect x="34" y="150" width="572" height="760"/></clipPath><g clip-path="url(#pc)">';
+  SCN.forEach(function (sc) {
+    if (t < sc.a || t >= sc.b) return;
+    var op = Math.min(sc.a < 0 ? 1 : ease((t - sc.a) / .2 - 0), 1), c = sc.cam(t), cx = c[0] + 6 * Math.sin(t * 1.3), cy = c[1] + 5 * Math.cos(t * 1.1), z = c[2] * (1 + .015 * Math.sin(t * 1.5));
+    op = sc.a < 0 ? 1 : clamp((t - sc.a) / .2);
+    s += '<g opacity="' + op.toFixed(3) + '"><g transform="translate(320 530) scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sc.draw(t) + '</g></g>';
+  });
+  s += '</g><rect x="34" y="150" width="572" height="760" fill="none" stroke="' + INK + '" stroke-width="2"/>';
+  s += '<rect x="16" y="16" width="608" height="1106" fill="none" stroke="' + INK + '" stroke-width="2"/><rect x="24" y="24" width="592" height="1090" fill="none" stroke="' + INK + '" stroke-width="1"/>';
+  s += T("إيه الحكاية؟", 590, 70, 20, INK, 700, "start") + T("تجربة 3", 320, 86, 18, ORANGE, 700) + '<path d="M290 96 H350" stroke="' + ORANGE + '" stroke-width="1.6"/>' + T("الشخصية الجديدة", 320, 128, 30, INK, 800);
+  var cp = capAt(t), k = ease(cp[1] / .35);
+  s += '<path d="M80 960 H560" stroke="' + INK + '" stroke-width="1.6"/>' + G("translate(0 " + f(8 * (1 - k)) + ")", T(cp[0], 320, 1022, 30, INK, 800), k);
+  return s + '<rect width="640" height="1138" filter="url(#paperN)" pointer-events="none"/>';
+}
+var DEFS = '<defs><pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0 H0 V32" stroke="#dccfb2" stroke-width="1" fill="none"/></pattern>' +
+  '<pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".18"/></pattern>' +
+  '<filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .06 0"/></filter></defs>';
+function renderAt(t) { window.__t = t; CLIPN = 0; document.getElementById("v").innerHTML = DEFS + card(t); }
+renderAt(0);
+</script>
+</body></html>

@@ -1,9 +1,15 @@
 # إيه الحكاية؟ — project notes for Claude
 
 - Talk to the user in Egyptian Arabic.
+- **People in every video, in every skill (sketch, animation, story-2d, law, and any skill made later): always the shared
+  person kit** `videos/_templates/people/person.js`, following its `README.md` (demo `videos/person-demo/`). It gives real
+  proportions, joints hidden in flowing limbs, straight reaching arms, five-finger hands and a face that acts; front view
+  and side view (walking, lying flat). No other way of drawing people. **The clothes change with every topic** (doctor's lab
+  coat, worker's vest and hard hat, pilot's uniform, period clothes in a story): pick an `outfit` preset or build one, and add
+  any missing outfit to the kit; the body, face and hands stay the same.
 - **New videos are made in the «اسكتش» style unless the user names another:** `.claude/skills/sketch/SKILL.md`.
-  **Locked for every sketch episode:** the drawing style of «لو حد شرق قدامك» (`videos/choking/`) with people in real body
-  proportions; **no background music** (narrator plus sound effects only, unless the user asks for music in that video); Claude makes the effects and asks the user
+  **Locked for every sketch episode:** the drawing style of «لو حد شرق قدامك» (`videos/choking/`) with people from the
+  shared person kit; **no background music** (narrator plus sound effects only, unless the user asks for music in that video); Claude makes the effects and asks the user
   for any real recording it needs; and every video ends with the reel cover and the TikTok, Instagram (shared to Facebook)
   and YouTube Shorts titles, without being asked.
   The reference episode is «المد والجزر» (`videos/tides/`), the shared template `videos/_templates/sketch/`
@@ -23,7 +29,7 @@
 - **Every «لو» video looks like the 14 reference videos the user sent (`videos/_reference/law/`, read its README; never ask
   for them again):** full-screen 9:16 "2.5D" vector drawings (gradients, shading, soft shadows, a cut-open scene that
   grows), one big word of caption at a time, and their script shape («لو… بس المشكلة… عشان كده… وده اسمه… ومبروك عليك»)
-  in casual Egyptian Arabic. A man in real body proportions acts out and reacts to every step: shocked on each «بس…»
+  in casual Egyptian Arabic. A man drawn with the shared person kit acts out and reacts to every step: shocked on each «بس…»
   failure, relieved on each «عشان كده…» fix, going down into the build and back up. The whole method is the `law` skill (`.claude/skills/law/SKILL.md`, run it with `/law`); copy `videos/solar-building/` and build on
   the shared kit `videos/_templates/law/kit.js`.
 - **All the account's own skills live in `.claude/skills/` too** (graphify, hyperframes, hyperframes-cli,

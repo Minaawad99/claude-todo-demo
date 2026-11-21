@@ -130,7 +130,7 @@ The page is 360×640 CSS px, rendered at 1080×1920:
 
 Drawing language (`_helpers.js`):
 
-- **Characters:** ball-head characters with moods (n, happy, shock, dizzy, curious, worry) and sometimes a mascot (oil drop, pixel, phone).
+- **Characters:** **People: the shared person kit, always** (the user's fixed rule for every skill): every human is drawn with `videos/_templates/people/person.js` (read `videos/_templates/people/README.md`; demo `videos/person-demo/`). Use `PERSON.front()` for the front or three-quarter view and `PERSON.side()` for walking and for lying flat (`rot: -90`). It keeps real proportions (fingertips at mid-thigh), flowing limbs with the joints hidden in one outline, straight reaching arms, five-finger hands with nails, and a face that acts. Add a missing pose or costume to the kit; never draw a person another way. Set its moods with the face options (happy, shock, dizzy, worry…). A mascot (oil drop, pixel, phone) may stay a cartoon. The old ball-head characters are retired. **Clothes follow the topic:** dress every person for who they are in this video with `outfit` (presets `home`, `casual`, `office`, `doctor`, `worker`, `pilot`, `chef`, or your own parts and colours; see `videos/person-demo/outfits.html`). Add a missing outfit to the kit, front and side.
 - **Labels:** brush-swash tags that pop in.
 - **Backgrounds:** sky, clouds, city, grass, plus film grain. Objects use gradients so they read as 3D.
 - **Realistic objects:** each is a function drawn from the real shape in the reference photos (layout, colours, parts).
@@ -217,7 +217,7 @@ code. Keep mix.wav and the mp4 in the scratchpad, not in the repo.
     face-on just to copy the tunnel cover. Tags with the key numbers, a shocked hard-hat worker for scale when it fits.
     See `cover-tbm-tunnel-tiktok.html` and `cover-birds-tiktok.html`.
   - the picture fills the whole frame (`<svg id="art" viewBox="0 0 540 960">`), composed from the video's `window.__parts`
-    (load `timing.js` and `cartoon/scenes.js`), with the main object big in the middle, a hard-hat character for scale and
+    (load `timing.js` and `cartoon/scenes.js`), with the main object big in the middle, a hard-hat person from the person kit for scale and
     one or two brush tags with the key numbers, plus film grain;
   - dark fades top (`fadeT`, 0–300) and bottom (`fadeB`, 680–960) so the text reads;
   - text: «إيه الحكاية؟» small (Noto 15px, #d9d4c8, top 132), the hook in **Noto Sans Arabic 900, 42px** white (top 154), a
