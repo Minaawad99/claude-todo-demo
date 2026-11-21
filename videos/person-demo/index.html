@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>Person demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@500;600;700;800;900&family=Noto+Serif:wght@800&display=swap" rel="stylesheet">
+<style>
+  /* 30 s demo of the detailed person (videos/_templates/sketch/person.js) on the «اسكتش» paper card. render.js: 360×640 → 1080×1920. */
+  html, body { margin: 0; background: #eee5d0; }
+  svg { display: block; width: 360px; height: 640px; }
+</style></head><body>
+<svg id="v" viewBox="0 0 640 1138"></svg>
+<script>window.TIMING = { lines: [], duration: 30 }; window.VIDEO_END = 30;</script>
+<script src="../_templates/sketch/_helpers.js"></script>
+<script src="../_templates/sketch/person.js"></script>
+<script>
+// ── props (from the naps episode): a twin-bell alarm clock, a dizzy swirl, rising z's ──
+function alarmClock(x, y, r, min, ring, t) {
+  var sh = ring ? 3 * Math.sin(t * 40) : 0, s = "";
+  s += '<path d="M' + f(x - r * .55) + ' ' + f(y + r * .8) + ' l' + f(-r * .25) + ' ' + f(r * .35) + ' M' + f(x + r * .55) + ' ' + f(y + r * .8) + ' l' + f(r * .25) + ' ' + f(r * .35) + '" stroke="' + INK + '" stroke-width="' + f(r * .1) + '" stroke-linecap="round"/>';
+  [-1, 1].forEach(function (d) { s += G("rotate(" + f(d * 35 + sh * 2) + " " + f(x) + " " + f(y) + ")", '<path d="M' + f(x - r * .32) + ' ' + f(y - r * 1.02) + ' A' + f(r * .32) + ' ' + f(r * .32) + ' 0 0 1 ' + f(x + r * .32) + ' ' + f(y - r * 1.02) + ' Z" fill="#9aa0a4" stroke="' + INK + '" stroke-width="2"/>'); });
+  s += C(x, y, r, "#f4ecdb", Math.max(2, r * .08)) + C(x, y, r * .86, "none", 1.2);
+  if (min > .2) { var a1 = -Math.PI / 2 + Math.min(min, 59.9) / 60 * Math.PI * 2; s += '<path d="M' + f(x) + ' ' + f(y) + ' L' + f(x) + ' ' + f(y - r * .8) + ' A' + f(r * .8) + ' ' + f(r * .8) + ' 0 ' + (min > 30 ? 1 : 0) + ' 1 ' + f(x + Math.cos(a1) * r * .8) + ' ' + f(y + Math.sin(a1) * r * .8) + ' Z" fill="' + ORANGE + '" opacity=".3"/>'; }
+  for (var i = 0; i < 12; i++) { var b = i / 12 * Math.PI * 2; s += '<path d="M' + f(x + Math.cos(b) * r * .72) + ' ' + f(y + Math.sin(b) * r * .72) + ' L' + f(x + Math.cos(b) * r * .84) + ' ' + f(y + Math.sin(b) * r * .84) + '" stroke="' + INK + '" stroke-width="' + (i % 3 ? 1.6 : 3) + '"/>'; }
+  var am = -Math.PI / 2 + min / 60 * Math.PI * 2, ah = -Math.PI / 2 + (2 + min / 60) / 12 * Math.PI * 2;
+  s += '<path d="M' + f(x) + ' ' + f(y) + ' L' + f(x + Math.cos(ah) * r * .45) + ' ' + f(y + Math.sin(ah) * r * .45) + '" stroke="' + INK + '" stroke-width="' + f(r * .09) + '" stroke-linecap="round"/><path d="M' + f(x) + ' ' + f(y) + ' L' + f(x + Math.cos(am) * r * .7) + ' ' + f(y + Math.sin(am) * r * .7) + '" stroke="' + INK + '" stroke-width="' + f(r * .05) + '" stroke-linecap="round"/>' + C(x, y, r * .06, INK, 0);
+  if (ring) for (var k = 0; k < 3; k++) s += '<path d="M' + f(x + r * (1.25 + k * .18)) + ' ' + f(y - r * .9) + ' q' + f(r * .14) + ' ' + f(r * .3) + ' 0 ' + f(r * .6) + ' M' + f(x - r * (1.25 + k * .18)) + ' ' + f(y - r * .9) + ' q' + f(-r * .14) + ' ' + f(r * .3) + ' 0 ' + f(r * .6) + '" stroke="' + ORANGE + '" stroke-width="3" fill="none" opacity="' + f(.5 + .5 * Math.sin(t * 12 + k)) + '"/>';
+  return G("translate(" + f(sh) + " 0)", s);
+}
+function dizzy(x, y, r, t, k) {
+  k = clamp(k); if (k <= 0) return ""; var d = "";
+  for (var i = 0; i <= 60; i++) { var a = i / 60 * Math.PI * 4 + t * 4, rr = r * i / 60; d += (i ? " L" : "M") + f(x + Math.cos(a) * rr) + " " + f(y + Math.sin(a) * rr * .42); }
+  var st = ""; for (var j = 0; j < 3; j++) { var b = t * 3 + j * 2.1, sx = x + Math.cos(b) * r * 1.15, sy = y + Math.sin(b) * r * .48; st += '<path d="M' + f(sx) + ' ' + f(sy - 8) + ' L' + f(sx + 2.5) + ' ' + f(sy - 2.5) + ' L' + f(sx + 8) + ' ' + f(sy) + ' L' + f(sx + 2.5) + ' ' + f(sy + 2.5) + ' L' + f(sx) + ' ' + f(sy + 8) + ' L' + f(sx - 2.5) + ' ' + f(sy + 2.5) + ' L' + f(sx - 8) + ' ' + f(sy) + ' L' + f(sx - 2.5) + ' ' + f(sy - 2.5) + ' Z" fill="' + ORANGE + '" stroke="' + INK + '" stroke-width="1.2"/>'; }
+  return G("", '<path d="' + d + '" stroke="' + ORANGE + '" stroke-width="3.5" fill="none" stroke-linecap="round"/>' + st, k);
+}
+function zzz(x, y, t, sz) { var s = ""; for (var i = 0; i < 3; i++) { var p = (t * .45 + i / 3) % 1; s += G("", N("z", x + p * 40 + i * 4, y - p * 90, sz * (.6 + .5 * p), BLUE), Math.sin(p * Math.PI)); } return s; }
+function sideTable(x, fl) { return R(x - 52, fl - 190, 104, 14, "#c9b48c", 2.2) + R(x - 46, fl - 176, 10, 176, "#a8916a", 2) + R(x + 36, fl - 176, 10, 176, "#a8916a", 2) + '<path d="M' + (x - 36) + ' ' + (fl - 120) + ' H' + (x + 36) + '" stroke="' + INK + '" stroke-width="2"/>'; }
+
+// ── the scene: world 640 wide, floor at y 820; the person at s = 1.55 (H = 620) ──
+var S = 1.55, FL = 820, HX = 300, SIT_Y = FL - 114 * S, STAND_Y = FL - 210 * S, CX = 548;
+function hipY(legs) { return legs === "sit" ? SIT_Y : STAND_Y; }
+// head centre of a pose (one dry run), so a hand can be put on the forehead or by the face
+function headOf(p) { return person(p).joints.head; }
+function base(o) { return Object.assign({ x: HX, s: S }, o); }
+var KEYS = [];
+function key(t, o) { KEYS.push({ t: t, o: base(o) }); }
+var knees = function (y) { return [{ to: [HX - 40 * S, y + 2 * S], hand: "relaxed", bend: 1, rot: 70 }, { to: [HX + 40 * S, y + 2 * S], hand: "relaxed", bend: -1, rot: 110 }]; };
+// 0–5 asleep on the sofa · 5–6.5 the alarm · 7–12 groggy, hand to the forehead · 12.4–13.8 stands · 14–16 stretch and yawn
+// 16.6–20.6 points at the clock · 21–25 thumbs up · 25–30 expressions close up
+key(0, { y: SIT_Y, legs: "sit", slump: .8, head: { nod: .55, tilt: -10, turn: -.15 }, face: { eyes: 0, mouth: "neutral" }, arms: knees(SIT_Y) });
+key(5.1, { y: SIT_Y, legs: "sit", slump: .2, head: { nod: 0, tilt: 4, turn: .35 }, face: { eyes: 1.25, brows: "raised", mouth: "o", look: [1, 0] }, arms: knees(SIT_Y) });
+var G0 = base({ y: SIT_Y, legs: "sit", slump: .6, head: { tilt: 10, turn: .25, nod: .1 }, face: { eyes: .4, brows: "worried", mouth: "frown", tired: true }, arms: knees(SIT_Y) }), gh = headOf(G0);
+key(7.0, Object.assign({}, G0, { arms: [{ to: [HX - 40 * S, SIT_Y + 2 * S], hand: "relaxed", bend: 1, rot: 70 }, { to: [gh[0] + 23 * S, gh[1] - 13 * S], bend: 1, hand: "flat", front: true, rot: -168, palm: true }] }));
+key(12.4, { y: SIT_Y, legs: "sit", slump: .3, head: { tilt: 0, turn: 0 }, face: { eyes: .8, brows: "neutral", mouth: "neutral" }, arms: knees(SIT_Y) });
+key(13.4, { y: STAND_Y, legs: "stand", slump: 0, head: { tilt: 0 }, face: { eyes: .9, mouth: "neutral" }, arms: [{ to: [HX - 50 * S, STAND_Y + 16 * S], hand: "relaxed", bend: 1 }, { to: [HX + 50 * S, STAND_Y + 16 * S], hand: "relaxed", bend: -1 }] });
+var up = [{ to: [HX - 78 * S, STAND_Y - 236 * S], bend: 1, hand: "open", front: true }, { to: [HX + 78 * S, STAND_Y - 236 * S], bend: -1, hand: "open", front: true }];
+key(14.2, { y: STAND_Y, legs: "stand", head: { tilt: -6 }, face: { eyes: 0, brows: "raised", mouth: "yawn" }, arms: up });
+key(15.7, { y: STAND_Y, legs: "stand", head: { tilt: 0 }, face: { eyes: 1, brows: "raised", mouth: "smile" }, arms: up });
+key(16.6, { y: STAND_Y, legs: "stand", head: { tilt: 4, turn: .45 }, face: { eyes: 1, brows: "raised", mouth: "grin", look: [1, -.2] },
+  arms: [{ to: [HX - 50 * S, STAND_Y + 16 * S], hand: "relaxed", bend: 1 }, { to: [CX - 46, 560], bend: 1, hand: "point" }] });
+key(20.8, { y: STAND_Y, legs: "stand", head: { tilt: -5, turn: -.2 }, face: { eyes: 1, brows: "raised", mouth: "smile", look: [-.3, 0] },
+  arms: [{ to: [HX - 36 * S, STAND_Y - 70 * S], bend: 1, hand: "thumb", rot: 0, side: 1 }, { to: [HX + 50 * S, STAND_Y + 16 * S], hand: "relaxed", bend: -1 }] });
+var EXPR = [["neutral", "neutral", 1], ["o", "raised", 1.25], ["frown", "worried", .7], ["grin", "raised", 1], ["neutral", "neutral", .3], ["smile", "raised", 1]];
+key(25, { y: STAND_Y, legs: "stand", head: { tilt: 0, turn: .15 }, face: { eyes: 1, mouth: "neutral" }, arms: [{ to: [HX - 50 * S, STAND_Y + 16 * S], hand: "relaxed", bend: 1 }, { to: [HX + 50 * S, STAND_Y + 16 * S], hand: "relaxed", bend: -1 }] });
+function poseAt(t) {
+  var i = 0; while (i < KEYS.length - 1 && KEYS[i + 1].t <= t) i++;
+  var cur = KEYS[i], prev = i ? KEYS[i - 1] : cur, k = ease((t - cur.t) / (i === 4 ? 1.0 : .6));
+  var p = personMix(prev.o, cur.o, k);
+  if (cur.t === 13.4 || (prev.t === 12.4 && k < 1)) p.y = lerp(prev.o.y, cur.o.y, k);
+  // idle life: breathing, a small head sway, blinks
+  p = Object.assign({}, p); p.breath = (Math.sin(t * 1.7) + 1) / 2; p.head = Object.assign({}, p.head || {}); p.head.tilt = (p.head.tilt || 0) + 1.6 * Math.sin(t * .9);
+  p.face = Object.assign({}, p.face || {});
+  if (t < 5) { p.head.nod = .5 + .14 * Math.sin(t * 1.3); }
+  var bl = (t * 1000) % 3700; if (p.face.eyes > .3 && bl < 130 && t > 6) p.face.eyes = .05;
+  if (t >= 25.6) { var e = EXPR[Math.min(EXPR.length - 1, Math.floor((t - 25.6) / .8))]; p.face.mouth = e[0]; p.face.brows = e[1]; p.face.eyes = e[2]; }
+  return p;
+}
+// camera keys [t, cx, cy, zoom]
+var CAM = [[0, 330, 600, 1.0], [5, 360, 560, 1.1], [7.5, 320, 520, 1.15], [9.2, 330, 420, 2.1], [11.6, 330, 430, 2.0], [12.6, 330, 560, 1.0], [14, 320, 410, .84], [16.6, 380, 520, 1.0], [20.8, 300, 500, 1.15], [25, 300, 450, 1.0], [25.8, 300, 210, 2.9], [30, 300, 205, 3.1]];
+function camAt(t) { var i = 0; while (i < CAM.length - 1 && CAM[i + 1][0] <= t) i++; var a = CAM[i], b = CAM[Math.min(i + 1, CAM.length - 1)], k = b === a ? 0 : ease((t - a[0]) / (b[0] - a[0])); return [lerp(a[1], b[1], k), lerp(a[2], b[2], k), lerp(a[3], b[3], k)]; }
+var CAPS = [[0, "نايم على الكنبة…"], [5.0, "المنبه رن!"], [7.0, "قام مدروخ: إيده على جبهته"], [9.2, "خمس صوابع، وكل صباع بعُقَله"], [12.4, "بيقوم ويقف بنسب جسم حقيقية"], [14.0, "ويتمطّع… ويتاوب"], [16.6, "بيشاور بصباع واحد على الساعة"], [20.8, "ويعمل لايك"], [25.0, "والوش بيتكلم: تعبيرات من غير كلام"]];
+function capAt(t) { var i = 0; while (i < CAPS.length - 1 && CAPS[i + 1][0] <= t) i++; return [CAPS[i][1], t - CAPS[i][0]]; }
+
+function scene(t) {
+  var s = '<rect x="-2000" y="-2000" width="4640" height="4800" fill="' + PAPER + '"/><rect x="-2000" y="-2000" width="4640" height="4800" fill="url(#grid)"/>';
+  s += '<rect x="-2000" y="' + FL + '" width="4640" height="1200" fill="#e3d7bd"/><rect x="-2000" y="' + FL + '" width="4640" height="1200" fill="url(#hatch)" opacity=".35"/><path d="M-2000 ' + FL + ' H2640" stroke="' + INK + '" stroke-width="2.4"/>';
+  var sofaK = t < 12.4 ? 1 : 1 - clamp((t - 12.4) / 1.2) * .55;
+  s += G("", sofaFront(HX, FL + 4, 360 * S / 1.55 * 1.0 * 1.15, S), sofaK);
+  s += sideTable(CX, FL);
+  var ring = t > 5 && t < 6.6, min = t < 5 ? 14 + t * 2 : t < 16.6 ? 24 : 20;
+  s += alarmClock(CX, FL - 230, 40, min, ring, t);
+  if (t > 17.6 && t < 20.8) s += check(CX + 58, FL - 290, 1.1, ease((t - 17.6) / .4), OLIVE) + N("20", CX, FL - 300, 30, ORANGE);
+  var P = poseAt(t), pr = person(P);
+  s += pr.svg;
+  if (t < 5) s += zzz(HX + 60, SIT_Y - 280, t, 34);
+  if (t > 7.4 && t < 12.4) s += dizzy(pr.joints.head[0], pr.joints.head[1] - 58 * S, 30, t, ease((t - 7.4) / .4) * (1 - ease((t - 12) / .3)));
+  // labels: the fingers (close-up), the joints at real proportions (standing)
+  if (t > 9.6 && t < 12.2) { var w = pr.joints.wr[1]; s += label(w[0] + 12, w[1] - 30, w[0] + 70, w[1] - 70, "5 صوابع", OLIVE, ease((t - 9.8) / .6), 12); s += label(pr.joints.head[0] - 6, pr.joints.head[1] + 4, pr.joints.head[0] - 60, pr.joints.head[1] + 40, "عينين نعسانين", BLUE, ease((t - 10.6) / .6), 12); }
+  if (t > 13.6 && t < 16.4) { var J = pr.joints, k = ease((t - 13.8) / .5), d = ""; ["sh", "el", "wr", "hip", "knee", "ankle"].forEach(function (n) { J[n].forEach(function (p) { d += C(p[0], p[1], 5, ORANGE, 1.6); }); }); s += G("", d, k * (1 - ease((t - 16) / .3))) + label(J.knee[0][0] - 12, J.knee[0][1], J.knee[0][0] - 60, J.knee[0][1] - 60, "مفاصل في مكانها", ORANGE, ease((t - 14.2) / .6), 20); }
+  return s;
+}
+function card(t) {
+  var c = camAt(t), cx = c[0] + 6 * Math.sin(t * 1.3), cy = c[1] + 5 * Math.cos(t * 1.1), z = c[2] * (1 + .015 * Math.sin(t * 1.5));
+  var s = '<rect width="640" height="1138" fill="' + PAPER + '"/>';
+  s += '<clipPath id="pc"><rect x="34" y="150" width="572" height="760"/></clipPath><g clip-path="url(#pc)"><g transform="translate(320 530) scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + scene(t) + '</g></g>';
+  s += '<rect x="34" y="150" width="572" height="760" fill="none" stroke="' + INK + '" stroke-width="2"/>';
+  s += '<rect x="16" y="16" width="608" height="1106" fill="none" stroke="' + INK + '" stroke-width="2"/><rect x="24" y="24" width="592" height="1090" fill="none" stroke="' + INK + '" stroke-width="1"/>';
+  s += T("إيه الحكاية؟", 590, 70, 20, INK, 700, "start") + T("تجربة", 320, 86, 18, ORANGE, 700) + '<path d="M290 96 H350" stroke="' + ORANGE + '" stroke-width="1.6"/>' + T("الشخصية الجديدة", 320, 128, 30, INK, 800);
+  var cp = capAt(t), k = ease(cp[1] / .35);
+  s += '<path d="M80 960 H560" stroke="' + INK + '" stroke-width="1.6"/>' + G("translate(0 " + f(8 * (1 - k)) + ")", T(cp[0], 320, 1022, 30, INK, 800), k);
+  return s + '<rect width="640" height="1138" filter="url(#paperN)" pointer-events="none"/>';
+}
+var DEFS = '<defs><pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0 H0 V32" stroke="#dccfb2" stroke-width="1" fill="none"/></pattern>' +
+  '<pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".18"/></pattern>' +
+  '<filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .06 0"/></filter></defs>';
+function renderAt(t) { window.__t = t; CLIPN = 0; document.getElementById("v").innerHTML = DEFS + card(t); }
+renderAt(0);
+</script>
+</body></html>

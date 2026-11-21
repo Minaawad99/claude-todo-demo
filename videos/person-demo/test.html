@@ -1,0 +1,15 @@
+<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;700;800&family=Noto+Serif:wght@800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#eee5d0}svg{display:block}</style></head><body>
+<svg id="s" width="1600" height="1100" viewBox="0 0 1600 1100"></svg>
+<script>window.TIMING={lines:[],duration:30};</script>
+<script src="../_templates/sketch/_helpers.js"></script><script src="../_templates/sketch/person.js"></script>
+<script>
+var out = "";
+["open","relaxed","flat","fist","point","thumb"].forEach(function(k,i){ out += pHand([60+i*260, 200], -Math.PI/2, k, 1, 5, PSN) + pHand([60+i*260, 560], 0, k, 1, 5, PSN); });
+var hy = 760-114*1.2, hx = 1400;
+out += sofaFront(hx, 760+300, 330, 1.2);
+var P = person({x:hx,y:hy+300,s:1.2,legs:"sit",slump:.6,head:{tilt:8,turn:.25},face:{eyes:.4,brows:"worried",mouth:"frown",tired:true},
+  arms:[{to:[hx-24,hy+300+22],hand:"relaxed",bend:1},{to:[hx+40,hy+300-178],bend:1,hand:"flat",front:1,rot:-160,palm:1}]});
+out += P.svg;
+document.getElementById("s").innerHTML = '<defs><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".18"/></pattern></defs>' + out;
+</script></body></html>
