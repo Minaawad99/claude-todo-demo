@@ -5,11 +5,15 @@
 <script src="../_templates/sketch/_helpers.js"></script><script src="../_templates/sketch/person.js"></script>
 <script>
 var out = "";
-["open","relaxed","flat","fist","point","thumb"].forEach(function(k,i){ out += pHand([60+i*260, 200], -Math.PI/2, k, 1, 5, PSN) + pHand([60+i*260, 560], 0, k, 1, 5, PSN); });
-var hy = 760-114*1.2, hx = 1400;
-out += sofaFront(hx, 760+300, 330, 1.2);
-var P = person({x:hx,y:hy+300,s:1.2,legs:"sit",slump:.6,head:{tilt:8,turn:.25},face:{eyes:.4,brows:"worried",mouth:"frown",tired:true},
-  arms:[{to:[hx-24,hy+300+22],hand:"relaxed",bend:1},{to:[hx+40,hy+300-178],bend:1,hand:"flat",front:1,rot:-160,palm:1}]});
-out += P.svg;
+["open","relaxed","flat","fist","point","thumb"].forEach(function(k,i){ out += pHand([40+i*190, 230], -Math.PI/2, k, 1, 4.2, PSN) + pHand([30+i*190, 400], 0, k, 1, 3.4, PSN); });
+out += person({x:1260,y:340,s:.9,legs:"stand",face:{mouth:"smile"},arms:[{to:[1260-50*.9,340+16*.9],hand:"relaxed",bend:1},{to:[1260+110,340-60],hand:"point",bend:1}]}).svg;
+out += person({x:1480,y:340,s:.9,legs:"stand",face:{mouth:"smile"},arms:[{to:[1480-33,340-63],bend:1,hand:"thumb",rot:0,side:1,front:true},{to:[1480+45,340+14],hand:"relaxed",bend:-1}]}).svg;
+var hx=700, fl=1080, sy=fl-114*1.5;
+out += sofaFront(hx, fl, 400, 1.5);
+var G0={x:hx,y:sy,s:1.5,legs:"sit",slump:.6,head:{tilt:10,turn:.25,nod:.1},face:{eyes:.4,brows:"worried",mouth:"frown",tired:true}};
+var gh=person(G0).joints.head;
+G0.arms=[{to:[hx-40*1.5,sy+2*1.5],hand:"relaxed",bend:1,rot:70},{to:[gh[0]+23*1.5,gh[1]-13*1.5],bend:1,hand:"flat",front:true,rot:-168,palm:true}];
+out += person(G0).svg;
+out += person({x:1150,y:fl-210*1.5,s:1.5,legs:"stand",face:{eyes:0,mouth:"yawn",brows:"raised"},arms:[{to:[1150-78*1.5,fl-210*1.5-236*1.5],bend:1,hand:"open",front:true},{to:[1150+78*1.5,fl-210*1.5-236*1.5],bend:-1,hand:"open",front:true}]}).svg;
 document.getElementById("s").innerHTML = '<defs><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".18"/></pattern></defs>' + out;
 </script></body></html>
