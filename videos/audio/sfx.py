@@ -270,6 +270,13 @@ def fx_rotor(d=4.0, rate=6.5):   # main rotor "chop": low thumps per blade pass 
 def fx_windmill(d=3.0):          # rotor coasting without the engine: slower chop, airy
     return fx_rotor(d, 4.2) * 0.6 + lp_fast(noise(int(d * SR)), 1200, 1) * 0.3 * env(int(d * SR), .5, .5)
 
+def fx_heart(d=0.55):          # one heartbeat, "lub-dub": two soft low thumps 0.2 s apart
+    t = t_(d); x = np.zeros_like(t, dtype=np.float32)
+    for t0, a, f0 in ((0.0, 1.0, 58), (0.2, 0.7, 72)):
+        u = np.clip(t - t0, 0, None); e = (u > 0) * np.exp(-u * 26) * (1 - np.exp(-u * 400))
+        x += (a * e * np.sin(2 * np.pi * f0 * u * (1 - 0.25 * u))).astype(np.float32)
+    x += 0.08 * lp_fast(noise(len(t)), 180) * np.exp(-t * 20)
+    return (x / (np.abs(x).max() + 1e-9) * 0.9).astype(np.float32)
 FX = {k[3:]: v for k, v in globals().items() if k.startswith("fx_")}
 
 # ── music bed: soft chords + plucks, 84 bpm, voice band carved out ──

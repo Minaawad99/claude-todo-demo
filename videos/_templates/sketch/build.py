@@ -6,6 +6,7 @@ episode.py sets:
   CFG = {"title": …, "category": …, "outro": <summary-card HTML>, "watermark": "" or "إيه الحكاية؟ | @handle"}
         optional: "libs": extra scripts loaded before scenes.js (default ["../../lib/geo.min.js"], which globe() needs).
         The shared person kit ../../_templates/people/person.js is always loaded first (the user's rule: every person is drawn with it)
+        optional: "shots": another episode's shots.js (a second language of the same episode), "lang": "en" (left to right, English series lines)
         optional: "intro_lines" (how many hook lines before the promise), "promise", "summary", "cta" (line indexes)
   K   = {line: {word: "o" | "b" | "g" | "u" | "gr" | "o u"}}   key words in the caption / hook:
         o orange (action, danger, heat, numbers) · b blue (water, air, cold, the technical term) · g olive (the named part)
@@ -79,12 +80,23 @@ chunks = [[c["f"] for c in cs] for cs in caps]
 
 open(os.path.join(HERE, "scenes.js"), "w", encoding="utf-8").write(
     "window.CHUNKS = " + json.dumps(chunks) + ";\n" + open(os.path.join(TPL, "_helpers.js"), encoding="utf-8").read() + "\n" +
-    open(os.path.join(HERE, "shots.js"), encoding="utf-8").read())
+    open(os.path.join(HERE, CFG.get("shots", "shots.js")), encoding="utf-8").read())
 page = open(os.path.join(TPL, "template.html"), encoding="utf-8").read()
 for k, v in [("/*TITLE*/", CFG.get("title", "")), ("/*CATEGORY*/", CFG.get("category", "")), ("/*OUTRO*/", CFG.get("outro", "")),
              ("/*WATERMARK*/", html.escape(CFG.get("watermark", ""))),
              ("/*LIBS*/", "".join('<script src="%s"></script>' % src for src in ["../../_templates/people/person.js"] + [l for l in CFG.get("libs", ["../../lib/geo.min.js"]) if "people/person.js" not in l])), ("/*DATA*/", "window.DATA = " + json.dumps(data, ensure_ascii=False) + ";")]:
     page = page.replace(k, v)
+if CFG.get("lang") == "en":   # an English episode: left to right, Noto Sans, the series name and fixed lines in English
+    EN = CFG.get("en", {})
+    for a, b in [('lang="ar" dir="rtl"', 'lang="en" dir="ltr"'), ("family=Noto+Sans+Arabic:", "family=Noto+Sans:"), ('"Noto Sans Arabic"', '"Noto Sans"'),
+                 ("font:800 120px Noto Sans Arabic;fill:#bd552f\">؟", "font:800 120px Noto Sans;fill:#bd552f\">?"),
+                 ("margin-left: 4px; vertical-align", "margin-right: 4px; vertical-align"),
+                 ('<span>إيه الحكاية؟</span>', '<span>%s</span>' % EN.get("brand", "What's the Deal?")),
+                 ('<div class="name">إيه الحكاية؟</div>', '<div class="name">%s</div>' % EN.get("brand", "What's the Deal?")),
+                 ('هشرحهالك في <span class="k-o">دقيقة.</span>', EN.get("sub", 'Let me break it down in a <span class="k-o">minute.</span>')),
+                 ('<div class="l1">قولولنا…</div><div class="l2">عايزين تعرفوا</div><div class="l3">حكاية<span class="blank">', EN.get("ask", '<div class="l1">So…</div><div class="l2">what should we</div><div class="l3">break down<span class="blank">')),
+                 ('</span></span>؟</div></div>', '</span></span>next?</div></div>'), ("— إيه الحكاية؟</title>", "— What's the Deal?</title>")]:
+        page = page.replace(a, b)
 open(os.path.join(HERE, "index.html"), "w", encoding="utf-8").write(page)
 print("built: %d lines, %d caption chunks · hook lines 0-%d · promise %d · summary %d · ask %d"
       % (n, sum(len(c) for c in caps), intro_lines - 1, promise, summary, cta))

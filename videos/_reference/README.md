@@ -23,7 +23,7 @@ ffmpeg -ss 40 -t 2.4 -i law/videos/r12.mp4 -vf "fps=5,tile=6x2" -frames:v 1 stri
 
 | الموضوع | المرجع | حلقاتنا |
 |---|---|---|
-| **جسم الإنسان** (مخ، قلب، رئة، أعصاب، جلد، عضم، جنين) | v04 مخ ونعاس · v07 إيد وعضمها · v11 مخ مقطوع · v17 جنين وقلب ورئة · v20 أعصاب وجلد ونخاع | choking · naps · xray-diagram |
+| **جسم الإنسان** (مخ، قلب، رئة، أعصاب، جلد، عضم، جنين) | v04 مخ ونعاس · v07 إيد وعضمها · v11 مخ مقطوع · v17 جنين وقلب ورئة · v20 أعصاب وجلد ونخاع | choking · naps · xray-diagram · heart (القلب من قدام ومقطوع) |
 | **أشخاص** (بيتحركوا، نايمين، بيتفاعلوا) | كل فيديوهات `law/` (الراجل بيمثّل كل خطوة) · v04 · v11 | عُدّة الأشخاص `_templates/people/` · person-demo · choking · naps |
 | **أجهزة البيت** (غسالة، تلاجة، تكييف، ميكروويف، إيرفراير، حلة) | v02 إيرفراير · v09 غسالة أطباق · v12 تكييف · v13 غسالة · v16 حلة ضغط · v19 طفاية | washer · dishwasher · fridge · fridge-3d · microwave · inverter-ac · gas-heater · lcd-tv · printer · robot-vacuum |
 | **عربيات ومحركات** | v03 طيارة · v08 جير · v18 عربية مقطوعة وسلندر وبستم | car-egypt · car-us · car-water · airplane · helicopter · engine.js |

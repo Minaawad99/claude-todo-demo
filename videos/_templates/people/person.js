@@ -30,7 +30,7 @@ function G(tr, inner, op) { return '<g' + (tr ? ' transform="' + tr + '"' : "") 
 function R(x, y, w, h, fill, sw, rx, ex) { return '<rect x="' + f(x) + '" y="' + f(y) + '" width="' + f(w) + '" height="' + f(h) + '"' + (rx ? ' rx="' + rx + '"' : "") + ' fill="' + fill + '" stroke="' + INK + '" stroke-width="' + (sw == null ? 2 : sw) + '"' + (ex || "") + '/>'; }
 // outfits: the body never changes, the clothes follow the topic. o.outfit = a preset name or {base, top, over, tie, epaulettes, hat, feet, colors}
 //   top: "sweater" (ribbed) | "tshirt" (short sleeves) | "shirt" (collar, buttons, cuffs) · over: "labcoat" | "vest" (hi-vis) | "apron"
-//   hat: "hardhat" | "cap" | "pilot" · feet: "socks" | "shoes" | "boots" · tie, epaulettes: true
+//   hat: "hardhat" | "cap" | "pilot" · feet: "socks" | "shoes" | "boots" · tie, epaulettes: true · hair: "long" (to the shoulders, front and side)
 var OUTFITS = {
   home:   { top: "sweater", feet: "socks" },
   casual: { top: "tshirt", feet: "shoes", colors: { shirt: "#c9a77c", shirtD: "#a5845c", pants: "#4b5a6e", pantsD: "#38445a" } },
@@ -38,7 +38,9 @@ var OUTFITS = {
   doctor: { top: "shirt", tie: true, over: "labcoat", feet: "shoes", colors: { shirt: "#cfe0ee", shirtD: "#a6bfd3", tie: "#4a6f8a", pants: "#3d4656", pantsD: "#2b3240" } },
   worker: { top: "tshirt", over: "vest", hat: "hardhat", feet: "boots", colors: { shirt: "#7f97a6", shirtD: "#61798a", pants: "#4b5a6e", pantsD: "#38445a" } },
   pilot:  { top: "shirt", tie: true, epaulettes: true, hat: "pilot", feet: "shoes", colors: { shirt: "#f4f2ec", shirtD: "#d6d2c6", pants: "#262a36", pantsD: "#191c25", tie: "#262a36" } },
-  chef:   { top: "shirt", over: "apron", hat: "cap", feet: "shoes", colors: { shirt: "#f4f2ec", shirtD: "#d6d2c6", pants: "#3b3f4a", pantsD: "#2a2d36", hat: "#f4f2ec", hatD: "#d6d2c6" } }
+  chef:   { top: "shirt", over: "apron", hat: "cap", feet: "shoes", colors: { shirt: "#f4f2ec", shirtD: "#d6d2c6", pants: "#3b3f4a", pantsD: "#2a2d36", hat: "#f4f2ec", hatD: "#d6d2c6" } },
+  // a woman: the same body and face, long hair to the shoulders (hair: "long" works with any outfit), a rose top
+  woman:  { top: "sweater", hair: "long", feet: "shoes", colors: { shirt: "#c97a84", shirtD: "#a45a64", pants: "#4b5a6e", pantsD: "#38445a", hair: "#3b2a22", hairL: "#5a4234" } }
 };
 function pOutfit(o, c) {
   var x = o.outfit, of = {}, k;
@@ -146,6 +148,10 @@ function pHead(hc, s, rot, o, c) {
   var g = "", X = function (u) { return u + tr * 4.5; };
   var shape = [[0, -27.5], [12, -26], [18.4, -15], [18.8, -2], [17, 9], [12.5, 18.5], [6, 24.5], [0, 26.2], [-6, 24.5], [-12.5, 18.5], [-17, 9], [-18.8, -2], [-18.4, -15], [-12, -26]].map(function (p) { return [p[0] - tr * (p[0] > 0 ? 1.5 : -.5), p[1]]; });
   var ear = function (sd) { var ex = sd * (18.6 - tr * sd * 1.4); return '<path d="M' + f(ex) + ' -5 C' + f(ex + sd * 6) + ' -8 ' + f(ex + sd * 6.5) + ' 6 ' + f(ex + sd * .5) + ' 8 Z" fill="' + c.skin + '" stroke="' + INK + '" stroke-width="1.6" stroke-linejoin="round"/><path d="M' + f(ex + sd * 1.5) + ' -2 C' + f(ex + sd * 4) + ' -3 ' + f(ex + sd * 4) + ' 3 ' + f(ex + sd * 1.5) + ' 4" stroke="' + c.skinD + '" stroke-width="1.1" fill="none"/>'; };
+  if ((o._of || {}).hair === "long") {   // long hair falling behind the face to the shoulders, open in the middle for the neck
+    var lh = [[-12, -29], [-22, -15], [-25, 8], [-26.5, 30], [-23, 43], [-12, 42], [-10.5, 20], [10.5, 20], [12, 42], [23, 43], [26.5, 30], [25, 8], [22, -15], [12, -29]].map(function (p) { return [X(p[0] * .9) + p[0] * .1, p[1]]; });
+    g += '<path d="' + pPath(lh, true) + '" fill="' + c.hair + '" stroke="' + INK + '" stroke-width="1.8"/>' + pLine([[-22, 4], [-23, 26], [-20, 38]], c.hairL, 1.2) + pLine([[22, 4], [23, 26], [20, 38]], c.hairL, 1.2);
+  }
   g += ear(-1) + ear(1);
   g += '<path d="' + pPath(shape, true) + '" fill="' + c.skin + '" stroke="' + INK + '" stroke-width="2.2"/>';
   // shading: the far cheek and jaw, a soft shadow under the hair line
@@ -404,6 +410,7 @@ function personSide(o) {
              '<path d="' + pPath([T(118, -11), T(124, 2), T(118, 15)], false) + '" stroke="' + INK + '" stroke-width="2" fill="' + c.shirt + '"/>' + pLine([T(119.5, -8), T(123, 2), T(119.5, 12)], c.shirtD, 1);
   var eo = fc.eyes == null ? 1 : fc.eyes, mo = fc.mouth || "neutral", h = "";
   var shape = [[-23, -4], [-19, -20], [-6, -28], [8, -26], [17, -18], [20.5, -8], [20.5, -4], [22, 0], [27.5, 7.5], [23, 10], [22.5, 12.5], [23, 15], [22, 17.5], [21, 22], [16, 25.5], [6, 25], [-2, 20], [-10, 15], [-17, 12], [-22, 6]];
+  if (OF.hair === "long") h += '<path d="' + pPath([[-4, -31], [-20, -25], [-27, -6], [-29, 18], [-27, 42], [-13, 44], [-9, 26], [-4, 14]], true) + '" fill="' + c.hair + '" stroke="' + INK + '" stroke-width="1.8"/>' + pLine([[-24, 0], [-25, 24], [-22, 38]], c.hairL, 1.2);   // long hair down the back
   h += '<path d="' + pPath(shape, true) + '" fill="' + c.skin + '" stroke="' + INK + '" stroke-width="2.2"/>';
   h += '<path d="M10 8 C14 16 14 21 8 24 C14 24 19 21 20 14 Z" fill="' + c.skinD + '" opacity=".35"/>';   // jaw shade
   h += '<path d="M-5 -4 C3 -6 5 8 -3 10 C-1 6 -1 0 -5 -4 Z" fill="' + c.skin + '" stroke="' + INK + '" stroke-width="1.7"/><path d="M-2.5 -1 C1 -1 1.5 5 -1.5 6" stroke="' + c.skinD + '" stroke-width="1.1" fill="none"/>';   // ear
