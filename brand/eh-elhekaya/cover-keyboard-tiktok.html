@@ -3,7 +3,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
   /* the reel cover for the «اسكتش» keyboard video, full bleed 540×960 (1080×1920 at 2x): the tunnel-cover palette (near
-     black top and bottom, one warm glow behind the subject) with the diagram look (the episode's own drawings: the 1874 Sholes & Glidden with Q W E R T Y lit, and the two typebars jammed in the inset).
+     black top and bottom, one warm glow behind the subject) with the diagram look (the episode's own drawings: two keyboards one over the other: QWERTY lit orange, and the A B C one we expected).
      Everything that matters stays inside y 120–840 and away from the right-hand buttons. */
   body { margin: 0; background: #000; }
   .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #000; }
@@ -13,9 +13,9 @@
 <div class="cover">
   <svg id="art" viewBox="0 0 540 960"></svg>
   <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
-  <p class="t" style="top:154px;font:900 41px/1.2 'Noto Sans Arabic';color:#fff">ليه الكيبورد مش <span dir="ltr">A B C</span>؟</p>
-  <p class="t" style="top:210px;font:800 24px/1.3 'Noto Sans Arabic';color:#f2c230">كانت بالترتيب فعلًا… لحد ما اتزنقت!</p>
-  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff">ترتيب عمره <span style="color:#f2c230">150</span> سنة<br><span style="font-size:24px;color:#d9d4c8">والسبب دراعين حديد</span></p>
+  <p class="t" style="top:154px;font:900 37px/1.2 'Noto Sans Arabic';color:#fff">ليه الحروف مش مترتبة؟</p>
+  <p class="t" style="top:212px;font:800 26px/1.3 'Noto Sans Arabic';color:#f2c230"><span dir="ltr">A B C D</span> زي ما اتعلمناها!</p>
+  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff">كانت <span style="color:#f2c230">بالترتيب</span> فعلًا!<br><span style="font-size:24px;color:#d9d4c8">لحد ما حصلت الزنقة</span></p>
 </div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
   <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2b2b2b" stroke-width="1" opacity=".16"/></pattern>
@@ -34,17 +34,16 @@
 <script src="../../videos/keyboard/sketch/scenes.js"></script>
 <script>
   (function () {
-    var t = 66, s = "";
+    var t = 66, s = "", u = 40;
     s += '<rect width="540" height="960" fill="#1b1d22"/><rect width="540" height="960" fill="url(#grid)" opacity=".18"/>';
-    s += '<circle cx="270" cy="480" r="240" fill="#ffd27a" opacity=".35" filter="url(#soft)"/><circle cx="270" cy="480" r="140" fill="#ffe08a" opacity=".3" filter="url(#soft)"/>';
-    // the 1874 Sholes & Glidden, its top row lit: the layout the video explains
-    s += '<g transform="translate(262 488) scale(.64) translate(-320 -380)">' + sg1874(t, { hl: function (c, r) { return r === 1 && "QWERTY".indexOf(c) >= 0 ? "#c4532c" : null; } }) + '</g>';
-    // inset: the two typebars jammed under the platen
-    var ix = 430, iy = 330;
-    s += '<circle cx="' + ix + '" cy="' + iy + '" r="96" fill="#ffd27a" opacity=".25" filter="url(#soft)"/>' + inset(ix, iy, 84, '<g transform="scale(1.05) translate(-300 -330)">' + basket(t, { swing: function (i) { return i === iS ? .78 : i === iT ? .8 : 0; }, col: function (i) { return i === iS ? ORANGE : i === iT ? BLUE : null; } }) + (function () { var b = bar3(ringTheta(iS), .78).tip; return impact(b[0], b[1], .45); })() + '</g>', 1);
-    s += '<circle cx="' + ix + '" cy="' + iy + '" r="86" fill="none" stroke="#c4532c" stroke-width="4"/>';
-    s += '<g transform="translate(96 330)"><rect x="-70" y="-22" width="140" height="38" rx="5" fill="#f4ecdb" stroke="#2a2016" stroke-width="2"/><text x="0" y="6" text-anchor="middle" style="font:800 19px Noto Serif;fill:#5e653a;direction:ltr">1868 ABC</text></g>';
-    s += '<g transform="translate(96 384)"><rect x="-70" y="-22" width="140" height="38" rx="5" fill="#c4532c"/><text x="0" y="6" text-anchor="middle" style="font:800 19px Noto Serif;fill:#fff;direction:ltr">1874 QWERTY</text></g>';
+    s += '<circle cx="270" cy="480" r="250" fill="#ffd27a" opacity=".35" filter="url(#soft)"/><circle cx="270" cy="480" r="150" fill="#ffe08a" opacity=".3" filter="url(#soft)"/>';
+    // two keyboards one over the other: yours (QWERTY, scrambled, lit orange) and the A B C one we expected
+    var kx = 270 - 5.1 * u;
+    s += '<g transform="rotate(-4 270 370)">' + keyboard(kx, 330, u, 0, { hl: function (c) { return "QWERTY".indexOf(c) >= 0 ? "#c4532c" : null; } }) + '</g>';
+    s += '<g transform="rotate(3 270 590)">' + keyboard(kx, 550, u, 1, { hl: function (c) { return "ABCD".indexOf(c) >= 0 ? "#5e653a" : null; } }) + '</g>';
+    s += '<g transform="translate(78 296) rotate(-4)"><rect x="-58" y="-20" width="116" height="36" rx="5" fill="#c4532c"/><text x="0" y="6" text-anchor="middle" style="font:800 19px Noto Sans Arabic;fill:#fff">الكيبورد بتاعك</text></g>';
+    s += '<g transform="translate(118 508) rotate(3)"><rect x="-74" y="-20" width="148" height="36" rx="5" fill="#f4ecdb" stroke="#2a2016" stroke-width="2"/><text x="0" y="6" text-anchor="middle" style="font:800 19px Noto Sans Arabic;fill:#5e653a">ليه مش كده؟</text></g>';
+    s += '<g transform="translate(464 500)"><circle r="34" fill="#f2c230" stroke="#2a2016" stroke-width="3"/><text x="0" y="17" text-anchor="middle" style="font:900 48px Noto Sans Arabic;fill:#2a2016">؟</text></g>';
     s += '<defs><linearGradient id="fadeT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".95"/><stop offset=".75" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>' +
          '<linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset=".3" stop-color="#000" stop-opacity=".7"/><stop offset="1" stop-color="#000" stop-opacity=".95"/></linearGradient></defs>';
     s += '<rect width="540" height="300" fill="url(#fadeT)"/><rect y="680" width="540" height="280" fill="url(#fadeB)"/>';
