@@ -12,6 +12,8 @@ description: >
 
 # «إيه الحكاية؟» — the «اسكتش» style
 
+**Reference before every drawing (the user's rule for every skill):** before you draw any object, body part, machine, place or scene, look it up in `videos/_reference/README.md` (a subject index of the 34 reference videos and of our own episodes), open the frames that show it and see how it was cut open, labelled and framed. Then draw it in this skill's own style. Never copy a drawing.
+
 **The user named this style «اسكتش»** and locked it after «المد والجزر». Use the same drawings, narration and sounds in
 every episode.
 

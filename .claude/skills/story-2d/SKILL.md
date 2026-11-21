@@ -18,6 +18,8 @@ description: |
 use this skill and the Titanic recipe below: the Titanic video got the channel's highest views, and the user fixed its
 narration and its opening as the style. The 3D version (`story` skill) is only for when the user says 3D.
 
+**Reference before every drawing (the user's rule for every skill):** before you draw any object, body part, machine, place or scene, look it up in `videos/_reference/README.md` (a subject index of the 34 reference videos and of our own episodes), open the frames that show it and see how it was cut open, labelled and framed. Then draw it in this skill's own style. Never copy a drawing.
+
 Talk to the user in Egyptian Arabic. Show each stage before the next (the user's rule: "اعمله واعرضه عليا الأول"). The
 reference build is `videos/titanic/` (`script.txt`, `style.txt`, `cues.js`, `film/`); start every new video from a copy
 of `videos/titanic/film/` (Hiroshima `videos/hiroshima/` and Chernobyl `videos/chernobyl/` are later examples of the

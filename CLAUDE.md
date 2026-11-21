@@ -7,6 +7,10 @@
   and side view (walking, lying flat). No other way of drawing people. **The clothes change with every topic** (doctor's lab
   coat, worker's vest and hard hat, pilot's uniform, period clothes in a story): pick an `outfit` preset or build one, and add
   any missing outfit to the kit; the body, face and hands stay the same.
+- **The reference videos are the model for how anything is drawn, in every style and every skill:** before drawing any
+  object or scene, look it up in `videos/_reference/README.md` (subject index of the 20 «طب إزاي؟» videos, the 14 «لو»
+  videos and our own episodes; the big media sits in the private repo `Minaawad99/claude-media`), look at how it was
+  drawn there, then draw it in the skill's own style. Never copy a drawing or a script.
 - **New videos are made in the «اسكتش» style unless the user names another:** `.claude/skills/sketch/SKILL.md`.
   **Locked for every sketch episode:** the drawing style of «لو حد شرق قدامك» (`videos/choking/`) with people from the
   shared person kit; **no background music** (narrator plus sound effects only, unless the user asks for music in that video); Claude makes the effects and asks the user

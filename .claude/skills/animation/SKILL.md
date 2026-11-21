@@ -9,6 +9,8 @@ description: |
 
 # «إيه الحكاية؟» — the animation (cartoon-panel) style
 
+**Reference before every drawing (the user's rule for every skill):** before you draw any object, body part, machine, place or scene, look it up in `videos/_reference/README.md` (a subject index of the 34 reference videos and of our own episodes), open the frames that show it and see how it was cut open, labelled and framed. Then draw it in this skill's own style. Never copy a drawing.
+
 **This is the channel's fixed way of making every new video** (the user's decision): the cartoon panel, built like the
 Suez Canal tunnel video. The reference build is `videos/tbm-tunnel/cartoon/` («مين حفر نفق القناة؟», 29 shots, 1:56) and
 its cover `brand/eh-elhekaya/cover-tbm-tunnel-tiktok.html`. Start every new video from a copy of them. Older builds in the

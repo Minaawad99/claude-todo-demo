@@ -15,6 +15,8 @@ description: >
 
 Talk to the user in Egyptian Arabic. This file is complete on its own: a new session can make a «لو» video from it alone.
 
+**Reference before every drawing (the user's rule for every skill):** before you draw any object, body part, machine, place or scene, look it up in `videos/_reference/README.md` (a subject index of the 34 reference videos and of our own episodes), open the frames that show it and see how it was cut open, labelled and framed. Then draw it in this skill's own style. Never copy a drawing.
+
 **Worked examples to copy from (both pass qa.py):**
 - `videos/solar-building/` «تنوّر عمارة بالشمس إزاي؟» — **the template to copy**: built on the shared kit.
 - `videos/secret-basement/` «تعمل قبو سري إزاي؟» — the first one; its `law/scene.js` is where the kit came from.
