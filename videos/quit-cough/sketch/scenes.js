@@ -1,4 +1,4 @@
-window.CHUNKS = [[0.0, 0.4103], [0.0, 0.1912, 0.5147], [0.0], [0.0, 0.4194], [0.0], [0.0, 0.1505, 0.6022], [0.0, 0.3882, 0.7882], [0.0], [0.0, 0.5079], [0.0, 0.6173], [0.0, 0.4471, 0.8], [0.0], [0.0], [0.0], [0.0, 0.5224], [0.0], [0.0, 0.3846, 0.7143], [0.0, 0.569], [0.0, 0.5714], [0.0, 0.4516], [0.0, 0.5714], [0.0, 0.6, 0.8], [0.0, 0.1442, 0.5288, 0.6442], [0.0, 0.3483, 0.6292], [0.0], [0.0]];
+window.CHUNKS = [[0.0, 0.4681], [0.0, 0.6579], [0.0, 0.4194], [0.0, 0.4667], [0.0, 0.2766], [0.0], [0.0, 0.5455], [0.0, 0.4194], [0.0], [0.0, 0.7], [0.0, 0.5714], [0.0], [0.0, 0.561], [0.0, 0.6667], [0.0, 0.6061], [0.0, 0.5143], [0.0, 0.3438], [0.0], [0.0], [0.0], [0.0, 0.4828], [0.0], [0.0, 0.5714], [0.0, 0.6757], [0.0, 0.6429], [0.0, 0.7027], [0.0, 0.6786], [0.0], [0.0, 0.46], [0.0, 0.5294, 0.7647], [0.0, 0.1923, 0.4744, 0.6282], [0.0, 0.5435], [0.0], [0.0], [0.0]];
 /* «إيه الحكاية؟» — «الرسم الهندسي» drawing helpers. build.py puts this file in front of the episode's shots.js, so every
    name here is in scope for the shots. The panel world is 640×786 (portrait, the panel's own aspect); a shot's camera
    [cx, cy, zoom] picks what is in view. Everything is redrawn every frame from t, so the render is deterministic.
@@ -171,7 +171,7 @@ function tag(text, x, y, k, sz, col) { k = pop(k == null ? 1 : k); if (k <= 0) r
 
 var LUNG = "#e4b4a4", LUNG_D = "#c98b7c", AIRW = "#a9a874", AIRW_D = "#7f7f4e", RING = "#e6dcc4", CART = "#dfe3dc", CART_D = "#b9c3bd",
     CELL = "#ebc6b4", CELL_D = "#d49f8b", NUC = "#7b5a70", MUC = "#cfc58f", MUC_D = "#a3965c", PCL = "#d9e5e6", SUB = "#f0dccb",
-    TAR = "#5b4b3d", SMOKE = "#9a958c", CHILI = "#b8402c", BLOOD = "#a8332a";
+    BONE = "#e6dcc4", TAR = "#5b4b3d", SMOKE = "#9a958c", CHILI = "#b8402c", BLOOD = "#a8332a";
 function L2(a, b, k) { return [lerp(a[0], b[0], k), lerp(a[1], b[1], k)]; }
 function along(pts, k) {
   var segs = [], tot = 0, i; for (i = 1; i < pts.length; i++) { var l = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); segs.push(l); tot += l; }
@@ -320,9 +320,13 @@ function chili(x, y, s, rot) {
     '<path d="M-14 -40 C-6 -48 8 -48 12 -38 C4 -34 -6 -34 -14 -40 Z" fill="' + OLIVE + '" stroke="' + INK + '" stroke-width="1.8"/><path d="M0 -44 C2 -54 8 -60 16 -62" stroke="' + OLIVE + '" stroke-width="5" fill="none" stroke-linecap="round"/>' +
     '<path d="M6 -30 C8 -10 4 10 -4 30" stroke="#e7a092" stroke-width="3" fill="none" opacity=".7"/>');
 }
-function exhaust(t) {   // the back of a car: bumper, the tail pipe and its fumes (for the analogy box)
-  var s = R(-50, -16, 100, 28, "#8f99a0", 1.8, 6) + R(-46, 12, 22, 8, INK, 0) + R(-38, -30, 76, 16, "#b6bfc4", 1.6, 4) + R(28, 6, 26, 9, "#6b6560", 1.6, 2);
-  for (var i = 0; i < 4; i++) { var p = (t * .7 + i / 4) % 1; s += C(56 + p * 40, 10 - p * 22, 5 + 10 * p, "#b9b4aa", 1.2).replace('fill="#b9b4aa"', 'fill="#b9b4aa" opacity="' + f(1 - p) + '"'); }
+function exhaust(t) {   // back half of a sedan from the side (real proportions: wheel ≈ ⅓ of the body height + roof), the tail pipe under the bumper
+  var s = P("M-120 10 L-120 -24 C-112 -34 -70 -38 -40 -40 L-6 -74 C2 -80 40 -82 70 -80 L92 -54 C110 -50 128 -46 132 -36 L134 6 C134 12 128 16 120 16 L-120 16 Z", "#9aa6ad", 2.2);
+  s += P("M-30 -42 L-2 -70 L40 -72 L40 -44 Z", "#d5e1e6", 1.6) + P("M48 -72 L66 -72 L84 -50 L48 -46 Z", "#d5e1e6", 1.6) + '<path d="M44 -74 L44 10" stroke="' + INK + '" stroke-width="1.4"/>';
+  s += R(120, -40, 12, 14, "#c8503a", 1.4, 2) + '<path d="M-120 -14 H128" stroke="' + INK + '" stroke-width="1.2" opacity=".5"/>';
+  [[-70, 16], [80, 16]].forEach(function (w) { s += C(w[0], w[1], 24, INK, 0) + C(w[0], w[1], 12, "#c9c9c4", 1.6); });
+  s += R(118, 12, 30, 8, "#6b6560", 1.6, 3);   // tail pipe
+  for (var i = 0; i < 5; i++) { var p = (t * .7 + i / 5) % 1; s += '<circle cx="' + f(152 + p * 60) + '" cy="' + f(16 - p * 30) + '" r="' + f(5 + 14 * p) + '" fill="#b9b4aa" opacity="' + f(.8 * (1 - p)) + '" stroke="' + INK + '" stroke-width="1"/>'; }
   return s;
 }
 function flypaper(t) {   // a hanging sticky strip with flies stuck on it
@@ -360,7 +364,7 @@ function chart(x, y, k, hiK) {   // cough reports: smoking, week 1, week 2, week
 }
 
 // ═════════ the man (shared person kit), casual clothes ═════════
-var MAN = { outfit: "casual" }, PS = 2.3, PX0 = 320, PY0 = 860;   // waist-up close-up: hips below the panel edge
+var MAN = { outfit: "casual" }, PS = 4.2, PX0 = 320, PY0 = 878;   // chest close-up: head on top, the chest (.87H–.655H) fills y 290–650   // waist-up close-up: hips below the panel edge
 function man(t, o) {
   var base = Object.assign({ x: PX0, y: PY0, s: PS, legs: "stand", breath: (Math.sin(t * 1.6) + 1) / 2, head: { tilt: wob(t, 2, 1.1) }, face: { eyes: 1, mouth: "neutral" } }, MAN, o || {});
   if (!base.arms) base.arms = [{ to: [PX0 - 52 * PS, PY0 + 30 * PS], hand: "relaxed", bend: 1 }, { to: [PX0 + 52 * PS, PY0 + 30 * PS], hand: "relaxed", bend: -1 }];
@@ -369,8 +373,8 @@ function man(t, o) {
 function headAt(o) { return man(0, o).joints.head; }
 // the cough: fist to the mouth, eyes squeezed, head jerks forward on each cough (n coughs per second)
 function coughMan(t, k, rate) {
-  var c = Math.max(0, Math.sin(t * Math.PI * 2 * (rate || 1.3))), hd = headAt({}), m = [hd[0] + 8 * PS, hd[1] + 20 * PS], up = k > .5;
-  var arm = up ? { to: [m[0], m[1] + 4 * c], hand: "fist", elbow: [-14, 56], front: true, rot: -150 } : { to: [PX0 + 52 * PS, PY0 + 30 * PS], hand: "relaxed", bend: -1 };
+  var c = Math.max(0, Math.sin(t * Math.PI * 2 * (rate || 1.3))), hd = headAt({}), m = [hd[0] + 6 * PS, hd[1] + 13 * PS], up = k > .5;
+  var arm = up ? { to: [m[0], m[1] + 4 * c], hand: "fist", elbow: [-12, 50], front: true, rot: -150 } : { to: [PX0 + 52 * PS, PY0 + 30 * PS], hand: "relaxed", bend: -1 };
   var p = man(t, { head: { tilt: -3 + 6 * c * k, nod: .22 * c * k }, face: { eyes: up ? .15 : 1, brows: "worried", mouth: c > .4 ? "o" : "frown" },
     arms: [{ to: [PX0 - 52 * PS, PY0 + 30 * PS], hand: "relaxed", bend: 1 }, arm] });
   var s = p.svg;
@@ -378,131 +382,233 @@ function coughMan(t, k, rate) {
   return s;
 }
 
+// ═════════ the chest window: lungs, ribs and heart drawn INSIDE the man at their real places ═════════
+// Surface anatomy as fractions of standing height H (adult, front view): larynx ≈ .87H (just under the chin), lung apex ≈ .825H
+// (2–3 cm above the clavicle), clavicles and sternal notch ≈ .815H, carina (sternal angle) ≈ .79H, nipples / xiphoid ≈ .72H,
+// lower lung edge ≈ .70H at the 6th rib in front and ≈ .67H at the side, lung field ≈ .17H wide. The kit's man stands with his
+// hip joints at .52H, so a height h sits at y = PY0 − (h − .52)·400·PS.
+function hy(h) { return PY0 - (h - .52) * 400 * PS; }
+function hx(w) { return PX0 + w * 400 * PS; }
+// lungs() is drawn on a sheet where the larynx top is y 10, the apexes y 170, the bases y 640 and the lung field x 96–546:
+// map it onto those landmarks
+var LSX = (hx(.088) - hx(-.088)) / 450, LSY = (hy(.665) - hy(.825)) / 470;
+function lungFrame() { return "translate(" + f(PX0) + " " + f(hy(.825)) + ") scale(" + f(LSX) + " " + f(LSY) + ") translate(-320 -170)"; }
+function ribs(op) {
+  // after Gray's Anatomy fig. 112 (front of the thorax): the sternum (wide manubrium, narrower body, small xiphoid); each true
+  // rib leaves the sternum as a pale costal cartilage running out and DOWN, then the bone turns out and UP and curves down
+  // around the side; ribs 8–10 join the costal margin, the inverted V under the sternum. Heights as fractions of H.
+  var s = "", Hs = 400 * PS, X = function (w) { return PX0 + w * Hs; }, Y = hy;
+  function bone(d, w) { return '<path d="' + d + '" stroke="' + INK + '" stroke-width="' + f(w + 4) + '" fill="none" stroke-linecap="round"/><path d="' + d + '" stroke="' + BONE + '" stroke-width="' + f(w) + '" fill="none" stroke-linecap="round"/>'; }
+  function cart(d, w) { return '<path d="' + d + '" stroke="' + INK + '" stroke-width="' + f(w + 3) + '" fill="none" stroke-linecap="round" opacity=".8"/><path d="' + d + '" stroke="#cfd6cf" stroke-width="' + f(w) + '" fill="none" stroke-linecap="round"/>'; }
+  var attach = [.809, .792, .776, .763, .750, .738, .727];
+  [-1, 1].forEach(function (d) {
+    // ribs 8–10: the costal margin and the lower bone ends at the side
+    s += cart("M" + f(X(d * .008)) + " " + f(Y(.722)) + " C" + f(X(d * .03)) + " " + f(Y(.70)) + " " + f(X(d * .06)) + " " + f(Y(.672)) + " " + f(X(d * .083)) + " " + f(Y(.655)), 6);
+    for (var j = 0; j < 3; j++) s += bone("M" + f(X(d * (.074 + j * .006))) + " " + f(Y(.685 - j * .012)) + " Q" + f(X(d * (.092 + j * .002))) + " " + f(Y(.705 - j * .012)) + " " + f(X(d * .099)) + " " + f(Y(.69 - j * .014)), 7);
+    for (var i = 0; i < 7; i++) {
+      var yS = attach[i], drop = i < 2 ? .004 : .006 + (i - 2) * .007, xC = .032 + i * .006 + (i === 0 ? -.012 : 0), yC = yS - drop;
+      var xP = i === 0 ? .06 : .072 + i * .002, yP = yC + (i === 0 ? .004 : .010), xE = i === 0 ? .07 : .097, yE = yC - .022 - i * .002;
+      s += cart("M" + f(X(d * .012)) + " " + f(Y(yS)) + " Q" + f(X(d * (xC * .6))) + " " + f(Y(yS - drop * .2)) + " " + f(X(d * xC)) + " " + f(Y(yC)), i < 2 ? 7 : 6);
+      s += bone("M" + f(X(d * xC)) + " " + f(Y(yC)) + " Q" + f(X(d * xP)) + " " + f(Y(yP + .012)) + " " + f(X(d * xE)) + " " + f(Y(yE)), 8);
+    }
+    // the clavicle: an S-curved bar from the top of the sternum out to the shoulder
+    s += bone("M" + f(X(d * .014)) + " " + f(Y(.815)) + " C" + f(X(d * .045)) + " " + f(Y(.808)) + " " + f(X(d * .07)) + " " + f(Y(.822)) + " " + f(X(d * .105)) + " " + f(Y(.82)), 10);
+  });
+  // sternum: manubrium, body, xiphoid
+  s += P("M" + f(X(-.018)) + " " + f(Y(.814)) + " L" + f(X(.018)) + " " + f(Y(.814)) + " L" + f(X(.013)) + " " + f(Y(.792)) + " L" + f(X(-.013)) + " " + f(Y(.792)) + " Z", BONE, 2);
+  s += P("M" + f(X(-.012)) + " " + f(Y(.791)) + " L" + f(X(.012)) + " " + f(Y(.791)) + " L" + f(X(.014)) + " " + f(Y(.735)) + " L" + f(X(.006)) + " " + f(Y(.726)) + " L" + f(X(-.006)) + " " + f(Y(.726)) + " L" + f(X(-.014)) + " " + f(Y(.735)) + " Z", BONE, 2);
+  s += P("M" + f(X(-.005)) + " " + f(Y(.726)) + " L" + f(X(.005)) + " " + f(Y(.726)) + " L" + f(X(0)) + " " + f(Y(.712)) + " Z", "#cfd6cf", 1.6);
+  return G("", s, op == null ? .85 : op);
+}
+function heart(t) {   // in the middle, its apex toward the man's left (viewer's right), beating
+  var b = 1 + .05 * Math.max(0, Math.sin(t * 7.5)), cx = PX0 + .018 * 400 * PS, cy = hy(.742);   // ≈ 12 cm wide (.07H), apex to his left
+  return G("translate(" + f(cx) + " " + f(cy) + ") scale(" + f(b * .07 * 400 * PS / 130) + ") rotate(-30)", '<path d="M0 -46 C-30 -66 -70 -40 -58 -6 C-48 22 -10 44 6 62 C24 40 60 18 64 -10 C70 -44 30 -64 0 -46 Z" fill="#c8705f" stroke="' + INK + '" stroke-width="2.4"/><path d="M-8 -50 C-6 -70 0 -84 12 -90" stroke="#c8705f" stroke-width="16" fill="none"/><path d="M-8 -50 C-6 -70 0 -84 12 -90" stroke="' + INK + '" stroke-width="2" fill="none" opacity=".6"/>');
+}
+// the window: the shirt and skin cut open over the chest, the organs inside. o: lungs() options + {k: open 0..1, heart, ribs}
+function chestWin(t, k, o) {
+  o = o || {}; k = clamp(k); if (k <= 0) return ""; var id = "cw" + (++CLIPN), x0 = hx(-.105), x1 = hx(.105), y0 = hy(.87), y1 = hy(.655), r = 60;
+  var win = "M" + f(PX0 - 24) + " " + f(y0) + " L" + f(PX0 + 24) + " " + f(y0) + " L" + f(PX0 + 30) + " " + f(hy(.83)) + " C" + f(x1 - 20) + " " + f(hy(.83)) + " " + f(x1) + " " + f(hy(.80)) + " " + f(x1) + " " + f(hy(.77)) + " L" + f(x1 - 8) + " " + f(y1 + r) + " Q" + f(x1 - 10) + " " + f(y1) + " " + f(x1 - 70) + " " + f(y1) + " L" + f(x0 + 70) + " " + f(y1) + " Q" + f(x0 + 10) + " " + f(y1) + " " + f(x0 + 8) + " " + f(y1 + r) + " L" + f(x0) + " " + f(hy(.77)) + " C" + f(x0) + " " + f(hy(.80)) + " " + f(x0 + 20) + " " + f(hy(.83)) + " " + f(PX0 - 30) + " " + f(hy(.83)) + " Z";
+  var inner = '<path d="' + win + '" fill="#f3e3d6"/><path d="' + win + '" fill="url(#hatch)" opacity=".15"/>';
+  inner += P("M" + f(x0) + " " + f(y1 + 18) + " C" + f(PX0 - 60) + " " + f(hy(.69)) + " " + f(PX0 + 60) + " " + f(hy(.69)) + " " + f(x1) + " " + f(y1 + 18), "none", 6, ' stroke="' + OLIVE + '" opacity=".8"');   // diaphragm
+  inner += G(lungFrame(), lungs(t, o));
+  if (o.heart !== false) inner += heart(t);
+  if (o.ribs !== false) inner += ribs(o.ribsOp);
+  if (o.extra) inner += o.extra;
+  return G("", '<clipPath id="' + id + '"><path d="' + win + '"/></clipPath><g clip-path="url(#' + id + ')">' + inner + '</g><path d="' + win + '" fill="none" stroke="' + INK + '" stroke-width="3"/>', k);
+}
+// a point on the lungs sheet → panel coordinates (for things that travel through the body)
+function L2W(p) { return [PX0 + (p[0] - 320) * LSX, hy(.825) + (p[1] - 170) * LSY]; }
+function clockChip(x, y, txt, k) { k = pop(k == null ? 1 : k); if (k <= 0) return ""; return G("translate(" + f(x) + " " + f(y) + ") scale(" + f(k) + ")", R(-96, -34, 192, 68, "#f4ecdb", 2.2, 6) + C(-62, 0, 20, PAPER, 2) + '<path d="M-62 0 V-13 M-62 0 L-52 6" stroke="' + INK + '" stroke-width="3" stroke-linecap="round"/>' + T(txt, 22, 10, 26, ORANGE, 800)); }
+function pulse(x, y, w, t, rate, k) { var d = "M" + f(x) + " " + y, n = 60; for (var i = 0; i <= n; i++) { var xx = x + w * i / n, ph = ((i / n) * rate * 2 - t * rate) % 1, v = ph < 0 ? ph + 1 : ph; var yy = y - (v > .45 && v < .5 ? -18 : v >= .5 && v < .56 ? 46 : v >= .56 && v < .6 ? -14 : 0); d += " L" + f(xx) + " " + f(yy); } return draw(d, k == null ? 1 : k, ORANGE, 3.5); }
+
 // ═════════ shots (line numbers from script.txt) ═════════
-// 4 · «طب إيه اللي بيحصل جوه الرئة لما تبطّل؟»: the lungs draw themselves, the tree grows in
-shot(4, push(320, 380, 1.08, 0.98), function (u, d, t) {
-  return paper() + lungs(t, { tree: at(u, .2, 2.2) }) + label(160, 380, 130, 250, "الرئة", OLIVE, at(u, .8, .5), 26) + label(320, 160, 430, 90, "ماسورة الهوا", OLIVE, at(u, 1.4, .5), 24) + T("؟", 560, 220, 120, ORANGE, 800);
+// 3 · 20 minutes: the pulse starts to calm — the heart in the open chest, the trace slowing
+shot(3, push(320, 420, 1.02, 1.08), function (u, d, t) {
+  var rate = lerp(1.8, 1.0, at(u, .8, 2));
+  return paper() + man(t, { face: { eyes: 1, mouth: "neutral" } }).svg + chestWin(t, at(u, .1, .5), { ribsOp: .5 }) + clockChip(150, 110, "20 دقيقة", at(u, .2, .4)) + R(400, 60, 220, 110, "#f4ecdb", 2) + pulse(410, 125, 200, t, rate, at(u, .4, .5));
 });
-// 5 · carbon monoxide leaves within two days: CO molecules ride up the trachea and out; the car-exhaust analogy box
-shot(5, push(320, 360, 1.0, 1.06), function (u, d, t) {
-  var s = paper() + lungs(t, { tar: .25 });
-  for (var i = 0; i < 9; i++) { var p = ((u * .28 + i / 9) % 1), q = along(UPPATH.map(function (pp, j) { return i % 2 ? [640 - pp[0], pp[1]] : pp; }), p); s += G("", coMol(q[0], q[1], .9), Math.min(1, at(u, .2 + i * .15, .4)) * (p > .9 ? (1 - p) * 10 : 1)); }
-  s += iconBox(540, 110, 130, G("translate(-8 10)", exhaust(t)), at(u, 1.6, .4)) + tag("يومين", 120, 120, at(u, .5, .4), 30, ORANGE);
-  return s + label(338, 120, 470, 240, "أول أكسيد الكربون", BLUE, at(u, 1.0, .5), 22);
+// 4 · 8 hours: half the carbon monoxide leaves the blood — CO molecules ride up the airway and out
+function coStream(t, u, n, x) {
+  var s = "", path = UPPATH.map(L2W).concat([[PX0 + 30, hy(.895)], [PX0 - 140, hy(.93)]]);
+  for (var i = 0; i < n; i++) { var p = ((u * .25 + i / n) % 1), q = along(path, p); s += G("", coMol(q[0], q[1], .8), Math.min(1, at(u, .2 + i * .12, .4))); }
+  return s;
+}
+shot(4, push(320, 380, 1.0, 1.06), function (u, d, t) {
+  return paper() + man(t, { face: { eyes: 1, mouth: "o" } }).svg + chestWin(t, 1, { ribsOp: .45, tar: .3 }) + coStream(t, u, 10) + clockChip(150, 110, "8 ساعات", at(u, .2, .4)) + tag("النص", 520, 120, at(u, 1.6, .4), 30, ORANGE);
 });
-// 6 · UK study 2003: the cough chart rises at week one, then falls
-shot(6, push(320, 400, 1.04, 0.98), function (u, d, t) {
-  return paper() + G("translate(-42 -40) scale(1.15)", chart(60, 300, at(u, .6, 2.6), at(u, 3, .4))) + tag("إنجلترا 2003", 320, 200, at(u, .2, .4), 28);
+// 5 · the same gas as a car's exhaust: the back of a car, big, its fumes made of the same CO molecules
+shot(5, push(320, 420, 1.06, 0.98), function (u, d, t) {
+  var s = paper() + G("translate(200 470) scale(1.8)", exhaust(t));
+  for (var i = 0; i < 8; i++) { var p = (u * .3 + i / 8) % 1; s += G("", coMol(480 + p * 160, 490 - p * 200 + 20 * Math.sin(i), 1.1), Math.min(1, at(u, .3 + i * .1, .3)) * (1 - p)); }
+  return s + label(500, 470, 470, 220, "أول أكسيد الكربون", BLUE, at(u, .8, .5), 24) + line0(410);
 });
-// 7 · «ليه أصلاً فيه مخاط؟»: fly into one bronchus — the lungs zoom toward a branch
-shot(7, function (u, d) { var k = ease(u / d); return [lerp(320, 210, k), lerp(400, 470, k), lerp(1, 2.6, k)]; }, function (u, d, t) {
-  return paper() + lungs(t, {}) + G("", '<circle cx="210" cy="470" r="' + f(34 + 4 * Math.sin(t * 4)) + '" fill="none" stroke="' + ORANGE + '" stroke-width="4"/>', at(u, .4, .4)) + T("؟", 270, 430, 70, ORANGE, 800);
-}, { tr: "fade" });
-// 8 · the pipes are lined inside with a sticky blanket: a cut tube, then the wall close-up label
-shot(8, push(330, 400, 1.06, 0.98), function (u, d, t) {
-  return paper() + tubeCut(t, 1) + label(160, 300, 150, 140, "مخاط لزج", BLUE, at(u, .6, .5), 26) + label(420, 230, 470, 120, "جدار الماسورة", OLIVE, at(u, 1.2, .5), 24);
+function line0(y) { return '<path d="M-100 ' + y + ' H740" stroke="' + INK + '" stroke-width="2" opacity="0"/>'; }
+// 6 · after two days: all of it is out — the stream thins to nothing, a check
+shot(6, push(320, 380, 1.06, 1.0), function (u, d, t) {
+  var n = Math.max(0, Math.round(8 * (1 - at(u, .2, 1.4))));
+  return paper() + man(t, { face: { eyes: 1, mouth: "smile" } }).svg + chestWin(t, 1, { ribsOp: .45 }) + coStream(t, u, n) + clockChip(150, 110, "يومين", at(u, .1, .4)) + check(520, 140, 1.2, at(u, 1.6, .4), OLIVE);
+});
+// 7 · after three days breathing is easier: the airways relax, the lungs fill wider, air arrows in
+shot(7, push(320, 400, 1.0, 1.06), function (u, d, t) {
+  var b = (Math.sin(t * 1.5) + 1) / 2;
+  return paper() + man(t, { breath: b, face: { eyes: .6, mouth: "smile", brows: "raised" }, head: { tilt: -4 } }).svg + chestWin(t, 1, { breathe: 3.5, hlTree: true, ribsOp: .45 }) + clockChip(150, 110, "3 أيام", at(u, .1, .4)) +
+    G("", arrow(PX0 - 150, hy(.95), PX0 + 4, hy(.885), BLUE, 6, 1), .4 + .6 * b);
+});
+// 8 · «بس هنا بتحصل حاجة غريبة»: the man frowns, an orange «!» over him
+shot(8, push(320, 420, 1.04, 1.0), function (u, d, t) {
+  return paper() + man(t, { face: { eyes: 1.2, brows: "worried", mouth: "frown", look: [.3, -.2] }, head: { tilt: 5 } }).svg + chestWin(t, 1, { ribsOp: .45 }) + G("", T("!", 530, 260, 160, ORANGE, 900), at(u, .3, .3));
+});
+// 9 · a study in England, 2003
+shot(9, push(320, 400, 1.04, 0.98), function (u, d, t) {
+  return paper() + G("translate(-42 -40) scale(1.15)", chart(60, 300, at(u, .8, 1.6), 0)) + tag("إنجلترا 2003", 320, 200, at(u, .2, .4), 30);
+});
+// 10 · quitters coughed more after just one week: the week-1 point rings, the man coughs in a box
+shot(10, push(320, 400, 1.0, 1.04), function (u, d, t) {
+  return paper() + G("translate(-42 -40) scale(1.15)", chart(60, 300, 1, at(u, .3, .4))) + tag("إنجلترا 2003", 320, 200, 1, 30) + iconBox(520, 640, 200, '<clipPath id="cb"><rect x="-100" y="-100" width="200" height="200"/></clipPath><g clip-path="url(#cb)">' + G("translate(-128 -90) scale(.4)", coughMan(t, 1, 1.4)) + '</g>', at(u, .8, .4));
+});
+// 11 · «طب ليه؟»: the camera flies into the open chest, into one bronchus of the right lung
+shot(11, function (u, d) { var k = ease(u / d), q = L2W([210, 470]); return [lerp(320, q[0], k), lerp(420, q[1], k), lerp(1, 2.8, k)]; }, function (u, d, t) {
+  var q = L2W([210, 470]);
+  return paper() + man(t, {}).svg + chestWin(t, 1, { ribsOp: .3 }) + G("", '<circle cx="' + f(q[0]) + '" cy="' + f(q[1]) + '" r="' + f(16 + 2 * Math.sin(t * 4)) + '" fill="none" stroke="' + ORANGE + '" stroke-width="3"/>', at(u, .2, .3)) + T("؟", 520, 260, 110, ORANGE, 800);
+});
+// 12 · the pipes are lined with sticky mucus: the cut tube
+shot(12, push(330, 400, 1.06, 0.98), function (u, d, t) {
+  return paper() + tubeCut(t, 1) + label(160, 300, 150, 140, "مخاط لزج", BLUE, at(u, .5, .5), 26) + label(420, 230, 470, 120, "جدار الماسورة", OLIVE, at(u, 1.0, .5), 24);
 }, { tr: "in" });
-// 9 · the blanket traps dust and microbes (flypaper box); specks fall in from the air and stick
-shot(9, push(320, 360, 1.0, 1.05), function (u, d, t) {
+// 13 · it traps dust and microbes, like flypaper
+shot(13, push(320, 360, 1.0, 1.05), function (u, d, t) {
   var s = paper() + wall(t, { dust: 1 });
-  for (var i = 0; i < 6; i++) { var p = clamp((u - .3 - i * .35) / 1.2), x = 60 + i * 100, y = lerp(40, 260 + 10 * hash(i), ease(p)); if (p < 1) s += i % 2 ? '<rect x="' + f(x - 9) + '" y="' + f(y - 4) + '" width="18" height="8" rx="4" fill="' + OLIVE + '" stroke="' + INK + '" stroke-width="1.2"/>' : '<path d="M' + f(x - 5) + ' ' + f(y + 3) + ' L' + f(x - 2) + ' ' + f(y - 5) + ' L' + f(x + 6) + ' ' + f(y - 2) + ' L' + f(x + 4) + ' ' + f(y + 5) + ' Z" fill="#8a6a48" stroke="' + INK + '" stroke-width="1"/>'; }
-  return s + iconBox(550, 90, 120, flypaper(t), at(u, 1.4, .4)) + label(220, 262, 250, 120, "تراب وميكروبات", ORANGE, at(u, 1.8, .5), 22);
+  for (var i = 0; i < 6; i++) { var p = clamp((u - .2 - i * .25) / 1), x = 60 + i * 100, y = lerp(40, 260 + 10 * hash(i), ease(p)); if (p < 1) s += i % 2 ? '<rect x="' + f(x - 9) + '" y="' + f(y - 4) + '" width="18" height="8" rx="4" fill="' + OLIVE + '" stroke="' + INK + '" stroke-width="1.2"/>' : '<path d="M' + f(x - 5) + ' ' + f(y + 3) + ' L' + f(x - 2) + ' ' + f(y - 5) + ' L' + f(x + 6) + ' ' + f(y - 2) + ' L' + f(x + 4) + ' ' + f(y + 5) + ' Z" fill="#8a6a48" stroke="' + INK + '" stroke-width="1"/>'; }
+  return s + iconBox(550, 90, 120, flypaper(t), at(u, 1.2, .4)) + label(220, 262, 250, 120, "تراب وميكروبات", ORANGE, at(u, .6, .5), 22);
 });
-// 10 · the cilia beat together and push the blanket up toward the throat (escalator box)
-shot(10, push(330, 380, 1.08, 1.0), function (u, d, t) {
-  return paper() + wall(t, { hl: at(u, .3, .4) > .5 ? "cil" : "", dust: 1 }) + label(200, 330, 110, 130, "شعيرات", OLIVE, at(u, .5, .5), 26) +
-    arrow(360, 180, 600, 180, ORANGE, 6, at(u, 1.2, .6)) + T("للزور", 560, 160, 26, ORANGE, 800) + iconBox(90, 90, 120, escalator(t), at(u, 2.2, .4));
+// 14 · under it, tiny hairs beat together
+shot(14, push(330, 400, 1.1, 1.18), function (u, d, t) {
+  return paper() + wall(t, { hl: "cil", dust: 1 }) + label(200, 330, 110, 130, "شعيرات", OLIVE, at(u, .3, .5), 28);
 });
-// 11 · up at the throat you swallow it without noticing: the blanket rides up the trachea
-shot(11, push(320, 300, 1.0, 1.1), function (u, d, t) {
-  var blobs = []; for (var i = 0; i < 5; i++) { var p = (u * .22 + i / 5) % 1; blobs.push(along(UPPATH, .25 + .75 * p)); }
-  return paper() + lungs(t, { blobs: blobs }) + label(320, 30, 440, 80, "الزور", OLIVE, at(u, .4, .5), 26) + check(520, 220, 1, at(u, 1.4, .4), OLIVE);
+// 15 · they push the mucus up, like an escalator
+shot(15, push(330, 380, 1.04, 1.0), function (u, d, t) {
+  return paper() + wall(t, { dust: 1 }) + arrow(300, 180, 600, 180, ORANGE, 6, at(u, .2, .6)) + T("لفوق", 560, 160, 26, ORANGE, 800) + iconBox(90, 90, 120, escalator(t), at(u, .8, .4));
+});
+// 16 · up to the throat, swallowed without noticing: mucus beads ride up the airway inside the man to the throat
+shot(16, push(320, 400, 1.04, 1.0), function (u, d, t) {
+  var blobs = []; for (var i = 0; i < 5; i++) { var p = (u * .25 + i / 5) % 1; blobs.push(along(UPPATH, .25 + .75 * p)); }
+  return paper() + man(t, { face: { eyes: 1, mouth: "neutral" } }).svg + chestWin(t, 1, { blobs: blobs, heart: false, ribsOp: .3 }) + label(PX0, hy(.875), PX0 + 170, hy(.95), "الزور", OLIVE, at(u, .3, .5), 26) + check(520, 140, 1, at(u, 1.2, .4), OLIVE);
 }, { tr: "out" });
-// 12 · «والسجاير بتعمل إيه في ده؟»: the man lights a cigarette, smoke rises
-shot(12, push(320, 430, 1.0, 1.08), function (u, d, t) {
-  var hd = headAt({}), m = [hd[0] - 4 * PS, hd[1] + 22 * PS], k = at(u, .2, .6);
-  var p = man(t, { face: { eyes: .9, mouth: "neutral", look: [-.3, 0] }, arms: [{ to: [PX0 - 52 * PS, PY0 + 30 * PS], hand: "relaxed", bend: 1 }, (k > .5 ? { to: [hd[0] + 14 * PS, hd[1] + 30 * PS], hand: "relaxed", elbow: [-8, 52], front: true, rot: -120 } : { to: [PX0 + 52 * PS, PY0 + 30 * PS], hand: "relaxed", bend: -1 })] });
+// 17 · «طب والسجاير؟»: the man smokes
+shot(17, push(320, 430, 1.0, 1.06), function (u, d, t) {
+  var hd = headAt({}), k = at(u, .1, .4);
+  var p = man(t, { face: { eyes: .9, mouth: "neutral", look: [-.3, 0] }, arms: [{ to: [PX0 - 52 * PS, PY0 + 30 * PS], hand: "relaxed", bend: 1 }, { to: [lerp(PX0 + 52 * PS, PX0 + 44 * PS, k), lerp(PY0 + 30 * PS, hy(.735), k)], hand: "relaxed", elbow: [6, 48], rot: -60 }] });
   var w = p.joints.wr[1];
-  return paper() + p.svg + cigarette(w[0] - 20, w[1] - 14, 160, 70, true, t) + smokeWisps(t, 0, 60, 640, 200, at(u, .6, 1)) + T("؟", 120, 260, 120, ORANGE, 800);
+  return paper() + p.svg + cigarette(w[0] + 8, w[1] - 30, -70, 60, true, t) + smokeWisps(t, 0, 60, 640, 200, at(u, .4, 1)) + T("؟", 120, 260, 120, ORANGE, 800);
 });
-// 13 · smoke makes the pipes pour out more, thicker mucus: goblet cells swell, the blanket thickens
-shot(13, push(320, 380, 1.06, 0.98), function (u, d, t) {
-  var k = at(u, .4, 2.4);
-  return paper() + wall(t, { smoke: 1, gob: lerp(1, 1.6, k), muc: lerp(1, 2.3, k), gobEvery: k > .5 ? 3 : 5, hl: "gob" }) + label(100, 420, 160, 640, "خلايا المخاط", OLIVE, at(u, 1, .5), 22) + tag("أكتر وأتقل", 470, 110, at(u, 2, .4), 28, BLUE);
+// 18 · smoke makes more, thicker mucus
+shot(18, push(320, 380, 1.06, 0.98), function (u, d, t) {
+  var k = at(u, .2, 1.8);
+  return paper() + wall(t, { smoke: 1, gob: lerp(1, 1.6, k), muc: lerp(1, 2.3, k), gobEvery: k > .5 ? 3 : 5, hl: "gob" }) + label(100, 420, 160, 640, "خلايا المخاط", OLIVE, at(u, .8, .5), 22) + tag("أكتر وأتقل", 470, 110, at(u, 1.4, .4), 28, BLUE);
 });
-// 14 · the cilia get fewer and shorter, the escalator slows and mucus piles up
-shot(14, push(320, 380, 1.0, 1.06), function (u, d, t) {
-  var k = at(u, .3, 2.2);
-  return paper() + wall(t, { len: lerp(1, .55, k), dens: lerp(1, .6, k), speed: lerp(1, .25, k), muc: 2.3, gob: 1.6, gobEvery: 3, dust: 1, smoke: .5, hl: "cil" }) +
-    cross(560, 140, .9, at(u, 2.6, .5)) + iconBox(90, 90, 120, escalator(t * lerp(1, .2, k)), at(u, 1.6, .4)) + label(240, 330, 330, 150, "أقل وأقصر", ORANGE, at(u, 1.0, .5), 24);
+// 19 · and the hairs fewer and shorter
+shot(19, push(320, 380, 1.0, 1.06), function (u, d, t) {
+  var k = at(u, .2, 1.6);
+  return paper() + wall(t, { len: lerp(1, .55, k), dens: lerp(1, .6, k), speed: lerp(1, .4, k), muc: 2.3, gob: 1.6, gobEvery: 3, smoke: .5, hl: "cil" }) + label(240, 330, 330, 150, "أقل وأقصر", ORANGE, at(u, .8, .5), 26);
 });
-// 15 · «طب ولما تبطّل؟»: the man breaks the cigarette
-shot(15, push(320, 430, 1.04, 0.98), function (u, d, t) {
-  var k = at(u, .5, .4);
-  return paper() + man(t, { face: { eyes: 1, mouth: k > .5 ? "smile" : "neutral", brows: "raised" } }).svg + brokenCig(320, 300, k) + T("؟", 520, 250, 110, ORANGE, 800);
+// 20 · the escalator slows and the mucus piles up
+shot(20, push(320, 380, 1.04, 1.0), function (u, d, t) {
+  var k = at(u, .1, 1.4);
+  return paper() + wall(t, { len: .55, dens: .6, speed: lerp(.4, .2, k), muc: lerp(2.3, 3, k), gob: 1.6, gobEvery: 3, dust: 1, smoke: .5 }) + iconBox(90, 90, 120, escalator(t * .2), at(u, .2, .4)) + cross(560, 120, .9, at(u, 1.2, .5));
 });
-// 16 · 29 smokers, a chili spray test: cough reflex sharper after two weeks
-shot(16, push(320, 400, 1.0, 1.05), function (u, d, t) {
-  var k = at(u, 2, 1.6);
-  return paper() + numBox("29", 140, 150, at(u, .2, .3), 46) + T("مدخن", 140, 220, 24, INK, 700) + G("", chili(320, 200, 1.3, 20 + wob(t, 4, 2)), at(u, .8, .4)) +
-    G("", (function () { var s = ""; for (var i = 0; i < 16; i++) { var p = (t * .6 + i / 16) % 1; s += C(370 + p * 160, 200 - 40 * Math.sin(i) * p, 3 + 3 * p, "#e7a092", 0); } return s; })(), at(u, 1, .4)) +
-    gauge(320, 560, 150, k, "سرعة الكحة") + calendarWeeks(320, 690, 2, Math.min(2, Math.floor(at(u, 1.5, 1.2) * 2.99)), "");
+// 21 · «طب ولما تبطّل؟»: the man breaks the cigarette
+shot(21, push(320, 430, 1.04, 0.98), function (u, d, t) {
+  var k = at(u, .3, .4);
+  return paper() + man(t, { face: { eyes: 1, mouth: k > .5 ? "smile" : "neutral", brows: "raised" } }).svg + brokenCig(480, 230, k) + T("؟", 120, 200, 110, ORANGE, 800);
 });
-// 17 · the cilia wake up and grow back over the following weeks
-shot(17, push(320, 380, 1.06, 1.0), function (u, d, t) {
-  var k = at(u, .3, 3);
-  return paper() + wall(t, { len: lerp(.55, 1, k), dens: lerp(.6, 1, k), speed: lerp(.25, 1, k), muc: 2.1, gob: lerp(1.6, 1.1, k), gobEvery: k > .6 ? 5 : 3, dust: 1, hl: "cil" }) +
-    calendarWeeks(320, 110, 6, Math.round(k * 6), "") + check(560, 220, 1, at(u, 3, .4), OLIVE);
+// 22 · the hairs wake up and get back to work
+shot(22, push(320, 380, 1.06, 1.0), function (u, d, t) {
+  var k = at(u, .2, 2.2);
+  return paper() + wall(t, { len: lerp(.55, 1, k), dens: lerp(.6, 1, k), speed: lerp(.2, 1, k), muc: 2.4, gob: lerp(1.6, 1.1, k), gobEvery: k > .6 ? 5 : 3, dust: 1, hl: "cil" }) + calendarWeeks(320, 110, 6, Math.round(k * 6), "") + check(560, 220, 1, at(u, 2.2, .4), OLIVE);
 });
-// 18 · the piled-up mucus comes out, and its only way out is the cough: blobs race up the tree, the man coughs
-shot(18, push(320, 420, 1.02, 0.98), function (u, d, t) {
-  var blobs = []; for (var i = 0; i < 8; i++) { var p = (u * .35 + i / 8) % 1; blobs.push(along(UPPATH, p)); }
-  var s = paper();
-  if (u < d * .45) s += lungs(t, { blobs: blobs, tar: .2 });
-  else s += coughMan(t, at(u, d * .45, .4), 1.4);
-  return s;
+// 23 · scientists sprayed chili on 29 smokers
+shot(23, push(320, 400, 1.0, 1.05), function (u, d, t) {
+  var mist = ""; for (var i = 0; i < 18; i++) { var p = (t * .6 + i / 18) % 1; mist += C(360 + p * 200, 330 - 50 * Math.sin(i) * p, 3 + 4 * p, "#e7a092", 0); }
+  return paper() + numBox("29", 150, 170, at(u, .6, .3), 52) + T("مدخن", 150, 250, 26, INK, 700) + G("", chili(300, 330, 1.8, 20 + wob(t, 4, 2)), at(u, .1, .4)) + G("", mist, at(u, .4, .4)) + tag("رذاذ شطة", 320, 560, at(u, 1, .4), 30, ORANGE);
 });
-// 19 · the myth: «التبطيل بيأذي الرئة» — crossed out
-shot(19, push(320, 400, 1.0, 1.06), function (u, d, t) {
-  return paper() + lungs(t, { dim: .3 }) + tag("التبطيل بيأذي الرئة", 320, 380, at(u, .3, .4), 30) + cross(320, 370, 2.6, at(u, d - 1.4, .6));
+// 24 · two weeks after quitting, the cough came faster: the reflex gauge swings up
+shot(24, push(320, 420, 1.04, 0.98), function (u, d, t) {
+  return paper() + gauge(320, 470, 190, at(u, .6, 1.4), "سرعة الكحة") + calendarWeeks(320, 640, 2, Math.min(2, Math.floor(at(u, .1, .8) * 2.99)), "أسبوعين");
 });
-// 20 · it's the lungs cleaning themselves: the healthy wall, blanket flowing, a check; «كام أسبوع»
-shot(20, push(320, 380, 1.06, 1.0), function (u, d, t) {
-  return paper() + wall(t, { dust: 1, speed: 1.2 }) + arrow(300, 170, 600, 170, ORANGE, 6, at(u, .4, .5)) + check(130, 150, 1.2, at(u, .8, .4), OLIVE) + tag("كام أسبوع", 420, 110, at(u, 2.2, .4), 28, OLIVE);
+// 25 · the mucus piled up for years starts to come out: beads race up the tree inside the man
+shot(25, push(320, 400, 1.02, 1.06), function (u, d, t) {
+  var blobs = []; for (var i = 0; i < 9; i++) { var p = (u * .4 + i / 9) % 1; blobs.push(along(UPPATH, p)); }
+  return paper() + man(t, { face: { eyes: 1, brows: "worried", mouth: "frown" } }).svg + chestWin(t, 1, { blobs: blobs, tar: .3, heart: false, ribsOp: .3 });
 });
-// 21 · the doctor: more than three weeks, or blood → see a doctor
-shot(21, push(320, 420, 1.0, 1.06), function (u, d, t) {
+// 26 · and its only way out is the cough
+shot(26, push(320, 420, 1.0, 1.04), function (u, d, t) {
+  return paper() + coughMan(t, at(u, .1, .3), 1.5) + G("", '<ellipse cx="' + f(PX0 - 150 - 40 * ((t * 1.5) % 1)) + '" cy="' + f(hy(.93)) + '" rx="12" ry="8" fill="' + MUC + '" stroke="' + INK + '" stroke-width="1.8"/>', 1 - ((t * 1.5) % 1));
+});
+// 27 · the myth: «التبطيل بيأذي الرئة» — crossed out
+shot(27, push(320, 400, 1.0, 1.06), function (u, d, t) {
+  return paper() + lungs(t, { dim: .3 }) + tag("التبطيل بيأذي الرئة", 320, 380, at(u, .2, .4), 30) + cross(320, 370, 2.6, at(u, d - 1.0, .5));
+});
+// 28 · it's the lungs cleaning themselves; it usually calms within a few weeks
+shot(28, push(320, 380, 1.06, 1.0), function (u, d, t) {
+  return paper() + wall(t, { dust: 1, speed: 1.2 }) + arrow(300, 170, 600, 170, ORANGE, 6, at(u, .3, .5)) + check(130, 150, 1.2, at(u, .6, .4), OLIVE) + tag("كام أسبوع", 420, 110, at(u, 1.6, .4), 28, OLIVE);
+});
+// 29 · past three weeks, or with blood: see a doctor
+shot(29, push(320, 420, 1.0, 1.06), function (u, d, t) {
   var hd = headAt({ outfit: "doctor" });
-  var p = man(t, { outfit: "doctor", face: { eyes: 1, brows: "raised", mouth: "neutral" }, arms: [{ to: [PX0 - 52 * PS, PY0 + 30 * PS], hand: "relaxed", bend: 1 }, { to: [hd[0] + 70 * PS, hd[1] - 4 * PS], hand: "point", bend: 1, rot: -90 }] });
-  return paper() + p.svg + tag("+3 أسابيع", 140, 140, at(u, .4, .4), 30, ORANGE) + G("", blood(520, 140, 1.2), at(u, 1.6, .4)) + T("أو", 400, 150, 28, INK, 800);
+  var p = man(t, { outfit: "doctor", face: { eyes: 1, brows: "raised", mouth: "neutral" }, arms: [{ to: [PX0 - 52 * PS, PY0 + 30 * PS], hand: "relaxed", bend: 1 }, { to: [hd[0] + 44 * PS, hd[1] - 2 * PS], hand: "point", elbow: [16, 40], rot: -90 }] });
+  return paper() + p.svg + tag("+3 أسابيع", 140, 140, at(u, .2, .4), 30, ORANGE) + G("", blood(140, 260, 1.2), at(u, 1.0, .4)) + T("أو", 140, 205, 28, INK, 800);
 });
-// 22 · the recap: three panels in a row — more mucus, crippled cilia, cilia wake up + cough
-shot(22, push(320, 400, 1.0, 1.04), function (u, d, t) {
-  function pnl(y, k, o, cap, n) { return G("", G("translate(16 " + f(y - 160) + ") scale(.62)", '<clipPath id="rc' + n + '"><rect x="-26" y="258" width="650" height="330"/></clipPath><g clip-path="url(#rc' + n + ')">' + wall(t, o) + '</g>') + R(0, y, 402, 205, "none", 2.4) + callout(String(n), 20, y + 20, k) + T(cap, 520, y + 112, 28, INK, 800), k); }
-  return paper() + pnl(40, at(u, .2, .4), { muc: 2.2, gob: 1.6, gobEvery: 3, smoke: 1 }, "مخاط أكتر", 1) + pnl(290, at(u, 1.6, .4), { len: .55, dens: .6, speed: .3, muc: 2.2 }, "شعيرات مكسّحة", 2) +
-    pnl(540, at(u, 3.4, .4), { muc: 1.4, speed: 1.2, dust: 1 }, "تصحى وتطلّعه", 3);
+// 30 · the recap: three panels — smoke cripples the hairs, quit, they wake and cough it out
+shot(30, push(320, 400, 1.0, 1.04), function (u, d, t) {
+  function pnl(y, k, o, cap, n) { return G("", G("translate(16 " + f(y - 160) + ") scale(.62)", '<clipPath id="rc' + n + '"><rect x="-26" y="258" width="650" height="330"/></clipPath><g clip-path="url(#rc' + n + ')">' + wall(t, o) + '</g>') + R(0, y, 402, 205, "none", 2.4) + callout(String(n), 20, y + 20, k) + T(cap, 520, y + 112, 26, INK, 800), k); }
+  return paper() + pnl(40, at(u, .2, .4), { len: .55, dens: .6, speed: .3, muc: 2.3, gob: 1.6, gobEvery: 3, smoke: 1 }, "الدخان كسّحها", 1) + pnl(290, at(u, 1.4, .4), { len: .85, dens: .9, speed: .8, muc: 2.2 }, "تبطّل… تصحى", 2) +
+    pnl(540, at(u, 2.8, .4), { muc: 1.2, speed: 1.3, dust: 1 }, "تطلّعه بالكحة", 3);
 });
-// 23 · the odd fact: one cell, ~200 cilia, beating more than 10 times a second
-shot(23, push(320, 400, 1.08, 1.0), function (u, d, t) {
-  var s = paper(), cx = 320, cy = 470;
-  s += R(cx - 90, cy, 180, 260, CELL, 2.4) + '<ellipse cx="' + cx + '" cy="' + (cy + 150) + '" rx="34" ry="56" fill="' + NUC + '" stroke="' + INK + '" stroke-width="1.6"/>';
-  for (var k = 0; k < 40; k++) { var x = cx - 86 + k * 4.4, ph = (t * 12 - k / 9) * Math.PI * 2 / 4, a = (16 + 30 * Math.sin(ph)) * Math.PI / 180, L = 150 + 10 * hash(k);
-    var dd = "M" + f(x) + " " + cy + " Q" + f(x + Math.sin(a) * L * .5 - 6) + " " + f(cy - L * .5) + " " + f(x + Math.sin(a) * L) + " " + f(cy - Math.cos(a) * L);
+// 31 · the odd fact: each cell carries about 200 hairs
+var CELLX = 320, CELLY = 470;
+function bigCell(t, rate) {
+  var s = R(CELLX - 90, CELLY, 180, 260, CELL, 2.4) + '<ellipse cx="' + CELLX + '" cy="' + (CELLY + 150) + '" rx="34" ry="56" fill="' + NUC + '" stroke="' + INK + '" stroke-width="1.6"/>';
+  for (var k = 0; k < 40; k++) { var x = CELLX - 86 + k * 4.4, ph = (t * rate - k / 9) * Math.PI * 2 / 4, a = (16 + 30 * Math.sin(ph)) * Math.PI / 180, L = 150 + 10 * hash(k);
+    var dd = "M" + f(x) + " " + CELLY + " Q" + f(x + Math.sin(a) * L * .5 - 6) + " " + f(CELLY - L * .5) + " " + f(x + Math.sin(a) * L) + " " + f(CELLY - Math.cos(a) * L);
     s += '<path d="' + dd + '" stroke="' + INK + '" stroke-width="3" fill="none"/><path d="' + dd + '" stroke="#f3ece0" stroke-width="1.2" fill="none"/>'; }
-  s += G("", N(count(200, at(u, .4, 1.6)), 140, 200, 64, ORANGE) + T("شعرة", 140, 240, 26, INK, 700), at(u, .3, .3));
-  s += G("", N("+10", 520, 200, 56, ORANGE) + T("مرة في الثانية", 520, 240, 22, INK, 700), at(u, 2.4, .3));
   return s;
+}
+shot(31, push(320, 400, 1.08, 1.0), function (u, d, t) {
+  return paper() + bigCell(t, 3) + G("", N(count(200, at(u, .3, 1.4)), 140, 200, 64, ORANGE) + T("شعرة", 140, 240, 26, INK, 700), at(u, .2, .3)) + label(CELLX, CELLY + 200, 520, 680, "خلية واحدة", OLIVE, at(u, .6, .5), 24);
+});
+// 32 · beating more than 10 times a second
+shot(32, push(320, 400, 1.0, 1.06), function (u, d, t) {
+  return paper() + bigCell(t, lerp(3, 12, at(u, 0, .8))) + N("200", 140, 200, 64, ORANGE) + T("شعرة", 140, 240, 26, INK, 700) + G("", N("+10", 520, 200, 56, ORANGE) + T("مرة في الثانية", 520, 240, 22, INK, 700), at(u, .3, .3));
 });
 
 // ── opening card, bumper and summary art ──
 window.SCENE = window.SCENE || {};
 SCENE.intro = function (svg, t, li) {
-  // line 0: the man breaks a cigarette and smiles. line 1: a week later he coughs (calendar "أسبوع"). line 2: the lungs with a question
+  // line 0: the man breaks a cigarette, his chest opens on the lungs, «؟». line 1: he coughs, a «أسبوع» calendar
   var u0 = t - LN[0].start;
-  if (li === 0) return G("translate(-16 -150) scale(.95)", man(t, { face: { eyes: 1, mouth: u0 > 1.2 ? "smile" : "neutral", brows: "raised" } }).svg + brokenCig(320, 300, ease((u0 - .6) / .4)));
-  if (li === 1) { var u1 = t - LN[1].start; return G("translate(-16 -150) scale(.95)", coughMan(t, ease((u1 - .8) / .4), 1.3)) + iconBox(520, 90, 120, calendarWeeks(0, 0, 1, 1, "") + T("أسبوع", 0, 44, 18, INK, 800), ease(u1 / .4)); }
-  var u2 = t - LN[2].start;
-  return G("translate(14 0) scale(.92)", lungs(t, { tar: .35 })) + T("؟", 520, 160, 140, ORANGE, 800) + cross(300, 520, .6, 0);
+  if (li === 0) return G("translate(12 -20) scale(.92)", man(t, { face: { eyes: 1, mouth: u0 > 1.6 ? "o" : "neutral", brows: "raised" } }).svg + chestWin(t, ease((u0 - 1.2) / .5), { ribsOp: .5 }) + brokenCig(470, 240, ease((u0 - .4) / .4))) + T("؟", 540, 200, 110, ORANGE, 800);
+  var u1 = t - LN[1].start;
+  return G("translate(12 -20) scale(.92)", coughMan(t, ease((u1 - .5) / .3), 1.4)) + iconBox(520, 90, 120, calendarWeeks(0, 0, 1, 1, "") + T("أسبوع", 0, 44, 18, INK, 800), ease(u1 / .4));
 };
 SCENE.bumper = function (u, t) {
   return G("translate(90 108) scale(.24) translate(-320 -340)", lungs(t, { breathe: 3 }));
