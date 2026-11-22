@@ -45,6 +45,9 @@ its own `person()`, so in `story-2d` always call `PERSON.front` / `PERSON.side`.
 2. **Joints hidden inside one flowing outline**: an arm is one shape from the shoulder through the elbow to the cuff, and
    a leg one shape from the hip through the knee to the hem. They thicken at the shoulder, forearm, thigh and calf, and
    the cloth folds inside the bend. Never a circle at a joint.
+2b. **Shoulders slope** (the user's note after «الكحة بعد التبطيل»): the line runs from the neck down the trapezius to a round
+   shoulder cap, and the sleeve starts under that cap. No square shoulder corner, no sleeve top sticking up above the
+   shoulder as if the clothes came out of it. Every outfit (lab coat included) follows the same slope.
 3. **A reaching arm is a straight line** (`straight: true`): a stretch overhead or a reach to a shelf goes from the
    shoulder to the fingertips with no elbow sticking out. Elbows bend only forward and up; knees bend only backward.
 4. **Hands with five fingers**:

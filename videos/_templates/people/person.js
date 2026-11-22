@@ -246,7 +246,7 @@ function person(o) {
   // ── trunk: sweater with ribbed hem, crew collar, side folds; the trousers' waist under the hem ──
   var wy = 7 + br * .3;
   svg += '<path d="' + pPath([T(-8, -40), T(10, -38), T(10, 38), T(-8, 40), T(-16, 0)], true) + '" fill="' + c.pants + '" stroke="' + INK + '" stroke-width="' + f(2.2 * s) + '"/>';
-  var tor = [T(wy, -37), T(30, -33 - br * .3), T(70, -38 - br * .4), T(96, -42), T(hSh + 2, -46 + 2 * sl), T(hSh + 8, -30), T(hNeck + 2, -13), T(hNeck + 2, 13), T(hSh + 8, 30), T(hSh + 2, 46 - 2 * sl), T(96, 42), T(70, 38 + br * .4), T(30, 33 + br * .3), T(wy, 37)];
+  var tor = [T(wy, -37), T(30, -33 - br * .3), T(70, -38 - br * .4), T(96, -43), T(hSh - 8, -50 + 2 * sl), T(hSh + 3, -44 + 2 * sl), T(hNeck - 1, -28), T(hNeck + 2, -13), T(hNeck + 2, 13), T(hNeck - 1, 28), T(hSh + 3, 44 - 2 * sl), T(hSh - 8, 50 - 2 * sl), T(96, 43), T(70, 38 + br * .4), T(30, 33 + br * .3), T(wy, 37)];
   svg += '<path d="' + pPath(tor, true) + '" fill="' + c.shirt + '" stroke="' + INK + '" stroke-width="' + f(2.4 * s) + '"/>';
   svg += '<path d="' + pPath([T(hSh, 22), T(90, 36), T(50, 33), T(wy + 6, 34), T(wy + 6, 22), T(50, 24), T(86, 22)], true) + '" fill="' + c.shirtD + '" opacity=".55"/>';   // shaded far side
   svg += pLine([T(60, -20), T(52, -6), T(56, 6)], c.shirtD, 1.4 * s) + pLine([T(34, 8), T(26, 18)], c.shirtD, 1.3 * s) + pLine([T(40, -26), T(30, -16)], c.shirtD, 1.3 * s);
@@ -279,7 +279,7 @@ function person(o) {
   });
   if (OF.over === "apron") svg += '<path d="' + pPath([T(104, -20), T(104, 20), T(60, 28), T(-64, 36), T(-64, -36), T(60, -28)], true) + '" fill="' + c.apron + '" stroke="' + INK + '" stroke-width="' + f(2 * s) + '"/>' + pLine([T(104, -18), T(hNeck - 4, -12)], INK, 1.6 * s) + pLine([T(104, 18), T(hNeck - 4, 12)], INK, 1.6 * s) + pLine([T(20, -38), T(20, 38)], c.apronD, 3 * s);
   if (OF.over === "labcoat") [-1, 1].forEach(function (sd) {   // an open white coat to mid-thigh: panel, lapel, pocket
-    var pan = [T(hSh + 4, sd * 44), T(hNeck + 2, sd * 15), T(86, sd * 9), T(-66, sd * 12), T(-68, sd * 48), T(40, sd * 46), T(96, sd * 46)];
+    var pan = [T(hSh + 4, sd * 44), T(hNeck, sd * 28), T(hNeck + 2, sd * 15), T(86, sd * 9), T(-66, sd * 12), T(-68, sd * 48), T(40, sd * 47), T(96, sd * 47), T(hSh - 8, sd * 51)];   // shoulder follows the sloped, rounded torso
     svg += '<path d="' + pPath(pan, true) + '" fill="' + c.coat + '" stroke="' + INK + '" stroke-width="' + f(2.2 * s) + '"/>';
     svg += '<path d="M' + [T(hNeck + 2, sd * 15), T(92, sd * 26), T(86, sd * 9)].map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + '" fill="' + c.coatD + '" stroke="' + INK + '" stroke-width="' + f(1.6 * s) + '" stroke-linejoin="round"/>';
     svg += '<path d="M' + [T(-18, sd * 20), T(-18, sd * 40), T(-40, sd * 40), T(-40, sd * 20)].map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + ' Z" fill="none" stroke="' + c.coatD + '" stroke-width="' + f(1.4 * s) + '"/>' + pLine([T(60, sd * 40), T(-50, sd * 44)], c.coatD, 1.2 * s);
@@ -295,7 +295,7 @@ function person(o) {
     if (A.straight) { var rdx = tg[0] - sp[0], rdy = tg[1] - sp[1], rdl = Math.hypot(rdx, rdy) || 1; tg = [sp[0] + rdx / rdl * 132 * s, sp[1] + rdy / rdl * 132 * s]; }
     var el = A.elbow ? [sp[0] + A.elbow[0] * s, sp[1] + A.elbow[1] * s] : A.straight ? [sp[0] + (tg[0] - sp[0]) * 74 / 132, sp[1] + (tg[1] - sp[1]) * 74 / 132] : pIK(sp, tg, 74 * s, 58 * s, A.bend == null ? -sd : A.bend), dx = tg[0] - el[0], dy = tg[1] - el[1], dl = Math.hypot(dx, dy) || 1, wr = [el[0] + dx / dl * Math.min(dl, 58 * s), el[1] + dy / dl * Math.min(dl, 58 * s)];
     J.sh.push(sp); J.el.push(el); J.wr.push(wr);
-    var cuff = [wr[0] - dx / dl * 8 * s, wr[1] - dy / dl * 8 * s], sp0 = [sp[0] - sd * 3 * s, sp[1] - 4 * s];
+    var cuff = [wr[0] - dx / dl * 8 * s, wr[1] - dy / dl * 8 * s], sp0 = [sp[0] - sd * 2 * s, sp[1] + 7 * s];   // the sleeve starts just under the round shoulder cap of the torso, so no corner sticks up above it
     var ang1 = Math.atan2(el[1] - sp[1], el[0] - sp[0]), ang2 = Math.atan2(dy, dx), bendA = Math.abs(((ang2 - ang1 + 3 * Math.PI) % (2 * Math.PI)) - Math.PI);
     var ap = [sp0, L2p(sp, el, .3, 0), L2p(sp, el, .75, 0), el, L2p(el, cuff, .35, 0), cuff], aw = [27 * s, 24.5 * s, 21.5 * s, 20.5 * s, 20 * s, 16.5 * s];
     var coat = OF.over === "labcoat", sc = coat ? c.coat : c.shirt, scD = coat ? c.coatD : c.shirtD, sleeve;
