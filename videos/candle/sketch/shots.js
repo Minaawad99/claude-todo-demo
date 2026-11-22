@@ -77,18 +77,26 @@ function glass(x, y, w, h, t, oil) {
   if (oil) s += '<path d="M' + f(x + 2) + ' ' + f(ol) + ' L' + f(x + w - 2) + ' ' + f(ol) + ' L' + f(x + w - 3) + ' ' + f(wl) + ' L' + f(x + 3) + ' ' + f(wl) + ' Z" fill="' + OIL + '" stroke="' + INK + '" stroke-width="1.4"/>';
   return s + '<path d="M' + f(x + 12) + ' ' + f(y + 16) + ' L' + f(x + 18) + ' ' + f(y + h - 20) + '" stroke="#fff" stroke-width="5" opacity=".55" stroke-linecap="round"/>';
 }
-// the man holding a candle: the shared person kit, front view, «home» clothes. a = candle tilt (deg), face = expression
+// a lab stand that tips the candle (the user's choice after the hand-held version): a heavy base plate on a bench, an upright
+// rod, a boss and arm reaching left to a pivot clamp round the candle's middle. a = candle tilt (deg, 0 upright, -90 lying
+// pointing left). The pivot is (px, py); sc scales it. Sets HOLD.tip to the flame's middle for arrows.
 var HOLD = { tip: [0, 0] };
-function holder(x, y, s, a, t, face, look) {
-  var o = { x: x, y: y, s: s, outfit: "home", legs: "stand", breath: (Math.sin(t * 1.7) + 1) / 2, head: { tilt: 3 * Math.sin(t * .9), turn: -.35 },
-    face: Object.assign({ eyes: (t * 1000) % 3300 < 120 ? .05 : 1, look: look || [-.8, -.2], brows: "neutral", mouth: "neutral" }, face || {}) };
-  var wr = [x - 150 * s / 1.7, y - 230 * s / 1.7];
-  o.arms = [{ to: wr, hand: "fist", bend: -1, rot: 200 }, { hand: "relaxed" }];
-  var P = PERSON.front(o), w = P.joints.wr[0], el = P.joints.el[0], dx = w[0] - el[0], dy = w[1] - el[1], L = Math.hypot(dx, dy), fc = [w[0] + dx / L * 30 * s / 1.7, w[1] + dy / L * 30 * s / 1.7];
-  // the candle passes through the fist: 40 % of it below the grip
-  var len = 150 * s / 1.7, r = a * Math.PI / 180, base = [fc[0] - Math.sin(r) * len * .35, fc[1] + Math.cos(r) * len * .35];
-  var tp = tipOf(base[0], base[1], a, len); HOLD.tip = [tp[0], tp[1] - 40 * s / 1.7];
-  return candle(base[0], base[1], a, len, 30 * s / 1.7, t) + P.svg;
+function stand(px, py, a, t, sc) {
+  var rx = px + 150 * sc, fl = py + 230 * sc, len = 200 * sc, w = 40 * sc, r = a * Math.PI / 180, dir = [Math.sin(r), -Math.cos(r)], s = "";
+  // the bench: top edge and a hatched front
+  s += R(-400, fl, 1500, 300, TAN, 2.4) + '<rect x="-400" y="' + f(fl + 14) + '" width="1500" height="300" fill="url(#hatch)" opacity=".5"/>' + '<path d="M-400 ' + f(fl + 14) + ' H1100" stroke="' + INK + '" stroke-width="1.4"/>';
+  // base plate, rod, boss with its screw, the arm to the pivot
+  s += '<ellipse cx="' + f(rx + 6) + '" cy="' + f(fl - 2) + '" rx="' + f(80 * sc) + '" ry="' + f(7 * sc) + '" fill="' + INK + '" opacity=".15"/>';
+  s += R(rx - 70 * sc, fl - 16 * sc, 140 * sc, 16 * sc, "#d79a7c", 2.2, 4) + R(rx - 6 * sc, py - 60 * sc, 12 * sc, fl - 16 * sc - py + 60 * sc, "#e9e4d6", 2.2, 3);
+  s += R(px, py - 5 * sc, rx - px, 10 * sc, "#e9e4d6", 2.2, 3) + R(rx - 13 * sc, py - 14 * sc, 26 * sc, 28 * sc, "#8f8576", 2.2, 3) + R(rx + 13 * sc, py - 4 * sc, 16 * sc, 8 * sc, INK, 0, 2) + C(rx + 32 * sc, py, 6 * sc, "#8f8576", 2);
+  // the candle (and its flame) through the clamp
+  var base = [px - dir[0] * len * .42, py - dir[1] * len * .42];
+  s += candle(base[0], base[1], a, len, w, t, { s: w / 22 });
+  // the clamp ring round the candle and the pivot bolt on top
+  s += G("translate(" + f(px) + " " + f(py) + ") rotate(" + f(a) + ")", R(-w / 2 - 6 * sc, -11 * sc, w + 12 * sc, 22 * sc, "#c9c4b4", 2.2, 4) + '<path d="M' + f(-w / 2 - 6 * sc) + ' 0 H' + f(w / 2 + 6 * sc) + '" stroke="' + INK + '" stroke-width="1.2"/>');
+  s += C(px, py, 8 * sc, "#8f8576", 2.2) + C(px, py, 2.5 * sc, INK, 0);
+  var tp = tipOf(base[0], base[1], a, len); HOLD.tip = [tp[0] + dir[0] * 4, tp[1] + dir[1] * 4 - 30 * sc];
+  return s;
 }
 
 // ── shots (one per idea; line numbers from script.txt) ──
@@ -174,11 +182,11 @@ shot(12, push(320, 450, 1.04, .98), function (u, d, t) {
 }, { tr: "out" });
 // 13 · however you tip the candle, «up» is against gravity, not the candle's end
 shot(13, push(320, 430, 1.0, 1.05), function (u, d, t) {
-  var a = -95 * at(u, .2, 1.4), s = paper();
-  s += holder(470, 780, 1.6, a, t, { brows: "raised" });
-  var tp = tipOf(0, 0, a, 1);
-  s += gArrow(170, 130, 170, at(u, .8, .5)) + G("", arrow(150, 520, 150, 380, ORANGE, 6, 1) + T("فوق", 150, 360, 28, ORANGE, 800), at(u, 1.6, .4));
-  return s + G("", '<path d="M150 400 L150 560" stroke="' + INK + '" stroke-width="2" stroke-dasharray="6 6"/>', at(u, 1.8, .4));
+  var a = u < 2.5 ? -95 * at(u, .2, 1.4) : lerp(-95, 50, at(u, 2.6, 1.8)), s = paper();
+  s += stand(300, 420, a, t, 1.15);
+  var fx = HOLD.tip[0], fy = HOLD.tip[1];
+  s += gArrow(590, 120, 170, at(u, .8, .5)) + G("", arrow(fx, fy - 60, fx, fy - 150, ORANGE, 6, 1) + T("فوق", fx - 40, fy - 120, 28, ORANGE, 800), at(u, 1.6, .4));
+  return s;
 });
 // 14 · «why pointed like a drop?»: the big flame, a question mark
 shot(14, push(320, 380, 1.1, 1.2), function (u, d, t) { return paper() + candle(320, 820, 0, 300, 70, t, { s: 3.6 }) + G("", T("؟", 520, 260, 140, ORANGE, 800), at(u, .3, .4)); }, { tr: "in" });
@@ -246,15 +254,14 @@ shot(24, function (u, d) { return [320, lerp(300, 560, ease(u / d)), 1]; }, func
 // ── opening card, bumper and summary art ──
 window.SCENE = window.SCENE || {};
 SCENE.intro = function (svg, t, li) {
-  // line 0: he tips the candle until it lies flat. line 1: the flame bends and points up (an orange «up» arrow over it).
+  // line 0: the stand tips the candle until it lies flat. line 1: the flame still points up (an orange «up» arrow over it).
   // line 2: a dotted «pull» line above the flame with ✗ (nothing pulls it), then blue push arrows from under it (it is pushed)
-  var l0 = LN[0], k0 = clamp((t - l0.start - .3) / 1.6), a = li === 0 ? -92 * ease(k0) : -92;
-  var face = li === 0 ? { brows: "neutral" } : li === 1 ? { brows: "raised", mouth: "o", eyes: 1.2 } : { brows: "worried", mouth: "neutral" };
-  var s = holder(500, 830, 2.3, a, t, face), fx = HOLD.tip[0], fy = HOLD.tip[1];
-  if (li >= 1) { var u1 = t - LN[1].start; s += arrow(fx, fy - 130, fx, fy - 230, ORANGE, 7, ease(u1 / .5)); }
+  var l0 = LN[0], k0 = clamp((t - l0.start - .3) / 1.8), a = li === 0 ? -92 * ease(k0) : -92 + 1.5 * Math.sin(t * 1.3);
+  var s = stand(300, 300, a, t, 1.35), fx = HOLD.tip[0], fy = HOLD.tip[1];
+  if (li >= 1) { var u1 = t - LN[1].start; s += arrow(fx, fy - 100, fx, fy - 210, ORANGE, 7, ease(u1 / .5)); }
   if (li >= 2) { var u2 = t - LN[2].start;
-    s += G("", '<path d="M' + f(fx) + ' 10 V' + f(fy - 140) + '" stroke="' + INK + '" stroke-width="2.4" stroke-dasharray="6 7"/>', ease(u2 / .3)) + cross(fx, fy - 200, .9, ease((u2 - .9) / .4));
-    s += arrow(fx - 46, fy + 96, fx - 16, fy + 40, BLUE, 6, ease((u2 - 1.7) / .4)) + arrow(fx + 46, fy + 96, fx + 16, fy + 40, BLUE, 6, ease((u2 - 1.8) / .4)); }
+    s += G("", '<path d="M' + f(fx) + ' 10 V' + f(fy - 105) + '" stroke="' + INK + '" stroke-width="2.4" stroke-dasharray="6 7"/>', ease(u2 / .3)) + cross(fx, fy - 170, .9, ease((u2 - .9) / .4));
+    s += arrow(fx - 50, fy + 110, fx - 18, fy + 50, BLUE, 6, ease((u2 - 1.7) / .4)) + arrow(fx + 50, fy + 110, fx + 18, fy + 50, BLUE, 6, ease((u2 - 1.8) / .4)); }
   return s;
 };
 SCENE.bumper = function (u, t) { return candle(90, 190, 0, 70, 30, t, { s: 1.3 }); };
