@@ -46,6 +46,38 @@ if (!window.PERSON && document.currentScript) document.write('<script src="' + d
     for (var g = -790; g < 1900; g += 18) s += P("M" + g + " " + (GY - 8) + " l4 -14 M" + (g + 7) + " " + (GY - 8) + " l-3 -10", "#4f8a34", 3);
     return s;
   }
+  // the desert version (first used in «ملجأ نجاة في الصحرا», videos/desert-shelter): a hazy sky with far dunes and rocky
+  // hills instead of the town, and sand cut open instead of soil and grass. o: night, sun [x, y] (late afternoon = lower
+  // and warmer), warm 0..1 (orange evening light). Needs the gradients skyD, skyN, sun, sandG in the page's <defs>.
+  var SANDTEX = (function () { var s = ""; for (var i = 0; i < 220; i++) { var x = -800 + hash(i + 1000) * 2700, y = GY + 30 + hash(i + 1100) * 1500, rx = 10 + hash(i + 1200) * 36;
+      s += '<ellipse cx="' + f(x) + '" cy="' + f(y) + '" rx="' + f(rx) + '" ry="' + f(rx * 0.35) + '" fill="' + (hash(i + 1300) > 0.5 ? "#b07c42" : "#f0d49a") + '" opacity="' + f(0.25 + hash(i + 1400) * 0.3) + '"/>'; }
+    for (var k = 0; k < 26; k++) { var ly = GY + 60 + k * 58 + hash(k + 1500) * 20, d = "M-800 " + f(ly); for (var x = -800; x < 1900; x += 180) d += " q90 " + f(-10 + hash(k * 31 + x) * 20) + " 180 0"; s += P(d, "#9a6a36", 2.2, ' opacity="' + f(0.12 + hash(k + 1600) * 0.12) + '"'); }
+    for (var q = 0; q < 40; q++) { var sx = -800 + hash(q + 1700) * 2700, sy = GY + 140 + hash(q + 1800) * 1400, r = 7 + hash(q + 1900) * 16; s += '<ellipse cx="' + f(sx) + '" cy="' + f(sy) + '" rx="' + f(r * 1.4) + '" ry="' + f(r) + '" fill="#b9a088" stroke="#6a5440" stroke-width="2" opacity=".7"/>'; }
+    return s; })();
+  function desertSky(t, o) { o = o || {}; var night = o.night, sp = o.sun || [880, 120], w = clamp(o.warm || 0);
+    var s = '<rect x="-800" y="-900" width="2700" height="' + (GY + 900) + '" fill="url(#' + (night ? "skyN" : "skyD") + ')"/>';
+    if (!night && w > 0) s += '<rect x="-800" y="-900" width="2700" height="' + (GY + 900) + '" fill="#f29a4a" opacity="' + f(0.35 * w) + '"/>';
+    if (!night) s += '<circle cx="' + f(sp[0]) + '" cy="' + f(sp[1]) + '" r="' + f(360 + 12 * Math.sin(t * 0.7)) + '" fill="url(#sun)"/>' + C(sp[0], sp[1], 70, w > 0.3 ? "#ffd08a" : "#fffbe8", { op: 0.95 });
+    else { for (var i = 0; i < 60; i++) s += C(-700 + hash(i + 40) * 2500, -700 + hash(i + 60) * (GY + 400), 2 + hash(i) * 2.4, "#fff", { op: 0.35 + 0.55 * Math.abs(Math.sin(t * 1.7 + i)) });
+      s += C(240, 140, 54, "#f4f0dc", { st: "#c9c2a8", sw: 3 }) + C(264, 128, 46, "url(#skyN)"); }
+    for (var c = 0; c < 3; c++) { var cx = ((c * 760 + t * 10) % 2600) - 700, cy = -200 + hash(c + 20) * 260, sc = 0.7 + hash(c + 30) * 0.5;
+      s += '<g transform="translate(' + f(cx) + ' ' + f(cy) + ') scale(' + f(sc * 1.4) + ' ' + f(sc * 0.6) + ')" opacity="' + (night ? 0.15 : 0.6) + '"><path d="M-90 30 C-110 30 -110 0 -86 -2 C-84 -30 -40 -40 -24 -18 C-10 -44 40 -40 44 -10 C70 -14 84 6 74 24 C80 30 70 38 60 36 Z" fill="#fff" stroke="none"/></g>'; }
+    // far rocky hills, then two rows of dunes, faded by the haze
+    var hill = "M-800 " + GY; for (var hx = -800; hx <= 1900; hx += 100) hill += " L" + hx + " " + f(GY - 150 - 120 * Math.abs(Math.sin(hx * 0.004 + 1)) - 40 * hash(hx + 5));
+    s += '<path d="' + hill + ' L1900 ' + GY + ' Z" fill="' + (night ? "#2c3550" : "#d9b98e") + '" opacity=".55"/>';
+    [[GY - 90, night ? "#3a3f58" : "#e6c48c", 0.008, 0.75], [GY - 40, night ? "#4a4a5e" : "#ebc888", 0.013, 0.9]].forEach(function (r, j) {
+      var d = "M-800 " + GY; for (var x = -800; x <= 1900; x += 40) d += " L" + x + " " + f(r[0] + 50 * Math.sin(x * r[2] + j * 2) + 20 * Math.sin(x * r[2] * 2.7));
+      s += '<path d="' + d + ' L1900 ' + GY + ' Z" fill="' + r[1] + '" opacity="' + r[3] + '"/>'; });
+    if (!night && !o.noShimmer) for (var m = 0; m < 6; m++) { var p = (t * 0.4 + m / 6) % 1, mx = -300 + hash(m + 77) * 1700; s += P("M" + f(mx) + " " + f(GY - 20 - p * 60) + " q20 -8 40 0 q20 8 40 0", "#fff", 3, ' opacity="' + f(0.35 * Math.sin(p * Math.PI)) + '"'); }
+    return s;
+  }
+  function sand(t, o) { o = o || {};
+    var s = '<rect x="-800" y="' + GY + '" width="2700" height="1900" fill="url(#sandG)"/>' + SANDTEX;
+    if (o.night) s += '<rect x="-800" y="' + (GY - 4) + '" width="2700" height="1900" fill="#0a1430" opacity=".45"/>';
+    s += '<path d="M-800 ' + (GY + 6) + ' H1900" stroke="' + INK + '" stroke-width="3"/>' + '<rect x="-800" y="' + (GY - 6) + '" width="2700" height="12" fill="' + (o.night ? "#8a7a68" : "#f2d6a0") + '"/>';
+    for (var g = -790; g < 1900; g += 60) s += P("M" + g + " " + (GY - 2) + " q15 -6 30 0", o.night ? "#6a5a4a" : "#c9a066", 2.4, ' opacity=".6"');
+    return s;
+  }
   // the house cut open: floor slab, walls, roof, a ceiling fan, a picture, the sofa, the rug, the bookcase (the secret door)
   // ── the man: a jointed figure in real proportions (8 heads tall), angles per joint, a face with moods ──
   var POSES = {
@@ -131,10 +163,12 @@ if (!window.PERSON && document.currentScript) document.write('<script src="' + d
     if (((t * 0.31 + (o.x || 0) * 0.001) % 1) < 0.035) face.eyes = 0.05;   // a blink now and then
     var outfit = o.outfit || ((o.vest || o.hat) ? { base: "worker" } : { base: "casual" });
     if (typeof outfit === "string") outfit = { base: outfit };
-    outfit = Object.assign({}, outfit, { colors: Object.assign({ shirt: o.shirt || "#4a8ccc", shirtD: o.shirtD || "#2a5f92", pants: "#5a5142", pantsD: "#3e372c" }, outfit.colors || {}) });
+    // the blue shirt is the default only for the plain casual man; a named outfit keeps its own colours unless shirt is given
+    var defc = (o.outfit && !o.shirt) ? {} : { shirt: o.shirt || "#4a8ccc", shirtD: o.shirtD || "#2a5f92", pants: "#5a5142", pantsD: "#3e372c" };
+    outfit = Object.assign({}, outfit, { colors: Object.assign(defc, outfit.colors || {}) });
     if (!o.vest && outfit.base === "worker" && !outfit.over) outfit.over = "none";
     if (!o.hat && outfit.base === "worker" && !outfit.hat) outfit.hat = "none";
-    var q = { s: s, dir: fc, lean: lean, breath: (Math.sin(t * 1.6) + 1) / 2, head: { tilt: (p.head || 0) - lean * 0.3 }, face: face, outfit: outfit,
+    var q = { rot: o.rot || 0, s: s, dir: fc, lean: lean, breath: (Math.sin(t * 1.6) + 1) / 2, head: { tilt: (p.head || 0) - lean * 0.3 }, face: face, outfit: outfit,
       legs: [{ hip: p.lN[0], knee: p.lN[0] - p.lN[1] }, { hip: p.lF[0], knee: p.lF[0] - p.lF[1] }], arms: [arm(p.aN, handN), arm(p.aF, p.shovel ? "fist" : "relaxed")] };
     if (p.walk != null) { var W = window.PERSON.walkPose(p.walk * Math.PI * 2, 1); q.legs = W.legs; q.arms = W.arms; q.lean = 3; }   // the kit's own gait: the foot on the floor straight, the other bends after toe-off
     q.x = o.hip ? o.hip[0] : o.x; q.y = o.hip ? o.hip[1] : window.PERSON.sideHipY(Object.assign({ x: 0 }, q), o.y);
@@ -143,7 +177,8 @@ if (!window.PERSON && document.currentScript) document.write('<script src="' + d
     function wrist(a) { var L = lean * Math.PI / 180, sp = [-2 * Math.cos(L) + 117 * Math.sin(L), -117 * Math.cos(L) - 2 * Math.sin(L)], ua = a.sh + lean, fa = ua + a.el;
       function V(d) { d = d * Math.PI / 180; return [Math.sin(d), Math.cos(d)]; }
       var w = [sp[0] + V(ua)[0] * 74 + V(fa)[0] * 58, sp[1] + V(ua)[1] * 74 + V(fa)[1] * 58]; return [q.x + w[0] * s * fc, q.y + w[1] * s]; }
-    var wN = wrist(q.arms[0]), wF = wrist(q.arms[1]), g = '<g filter="url(#sh)">' + P.svg;
+    var wN = wrist(q.arms[0]), wF = wrist(q.arms[1]); man.wN = wN; man.wF = wF;   // the wrists, for props an episode draws in the hand
+    var g = '<g filter="url(#sh)">' + P.svg;
     if (mood === "shock" || mood === "worry" || mood === "dizzy") { var sw = (t * 1.3) % 1, hc = J.head; g += F("M" + f(hc[0] - fc * 40 * s) + " " + f(hc[1] - 20 + sw * 20) + " q-7 12 0 15 q7 -3 0 -15 Z", "#9fd6ff", { sw: 1.6, op: 1 - sw }); }
     if (p.shovel) { var dv = [wN[0] - wF[0], wN[1] - wF[1]], ln = Math.hypot(dv[0], dv[1]) || 1, u = [dv[0] / ln, dv[1] / ln], back = [wF[0] - u[0] * 26, wF[1] - u[1] * 26], tip = [wN[0] + u[0] * 120, wN[1] + u[1] * 120];
       if (u[1] < 0.2) { u = [fc * 0.5, 0.87]; tip = [wN[0] + u[0] * 120, wN[1] + u[1] * 120]; }
@@ -203,7 +238,7 @@ if (!window.PERSON && document.currentScript) document.write('<script src="' + d
     var bk = clamp((u - (ub - 0.45)) / 0.45), pz = mixPose(pa, pb, ease(bk));
     if (!moving && (a.p || "stand") === "stand") { pz = mixPose(pz, { lean: Math.sin(t * 1.6) * 2, head: Math.sin(t * 1.1) * 3 }, 0.5); }
     var hip = a.hip ? [lerp(a.hip[0], (b.hip || a.hip)[0], kpos), lerp(a.hip[1], (b.hip || a.hip)[1], kpos)] : null;
-    return man({ x: x, y: y + Math.abs(Math.sin(u * 5)) * (moving ? 4 : 0), f: (kpos > 0.5 && b.f ? b.f : a.f) || 1, pose: pz, mood: u > ub - 0.3 && b.mood ? b.mood : a.mood, t: t, hip: hip, s: a.s || 1, shirt: a.shirt, shirtD: a.shirtD, vest: a.vest, hat: a.hat, phone: a.phone });
+    return man({ x: x, y: y + Math.abs(Math.sin(u * 5)) * (moving ? 4 : 0), f: (kpos > 0.5 && b.f ? b.f : a.f) || 1, pose: pz, mood: u > ub - 0.3 && b.mood ? b.mood : a.mood, t: t, hip: hip, rot: a.rot, s: a.s || 1, shirt: a.shirt, shirtD: a.shirtD, vest: a.vest, hat: a.hat, phone: a.phone, outfit: a.outfit });
   }
   // ── overlays: a dark pill label with a pointer, a red ✗, a green ✓, a yellow ring ──
   function pill(text, x, y, u, u0, o) { o = o || {}; var k = clamp((u - u0) / 0.35); if (k <= 0) return ""; var sz = o.sz || 40, w = text.length * sz * 0.52 + 44, col = o.bg || "#262a30";
@@ -229,7 +264,7 @@ if (!window.PERSON && document.currentScript) document.write('<script src="' + d
     return i;
   };
   window.LAW = { L: L, clamp: clamp, ease: ease, lerp: lerp, hash: hash, f: f, pop: pop, INK: INK, R: R, P: P, F: F, C: C, T: T, GY: GY,
-    sky: sky, palm: palm, bush: bush, ground: ground, POSES: POSES, pose: pose, mixPose: mixPose, man: man, manOld: manOld, act: act,
+    sky: sky, desertSky: desertSky, sand: sand, palm: palm, bush: bush, ground: ground, POSES: POSES, pose: pose, mixPose: mixPose, man: man, manOld: manOld, act: act,
     pill: pill, xmark: xmark, vmark: vmark, ring: ring, confetti: confetti, arrowH: arrowH, arrowV: arrowV,
     shot: shot, steps: steps, has: has, setLine: function (n) { CUR = n; } };
   window.__parts = window.LAW;

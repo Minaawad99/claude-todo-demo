@@ -30,7 +30,7 @@ function G(tr, inner, op) { return '<g' + (tr ? ' transform="' + tr + '"' : "") 
 function R(x, y, w, h, fill, sw, rx, ex) { return '<rect x="' + f(x) + '" y="' + f(y) + '" width="' + f(w) + '" height="' + f(h) + '"' + (rx ? ' rx="' + rx + '"' : "") + ' fill="' + fill + '" stroke="' + INK + '" stroke-width="' + (sw == null ? 2 : sw) + '"' + (ex || "") + '/>'; }
 // outfits: the body never changes, the clothes follow the topic. o.outfit = a preset name or {base, top, over, tie, epaulettes, hat, feet, colors}
 //   top: "sweater" (ribbed) | "tshirt" (short sleeves) | "shirt" (collar, buttons, cuffs) · over: "labcoat" | "vest" (hi-vis) | "apron"
-//   hat: "hardhat" | "cap" | "pilot" · feet: "socks" | "shoes" | "boots" · tie, epaulettes: true
+//   hat: "hardhat" | "cap" | "pilot" | "scarf" (a head cloth wrapped against the sun, its tail behind) · feet: "socks" | "shoes" | "boots" · tie, epaulettes: true
 var OUTFITS = {
   home:   { top: "sweater", feet: "socks" },
   casual: { top: "tshirt", feet: "shoes", colors: { shirt: "#c9a77c", shirtD: "#a5845c", pants: "#4b5a6e", pantsD: "#38445a" } },
@@ -38,6 +38,7 @@ var OUTFITS = {
   doctor: { top: "shirt", tie: true, over: "labcoat", feet: "shoes", colors: { shirt: "#cfe0ee", shirtD: "#a6bfd3", tie: "#4a6f8a", pants: "#3d4656", pantsD: "#2b3240" } },
   worker: { top: "tshirt", over: "vest", hat: "hardhat", feet: "boots", colors: { shirt: "#7f97a6", shirtD: "#61798a", pants: "#4b5a6e", pantsD: "#38445a" } },
   pilot:  { top: "shirt", tie: true, epaulettes: true, hat: "pilot", feet: "shoes", colors: { shirt: "#f4f2ec", shirtD: "#d6d2c6", pants: "#262a36", pantsD: "#191c25", tie: "#262a36" } },
+  desert: { top: "shirt", hat: "scarf", feet: "boots", colors: { shirt: "#e9dcc0", shirtD: "#c8b690", pants: "#7a6a52", pantsD: "#5a4c38", hat: "#f4efe2", hatD: "#cbbf9f" } },
   chef:   { top: "shirt", over: "apron", hat: "cap", feet: "shoes", colors: { shirt: "#f4f2ec", shirtD: "#d6d2c6", pants: "#3b3f4a", pantsD: "#2a2d36", hat: "#f4f2ec", hatD: "#d6d2c6" } }
 };
 function pOutfit(o, c) {
@@ -202,6 +203,9 @@ function pHat(kind, c, side) {
   if (kind === "cap") return side
     ? '<path d="M-22 -14 C-23 -30 -10 -36 2 -36 C14 -36 21 -28 20 -14 Z" fill="' + c.hat + '"' + st + '/><path d="M16 -15 Q28 -15 34 -11 Q26 -9 16 -11 Z" fill="' + c.hatD + '"' + st + '/>'
     : '<path d="M-20 -15 C-21 -31 -10 -37 0 -37 C10 -37 21 -31 20 -15 Z" fill="' + c.hat + '"' + st + '/><path d="M-19 -15 Q0 -9 19 -15 Q0 -12 -19 -15 Z" fill="' + c.hatD + '"' + st + '/><circle cx="0" cy="-36" r="1.8" fill="' + c.hatD + '"/>';
+  if (kind === "scarf") return side
+    ? '<path d="M-23 -4 C-33 6 -35 20 -31 34 L-22 33 C-25 21 -21 9 -15 1 Z" fill="' + c.hat + '"' + st + '/><path d="M-26 4 C-29 -22 -14 -37 4 -36 C17 -35 25 -27 23 -13 L15 -15 C5 -19 -7 -17 -15 -9 L-17 6 Z" fill="' + c.hat + '"' + st + '/><path d="M-22 -10 C-12 -22 6 -24 21 -16 M-24 -2 C-16 -12 -6 -15 4 -16" stroke="' + c.hatD + '" stroke-width="2" fill="none"/>'
+    : '<path d="M-25 -4 C-27 -30 -12 -39 0 -39 C12 -39 27 -30 25 -4 L20 -11 C10 -19 -10 -19 -20 -11 Z" fill="' + c.hat + '"' + st + '/><path d="M-22 -14 Q0 -24 22 -14 M-20 -24 Q0 -32 20 -24" stroke="' + c.hatD + '" stroke-width="2" fill="none"/>';
   if (kind === "pilot") return side
     ? '<path d="M-20 -18 L-24 -34 Q2 -42 24 -33 L20 -18 Z" fill="' + c.pants + '"' + st + '/><path d="M-20 -18 L20 -18 L20 -13 L-20 -13 Z" fill="#14161c"' + st + '/><path d="M14 -14 Q26 -14 31 -9 Q24 -8 14 -10 Z" fill="#14161c"' + st + '/><circle cx="12" cy="-27" r="2.6" fill="#d9a72e" stroke="' + INK + '" stroke-width="1"/>'
     : '<path d="M-19 -18 L-26 -35 Q0 -43 26 -35 L19 -18 Z" fill="' + c.pants + '"' + st + '/><path d="M-19 -18 L19 -18 L19 -12.5 L-19 -12.5 Z" fill="#14161c"' + st + '/><path d="M-17 -12.5 Q0 -6 17 -12.5 Z" fill="#14161c"' + st + '/><path d="M-4 -30 L0 -34 L4 -30 L0 -25 Z" fill="#d9a72e" stroke="' + INK + '" stroke-width="1"/><path d="M-12 -30 Q-6 -33 -4 -30 M12 -30 Q6 -33 4 -30" stroke="#d9a72e" stroke-width="1.6" fill="none"/>';
