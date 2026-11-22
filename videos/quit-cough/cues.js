@@ -43,7 +43,51 @@ a(L(SUMMARY) + 0.1, 'chime', 0.35); for (let k = 0; k < 5; k++) a(L(SUMMARY) + 0
 paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                                                       // ask box
 
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
-// e.g. lab(5, 0.4); ding(L(6) + 1.6); scribble(L(9) + 1.2); sea(L(0), L(PROMISE) - L(0) + 0.6, 0.45);
+// a cough: the real recording if the user sends one (sfx/px-cough.mp3), else a short breathy burst + a soft chest thud
+const cough = (t, g) => has('cough') ? rec(t, 'cough', g || 0.5, 0, 0.9, 1.0) : (a(t, 'steam', 0.2 * (g ? g / 0.5 : 1), 0.95), a(t, 'thud', 0.18));
+const beat = (t, n, gap) => { for (let k = 0; k < n; k++) { a(t + k * gap, 'thud', 0.22); a(t + k * gap + 0.16, 'thud', 0.14); } };   // lub-dub
+// hook: the cigarette snaps (0), a cough (1)
+a(L(0) + 0.6, 'snip', 0.35); cough(L(1) + 0.7); cough(L(1) + 1.5, 0.4);
+// 3 · 20 minutes: clock chip, the heart beats, the trace beeps slower
+paper(L(3) + 0.2); beat(L(3) + 0.5, 3, 0.75); a(L(3) + 0.6, 'beep', 0.12);
+// 4 · 8 hours: CO molecules ride out — soft whooshes, «النص» lands
+paper(L(4) + 0.2); a(L(4) + 0.5, 'whoosh', 0.14, 1.2); a(L(4) + 1.9, 'pop', 0.35);
+// 5 · the car's exhaust
+a(L(5) + 0.1, 'idle', 0.22, D(5)); a(L(5) + 0.4, 'exhaust', 0.2); lab(5, 0.8);
+// 6 · two days: all of it out, ✓
+paper(L(6) + 0.1); a(L(6) + 0.5, 'whoosh', 0.12); scribble(L(6) + 1.6);
+// 7 · three days: an easy deep breath
+paper(L(7) + 0.1); a(L(7) + 0.4, 'wind', 0.18, 1.6);
+// 8 · «حاجة غريبة»: the «!» pops
+a(L(8) + 0.3, 'pop', 0.4);
+// 9–10 · the 2003 study: the tag, the chart line draws, week 1 rings, a cough in the box
+paper(L(9) + 0.2); a(L(9) + 0.8, 'whoosh', 0.12, 1.4); ding(L(10) + 0.3); cough(L(10) + 0.9, 0.35);
+// 11 · «طب ليه؟»: the camera dives into the bronchus
+a(L(11) + 0.1, 'whoosh', 0.2, 0.8);
+// 12–16 · the lining: label ticks, flypaper, cilia beating, the escalator, swallowed
+lab(12, 0.5); lab(12, 1.0); a(L(13) + 0.3, 'drip', 0.25); a(L(13) + 0.7, 'drip', 0.2); lab(13, 0.6); a(L(13) + 1.2, 'pop', 0.3);
+lab(14, 0.3); a(L(14) + 0.2, 'servo', 0.08, D(14) - 0.3);
+a(L(15) + 0.2, 'whoosh', 0.16, 1.0); a(L(15) + 0.8, 'pop', 0.3);
+a(L(16) + 0.4, 'plunk', 0.25); scribble(L(16) + 1.2);
+// 17–20 · smoking: a lighter-ish fizz, goblets swell, cilia shrink, the escalator stalls ✗
+a(L(17) + 0.1, 'fizz', 0.18, 1.2); a(L(18) + 0.3, 'squeeze', 0.2); lab(18, 0.8); a(L(18) + 1.4, 'pop', 0.35);
+a(L(19) + 0.2, 'servo', 0.08, 1.0); lab(19, 0.8); a(L(20) + 0.2, 'creak', 0.18); scribble(L(20) + 1.2);
+// 21–26 · quitting: the cigarette snaps, cilia wake (calendar ticks), chili spray, the gauge, mucus rides up, the cough
+a(L(21) + 0.3, 'snip', 0.4); for (let k = 0; k < 6; k++) lab(22, 0.2 + k * 0.33); scribble(L(22) + 2.2);
+a(L(23) + 0.3, 'spray', 0.25, 1.2); ding(L(23) + 0.7);
+for (let k = 0; k < 2; k++) lab(24, 0.1 + k * 0.4); a(L(24) + 0.6, 'whoosh', 0.14, 1.2); ding(L(24) + 1.9);
+a(L(25) + 0.3, 'whoosh', 0.16, 1.6); a(L(25) + 0.6, 'slosh', 0.15);
+cough(L(26) + 0.2); cough(L(26) + 0.9, 0.45); cough(L(26) + 1.6, 0.4);
+// 27 · the myth crossed out
+paper(L(27) + 0.2); scribble(L(27) + D(27) - 1.0);
+// 28 · cleaning itself ✓, «كام أسبوع»
+a(L(28) + 0.3, 'whoosh', 0.14); scribble(L(28) + 0.6); paper(L(28) + 1.6);
+// 29 · the doctor: «+3 أسابيع», the blood drop
+paper(L(29) + 0.2); a(L(29) + 1.0, 'drip', 0.3);
+// 30 · the recap panels land one by one
+for (const dt of [0.2, 1.4, 2.8]) { paper(L(30) + dt); a(L(30) + dt + 0.1, 'pop', 0.3); }
+// 31–32 · 200 hairs count up, then beat fast
+a(L(31) + 0.3, 'servo', 0.08, 1.4); ding(L(31) + 1.7); a(L(32) + 0.1, 'spin', 0.12, D(32)); ding(L(32) + 0.5);
 
 // music plays only when sfx.py is run with --music, and that only when the user asked for music in this video
 const MUSIC = has('music-soft') ? 'music-soft' : null;
