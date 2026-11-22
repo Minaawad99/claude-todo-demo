@@ -1,1 +1,4 @@
 __pycache__/
+
+# previews sent to the user (not source)
+out/
