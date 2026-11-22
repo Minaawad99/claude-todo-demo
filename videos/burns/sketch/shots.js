@@ -281,9 +281,9 @@ shot(18, push(320, 360, 1.0, 1.06), function (u, d, t) {
     G("translate(" + f(lerp(560, 400, at(u, .7, .6))) + " 150) rotate(-40)", R(-4, -90, 8, 90, METAL_D, 1.6) + R(-16, -170, 32, 80, "#f4efe3", 2), 1) + cross(420, 120, 1, at(u, 1.3, .4));
 }, { tr: "in" });
 // 19 · to hospital: bigger than his palm, white or black skin, or a child
-shot(19, push(320, 400, 1.0, 1.04), function (u, d, t) {
+shot(19, function (u, d) { return [320 + 30 * Math.sin(u * 1.2), 400, lerp(0.94, 1.08, u / d)]; }, function (u, d, t) {
   var c = window.CHUNKS[19], D = LN[19].end - LN[19].start, k1 = at(u, D * (c[1] || .3), .4), k2 = at(u, D * (c[2] || .6), .4), k3 = at(u, D * (c[3] || .85), .4);
-  var s = paper() + hospital(320, 170, 1.0) + G("", T("المستشفى", 320, 262, 28, ORANGE, 800), at(u, .3, .3));
+  var s = paper() + '<circle cx="320" cy="150" r="' + f(90 + 14 * Math.sin(t * 5)) + '" fill="' + ORANGE + '" opacity=".12"/>' + hospital(320, 170 - 6 * Math.abs(Math.sin(t * 3)), 1.0) + G("", T("المستشفى", 320, 262, 28, ORANGE, 800), at(u, .3, .3));
   // the palm against a big burn
   s += G("translate(0 " + f(40 * (1 - k1)) + ")", R(40, 320, 260, 180, PAPER, 2) + G("translate(170 410)", '<ellipse rx="110" ry="60" fill="' + BURN + '" stroke="' + BURN_D + '" stroke-width="2"/>' + G("rotate(-90)", PERSON.hand([28, -6], 0, "flat", 1, 2.2, null, true)) ) + T("أكبر من الكف", 170, 530, 22, INK, 800), k1);
   // skin turned white or charred
@@ -340,8 +340,10 @@ SCENE.intro = function (svg, t, li) {
   var p = PERSON.front(o), el = p.joints.el[1], wr = p.joints.wr[1], bx = lerp(el[0], wr[0], .5), by = lerp(el[1], wr[1], .5);
   s += pot(470, 440, .8, 28) + '<path d="M410 420 C380 430 370 460 360 ' + f(470 + 6 * Math.sin(t * 8)) + '" stroke="' + WATER + '" stroke-width="12" fill="none" stroke-linecap="round"/>';
   s += p.svg + '<ellipse cx="' + f(bx) + '" cy="' + f(by - 3) + '" rx="22" ry="9" fill="' + BURN + '" stroke="' + BURN_D + '" stroke-width="1.6" transform="rotate(' + f(Math.atan2(wr[1] - el[1], wr[0] - el[0]) * 180 / Math.PI) + ' ' + f(bx) + ' ' + f(by) + ')"/>' + steam(bx, by - 20, t, 3, 50);
-  if (li >= 1) { var u = t - LN[1].start; s += G("", pasteTube(130, 120, .9, -15), ease(u / .4)) + G("", iceCubes(470, 130, 1.1), ease((u - .9) / .4)); }
-  if (li >= 2) { var v = t - LN[2].start; s += cross(130, 120, 1.3, ease(v / .4)) + cross(470, 130, 1.3, ease((v - .3) / .4)) + G("", inset(310, 120, 90, G("scale(.42) translate(-320 -430)", skinCut(t, { heat: lerp(.15, .6, ease(v / 1.2)) }))) , ease((v - .2) / .3)); }
+  if (li >= 1) { var u = t - LN[1].start, left = Math.max(0, 1200 - Math.max(0, u - .6) * 60);
+    s += iconBox(470, 150, 170, watch(0, 4, 60, 1 - left / 1200), ease(u / .4)) + G("", N(mmss(left), 470, 280, 40, ORANGE), ease((u - .3) / .3));
+    s += G("", inset(160, 150, 100, G("scale(.46) translate(-320 -430)", skinCut(t, { heat: lerp(.12, .6, ease((u - .8) / 3.5)) }))) + G("", T("قبل ما ينزل لجوه", 160, 286, 24, ORANGE, 800), ease((u - 2.2) / .3)), ease((u - .7) / .4)); }
+  if (li >= 2) { var v = t - LN[2].start; s += G("", chips(3, 310, 30), ease(v / .4)); }
   return s;
 };
 SCENE.bumper = function (u, t) { return G("translate(90 96) scale(.3) translate(-300 -440)", kitchenSink(t, { y: 470, mx: 290, run: 1 }) + forearm(t, { y: 470, burn: .8, water: 1 })); };

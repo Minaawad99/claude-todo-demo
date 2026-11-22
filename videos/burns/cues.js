@@ -45,9 +45,10 @@ paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                               
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
 // e.g. lab(5, 0.4); ding(L(6) + 1.6); scribble(L(9) + 1.2); sea(L(0), L(PROMISE) - L(0) + 0.6, 0.45);
 const tap = (t, dur, g) => rec(t, 'water-rush', g || 0.3, 3, dur, 1.0, 'fill', 0.25);
-// 0–2 · hook: the pot tips, boiling water hisses on the arm; toothpaste and ice come in, both crossed
+// 0–2 · hook: the pot tips, boiling water hisses on the arm; the 20-minute clock starts, the skin lens; the three step chips
 a(L(0) + 0.6, 'splash', 0.3); a(L(0) + 0.9, 'sizzle', 0.35, 1.8); a(L(0) + 1.2, 'steam', 0.2, 1.6);
-a(L(1) + 1.2, 'pop', 0.35); a(L(1) + 2.1, 'clink', 0.25); scribble(L(2) + 0.1); scribble(L(2) + 0.45);
+a(L(1) + 0.1, 'pop', 0.3); rec(L(1) + 0.6, 'clock-ticking', 0.28, 0.1, D(1) - 0.6, 1.0, null); a(L(1) + 0.8, 'pop', 0.25); ding(L(1) + 3.0);
+for (let k = 0; k < 3; k++) a(L(2) + 0.1 + k * 0.18, 'pop', 0.3);
 // 4 · the rule card is pinned
 paper(L(4) + 0.15); a(L(4) + 0.3, 'pop', 0.35);
 // 5 · the pot goes, the patch keeps spreading
