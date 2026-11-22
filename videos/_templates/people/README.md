@@ -83,7 +83,7 @@ PERSON.front({ ..., outfit: { top: "shirt", tie: true, over: "labcoat", hat: nul
 
 - **Presets** (`PERSON.outfits`): `home` (sweater, socks; the default), `casual` (T-shirt, shoes), `office` (shirt and tie),
   `doctor` (shirt, tie, lab coat), `worker` (T-shirt, hi-vis vest, hard hat, boots), `pilot` (white shirt, tie, epaulettes,
-  pilot's cap), `chef` (shirt, apron, cap). See them all, front and side: `videos/person-demo/outfits.html`.
+  pilot's cap), `chef` (shirt, apron, cap), `guard` (navy security uniform: shirt with epaulettes, cap, boots). See them all, front and side: `videos/person-demo/outfits.html`.
 - **The parts:**
   - `top`: `sweater`, `tshirt` (bare forearms), `shirt` (collar, buttons, pocket, cuffs);
   - `over`: `labcoat`, `vest`, `apron`;

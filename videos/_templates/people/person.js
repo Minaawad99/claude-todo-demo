@@ -38,6 +38,7 @@ var OUTFITS = {
   doctor: { top: "shirt", tie: true, over: "labcoat", feet: "shoes", colors: { shirt: "#cfe0ee", shirtD: "#a6bfd3", tie: "#4a6f8a", pants: "#3d4656", pantsD: "#2b3240" } },
   worker: { top: "tshirt", over: "vest", hat: "hardhat", feet: "boots", colors: { shirt: "#7f97a6", shirtD: "#61798a", pants: "#4b5a6e", pantsD: "#38445a" } },
   pilot:  { top: "shirt", tie: true, epaulettes: true, hat: "pilot", feet: "shoes", colors: { shirt: "#f4f2ec", shirtD: "#d6d2c6", pants: "#262a36", pantsD: "#191c25", tie: "#262a36" } },
+  guard:  { top: "shirt", epaulettes: true, hat: "cap", feet: "boots", colors: { shirt: "#3e5068", shirtD: "#2c3a4e", pants: "#262a36", pantsD: "#191c25", hat: "#262a36", hatD: "#191c25" } },
   chef:   { top: "shirt", over: "apron", hat: "cap", feet: "shoes", colors: { shirt: "#f4f2ec", shirtD: "#d6d2c6", pants: "#3b3f4a", pantsD: "#2a2d36", hat: "#f4f2ec", hatD: "#d6d2c6" } }
 };
 function pOutfit(o, c) {
