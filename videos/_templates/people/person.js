@@ -295,13 +295,13 @@ function person(o) {
     if (A.straight) { var rdx = tg[0] - sp[0], rdy = tg[1] - sp[1], rdl = Math.hypot(rdx, rdy) || 1; tg = [sp[0] + rdx / rdl * 132 * s, sp[1] + rdy / rdl * 132 * s]; }
     var el = A.elbow ? [sp[0] + A.elbow[0] * s, sp[1] + A.elbow[1] * s] : A.straight ? [sp[0] + (tg[0] - sp[0]) * 74 / 132, sp[1] + (tg[1] - sp[1]) * 74 / 132] : pIK(sp, tg, 74 * s, 58 * s, A.bend == null ? -sd : A.bend), dx = tg[0] - el[0], dy = tg[1] - el[1], dl = Math.hypot(dx, dy) || 1, wr = [el[0] + dx / dl * Math.min(dl, 58 * s), el[1] + dy / dl * Math.min(dl, 58 * s)];
     J.sh.push(sp); J.el.push(el); J.wr.push(wr);
-    var cuff = [wr[0] - dx / dl * 8 * s, wr[1] - dy / dl * 8 * s], sp0 = [sp[0] - sd * 2 * s, sp[1] + 7 * s];   // the sleeve starts just under the round shoulder cap of the torso, so no corner sticks up above it
+    var cuff = [wr[0] - dx / dl * 8 * s, wr[1] - dy / dl * 8 * s], sp0 = [sp[0] + (el[0] - sp[0]) * .14 - sd * 3 * s, sp[1] + (el[1] - sp[1]) * .14];   // the sleeve starts just under the round shoulder cap of the torso, so no corner sticks up above it
     var ang1 = Math.atan2(el[1] - sp[1], el[0] - sp[0]), ang2 = Math.atan2(dy, dx), bendA = Math.abs(((ang2 - ang1 + 3 * Math.PI) % (2 * Math.PI)) - Math.PI);
-    var ap = [sp0, L2p(sp, el, .3, 0), L2p(sp, el, .75, 0), el, L2p(el, cuff, .35, 0), cuff], aw = [27 * s, 24.5 * s, 21.5 * s, 20.5 * s, 20 * s, 16.5 * s];
+    var ap = [sp0, L2p(sp, el, .3, 0), L2p(sp, el, .75, 0), el, L2p(el, cuff, .35, 0), cuff], aw = [16 * s, 24.5 * s, 21.5 * s, 20.5 * s, 20 * s, 16.5 * s];   // narrow at the top: the sleeve grows out from under the round shoulder
     var coat = OF.over === "labcoat", sc = coat ? c.coat : c.shirt, scD = coat ? c.coatD : c.shirtD, sleeve;
     if (OF.top === "tshirt" && !coat) {   // bare arm, the short sleeve over its top
-      var bare = [sp0, L2p(sp, el, .3, 0), L2p(sp, el, .75, 0), el, L2p(el, wr, .35, 0), wr], bw = [24 * s, 21 * s, 18 * s, 16.5 * s, 17 * s, 13 * s];
-      var sv = [sp0, L2p(sp, el, .25, 0), L2p(sp, el, .5, 0)], sw2 = [28 * s, 26 * s, 25 * s];
+      var bare = [sp0, L2p(sp, el, .3, 0), L2p(sp, el, .75, 0), el, L2p(el, wr, .35, 0), wr], bw = [15 * s, 21 * s, 18 * s, 16.5 * s, 17 * s, 13 * s];
+      var sv = [sp0, L2p(sp, el, .25, 0), L2p(sp, el, .5, 0)], sw2 = [16 * s, 26 * s, 25 * s];
       sleeve = pLimbDraw(pLimb(bare, bw, false), c.skin, s, pShade(bare, bw, c.skinD, s, .45), 2.2) + pLimbDraw(pLimb(sv, sw2, false), sc, s, "", 2.3);
     } else sleeve = pLimbDraw(pLimb(ap, aw, false), sc, s, pShade(ap, aw, scD, s), 2.3);
     // fabric bunching at the elbow: more folds the more the arm is bent, on the inside of the bend
