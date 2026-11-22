@@ -67,7 +67,7 @@
     for (var c = 1; c < 4; c++) s += P("M" + f(x0 + w * c / 4) + " " + f(y0 + 8) + " V" + f(y1 - 8), "#aab2ba", 2);
     s += P("M" + f(x0 + 14) + " " + f(y0 + 10) + " V" + f(y1 - 10), "#8d959e", 3) + R(x0 + 4, y0 + h * 0.4, 10, 28, "#5a636d", { sw: 1.5 });
     if (o.cut) s += inside(x0, y0, w, h, o, t);
-    if (o.ports && !o.cut) { var pk = clamp(o.ports); for (var p = 0; p < 3; p++) s += port(x0 + w * (0.2 + p * 0.3), y0 + h * 0.3, pk, o.portOpen); }
+    if (o.ports && !o.cut) { var pk = clamp(o.ports); for (var p = 0; p < 3; p++) s += port(x0 + w * (0.2 + p * 0.3), y0 + h * 0.2, pk, o.portOpen); }
     if (o.cams) s += R(x0 - 6, y0 + 6, 22, 16, "#1e2226", { rx: 3, sw: 2 }) + C(x0 - 6, y0 + 14, 5, "#4a8ccc") + R(x1 - 30, y0 + 6, 22, 16, "#1e2226", { rx: 3, sw: 2 });
     return s; }
   // the box cut open: steel lining (armor), the floor, the money (bags, or the safe), the fire pipes along the ceiling
@@ -207,7 +207,7 @@
   shot(8, cam(560, 1.5), cam(520, 1.3, -40), function (u, d, t) {
     var s = scene(t, {}, { big: clamp((u - 0.3) / 2.2) });
     s += act(u, [[0, { x: 190, y: FY, f: 1, p: "pointUp", mood: "n" }], [2.6, { x: 190, y: FY, f: 1, p: "shock", mood: "shock" }], [4.2, { x: 190, y: FY, f: 1, p: "thumbs", mood: "happy" }]], t);
-    for (var c = 0; c < 8; c++) s += miniCar(330 + (c % 4) * 90, 790 + Math.floor(c / 4) * 50, clamp((u - 3.0 - c * 0.12) / 0.3));
+    for (var c = 0; c < (window.LAW_NCARS || 8); c++) s += miniCar(330 + (c % 4) * 90, 790 + Math.floor(c / 4) * 50, clamp((u - 3.0 - c * 0.12) / 0.3));
     return s + pill("١١ طن", 470, 690, u, 2.6, { col: "#ffd23a" });
   });
   // 9 — but the first shot at a tyre and the truck sits where it is
@@ -257,7 +257,7 @@
   shot(16, cam(420, 1.8), cam(440, 1.7), function (u, d, t) {
     var s = scene(t, { ports: 1 }, { ports: clamp((u - 0.3) / 0.6), portOpen: clamp((u - 1.8) / 0.6) - clamp((u - 3.0) / 0.5) });
     s += act(u, [[0, { x: 190, y: FY, f: 1, p: "point", mood: "n" }], [2.4, { x: 190, y: FY, f: 1, p: "thumbs", mood: "happy" }]], t);
-    return s + pill("فتحات من جوه بس", 430, 880, u, 0.9, { col: "#ffd23a", sz: 34 }) + ring(429, 1023, 34, u, 0.6, t);
+    return s + pill("فتحات من جوه بس", 430, 880, u, 0.9, { col: "#ffd23a", sz: 34 }) + ring(429, 980, 34, u, 0.6, t);
   });
   // 17 — but if they get into the box, the money is right there
   shot(17, cam(410, 1.8), cam(400, 1.85), function (u, d, t) {
