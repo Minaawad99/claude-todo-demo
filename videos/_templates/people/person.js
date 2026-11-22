@@ -19,6 +19,7 @@
      o.face: {eyes (0 closed .. 1 open, 1.25 wide), look [dx, dy] (-1..1), brows: "neutral" | "raised" | "worried" | "angry",
              mouth: "neutral" | "smile" | "grin" | "open" | "o" | "frown" | "yawn", tired: bool}
      o.colors: {shirt, shirtD, pants, pantsD, hair, skin, skinD, socks}
+     o.face.mustache: a colour draws a moustache · o.headset: true (or a colour) draws a headset with a boom mic
    returns {svg, joints}: joints has the shoulder, elbow, wrist, hip, knee, ankle points and the head centre. */
 (function () {
 // own small helpers, so the kit works in any skill (sketch, animation, story-2d, law…) without the sketch helpers loaded
@@ -188,9 +189,16 @@ function pHead(hc, s, rot, o, c) {
     yawn: '<ellipse cx="' + f(mx) + '" cy="' + f(my + 2.8) + '" rx="5" ry="6.2" fill="#5a2a22" stroke="' + INK + '" stroke-width="1.7"/><path d="M' + f(mx - 3) + ' ' + f(my + 6.6) + ' q3 -2.2 6 0" fill="' + PSN.lip + '"/><path d="M' + f(mx - 3.4) + ' ' + f(my - 2) + ' h6.8" stroke="#fff" stroke-width="1.4"/>'
   };
   g += M[mo] || M.neutral;
+  // a moustache (o.face.mustache = its colour): a full brush over the upper lip, drawn over the mouth line
+  if (fc.mustache) g += '<path d="M' + f(mx - 8) + ' ' + f(my - .6) + ' Q' + f(mx - 7) + ' ' + f(my - 5.6) + ' ' + f(mx) + ' ' + f(my - 4.6) + ' Q' + f(mx + 7) + ' ' + f(my - 5.6) + ' ' + f(mx + 8) + ' ' + f(my - .6) + ' Q' + f(mx + 4) + ' ' + f(my - 2) + ' ' + f(mx) + ' ' + f(my - 1.4) + ' Q' + f(mx - 4) + ' ' + f(my - 2) + ' ' + f(mx - 8) + ' ' + f(my - .6) + ' Z" fill="' + fc.mustache + '" stroke="' + INK + '" stroke-width="1.3" stroke-linejoin="round"/>';
   // jaw shadow and chin line
   g += '<path d="M' + f(X(-3)) + ' 22.5 Q' + f(X(0)) + ' 23.8 ' + f(X(3)) + ' 22.5" stroke="' + c.skinD + '" stroke-width="1" fill="none"/>';
   g += pHat(o._of && o._of.hat, c, false);
+  // a headset (o.headset: true, or a colour): band over the head, an ear cup on each side, a boom mic to the mouth
+  if (o.headset) { var hs = o.headset === true ? "#2b2e36" : o.headset;
+    g += '<path d="M-20 -6 C-22 -30 -12 -36 0 -36 C12 -36 22 -30 20 -6" stroke="' + INK + '" stroke-width="4.6" fill="none"/><path d="M-20 -6 C-22 -30 -12 -36 0 -36 C12 -36 22 -30 20 -6" stroke="' + hs + '" stroke-width="2.4" fill="none"/>';
+    [-1, 1].forEach(function (sd) { g += '<rect x="' + f(sd > 0 ? 16 : -24) + '" y="-10" width="8" height="15" rx="3.5" fill="' + hs + '" stroke="' + INK + '" stroke-width="1.6"/>'; });
+    g += '<path d="M-20 2 Q-17 16 ' + f(mx - 7) + ' ' + f(my + 1) + '" stroke="' + INK + '" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="' + f(mx - 7) + '" cy="' + f(my + 1) + '" r="2.4" fill="' + hs + '" stroke="' + INK + '" stroke-width="1.2"/>'; }
   return G("translate(" + f(hc[0]) + " " + f(hc[1]) + ") rotate(" + f(rot) + ") scale(" + f(s) + ")", g);
 }
 function pHat(kind, c, side) {
