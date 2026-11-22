@@ -279,7 +279,7 @@
     for (var x = -96; x < 104; x += 7.4) if (Math.abs(x - 96) > 6 && Math.abs(x + 92) > 4) g += '<rect x="' + f(x) + '" y="-7.5" width="3.4" height="4.6" rx="1.6" fill="#2a3442"/>';
     g += '<path d="M126 -9 L139 -9 L146 -3 L128 -3 Z M114 -9 L123 -9 L124 -3 L114 -3 Z" fill="#1d2430" stroke="' + INK + '" stroke-width="1"/>';
     g += R(98, -10, 9, 21, "none", { w: 1 }) + R(-98, -10, 8, 19, "none", { w: 1 });
-    g += txt("US AIRWAYS", 22, -.5, 10.5, NAVY, { font: "Noto Serif", wt: 700, ls: .6 }) + '<rect x="-26" y="-8" width="9" height="6" fill="' + NAVY + '"/><path d="M-26 -6 h9 M-26 -4 h9" stroke="#fff" stroke-width=".8"/>';
+    g += G((o.dir || 1) < 0 ? "translate(44 0) scale(-1 1)" : "", txt("US AIRWAYS", 22, -.5, 10.5, NAVY, { font: "Noto Serif", wt: 700, ls: .6 })) + '<rect x="-26" y="-8" width="9" height="6" fill="' + NAVY + '"/><path d="M-26 -6 h9 M-26 -4 h9" stroke="#fff" stroke-width=".8"/>';
     g += P("M-160 -6 L-128 -10 L-120 -6 L-152 -3 Z", "#c2c9d0", { w: 1.2 });   // stabiliser
     // near wing and engine
     g += P("M-6 10 L-60 30 L-44 31 L34 12 Z", "#c9d0d7", { w: 1.6 }) + '<path d="M-58 30 l-4 -6" stroke="' + INK + '" stroke-width="1.4"/>';
