@@ -451,8 +451,56 @@ function personSide(o) {
 // how high the hips must be so the lower foot stands on the floor (for walking: no sinking, no floating)
 function sideHipY(o, floorY) { var p = personSide(Object.assign({}, o, { y: 0 })), lo = -1e9; ["foot0", "foot1"].forEach(function (k) { p.joints[k].forEach(function (q) { lo = Math.max(lo, q[1]); }); }); return floorY - lo; }
 
+// ── the forearm and hand in close-up, from the side (added for «التبرع بالدم», after the user's source video): the forearm
+// lies flat towards the left, the back of the hand faces the viewer, four fingers reach out to the right, a little fanned,
+// each with two creases and a nail, and the thumb rises from the top of the hand. Strokes stay thin however big it is drawn
+// (PERSON.hand is for whole-body scale; at close-up size its outlines are too heavy). o: {x, y: the wrist; s: scale (the
+// wrist is 66 units wide); len: forearm length to the left (default 520); curl 0..1: fingers relax and bend down;
+// spread 0..1; colors; sw: stroke width}. Returns svg.
+function pForearm(o) {
+  var c = {}, k; for (k in PSN) c[k] = PSN[k]; if (o.colors) for (k in o.colors) c[k] = o.colors[k];
+  var s = o.s || 1, X = o.x, Y = o.y, len = o.len == null ? 520 : o.len, cu = o.curl || 0, sp = o.spread == null ? .5 : o.spread, sw = o.sw || 2.4;
+  function P(x, y) { return [X + x * s, Y + y * s]; }
+  function M(pts) { return pts.map(function (p) { return P(p[0], p[1]); }); }
+  var g = "";
+  // the forearm: wider towards the elbow, the wrist narrower; a shadow band along the underside and two faint surface veins
+  var e = -len / s, top = [[e, -56], [e * .6, -54], [e * .3, -44], [-40, -36], [0, -31]], bot = [[0, 32], [-40, 34], [e * .3, 44], [e * .6, 50], [e, 50]];
+  var arm = M(top.concat(bot));
+  g += '<path d="' + pPath(arm, false) + ' Z" fill="' + c.skin + '"/>';
+  g += '<path d="' + pPath(M([[e, 30], [e * .5, 30], [-30, 20], [0, 22], [0, 32], [-40, 34], [e * .3, 44], [e * .6, 50], [e, 50]]), false) + ' Z" fill="' + c.skinD + '" opacity=".4"/>';
+  g += pLine(M([[e * .9, -14], [e * .6, -18], [e * .3, -8], [-20, -12]]), "#8a93b8", 2, ' opacity=".5"') + pLine(M([[e * .35, -10], [e * .2, -24], [-10, -22]]), "#8a93b8", 1.8, ' opacity=".45"');
+  g += '<path d="' + pPath(M(top), false) + '" fill="none" stroke="' + INK + '" stroke-width="' + sw + '"/><path d="' + pPath(M(bot), false) + '" fill="none" stroke="' + INK + '" stroke-width="' + sw + '"/>';
+  // the fingers: little, ring, middle, index (back to front), each one flowing outline with a rounded tip
+  var F = [[[74, 22], 58, 16, 20], [[84, 5], 74, 18, 6], [[86, -12], 80, 19, -3], [[84, -29], 74, 19, -11]], fing = "";
+  F.forEach(function (q, i) {
+    var a = (q[3] * (.5 + sp) + cu * 26 + (3 - i) * cu * 3) * Math.PI / 180, b = q[0], pts = [[b[0] - 14, b[1]], b], ws = [q[2] * 1.12, q[2]], x = b[0], y = b[1], segs = [.46, .3, .24];
+    for (var j = 0; j < 3; j++) { a += cu * [.25, .45, .4][j]; x += Math.cos(a) * q[1] * segs[j]; y += Math.sin(a) * q[1] * segs[j]; pts.push([x, y]); ws.push(q[2] * [.96, .9, .82][j]); }
+    var lb = pLimb(M(pts), ws.map(function (v) { return v * s; }), true);
+    fing += '<path d="' + lb.fill + '" fill="' + c.skin + '"/><path d="' + lb.line + '" fill="none" stroke="' + INK + '" stroke-width="' + sw + '" stroke-linejoin="round"/>';
+    for (j = 2; j <= 3; j++) { var p0 = pts[j], aa = Math.atan2(pts[j + 1][1] - pts[j - 1][1], pts[j + 1][0] - pts[j - 1][0]), hw = ws[j] * .3; fing += pLine([P(p0[0] - Math.sin(aa) * hw, p0[1] + Math.cos(aa) * hw), P(p0[0] + Math.sin(aa) * hw * .2, p0[1] - Math.cos(aa) * hw * .2)], c.skinD, 1.3); }
+    var tp = pts[4], up = pts[3], na = Math.atan2(tp[1] - up[1], tp[0] - up[0]), nc = P(tp[0] - Math.cos(na) * q[2] * .38, tp[1] - Math.sin(na) * q[2] * .38);
+    fing += '<ellipse cx="' + f(nc[0]) + '" cy="' + f(nc[1]) + '" rx="' + f(q[2] * .36 * s) + '" ry="' + f(q[2] * .27 * s) + '" transform="rotate(' + f(na * 180 / Math.PI) + ' ' + f(nc[0]) + ' ' + f(nc[1]) + ')" fill="' + c.skinL + '" stroke="' + c.skinD + '" stroke-width="1.2"/>';
+  });
+  g += fing;
+  // the back of the hand over the finger roots, outlined along the top and the heel only, with tendons and knuckle bumps
+  var back = M([[-2, -31], [24, -38], [52, -41], [80, -39], [93, -28], [96, -11], [95, 6], [88, 24], [76, 33], [50, 38], [20, 37], [-2, 32]]);
+  g += '<path d="' + pPath(back, true) + '" fill="' + c.skin + '"/><path d="' + pPath(back.slice(0, 5), false) + '" fill="none" stroke="' + INK + '" stroke-width="' + sw + '"/><path d="' + pPath(back.slice(8), false) + '" fill="none" stroke="' + INK + '" stroke-width="' + sw + '"/>';
+  [[-27], [-11], [5], [20]].forEach(function (q, i) { g += pLine(M([[28, q[0] * .5 - 2], [60, q[0] * .8], [84, q[0] + (i === 3 ? -2 : 0)]]), c.skinD, 1.4, ' opacity=".6"'); });
+  g += '<path d="' + pPath(M([[-2, 26], [30, 30], [60, 30]]), false) + '" fill="none" stroke="' + c.skinD + '" stroke-width="5" opacity=".35" stroke-linecap="round"/>';
+  // the thumb: from the top of the hand near the wrist, up and forward, two segments, a nail
+  var ta = (-38 - sp * 10 + cu * 14) * Math.PI / 180, tb = [34, -30], t1 = [tb[0] + Math.cos(ta) * 32, tb[1] + Math.sin(ta) * 32], ta2 = ta + .18 + cu * .3, t2 = [t1[0] + Math.cos(ta2) * 26, t1[1] + Math.sin(ta2) * 26];
+  var tl = pLimb(M([[22, -18], tb, t1, t2]), [24 * s, 22 * s, 19 * s, 16 * s], true);
+  g += '<path d="' + tl.fill + '" fill="' + c.skin + '"/><path d="' + tl.line + '" fill="none" stroke="' + INK + '" stroke-width="' + sw + '" stroke-linejoin="round"/>';
+  g += pLine([P(t1[0] - 5, t1[1] + 3), P(t1[0] + 3, t1[1] + 6)], c.skinD, 1.3);
+  var tn = P(t2[0] - Math.cos(ta2) * 5, t2[1] - Math.sin(ta2) * 5);
+  g += '<ellipse cx="' + f(tn[0]) + '" cy="' + f(tn[1]) + '" rx="' + f(5.5 * s) + '" ry="' + f(4.2 * s) + '" transform="rotate(' + f(ta2 * 180 / Math.PI) + ' ' + f(tn[0]) + ' ' + f(tn[1]) + ')" fill="' + c.skinL + '" stroke="' + c.skinD + '" stroke-width="1.2"/>';
+  // the wrist crease
+  g += pLine(M([[2, -24], [-2, -6]]), c.skinD, 1.3, ' opacity=".6"');
+  return g;
+}
+
 // export: window.PERSON for every skill; plain globals too where the name is free (the story kit has its own person())
-var API = { outfits: OUTFITS, front: person, side: personSide, walkPose: walkPose, sideHipY: sideHipY, mix: personMix, sofaFront: sofaFront, hand: pHand, head: pHead, colors: PSN,
+var API = { outfits: OUTFITS, forearm: pForearm, front: person, side: personSide, walkPose: walkPose, sideHipY: sideHipY, mix: personMix, sofaFront: sofaFront, hand: pHand, head: pHead, colors: PSN,
   setInk: function (c) { INK = c; } };
 window.PERSON = API;
 [["person", person], ["personSide", personSide], ["walkPose", walkPose], ["sideHipY", sideHipY], ["personMix", personMix], ["sofaFront", sofaFront], ["pHand", pHand], ["pHead", pHead], ["PSN", PSN]].forEach(function (q) { if (!(q[0] in window)) window[q[0]] = q[1]; });

@@ -24,7 +24,8 @@ It is self-contained (its own helpers) and exposes `window.PERSON`:
 | `PERSON.sideHipY(o, floorY)` | the hip height that puts the lower foot exactly on the floor (no sinking, no floating) |
 | `PERSON.mix(a, b, k)` | tween two `front()` poses |
 | `PERSON.sofaFront(cx, floorY, w, s)` | a sofa at the same scale |
-| `PERSON.hand(...)`, `PERSON.head(...)` | a hand or a head alone, for close-ups |
+| `PERSON.hand(...)`, `PERSON.head(...)` | a hand or a head alone, at body scale |
+| `PERSON.forearm({x, y, s, len, curl, spread})` | a forearm and open hand in close-up from the side (wrist at x, y; back of the hand, four fingers with nails, the thumb up), thin strokes at any size. Made after the user's blood-donation source video; first used in `videos/blood-donation/` |
 | `PERSON.outfits` | the outfit presets (see «Clothes follow the topic») |
 | `PERSON.colors`, `PERSON.setInk(c)` | the palette (skin, hair, shirt, trousers, socks) and the outline colour, to match the skill's look |
 
