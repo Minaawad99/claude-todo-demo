@@ -168,7 +168,7 @@ function renderAt(t) {
   s += '<rect x="34" y="34" width="572" height="790" fill="none" stroke="' + INK + '" stroke-width="2"/>';
   s += '<rect x="16" y="16" width="608" height="1106" fill="none" stroke="' + INK + '" stroke-width="2"/>';
   var cp = capAt(t), k = ease(cp[1] / .35), words = cp[0].split(" ").map(function (w) { return '<tspan fill="' + (KEYW[w] || INK) + '">' + w + '</tspan>'; }).join(" ");
-  s += '<path d="M80 880 H560" stroke="' + INK + '" stroke-width="1.6"/>' + G("translate(0 " + f(8 * (1 - k)) + ")", '<text x="320" y="950" text-anchor="middle" style="font:800 25px Noto Sans Arabic">' + words + '</text>', k);
+  s += '<path d="M80 880 H560" stroke="' + INK + '" stroke-width="1.6"/>' + G("translate(0 " + f(8 * (1 - k)) + ")", '<text x="320" y="950" text-anchor="middle" style="font:800 22px Noto Sans Arabic">' + words + '</text>', k);
   s += T("إيه الحكاية؟", 590, 1090, 18, INK, 700, "start") + T("تجربة الشخصية الجديدة", 60, 1090, 16, ORANGE, 700, "end");
   document.getElementById("v").innerHTML = DEFS + s + '<rect width="640" height="1138" filter="url(#paperN)" pointer-events="none"/>';
 }
