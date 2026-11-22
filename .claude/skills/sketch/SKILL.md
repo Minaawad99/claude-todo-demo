@@ -230,6 +230,10 @@ python3 qa.py <fixed.mp4>
 
 ## 7. Cover and titles (always, right after the video)
 
+**And the Gemini image prompt, every time** (the user's rule): write it from `brand/eh-elhekaya/GEMINI-COVER.md`, in
+English in its own code block, name the reference images to attach, and send it with the video, cover and titles. When
+the picture comes back, build the cover on it like `cover-naps-gemini-tiktok.html`.
+
 Send the cover and all the titles together with the finished video, in the same reply, without being asked and without
 waiting for recorded sounds (the user confirmed this again after «لو عربيتك وقعت في المية»). Sounds can be swapped in
 later by a remux; the cover and titles don't change.

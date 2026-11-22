@@ -210,6 +210,8 @@ code. Keep mix.wav and the mp4 in the scratchpad, not in the repo.
 
 ## 9. Cover and titles (when the user asks)
 
+**The Gemini image prompt is always sent with the finished video**, asked or not: `brand/eh-elhekaya/GEMINI-COVER.md`.
+
 - **Cover:** copy `brand/eh-elhekaya/cover-container-ship-tiktok.html` (the tunnel cover's layout with the title already in
   Noto) to `cover-<slug>-tiktok.html`. **Every cover's title and sub-title are in Noto Sans Arabic, never Aref Ruqaa** (the user's
   fixed choice). It is **full bleed**, 540×960

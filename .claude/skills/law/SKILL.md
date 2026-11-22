@@ -212,6 +212,9 @@ restart). Send the mp4 with SendUserFile; keep mixes and mp4s in the scratchpad,
 
 ## 10. Cover and titles (always)
 
+**And the Gemini image prompt, every time:** `brand/eh-elhekaya/GEMINI-COVER.md` (English, own code block, the reference
+images to attach), sent with the video, cover and titles; build the cover on the picture when it comes back.
+
 - **Cover** `brand/eh-elhekaya/cover-<slug>-tiktok.html` (copy `cover-solar-building-tiktok.html`): 540×960, the video's own
   scene (load timing.js, the kit, the episode's scene.js, `K.setLine(<last line>)`) zoomed on the finished build with the
   man reacting and one or two pills with the key numbers; dark fades top (0–330) and bottom (660–960); text in Noto Sans
