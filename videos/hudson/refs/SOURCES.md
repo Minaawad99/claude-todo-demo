@@ -14,3 +14,9 @@ about 2,800 ft; "We're gonna be in the Hudson" about 15:29:28; ditching 15:30:43
 right after the strike; NTSB simulator runs: an immediate turn could reach LaGuardia, with a 35-second delay none did; first ferry
 alongside in about 4 minutes; all 155 survived; FAA released the tapes on 5 Feb 2009; the plane is in the Sullenberger Aviation
 Museum, Charlotte.
+
+## Real sound effects (sent by the channel, `sfx/real-*.wav`)
+- `real-spooldown.wav`: first 6 s of "CFM56 Jet Engine Full Stop in real time", faded out (layered with the made `spooldown.wav`).
+- `real-takeoff.wav` (20–36 s) and `real-cabin.wav` (45–57 s, low-passed): "Airbus A320 engine sound during take off".
+- `real-geese.wav`: "Canadian geese flock flying over (#flocktogether)". `real-crc.wav`: "Airbus Master Warning Sound High Quality".
+- `real-horn.wav` (3–9 s): "Hornblower Ferry Horn".
