@@ -13,7 +13,8 @@
      o.lean (deg, + leans to the viewer's right) · o.slump (0..1: shoulders drop, head sinks) · o.breath (0..1)
      o.legs: "stand" | "sit" | {k: [[dx,dy],[dx,dy]], a: [[dx,dy],[dx,dy]]} knee and ankle offsets from each hip joint (units)
      o.arms: [viewer-left arm, viewer-right arm], each {to: [x, y] wrist target in world coords | rel: [dx, dy] from the
-             shoulder in units, bend: ±1 (elbow side), hand: "open" | "relaxed" | "flat" | "fist" | "point" | "thumb",
+             shoulder in units, bend: ±1 (elbow side), elbow: [dx, dy] elbow placed by hand, in units from the shoulder (an arm
+             pointing at the viewer looks short: the cough pose, elbow down in front of the chest, fist up at the mouth), hand: "open" | "relaxed" | "flat" | "fist" | "point" | "thumb",
              rot: hand angle in deg (default: along the forearm), palm: true to show the palm}
      o.head: {tilt (deg), turn (-1..1, three-quarter turn), nod (0..1, chin to chest)}
      o.face: {eyes (0 closed .. 1 open, 1.25 wide), look [dx, dy] (-1..1), brows: "neutral" | "raised" | "worried" | "angry",
@@ -292,7 +293,7 @@ function person(o) {
     var tg = A.to || (A.rel ? [sp[0] + A.rel[0] * s, sp[1] + A.rel[1] * s] : [sp[0] + sd * 10 * s, sp[1] + 128 * s]);
     // straight: a reaching arm (a stretch overhead) is one straight line from the shoulder through the elbow to the wrist
     if (A.straight) { var rdx = tg[0] - sp[0], rdy = tg[1] - sp[1], rdl = Math.hypot(rdx, rdy) || 1; tg = [sp[0] + rdx / rdl * 132 * s, sp[1] + rdy / rdl * 132 * s]; }
-    var el = A.straight ? [sp[0] + (tg[0] - sp[0]) * 74 / 132, sp[1] + (tg[1] - sp[1]) * 74 / 132] : pIK(sp, tg, 74 * s, 58 * s, A.bend == null ? -sd : A.bend), dx = tg[0] - el[0], dy = tg[1] - el[1], dl = Math.hypot(dx, dy) || 1, wr = [el[0] + dx / dl * Math.min(dl, 58 * s), el[1] + dy / dl * Math.min(dl, 58 * s)];
+    var el = A.elbow ? [sp[0] + A.elbow[0] * s, sp[1] + A.elbow[1] * s] : A.straight ? [sp[0] + (tg[0] - sp[0]) * 74 / 132, sp[1] + (tg[1] - sp[1]) * 74 / 132] : pIK(sp, tg, 74 * s, 58 * s, A.bend == null ? -sd : A.bend), dx = tg[0] - el[0], dy = tg[1] - el[1], dl = Math.hypot(dx, dy) || 1, wr = [el[0] + dx / dl * Math.min(dl, 58 * s), el[1] + dy / dl * Math.min(dl, 58 * s)];
     J.sh.push(sp); J.el.push(el); J.wr.push(wr);
     var cuff = [wr[0] - dx / dl * 8 * s, wr[1] - dy / dl * 8 * s], sp0 = [sp[0] - sd * 3 * s, sp[1] - 4 * s];
     var ang1 = Math.atan2(el[1] - sp[1], el[0] - sp[0]), ang2 = Math.atan2(dy, dx), bendA = Math.abs(((ang2 - ang1 + 3 * Math.PI) % (2 * Math.PI)) - Math.PI);

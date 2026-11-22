@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>ليه بتكح أكتر لما تبطّل سجاير؟ — إيه الحكاية؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&family=Noto+Serif:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* «إيه الحكاية؟» — the «الرسم الهندسي» look, measured from 20 reference videos (videos/_reference/tabizzay/STYLE.md).
+     360×640 canvas (render.js SCALE 3 → 1080×1920). Reference sizes are at 720 wide, so here they are halved.
+     Phases, all driven by TIMING: intro card (hook lines) → bumper (promise line) → panel + captions → summary card → ask box. */
+  :root { --paper: #eee5d0; --ink: #2a2016; --mute: #8f8576; --orange: #bd552f; --blue: #4a6f8a; --olive: #5e653a; --tan: #ddd2b8; }
+  html, body { margin: 0; background: var(--paper); }
+  .canvas { position: relative; width: 360px; height: 640px; background: var(--paper); overflow: hidden; font-family: "Noto Sans Arabic", sans-serif; color: var(--ink); }
+  .layer { position: absolute; inset: 0; }
+  /* the main card: one 1px frame 14px in, the panel fills its top, a rule, the caption */
+  #frame { position: absolute; left: 14px; top: 14px; width: 332px; height: 612px; box-sizing: border-box; border: 1.1px solid var(--ink); }
+  .panel { position: absolute; left: 15px; top: 15px; width: 330px; height: 405px; overflow: hidden; }
+  .panel svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #rule { position: absolute; left: 32px; right: 32px; top: 431px; border-top: .6px solid var(--ink); }
+  #wm { position: absolute; left: 0; right: 0; top: 440px; text-align: center; font: 500 8.5px "Noto Sans Arabic"; color: #b3a995; }
+  #cap { position: absolute; left: 30px; right: 30px; top: 458px; text-align: center; font: 700 14px/1.75 "Noto Sans Arabic", sans-serif; }
+  .k-o { color: var(--orange); } .k-b { color: var(--blue); } .k-g { color: var(--olive); } .k-gr { color: var(--mute); }
+  .k-u { text-decoration: underline; text-decoration-thickness: 1.2px; text-underline-offset: 4px; }
+  /* cards (intro + summary): paper, double frame drawn as SVG so it can draw itself in, crop marks outside the corners */
+  .card { position: absolute; inset: 0; background: var(--paper); display: none; }
+  .card .chrome { position: absolute; inset: 0; width: 360px; height: 640px; }
+  .logo { position: absolute; right: 30px; top: 28px; display: flex; align-items: center; gap: 4px; font: 500 8px "Noto Sans Arabic"; color: #6f6556; }
+  .logo svg { width: 11px; height: 11px; }
+  #intro .cat { position: absolute; left: 0; right: 0; top: 100px; text-align: center; font: 600 8px "Noto Sans Arabic"; color: var(--orange); }
+  #intro .r { position: absolute; left: 157px; width: 46px; border-top: .6px solid var(--ink); }
+  #intro .hook { position: absolute; left: 26px; right: 26px; top: 124px; min-height: 80px; text-align: center; font: 800 17px/1.6 "Noto Sans Arabic"; }
+  #intro .hook span { transition: none; }
+  #introArt { position: absolute; left: 28px; top: 236px; width: 304px; height: 330px; }
+  #bumper { position: absolute; inset: 0; display: none; background: var(--paper); }
+  #bumper svg { position: absolute; left: 90px; top: 98px; width: 180px; height: 200px; }
+  #bumper .name { position: absolute; left: 0; right: 0; top: 310px; text-align: center; font: 700 22px "Noto Sans Arabic"; }
+  #bumper .sub { position: absolute; left: 0; right: 0; top: 352px; text-align: center; font: 600 9.5px "Noto Sans Arabic"; }
+  /* summary card */
+  #outro .q { position: absolute; left: 28px; right: 28px; top: 50px; font: 800 12.5px/1.55 "Noto Sans Arabic"; }
+  #outro .art { position: absolute; left: 28px; right: 28px; top: 98px; height: 140px; background: var(--tan); overflow: hidden; }
+  #outro .art svg { width: 100%; height: 100%; display: block; }
+  #outro .leg { position: absolute; left: 28px; right: 28px; top: 246px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font: 600 7.5px "Noto Sans Arabic"; }
+  #outro .leg b { display: inline-grid; place-items: center; width: 10px; height: 10px; border: .8px solid var(--ink); border-radius: 50%; font: 700 6px "Noto Serif"; margin-left: 4px; vertical-align: -2px; }
+  #outro .stat { position: absolute; left: 28px; right: 28px; top: 290px; display: flex; align-items: center; gap: 9px; }
+  #outro .stat .n { font: 800 34px/1 "Noto Serif", serif; color: var(--orange); direction: ltr; white-space: nowrap; }
+  #outro .stat .t { font: 700 8px/1.55 "Noto Sans Arabic"; }
+  #outro .pts { position: absolute; left: 28px; right: 28px; top: 342px; border-top: .6px solid var(--ink); padding-top: 7px; font: 600 7.5px/1.75 "Noto Sans Arabic"; }
+  #outro .more { margin-top: 5px; font: 500 6.8px/1.6 "Noto Sans Arabic"; color: var(--mute); }
+  #outro .ask { position: absolute; left: 34px; right: 34px; top: 448px; height: 120px; border: 1px solid var(--ink); text-align: center; display: none; }
+  #outro .ask::after { content: ""; position: absolute; inset: 3px; border: .5px solid var(--ink); }
+  #outro .ask .l1 { margin-top: 20px; font: 600 9px "Noto Sans Arabic"; }
+  #outro .ask .l2 { margin-top: 6px; font: 700 12px "Noto Sans Arabic"; }
+  #outro .ask .l3 { margin-top: 8px; font: 700 13px "Noto Sans Arabic"; color: var(--orange); }
+  #outro .ask .blank { display: inline-block; width: 64px; border-bottom: 1.2px solid var(--orange); margin: 0 4px; position: relative; height: 14px; vertical-align: -2px; }
+  #outro .ask .caret { position: absolute; left: 4px; bottom: 2px; width: 1.4px; height: 13px; background: var(--ink); }
+</style></head>
+<body>
+<div class="canvas">
+  <div class="layer" id="main">
+    <div class="panel"><svg id="panelA" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg><svg id="panelB" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg></div>
+    <div id="frame"></div><div id="rule"></div><div id="wm"></div><div id="cap"></div>
+  </div>
+  <div class="card" id="intro"><svg class="chrome" id="introChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="cat">جسم الإنسان · الرئة</div><div class="r" style="top:118px"></div><div class="hook" id="hook"></div><div class="r" id="hookRule" style="top:214px"></div>
+    <svg id="introArt" viewBox="0 0 608 660"></svg></div>
+  <div id="bumper"><svg id="bumperArt" viewBox="0 0 180 200"></svg><div class="name">إيه الحكاية؟</div><div class="sub">هشرحهالك في <span class="k-o">دقيقة.</span></div></div>
+  <div class="card" id="outro"><svg class="chrome" id="outroChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="q">ليه بتكح أكتر لما تبطّل سجاير؟</div><div class="art"><svg id="outroArt" viewBox="0 0 600 280"></svg></div><div class="leg"><span><b>1</b>المواسير</span><span><b>2</b>طبقة المخاط</span><span><b>3</b>الشعيرات</span><span><b>4</b>الزور</span></div><div class="stat"><div class="n">200</div><div class="t">شعرة تقريبًا على كل خلية،<br>بتضرب أكتر من 10 مرات في الثانية</div></div><div class="pts">1. المواسير متبطّنة بمخاط بيمسك التراب والميكروبات، والشعيرات بتزقه لفوق للزور.<br>2. الدخان بيزوّد المخاط ويتقّله، وبيقلّل الشعيرات ويقصّرها، فالمخاط يتكوّم.<br>3. لما تبطّل، الشعيرات بتصحى والكحة بترجع أقوى، فالمتكوّم يطلع. لو الكحة عدّت 3 أسابيع أو فيها دم: دكتور.<div class="more">معلومة زيادة: في دراسة إنجليزية سنة 2003، الكحة زادت بعد أسبوع من التبطيل، وهديت مع الأسابيع.</div></div>
+    <div class="ask" id="ask"><div class="l1">قولولنا…</div><div class="l2">عايزين تعرفوا</div><div class="l3">حكاية<span class="blank"><span class="caret" id="caret"></span></span>؟</div></div>
+  </div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="mark"><rect x="84" y="4" width="32" height="10" fill="#2a2016"/><rect x="94" y="14" width="12" height="14" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" fill="#f4ecdb" stroke="#2a2016" stroke-width="9" stroke-linejoin="round"/><text x="106" y="140" text-anchor="middle" style="font:800 120px Noto Sans Arabic;fill:#bd552f">؟</text></g>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".15"/></pattern>
+  <pattern id="hatchW" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#fff" stroke-width="1" opacity=".25"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#e1d5ba" stroke-width="1.3" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .05 0"/></filter>
+</defs></svg>
+<script src="../timing.js"></script>
+<script>window.DATA = {"caps": [[{"f": 0.0, "h": "لو <span class=\"k-o\">بطّلت</span> سجاير،"}, {"f": 0.4103, "h": "المفروض صدرك <span class=\"k-b\">يرتاح…</span> صح؟"}], [{"f": 0.0, "h": "بس ناس كتير،"}, {"f": 0.1912, "h": "بعد ما بطّلوا <span class=\"k-o\">بأسبوع،</span>"}, {"f": 0.5147, "h": "لقوا نفسهم <span class=\"k-o\">بيكحّوا</span> <span class=\"k-u\">أكتر</span> من الأول!"}], [{"f": 0.0, "h": "يعني التبطيل <span class=\"k-o\">بيبوّظ</span> <span class=\"k-g\">الرئة؟</span>"}], [{"f": 0.0, "h": "إيه الحكاية؟"}, {"f": 0.4194, "h": "هشرحهالك في دقيقة."}], [{"f": 0.0, "h": "طب إيه اللي بيحصل جوه <span class=\"k-g\">الرئة</span> لما <span class=\"k-u\">تبطّل؟</span>"}], [{"f": 0.0, "h": "في <span class=\"k-b\">أول</span> <span class=\"k-o\">يومين،</span>"}, {"f": 0.1505, "h": "بتطلّع <span class=\"k-b\">أول</span> <span class=\"k-b\">أكسيد</span> <span class=\"k-b\">الكربون</span> اللي كان في دمك،"}, {"f": 0.6022, "h": "نفس الغاز اللي طالع من <span class=\"k-u\">شكمان</span> العربية."}], [{"f": 0.0, "h": "بس في دراسة في <span class=\"k-g\">إنجلترا</span> سنة <span class=\"k-o\">2003،</span>"}, {"f": 0.3882, "h": "اللي بطّلوا اشتكوا من <span class=\"k-o\">الكحة</span> أكتر،"}, {"f": 0.7882, "h": "بعد <span class=\"k-o\">أسبوع</span> واحد بس."}], [{"f": 0.0, "h": "طب هو ليه أصلاً فيه <span class=\"k-g\">مخاط</span> في رئتك؟"}], [{"f": 0.0, "h": "<span class=\"k-g\">المواسير</span> اللي بيدخل منها الهوا،"}, {"f": 0.5079, "h": "متبطّنة من جوه بطبقة <span class=\"k-b\">مخاط</span> <span class=\"k-b\">لزجة.</span>"}], [{"f": 0.0, "h": "المخاط ده بيمسك <span class=\"k-o\">التراب</span> <span class=\"k-o\">والميكروبات</span> اللي بتتنفسها،"}, {"f": 0.6173, "h": "زي ورق <span class=\"k-u\">اللزق</span> اللي بيمسك الدبان."}], [{"f": 0.0, "h": "وتحته <span class=\"k-g\">شعيرات</span> صغيرة جداً بتضرب مع بعض،"}, {"f": 0.4471, "h": "وتزق المخاط <span class=\"k-o\">لفوق</span> ناحية <span class=\"k-u\">الزور،</span>"}, {"f": 0.8, "h": "زي <span class=\"k-u\">السلم</span> <span class=\"k-u\">الكهربا.</span>"}], [{"f": 0.0, "h": "وهناك <span class=\"k-b\">بتبلعه</span> من غير ما تحس."}], [{"f": 0.0, "h": "طب <span class=\"k-o\">والسجاير</span> بتعمل إيه في ده؟"}], [{"f": 0.0, "h": "<span class=\"k-o\">الدخان</span> بيخلّي المواسير تطلّع مخاط <span class=\"k-b\">أكتر</span> <span class=\"k-b\">وأتقل.</span>"}], [{"f": 0.0, "h": "وفي نفس الوقت الشعيرات <span class=\"k-o\">بتقل</span> <span class=\"k-o\">وتقصر،</span>"}, {"f": 0.5224, "h": "فالسلم <span class=\"k-o\">يبطّأ</span> والمخاط <span class=\"k-b\">يتكوّم</span> جوه."}], [{"f": 0.0, "h": "طب ولما <span class=\"k-u\">تبطّل؟</span>"}], [{"f": 0.0, "h": "علماء اختبروا <span class=\"k-o\">29</span> مدخن برذاذ <span class=\"k-o\">الشطة،</span>"}, {"f": 0.3846, "h": "ولقوا إن الكحة عندهم بقت <span class=\"k-b\">أسرع</span>"}, {"f": 0.7143, "h": "بعد <span class=\"k-o\">أسبوعين</span> بس من التبطيل."}], [{"f": 0.0, "h": "والشعيرات <span class=\"k-g\">بتصحى</span> وترجع تشتغل <span class=\"k-b\">أحسن</span>"}, {"f": 0.569, "h": "مع الأسابيع اللي بعد كده."}], [{"f": 0.0, "h": "فالمخاط اللي اتكوّم <span class=\"k-o\">سنين</span> يبدأ <span class=\"k-b\">يطلع،</span>"}, {"f": 0.5714, "h": "وطريقه الوحيد بره هو <span class=\"k-o\">الكحة.</span>"}], [{"f": 0.0, "h": "وناس كتير فاكرة إن الكحة دي"}, {"f": 0.4516, "h": "معناها إن التبطيل <span class=\"k-o\">بيأذي</span> الرئة. <span class=\"k-o\">لأ.</span>"}], [{"f": 0.0, "h": "دي علامة إن الرئة رجعت <span class=\"k-b\">تنضّف</span> نفسها،"}, {"f": 0.5714, "h": "وغالباً بتهدى في <span class=\"k-g\">كام</span> <span class=\"k-g\">أسبوع.</span>"}], [{"f": 0.0, "h": "بس لو الكحة طوّلت أكتر من <span class=\"k-o\">3</span> <span class=\"k-o\">أسابيع،</span>"}, {"f": 0.6, "h": "أو فيها <span class=\"k-o\">دم،</span>"}, {"f": 0.8, "h": "روح <span class=\"k-u\">للدكتور.</span>"}], [{"f": 0.0, "h": "يعني من الآخر:"}, {"f": 0.1442, "h": "السجاير <span class=\"k-o\">بتزوّد</span> <span class=\"k-b\">المخاط</span> <span class=\"k-o\">وبتكسّح</span> الشعيرات،"}, {"f": 0.5288, "h": "ولما تبطّل،"}, {"f": 0.6442, "h": "الشعيرات <span class=\"k-g\">تصحى</span> وتطلّع المتكوّم <span class=\"k-o\">بالكحة.</span>"}], [{"f": 0.0, "h": "والأغرب إن كل خلية في المواسير"}, {"f": 0.3483, "h": "دي عليها حوالي <span class=\"k-o\">200</span> <span class=\"k-g\">شعرة،</span>"}, {"f": 0.6292, "h": "بتضرب أكتر من <span class=\"k-o\">10</span> مرات في <span class=\"k-o\">الثانية.</span>"}], [{"f": 0.0, "h": "ودي كانت حكاية كحة اللي لسه مبطّل سجاير."}], [{"f": 0.0, "h": "قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟"}]], "hook": [[{"w": "لو", "c": "", "f": 0.0}, {"w": "بطّلت", "c": "k-o", "f": 0.0769}, {"w": "سجاير،", "c": "", "f": 0.2308}, {"w": "المفروض", "c": "", "f": 0.4103}, {"w": "صدرك", "c": "", "f": 0.6154}, {"w": "يرتاح…", "c": "k-b", "f": 0.7436}, {"w": "صح؟", "c": "", "f": 0.9231}], [{"w": "بس", "c": "", "f": 0.0}, {"w": "ناس", "c": "", "f": 0.0441}, {"w": "كتير،", "c": "", "f": 0.1029}, {"w": "بعد", "c": "", "f": 0.1912}, {"w": "ما", "c": "", "f": 0.25}, {"w": "بطّلوا", "c": "", "f": 0.2941}, {"w": "بأسبوع،", "c": "k-o", "f": 0.3971}, {"w": "لقوا", "c": "", "f": 0.5147}, {"w": "نفسهم", "c": "", "f": 0.5882}, {"w": "بيكحّوا", "c": "k-o", "f": 0.6765}, {"w": "أكتر", "c": "k-u", "f": 0.7941}, {"w": "من", "c": "", "f": 0.8676}, {"w": "الأول!", "c": "", "f": 0.9118}], [{"w": "يعني", "c": "", "f": 0.0}, {"w": "التبطيل", "c": "", "f": 0.1923}, {"w": "بيبوّظ", "c": "k-o", "f": 0.5}, {"w": "الرئة؟", "c": "k-g", "f": 0.7692}]], "introLines": 3, "promise": 3, "summary": 24, "cta": 25, "watermark": ""};</script>
+<script src="../../_templates/people/person.js"></script>
+<script src="scenes.js"></script>
+<script src="../../_templates/sketch/engine.js"></script>
+</body></html>
