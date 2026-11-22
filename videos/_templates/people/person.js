@@ -291,7 +291,7 @@ function person(o) {
   });
   if (OF.over === "apron") svg += '<path d="' + pPath([T(104, -20), T(104, 20), T(60, 28), T(-64, 36), T(-64, -36), T(60, -28)], true) + '" fill="' + c.apron + '" stroke="' + INK + '" stroke-width="' + f(2 * s) + '"/>' + pLine([T(104, -18), T(hNeck - 4, -12)], INK, 1.6 * s) + pLine([T(104, 18), T(hNeck - 4, 12)], INK, 1.6 * s) + pLine([T(20, -38), T(20, 38)], c.apronD, 3 * s);
   if (OF.over === "galabeya") {   // a long closed robe from the shoulders to the ankles (Egyptian galabeya, pilgrims' white): body, neck slit, folds
-    svg += '<path d="' + pPath([T(hSh + 6, -40), T(hNeck + 2, -12), T(hNeck + 2, 12), T(hSh + 6, 40), T(60, 46), T(-120, 56), T(-182, 62), T(-184, -62), T(-120, -56), T(60, -46)], true) + '" fill="' + c.coat + '" stroke="' + INK + '" stroke-width="' + f(2.2 * s) + '"/>';
+    svg += '<path d="' + pPath([T(hSh + 2, -30), T(hNeck + 2, -12), T(hNeck + 2, 12), T(hSh + 2, 30), T(hSh - 10, 42), T(60, 42), T(-120, 54), T(-182, 60), T(-184, -60), T(-120, -54), T(60, -42), T(hSh - 10, -42)], true) + '" fill="' + c.coat + '" stroke="' + INK + '" stroke-width="' + f(2.2 * s) + '"/>';
     svg += pLine([T(hNeck, 0), T(hNeck - 34, 0)], c.coatD, 1.6 * s) + pLine([T(20, 22), T(-178, 40)], c.coatD, 1.6 * s) + pLine([T(10, -16), T(-178, -30)], c.coatD, 1.3 * s) + pLine([T(-30, 4), T(-180, 6)], c.coatD, 1.2 * s);
   }
   if (OF.over === "labcoat") [-1, 1].forEach(function (sd) {   // an open white coat to mid-thigh: panel, lapel, pocket
