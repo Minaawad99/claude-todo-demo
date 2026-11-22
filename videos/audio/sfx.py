@@ -256,6 +256,21 @@ def fx_chime(d=1.0):          # docked / charging: rising three-note chime
     return x
 def fx_bell(d=0.9, f=880):    # a soft bell note at pitch f (a scale: pass "f" in the cue)
     t = t_(d); return (np.sin(2 * np.pi * f * t) + 0.3 * np.sin(2 * np.pi * 2 * f * t) * np.exp(-t * 4)) * np.exp(-t * 5) * env(len(t), .004, .05)
+def fx_thump(d=0.45):          # one heartbeat, «lub-dub»: two soft low thumps
+    t = t_(d); x = np.zeros(len(t), np.float32)
+    for t0, f0, a in [(0, 62, 1.0), (0.16, 74, 0.7)]:
+        m = t >= t0; u = t[m] - t0; x[m] += (a * np.sin(2 * np.pi * (f0 + 30 * np.exp(-u * 30)) * u) * np.exp(-u * 22) * (1 - np.exp(-u * 400))).astype(np.float32)
+    return x
+def fx_knock(d=0.2):          # a Korotkoff tap heard through the stethoscope: a short muffled knock
+    t = t_(d); x = np.sin(2 * np.pi * (140 * np.exp(-t * 25) + 70) * t) * np.exp(-t * 30) + 0.3 * lp_fast(noise(len(t)), 500, 2) * np.exp(-t * 60)
+    return (x * (1 - np.exp(-t * 600))).astype(np.float32)
+def fx_hiss(d=1.6):           # air let out of the cuff through the valve
+    t = t_(d); x = hp_fast(noise(len(t)), 2500) * (0.6 + 0.4 * np.exp(-t * 0.8))
+    return (x * env(len(t), .05, .3)).astype(np.float32)
+def fx_siren(d=2.0):          # an ambulance far off: a slow rising and falling wail
+    t = t_(d); f = 700 + 350 * (0.5 - 0.5 * np.cos(2 * np.pi * t / 1.6)); ph = 2 * np.pi * np.cumsum(f) / SR
+    x = 0.6 * np.sin(ph) + 0.25 * np.sin(2 * ph)
+    return lp_fast(x.astype(np.float32), 2200, 1) * env(len(t), .3, .5)
 def fx_notify(d=0.6):         # phone notification: two soft bubbles
     t = t_(d); x = np.zeros(len(t), np.float32)
     for t0, f in [(0, 880), (0.14, 1175)]:
