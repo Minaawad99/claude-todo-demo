@@ -42,16 +42,19 @@
     s += '<ellipse cx="' + f(X(g.len / 2)) + '" cy="' + f(RY + 4) + '" rx="' + f(g.len * M * 0.52) + '" ry="12" fill="#000" opacity=".25"/>';
     // chassis rails
     s += R(X(g.len - 0.2), Y(g.cabBot + 0.05), (g.len - 0.4) * M, 0.18 * M, "#2c2f34", { sw: 2 });
-    s += wheel(X(g.rAx), r, { runflat: o.runflat, flat: o.flat === "r", spin: o.spin }, t);
+    var wR = wheel(X(g.rAx), r, { runflat: o.runflat, flat: o.flat === "r" || o.flat === "both", spin: o.spin }, t), sag = o.sag || 0;
+    s += wR + '<g transform="translate(0 ' + f(sag) + ')">';
     // cargo: the open pickup bed, or the closed steel box
     if (!o.box) {
       s += '<g filter="url(#sh)">' + F("M" + f(X(g.bed0)) + " " + f(Y(g.bedFloor - 0.35)) + " H" + f(xr + 6) + " V" + f(Y(g.bedTop)) + " H" + f(X(g.bed0)) + " Z", paint) + '</g>';
       s += P("M" + f(xr + 20) + " " + f(Y(g.bedTop - 0.12)) + " H" + f(X(g.bed0) - 14), "#ffffff", 3, ' opacity=".5"');
-      if (o.bags !== false) for (var i = 0; i < 3; i++) s += bagIcon(X(g.bed0 + 0.55 + i * 0.6), Y(g.bedTop) + 6, 0.9);
+      var nb = o.bagN == null ? 3 : o.bagN; for (var i = 0; i < nb; i++) s += bagIcon(X(g.bed0 + 0.55 + i * 0.6), Y(g.bedTop) + 6, 0.9);
       s += R(xr + 4, Y(g.bedTop) - 6, 14, 22, "#e2b035", { rx: 3, sw: 2 }) + P("M" + f(xr + 6) + " " + f(Y(g.bedTop) - 6) + " a5 6 0 0 1 10 0", INK, 3);   // the padlock on the tailgate
-    } else s += box(X, Y, g, o, t, xr);
-    s += cab(X, Y, g, o, t, paint, b);
-    s += wheel(X(g.fAx), r, { runflat: o.runflat, flat: o.flat === "f", spin: o.spin }, t);
+    } else { var dk = o.boxDrop == null ? 1 : ease(clamp(o.boxDrop)), lift = (1 - dk) * -620;
+      if (dk < 1) s += P("M" + f((xr + X(g.bed0)) / 2) + " " + f(Y(g.boxTop) + lift) + " V-1400", "#2a2a2a", 4) + F("M" + f((xr + X(g.bed0)) / 2 - 14) + " " + f(Y(g.boxTop) + lift - 30) + " h28 l-6 30 h-16 Z", "#e2b035", { sw: 2 });
+      s += '<g transform="translate(0 ' + f(lift) + ')">' + box(X, Y, g, o, t, xr) + '</g>'; }
+    s += cab(X, Y, g, o, t, paint, b) + '</g>';
+    s += wheel(X(g.fAx), r, { runflat: o.runflat, flat: o.flat === "f" || o.flat === "both", spin: o.spin }, t);
     if (o.bull) { var bk = clamp(o.bull); s += '<g opacity="' + f(bk) + '" transform="translate(' + f((1 - ease(bk)) * 120) + ' 0)">' + P("M" + f(xf + 4) + " " + f(Y(0.35)) + " H" + f(xf + 30) + " V" + f(Y(1.35)) + " H" + f(xf + 4) + " M" + f(xf + 30) + " " + f(Y(0.85)) + " H" + f(xf + 4), INK, 16) + P("M" + f(xf + 4) + " " + f(Y(0.35)) + " H" + f(xf + 30) + " V" + f(Y(1.35)) + " H" + f(xf + 4) + " M" + f(xf + 30) + " " + f(Y(0.85)) + " H" + f(xf + 4), "#8a939c", 10) + '</g>'; }
     return s; }
   function bagIcon(x, y, s) { return '<g transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + s + ')">' + F("M-24 0 Q-30 -34 -10 -44 L-14 -54 L14 -54 L10 -44 Q30 -34 24 0 Z", "url(#bag)", { sw: 2.4 }) + P("M-12 -46 H12", INK, 3) + T("ج", 0, -12, 22, "#3f6a2e") + '</g>'; }
@@ -131,7 +134,188 @@
     return s; }
   window.__armor = { scene: scene, truck: truck, wheel: wheel, flames: flames, cashCase: cashCase, car: car, act: act, M: M, RY: RY };
 
-  // ── the build per line (fills in with the shots once the script is approved) ──
-  K.steps([]);
-  shot(0, [540, 1000, 1.2], [540, 1000, 1.2], function (u, d, t) { return scene(t, {}, {}); });
+  // ── the build per line: a part is on from the line after the one that adds it ──
+  K.steps([[2, { box: 1 }], [4, { glass: 1 }], [6, { armor: 1 }], [8, { big: 1 }], [10, { runflat: 1 }], [12, { bull: 1 }], [14, { fire: 1, fireCab: 1 }], [16, { ports: 1 }], [18, { safe: 1, safeOk: 1 }], [22, { gps: 1 }], [23, { cams: 1, radio: 1 }]]);
+  var GYM = RY + 22 - 22, FY = RY;          // the man's feet on the road
+  function cam(cx, z, dy) { return [cx, RY - 330 / z + (dy || 0), z]; }
+  var THIEF = { base: "casual", hat: "cap", colors: { shirt: "#2b2b2e", shirtD: "#1a1a1c", pants: "#3a3a3e", pantsD: "#26262a", hat: "#1a1a1c", hatD: "#0e0e10" } };
+  function thief(u, Ks, t) { Ks.forEach(function (k) { k[1].outfit = THIEF; }); return act(u, Ks, t); }
+  function bullet(x0, y, x1, k) { if (k <= 0 || k >= 1) return ""; var x = lerp(x0, x1, k); return P("M" + f(x - 60) + " " + f(y) + " H" + f(x), "#ffd23a", 4, ' opacity=".7"') + F("M" + f(x) + " " + f(y - 5) + " h10 q8 5 0 10 h-10 Z", "#b87333", { sw: 1.5 }); }
+  function hole(x, y, k) { return k > 0 ? C(x, y, 7, "#1e2226", { st: "#fff", sw: 2 }) + P("M" + f(x - 14) + " " + f(y - 10) + " L" + f(x + 14) + " " + f(y + 10) + " M" + f(x + 12) + " " + f(y - 12) + " L" + f(x - 12) + " " + f(y + 12), "#fff", 2) : ""; }
+  function splat(x, y, k) { return k > 0 ? F("M" + f(x) + " " + f(y - 12) + " l5 8 l9 -2 l-5 8 l6 7 l-9 0 l-6 8 l-3 -9 l-9 -3 l8 -5 Z", "#9aa2ac", { sw: 1.5 }) : ""; }
+  function miniCar(x, y, k) { return k > 0 ? '<g transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + f(0.32 * K.pop(k)) + ')">' + F("M-110 0 v-30 l40 -8 l36 -32 h80 l36 32 l28 8 v30 Z", "#5a8fc0", { sw: 6 }) + C(-60, 0, 20, "#26282b") + C(70, 0, 20, "#26282b") + '</g>' : ""; }
+  function card(x, y, w, h, k, inner) { if (k <= 0) return ""; return '<g transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + f(K.pop(k)) + ')" filter="url(#sh)">' + R(-w / 2, -h / 2, w, h, "#f6f1e6", { rx: 18, sw: 5 }) + inner + '</g>'; }
+  var XF = 900;
+
+  // 0 — put the cash bags in a pickup and padlock it: a cash truck
+  shot(0, cam(560, 1.7), cam(590, 1.55), function (u, d, t) {
+    var s = scene(t, {}, { bagN: u < 1.6 ? 2 : 3 });
+    s += act(u, [[0, { x: 330, y: FY, f: 1, p: "push", mood: "n" }], [1.6, { x: 340, y: FY, f: 1, p: "reach", mood: "n" }], [3.2, { x: 330, y: FY, f: 1, p: "thumbs", mood: "happy" }]], t);
+    return s + pill("ربع نقل", 700, 960, u, 0.5) + pill("قفل", 400, 1010, u, 3.0, { col: "#ffd23a" }) + ring(400, 1105, 30, u, 3.0, t);
+  });
+  // 1 — but a thief with a hammer breaks the lock and runs off with the bags
+  shot(1, cam(560, 1.35), cam(520, 1.4), function (u, d, t) {
+    var s = scene(t, {}, { bagN: u < 2.4 ? 3 : 2 });
+    s += act(u, [[0, { x: 935, y: FY, f: -1, p: "stand", mood: "n" }], [2.2, { x: 935, y: FY, f: -1, p: "stand", mood: "n" }], [2.6, { x: 935, y: FY, f: -1, p: "shock", mood: "shock" }]], t);
+    s += thief(u, [[0, { x: -60, y: FY, f: 1 }], [1.1, { x: 340, y: FY, f: 1, p: "hammer", mood: "n" }], [2.3, { x: 340, y: FY, f: 1, p: "reach", mood: "happy" }], [2.7, { x: 340, y: FY, f: -1 }], [d, { x: -120, y: FY, f: -1 }]], t);
+    if (u > 2.4) s += bagIcon(lerp(330, -110, clamp((u - 2.7) / (d - 2.7))) - 20, FY - 70, 0.8);
+    return s + pill("اتسرقت!", 470, 930, u, 2.5, { bg: "#c7321f" }) + xmark(400, 1060, u, 1.7, 0.6);
+  });
+  // 2 — so you lower a closed steel box with no windows onto the chassis
+  shot(2, cam(520, 1.5, -60), cam(540, 1.6), function (u, d, t) {
+    var s = scene(t, { box: 1 }, { boxDrop: clamp((u - 0.2) / 1.8) });
+    s += act(u, [[0, { x: 300, y: FY, f: 1, p: "pointUp", mood: "n" }], [1.9, { x: 300, y: FY, f: 1, p: "push", mood: "n" }], [2.8, { x: 300, y: FY, f: 1, p: "thumbs", mood: "happy" }]], t);
+    return s + pill("صندوق حديد", 510, 900, u, 2.0, { col: "#ffd23a" }) + vmark(620, 1000, u, 2.6, 0.6);
+  });
+  // 3 — but the driver still sits behind ordinary glass, and one shot goes through
+  shot(3, cam(700, 2.2, -40), cam(690, 2.4, -40), function (u, d, t) {
+    var s = scene(t, {}, { crack: u > 1.4 });
+    s += act(u, [[0, { x: 935, y: FY, f: -1, p: "point", mood: "n" }], [1.3, { x: 935, y: FY, f: -1, p: "point", mood: "n" }], [1.7, { x: 945, y: FY, f: -1, p: "cover", mood: "shock" }]], t);
+    s += bullet(420, 1094, 679, clamp((u - 1.0) / 0.4));
+    return s + pill("إزاز عادي", 680, 1000, u, 0.4, { bg: "#c7321f" }) + xmark(760, 1040, u, 1.5, 0.5);
+  });
+  // 4 — so you swap it for layers of glass and plastic bonded together, 4 to 7 cm thick
+  shot(4, cam(700, 2.1, -80), cam(700, 2.2, -70), function (u, d, t) {
+    var s = scene(t, { glass: 1 }, {});
+    s += act(u, [[0, { x: 935, y: FY, f: -1, p: "reach", mood: "n" }], [2.8, { x: 935, y: FY, f: -1, p: "thumbs", mood: "happy" }]], t);
+    var n = Math.min(7, Math.floor(clamp((u - 0.5) / 2) * 7) + 1), lay = "";
+    for (var i = 0; i < n; i++) lay += R(-90 + i * 26, -70, i % 2 ? 10 : 16, 140, i % 2 ? "#f2e6a0" : "url(#glassC)", { sw: 2 });
+    s += card(700, 900, 260, 210, clamp((u - 0.3) / 0.4), lay + T(n >= 7 ? "٤–٧ سم" : "", 0, 96, 26, "#2a2522"));
+    return s + ring(696, 1040, 50, u, 0.3, t) + pill("إزاز + بلاستيك", 700, 760, u, 1.2, { col: "#ffd23a", sz: 34 });
+  });
+  // 5 — but the door's sheet metal is thin, and a bullet goes straight through
+  shot(5, cam(650, 2.0, -30), cam(660, 2.1, -30), function (u, d, t) {
+    var s = scene(t, {}, {});
+    s += bullet(380, 1130, 700, clamp((u - 0.3) / 0.4)) + hole(700, 1130, u > 0.7 ? 1 : 0) + bullet(700, 1130, 1200, clamp((u - 0.7) / 0.5));
+    s += act(u, [[0, { x: 1000, y: FY, f: -1, p: "stand", mood: "n" }], [0.9, { x: 1010, y: FY, f: -1, p: "cover", mood: "shock" }]], t);
+    return s + pill("صاج رقيق", 690, 1010, u, 0.8, { bg: "#c7321f" }) + xmark(600, 1100, u, 1.0, 0.5);
+  });
+  // 6 — so you line the whole truck with hardened steel plates; a bullet hits and flattens
+  shot(6, cam(520, 1.6), cam(540, 1.75), function (u, d, t) {
+    var s = scene(t, { armor: 1 }, { cut: 1 });
+    s += act(u, [[0, { x: 300, y: FY, f: 1, p: "hammer", mood: "n" }], [2.6, { x: 300, y: FY, f: 1, p: "hammer", mood: "n" }], [3.6, { x: 300, y: FY, f: 1, p: "thumbs", mood: "happy" }]], t);
+    s += bullet(1250, 1050, 627, clamp((u - 3.2) / 0.5)) + splat(627, 1050, u > 3.7 ? 1 : 0);
+    return s + pill("حديد مقوّى", 520, 920, u, 0.8, { col: "#ffd23a" }) + vmark(700, 990, u, 3.9, 0.55);
+  });
+  // 7 — but the steel is heavy, and the pickup can't carry it
+  shot(7, cam(600, 1.6), cam(600, 1.7), function (u, d, t) {
+    var k = ease(clamp(u / 0.8)), s = scene(t, {}, { sag: 18 * k, flat: u > 0.6 ? "both" : null });
+    s += act(u, [[0, { x: 300, y: FY, f: 1, p: "stand", mood: "n" }], [0.8, { x: 300, y: FY, f: 1, p: "worry", mood: "worry" }]], t);
+    return s + pill("تقيل!", 600, 930, u, 0.5, { bg: "#c7321f" }) + xmark(520, 1170, u, 0.8, 0.5);
+  });
+  // 8 — so it all moves onto a truck chassis: about 11 t loaded, like 8 cars
+  shot(8, cam(560, 1.5), cam(520, 1.3, -40), function (u, d, t) {
+    var s = scene(t, {}, { big: clamp((u - 0.3) / 2.2) });
+    s += act(u, [[0, { x: 190, y: FY, f: 1, p: "pointUp", mood: "n" }], [2.6, { x: 190, y: FY, f: 1, p: "shock", mood: "shock" }], [4.2, { x: 190, y: FY, f: 1, p: "thumbs", mood: "happy" }]], t);
+    for (var c = 0; c < 8; c++) s += miniCar(330 + (c % 4) * 90, 790 + Math.floor(c / 4) * 50, clamp((u - 3.0 - c * 0.12) / 0.3));
+    return s + pill("١١ طن", 470, 690, u, 2.6, { col: "#ffd23a" });
+  });
+  // 9 — but the first shot at a tyre and the truck sits where it is
+  shot(9, cam(780, 2.6, 60), cam(790, 2.8, 60), function (u, d, t) {
+    var s = scene(t, {}, { flat: u > 0.5 ? "f" : null });
+    s += bullet(1300, RY - 40, 830, clamp(u / 0.45));
+    s += act(u, [[0, { x: 935, y: FY, f: -1, p: "stand", mood: "n" }], [0.6, { x: 945, y: FY, f: -1, p: "shock", mood: "shock" }]], t);
+    return s + pill("بنشر!", 800, 1080, u, 0.6, { bg: "#c7321f" }) + xmark(700, 1150, u, 0.8, 0.45);
+  });
+  // 10 — so a hard ring inside every wheel keeps it going for tens of km: the run-flat
+  shot(10, cam(800, 2.6, 60), cam(980, 2.0, 30), function (u, d, t) {
+    var roll = ease(clamp((u - 2.6) / (d - 2.6))), s = scene(t, { runflat: 1 }, { runflat: clamp((u - 0.4) / 0.8), flat: "f", xf: XF + roll * 220, spin: roll * 1.5 });
+    s += act(u, [[0, { x: 935, y: FY, f: -1, p: "crouch", mood: "n" }], [2.2, { x: 935, y: FY, f: -1, p: "stand", mood: "n" }], [3.4, { x: 940, y: FY, f: 1, p: "thumbs", mood: "happy" }]], t);
+    return s + pill("الرن فلات", 820 + roll * 220, 1060, u, 1.0, { col: "#ffd23a" }) + ring(804 + roll * 220, RY - 39, 46, u, 0.5, t);
+  });
+  // 11 — but robbers can block the road with a car
+  shot(11, cam(760, 1.25), cam(780, 1.3), function (u, d, t) {
+    var s = scene(t, {}, {}) + car(1260, clamp(u / 0.4));
+    s += act(u, [[0, { x: 190, y: FY, f: 1, p: "stand", mood: "n" }], [0.6, { x: 190, y: FY, f: 1, p: "shock", mood: "shock" }]], t);
+    return s + pill("الطريق اتقفل!", 1040, 980, u, 0.5, { bg: "#c7321f", sz: 34 }) + xmark(1080, 1100, u, 0.8, 0.5);
+  });
+  // 12 — so a heavy steel bumper up front pushes anything out of the way
+  shot(12, cam(800, 1.3), cam(880, 1.25), function (u, d, t) {
+    var mv = ease(clamp((u - 1.4) / 1.8)), s = scene(t, { bull: 1 }, { bull: clamp((u - 0.2) / 0.8), xf: XF + mv * 160, spin: mv }) + car(1260 + mv * 260, 1 - clamp((u - 2.6) / 0.8));
+    s += act(u, [[0, { x: 190, y: FY, f: 1, p: "point", mood: "n" }], [2.8, { x: 190, y: FY, f: 1, p: "cheer", mood: "happy" }]], t);
+    return s + pill("صدّام حديد", 960 + mv * 160, 1000, u, 0.6, { col: "#ffd23a" }) + ring(930 + mv * 160, RY - 85, 60, u, 0.6, t);
+  });
+  // 13 — but what if they set the truck on fire to smoke you out?
+  shot(13, cam(520, 1.4), cam(530, 1.45), function (u, d, t) {
+    var s = scene(t, {}, {}) + flames(560, RY - 60, clamp(u / 0.6), t) + flames(760, RY - 100, clamp((u - 0.3) / 0.6), t);
+    s += act(u, [[0, { x: 190, y: FY, f: 1, p: "stand", mood: "n" }], [0.5, { x: 175, y: FY, f: 1, p: "cough", mood: "sick" }]], t);
+    return s + pill("نار!", 560, 880, u, 0.5, { bg: "#c7321f" });
+  });
+  // 14 — so a fireproof lining in the cab, and pipes that put the fire out by themselves
+  shot(14, cam(470, 1.6), cam(480, 1.55), function (u, d, t) {
+    var out = clamp((u - 1.4) / 1.6), s = scene(t, { fire: 1 }, { cut: 1, fire: 1, spray: u > 1.0 ? 1 : 0 }) + flames(560, RY - 60, 1 - out, t) + flames(760, RY - 100, 1 - out, t);
+    s += act(u, [[0, { x: 190, y: FY, f: 1, p: "cough", mood: "sick" }], [2.4, { x: 190, y: FY, f: 1, p: "breathe", mood: "happy" }]], t);
+    return s + pill("مواسير إطفا", 440, 900, u, 0.8, { col: "#ffd23a" }) + ring(440, 975, 50, u, 0.8, t);
+  });
+  // 15 — but to see what's outside you have to open the door
+  shot(15, cam(380, 1.9), cam(370, 2.0), function (u, d, t) {
+    var s = scene(t, {}, {});
+    s += act(u, [[0, { x: 190, y: FY, f: 1, p: "reach", mood: "n" }], [0.9, { x: 190, y: FY, f: 1, p: "shrug", mood: "worry" }]], t);
+    return s + pill("لازم تفتح؟", 300, 900, u, 0.6, { bg: "#c7321f" }) + xmark(236, 1040, u, 1.0, 0.45);
+  });
+  // 16 — so small round ports in the sides that open only from inside
+  shot(16, cam(420, 1.8), cam(440, 1.7), function (u, d, t) {
+    var s = scene(t, { ports: 1 }, { ports: clamp((u - 0.3) / 0.6), portOpen: clamp((u - 1.8) / 0.6) - clamp((u - 3.0) / 0.5) });
+    s += act(u, [[0, { x: 190, y: FY, f: 1, p: "point", mood: "n" }], [2.4, { x: 190, y: FY, f: 1, p: "thumbs", mood: "happy" }]], t);
+    return s + pill("فتحات من جوه بس", 430, 880, u, 0.9, { col: "#ffd23a", sz: 34 }) + ring(429, 1023, 34, u, 0.6, t);
+  });
+  // 17 — but if they get into the box, the money is right there
+  shot(17, cam(410, 1.8), cam(400, 1.85), function (u, d, t) {
+    var s = scene(t, {}, { cut: 1 });
+    s += act(u, [[0, { x: 190, y: FY, f: 1, p: "point", mood: "n" }], [0.8, { x: 190, y: FY, f: 1, p: "shock", mood: "shock" }]], t);
+    return s + pill("الفلوس قدامهم!", 400, 940, u, 0.5, { bg: "#c7321f", sz: 34 }) + xmark(560, 1060, u, 0.9, 0.5);
+  });
+  // 18 — so the money is locked in a safe whose lock follows GPS: it opens only at the bank
+  shot(18, cam(470, 1.75), cam(400, 1.3, -30), function (u, d, t) {
+    var sk = ease(clamp((u - 0.2) / 0.8)), ok = u > 3.0, s = scene(t, { safe: 1 }, { cut: 1, safeOk: ok, dial: t * 2, bankX: lerp(-700, -330, ease(clamp((u - 2.2) / 1.0))) });
+    s += act(u, [[0, { x: 190, y: FY, f: 1, p: "push", mood: "n" }], [2.0, { x: 190, y: FY, f: 1, p: "point", mood: "n" }], [3.3, { x: 190, y: FY, f: 1, p: "thumbs", mood: "happy" }]], t);
+    return s + pill("خزنة", 560, 900, u, 0.6, { col: "#ffd23a" }) + pill(ok ? "في البنك ✓" : "بره البنك ✗", 400, 790, u, 1.4, { bg: ok ? "#2a7a46" : "#c7321f", sz: 34 }) + ring(565, 1040, 70, u, 0.6, t);
+  });
+  // 19 — the surprise: many people think a thief who grabs the cash case has won
+  shot(19, cam(330, 1.75), cam(310, 1.85), function (u, d, t) {
+    var s = scene(t, {}, {}), tx = lerp(420, 260, ease(clamp(u / 1.2)));
+    s += thief(u, [[0, { x: 420, y: FY, f: -1 }], [1.2, { x: 260, y: FY, f: -1, p: "cheer", mood: "proud" }]], t) + cashCase(tx - 60, FY - 70, 0, t);
+    s += act(u, [[0, { x: 60, y: FY, f: 1, p: "shrug", mood: "n" }]], t);
+    return s + pill("كسب؟", 260, 900, u, 1.0);
+  });
+  // 20 — the truth: some cases hold ink that sprays the notes if opened wrongly
+  shot(20, cam(300, 2.0), cam(290, 2.1), function (u, d, t) {
+    var ink = ease(clamp((u - 0.8) / 0.6)), s = scene(t, {}, {});
+    s += thief(u, [[0, { x: 220, y: FY, f: -1, p: "crouch", mood: "happy" }], [0.9, { x: 230, y: FY, f: -1, p: "shock", mood: "shock" }]], t) + cashCase(140, FY, ink, t);
+    for (var n = 0; n < 6; n++) s += R(80 + n * 22, FY - 18 - n * 4, 40, 18, ink > 0.5 ? "#d8357a" : "#6aa86a", { sw: 1.5, rx: 2 });
+    return s + pill("حبر!", 150, 940, u, 1.0, { col: "#ff8ac0" }) + pill("ورق ملهوش لازمة", 300, 840, u, 2.6, { bg: "#c7321f", sz: 34 });
+  });
+  // 21 — but what if they steal the whole truck?
+  shot(21, cam(520, 1.3), cam(600, 1.25), function (u, d, t) {
+    var mv = ease(clamp((u - 0.1) / 1.3)), s = scene(t, {}, { xf: XF + mv * 700, spin: mv * 3 });
+    s += act(u, [[0, { x: 190, y: FY, f: 1, p: "stand", mood: "n" }], [0.4, { x: 190, y: FY, f: 1, p: "shock", mood: "shock" }]], t);
+    return s + pill("اتخطفت!", 400, 880, u, 0.4, { bg: "#c7321f" });
+  });
+  // 22 — so a tracker: the company sees where the truck is and cuts the engine remotely
+  shot(22, cam(800, 1.35, -60), cam(820, 1.3, -60), function (u, d, t) {
+    var stop = u > 3.0, mv = ease(clamp(u / 3.0)), s = scene(t, { gps: 1 }, { gps: 1, gpsU: u, xf: XF + 300 + mv * 120, spin: mv });
+    var dot = "", px = lerp(-90, 60, mv); for (var r = 0; r < 4; r++) dot += P("M" + (-110 + r * 60) + " -80 V80 M-120 " + (-60 + r * 45) + " H120", "#c9c0aa", 3);
+    dot += P("M-100 40 Q-30 40 0 -10 T110 -40", "#2f6f9f", 8) + C(px, lerp(40, -30, mv), 12, "#d8352a", { st: "#fff", sw: 3 }) + T(stop ? "الموتور اتطفى" : "GPS", 0, 108, 22, stop ? "#c7321f" : "#2a2522");
+    s += card(560, 760, 280, 250, clamp((u - 0.4) / 0.4), dot);
+    s += act(u, [[0, { x: 470, y: FY, f: 1, p: "point", mood: "n" }], [3.2, { x: 470, y: FY, f: 1, p: "thumbs", mood: "happy" }]], t);
+    return s + pill("جهاز تتبّع", 980, 880, u, 0.8, { col: "#ffd23a" });
+  });
+  // 23 — finishing touches: cameras on every side, a radio, and a driver who never gets out
+  shot(23, cam(520, 1.55, -40), cam(530, 1.45, -40), function (u, d, t) {
+    var s = scene(t, { cams: 1, radio: 1 }, {});
+    s += act(u, [[0, { x: 190, y: FY, f: 1, p: "point", mood: "n" }], [2.0, { x: 190, y: FY, f: 1, p: "pointUp", mood: "n" }], [3.4, { x: 190, y: FY, f: 1, p: "thumbs", mood: "happy" }]], t);
+    return s + pill("كاميرات", 330, 880, u, 0.5, { col: "#ffd23a" }) + ring(222, 954, 26, u, 0.5, t) + pill("لاسلكي", 760, 820, u, 1.6, { col: "#ffd23a" }) + pill("السواق مبينزلش", 700, 960, u, 3.0, { sz: 32 });
+  });
+  // 24 — and congratulations: you built an armoured cash truck yourself
+  shot(24, cam(470, 1.25, -40), cam(450, 1.1, -60), function (u, d, t) {
+    var s = scene(t, {}, { bankX: -330 });
+    s += act(u, [[0, { x: 190, y: FY, f: 1, p: "cheer", mood: "proud" }]], t);
+    return s + K.confetti(t, -100, 1100, 500, 1250);
+  });
+  // 25 — tell us what you want to know next
+  shot(25, cam(450, 1.1, -60), cam(450, 1.05, -60), function (u, d, t) {
+    var s = scene(t, {}, { bankX: -330 });
+    s += act(u, [[0, { x: 190, y: FY, f: 1, p: "wave", mood: "happy" }]], t);
+    return s + pill("؟", 140, 940, u, 0.5);
+  });
 })();
