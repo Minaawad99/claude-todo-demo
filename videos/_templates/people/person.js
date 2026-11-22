@@ -31,6 +31,7 @@ function G(tr, inner, op) { return '<g' + (tr ? ' transform="' + tr + '"' : "") 
 function R(x, y, w, h, fill, sw, rx, ex) { return '<rect x="' + f(x) + '" y="' + f(y) + '" width="' + f(w) + '" height="' + f(h) + '"' + (rx ? ' rx="' + rx + '"' : "") + ' fill="' + fill + '" stroke="' + INK + '" stroke-width="' + (sw == null ? 2 : sw) + '"' + (ex || "") + '/>'; }
 // outfits: the body never changes, the clothes follow the topic. o.outfit = a preset name or {base, top, over, tie, epaulettes, hat, feet, colors}
 //   top: "sweater" (ribbed) | "tshirt" (short sleeves) | "shirt" (collar, buttons, cuffs) · over: "labcoat" | "vest" (hi-vis) | "apron"
+//   over: also "galabeya" (a long robe to the ankles; preset "galabeya") · hat: also "hijab" (a headscarf, colours hat/hatD)
 //   hat: "hardhat" | "cap" | "pilot" · feet: "socks" | "shoes" | "boots" · tie, epaulettes: true
 var OUTFITS = {
   home:   { top: "sweater", feet: "socks" },
@@ -39,6 +40,7 @@ var OUTFITS = {
   doctor: { top: "shirt", tie: true, over: "labcoat", feet: "shoes", colors: { shirt: "#cfe0ee", shirtD: "#a6bfd3", tie: "#4a6f8a", pants: "#3d4656", pantsD: "#2b3240" } },
   worker: { top: "tshirt", over: "vest", hat: "hardhat", feet: "boots", colors: { shirt: "#7f97a6", shirtD: "#61798a", pants: "#4b5a6e", pantsD: "#38445a" } },
   pilot:  { top: "shirt", tie: true, epaulettes: true, hat: "pilot", feet: "shoes", colors: { shirt: "#f4f2ec", shirtD: "#d6d2c6", pants: "#262a36", pantsD: "#191c25", tie: "#262a36" } },
+  galabeya: { top: "shirt", over: "galabeya", feet: "shoes", colors: { shirt: "#ece8dc", shirtD: "#cbc5b4", coat: "#ece8dc", coatD: "#cbc5b4", shoes: "#5a4632" } },
   chef:   { top: "shirt", over: "apron", hat: "cap", feet: "shoes", colors: { shirt: "#f4f2ec", shirtD: "#d6d2c6", pants: "#3b3f4a", pantsD: "#2a2d36", hat: "#f4f2ec", hatD: "#d6d2c6" } }
 };
 function pOutfit(o, c) {
@@ -210,6 +212,9 @@ function pHat(kind, c, side) {
   if (kind === "cap") return side
     ? '<path d="M-22 -14 C-23 -30 -10 -36 2 -36 C14 -36 21 -28 20 -14 Z" fill="' + c.hat + '"' + st + '/><path d="M16 -15 Q28 -15 34 -11 Q26 -9 16 -11 Z" fill="' + c.hatD + '"' + st + '/>'
     : '<path d="M-20 -15 C-21 -31 -10 -37 0 -37 C10 -37 21 -31 20 -15 Z" fill="' + c.hat + '"' + st + '/><path d="M-19 -15 Q0 -9 19 -15 Q0 -12 -19 -15 Z" fill="' + c.hatD + '"' + st + '/><circle cx="0" cy="-36" r="1.8" fill="' + c.hatD + '"/>';
+  if (kind === "hijab") return side   // a headscarf framing the face, falling to the shoulders (c.hat is its colour)
+    ? '<path d="M-24 -8 C-26 -36 -8 -43 6 -41 C20 -39 25 -24 21 -14 L12 -14 C14 0 10 16 6 28 L-24 34 Z" fill="' + c.hat + '"' + st + '/>'
+    : '<path d="M-27 36 L-25 -6 C-27 -38 -12 -43 0 -43 C12 -43 27 -38 25 -6 L27 36 Q0 46 -27 36 Z M-16.5 1 a16.5 25 0 1 0 33 0 a16.5 25 0 1 0 -33 0 Z" fill="' + c.hat + '" fill-rule="evenodd"' + st + '/><path d="M-14 -20 Q0 -30 14 -20" stroke="' + c.hatD + '" stroke-width="1.6" fill="none"/>';
   if (kind === "pilot") return side
     ? '<path d="M-20 -18 L-24 -34 Q2 -42 24 -33 L20 -18 Z" fill="' + c.pants + '"' + st + '/><path d="M-20 -18 L20 -18 L20 -13 L-20 -13 Z" fill="#14161c"' + st + '/><path d="M14 -14 Q26 -14 31 -9 Q24 -8 14 -10 Z" fill="#14161c"' + st + '/><circle cx="12" cy="-27" r="2.6" fill="#d9a72e" stroke="' + INK + '" stroke-width="1"/>'
     : '<path d="M-19 -18 L-26 -35 Q0 -43 26 -35 L19 -18 Z" fill="' + c.pants + '"' + st + '/><path d="M-19 -18 L19 -18 L19 -12.5 L-19 -12.5 Z" fill="#14161c"' + st + '/><path d="M-17 -12.5 Q0 -6 17 -12.5 Z" fill="#14161c"' + st + '/><path d="M-4 -30 L0 -34 L4 -30 L0 -25 Z" fill="#d9a72e" stroke="' + INK + '" stroke-width="1"/><path d="M-12 -30 Q-6 -33 -4 -30 M12 -30 Q6 -33 4 -30" stroke="#d9a72e" stroke-width="1.6" fill="none"/>';
@@ -285,6 +290,10 @@ function person(o) {
     [36, 66].forEach(function (h) { svg += '<path d="M' + [T(h + 4, sd * 5), T(h + 4, sd * 39), T(h - 4, sd * 39), T(h - 4, sd * 5)].map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + ' Z" fill="' + c.reflect + '" stroke="' + INK + '" stroke-width="' + f(1.1 * s) + '"/>'; });
   });
   if (OF.over === "apron") svg += '<path d="' + pPath([T(104, -20), T(104, 20), T(60, 28), T(-64, 36), T(-64, -36), T(60, -28)], true) + '" fill="' + c.apron + '" stroke="' + INK + '" stroke-width="' + f(2 * s) + '"/>' + pLine([T(104, -18), T(hNeck - 4, -12)], INK, 1.6 * s) + pLine([T(104, 18), T(hNeck - 4, 12)], INK, 1.6 * s) + pLine([T(20, -38), T(20, 38)], c.apronD, 3 * s);
+  if (OF.over === "galabeya") {   // a long closed robe from the shoulders to the ankles (Egyptian galabeya, pilgrims' white): body, neck slit, folds
+    svg += '<path d="' + pPath([T(hSh + 6, -40), T(hNeck + 2, -12), T(hNeck + 2, 12), T(hSh + 6, 40), T(60, 46), T(-120, 56), T(-182, 62), T(-184, -62), T(-120, -56), T(60, -46)], true) + '" fill="' + c.coat + '" stroke="' + INK + '" stroke-width="' + f(2.2 * s) + '"/>';
+    svg += pLine([T(hNeck, 0), T(hNeck - 34, 0)], c.coatD, 1.6 * s) + pLine([T(20, 22), T(-178, 40)], c.coatD, 1.6 * s) + pLine([T(10, -16), T(-178, -30)], c.coatD, 1.3 * s) + pLine([T(-30, 4), T(-180, 6)], c.coatD, 1.2 * s);
+  }
   if (OF.over === "labcoat") [-1, 1].forEach(function (sd) {   // an open white coat to mid-thigh: panel, lapel, pocket
     var pan = [T(hSh + 4, sd * 44), T(hNeck + 2, sd * 15), T(86, sd * 9), T(-66, sd * 12), T(-68, sd * 48), T(40, sd * 46), T(96, sd * 46)];
     svg += '<path d="' + pPath(pan, true) + '" fill="' + c.coat + '" stroke="' + INK + '" stroke-width="' + f(2.2 * s) + '"/>';
@@ -447,6 +456,7 @@ function personSide(o) {
     part.arm[i] = g; if (!i) { J.wrist = wr; J.elbow = el; }
   });
   var coatSvg = OF.over === "labcoat" ? '<path d="' + pPath([T(121, -14), T(121, 16), T(96, 34), T(30, 32), T(-66, 38), T(-68, -34), T(30, -32), T(96, -30)], true) + '" fill="' + c.coat + '" stroke="' + INK + '" stroke-width="2.2"/>' + pLine([T(112, 18), T(70, 30), T(60, 33)], c.coatD, 2) + pLine([T(-10, 30), T(-60, 34)], c.coatD, 1.3) : "";
+  if (OF.over === "galabeya") coatSvg = '<path d="' + pPath([T(121, -14), T(121, 16), T(96, 30), T(-60, 40), T(-184, 46), T(-186, -40), T(-60, -34), T(96, -26)], true) + '" fill="' + c.coat + '" stroke="' + INK + '" stroke-width="2.2"/>' + pLine([T(80, 20), T(-180, 30)], c.coatD, 1.6) + pLine([T(40, -10), T(-180, -20)], c.coatD, 1.3);
   var body = part.arm[1] + part.leg[1] + trunk + part.leg[0] + coatSvg + neck + head + part.arm[0];
   var s = o.s || 1, dir = o.dir || 1;
   J.toLocal = function (p) { return p; };
