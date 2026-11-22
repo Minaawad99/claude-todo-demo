@@ -1,17 +1,17 @@
 <!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@700;800&display=swap" rel="stylesheet">
 <style>body{margin:0;background:#eee5d0}svg{display:block}</style></head><body>
-<svg id="s" width="1680" height="1000" viewBox="0 0 1680 1000"></svg>
+<svg id="s" width="1920" height="1000" viewBox="0 0 1920 1000"></svg>
 <script src="../_templates/people/person.js"></script>
 <script>
 // the outfit presets, front and side: the body stays the same, the clothes follow the topic
-var out = "", names = {home:"البيت", casual:"كاجوال", office:"مكتب", doctor:"دكتور", worker:"عامل موقع", pilot:"طيار", chef:"شيف"}, i = 0, s = .95;
+var out = "", names = {home:"البيت", casual:"كاجوال", office:"مكتب", doctor:"دكتور", worker:"عامل موقع", pilot:"طيار", chef:"شيف", tunic:"ست: تونيكة"}, i = 0, s = .95;
 for (var k in PERSON.outfits) {
   var x = 120 + i * 236, fy = 470 - 210 * s;
-  out += PERSON.front({ x: x - 40, y: fy, s: s, outfit: k, face: { mouth: "smile" } }).svg;
-  var w = PERSON.walkPose(.9), o = Object.assign({ x: x + 60, s: s * .9, outfit: k, face: { mouth: "smile" } }, w); o.y = PERSON.sideHipY(o, 930);
+  out += PERSON.front({ x: x - 40, y: fy, s: s, outfit: k, sex: k === "tunic" ? "f" : null, face: { mouth: "smile" } }).svg;
+  var w = PERSON.walkPose(.9), o = Object.assign({ x: x + 60, s: s * .9, outfit: k, sex: k === "tunic" ? "f" : null, face: { mouth: "smile" } }, w); o.y = PERSON.sideHipY(o, 930);
   out += PERSON.side(o).svg;
   out += '<text x="' + x + '" y="985" text-anchor="middle" style="font:800 26px Noto Sans Arabic;fill:#2a2016">' + names[k] + '</text>';
   i++;
 }
-document.getElementById("s").innerHTML = '<path d="M0 472 H1680 M0 932 H1680" stroke="#2a2016" stroke-width="2"/>' + out;
+document.getElementById("s").innerHTML = '<path d="M0 472 H1920 M0 932 H1920" stroke="#2a2016" stroke-width="2"/>' + out;
 </script></body></html>
