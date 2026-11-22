@@ -85,6 +85,10 @@ the two you recommend and why (things Egyptians see every day, many problem → 
 - Verify every fact (WebSearch), write `refs/SOURCES.md` with links, and leave out what can't be confirmed (say so there).
   Tell the user which facts are surprising and that they were checked.
 - Keep it natural (the `humanizer` skill's rules), keep the «بس / عشان كده» chain and the last line word for word.
+- **Strict shape (the user's note after «ملجأ نجاة في الصحرا»):** every line is one of the shapes above. Line 0 is the naive
+  version and ends «يبقى عندك …»; then a «بس …» problem, its «عشان كده بت…» fix, a «بس …», a «عشان كده …», and so on. A fix
+  may run on into one «وبت…» line that adds to it. No free-standing lines outside the chain («وأول غلطة…», «والسر إن…»,
+  «وبكده…»): turn each into a «بس» problem or put it inside its «عشان كده» line.
   Show the script in one copy-ready code block and commit it.
 
 ## 3. Voice (generated here with Gemini TTS; the key comes from the environment, never read or print it)
@@ -115,6 +119,12 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
 - **"2.5D" vector**: gradients, inner shading, soft drop shadow (`filter="url(#sh)"`), highlights on glass/metal, thin dark
   outlines (`INK #2a2522`). A sky with a big soft sun glow and drifting clouds, a faded far town and palms, the ground
   line with grass, the earth cut open below with a stony soil texture; buildings cut open to show inside.
+- **Show every side the script talks about (the user's note after «ملجأ نجاة في الصحرا»):** a side cut shows only one
+  side. When the line is about the layout (sand heaped on three sides, a door on the fourth, a sheet over the top, four
+  sticks at the corners), draw that part of the build from above at an angle too (an oblique view of the same build, like
+  `iso()` in `videos/desert-shelter/law/scene.js`), so the viewer sees all the sides at once. Number the sides with pills
+  when the script counts them. Keep the side cut for what is under the ground or inside (depth, temperature, the man
+  lying inside).
 - **One scene that grows**: the build is drawn once with every part as a switch; each «عشان كده» line brings its part in
   with motion (lowered, poured, slid, drawn along its path) and it stays in later lines.
 - **Camera**: always moving inside the scene, `[cx, cy, zoom]` from → to per line with a slow drift and a 0.35 s
