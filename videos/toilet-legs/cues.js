@@ -55,7 +55,7 @@ a(L(7) + 0.4, 'pop', 0.3); a(L(7) + 0.95, 'pop', 0.3); a(L(7) + 1.3, 'pop', 0.3)
 // 8–10 · the question; the seat edge pressing (a creak), the hose: water, a step, the flow stops
 a(L(8) + 0.2, 'pop', 0.4);
 a(L(9) + 0.5, 'squeeze', 0.18); lab(9, 0.6); a(L(9) + 1.8, 'creak', 0.12, 1.0); lab(9, 2.2);
-rec(L(10), 'water-rush', 0.22, 3, 1.5, 1.0, 'fill', 0.2); a(L(10) + 1.25, 'thud', 0.3); scribble(L(10) + 1.8);
+rec(L(10), 'water-rush', 0.22, 3, 1.5, 1.0, 'fill', 0.2); a(L(10) + 0.8, 'thud', 0.3); scribble(L(10) + 1.0);
 // 11–15 · the nerve close-up: blood flowing, the squeeze, no oxygen, signals stopped, the leg asleep
 a(L(11) + 0.2, 'pop', 0.4);
 lab(12, 0.3); lab(12, 1.0); for (let k = 0; k < 3; k++) a(L(12) + 2.2 + k * 0.25, 'pop', 0.18);

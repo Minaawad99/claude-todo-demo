@@ -463,10 +463,10 @@ shot(9, push(260, 460, .96, 1.06), function (u, d, t) {
 });
 // 10 · like a garden hose someone steps on: water runs and sprays, he walks in and stands on it, the spray dies
 shot(10, push(320, 440, 1.0, 1.06), function (u, d, t) {
-  var k = at(u, .2, 1.1), x = lerp(120, 300, k), o = Object.assign({ x: x, s: .95, dir: 1, lean: 3, outfit: "home", breath: (Math.sin(t * 1.7) + 1) / 2,
-    face: { eyes: blink(t), brows: "neutral", mouth: "neutral" } }, PERSON.walkPose(u * 7, 1 - clamp((u - 1.1) / .2)));
+  var k = at(u, .05, .75), x = lerp(170, 300, k), o = Object.assign({ x: x, s: .95, dir: 1, lean: 3, outfit: "home", breath: (Math.sin(t * 1.7) + 1) / 2,
+    face: { eyes: blink(t), brows: "neutral", mouth: "neutral" } }, PERSON.walkPose(u * 8, 1 - clamp((u - .75) / .15)));
   o.y = PERSON.sideHipY(o, 600);
-  return paper() + floor(612) + hose(t, at(u, 1.2, .5), 330) + PERSON.side(o).svg + cross(560, 470, .7, at(u, 1.8, .4)) +
+  return paper() + floor(612) + hose(t, at(u, .75, .3), 330) + PERSON.side(o).svg + cross(560, 470, .7, at(u, 1.0, .3)) +
     iconBox(110, 130, 130, '<g transform="scale(.15) translate(-222 -520)">' + legCut(t, { press: 1, pinch: 1 }) + '</g>', at(u, .2, .3));
 });
 // 11 · «طب ليه الضغط يقفل العصب؟»: the nerve close-up with a question mark
