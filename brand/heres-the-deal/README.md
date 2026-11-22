@@ -90,3 +90,8 @@ What should we break down next? Drop it in the comments 👇
 
 #howitworks #aviation #planes #avgeek #explained
 ```
+
+## Video 3: How your body gets donated blood back
+
+Made in the sketch style (`videos/blood-donation-us/`), the English version of «التبرع بالدم».
+Thumbnail: `reel-cover-blood-donation-1080x1920.png` (`cover-blood-donation.html`).
