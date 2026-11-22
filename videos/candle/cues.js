@@ -44,6 +44,40 @@ paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                               
 
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
 // e.g. lab(5, 0.4); ding(L(6) + 1.6); scribble(L(9) + 1.2); sea(L(0), L(PROMISE) - L(0) + 0.6, 0.45);
+// a flame's soft breath: a recorded candle / match clip if the user sends one (sfx/px-flame.mp3), else a low steady airflow
+const flameBed = (t, dur, g) => rec(t, 'flame', g || 0.3, 0.2, dur, 1.0, 'wind', (g || 0.3) * 0.35);
+// 0–2 · hook: a match strikes, the stand creaks as the candle tips, the flame flutters; ✗ on the pull line, a whoosh for the push
+rec(L(0), 'match', 0.45, 0, 1.2, 1.0, 'spark', 0.3); flameBed(L(0) + 0.3, L(3) - L(0), 0.3);
+a(L(0) + 0.4, 'servo', 0.25, 1.6); a(L(1) + 0.2, 'whoosh', 0.15);
+scribble(L(2) + 0.95); a(L(2) + 1.75, 'whoosh', 0.2);
+// 4–6 · the rule card, the ball in the water, the string cut and the ball shooting up
+paper(L(4) + 0.5); a(L(4) + 0.6, 'pop', 0.35);
+rec(L(5), 'water-rush', 0.18, 3, D(5), 1.0, 'slosh', 0.2); lab(5, 0.4); lab(5, 1.0);
+a(L(6) + 1.2, 'snip', 0.4); a(L(6) + 1.3, 'splash', 0.3); a(L(6) + 0.2, 'pop', 0.3);
+// 7–9 · the hot gas: a flame flutter, the number counting up; molecules speeding up; the balance tips
+flameBed(L(7), D(7), 0.3); lab(7, 0.6); ding(L(7) + 2.4);
+a(L(8) + 0.6, 'fizz', 0.2, 2.0);
+a(L(9) + 0.8, 'creak', 0.18, 1.2); ding(L(9) + 2.0); lab(9, 0.4);
+// 10–13 · cold air all round, it sinks and shoves, oil on water, the stand swinging both ways
+a(L(10) + 0.3, 'wind', 0.12, D(10)); a(L(10) + 0.9, 'pop', 0.3);
+a(L(11) + 0.3, 'wind', 0.14, 3); a(L(11) + 1.0, 'whoosh', 0.18); lab(11, 0.2);
+a(L(12) + 0.4, 'fill', 0.2, 1.6); lab(12, 1.6); lab(12, 2.0);
+a(L(13) + 0.2, 'servo', 0.25, 1.4); a(L(13) + 2.6, 'servo', 0.25, 1.8); lab(13, 0.8); a(L(13) + 1.6, 'pop', 0.3);
+// 14–17 · the drop shape: question pops, oxygen drawn in, the flame stretches, soot glows
+a(L(14) + 0.3, 'pop', 0.4); flameBed(L(14), D(14) + D(15) + D(16) + D(17), 0.28);
+a(L(15) + 0.2, 'intake', 0.2, 1.4); lab(15, 1.2); lab(15, 1.4);
+a(L(16) + 0.4, 'whoosh', 0.14, 1.4); lab(16, 1.2);
+a(L(17) + 0.6, 'sizzle', 0.12, 1.4); lab(17, 1.0);
+// 18–20 · space: the drone under the orbit, the flame rounding into a ball, oxygen drifting
+drone(L(18), D(18) + D(19) + D(20) + 0.3); a(L(18) + 1.0, 'pop', 0.35);
+a(L(19) + 0.5, 'whoosh', 0.12, 1.6); lab(19, 2.0);
+a(L(20) + 0.8, 'pop', 0.3);
+// 21–23 · the myth crossed out, thermometers climbing all round, the recap labels
+a(L(21) + 0.6, 'pop', 0.3); scribble(L(21) + D(21) * 0.62);
+for (const dt of [0.4, 0.6]) a(L(22) + dt, 'tick', 0.18); scribble(L(22) + 1.2); a(L(22) + 1.6, 'whoosh', 0.14);
+lab(23, 0.3); lab(23, 1.4); lab(23, 2.6);
+// 24 · the jar drops: a falling whoosh, the flame shrinking
+a(L(24) + 1.0, 'whoosh', 0.25, Math.max(1, D(24) - 1.2)); a(L(24) + 0.6, 'pop', 0.3);
 
 // music plays only when sfx.py is run with --music, and that only when the user asked for music in this video
 const MUSIC = has('music-soft') ? 'music-soft' : null;

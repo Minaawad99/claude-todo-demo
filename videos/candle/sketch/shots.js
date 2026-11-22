@@ -19,7 +19,8 @@ function tipOf(x, y, a, len) { var r = a * Math.PI / 180; return [x + Math.sin(r
 // the flame: root at (x,y), always points up. s scale, t time. o.round 0..1 → a ball, o.blue 0..1 → the blue orbit flame,
 // o.glow (default 1), o.long (stretch), o.soot (0..1: glowing soot dots rising inside)
 function flame(x, y, s, t, o) {
-  o = o || {}; var rd = o.round || 0, bl = o.blue || 0, fl = 1 + .06 * Math.sin(t * 9.3) + .035 * Math.sin(t * 23.1) * (1 - rd);
+  o = o || {};
+  if (o.round > 0 && !o._b) { var rk = clamp(o.round), o2 = Object.assign({}, o, { round: 0, _b: 1 }); return (rk < 1 ? G("", flame(x, y, s, t, o2), 1 - rk) : "") + G("", ballFlame(x, y, s, t, o.blue || 0, o.glow == null ? 1 : o.glow), rk); } var rd = o.round || 0, bl = o.blue || 0, fl = 1 + .06 * Math.sin(t * 9.3) + .035 * Math.sin(t * 23.1) * (1 - rd);
   var w = 13 * s * lerp(1, 1.12, rd), H = lerp(60 * s * (o.long || 1) * fl, w * 2.05, rd), tx = (1 - rd) * 2.5 * s * Math.sin(t * 6.1), cy = -H * .4;
   var d = "M" + f(tx) + " " + f(-H) + " C" + f(w * .35 + tx * .5) + " " + f(-H * .62) + " " + f(w * 1.05) + " " + f(-H * .32) + " " + f(w) + " " + f(-H * .08) +
           " A" + f(w) + " " + f(w) + " 0 0 1 " + f(-w) + " " + f(-H * .08) + " C" + f(-w * 1.05) + " " + f(-H * .32) + " " + f(-w * .35 + tx * .5) + " " + f(-H * .62) + " " + f(tx) + " " + f(-H) + " Z";
@@ -32,6 +33,16 @@ function flame(x, y, s, t, o) {
     s2 += '<circle cx="' + f(xx) + '" cy="' + f(yy) + '" r="' + f(2.4 * s) + '" fill="' + (ph < .35 ? INK : ph < .6 ? FL_O : "#fff6c8") + '" opacity="' + f(o.soot) + '"/>'; }
   s2 += '<path d="' + d + '" fill="none" stroke="' + INK + '" stroke-width="' + f(1.6 + .2 * s) + '" opacity=".85"/>';
   s2 += '<path d="M0 ' + f(w * .9) + ' q1.5 -7 -.5 -14" stroke="' + INK + '" stroke-width="' + f(2.4 * Math.min(1.4, s)) + '" fill="none" stroke-linecap="round"/>';
+  return G("translate(" + f(x) + " " + f(y) + ")", s2);
+}
+// the flame with no «up» (orbit, free fall): a near-sphere round the wick, blue at bl = 1
+function ballFlame(x, y, s, t, bl, g) {
+  var r = 15 * s * (1 + .03 * Math.sin(t * 5)), cy = -r * .55, col = bl > .5 ? "#7d9fd0" : FL_Y, s2 = "";
+  s2 += '<circle cx="0" cy="' + f(cy) + '" r="' + f(r * 2.3) + '" fill="#b9cbe6" opacity="' + f(.2 * g) + '"/>';
+  s2 += '<circle cx="0" cy="' + f(cy) + '" r="' + f(r) + '" fill="' + col + '" opacity=".85"/><circle cx="0" cy="' + f(cy + r * .1) + '" r="' + f(r * .62) + '" fill="' + (bl > .5 ? "#c9d8ee" : FL_C) + '"/>';
+  if (bl < .5) s2 += '<ellipse cx="0" cy="' + f(cy + r * .55) + '" rx="' + f(r * .7) + '" ry="' + f(r * .35) + '" fill="' + FL_B + '"/>';
+  s2 += '<circle cx="0" cy="' + f(cy) + '" r="' + f(r) + '" fill="none" stroke="' + INK + '" stroke-width="' + f(1.6 + .2 * s) + '" opacity=".85"/>';
+  s2 += '<path d="M0 ' + f(r * .5) + ' q1.5 -7 -.5 -14" stroke="' + INK + '" stroke-width="' + f(2.4 * Math.min(1.4, s)) + '" fill="none" stroke-linecap="round"/>';
   return G("translate(" + f(x) + " " + f(y) + ")", s2);
 }
 // a candle at (x,y) (base), tilted a deg, with its flame; returns svg. len/w in px
@@ -120,15 +131,15 @@ shot(5, push(320, 520, 1.15, 1.05), function (u, d, t) {
   return paper() + bucket(320, 560, t) + ball(320, by, 40) + arrow(320, by + 130, 320, by + 52, BLUE, 6, at(u, .3, .4)) + arrow(240, by + 110, 288, by + 40, BLUE, 4, at(u, .45, .4)) + arrow(400, by + 110, 352, by + 40, BLUE, 4, at(u, .45, .4)) +
     label(360, by - 10, 520, 300, "أخف", ORANGE, at(u, .4, .5), 26) + label(400, 640, 430, 730, "المية أتقل", BLUE, at(u, 1, .5), 24);
 }, { tr: "in" });
-// 6 · the analogy: a hand pushes a plastic ball under, lets go, it shoots up
+// 6 · the analogy: a plastic ball tied under water to the bucket's floor; the string is cut and it shoots up
 shot(6, push(320, 470, 1.0, 1.06), function (u, d, t) {
-  var rel = 1.1, k = at(u, rel, .7), by = u < rel ? 620 : lerp(620, 430, k) + 4 * Math.sin(t * 4) * k;
-  var hand = PERSON.hand ? "" : "";
-  var s = paper() + bucket(320, 560, t) + ball(320, by, 40);
-  // the hand (shared kit arm) pressing from above, then lifting away
-  var hy = u < rel ? by - 40 : lerp(by - 40, 120, at(u, rel, .5));
-  s += PERSON.front({ x: 600, y: hy + 420, s: 1.4, outfit: "home", legs: "stand", arms: [{ to: [340, hy], hand: "flat", rot: 90, straight: true }, { hand: "relaxed" }], face: { look: [-1, .6] } }).svg;
-  return s + iconBox(110, 120, 120, ball(0, -6, 30) + T("بلاستيك", 0, 48, 18, INK, 700), at(u, .2, .3)) + G("", arrow(470, 500, 470, 380, ORANGE, 6, k), k);
+  var cut = 1.2, k = at(u, cut, .8), by = lerp(600, 438, k) + (k > .9 ? 4 * Math.sin(t * 4) : 3 * Math.sin(t * 3)), s = paper() + bucket(320, 560, t);
+  // the string: taut from the floor knot to the ball, then two loose ends after the cut
+  if (u < cut) s += '<path d="M320 705 L320 ' + f(by + 40) + '" stroke="' + INK + '" stroke-width="2.4"/>';
+  else { var fl = at(u, cut, .5); s += '<path d="M320 705 Q' + f(320 + 14 * fl) + ' 690 ' + f(318 + 10 * fl) + ' ' + f(660 + 20 * fl) + '" stroke="' + INK + '" stroke-width="2.4" fill="none"/>'; }
+  s += C(320, 706, 5, INK, 0) + ball(320, by, 40);
+  if (u > cut - .2 && u < cut + .5) s += cross(345, 660, .5, at(u, cut - .2, .3));
+  return s + iconBox(150, 180, 120, ball(0, -6, 30) + T("بلاستيك", 0, 48, 18, INK, 700), at(u, .2, .3)) + G("", arrow(470, 560, 470, 420, ORANGE, 6, k), k);
 });
 // 7 · the flame itself: hot gas, over 1000 degrees
 shot(7, push(320, 430, 1.25, 1.05), function (u, d, t) {
@@ -224,19 +235,24 @@ shot(20, push(320, 470, 1.08, 1.0), function (u, d, t) {
   for (var i = 0; i < 9; i++) { var a = i / 9 * Math.PI * 2 + t * .1, rr = 170 - ((t * 9 + i * 13) % 110); s += '<circle cx="' + f(320 + Math.cos(a) * rr) + '" cy="' + f(470 + Math.sin(a) * rr) + '" r="8" fill="' + COOL + '" fill-opacity=".25" stroke="' + COOL + '" stroke-width="2"/>'; }
   return s + tag("بالراحة", 320, 290, at(u, .8, .3), 30, BLUE);
 });
-// 21 · the myth: «heat only goes up» — the man's hand over the flame, the claim crossed out
+// a thermometer: glass tube, bulb at the bottom (x, y = bulb centre), red column k 0..1
+function thermo(x, y, k, ang) {
+  var h = 150, lv = lerp(20, h - 16, clamp(k));
+  return G("rotate(" + f(ang || 0) + " " + f(x) + " " + f(y) + ")", R(x - 9, y - h, 18, h, "#f4f1ea", 2, 9) + C(x, y + 4, 15, "#c94a32", 2.2) + R(x - 4, y - lv, 8, lv, "#c94a32", 0) +
+    [30, 60, 90, 120].map(function (m) { return '<path d="M' + f(x + 9) + ' ' + f(y - m) + ' h7" stroke="' + INK + '" stroke-width="1.4"/>'; }).join(""));
+}
+// 21 · the myth: «heat only goes up» — a thermometer over the flame climbs, the claim is crossed out
 shot(21, push(320, 460, 1.0, 1.06), function (u, d, t) {
-  var s = paper() + candle(250, 780, 0, 200, 60, t, { s: 3 });
-  s += PERSON.front({ x: 560, y: 820, s: 1.5, outfit: "home", legs: "stand", breath: (Math.sin(t * 1.7) + 1) / 2, head: { turn: -.4 }, arms: [{ to: [300, 280], hand: "flat", rot: 180, bend: -1 }, { hand: "relaxed" }], face: { look: [-1, .3], brows: "neutral" } }).svg;
-  s += arrow(250, 470, 250, 330, ORANGE, 6, at(u, .3, .4)) + tag("السخونية لفوق بس؟", 320, 230, at(u, .6, .3), 28, INK);
-  return s + cross(320, 220, 1.3, at(u, d * .62, .5));
+  var s = paper() + candle(320, 780, 0, 200, 60, t, { s: 3 }) + thermo(320, 330, at(u, .3, 1.6));
+  s += tag("السخونية لفوق بس؟", 320, 140, at(u, .6, .3), 28, INK);
+  return s + cross(320, 130, 1.3, at(u, d * .62, .5));
 });
-// 22 · heat leaves in every direction (a hand beside the flame feels it too); what rises is the light gas
+// 22 · heat leaves in every direction (a thermometer beside the flame climbs too); what rises is the light gas
 shot(22, push(320, 470, 1.04, 1.0), function (u, d, t) {
-  var s = paper() + streams(250, 560, 1, t, { up: at(u, 1.6, .8) }) + candle(250, 780, 0, 200, 60, t, { s: 3 });
-  for (var i = 0; i < 8; i++) { var a = i / 8 * Math.PI * 2, r0 = 100, r1 = 100 + 70 * at(u, .2, .8); s += wave(250 + Math.cos(a) * r0, 470 + Math.sin(a) * r0, 250 + Math.cos(a) * r1, 470 + Math.sin(a) * r1, t, ORANGE, 4, 14, 1, 2.6); }
-  s += PERSON.front({ x: 600, y: 830, s: 1.5, outfit: "home", legs: "stand", breath: (Math.sin(t * 1.7) + 1) / 2, head: { turn: -.4 }, arms: [{ to: [420, 470], hand: "open", rot: 180, bend: -1 }, { hand: "relaxed" }], face: { look: [-1, 0], brows: "raised", mouth: "o" } }).svg;
-  return s + check(470, 380, 1, at(u, .9, .4), OLIVE);
+  var s = paper() + streams(320, 560, 1, t, { up: at(u, 1.6, .8) }) + candle(320, 780, 0, 200, 60, t, { s: 3 });
+  for (var i = 0; i < 8; i++) { var a = i / 8 * Math.PI * 2, r0 = 100, r1 = 100 + 60 * at(u, .2, .8); s += wave(320 + Math.cos(a) * r0, 470 + Math.sin(a) * r0, 320 + Math.cos(a) * r1, 470 + Math.sin(a) * r1, t, ORANGE, 4, 14, 1, 2.6); }
+  s += thermo(320, 300, .85) + thermo(530, 540, at(u, .4, 1.4) * .7) + thermo(110, 540, at(u, .6, 1.4) * .7);
+  return s + check(530, 330, 1, at(u, 1.2, .4), OLIVE) + check(110, 330, 1, at(u, 1.4, .4), OLIVE);
 });
 // 23 · «يعني من الآخر»: everything at once, labelled
 shot(23, push(320, 450, .94, 1.02), function (u, d, t) {
@@ -244,7 +260,7 @@ shot(23, push(320, 450, .94, 1.02), function (u, d, t) {
     label(330, 420, 440, 250, "غاز خفيف", ORANGE, at(u, .3, .4), 24) + label(150, 616, 200, 720, "هوا تقيل", BLUE, at(u, 1.4, .4), 24) + label(240, 600, 160, 460, "أكسجين", BLUE, at(u, 2.6, .4), 24);
 }, { tr: "out" });
 // 24 · the odd fact: a jar with a lit candle dropped; while it falls the flame shrinks to a small ball
-shot(24, function (u, d) { return [320, lerp(300, 560, ease(u / d)), 1]; }, function (u, d, t) {
+shot(24, push(320, 450, 1.0, 1.04), function (u, d, t) {
   var k = at(u, 1, d - 1.2), y = lerp(260, 600, k * k), s = paper();
   for (var i = 0; i < 4; i++) s += '<path d="M' + (230 + i * 60) + ' ' + f(y - 160 - i * 20) + ' v' + f(-60 * k) + '" stroke="' + INK + '" stroke-width="2" opacity=".5" stroke-dasharray="8 8"/>';
   s += G("translate(320 " + f(y) + ") scale(1.5)", R(-90, -110, 180, 220, GLASS, 2.6, 14) + R(-80, -130, 160, 24, "#b8a77e", 2.2, 4) + G("translate(0 100)", candleBody(90, 34)) + flame(0, -6, 1.6, t, { round: k, blue: k * .8, glow: 1 - k * .6 }));
