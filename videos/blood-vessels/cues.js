@@ -44,6 +44,32 @@ paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                               
 
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
 // e.g. lab(5, 0.4); ding(L(6) + 1.6); scribble(L(9) + 1.2); sea(L(0), L(PROMISE) - L(0) + 0.6, 0.45);
+const beat = (t, n, g) => { for (let k = 0; k < n; k++) { a(t + k * 0.85, 'thud', g || 0.22); a(t + k * 0.85 + 0.22, 'thud', (g || 0.22) * 0.7); } };   // lub-dub
+// hook: the vessels pulled out of the man, the thread wound round the Earth, the ✗
+a(L(0) + 0.5, 'whoosh', 0.18, 1.6); drone(L(1), D(1) + D(2), 2); a(L(1) + 0.4, 'spin', 0.14, 2.6); scribble(L(2) + 0.2);
+beat(L(PROMISE) + 0.2, 2, 0.18);                                                    // the heart in the stopwatch
+beat(L(4) + 0.2, 3, 0.2); rec(L(4) + 0.4, 'paper', 0.3, 0, 0.5); a(L(4) + 1.6, 'tick', 0.2);   // 5 litres, one minute
+paper(L(5) + 0.3); a(L(5) + 0.8, 'pop', 0.25); a(L(5) + 1.0, 'pop', 0.25);
+lab(6, 0.3); lab(6, 1.2); a(L(6) + 0.8, 'bump', 0.2); scribble(L(6) + 1.8); scribble(L(6) + 2.3);   // thick wall ✗, thin wall ✓
+beat(L(7) + 0.3, 2, 0.2); rec(L(7) + 0.6, 'water-rush', 0.16, 3, 1.6, 1.0, 'slosh', 0.15); lab(7, 0.7);   // aorta, hose
+for (let k = 0; k < 5; k++) a(L(8) + 0.3 + k * 0.45, 'tick', 0.15);                // branches drawing
+a(L(9) + 0.2, 'whoosh', 0.14); lab(9, 1.0);
+lab(10, 0.5); lab(10, 1.3); ding(L(10) + 2.2);                                     // 7 microns, 10×
+for (let k = 0; k < 6; k++) a(L(11) + 0.3 + k * 0.5, 'plunk', 0.12);                // red cells in a queue
+lab(12, 0.4); for (let k = 0; k < 4; k++) a(L(12) + 0.8 + k * 0.6, 'pop', 0.14);   // O2 slipping out
+a(L(13) + 0.2, 'whoosh', 0.14, 1.5); beat(L(13) + 1.2, 1, 0.18);                   // veins back to the heart
+for (let k = 0; k < 3; k++) a(L(14) + 0.3 + k * 0.3, 'tick', 0.16); a(L(14) + 1.6, 'ping', 0.2);   // capillaries weave, «؟»
+for (let k = 0; k < 6; k++) a(L(15) + 0.5 + k * 0.2, 'tick', 0.12); lab(15, 1.2); paper(L(15) + 2.4);
+drone(L(16), D(16), 8); a(L(16) + 0.6, 'ping', 0.2);
+paper(L(17) + 0.1); rec(L(17) + 1.4, 'ding', 0.28, 0.1, 1.4, 1.0, 'chime', 0.25);   // the photo, the medal
+paper(L(18)); for (let k = 0; k < 3; k++) a(L(18) + 0.2 + k * 0.2, 'snip', 0.1); ding(L(18) + 2.0);   // writing, 100,000
+lab(19, 0.5); a(L(19) + 1.2, 'pop', 0.2); for (let k = 0; k < 5; k++) a(L(19) + 1.6 + k * 0.12, 'tick', 0.12);
+paper(L(20) + 0.3); scribble(L(20) + 1.4);
+a(L(21) + 0.2, 'whoosh', 0.12); scribble(L(21) + 1.2); ding(L(21) + 1.6);
+drone(L(22), D(22), 14); a(L(22) + 0.3, 'whoosh', 0.14, 2.2); lab(22, 1.4); lab(22, 2.3);
+for (let k = 0; k < 6; k++) a(L(23) + k * 0.18, 'thud', 0.12); scribble(L(23) + 2.2);   // books drop, ✗
+for (let k = 0; k < 4; k++) a(L(24) + 0.2 + k * 0.7, 'pop', 0.22); beat(L(24) + 0.3, 1, 0.16);
+lab(25, 0.6); a(L(25) + 1.8, 'wind', 0.08, 2); scribble(L(25) + 1.4);
 
 // music plays only when sfx.py is run with --music, and that only when the user asked for music in this video
 const MUSIC = has('music-soft') ? 'music-soft' : null;

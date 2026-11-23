@@ -356,7 +356,7 @@ shot(7, push(320, 300, 1.6, 1.85), function (u, d, t) {
 // 8 · it branches into smaller and smaller arteries, like a tree's branches
 shot(8, push(320, 420, .95, 1.05), function (u, d, t) {
   var k = at(u, .1, d * .8);
-  return paper() + tree(320, 760, 170, 0, 26, 6, k, 1) + iconBox(530, 110, 110, '<path d="M0 40 V0 M0 10 L-20 -14 M0 4 L22 -18 M-20 -14 L-30 -30 M-20 -14 L-8 -32 M22 -18 L14 -34 M22 -18 L34 -30" stroke="#6b4a2c" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="0" cy="-22" r="34" fill="#7f8a4a" opacity=".45"/>', at(u, 1.2, .3)) +
+  return paper() + G("rotate(" + f(2.2 * Math.sin(t * 1.4)) + " 320 760)", tree(320, 760, 170, 0, 26, 6, k, 1)) + C(320 + 3 * Math.sin(t * 1.4), lerp(760, 600, (u * .9) % 1), 7, "#f2d16b", 2) + iconBox(530, 110, 110, '<path d="M0 40 V0 M0 10 L-20 -14 M0 4 L22 -18 M-20 -14 L-30 -30 M-20 -14 L-8 -32 M22 -18 L14 -34 M22 -18 L34 -30" stroke="#6b4a2c" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="0" cy="-22" r="34" fill="#7f8a4a" opacity=".45"/>', at(u, 1.2, .3)) +
     label(320, 650, 450, 640, "شريان", ORANGE, at(u, .6, .5), 24);
 });
 // 9 · down to the capillaries: arteriole → a mesh of capillaries → venule (the classic histology diagram)
