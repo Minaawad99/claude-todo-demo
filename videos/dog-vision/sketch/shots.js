@@ -341,7 +341,7 @@ shot(13, push(320, 400, 1.0, 1.05), function (u, d, t) {
   s += R(80, 420, 200, 0, "none", 0) + N(count(300, k), 170, 470, 60, ORANGE) + T("مليون خلية شم", 170, 510, 22, INK, 700);
   s += G("", N("6", 470, 470, 60, INK) + T("مليون بس", 470, 510, 22, INK, 700), k2);
   s += R(70, 560, Math.max(1, 490 * k), 40, ORANGE, 2) + G("", R(70, 620, 500 * 6 / 300 + 4, 40, GREY, 2), k2);
-  return s + T("كلبك", 70, 548, 20, INK, 700, "start") + G("", T("إنت", 70, 608, 20, INK, 700, "start"), k2);
+  return s + T("كلبك", 70, 548, 20, INK, 700, "end") + G("", T("إنت", 70, 608, 20, INK, 700, "end"), k2);
 });
 // 14 · a spoon of sugar in two Olympic pools — and he'd smell it
 shot(14, push(320, 420, 1.06, 1.0), function (u, d, t) {
