@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>قطتك بتشوفك إزاي؟ — إيه الحكاية؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&family=Noto+Serif:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* «إيه الحكاية؟» — the «الرسم الهندسي» look, measured from 20 reference videos (videos/_reference/tabizzay/STYLE.md).
+     360×640 canvas (render.js SCALE 3 → 1080×1920). Reference sizes are at 720 wide, so here they are halved.
+     Phases, all driven by TIMING: intro card (hook lines) → bumper (promise line) → panel + captions → summary card → ask box. */
+  :root { --paper: #eee5d0; --ink: #2a2016; --mute: #8f8576; --orange: #bd552f; --blue: #4a6f8a; --olive: #5e653a; --tan: #ddd2b8; }
+  html, body { margin: 0; background: var(--paper); }
+  .canvas { position: relative; width: 360px; height: 640px; background: var(--paper); overflow: hidden; font-family: "Noto Sans Arabic", sans-serif; color: var(--ink); }
+  .layer { position: absolute; inset: 0; }
+  /* the main card: one 1px frame 14px in, the panel fills its top, a rule, the caption */
+  #frame { position: absolute; left: 14px; top: 14px; width: 332px; height: 612px; box-sizing: border-box; border: 1.1px solid var(--ink); }
+  .panel { position: absolute; left: 15px; top: 15px; width: 330px; height: 405px; overflow: hidden; }
+  .panel svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #rule { position: absolute; left: 32px; right: 32px; top: 431px; border-top: .6px solid var(--ink); }
+  #wm { position: absolute; left: 0; right: 0; top: 440px; text-align: center; font: 500 8.5px "Noto Sans Arabic"; color: #b3a995; }
+  #cap { position: absolute; left: 30px; right: 30px; top: 458px; text-align: center; font: 700 14px/1.75 "Noto Sans Arabic", sans-serif; }
+  .k-o { color: var(--orange); } .k-b { color: var(--blue); } .k-g { color: var(--olive); } .k-gr { color: var(--mute); }
+  .k-u { text-decoration: underline; text-decoration-thickness: 1.2px; text-underline-offset: 4px; }
+  /* cards (intro + summary): paper, double frame drawn as SVG so it can draw itself in, crop marks outside the corners */
+  .card { position: absolute; inset: 0; background: var(--paper); display: none; }
+  .card .chrome { position: absolute; inset: 0; width: 360px; height: 640px; }
+  .logo { position: absolute; right: 30px; top: 28px; display: flex; align-items: center; gap: 4px; font: 500 8px "Noto Sans Arabic"; color: #6f6556; }
+  .logo svg { width: 11px; height: 11px; }
+  #intro .cat { position: absolute; left: 0; right: 0; top: 100px; text-align: center; font: 600 8px "Noto Sans Arabic"; color: var(--orange); }
+  #intro .r { position: absolute; left: 157px; width: 46px; border-top: .6px solid var(--ink); }
+  #intro .hook { position: absolute; left: 26px; right: 26px; top: 124px; min-height: 80px; text-align: center; font: 800 17px/1.6 "Noto Sans Arabic"; }
+  #intro .hook span { transition: none; }
+  #introArt { position: absolute; left: 28px; top: 236px; width: 304px; height: 330px; }
+  #bumper { position: absolute; inset: 0; display: none; background: var(--paper); }
+  #bumper svg { position: absolute; left: 90px; top: 98px; width: 180px; height: 200px; }
+  #bumper .name { position: absolute; left: 0; right: 0; top: 310px; text-align: center; font: 700 22px "Noto Sans Arabic"; }
+  #bumper .sub { position: absolute; left: 0; right: 0; top: 352px; text-align: center; font: 600 9.5px "Noto Sans Arabic"; }
+  /* summary card */
+  #outro .q { position: absolute; left: 28px; right: 28px; top: 50px; font: 800 12.5px/1.55 "Noto Sans Arabic"; }
+  #outro .art { position: absolute; left: 28px; right: 28px; top: 98px; height: 140px; background: var(--tan); overflow: hidden; }
+  #outro .art svg { width: 100%; height: 100%; display: block; }
+  #outro .leg { position: absolute; left: 28px; right: 28px; top: 246px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font: 600 7.5px "Noto Sans Arabic"; }
+  #outro .leg b { display: inline-grid; place-items: center; width: 10px; height: 10px; border: .8px solid var(--ink); border-radius: 50%; font: 700 6px "Noto Serif"; margin-left: 4px; vertical-align: -2px; }
+  #outro .stat { position: absolute; left: 28px; right: 28px; top: 290px; display: flex; align-items: center; gap: 9px; }
+  #outro .stat .n { font: 800 34px/1 "Noto Serif", serif; color: var(--orange); direction: ltr; white-space: nowrap; }
+  #outro .stat .t { font: 700 8px/1.55 "Noto Sans Arabic"; }
+  #outro .pts { position: absolute; left: 28px; right: 28px; top: 342px; border-top: .6px solid var(--ink); padding-top: 7px; font: 600 7.5px/1.75 "Noto Sans Arabic"; }
+  #outro .more { margin-top: 5px; font: 500 6.8px/1.6 "Noto Sans Arabic"; color: var(--mute); }
+  #outro .ask { position: absolute; left: 34px; right: 34px; top: 448px; height: 120px; border: 1px solid var(--ink); text-align: center; display: none; }
+  #outro .ask::after { content: ""; position: absolute; inset: 3px; border: .5px solid var(--ink); }
+  #outro .ask .l1 { margin-top: 20px; font: 600 9px "Noto Sans Arabic"; }
+  #outro .ask .l2 { margin-top: 6px; font: 700 12px "Noto Sans Arabic"; }
+  #outro .ask .l3 { margin-top: 8px; font: 700 13px "Noto Sans Arabic"; color: var(--orange); }
+  #outro .ask .blank { display: inline-block; width: 64px; border-bottom: 1.2px solid var(--orange); margin: 0 4px; position: relative; height: 14px; vertical-align: -2px; }
+  #outro .ask .caret { position: absolute; left: 4px; bottom: 2px; width: 1.4px; height: 13px; background: var(--ink); }
+</style></head>
+<body>
+<div class="canvas">
+  <div class="layer" id="main">
+    <div class="panel"><svg id="panelA" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg><svg id="panelB" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg></div>
+    <div id="frame"></div><div id="rule"></div><div id="wm"></div><div id="cap"></div>
+  </div>
+  <div class="card" id="intro"><svg class="chrome" id="introChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="cat">حيوانات · الحواس</div><div class="r" style="top:118px"></div><div class="hook" id="hook"></div><div class="r" id="hookRule" style="top:214px"></div>
+    <svg id="introArt" viewBox="0 0 608 660"></svg></div>
+  <div id="bumper"><svg id="bumperArt" viewBox="0 0 180 200"></svg><div class="name">إيه الحكاية؟</div><div class="sub">هشرحهالك في <span class="k-o">دقيقة.</span></div></div>
+  <div class="card" id="outro"><svg class="chrome" id="outroChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="q">قطتك بتشوفك إزاي؟ وإزاي بتشوف في الضلمة؟</div><div class="art"><svg id="outroArt" viewBox="0 0 600 280"></svg></div><div class="leg"><span><b>1</b>بؤبؤ بيكبر 135 مرة</span><span><b>2</b>خلايا ضلمة كتير</span><span><b>3</b>مراية ورا الشبكية</span><span><b>4</b>بتعرفك بصوتك وريحتك</span></div><div class="stat"><div class="n">1/6</div><div class="t">من النور اللي إنت محتاجه،<br>كفاية عشان القطة تشوف</div></div><div class="pts">1. عينها معمولة للصيد: نظرها أضعف من نظرك حوالي 5 مرات، والقريب أوي بتحسه بشنباتها.<br>2. بالليل: البؤبؤ بيفتح على الآخر، والشبكية مليانة خلايا ضلمة، والتابيتوم بيرجّع النور تاني.<br>3. في الضلمة الكحل مبتشوفش حاجة، زيك بالظبط.<div class="more">معلومة زيادة: غمّض عينك ببطء وإنت بتبصلها، وغالبًا هترد عليك بنفس الغمضة.</div></div>
+    <div class="ask" id="ask"><div class="l1">قولولنا…</div><div class="l2">عايزين تعرفوا</div><div class="l3">حكاية<span class="blank"><span class="caret" id="caret"></span></span>؟</div></div>
+  </div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="mark"><rect x="84" y="4" width="32" height="10" fill="#2a2016"/><rect x="94" y="14" width="12" height="14" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" fill="#f4ecdb" stroke="#2a2016" stroke-width="9" stroke-linejoin="round"/><text x="106" y="140" text-anchor="middle" style="font:800 120px Noto Sans Arabic;fill:#bd552f">؟</text></g>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".15"/></pattern>
+  <pattern id="hatchW" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#fff" stroke-width="1" opacity=".25"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#e1d5ba" stroke-width="1.3" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .05 0"/></filter>
+</defs></svg>
+<script src="../timing.js"></script>
+<script>window.DATA = {"caps": [[{"f": 0.0, "h": "قطتك شايفاك <span class=\"k-o\">كده</span> دلوقتي."}], [{"f": 0.0, "h": "بس لو <span class=\"k-u\">طفيت</span> <span class=\"k-u\">النور…</span>"}, {"f": 0.36, "h": "هتفضل <span class=\"k-b\">شايفاك،</span>"}, {"f": 0.64, "h": "وإنت مش شايف <span class=\"k-o\">إيدك.</span>"}], [{"f": 0.0, "h": "إيه الحكاية؟"}, {"f": 0.4194, "h": "هشرحهالك في دقيقة."}], [{"f": 0.0, "h": "طب ليه شايفاك <span class=\"k-u\">مغبّش</span> كده؟"}], [{"f": 0.0, "h": "عين القطة معمولة <span class=\"k-g\">للصيد</span> مش للتفاصيل،"}, {"f": 0.5217, "h": "فنظرها أضعف من نظرك حوالي <span class=\"k-o\">5</span> <span class=\"k-o\">مرات.</span>"}], [{"f": 0.0, "h": "وأي حاجة أقرب من حوالي"}, {"f": 0.3966, "h": "<span class=\"k-o\">25</span> <span class=\"k-o\">سم</span> من وشها،"}, {"f": 0.6552, "h": "مبتعرفش تشوفها كويس."}], [{"f": 0.0, "h": "عشان كده بتستعمل <span class=\"k-g\">شنباتها،</span>"}, {"f": 0.4333, "h": "تحس بيها الحاجة اللي تحت مناخيرها."}], [{"f": 0.0, "h": "وفي الألوان،"}, {"f": 0.2, "h": "بتشوف <span class=\"k-b\">الأزرق</span> والأخضر المصفّر،"}, {"f": 0.6615, "h": "<span class=\"k-o\">والأحمر</span> بيبانلها <span class=\"k-u\">باهت.</span>"}], [{"f": 0.0, "h": "طب إزاي بتشوف في <span class=\"k-o\">الضلمة؟</span>"}], [{"f": 0.0, "h": "أول سر:"}, {"f": 0.0964, "h": "<span class=\"k-g\">البؤبؤ.</span> بالنهار بيقفل لحد ما يبقى <span class=\"k-o\">خط</span> رفيع،"}, {"f": 0.6145, "h": "وبالليل بيفتح لحد ما <span class=\"k-b\">يملا</span> العين."}], [{"f": 0.0, "h": "بؤبؤ القطة مساحته بتكبر لحد <span class=\"k-o\">135</span> مرة،"}, {"f": 0.6167, "h": "وبتاعك حوالي <span class=\"k-b\">15</span> مرة بس."}], [{"f": 0.0, "h": "تاني سر:"}, {"f": 0.1324, "h": "<span class=\"k-g\">شبكية</span> عينها مليانة خلايا بتحس <span class=\"k-b\">بأقل</span> <span class=\"k-b\">نور،</span>"}, {"f": 0.7206, "h": "أكتر من عندك بكتير."}], [{"f": 0.0, "h": "تالت سر:"}, {"f": 0.2093, "h": "<span class=\"k-b\">مراية</span> ورا الشبكية اسمها <span class=\"k-g\">التابيتوم.</span>"}], [{"f": 0.0, "h": "النور اللي يعدّي من غير ما يتلقط،"}, {"f": 0.4048, "h": "المراية <span class=\"k-o\">ترجّعه</span> تاني على الخلايا،"}, {"f": 0.7976, "h": "فياخد فرصة <span class=\"k-o\">تانية.</span>"}], [{"f": 0.0, "h": "زي ما تحط <span class=\"k-b\">مراية</span> ورا <span class=\"k-o\">لمبة،</span>"}, {"f": 0.5778, "h": "فالأوضة تنوّر أكتر."}], [{"f": 0.0, "h": "وده بالظبط اللي بيخلي عينيها <span class=\"k-o\">تلمع</span>"}, {"f": 0.5667, "h": "لما تنوّر عليها في الضلمة."}], [{"f": 0.0, "h": "والنتيجة إنها محتاجة حوالي <span class=\"k-o\">1/6</span> النور"}, {"f": 0.5873, "h": "اللي إنت محتاجه عشان تشوف."}], [{"f": 0.0, "h": "طب لو مش شايفة وشك كويس،"}, {"f": 0.6757, "h": "<span class=\"k-o\">بتعرفك</span> <span class=\"k-o\">إزاي؟</span>"}], [{"f": 0.0, "h": "دراسة في <span class=\"k-g\">اليابان</span> لقت إن"}, {"f": 0.338, "h": "القطط بتميّز <span class=\"k-o\">صوت</span> <span class=\"k-o\">صاحبها</span> من"}, {"f": 0.7183, "h": "وسط أصوات ناس غريبة."}], [{"f": 0.0, "h": "بتحرك <span class=\"k-g\">ودانها</span> وراسها ناحيتك…"}, {"f": 0.5, "h": "بس غالباً <span class=\"k-o\">مبتقومش</span> من مكانها."}], [{"f": 0.0, "h": "وبتعرفك <span class=\"k-o\">بريحتك</span> كمان،"}, {"f": 0.2692, "h": "ولما تحك راسها فيك،"}, {"f": 0.5256, "h": "بتحط ريحتها عليك عشان تقول إنك <span class=\"k-o\">تبعها.</span>"}], [{"f": 0.0, "h": "وناس كتير فاكرة إن القطط"}, {"f": 0.4902, "h": "بتشوف في الضلمة <span class=\"k-u\">الكحل.</span> <span class=\"k-o\">لأ.</span>"}], [{"f": 0.0, "h": "من غير ولا حتة نور،"}, {"f": 0.3846, "h": "القطة <span class=\"k-b\">زيك</span> بالظبط،"}, {"f": 0.7308, "h": "مش هتشوف حاجة."}], [{"f": 0.0, "h": "يعني من الآخر:"}, {"f": 0.1765, "h": "<span class=\"k-g\">بؤبؤ</span> بيفتح على الآخر،"}, {"f": 0.4353, "h": "وخلايا <span class=\"k-b\">ضلمة</span> كتير،"}, {"f": 0.6471, "h": "<span class=\"k-b\">ومراية</span> ورا العين بترجّع النور."}], [{"f": 0.0, "h": "والأغرب إنك لو غمّضت عينك <span class=\"k-b\">ببطء</span> وإنت بتبصلها،"}, {"f": 0.4839, "h": "غالباً هترد عليك بنفس الغمضة،"}, {"f": 0.8065, "h": "ودي <span class=\"k-o\">ابتسامة</span> <span class=\"k-o\">القطط.</span>"}], [{"f": 0.0, "h": "ودي كانت حكاية إزاي قطتك بتشوفك."}], [{"f": 0.0, "h": "قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟"}]], "hook": [[{"w": "قطتك", "c": "", "f": 0.0}, {"w": "شايفاك", "c": "", "f": 0.2174}, {"w": "كده", "c": "k-o", "f": 0.5217}, {"w": "دلوقتي.", "c": "", "f": 0.6957}], [{"w": "بس", "c": "", "f": 0.0}, {"w": "لو", "c": "", "f": 0.06}, {"w": "طفيت", "c": "k-u", "f": 0.12}, {"w": "النور…", "c": "k-u", "f": 0.22}, {"w": "هتفضل", "c": "", "f": 0.36}, {"w": "شايفاك،", "c": "k-b", "f": 0.48}, {"w": "وإنت", "c": "", "f": 0.64}, {"w": "مش", "c": "", "f": 0.74}, {"w": "شايف", "c": "", "f": 0.8}, {"w": "إيدك.", "c": "k-o", "f": 0.9}]], "introLines": 2, "promise": 2, "summary": 25, "cta": 26, "watermark": ""};</script>
+<script src="../../_templates/people/person.js"></script>
+<script src="scenes.js"></script>
+<script src="../../_templates/sketch/engine.js"></script>
+</body></html>
