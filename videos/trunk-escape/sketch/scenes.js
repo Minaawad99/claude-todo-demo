@@ -167,7 +167,7 @@ function tag(text, x, y, k, sz, col) { k = pop(k == null ? 1 : k); if (k <= 0) r
 
 function L2(a, b, k) { return [lerp(a[0], b[0], k), lerp(a[1], b[1], k)]; }
 function D2R(a) { return a * Math.PI / 180; }
-var BODY = "#cfc4a8", BODY_D = "#b3a585", GLASS = "#cfdde3", DARK = "#2f3034", DARK2 = "#3c3d42", CARPET = "#4a4a50",
+var LINING = "#3d3b38", BODY = "#cfc4a8", BODY_D = "#b3a585", GLASS = "#cfdde3", DARK = "#2f3034", DARK2 = "#3c3d42", CARPET = "#4a4a50",
     STEEL = "#9aa2ac", STEEL_D = "#6e757e", GLOW = "#e9f2a8", GLOW_D = "#b9c86a", TAIL = "#b8452e", SEAT = "#8a8173";
 
 // ── the car: a compact sedan in profile, front to the left, real size (1 m = 120 units): length 4.8 m, height 1.47 m,
@@ -186,8 +186,11 @@ var LID = "M456 -134 L558 -130 Q572 -128 574 -114 L574 -98 L566 -98 L566 -112 Q5
 var TRUNK = "M436 -128 L460 -126 L554 -122 Q564 -121 566 -112 L566 -98 L562 -96 L562 -42 L436 -42 Z";
 var TRUNK_OPEN = "M436 -128 L456 -134 L566 -98 L562 -96 L562 -42 L436 -42 Z", TRUNK_AIR = "M436 -128 L456 -134 L456 -400 L800 -400 L800 -98 L562 -96 L562 -42 L436 -42 Z";
 var FLOOR = -46, LATCH = [565, -102], RW = 420;
-function wheel(x, t, spin, sw) { var a = (spin || 0) * t * 200, s = C(x, -38, 38, "#3a352e", 2.4 * sw) + C(x, -38, 25, "#a9a59c", 2 * sw) + C(x, -38, 8, "#5a554d", 1.4 * sw) + C(x, -38, 3, INK, 0);
-  for (var i = 0; i < 5; i++) { var b = (a + i * 72) * Math.PI / 180; s += '<path d="M' + f(x + Math.cos(b) * 10) + ' ' + f(-38 + Math.sin(b) * 10) + ' L' + f(x + Math.cos(b) * 23) + ' ' + f(-38 + Math.sin(b) * 23) + '" stroke="#6e695f" stroke-width="' + f(5 * sw) + '" stroke-linecap="round"/>'; } return s; }
+function wheel(x, t, spin, sw) {
+  var a = (spin || 0) * t * 200, s = C(x, -38, 38, "#2f2b26", 2.4 * sw) + '<circle cx="' + x + '" cy="-38" r="33" fill="none" stroke="#45403a" stroke-width="' + f(1.4 * sw) + '"/>' + C(x, -38, 26, "#b9b5ac", 2 * sw);
+  for (var i = 0; i < 10; i++) { var b = (a + i * 36) * Math.PI / 180, b2 = b + .12; s += '<path d="M' + f(x + Math.cos(b) * 8) + ' ' + f(-38 + Math.sin(b) * 8) + ' L' + f(x + Math.cos(b) * 24) + ' ' + f(-38 + Math.sin(b) * 24) + ' L' + f(x + Math.cos(b2) * 24) + ' ' + f(-38 + Math.sin(b2) * 24) + ' Z" fill="#8f8a80" stroke="#77726a" stroke-width=".6"/>'; }
+  return s + C(x, -38, 9, "#d6d2c8", 1.4 * sw) + C(x, -38, 3, INK, 0);
+}
 // the lid's inside: inner panel frame with holes, the gooseneck arm, the latch box at its rear edge (all in closed-lid coords)
 function lidInner(sw, lidIn) {
   var g = P("M462 -126 L554 -122 Q563 -121 565 -112 L565 -104 L559 -104 L559 -111 Q557 -116 552 -116 L464 -120 Z", "#8e8778", 1.4 * sw);
@@ -204,6 +207,7 @@ function car(o) {
   var t = o.t || 0, sc = o.sc || 1, sw = 1 / Math.sqrt(sc), g = "";
   g += '<ellipse cx="290" cy="2" rx="290" ry="8" fill="' + INK + '" opacity=".14"/>';
   g += P(CAR_P, BODY, 2.6 * sw) + '<path d="' + CAR_P + '" fill="url(#hatch)" opacity=".3"/>';
+  g += '<path d="M160 -52 H372" stroke="' + BODY_D + '" stroke-width="' + f(2 * sw) + '"/><path d="M40 -80 Q200 -86 420 -91" stroke="' + BODY_D + '" stroke-width="' + f(1.2 * sw) + '" fill="none"/>';
   g += P(CABIN, "#efe6d2", 1.6 * sw);
   g += P("M154 -98 L202 -102 L204 -86 L156 -72 Z", "#7c7468", 1.6 * sw);
   g += P("M216 -66 L280 -66 L284 -52 L218 -50 Z", SEAT, 1.6 * sw) + P("M276 -66 L296 -146 Q304 -150 308 -142 L296 -58 Z", SEAT, 1.6 * sw) + R(294, -160, 16, 18, SEAT, 1.4 * sw, 4);
@@ -211,7 +215,10 @@ function car(o) {
   g += wheel(112, t, o.spin, sw) + wheel(RW, t, o.spin, sw);
   // ── the trunk, cut on the centre line ──
   var tid = "tr" + (++CLIPN), lk = clamp((o.lid || 0) * 4);
-  g += P(TRUNK_OPEN, DARK, 1.6 * sw) + G("", P(TRUNK, DARK, 0), 1 - lk);
+  g += P(TRUNK_OPEN, LINING, 1.6 * sw) + G("", P(TRUNK, LINING, 0), 1 - lk) + '<path d="' + TRUNK + '" fill="url(#hatch)" opacity=".18"/>';
+  // the far side's wheel housing (carpeted hump) and the side lining's moulded edge, seen through the cut
+  g += P("M440 -42 Q440 -82 482 -84 Q522 -82 524 -42 Z", "#34322f", 1.2 * sw) + '<path d="M448 -46 Q450 -76 482 -78 Q514 -76 516 -46" fill="none" stroke="#45423e" stroke-width="' + f(1.4 * sw) + '"/>';
+  g += '<path d="M440 -112 Q500 -110 548 -108 Q556 -106 556 -96" fill="none" stroke="#45423e" stroke-width="' + f(1.6 * sw) + '"/>';
   // the rear seat's back (the trunk's front wall) with its belt, and the parcel shelf
   g += P("M404 -62 L418 -132 Q424 -138 432 -134 L438 -128 L436 -42 L410 -46 Z", SEAT, 1.6 * sw) + '<path d="M414 -64 L426 -126" stroke="#766d60" stroke-width="' + f(1.2 * sw) + '"/>' + P("M424 -128 L430 -132 L431 -60 L425 -60 Z", "#4c4b4f", .9 * sw);
   g += P("M430 -136 L458 -136 L458 -130 L432 -129 Z", "#5d5a55", 1.2 * sw);
@@ -222,7 +229,7 @@ function car(o) {
   g += R(436, FLOOR, 126, 4, CARPET, 1 * sw) + '<path d="M436 ' + (FLOOR + .8) + ' H562" stroke="#5e5e66" stroke-width="' + f(1.2 * sw) + '" stroke-dasharray="2 3"/>';
   // the back of the rear lamp housing in the corner, with its bulb holder; the rear sill and the striker
   g += P("M550 -84 L562 -84 L562 -70 L551 -70 Z", "#4a4b50", 1.1 * sw) + C(555.5, -77, 2.4, "#77787d", .8 * sw);
-  g += R(556, -98, 10, 3, STEEL_D, .8 * sw) + '<path d="M560 -98 L560 -101 L564 -101 L564 -98" fill="none" stroke="' + STEEL + '" stroke-width="' + f(1.6 * sw) + '"/>';
+  g += '<path d="M552 -97.5 H567" stroke="#1d1c1b" stroke-width="' + f(3.2 * sw) + '" stroke-linecap="round"/>' + R(556, -98, 10, 3, STEEL_D, .8 * sw) + '<path d="M560 -98 L560 -101 L564 -101 L564 -98" fill="none" stroke="' + STEEL + '" stroke-width="' + f(1.6 * sw) + '"/>';
   g += '<clipPath id="' + tid + '"><path d="' + (lk > 0 ? TRUNK_AIR : TRUNK) + '"/></clipPath><g clip-path="url(#' + tid + ')">';
   if (o.people) g += o.people(t);
   if (o.dark) g += '<rect x="420" y="-140" width="160" height="100" fill="#000" opacity="' + f(.2 * o.dark) + '"/>';
@@ -230,12 +237,13 @@ function car(o) {
   // windows, pillars, doors, lights, bumper, plate
   g += '<g opacity=".7"><path d="' + WIN_F + '" fill="' + GLASS + '"/><path d="' + WIN_R + '" fill="' + GLASS + '"/></g>' + P(WIN_F, "none", 2 * sw) + P(WIN_R, "none", 2 * sw) + R(300, -166, 10, 120, BODY, 2 * sw);
   g += '<path d="M160 -118 L156 -48 M300 -118 L300 -46 M420 -140 L420 -60" stroke="' + INK + '" stroke-width="' + f(1.8 * sw) + '" fill="none"/>' + R(258, -102, 22, 6, INK, 0, 3) + R(390, -102, 22, 6, INK, 0, 3);
-  g += P("M6 -88 L26 -96 L28 -86 L8 -82 Z", "#f4efe3", 1.4 * sw);
+  g += P("M6 -88 L26 -96 L28 -86 L8 -82 Z", "#f4efe3", 1.4 * sw) + P("M226 -118 L246 -122 L248 -110 L230 -108 Z", BODY_D, 1.4 * sw);
   g += P("M566 -97 L574.5 -97 L576 -78 L567 -78 Z", TAIL, 1.4 * sw, o.hlTail ? ' style="filter:drop-shadow(0 0 ' + f(5 * o.hlTail) + 'px ' + ORANGE + ')"' : "") + '<path d="M567 -88 H575" stroke="#e7a08c" stroke-width="' + f(1.2 * sw) + '"/>';
   g += P("M570 -66 Q581 -64 580 -52 Q579 -44 568 -43 L562 -43 L562 -66 Z", "#bdb196", 1.8 * sw);
   // the lid: outer skin and the inner frame turn together round the gooseneck pivot; a kick makes it jolt
   var ang = -55 * ease(clamp(o.lid || 0)) - 1.4 * (o.shake || 0);
   g += G("rotate(" + f(ang) + " " + HINGE[0] + " " + HINGE[1] + ")", lidInner(sw, o.lidIn) + P(LID, BODY, 2.2 * sw) + '<path d="' + LID + '" fill="url(#hatch)" opacity=".3"/>');
+  if (o.over) g += o.over(t);   // what sits in front of the lid's parts: the fingers closed round the handle
   return G("translate(" + f(o.x) + " " + f(o.y) + ") scale(" + f(sc) + ") translate(-570 0)", g);
 }
 
@@ -263,7 +271,7 @@ function trapped(o) {
   var legs = o.feet.map(function (a, i) { var L = legTo(hip, a, rot); L.ankle = (o.ankle && o.ankle.length ? o.ankle[i] : o.ankle) || 0; return L; });
   var rest = [[hip[0] - 14, FLOOR - 1], [hip[0] - 20, FLOOR - 1]];
   var arms = [0, 1].map(function (i) { var w = (o.hands && o.hands[i]) || rest[i], A = armTo(sh, w, rot, o.straight && o.straight[i]); A.hand = (o.hk && o.hk[i]) || "flat"; if (o.wrist) A.wrist = o.wrist[i]; return A; });
-  var P_ = PERSON.side({ x: hip[0], y: hip[1], s: PS, dir: DIR, rot: rot, outfit: { base: "casual", colors: { shirt: "#b9c7d4", shirtD: "#93a4b4", pants: "#4b5a6e", pantsD: "#38445a" } }, breath: (Math.sin(t * 3.1) + 1) / 2, legs: legs, arms: arms,
+  var P_ = PERSON.side({ x: hip[0], y: hip[1], s: PS, dir: DIR, rot: rot, outfit: { base: "casual", jeans: true, feet: "sneakers", colors: { shirt: "#c4d2de", shirtD: "#93a4b4", pants: "#4a5d78", pantsD: "#36465e", shoes: "#5d6470", shoesD: "#474c56" } }, breath: (Math.sin(t * 3.1) + 1) / 2, legs: legs, arms: arms,
     head: { tilt: o.tilt || 0 }, face: Object.assign({ eyes: 1.2, brows: "worried", mouth: "open" }, o.face || {}) });
   return P_.svg;
 }
@@ -280,6 +288,10 @@ function reachPose(hand, t, o) {
   o = o || {};
   return trapped(Object.assign({ hip: HIP_R, rot: -34, feet: FEET_R, ankle: 0, hands: [hand, [486, FLOOR - 1]], hk: ["fist", "flat"], wrist: [0, 70], t: t, tilt: -16, face: { eyes: 1.1, brows: "angry", mouth: "neutral" } }, o));
 }
+// the fingers closed round the handle's stem (drawn over the handle): the front of the fist, three creases
+function gripFingers(p, k) { p = p || GRIP; var c = PERSON.colors, g = ""; [-2.1, 0, 2.1].forEach(function (dx, i) { g += '<rect x="' + f(p[0] + dx - 1.05) + '" y="' + f(p[1] - 2.3 + i * .3) + '" width="2.1" height="' + f(4.4 - i * .3) + '" rx="1" fill="' + c.skin + '" stroke="' + INK + '" stroke-width=".7"/>'; }); return G("", g, k == null ? 1 : k); }
+// the wrist target that puts the fist's middle on point p, coming from the shoulder
+function wristFor(p, hip, rot) { var sh = kitW(hip[0], hip[1], rot, [-2, -117]), dx = p[0] - sh[0], dy = p[1] - sh[1], L = Math.hypot(dx, dy); return [p[0] - dx / L * 6, p[1] - dy / L * 6]; }
 function kickK(t, per) { var p = (t % per) / per; return p < .25 ? ease(p / .25) : 1 - ease((p - .25) / .75); }
 function kickHit(t, per) { var p = (t % per) / per; return p > .22 && p < .4 ? 1 - Math.abs(p - .28) / .12 : 0; }
 // impact star at a hit
@@ -346,7 +358,7 @@ function latchCut(cx, cy, s, open, hl, t) {
 // rear bumper at world (X, Y); Wp(local) gives the world point of a local car point.
 var X = 610, Y = 690, S = 3.6;
 function Wp(p, x, y, sc) { return [(x || X) + (p[0] - 570) * (sc || S), (y || Y) + p[1] * (sc || S)]; }
-var HD = [557, -101];   // where the handle hangs under the lid (local)
+var HD = [557, -101], GRIP = [HD[0] + .4, HD[1] + 8.4];   // where the handle hangs under the lid (local)
 function handleSmall(gl, pull, t) { return '<g transform="translate(' + HD[0] + ' ' + HD[1] + ') scale(.085)">' + handleT(0, 0, 1, gl, pull, t) + '</g>'; }
 function road(t, y, run) { return R(-600, y, 1840, 400, "#cbc2ad", 0) + '<path d="M-600 ' + y + ' H1240" stroke="' + INK + '" stroke-width="2.4"/>' + '<path d="M-600 ' + f(y + 50) + ' H1240" stroke="#efe9da" stroke-width="6" stroke-dasharray="54 40" stroke-dashoffset="' + f((run || 0) * t * 90) + '"/>'; }
 var FACE_KICK = { eyes: 1.25, brows: "angry", mouth: "open" };
@@ -391,8 +403,8 @@ shot(8, push(330, 420, 1.0, 1.04), function (u, d, t) {
 // 9 · «اسحبه، وبعدين زق الغطا لفوق.» — the fist pulls the handle down, the latch lets go, both hands push the lid up
 function lidPt(p, lid) { var a = D2R(-55 * ease(clamp(lid))), dx = p[0] - HINGE[0], dy = p[1] - HINGE[1]; return [HINGE[0] + dx * Math.cos(a) - dy * Math.sin(a), HINGE[1] + dx * Math.sin(a) + dy * Math.cos(a)]; }
 shot(9, push(330, 430, 1.0, .9), function (u, d, t) {
-  var pull = at(u, .3, .5), lid = .6 * at(u, 1.3, 1.6), g = [HD[0] - 1, HD[1] + 10 + 4 * pull], hk = lid;
-  return paper() + road(0, Y) + car({ x: X, y: Y, sc: S, t: t, lid: lid, lidIn: handleSmall(1, pull * (1 - clamp(lid * 3)), t), people: function (tt) {
+  var pull = at(u, .3, .5), lid = .6 * at(u, 1.3, 1.6), gp = [GRIP[0], GRIP[1] + 3.4 * pull * (1 - clamp(lid * 3))], g = wristFor(gp, HIP_R, -34), hk = lid;
+  return paper() + road(0, Y) + car({ x: X, y: Y, sc: S, t: t, lid: lid, lidIn: handleSmall(1, pull * (1 - clamp(lid * 3)), t), over: function () { return lid < .02 ? gripFingers(gp) : ""; }, people: function (tt) {
       var h0 = lid > 0 ? lidPt([512, -122], hk) : g, h1 = lid > 0 ? lidPt([496, -124], hk) : null;
       if (lid > 0 && lid < .15) h0 = L2(g, h0, lid / .15);
       return reachPose(h0, tt, { rot: lerp(-34, -4, lid / .6), hands: [h0, h1 ? (lid < .15 ? L2([462, -54], h1, lid / .15) : h1) : null], hk: ["fist", lid > 0 ? "flat" : "relaxed"], wrist: lid > 0 ? [-80, -80] : null,
@@ -422,6 +434,6 @@ SCENE.intro = function (svg, t, li) {
 };
 SCENE.bumper = function (u, t) { return '<g transform="translate(90 40) scale(.55)">' + handleT(0, 20, 1, 1, 0, t) + '</g>'; };
 SCENE.outro = function (svg, u, t) {
-  return car({ x: 590, y: 270, sc: .98, t: t, lidIn: handleSmall(1, 0, t), people: function (tt) { return reachPose([HD[0] - 1, HD[1] + 10], tt, { face: { eyes: 1, brows: "raised", mouth: "smile" } }); } }) +
+  return car({ x: 590, y: 270, sc: .98, t: t, lidIn: handleSmall(1, 0, t), people: function (tt) { return reachPose(wristFor(GRIP, HIP_R, -34), tt, { face: { eyes: 1, brows: "raised", mouth: "smile" } }); }, over: function () { return gripFingers(); } }) +
     callout("1", 470, 60, ease(u / .3)) + callout("2", 548, 120, ease(u / .3 - .5)) + callout("3", 120, 60, ease(u / .3 - 1)) + callout("4", 380, 120, ease(u / .3 - 1.5));
 };
