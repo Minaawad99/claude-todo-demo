@@ -80,10 +80,11 @@ the two you recommend and why (things Egyptians see every day, many problem → 
   - one line of finishing touches: «وكده فاضل عليك …، و…، و…»;
   - the payoff: «ومبروك عليك، عملت <the thing> بنفسك.»;
   - last line, exactly: «قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟».
-- **The bio line (every video, the user's rule):** once, about 50–65% in, right after a «بس المشكلة…» / «بس…» line and
+- **The bio line (every video, the user's rule):** once, about 40–65% in, right after a «بس المشكلة…» / «بس…» line and
   before its «عشان كده…» fix, word for word «ولو عايز تعمل فيديوهات زي دي… اضغط على اللينك اللي في البايو.» The man turns to the viewer and
   points up while a yellow pill «اللينك في البايو ↑» pops in near the top (one soft `pop`), then he turns back to the
-  build. In `style.txt` add "say the bio line warmly and quickly, like a friendly aside, then go straight back". No «إيه الحكاية؟ هشرحهالك في دقيقة.» line.
+  build. In `style.txt` add "say the bio line warmly and quickly, like a friendly aside, then go straight back".
+  **Choosing the spot:** read the whole script and pick the most gripping moment in its middle third: the peak of suspense, where the viewer most wants the next line (a question just asked, a surprising number or reveal about to come, a problem with no fix yet). Never on a calm or summing-up line, never in the hook or the ending. Say the line there, then carry on with the script exactly where it left off. When showing the script, mark the bio line with ← and say in one line why that spot. No «إيه الحكاية؟ هشرحهالك في دقيقة.» line.
 - Numbers the voice must say are written as words («خمسمية وات», «ستاشر في المية»).
 - Verify every fact (WebSearch), write `refs/SOURCES.md` with links, and leave out what can't be confirmed (say so there).
   Tell the user which facts are surprising and that they were checked.

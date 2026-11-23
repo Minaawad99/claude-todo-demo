@@ -51,10 +51,11 @@ and fix them.
 2. **Promise:** «إيه الحكاية؟ هشرحهالك في دقيقة.»
 3. **Optional rule:** «قبل ما نشرح محتاجين نوضّح قاعدة صغيرة… خليك فاكرها.», with one law.
 4. **The steps:** each opens with a «طب…؟» question, then the answer, then a home analogy «زي…».
-   **The bio line (every video, the user's rule):** about 50–65% in, right after a «طب…؟» question and before its
+   **The bio line (every video, the user's rule):** about 40–65% in, right after a «طب…؟» question and before its
    answer, add word for word «ولو عايز تعمل فيديوهات زي دي… اضغط على اللينك اللي في البايو.» then answer the question. On screen the
    drawing keeps moving and a yellow pill «اللينك في البايو ↑» pops in near the top (one soft `pop`); in `style.txt`
    add "say the bio line warmly and quickly, like a friendly aside, then go straight back".
+   **Choosing the spot:** read the whole script and pick the most gripping moment in its middle third: the peak of suspense, where the viewer most wants the next line (a question just asked, a surprising number or reveal about to come, a problem with no fix yet). Never on a calm or summing-up line, never in the hook or the ending. Say the line there, then carry on with the script exactly where it left off. When showing the script, mark the bio line with ← and say in one line why that spot.
 5. **«ونتيجة لإيه»:** what else drives it, and what changes it.
 6. **The myth:** «وناس كتير فاكرة إن… لأ.»
 7. **The recap:** «يعني من الآخر…» in 3–4 short clauses.

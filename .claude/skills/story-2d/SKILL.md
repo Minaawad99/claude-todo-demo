@@ -104,7 +104,7 @@ words already on screen: the first Salam 98 caption did both and got 6 comments 
 - One second-person line of immersion («تخيّل إنك واقف على السطح، والأرض بتميل تحت رجلك…»).
 - The climax as three short beats with «…» and a whisper («…ونزلت.»), then the number of the dead, heavy and plain.
 - One strange survival fact, the rescue, the bitter callback, what changed after (the law), the Egyptian person.
-- **The mid-video bio line (always, the user's rule):** one line in the middle of the video, about 50–65% in, placed
+- **The mid-video bio line (always, the user's rule):** one line in the middle of the video, about 40–65% in, placed
   right after a cliffhanger so nobody leaves: the line before it opens a question that the next scene answers (in
   Titanic it would sit right after «تخيّل إنك واقف على السطح، والأرض بتميل تحت رجلك…», before the ship breaks). Then
   the bio line, then straight back into the scene:
@@ -114,6 +114,7 @@ words already on screen: the first Salam 98 caption did both and got 6 comments 
   On screen during the bio line: the scene keeps moving behind it (the frozen cliffhanger frame with the camera still
   creeping), and a yellow pill «اللينك في البايو ↑» near the top; one soft `pop` on the pill. In the voice style text
   add: "say the bio line warmly and quickly, like a friendly aside, then drop back into the story's tension".
+  **Choosing the spot:** read the whole script and pick the most gripping moment in its middle third: the peak of suspense, where the viewer most wants the next line (a question just asked, a surprising number or reveal about to come, a problem with no fix yet). Never on a calm or summing-up line, never in the hook or the ending. Say the line there, then carry on with the script exactly where it left off. When showing the script, mark the bio line with ← and say in one line why that spot.
 - Sentences short; one moment per line; real numbers and times; no hype words, no MSA.
 - Last line exactly «قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟».
 

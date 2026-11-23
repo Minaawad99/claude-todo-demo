@@ -19,8 +19,9 @@
   The reference episode is «المد والجزر» (`videos/tides/`), the shared template `videos/_templates/sketch/`
   (its README lists the drawing helpers), the sound kit `videos/_templates/sketch/sfx/`.
 - **The bio line, in every video and every skill (the user's fixed rule):** every script carries, word for word,
-  «ولو عايز تعمل فيديوهات زي دي… اضغط على اللينك اللي في البايو.» It sits once in the middle of the video (about 50–65% in), right after a
-  cliffhanger or a «طب…؟» question so nobody leaves, then the next line answers it. On screen: the scene keeps moving
+  «ولو عايز تعمل فيديوهات زي دي… اضغط على اللينك اللي في البايو.» It sits once in the middle of the video (about 40–65% in), right after a
+  cliffhanger or a «طب…؟» question so nobody leaves, then the next line answers it.
+  **Choosing the spot:** read the whole script and pick the most gripping moment in its middle third: the peak of suspense, where the viewer most wants the next line (a question just asked, a surprising number or reveal about to come, a problem with no fix yet). Never on a calm or summing-up line, never in the hook or the ending. Say the line there, then carry on with the script exactly where it left off. When showing the script, mark the bio line with ← and say in one line why that spot. On screen: the scene keeps moving
   behind it and a yellow pill «اللينك في البايو ↑» appears near the top with one soft `pop`. In the voice style text:
   "say the bio line warmly and quickly, like a friendly aside, then go straight back". Each skill's script section says
   where it goes; a new skill must add it too.
