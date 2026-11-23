@@ -8,7 +8,7 @@ description: >
   عملت … بنفسك» in casual Cairo Egyptian Arabic. Covers topic choice, script, Gemini voice, alignment, the scene on the
   shared kit, joint-correct acting, checks, sound effects (no music), 1080×1920 render, qa.py, the reel cover and the
   TikTok / Instagram+Facebook / YouTube Shorts titles. Use when the user says "لو", "بأسلوب لو", "بطريقة لو",
-  "اعملها بنفسك", "زي فيديو القبو", "زي فيديو الطاقة الشمسية", "build-along" or "law style".
+  "اعملها بنفسك", "زي فيديو القبو", "زي فيديو الطاقة الشمسية", "زي فيديو الكوبري", "ابنيها بنفسك", "build-along" or "law style".
 ---
 
 # «إيه الحكاية؟» — the «لو» style (build it yourself, step by step)
@@ -17,8 +17,11 @@ Talk to the user in Egyptian Arabic. This file is complete on its own: a new ses
 
 **Reference before every drawing (the user's rule for every skill):** before you draw any object, body part, machine, place or scene, look it up in `videos/_reference/README.md` (a subject index of the 34 reference videos and of our own episodes), open the frames that show it and see how it was cut open, labelled and framed. Then draw it in this skill's own style. Never copy a drawing.
 
-**Worked examples to copy from (both pass qa.py):**
-- `videos/solar-building/` «تنوّر عمارة بالشمس إزاي؟» — **the template to copy**: built on the shared kit.
+**Worked examples to copy from (all pass qa.py):**
+- `videos/flyover/` «تبني كوبري فوق الشارع إزاي؟» — **the locked standard and the template to copy** (the user, November
+  2026: «ثبت الطريقة دي وطريقة الاسكريبت في اي موضوع ابنيها بنفسك»). Every «لو» / «ابنيها بنفسك» topic follows its
+  method, section «The locked method» below.
+- `videos/solar-building/` «تنوّر عمارة بالشمس إزاي؟» — the one the audience loved first; same method, built on the shared kit.
 - `videos/secret-basement/` «تعمل قبو سري إزاي؟» — the first one; its `law/scene.js` is where the kit came from.
 
 **The user's fixed rules for this style (never break them):**
@@ -40,6 +43,40 @@ Talk to the user in Egyptian Arabic. This file is complete on its own: a new ses
    check and qa.py.
 7. **Don't re-render without the user's OK** once a video has been delivered; fix the code and say what changed.
 8. Every video ends with the reel cover and the three platforms' titles, without being asked.
+9. **The method of «الكوبري» (`videos/flyover/`) is locked for every build-it-yourself topic**: the script method and the
+   drawing method in «The locked method» below. A topic the user sends as a video is made our way: same subject, our own
+   steps, order and «والغريب» fact.
+
+## The locked method (from «تبني كوبري فوق الشارع إزاي؟», `videos/flyover/`)
+
+**Script (how it's written):**
+- Line 0 starts from a naive version you can SEE and that is a little funny («لو ردمت تل تراب في نص الشارع… يبقى عندك
+  كوبري»), never a definition. Each «بس…» breaks the previous step in one picture (the street closed, the column sinking,
+  the belly cracking, the truck hitting, the puddle, the car falling); each «عشان كده…» adds exactly ONE part you can draw
+  arriving, and stays.
+- 9–10 rounds, local and concrete: Cairo/Egypt details where true («طين النيل», «بالليل والشارع فاضي», «الدريكسيون»),
+  one real number in most fixes (30 m, a tenth, 5.5 m, 2 %), and 3–4 named parts («وده اسمه…», «ودي اسمها…»).
+- The surprise pair sits in the middle of the chain and its fix is the next «عشان كده» (camber → topping slab), so it
+  pushes the build forward instead of being trivia.
+- The order follows how the thing is really built: ground → structure → main part → protection → finishing touches.
+- If the user sent a video on the same subject: transcribe it (sherpa whisper, `videos/align_asr.py`'s model) and make
+  ours differ on purpose (other start, other steps, other surprise), noted in `refs/SOURCES.md`. Same for our own earlier
+  episodes on the topic.
+- 23 lines, ≈ 295 words, ≈ 1:53 of voice. Check every number on the web and say «حوالي» / «كام» where sources vary.
+
+**Drawing (how it's built):**
+- One side-view scene for the whole video, the ground cut open under it with real layers named by pills (clay, firm
+  sand); the build is parametric (heights from a `geo()` function, every part a switch from `K.steps`), so a later fix
+  can change an earlier part (raising the whole bridge, bearings lifting the girders) and every line stays consistent.
+- What the side view can't show goes in a round magnifier («مقطع في …», `xsec()` in flyover) placed next to the action:
+  slope, drains, barrier.
+- Things moving the other way are drawn from behind (the cross-street cars), so traffic reads in both directions.
+- Each failure animates (sinking, bending with cracks, a hit with a shake, a skid, a fall) with a red ✗ and a red pill;
+  each fix animates in (rising, lowered by a crane, poured, slid in) with a yellow ring and a pill naming it.
+- The man in the clothes of the job (worker vest and hard hat for building), scale ≈ 0.4 next to a 5.5 m bridge; camera
+  framed so his feet stay above the caption: feet screen y = 960 + (feetY − cy)·zoom < 1500. Close-ups (zoom 1.3–2.5)
+  for every detail; pull back only for the start, the night crane and the payoff.
+- Real-world frames from several of the 14 references, listed in `refs/SOURCES.md`.
 
 ## 0. The reference videos (`videos/_reference/law/`)
 
@@ -132,7 +169,7 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
 ## 5. Build: copy the template episode
 
 ```
-mkdir -p videos/<slug>/law && cp videos/solar-building/law/{template.html,build.py,scene.js} videos/<slug>/law/
+mkdir -p videos/<slug>/law && cp videos/flyover/law/{template.html,build.py,scene.js} videos/<slug>/law/
 ```
 
 - `template.html`: the 9:16 page, gradients in `<defs>`, then `../timing.js`, `window.LAW_GY = <ground y>`, the kit
@@ -187,7 +224,7 @@ before their line, overlaps (screens on batteries), wrong joints. Fix and look a
 
 ## 8. Sound effects (no music)
 
-`videos/<slug>/cues.js` → `cues.json` (copy `videos/solar-building/cues.js`): a whoosh before every line, then effects
+`videos/<slug>/cues.js` → `cues.json` (copy `videos/flyover/cues.js`): a whoosh before every line, then effects
 on the actions with `a(t, fx, gain, dur)`; synthesized `fx_*` in `videos/audio/sfx.py` (pop, chime, ping, beep, tick,
 whoosh, wipe, thud, clank, creak, motor, hum, zap, spark, sizzle, charge, servo, boom, drip, fill, slosh, steam, spin,
 bell, notify…). Recorded clips with `rec(t, file, gain, from, dur, duck)` from `videos/*/sfx/px-*.mp3` and the kit
@@ -212,7 +249,7 @@ restart). Send the mp4 with SendUserFile; keep mixes and mp4s in the scratchpad,
 
 ## 10. Cover and titles (always)
 
-- **Cover** `brand/eh-elhekaya/cover-<slug>-tiktok.html` (copy `cover-solar-building-tiktok.html`): 540×960, the video's own
+- **Cover** `brand/eh-elhekaya/cover-<slug>-tiktok.html` (copy `cover-flyover-tiktok.html`): 540×960, the video's own
   scene (load timing.js, the kit, the episode's scene.js, `K.setLine(<last line>)`) zoomed on the finished build with the
   man reacting and one or two pills with the key numbers; dark fades top (0–330) and bottom (660–960); text in Noto Sans
   Arabic: «إيه الحكاية؟» 15 px at 132, the hook title 900 34–42 px at 154 (one line), a yellow 800 24 px sub-title at 214,

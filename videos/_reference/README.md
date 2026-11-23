@@ -27,7 +27,7 @@ ffmpeg -ss 40 -t 2.4 -i law/videos/r12.mp4 -vf "fps=5,tile=6x2" -frames:v 1 stri
 | **أشخاص** (بيتحركوا، نايمين، بيتفاعلوا) | كل فيديوهات `law/` (الراجل بيمثّل كل خطوة) · v04 · v11 | عُدّة الأشخاص `_templates/people/` · person-demo · choking · naps |
 | **أجهزة البيت** (غسالة، تلاجة، تكييف، ميكروويف، إيرفراير، حلة) | v02 إيرفراير · v09 غسالة أطباق · v12 تكييف · v13 غسالة · v16 حلة ضغط · v19 طفاية | washer · dishwasher · fridge · fridge-3d · microwave · inverter-ac · gas-heater · lcd-tv · printer · robot-vacuum |
 | **عربيات ومحركات** | v03 طيارة · v08 جير · v18 عربية مقطوعة وسلندر وبستم | car-egypt · car-us · car-water · airplane · helicopter · engine.js |
-| **طريق ومرور ومدينة** | v05 رادار · v10 كاميرا مرور · v15 مدينة إيزومتري وزحمة | gps-traffic · monorail · sheikh-jaber-bridge · bridge-water |
+| **طريق ومرور ومدينة** | v05 رادار · v10 كاميرا مرور · v15 مدينة إيزومتري وزحمة | gps-traffic · monorail · sheikh-jaber-bridge · bridge-water · flyover (كوبري علوي بأسلوب «لو») |
 | **بيت مقطوع / أوضة إيزومتري** | v06 · v11 · v12 أوضة · v19 مطبخ · r09 مخبأ تحت السرير · r14 صرف البيت | secret-basement · solar-building · nuclear-shelter · elevator |
 | **كهربا وطاقة** | r02 طاقة شمسية · r08 محطة نووية · r12 عمود وشبكة | solar-building · egypt-saudi-power · high-dam · chernobyl |
 | **بترول وغاز ومية** | v18 غاز · r06 بير بترول ومصفاة · r14 بيارة | offshore-oil · gas-cylinder · sea-cables |
