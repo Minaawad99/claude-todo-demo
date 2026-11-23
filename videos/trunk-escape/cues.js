@@ -44,6 +44,30 @@ paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                               
 
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
 // e.g. lab(5, 0.4); ding(L(6) + 1.6); scribble(L(9) + 1.2); sea(L(0), L(PROMISE) - L(0) + 0.6, 0.45);
+// kicks: one thud per hit of the drawn kick (hit at 28% of each period, on the global clock), the lid's steel answering
+const kicks = (from, to, per, g) => { for (let k = Math.ceil((from - .28 * per) / per); k * per + .28 * per < to; k++) { const t = k * per + .28 * per; if (t < from) continue; a(t, 'thud', g); a(t + .02, 'clank', g * .35); } };
+kicks(L(1), L(2), 1.0, 0.5);                    // hook: kicking the lid
+kicks(L(4), L(6), 1.1, 0.45);                   // «طب ليه الرفس…» and the latch that doesn't move
+kicks(L(6), L(7), 1.4, 0.3);                    // weak kicks, no room
+lab(5, 1.2); lab(5, 2.6); scribble(L(5) + (L(6) - L(5)) * .55 + .5);   // labels, ✗
+a(L(7) + .3, 'charge', 0.18); a(L(7) + (L(8) - L(7)) * .73, 'whoosh', 0.25); a(L(7) + (L(8) - L(7)) * .73 + .3, 'bell', 0.25);   // glow, zoom in
+lab(8, .3); lab(8, 2.2);
+a(L(9) + .15, 'clank', 0.4); a(L(9) + .55, 'creak', 0.3); a(L(9) + .75, 'whoosh', 0.3);   // pull, latch, lid up
+a(L(10) + .2, 'charge', 0.15); a(L(10) + 2.3, 'bell', 0.22);
+rec(L(11), 'clock-ticking', 0.25, 0, D(11) - .2, 1.0, 'tick', 0.15);
+ding(L(12) + .3); a(L(12) + .6, 'beep', 0.25); a(L(12) + 1.9, 'pop', 0.3);
+a(L(13) + .2, 'notify', 0.3); scribble(L(13) + .6);
+lab(14, .3); a(L(14) + 1.5, 'snip', 0.3);
+a(L(15) + .25, 'thud', 0.45); a(L(15) + .3, 'clank', 0.2); a(L(15) + 1.2, 'whoosh', 0.2);
+a(L(16) + .9, 'bump', 0.45); a(L(16) + 1.1, 'clink', 0.25); a(L(16) + 1.9, 'whoosh', 0.2);
+a(L(17), 'motor', 0.25, D(17)); rec(L(17), 'wind-gust', 0.25, 0.25, D(17), 1.0, 'wind', 0.15); scribble(L(17) + .6);
+a(L(18) + 1.6, 'motor', 0.15, 1.6); scribble(L(18) + 2.8);
+paper(L(19) + .2); scribble(L(19) + 1.6); a(L(19) + 1.8, 'pop', 0.35);
+a(L(20) + .2, 'intake', 0.2); a(L(20) + D(20) * .35, 'sizzle', 0.12); a(L(20) + D(20) * .62, 'pop', 0.25);
+for (let k = 0; k < 4; k++) scribble(L(21) + .3 + k * (D(21) - .8) / 4);
+paper(L(22) + .1); ding(L(22) + .4);
+ding(L(23) + .3);
+ding(L(24) + .4); a(L(24) + 1.4, 'thud', 0.4);
 
 // music plays only when sfx.py is run with --music, and that only when the user asked for music in this video
 const MUSIC = has('music-soft') ? 'music-soft' : null;

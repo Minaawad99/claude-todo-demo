@@ -409,13 +409,13 @@ shot(8, push(330, 420, 1.0, 1.04), function (u, d, t) {
 // 9 · «اسحبه، وبعدين زق الغطا لفوق.» — the fist pulls the handle down, the latch lets go, both hands push the lid up
 function lidPt(p, lid) { var a = D2R(-55 * ease(clamp(lid))), dx = p[0] - HINGE[0], dy = p[1] - HINGE[1]; return [HINGE[0] + dx * Math.cos(a) - dy * Math.sin(a), HINGE[1] + dx * Math.sin(a) + dy * Math.cos(a)]; }
 shot(9, push(330, 430, 1.0, .9), function (u, d, t) {
-  var pull = at(u, .3, .5), lid = .6 * at(u, 1.3, 1.6), gp = [GRIP[0], GRIP[1] + 3.4 * pull * (1 - clamp(lid * 3))], g = wristFor(gp, HIP_R, -34), hk = lid;
+  var pull = at(u, .1, .4), lid = .6 * at(u, .7, 1.2), gp = [GRIP[0], GRIP[1] + 3.4 * pull * (1 - clamp(lid * 3))], g = wristFor(gp, HIP_R, -34), hk = lid;
   return paper() + road(0, Y) + car({ x: X, y: Y, sc: S, t: t, lid: lid, lidIn: handleSmall(1, pull * (1 - clamp(lid * 3)), t), over: function () { return lid < .02 ? gripFingers(gp) : ""; }, people: function (tt) {
       var h0 = lid > 0 ? lidPt([512, -122], hk) : g, h1 = lid > 0 ? lidPt([496, -124], hk) : null;
       if (lid > 0 && lid < .15) h0 = L2(g, h0, lid / .15);
       return reachPose(h0, tt, { rot: lerp(-34, -4, lid / .6), hands: [h0, h1 ? (lid < .15 ? L2([462, -54], h1, lid / .15) : h1) : null], hk: ["fist", lid > 0 ? "flat" : "relaxed"], wrist: lid > 0 ? [-80, -80] : null,
         face: { eyes: 1.1, brows: lid > .5 ? "raised" : "angry", mouth: lid > .5 ? "smile" : "neutral" }, tilt: -24 });
-    } }) + G("", arrow(560, 130, 560, 230, ORANGE, 7, 1) + T("اسحب", 560, 110, 36, ORANGE, 800), at(u, .2, .3) * (1 - at(u, 1.2, .3))) + G("", arrow(150, 330, 150, 200, OLIVE, 7, 1) + T("زق", 150, 370, 40, OLIVE, 800), at(u, 1.3, .4));
+    } }) + G("", arrow(560, 130, 560, 230, ORANGE, 7, 1) + T("اسحب", 560, 110, 36, ORANGE, 800), at(u, .05, .25) * (1 - at(u, .65, .25))) + G("", arrow(150, 330, 150, 200, OLIVE, 7, 1) + T("زق", 150, 370, 40, OLIVE, 800), at(u, .7, .3));
 });
 
 // the handle close-up scene (dark lid underside, latch box, cable, glowing T)
