@@ -18,6 +18,12 @@
   and YouTube Shorts titles, without being asked.
   The reference episode is «المد والجزر» (`videos/tides/`), the shared template `videos/_templates/sketch/`
   (its README lists the drawing helpers), the sound kit `videos/_templates/sketch/sfx/`.
+- **The bio line, in every video and every skill (the user's fixed rule):** every script carries, word for word,
+  «ولو عايز تعمل فيديوهات زي دي… اضغط على اللينك اللي في البايو.» It sits once in the middle of the video (about 50–65% in), right after a
+  cliffhanger or a «طب…؟» question so nobody leaves, then the next line answers it. On screen: the scene keeps moving
+  behind it and a yellow pill «اللينك في البايو ↑» appears near the top with one soft `pop`. In the voice style text:
+  "say the bio line warmly and quickly, like a friendly aside, then go straight back". Each skill's script section says
+  where it goes; a new skill must add it too.
 - **Sound without asking: sound effects only, in every video and every skill.** No background music of any kind
   unless the user asks for it for that video.
   `videos/audio/sfx.py` leaves music out unless run with `--music`; never pass it on your own.

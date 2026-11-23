@@ -51,6 +51,10 @@ and fix them.
 2. **Promise:** «إيه الحكاية؟ هشرحهالك في دقيقة.»
 3. **Optional rule:** «قبل ما نشرح محتاجين نوضّح قاعدة صغيرة… خليك فاكرها.», with one law.
 4. **The steps:** each opens with a «طب…؟» question, then the answer, then a home analogy «زي…».
+   **The bio line (every video, the user's rule):** about 50–65% in, right after a «طب…؟» question and before its
+   answer, add word for word «ولو عايز تعمل فيديوهات زي دي… اضغط على اللينك اللي في البايو.» then answer the question. On screen the
+   drawing keeps moving and a yellow pill «اللينك في البايو ↑» pops in near the top (one soft `pop`); in `style.txt`
+   add "say the bio line warmly and quickly, like a friendly aside, then go straight back".
 5. **«ونتيجة لإيه»:** what else drives it, and what changes it.
 6. **The myth:** «وناس كتير فاكرة إن… لأ.»
 7. **The recap:** «يعني من الآخر…» in 3–4 short clauses.
@@ -62,7 +66,7 @@ and fix them.
 - Numbers are words in the script and digits in the caption, set with `CAPTEXT` in `episode.py`.
 - Short phrases; the template splits each line into caption chunks of about 5 words.
 - Check every fact. Tell the user which ones are surprising and that they were checked.
-- Run the script through the `humanizer` skill. Keep the series devices above word for word.
+- Run the script through the `humanizer` skill. Keep the series devices above, the bio line included, word for word.
 - Give the script in one copy-ready code block, then commit it.
 
 ## 2. Voice

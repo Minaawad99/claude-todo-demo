@@ -31,19 +31,24 @@ question whether to run it in quick mode or with the full checks. Quick mode is 
 
 ## 1. Script → `videos/<slug>/script.txt`
 
-- 25–29 lines, one sentence per line, about 230–280 words → 1:40–2:00 of voice (the tunnel video: 29 lines, 274 words, 1:56).
+- 26–30 lines (the bio line included), one sentence per line, about 230–280 words → 1:40–2:00 of voice (the tunnel video: 29 lines, 274 words, 1:56).
 - Casual Cairo Egyptian Arabic, warm and curious. Check spelling carefully (e.g. «آلاف الأطنان», «أسطوانات», «المية»).
 - Fixed shape:
   - line 0: a hook about something the viewer sees or uses every day;
   - lines 1–2: the puzzle as questions;
   - line 3: exactly «إيه الحكاية؟ هشرحهالك في دقيقة.» (in a فصحى video: «ما الحكاية؟ سأشرحها لك في دقيقة.», see section 2);
-  - lines 4–22: the explanation, one idea per line, with real numbers and one surprising fact or story;
-  - line 23: the payoff that ties back to the hook;
-  - line 24: exactly «قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟».
+  - lines 4–23: the explanation, one idea per line, with real numbers and one surprising fact or story;
+  - **the bio line (every video, the user's rule):** inside the explanation, about 50–65% in (around line 13–16),
+    right after a question or a cliffhanger and before its answer, word for word
+    «ولو عايز تعمل فيديوهات زي دي… اضغط على اللينك اللي في البايو.» (in a فصحى video: «ولو أردت أن تصنع فيديوهات مثل هذه… اضغط على الرابط
+    في البايو.»). On screen the shot keeps moving and a yellow pill «اللينك في البايو ↑» pops in near the top (one soft
+    `pop`); in `style.txt` add "say the bio line warmly and quickly, like a friendly aside, then go straight back";
+  - the line before last: the payoff that ties back to the hook;
+  - last line: exactly «قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟».
 - Write numbers as words when the voice must say them («تسعة وتسعين», «ألفين وعشرين»); English terms stay
   Latin (GPS, LCD, 4K).
 - Verify every fact. Tell the user which facts are surprising and that they were checked.
-- Run the script through the `humanizer` skill before showing it (the user asks for this every time), keeping lines 3 and 24
+- Run the script through the `humanizer` skill before showing it (the user asks for this every time), keeping line 3, the bio line and the last line
   word for word. Give the script in one copy-ready code block.
 - Commit the script, then give the user the voice settings below (the Style text in its own code block).
 

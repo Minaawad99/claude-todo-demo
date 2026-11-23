@@ -109,7 +109,7 @@ words already on screen: the first Salam 98 caption did both and got 6 comments 
   Titanic it would sit right after «تخيّل إنك واقف على السطح، والأرض بتميل تحت رجلك…», before the ship breaks). Then
   the bio line, then straight back into the scene:
   - the cliffhanger: «…وفي اللحظة دي حصل اللي محدش كان متوقعه.» (or the story's own suspense line);
-  - the bio line, word for word: «ولو عايز تعرف تعمل فيديوهات زي كده إزاي… دوس على اللينك اللي في البايو.»;
+  - the bio line, word for word: «ولو عايز تعمل فيديوهات زي دي… اضغط على اللينك اللي في البايو.»;
   - back in: «نرجع للسفينة…» / «نرجع لـ<place/person>…», and the next line pays off the cliffhanger.
   On screen during the bio line: the scene keeps moving behind it (the frozen cliffhanger frame with the camera still
   creeping), and a yellow pill «اللينك في البايو ↑» near the top; one soft `pop` on the pill. In the voice style text

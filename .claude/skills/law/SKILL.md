@@ -80,11 +80,14 @@ the two you recommend and why (things Egyptians see every day, many problem → 
   - one line of finishing touches: «وكده فاضل عليك …، و…، و…»;
   - the payoff: «ومبروك عليك، عملت <the thing> بنفسك.»;
   - last line, exactly: «قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟».
-- No mid-video plug (theirs says "الرابط في البايو"; we don't). No «إيه الحكاية؟ هشرحهالك في دقيقة.» line.
+- **The bio line (every video, the user's rule):** once, about 50–65% in, right after a «بس المشكلة…» / «بس…» line and
+  before its «عشان كده…» fix, word for word «ولو عايز تعمل فيديوهات زي دي… اضغط على اللينك اللي في البايو.» The man turns to the viewer and
+  points up while a yellow pill «اللينك في البايو ↑» pops in near the top (one soft `pop`), then he turns back to the
+  build. In `style.txt` add "say the bio line warmly and quickly, like a friendly aside, then go straight back". No «إيه الحكاية؟ هشرحهالك في دقيقة.» line.
 - Numbers the voice must say are written as words («خمسمية وات», «ستاشر في المية»).
 - Verify every fact (WebSearch), write `refs/SOURCES.md` with links, and leave out what can't be confirmed (say so there).
   Tell the user which facts are surprising and that they were checked.
-- Keep it natural (the `humanizer` skill's rules), keep the «بس / عشان كده» chain and the last line word for word.
+- Keep it natural (the `humanizer` skill's rules), keep the «بس / عشان كده» chain, the bio line and the last line word for word.
   Show the script in one copy-ready code block and commit it.
 
 ## 3. Voice (generated here with Gemini TTS; the key comes from the environment, never read or print it)
