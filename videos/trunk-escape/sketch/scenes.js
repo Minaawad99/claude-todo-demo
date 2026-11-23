@@ -185,6 +185,7 @@ var HINGE = [452, -128];   // the gooseneck pivot, under the rear window's lower
 var LID = "M456 -134 L558 -130 Q572 -128 574 -114 L574 -98 L566 -98 L566 -112 Q564 -121 554 -122 L460 -126 Z";
 var TRUNK = "M436 -128 L460 -126 L554 -122 Q564 -121 566 -112 L566 -98 L562 -96 L562 -42 L436 -42 Z";
 var TRUNK_OPEN = "M436 -128 L456 -134 L566 -98 L562 -96 L562 -42 L436 -42 Z", TRUNK_AIR = "M436 -128 L456 -134 L456 -400 L800 -400 L800 -98 L562 -96 L562 -42 L436 -42 Z";
+var TRUNK_CAB = "M330 -166 L372 -166 L420 -140 L436 -128 L554 -122 Q564 -121 566 -112 L566 -98 L562 -96 L562 -42 L330 -42 Z";
 var FLOOR = -46, LATCH = [565, -102], RW = 420;
 function wheel(x, t, spin, sw) {
   var a = (spin || 0) * t * 200, s = C(x, -38, 38, "#2f2b26", 2.4 * sw) + '<circle cx="' + x + '" cy="-38" r="33" fill="none" stroke="#45403a" stroke-width="' + f(1.4 * sw) + '"/>' + C(x, -38, 26, "#b9b5ac", 2 * sw);
@@ -220,7 +221,10 @@ function car(o) {
   g += P("M440 -42 Q440 -82 482 -84 Q522 -82 524 -42 Z", "#34322f", 1.2 * sw) + '<path d="M448 -46 Q450 -76 482 -78 Q514 -76 516 -46" fill="none" stroke="#45423e" stroke-width="' + f(1.4 * sw) + '"/>';
   g += '<path d="M440 -112 Q500 -110 548 -108 Q556 -106 556 -96" fill="none" stroke="#45423e" stroke-width="' + f(1.6 * sw) + '"/>';
   // the rear seat's back (the trunk's front wall) with its belt, and the parcel shelf
-  g += P("M404 -62 L418 -132 Q424 -138 432 -134 L438 -128 L436 -42 L410 -46 Z", SEAT, 1.6 * sw) + '<path d="M414 -64 L426 -126" stroke="#766d60" stroke-width="' + f(1.2 * sw) + '"/>' + P("M424 -128 L430 -132 L431 -60 L425 -60 Z", "#4c4b4f", .9 * sw);
+  var fold = ease(clamp(o.fold || 0));
+  if (fold > 0) g += P("M410 -46 L436 -42 L436 -128 L420 -136 Z", "#262523", 1.2 * sw);   // the opening through to the cabin
+  g += G("rotate(" + f(-78 * fold) + " 408 -52)", P("M404 -62 L418 -132 Q424 -138 432 -134 L438 -128 L436 -42 L410 -46 Z", SEAT, 1.6 * sw) + '<path d="M414 -64 L426 -126" stroke="#766d60" stroke-width="' + f(1.2 * sw) + '"/>' + P("M424 -128 L430 -132 L431 -60 L425 -60 Z", "#4c4b4f", .9 * sw) +
+    G("", '<path d="M429 -126 L436 -118" stroke="' + ORANGE + '" stroke-width="' + f(3 * sw) + '" stroke-linecap="round"/>', o.strap == null ? 1 : o.strap));   // the seat-back release strap on the trunk side
   g += P("M430 -136 L458 -136 L458 -130 L432 -129 Z", "#5d5a55", 1.2 * sw);
   // the spare-wheel well under the floor, with the spare lying flat (a slab of tyre and rim seen from the side)
   g += P("M474 -42 L478 -30 L552 -30 L556 -42 Z", "#3a3b40", 1.4 * sw);
@@ -228,9 +232,9 @@ function car(o) {
   // the floor board with its carpet
   g += R(436, FLOOR, 126, 4, CARPET, 1 * sw) + '<path d="M436 ' + (FLOOR + .8) + ' H562" stroke="#5e5e66" stroke-width="' + f(1.2 * sw) + '" stroke-dasharray="2 3"/>';
   // the back of the rear lamp housing in the corner, with its bulb holder; the rear sill and the striker
-  g += P("M550 -84 L562 -84 L562 -70 L551 -70 Z", "#4a4b50", 1.1 * sw) + C(555.5, -77, 2.4, "#77787d", .8 * sw);
+  g += G("", P("M550 -84 L562 -84 L562 -70 L551 -70 Z", "#4a4b50", 1.1 * sw) + C(555.5, -77, 2.4, "#77787d", .8 * sw), 1 - (o.tailOut || 0));
   g += '<path d="M552 -97.5 H567" stroke="#1d1c1b" stroke-width="' + f(3.2 * sw) + '" stroke-linecap="round"/>' + R(556, -98, 10, 3, STEEL_D, .8 * sw) + '<path d="M560 -98 L560 -101 L564 -101 L564 -98" fill="none" stroke="' + STEEL + '" stroke-width="' + f(1.6 * sw) + '"/>';
-  g += '<clipPath id="' + tid + '"><path d="' + (lk > 0 ? TRUNK_AIR : TRUNK) + '"/></clipPath><g clip-path="url(#' + tid + ')">';
+  g += '<clipPath id="' + tid + '"><path d="' + (lk > 0 ? TRUNK_AIR : fold > 0 ? TRUNK_CAB : TRUNK) + '"/></clipPath><g clip-path="url(#' + tid + ')">';
   if (o.people) g += o.people(t);
   if (o.dark) g += '<rect x="420" y="-140" width="160" height="100" fill="#000" opacity="' + f(.2 * o.dark) + '"/>';
   g += '</g>' + P(lk > 0 ? TRUNK_OPEN : TRUNK, "none", 2 * sw);
@@ -238,7 +242,8 @@ function car(o) {
   g += '<g opacity=".7"><path d="' + WIN_F + '" fill="' + GLASS + '"/><path d="' + WIN_R + '" fill="' + GLASS + '"/></g>' + P(WIN_F, "none", 2 * sw) + P(WIN_R, "none", 2 * sw) + R(300, -166, 10, 120, BODY, 2 * sw);
   g += '<path d="M160 -118 L156 -48 M300 -118 L300 -46 M420 -140 L420 -60" stroke="' + INK + '" stroke-width="' + f(1.8 * sw) + '" fill="none"/>' + R(258, -102, 22, 6, INK, 0, 3) + R(390, -102, 22, 6, INK, 0, 3);
   g += P("M6 -88 L26 -96 L28 -86 L8 -82 Z", "#f4efe3", 1.4 * sw) + P("M226 -118 L246 -122 L248 -110 L230 -108 Z", BODY_D, 1.4 * sw);
-  g += P("M566 -97 L574.5 -97 L576 -78 L567 -78 Z", TAIL, 1.4 * sw, o.hlTail ? ' style="filter:drop-shadow(0 0 ' + f(5 * o.hlTail) + 'px ' + ORANGE + ')"' : "") + '<path d="M567 -88 H575" stroke="#e7a08c" stroke-width="' + f(1.2 * sw) + '"/>';
+  if (o.tailOut) g += P("M566 -90 L575 -90 L576.5 -70 L567 -70 Z", "#1c1b1a", 1.2 * sw);
+  g += G("translate(" + f(30 * (o.tailOut || 0)) + " " + f(40 * (o.tailOut || 0) * (o.tailOut || 0)) + ") rotate(" + f(40 * (o.tailOut || 0)) + " 571 -80)", P("M566 -90 L575 -90 L576.5 -70 L567 -70 Z", TAIL, 1.4 * sw, o.hlTail ? ' style="filter:drop-shadow(0 0 ' + f(5 * o.hlTail) + 'px ' + ORANGE + ')"' : "") + '<path d="M567 -80 H575.5" stroke="#e7a08c" stroke-width="' + f(1.2 * sw) + '"/>', 1 - .4 * (o.tailOut || 0));
   g += P("M570 -66 Q581 -64 580 -52 Q579 -44 568 -43 L562 -43 L562 -66 Z", "#bdb196", 1.8 * sw);
   // the lid: outer skin and the inner frame turn together round the gooseneck pivot; a kick makes it jolt
   var ang = -55 * ease(clamp(o.lid || 0)) - 1.4 * (o.shake || 0);
@@ -266,12 +271,13 @@ function armTo(sh, wr, rot, straight) {
 }
 // o: {hip, rot, feet [[x,y],[x,y]] ankle targets, hands [[x,y] | null, …] wrist targets, hk, straight, ankle, wrist, face, tilt, t}
 var HIP = [508, -51], ROT = -50;
-function trapped(o) {
+function trapped(o) { var d0 = DIR; DIR = o.dir || 1; try { return trapped_(o); } finally { DIR = d0; } }
+function trapped_(o) {
   var t = o.t || 0, rot = o.rot == null ? ROT : o.rot, hip = o.hip || HIP, sh = kitW(hip[0], hip[1], rot, [-2, -117]);
   var legs = o.feet.map(function (a, i) { var L = legTo(hip, a, rot); L.ankle = (o.ankle && o.ankle.length ? o.ankle[i] : o.ankle) || 0; return L; });
   var rest = [[hip[0] - 14, FLOOR - 1], [hip[0] - 20, FLOOR - 1]];
   var arms = [0, 1].map(function (i) { var w = (o.hands && o.hands[i]) || rest[i], A = armTo(sh, w, rot, o.straight && o.straight[i]); A.hand = (o.hk && o.hk[i]) || "flat"; if (o.wrist) A.wrist = o.wrist[i]; return A; });
-  var P_ = PERSON.side({ x: hip[0], y: hip[1], s: PS, dir: DIR, rot: rot, outfit: { base: "casual", jeans: true, feet: "sneakers", colors: { shirt: "#c4d2de", shirtD: "#93a4b4", pants: "#4a5d78", pantsD: "#36465e", shoes: "#5d6470", shoesD: "#474c56" } }, breath: (Math.sin(t * 3.1) + 1) / 2, legs: legs, arms: arms,
+  var P_ = PERSON.side({ x: hip[0], y: hip[1], s: PS, dir: DIR, rot: rot, lean: o.lean || 0, outfit: { base: "casual", jeans: true, feet: "sneakers", colors: { shirt: "#c4d2de", shirtD: "#93a4b4", pants: "#4a5d78", pantsD: "#36465e", shoes: "#5d6470", shoesD: "#474c56" } }, breath: (Math.sin(t * 3.1) + 1) / 2, legs: legs, arms: arms,
     head: { tilt: o.tilt || 0 }, face: Object.assign({ eyes: 1.2, brows: "worried", mouth: "open" }, o.face || {}) });
   return P_.svg;
 }
@@ -420,6 +426,120 @@ function handleClose(t, gl, pull) {
   s += handleT(320, 380, 2.4, gl, pull, t);
   return s;
 }
+
+// ── props ──
+function phone(x, y, ang, sc, lit) { return G("translate(" + f(x) + " " + f(y) + ") rotate(" + f(ang) + ") scale(" + f(sc || 1) + ")", R(-3.2, -6, 6.4, 12, "#2b2c30", .9, 1.4) + R(-2.5, -5, 5, 9.4, lit ? "#9fd0e6" : "#3e4a55", 0, .8)); }
+function head0(hip, rot) { return kitW(hip[0], hip[1], rot, [6, -166]); }
+// the boy on the phone: sitting up toward the lid, the near hand holding the phone at his ear
+function onPhone(t, o) {
+  o = o || {}; var hip = HIP_R, rot = -30, hd = head0(hip, rot), ear = [hd[0] - 1.5, hd[1] + 2];
+  return trapped(Object.assign({ hip: hip, rot: rot, feet: FEET_R, hands: [[ear[0] + 2, ear[1] + 7], [486, FLOOR - 1]], hk: ["fist", "flat"], wrist: [-40, 70], tilt: -6, t: t, face: { eyes: 1.1, brows: "worried", mouth: (t * 3) % 1 < .5 ? "open" : "neutral" } }, o)) +
+    phone(ear[0] + 1.5, ear[1] + 1, -18, 1, true);
+}
+function watch(cx, cy, r, glow, t) {
+  var g = C(cx, cy, r + 18, "#6b6760", 3) + C(cx, cy, r, glow ? "#23262b" : "#f4efe3", 3);
+  for (var i = 0; i < 12; i++) { var a = i * Math.PI / 6, x = cx + Math.cos(a) * r * .82, y = cy + Math.sin(a) * r * .82; g += glow ? '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(r * .06) + '" fill="' + GLOW + '" style="filter:drop-shadow(0 0 6px ' + GLOW + ')"/>' : '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(r * .04) + '" fill="' + INK + '"/>'; }
+  var hm = -Math.PI / 2 + t * .05, hh = -Math.PI / 2 + 2.2 + t * .004, col = glow ? GLOW : INK, fx = glow ? ' style="filter:drop-shadow(0 0 7px ' + GLOW + ')"' : "";
+  g += '<path d="M' + cx + ' ' + cy + ' L' + f(cx + Math.cos(hm) * r * .78) + ' ' + f(cy + Math.sin(hm) * r * .78) + '" stroke="' + col + '" stroke-width="' + f(r * .07) + '" stroke-linecap="round"' + fx + '/><path d="M' + cx + ' ' + cy + ' L' + f(cx + Math.cos(hh) * r * .52) + ' ' + f(cy + Math.sin(hh) * r * .52) + '" stroke="' + col + '" stroke-width="' + f(r * .1) + '" stroke-linecap="round"' + fx + '/>' + C(cx, cy, r * .06, "#9aa2ac", 1.4);
+  return g;
+}
+function thermo(x, y, h, k) { var lv = h * (.25 + .7 * clamp(k)); return R(x - 14, y - h, 28, h, "#f4efe3", 2.6, 14) + R(x - 6, y - lv, 12, lv, ORANGE, 0, 6) + C(x, y + 14, 22, ORANGE, 2.6) + [0, 1, 2, 3, 4].map(function (i) { return '<path d="M' + (x + 14) + ' ' + f(y - h * (.2 + i * .18)) + ' h10" stroke="' + INK + '" stroke-width="2"/>'; }).join(""); }
+function arrows(n, x0, y0, dx, dy, t, col) { var g = ""; for (var i = 0; i < n; i++) { var p = ((t * .8 + i / n) % 1); g += G("", '<path d="M' + f(x0 + dx * p - dx * .12) + ' ' + f(y0 + i * 18 + dy * p - dy * .12) + ' L' + f(x0 + dx * p) + ' ' + f(y0 + i * 18 + dy * p) + '" stroke="' + (col || BLUE) + '" stroke-width="5" stroke-linecap="round"/>', Math.sin(p * Math.PI)); } return g; }
+function trafficCar(x, y, sc, t) { return G("translate(" + f(x) + " " + f(y) + ") scale(" + f(sc) + ")", P("M0 -20 L6 -36 L30 -46 L70 -46 L92 -30 L118 -26 L120 -10 L0 -10 Z", "#9fb3c2", 2.4) + C(26, -10, 12, "#2f2b26", 2) + C(96, -10, 12, "#2f2b26", 2) + P("M34 -42 L66 -42 L84 -30 L30 -30 Z", GLASS, 1.6)); }
+
+// 10 · «طب ليه بينوّر؟ لأنه معمول من مادة بتشرب النور…» — the handle by day soaks up light, at night gives it back
+shot(10, push(320, 420, 1.0, 1.05), function (u, d, t) {
+  var night = at(u, 2.2, 1), g = '<rect x="-600" y="-600" width="1840" height="2000" fill="' + PAPER + '"/>' + G("", '<rect x="-600" y="-600" width="1840" height="2000" fill="' + DARK + '"/>', night);
+  g += G("", sun(120, 150, 46, t) + arrows(4, 170, 170, 150, 120, t, ORANGE), 1 - night);
+  g += '<g transform="translate(320 220) scale(2.2)">' + handleT(0, 0, 1, night, 0, t) + '</g>';
+  var grains = ""; for (var i = 0; i < 14; i++) { var a = hash(i) * 6.28, rr = 24 + hash(i + 3) * 46, x = 470 + Math.cos(a) * rr * .9, y = 560 + Math.sin(a) * rr * .9, lit = night > 0 ? .4 + .6 * Math.abs(Math.sin(t * 2 + i)) : clamp(u * 1.4 - hash(i)); grains += '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="7" fill="' + (lit > .5 ? GLOW : "#cfc6aa") + '" stroke="' + INK + '" stroke-width="1.2"' + (night > 0 ? ' style="filter:drop-shadow(0 0 5px ' + GLOW + ')"' : '') + '/>'; }
+  g += inset(470, 560, 96, '<rect x="-200" y="-200" width="400" height="400" fill="' + (night > .5 ? "#3a3d33" : "#efe9cf") + '"/><g transform="translate(-470 -560)">' + grains + '</g>', at(u, .6, .4));
+  return g + label(410, 470, 200, 700, night > .5 ? "تطلعه بالراحة" : "بتشرب النور", night > .5 ? GLOW : BLUE, at(u, 1, .4), 30);
+});
+// 11 · «زي عقارب الساعة اللي بتنوّر بالليل.»
+shot(11, push(320, 400, 1.04, 1.1), function (u, d, t) {
+  var night = at(u, .6, .8);
+  return '<rect x="-600" y="-600" width="1840" height="2000" fill="' + PAPER + '"/>' + G("", '<rect x="-600" y="-600" width="1840" height="2000" fill="' + DARK + '"/>', night) + R(280, 180, 80, 120, "#4a4540", 2.6, 10) + R(280, 520, 80, 120, "#4a4540", 2.6, 10) + watch(320, 410, 140, night > .5, t) + iconBox(540, 110, 110, '<g transform="scale(.38) translate(0 -60)">' + handleT(0, 0, 1, 1, 0, t) + '</g>', at(u, .3, .4));
+});
+// 12 · «طب لو ملقتهوش؟ كلم النجدة على 122، وقولهم مكانك…»
+shot(12, push(330, 430, 1.0, 1.05), function (u, d, t) {
+  return paper() + road(0, Y) + car({ x: X, y: Y, sc: S, t: t, dark: .6, lidIn: handleSmall(0, 0, t), people: function (tt) { return onPhone(tt); } }) +
+    numBox("122", 170, 150, at(u, .3, .4), 56) + G("", '<path d="M470 110 q-26 0 -26 26 q0 20 26 46 q26 -26 26 -46 q0 -26 -26 -26 Z" fill="' + ORANGE + '" stroke="' + INK + '" stroke-width="2.4"/><circle cx="470" cy="136" r="9" fill="' + PAPER + '"/>' + T("مكانك", 470, 230, 30, INK, 800), at(u, 1.8, .4));
+});
+// 13 · «وخليك على الخط، متقفلش.» — the call keeps running: timer on the screen, his voice going out
+shot(13, push(320, 420, 1.06, 1.12), function (u, d, t) {
+  var sec = Math.floor(u + 34), sw = '<rect x="-600" y="-600" width="1840" height="2000" fill="' + PAPER + '"/>';
+  sw += R(200, 120, 240, 470, "#2b2c30", 4, 34) + R(216, 150, 208, 400, "#9fd0e6", 2, 18) + T("النجدة 122", 320, 230, 30, INK, 800) + N("00:" + (sec < 10 ? "0" : "") + sec, 320, 300, 44, INK) + C(320, 470, 34, "#d0503e", 2.4) + '<path d="M304 470 q16 -14 32 0" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/>';
+  for (var i = 0; i < 3; i++) { var p = (t * .9 + i / 3) % 1; sw += G("", '<path d="M' + f(460 + p * 60) + ' ' + f(300 - 50 - p * 30) + ' q' + f(20 + p * 20) + ' ' + f(50 + p * 30) + ' 0 ' + f(100 + p * 60) + '" stroke="' + BLUE + '" stroke-width="5" fill="none" stroke-linecap="round"/>', 1 - p); }
+  return sw + check(560, 620, 1.2, at(u, .6, .5), OLIVE);
+});
+// 14 · «بعدين دوّر على شريط أو ذراع بيفك ضهر الكنبة اللي ورا.» — the strap at the top of the seat back, on the trunk side
+shot(14, push(300, 400, 1.0, 1.08), function (u, d, t) {
+  var reach = at(u, .8, .9), st = Wp([432, -122]);
+  return paper() + road(0, Y) + car({ x: X, y: Y, sc: S, t: t, strap: .6 + .4 * Math.sin(t * 5), people: function (tt) {
+      return trapped({ hip: [500, -51], rot: -48, feet: FEET_IN, hands: [L2([480, FLOOR - 1], [433, -120], reach), [470, FLOOR - 1]], hk: [reach > .9 ? "fist" : "flat", "flat"], straight: [reach > .3, false], tilt: -4 - 10 * reach, t: tt, face: { eyes: 1.1, brows: "raised", mouth: "neutral" } });
+    } }) + label(st[0], st[1], 200, 130, "شريط فك الكنبة", ORANGE, at(u, .3, .5), 30);
+});
+// 15 · «لو فكّيته، زق الكنبة لقدام، وازحف لجوه العربية، لو ده آمن.»
+shot(15, function (u, d) { var k = ease(clamp((u - 1.2) / 2.6)); return [lerp(300, 120, k), 430, lerp(1, .82, k)]; }, function (u, d, t) {
+  var fold = at(u, .2, 1), cr = clamp((u - 1.1) / 3), hx = lerp(500, 372, cr), ph = t * 6;
+  return paper() + road(0, Y) + car({ x: X, y: Y, sc: S, t: t, fold: fold, people: function (tt) {
+      if (u < 1.1) return trapped({ hip: [500, -51], rot: -48, feet: FEET_IN, hands: [L2([433, -120], [420, -100], fold), [470, FLOOR - 1]], hk: ["flat", "flat"], straight: [true, false], t: tt, face: { eyes: 1.1, brows: "raised", mouth: "neutral" } });
+      var fy = hx < 420 ? -64 : FLOOR, k1 = Math.sin(ph), k2 = Math.sin(ph + Math.PI);
+      return trapped({ dir: -1, hip: [hx, fy - 30], rot: -88, feet: [[hx + 44 + 4 * k1, fy - 4], [hx + 40 + 4 * k2, fy - 4]], ankle: [70, 70], hands: [[hx - 52 + 4 * k2, fy - 1], [hx - 48 + 4 * k1, fy - 1]], hk: ["flat", "flat"], wrist: [60, 60], tilt: 30, t: tt, face: { eyes: 1, brows: "worried", mouth: "neutral" } });
+    } }) + G("", arrow(560, 200, 300, 200, OLIVE, 7, 1), at(u, 1.2, .4)) + tag("لو آمن", 150, 140, at(u, 3, .4), 30, ORANGE);
+});
+// 16 · «ومفيش؟ اخلع الفانوس اللي ورا من جوه، وطلّع إيدك من الفتحة وشاور للناس.»
+shot(16, push(380, 440, 1.0, 1.1), function (u, d, t) {
+  var out = at(u, .9, .6), wave = at(u, 1.8, .4), hole = Wp([571, -80]), x = 534;
+  return paper() + road(0, Y) + car({ x: X, y: Y, sc: S, t: t, tailOut: out, people: function (tt) { return trapped({ hip: [x, -51], rot: -26, feet: FEET_R.map(function (p) { return [p[0] - 6, p[1]]; }), hands: [[560, -78], [500, FLOOR - 1]], hk: ["flat", "flat"], straight: [true, false], tilt: -8, t: tt, face: { eyes: 1.1, brows: "angry", mouth: "neutral" } }); } }) +
+    G("", PERSON.hand([hole[0] + 4, hole[1] + 6], -1.2 + .35 * Math.sin(t * 9), "open", 1, 1.6, PERSON.colors, true), wave) + G("", T("شاور!", hole[0] - 40, hole[1] - 110, 34, ORANGE, 800), wave);
+});
+// 17 · «ولو العربية ماشية، أوعى تنط منها.»
+shot(17, push(330, 420, .9, .95), function (u, d, t) {
+  var x = 560, y = 560, sc = 1.6;
+  return paper() + road(t, y, 3) + car({ x: x, y: y, sc: sc, t: t, spin: 1, lid: .35, people: function (tt) { return trapped({ hip: [512, -51], rot: -20, feet: FEET_R, hands: [[548, -104], [496, FLOOR - 1]], hk: ["flat", "flat"], straight: [true, false], tilt: -6, t: tt, face: { eyes: 1.25, brows: "worried", mouth: "o" } }); } }) +
+    [0, 1, 2, 3].map(function (i) { var p = (t * 2 + i / 4) % 1; return '<path d="M' + f(620 - p * 200) + ' ' + (330 + i * 40) + ' h-60" stroke="' + INK + '" stroke-width="3" opacity="' + f(1 - p) + '" stroke-linecap="round"/>'; }).join("") + cross(470, 200, 1.6, at(u, .6, .5));
+});
+// 18 · «استنى لحد ما تقف خالص، وبص على العربيات قبل ما تنزل.» — stopped; out, looking back for traffic
+shot(18, push(330, 420, .9, .95), function (u, d, t) {
+  var x = 430, y = 560, sc = 1.6, step = at(u, 1, 1.2), look = at(u, 2.4, .5);
+  var boy = PERSON.side(Object.assign({ x: lerp(620, 660, step), s: PS * sc, dir: -1, outfit: { base: "casual", jeans: true, feet: "sneakers", colors: { shirt: "#c4d2de", shirtD: "#93a4b4", pants: "#4a5d78", pantsD: "#36465e", shoes: "#5d6470", shoesD: "#474c56" } }, head: { tilt: -4 }, face: { eyes: 1.1, brows: "raised", mouth: "neutral" } }, PERSON.walkPose(step * 6, step > 0 && step < 1 ? 1 : 0)));
+  boy.y = 0; var o2 = Object.assign({}, boy); 
+  var p = PERSON.side(Object.assign({}, { x: lerp(470, 540, step), y: PERSON.sideHipY({ s: PS * sc, dir: -1 }, y), s: PS * sc, dir: look > .5 ? -1 : 1, outfit: { base: "casual", jeans: true, feet: "sneakers", colors: { shirt: "#c4d2de", shirtD: "#93a4b4", pants: "#4a5d78", pantsD: "#36465e", shoes: "#5d6470", shoesD: "#474c56" } }, breath: (Math.sin(t * 2) + 1) / 2, face: { eyes: 1.1, brows: "raised", mouth: "neutral" } }, PERSON.walkPose(step * 6, step > 0 && step < 1 ? .8 : 0)));
+  return paper() + road(0, y) + car({ x: x, y: y, sc: sc, t: t, lid: 1 }) + G("", p.svg, step > 0 ? 1 : 0) + trafficCar(lerp(-300, -120, at(u, 1.6, 2)), y + 30, 1.4, t) + check(140, 130, 1.3, at(u, 2.8, .5), OLIVE) + G("", T("بص الأول", 140, 230, 34, INK, 800), at(u, 2.8, .4));
+});
+// 19 · «وناس كتير فاكرة إن الهوا هيخلص في دقايق. لأ.»
+shot(19, push(330, 430, 1.0, 1.05), function (u, d, t) {
+  return paper() + road(0, Y) + car({ x: X, y: Y, sc: S, t: t, dark: .6, people: function (tt) { return kickPose(0, tt, { eyes: 1.25, brows: "worried", mouth: "o" }); } }) +
+    G("", tag("الهوا هيخلص؟", 320, 140, 1, 34, INK), at(u, .2, .4)) + cross(320, 140, 1.5, at(u, 1.6, .5)) + G("", T("لأ", 520, 250, 80, ORANGE, 800), at(u, 1.8, .3));
+});
+// 20 · «الشنطة مش مقفولة على الآخر، والهوا بيدخل. الخطر الأكبر الحر والخضة، فاهدى…»
+shot(20, push(330, 430, 1.0, 1.04), function (u, d, t) {
+  var calm = at(u, d * .62, .8), sl = Wp([560, -97]), hg = Wp([440, -128]);
+  return paper() + road(0, Y) + car({ x: X, y: Y, sc: S, t: t, people: function (tt) { var br = calm > .5 ? (Math.sin(tt * 1.4) + 1) / 2 : (Math.sin(tt * 6) + 1) / 2; return kickPose(0, tt, calm > .5 ? { eyes: .05, brows: "neutral", mouth: "neutral" } : { eyes: 1.25, brows: "worried", mouth: "open" }); } }) +
+    G("", arrows(3, sl[0] + 60, sl[1] - 40, -60, 30, t, BLUE) + arrows(3, hg[0] - 20, hg[1] - 70, 30, 40, t, BLUE) + T("الهوا بيدخل", 330, 120, 32, BLUE, 800), at(u, .2, .4) * (1 - at(u, d * .35, .3))) +
+    G("", thermo(90, 330, 220, at(u, d * .35, 1.5)) + sun(560, 110, 40, t) + T("الحر", 90, 420, 30, ORANGE, 800), at(u, d * .35, .4)) + G("", tag("اهدى", 330, 150, 1, 36, BLUE), calm);
+});
+// 21 · recap: «يعني من الآخر…»
+shot(21, push(320, 400, 1.0, 1.03), function (u, d, t) {
+  var items = [["متفضلش ترفس", 0], ["المقبض المنوّر: اسحب وزق", 1], ["النجدة 122", 1], ["الكنبة اللي ورا", 1]], g = paper();
+  items.forEach(function (it, i) { var k = at(u, .3 + i * (d - .8) / 4, .4), y = 170 + i * 140; g += G("", R(70, y - 50, 500, 100, "#f4ecdb", 2.2, 8) + T(it[0], 350, y + 12, 32, INK, 800), k) + (it[1] ? check(130, y, 1, k, OLIVE) : cross(130, y, .8, k)); });
+  return g;
+});
+// 22–24 · Janet Fennell: 1995, locked in the trunk of their own car with her husband; the law of 2001
+shot(22, push(320, 420, 1.0, 1.05), function (u, d, t) {
+  return paper() + R(110, 150, 420, 470, "#f4ecdb", 2.6, 6) + '<path d="M140 200 H500 M140 214 H500" stroke="' + INK + '" stroke-width="2"/>' + T("سان فرانسيسكو", 320, 270, 40, INK, 800) + N("1995", 320, 380, 96, ORANGE) +
+    G("", '<g transform="translate(150 560) scale(.62) translate(0 0)">' + car({ x: 570, y: 0, sc: 1, t: t, dark: 1 }) + '</g>', at(u, .6, .5)) + G("", T("جانيت فينيل", 320, 690, 40, INK, 800), at(u, 1.2, .4));
+});
+shot(23, push(330, 430, 1.0, 1.06), function (u, d, t) {
+  var sil = function (tt) { return '<g style="filter:brightness(.25)">' + kickPose(0, tt, { eyes: 1.2, brows: "worried", mouth: "frown" }) + trapped({ hip: [532, -51], rot: -36, feet: FEET_R, hands: [[548, -110], [520, FLOOR - 1]], hk: ["flat", "flat"], straight: [true, false], t: tt + 1 }) + '</g>'; };
+  return paper() + '<rect x="-600" y="-600" width="1840" height="2000" fill="#2a2c33" opacity=".85"/>' + road(0, Y) + car({ x: X, y: Y, sc: S, t: t, dark: 1, people: sil }) + G("", N("1995", 160, 140, 70, ORANGE), at(u, .3, .4)) + G("", T("ونجيوا", 470, 140, 44, GLOW, 800), at(u, d * .7, .4));
+});
+shot(24, push(320, 420, 1.0, 1.05), function (u, d, t) {
+  return paper() + car({ x: 590, y: 520, sc: 1.05, t: t, lidIn: handleSmall(1, 0, t), people: function (tt) { return reachPose(null, tt, { hands: [null, null], face: { eyes: 1, brows: "raised", mouth: "smile" } }); } }) +
+    G("", N("2001", 320, 200, 110, ORANGE), at(u, .4, .4)) + G("", '<g transform="rotate(-8 320 680)">' + R(170, 630, 300, 90, "none", 5, 8).replace('stroke="' + INK + '"', 'stroke="' + ORANGE + '"') + T("إجباري", 320, 698, 54, ORANGE, 800) + '</g>', at(u, 1.4, .3));
+});
 
 // ── opening card, bumper and summary art ──
 window.SCENE = window.SCENE || {};
