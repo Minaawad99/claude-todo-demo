@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — tyre blowout (sketch style)</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* the reel cover for the «اسكتش» tyre-blowout video, full bleed 540×960 (1080×1920 at 2x): the tunnel-cover palette (near
+     black top and bottom, one warm glow behind the subject) with the diagram look (the episode's own drawings: the car from above on the highway, the front-left tyre burst and flapping, the brake pedal crossed out in a ringed inset).
+     Everything that matters stays inside y 120–840 and away from the right-hand buttons. */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #000; }
+  #art { position: absolute; inset: 0; width: 540px; height: 960px; }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 10px rgba(0,0,0,.6); }
+</style></head><body>
+<div class="cover">
+  <svg id="art" viewBox="0 0 540 960"></svg>
+  <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
+  <p class="t" style="top:154px;font:900 42px/1.2 'Noto Sans Arabic';color:#fff">اوعى تدوس فرامل!</p>
+  <p class="t" style="top:210px;font:800 24px/1.3 'Noto Sans Arabic';color:#f2c230">لو الكاوتش ضرب على الطريق السريع</p>
+  <p class="t" style="top:722px;font:800 30px/1.35 'Noto Sans Arabic';color:#fff">امسك جامد و<span style="color:#f2c230">شيل رجلك</span> بالراحة<br><span style="font-size:22px;color:#d9d4c8">والفرامل في الآخر خالص، تحت 50</span></p>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2b2b2b" stroke-width="1" opacity=".16"/></pattern>
+  <pattern id="hatchW" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#fff" stroke-width="1" opacity=".25"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#dccfb2" stroke-width="1.2" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="soft2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .06 0"/></filter>
+  <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e4e6e2"/><stop offset=".5" stop-color="#d3d6d1"/><stop offset="1" stop-color="#c7cbc5"/></linearGradient>
+  <radialGradient id="glowO" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ff8a3a" stop-opacity=".85"/><stop offset="1" stop-color="#ff8a3a" stop-opacity="0"/></radialGradient>
+  <radialGradient id="glowW" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff3c8" stop-opacity=".95"/><stop offset="1" stop-color="#fff3c8" stop-opacity="0"/></radialGradient>
+  <linearGradient id="cone" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff6d8" stop-opacity=".9"/><stop offset="1" stop-color="#fff6d8" stop-opacity="0"/></linearGradient>
+  <linearGradient id="rayCone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fb8cc" stop-opacity=".55"/><stop offset="1" stop-color="#9fb8cc" stop-opacity=".08"/></linearGradient>
+</defs></svg>
+<script src="../../videos/_templates/people/person.js"></script>
+<script src="../../videos/tyre-blowout/timing.js"></script>
+<script src="../../videos/tyre-blowout/sketch/scenes.js"></script>
+<script>
+  (function () {
+    var t = 2.1, s = "";
+    s += '<rect width="540" height="960" fill="#1b1d22"/><rect width="540" height="960" fill="url(#grid)" opacity=".18"/>';
+    s += '<circle cx="270" cy="470" r="240" fill="#ffd27a" opacity=".35" filter="url(#soft)"/><circle cx="270" cy="470" r="140" fill="#ffe08a" opacity=".3" filter="url(#soft)"/>';
+    // the highway from above; the car pulling left on its burst front-left tyre, the burst, the dotted track
+    window.__t = t;
+    s += '<g transform="translate(270 520) scale(1.15) translate(-300 -440)">' + road(t, 0) + track([[300, 760], [300, 640], [296, 560], [284, 500], [262, 470]], "#e8743c", 1) +
+         topCar(262, 430, -12, { blown: "FL", hl: ["FL"] }) + spark(196, 330, .45, 12, "#ff8a3a") + '</g>';
+    // inset: the brake pedal crossed out, ringed in orange
+    s += '<g transform="translate(410 430)"><circle r="86" fill="#eee5d0" stroke="#e8743c" stroke-width="7"/>' +
+         '<g transform="scale(1.6)">' + G("rotate(-18)", P("M14 -30 L-2 22", "none", 7) + R(-22, 14, 40, 30, ORANGE, 2.4, 6)) + '</g>' + cross(0, 0, 2.1, 1) + '</g>';
+    s += '<g transform="translate(118 610)"><rect x="-62" y="-22" width="124" height="38" rx="5" fill="#c4532c"/><text x="0" y="6" text-anchor="middle" style="font:800 20px Noto Sans Arabic;fill:#fff">120 كم/س</text></g>';
+    s += '<defs><linearGradient id="fadeT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".95"/><stop offset=".75" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>' +
+         '<linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset=".3" stop-color="#000" stop-opacity=".7"/><stop offset="1" stop-color="#000" stop-opacity=".95"/></linearGradient></defs>';
+    s += '<rect width="540" height="300" fill="url(#fadeT)"/><rect y="680" width="540" height="280" fill="url(#fadeB)"/>';
+    document.getElementById("art").innerHTML = s + '<rect width="540" height="960" filter="url(#paperN)"/>';
+  })();
+</script>
+</body></html>
