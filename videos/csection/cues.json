@@ -1,0 +1,172 @@
+{
+ "bed": false,
+ "cues": [
+  {
+   "t": 0.05,
+   "fx": "whoosh",
+   "gain": 0.7
+  },
+  {
+   "t": 12.27,
+   "fx": "whoosh",
+   "gain": 0.6
+  },
+  {
+   "t": 12.57,
+   "file": "sfx/monitor.wav",
+   "gain": 0.5
+  },
+  {
+   "t": 15.25,
+   "fx": "wipe",
+   "gain": 0.4
+  },
+  {
+   "t": 33.4,
+   "fx": "wipe",
+   "gain": 0.9
+  },
+  {
+   "t": 37.56,
+   "fx": "whoosh",
+   "gain": 0.5
+  },
+  {
+   "t": 40.59,
+   "fx": "clink",
+   "gain": 0.45
+  },
+  {
+   "t": 43.7,
+   "fx": "clink",
+   "gain": 0.35
+  },
+  {
+   "t": 50.65,
+   "fx": "whoosh",
+   "gain": 0.5
+  },
+  {
+   "t": 58.0,
+   "fx": "wipe",
+   "gain": 0.7
+  },
+  {
+   "t": 64.2,
+   "fx": "splash",
+   "gain": 0.6
+  },
+  {
+   "t": 65.0,
+   "fx": "drip",
+   "gain": 0.5
+  },
+  {
+   "t": 66.07,
+   "fx": "whoosh",
+   "gain": 0.5
+  },
+  {
+   "t": 78.58,
+   "fx": "chime",
+   "gain": 0.8
+  },
+  {
+   "t": 85.5,
+   "fx": "snip",
+   "gain": 0.9
+  },
+  {
+   "t": 89.07,
+   "fx": "whoosh",
+   "gain": 0.5
+  },
+  {
+   "t": 102.18,
+   "fx": "tick",
+   "gain": 0.5
+  },
+  {
+   "t": 102.63,
+   "fx": "tick",
+   "gain": 0.5
+  },
+  {
+   "t": 103.08,
+   "fx": "tick",
+   "gain": 0.5
+  },
+  {
+   "t": 103.53,
+   "fx": "tick",
+   "gain": 0.5
+  },
+  {
+   "t": 103.98,
+   "fx": "tick",
+   "gain": 0.5
+  },
+  {
+   "t": 105.47,
+   "fx": "tick",
+   "gain": 0.4
+  },
+  {
+   "t": 105.97,
+   "fx": "tick",
+   "gain": 0.4
+  },
+  {
+   "t": 106.47,
+   "fx": "tick",
+   "gain": 0.4
+  },
+  {
+   "t": 106.97,
+   "fx": "tick",
+   "gain": 0.4
+  },
+  {
+   "t": 113.83,
+   "file": "../_templates/sketch/sfx/px-ding.mp3",
+   "gain": 0.6
+  },
+  {
+   "t": 118.83,
+   "file": "../_templates/sketch/sfx/px-clock-ticking.mp3",
+   "gain": 0.5,
+   "from": 0.0,
+   "dur": 6.5
+  },
+  {
+   "t": 125.9,
+   "fx": "whoosh",
+   "gain": 0.5
+  },
+  {
+   "t": 138.99,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 139.27,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 140.05,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 141.28,
+   "fx": "pop",
+   "gain": 0.6
+  },
+  {
+   "t": 146.92,
+   "fx": "bell",
+   "gain": 0.4
+  }
+ ]
+}
