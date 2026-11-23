@@ -144,6 +144,41 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
 
   The old flat salmon `fig()` from `videos/choking/` is retired for new episodes. A body cut (throat, lungs) still uses
   the real anatomy from a reference picture (`throat()` in `videos/choking/sketch/shots.js`), placed in or beside this person.
+- **People from the side: the look the user approved after «لو اتحبست في شنطة عربية» (`videos/trunk-escape/`), locked for
+  every sketch episode.** `PERSON.side()` now draws it by itself; keep it, don't go back to stiff figures:
+  - **Neck and head:** the neck is one soft shape from the collar into the jaw, and the head turns on the top of the neck
+    (`head.tilt`), so a head thrown back or nodding never breaks off the neck.
+  - **Clothes that read:** the hem of a T-shirt or sweater sits at the belt line with the trousers' seat under it (a
+    tucked shirt shows a belt); a short sleeve is a closed shape with a round shoulder cap and a stitched hem; jeans
+    with `jeans: true` (the yellow seam, the hem); trainers with `feet: "sneakers"` (laces, white sole). The young man of
+    that episode: `outfit: { base: "casual", jeans: true, feet: "sneakers", colors: { shirt: "#c4d2de", shirtD: "#93a4b4",
+    pants: "#4a5d78", pantsD: "#36465e", shoes: "#5d6470", shoesD: "#474c56" } }`.
+  - **Hands:** a fist is a real closed hand in profile (curled fingers, the thumb across them, flowing out of the wrist);
+    flat hands land flat on the floor or on what they push; the far arm is a lighter mid tone, never a much darker skin.
+    A hand that holds something (a handle, a bar) gets the fingers drawn over the object (`gripFingers()`), and the wrist
+    target is set so the fist's middle is on the object (`wristFor()`).
+  - **Posing by where hands and feet land:** don't guess joint angles. Give the ankle and wrist targets and let the
+    two-bone IK on the kit's real segment lengths pose the limb (`legTo()`, `armTo()`, `trapped()` in
+    `videos/trunk-escape/sketch/shots.js`); it keeps knee and elbow flexion ≥ 0, so joints bend only the real way.
+  - **Face toward the action:** the body and face turn to what he is working on (the user's correction: in the trunk he
+    faces the lid, his back against the seat, not the other way round).
+  - **Check him big before showing anything:** `node videos/tools/lab.js <abs index.html> <out.png> "<viewBox>" "<js>"`
+    draws any helper call alone at any zoom; make a sheet of the key poses (each phase of the action) and look at
+    every hand, neck and joint before the full strip.
+- **Cars: the sedan cut-away the user approved (locked).** Start from `car()` in `videos/trunk-escape/sketch/shots.js`
+  (with `wheel()`, `lidInner()`): a compact sedan in profile to real size (1 m = 120 units), front to the left, drawn
+  in the v18 way with the inside showing through the side. Its details come from real photos (`refs/photos/`, BMW M3,
+  Ford Custom, Bentley Mulsanne) and stay in every car episode:
+  - **Outside:** body line and rocker line, mirror, door handles, ten-spoke alloy wheels with the tyre sidewall,
+    headlamp, the rear lamp wrapping the corner, the bumper.
+  - **The trunk in section:** the back of the rear seat (with the belt) and the parcel shelf; carpet lining with texture;
+    the far wheel housing as a carpeted hump; the floor board, and under it the spare wheel lying flat in its well;
+    the lid's inner frame with holes, on two curved gooseneck hinges; the latch box at the lid's rear edge, the striker
+    and the rubber seal on the sill; the back of the lamp housing in the corner.
+  - **The lid opens** round the gooseneck pivot (`lid` 0…1) and the trunk opens to the air; the shut lid jolts on a kick
+    (`shake`); `lidIn` hangs things under the lid (the glowing T handle), `over` draws what sits in front (fingers).
+  - Other cars (a hatchback, an SUV, the cabin cut) are drawn the same way: real photos first, real size, the same parts
+    in section, and shown to the user as a sheet with the photos above the drawing.
 - **Shots:** one `shot()` per idea, usually per line, sometimes per caption chunk (`[line, chunk]`).
   - Transitions: `tr: "fade"`, or `"in"` / `"out"` when the camera flies into a detail or pulls back. There are no hard cuts.
   - `hud(from, to, draw)` holds a dial, chip or checklist over several shots.

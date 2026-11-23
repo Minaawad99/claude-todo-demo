@@ -69,6 +69,16 @@ its own `person()`, so in `story-2d` always call `PERSON.front` / `PERSON.side`.
      the floor, and the arms swing against the legs.
 7. **Alive in every frame**: breathing (`breath`), a small head sway, blinks. He is never frozen through a line.
 
+## The side view the user approved (after «لو اتحبست في شنطة عربية», `videos/trunk-escape/`)
+
+- the neck is one soft shape from the collar into the jaw; the head turns on the top of the neck (`head.tilt`);
+- a sweater or T-shirt ends at the belt line with the trousers' seat under it; a tucked shirt shows a belt;
+- a short sleeve has a round shoulder cap and a stitched hem (`pSleeve`);
+- `hand: "fist"` in profile is a real closed hand (`pFistSide`); the far arm is a mid tone (`skinM`), not a dark skin;
+- outfit options `jeans: true` (seam and hem) and `feet: "sneakers"` (laces, white sole);
+- pose by where the hands and feet land with two-bone IK (`legTo` / `armTo` in `videos/trunk-escape/sketch/shots.js`),
+  and check the poses big with `videos/tools/lab.js` before the full frames.
+
 ## Clothes follow the topic (the user's rule)
 
 The body, face, hands and proportions never change; **the clothes change with every topic**. Before drawing, decide who
