@@ -391,9 +391,11 @@ SCENE.intro = function (svg, t, li) {
     var u = t - LN[0].start, bt = (LN[0].end - LN[0].start) * .45, k = clamp((u - bt) / 2.5);
     s += G("translate(-16 -40) scale(1)", road(t, 420 * (1 - .2 * k)) + track([[300, 760], [300, 600], [298, 540], [290, 500], [300 - 60 * k * k, 470]], ORANGE, k) + topCar(300 - 60 * k * k, 430, -12 * k, u > bt ? { blown: "FL" } : {}) + spark(252 - 60 * k * k, 346, (u - bt) / .5) );
     s += G("translate(500 90)", speedo(0, 0, 62, 120));
-    if (u > bt) s += G("", T("طاخ!", 120, 220, 54, ORANGE, 800), clamp((u - bt) / .25));
+    if (u > bt) s += G("", T("طاخ!", 480, 230, 54, ORANGE, 800), clamp((u - bt) / .25));
+    // «اوعى تدوس فرامل»: the brake pedal, crossed out, from the first word
+    s += iconBox(110, 100, 130, G("rotate(-18)", P("M14 -22 L-2 26", "none", 7) + R(-22, 18, 40, 30, ORANGE, 2.4, 6)) + T("فرامل", 0, -38, 20, INK, 800), clamp(u / .3)) + cross(110, 104, 1.1, clamp((u - .5) / .4));
   } else if (li === 1) {
-    var u1 = t - LN[1].start, p = clamp((u1 - .6) / .5);
+    var u1 = t - LN[1].start, p = clamp((u1 - (LN[1].end - LN[1].start) * .6) / .5);
     s += G("translate(-230 -150) scale(1.35)", cockpit({ x: 220, y: 420, s: 1, foot: "brake", press: p, hlPedal: "brake", face: { eyes: 1.25, brows: "raised", mouth: "o" } }).svg);
   } else {
     var u2 = t - LN[2].start, k2 = clamp(u2 / 2.4);
