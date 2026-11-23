@@ -43,7 +43,48 @@ a(L(SUMMARY) + 0.1, 'chime', 0.35); for (let k = 0; k < 5; k++) a(L(SUMMARY) + 0
 paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                                                       // ask box
 
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
-// e.g. lab(5, 0.4); ding(L(6) + 1.6); scribble(L(9) + 1.2); sea(L(0), L(PROMISE) - L(0) + 0.6, 0.45);
+// recordings sent by the channel for this episode (sfx/):
+//   px-highway  «Interior car on highway with high RPM engine and road noise» (jadeallencook, Pixabay 339224), steady from 0.2 s
+//   px-squeal   «Chrysler LHS tire squeal» (freesound_community, Pixabay 7154), loud squeal 4.3–7.0 s
+const CH = JSON.parse(fs.readFileSync(__dirname + '/sketch/scenes.js', 'utf8').match(/window\.CHUNKS = (.*);/)[1]);
+const LE = i => T[i].end, CT = (i, k) => T[i].start + (T[i].end - T[i].start) * (CH[i][k] || 0);
+const road = (t, dur, g, from) => rec(t, 'highway', g || 0.22, from || 0.3, dur, 1.0, 'wind', 0.12);
+const squeal = (t, dur, g, from) => rec(t, 'squeal', g || 0.35, from || 4.3, dur || 2.7, 1.0, 'whoosh', 0.2);
+const blowout = t => rec(t, 'blowout', 0.6, 0, 1.2, 1.0, 'boom', 0.55);
+const flap = (t, dur, g) => { for (let k = 0; k * 0.11 < dur; k++) a(t + k * 0.11, 'bump', (g || 0.1) * (1 - 0.5 * k * 0.11 / dur)); };
+const hiss = (t, dur, g) => rec(t, 'air-hiss', g || 0.3, 0, dur, 1.0, 'steam', g || 0.22);
+const hazard = (t, dur) => { for (let k = 0; k * 0.385 < dur; k++) rec(t + k * 0.385, 'hazard', 0.3, 0, 0.3, 1.0, 'tick', 0.22); };
+// 0–2 · hook: the highway, the blowout at 45 % of line 0, the flapping tyre; the foot goes for the brake; the car spins
+road(L(0), L(3) - L(0) + 0.3, 0.26);
+const BT = L(0) + (LE(0) - L(0)) * 0.45; blowout(BT); flap(BT + 0.25, L(2) - BT - 0.3, 0.1);
+a(L(1) + (LE(1) - L(1)) * 0.6 + 0.3, 'thud', 0.25, 0.3);
+squeal(L(2) + 0.1, D(2) + 0.2, 0.4); scribble(L(2) + 1.6);
+// 4–8 · the tyre: what's inside, the air rushing out, the squashed tyre, the pull, the trolley
+flap(L(4) + 0.1, D(4) - 0.3, 0.07); a(L(4) + 0.3, 'pop', 0.3);
+lab(5, 0.3); lab(5, 1.0); lab(5, CT(5, 1) - L(5)); a(CT(5, 2), 'intake', 0.22, 0.9);
+hiss(L(6) + 0.15, 1.6, 0.32); a(CT(6, 1) + 0.2, 'thud', 0.3, 0.4); flap(CT(6, 1) + 0.3, CT(6, 2) - CT(6, 1) - 0.4, 0.08);
+road(CT(6, 2), L(9) - CT(6, 2) - 0.2, 0.14); a(CT(6, 2) + 0.5, 'pop', 0.3);
+a(L(7) + 0.4, 'whoosh', 0.25, 0.6); squeal(L(7) + 0.3, 1.4, 0.18, 4.6);
+a(L(8) + 0.6, 'creak', 0.16, 1.2); lab(8, 0.4);
+// 9–12 · why braking is wrong: the pedal, the nose dives, the pull grows, the back goes light and spins
+a(L(9) + 0.3, 'pop', 0.3);
+squeal(L(10) + 0.6, 0.9, 0.22, 5.0); a(L(10) + 0.7, 'thud', 0.3, 0.4); lab(10, 1.0);
+road(L(11), D(11) + D(12) - 0.2, 0.14); a(L(11) + 0.6, 'whoosh', 0.25, 0.6); squeal(L(11) + 1.4, 1.6, 0.2, 4.4);
+lab(12, 0.3); squeal(L(12) + 1.1, Math.min(2.7, D(12) - 1.3), 0.4); scribble(L(12) + D(12) - 1.0);
+// 13–17 · the four steps
+for (let k = 0; k < 4; k++) a(CT(13, 1) + k * 0.35, 'pop', 0.32);
+a(L(14) + 0.3, 'thud', 0.25, 0.3); paper(L(14) + 0.6); paper(L(14) + 1.2);
+road(L(15), D(15), 0.14); scribble(L(15) + 0.9); scribble(L(15) + 1.8);
+rec(L(16), 'highway', 0.2, 20, D(16), 1.0, 'wind', 0.1); a(L(16) + 0.4, 'idle', 0.12, D(16) - 0.6);
+ding(CT(17, 0) + 0.8); a(CT(17, 1) + 0.3, 'thud', 0.22, 0.3); hazard(CT(17, 2) + 0.3, L(18) - CT(17, 2) - 0.5);
+// 18–20 · the myth, the hot tyre, check it cold
+hiss(L(18) + 0.4, D(18) - 1.4, 0.2); scribble(L(18) + D(18) - 1.0);
+scribble(L(19) + 0.3); a(L(19) + 1.6, 'sizzle', 0.18, 1.6); lab(19, 0.8);
+a(L(20) + 0.6, 'clink', 0.25, 0.6); paper(CT(20, 2) + 0.2);
+// 21–23 · recap, the date on the sidewall, six years
+for (let k = 0; k < 4; k++) a(CT(21, Math.min(k + 1, CH[21].length - 1)) - 0.05, 'pop', 0.3);
+a(CT(22, 1), 'pop', 0.3); ding(CT(22, 1) + 0.2); paper(CT(22, 2)); paper(CT(22, 3));
+a(L(23) + 0.8, 'creak', 0.15, 1.4); ding(L(23) + 0.4);
 
 // music plays only when sfx.py is run with --music, and that only when the user asked for music in this video
 const MUSIC = has('music-soft') ? 'music-soft' : null;
