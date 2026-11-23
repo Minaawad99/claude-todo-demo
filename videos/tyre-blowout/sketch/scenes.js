@@ -245,68 +245,110 @@ function wheelSide(cx, cy, r, o) {
 function ground(y, x0, x1) { return R(x0 == null ? -400 : x0, y, (x1 == null ? 1040 : x1) - (x0 == null ? -400 : x0), 500, ASPH, 0) + '<path d="M' + (x0 == null ? -400 : x0) + ' ' + y + ' H' + (x1 == null ? 1040 : x1) + '" stroke="' + INK + '" stroke-width="2.6"/>' + '<rect x="-400" y="' + (y + 1) + '" width="1440" height="500" fill="url(#hatch)" opacity=".3"/>'; }
 function heatLines(x, y, t, n, col) { var s = ""; for (var i = 0; i < (n || 3); i++) { var xx = x + (i - (n || 3) / 2) * 22, p = (t * .8 + i * .33) % 1; s += '<path d="M' + f(xx) + ' ' + f(y - p * 40) + ' q8 -10 0 -20 q-8 -10 0 -20" stroke="' + (col || HOT) + '" stroke-width="3" fill="none" stroke-linecap="round" opacity="' + f(1 - p) + '"/>'; } return s; }
 
-// ── the radial tyre cut across, sitting on the rim, tread on the road (205/55 R16; 1 mm = 1.45 units). air 0..1 inside.
-function tyreCut(cx, cy, o) {
-  o = o || {}; var s = "", air = o.air == null ? 1 : o.air, t = window.__t;
-  var Lh = function (sd) { return function (p) { return [cx + sd * p[0], cy + p[1]]; }; };
-  // outer and inner contour of one half (x ≥ 0): bead (top) → sidewall → shoulder → tread centre (bottom)
-  var out = [[112, -82], [138, -40], [150, 8], [146, 52], [132, 76], [0, 82]], inn = [[100, -78], [124, -40], [134, 6], [130, 44], [118, 58], [0, 62]];
-  function half(arr, sd) { return arr.map(Lh(sd)); }
-  var O = half(out, 1).concat(half(out, -1).reverse()), I = half(inn, 1).concat(half(inn, -1).reverse());
-  var rubber = pts2d(O) + " Z " + pts2d(I) + " Z";
-  // rim (the cut of the wheel): flanges hold the beads, the drop centre in the middle
-  s += P("M" + f(cx - 132) + " " + f(cy - 100) + " L" + f(cx - 124) + " " + f(cy - 76) + " L" + f(cx - 104) + " " + f(cy - 84) + " L" + f(cx - 96) + " " + f(cy - 110) + " L" + f(cx - 44) + " " + f(cy - 112) + " L" + f(cx - 34) + " " + f(cy - 140) + " L" + f(cx + 34) + " " + f(cy - 140) + " L" + f(cx + 44) + " " + f(cy - 112) + " L" + f(cx + 96) + " " + f(cy - 110) + " L" + f(cx + 104) + " " + f(cy - 84) + " L" + f(cx + 124) + " " + f(cy - 76) + " L" + f(cx + 132) + " " + f(cy - 100) + " L" + f(cx + 120) + " " + f(cy - 100) + " L" + f(cx + 108) + " " + f(cy - 98) + " L" + f(cx + 42) + " " + f(cy - 126) + " L" + f(cx - 42) + " " + f(cy - 126) + " L" + f(cx - 108) + " " + f(cy - 98) + " L" + f(cx - 120) + " " + f(cy - 100) + " Z", RIM, 2.2);
-  // the air
-  var id = "air" + (++CLIPN); s += '<clipPath id="' + id + '"><path d="' + pts2d(I) + ' Z M' + f(cx - 100) + ' ' + f(cy - 78) + '"/></clipPath>';
-  if (air > 0) { s += '<path d="' + pts2d(I) + ' Z" fill="' + AIR + '" opacity="' + f(.22 * air) + '"/>';
-    for (var i = 0; i < 30; i++) { if (hash(i + 2) > air) continue; var ax = cx + (hash(i) - .5) * 220, ay = cy - 50 + hash(i + 7) * 100 + 5 * Math.sin(t * 3 + i); s += '<circle cx="' + f(ax + 4 * Math.cos(t * 2.4 + i)) + '" cy="' + f(ay) + '" r="4" fill="' + AIR + '" clip-path="url(#' + id + ')"/>'; } }
-  s += '<path d="' + rubber + '" fill="' + TYRE2 + '" fill-rule="evenodd" stroke="' + INK + '" stroke-width="2.4" stroke-linejoin="round"/>';
-  // tread grooves (4 main channels)
-  [-84, -30, 30, 84].forEach(function (gx) { s += R(cx + gx - 6, cy + 70, 12, 13, PAPER, 1.6, 2); });
-  var hl = o.hl || "";
-  // inner liner along the inside
-  s += '<path d="' + pts2d(I) + ' Z" fill="none" stroke="' + LINER + '" stroke-width="4"/>';
-  // body ply: one cord line bead to bead, wrapped round the bead wires
-  var ply = [[-104, -70], [-128, -36], [-139, 6], [-136, 46], [-124, 66], [0, 70], [124, 66], [136, 46], [139, 6], [128, -36], [104, -70]].map(function (p) { return [cx + p[0], cy + p[1]]; });
-  s += '<path d="' + pts2d(ply) + '" fill="none" stroke="' + (hl === "ply" ? ORANGE : PLY) + '" stroke-width="' + (hl === "ply" ? 5 : 3.4) + '" stroke-dasharray="7 3"/>';
-  // two steel belts and the cap ply under the tread
-  s += '<path d="M' + f(cx - 118) + ' ' + f(cy + 64) + ' H' + f(cx + 118) + '" stroke="' + (hl === "steel" ? ORANGE : STEEL) + '" stroke-width="' + (hl === "steel" ? 5 : 4) + '"/>' +
-       '<path d="M' + f(cx - 108) + ' ' + f(cy + 58) + ' H' + f(cx + 108) + '" stroke="' + (hl === "steel" ? ORANGE : STEEL) + '" stroke-width="' + (hl === "steel" ? 5 : 4) + '"/>' +
-       '<path d="M' + f(cx - 120) + ' ' + f(cy + 69) + ' H' + f(cx + 120) + '" stroke="#e8e1cf" stroke-width="1.6" stroke-dasharray="3 3"/>';
-  // bead wires: bundles of steel wire in the tyre's foot
-  [-1, 1].forEach(function (sd) { for (var a = 0; a < 3; a++) for (var b = 0; b < 2; b++) s += C(cx + sd * (106 + a * 6), cy - 66 + b * 7, 3, STEEL, 1); });
+// ── the radial tyre cut across, the way tyre makers draw it (tread on top, the beads seated on the rim flanges below):
+//    tread with its grooves, nylon cap ply, two steel belts, the polyester body ply running bead to bead and wrapped
+//    round the bead wires, the rubber apex, the sidewall and the inner liner; the air fills the space down to the rim.
+//    205/55 R16: section 205 mm wide, 113 mm tall (1 mm ≈ 1.55 units). cx, cy = top of the tread. o: {air 0..1, squash 0..1, hl, sc}
+var TREAD = "#3a3530", SIDE = "#4a443d", APEX = "#b98552";
+function tyreSection(cx, cy, o) {
+  o = o || {}; var sc = o.sc || 1, k = clamp(o.squash || 0), air = o.air == null ? 1 : o.air, t = window.__t, hl = o.hl || "";
+  function Q(p, sd) { var y = 182 - (182 - p[1]) * (1 - .42 * k), bul = Math.sin(Math.PI * clamp(p[1] / 182)); return [cx + sd * p[0] * (1 + .16 * k * bul) * sc, cy + y * sc]; }
+  function both(arr) { return arr.map(function (p) { return Q(p, 1); }).concat(arr.slice().reverse().map(function (p) { return Q(p, -1); })); }
+  var OUT = [[0, 0], [100, 0], [128, 4], [146, 20], [154, 48], [158, 90], [154, 128], [144, 156], [134, 174], [128, 184]];
+  var INN = [[0, 38], [96, 38], [118, 44], [130, 62], [136, 96], [134, 128], [126, 150], [116, 166], [110, 184]];
+  var s = "";
+  // the rim: drop centre, bead seats and the J-shaped flanges that hold the beads (does not squash)
+  var RIMR = [[0, 238], [64, 238], [76, 214], [100, 200], [106, 188], [138, 188], [146, 176], [150, 162], [160, 156], [166, 162], [160, 172], [156, 194], [118, 202], [110, 214], [94, 252], [0, 252]];
+  var rimP = RIMR.map(function (p) { return [cx + p[0] * sc, cy + p[1] * sc]; }).concat(RIMR.slice().reverse().map(function (p) { return [cx - p[0] * sc, cy + p[1] * sc]; }));
+  // the air: from the inner liner down to the rim
+  var cav = INN.map(function (p) { return Q(p, 1); }).concat([[106, 188], [76, 214], [64, 238], [-64, 238], [-76, 214], [-106, 188]].map(function (p) { return [cx + p[0] * sc, cy + p[1] * sc]; })).concat(INN.slice().reverse().map(function (p) { return Q(p, -1); }));
+  if (air > 0) { var id = "cv" + (++CLIPN); s += '<clipPath id="' + id + '"><path d="' + pp(cav) + '"/></clipPath><path d="' + pp(cav) + '" fill="' + AIR + '" opacity="' + f(.35 * air + .05) + '"/>';
+    var gg = ""; for (var i = 0; i < 46; i++) { if (hash(i + 2) > air) continue; gg += '<circle cx="' + f(cx + (hash(i) - .5) * 260 * sc + 5 * Math.cos(t * 2.3 + i)) + '" cy="' + f(cy + (40 + hash(i + 7) * 190) * sc + 5 * Math.sin(t * 2.9 + i)) + '" r="' + f(3.2 * sc) + '" fill="#e9f1f4"/>'; }
+    s += '<g clip-path="url(#' + id + ')">' + gg + '</g>'; }
+  else s += '<path d="' + pp(cav) + '" fill="#e8e1cf"/>';
+  s += '<path d="' + pp(rimP) + '" fill="' + (hl === "rim" ? "#d8d2c4" : RIM) + '" stroke="' + INK + '" stroke-width="2.4" stroke-linejoin="round"/>' + '<path d="' + pp(rimP) + '" fill="url(#hatch)" opacity=".5"/>';
+  // the rubber: outer minus inner
+  var R1 = function (arr, sd) { return arr.map(function (p) { return Q(p, sd); }); };
+  var rub = R1(OUT, 1).concat(R1(INN.slice().reverse(), 1), R1(INN, -1), R1(OUT.slice().reverse(), -1));
+  s += '<path d="' + pp(rub) + '" fill="' + SIDE + '" stroke="' + INK + '" stroke-width="2.6" stroke-linejoin="round"/>';
+  // the tread band on top, darker, with four grooves
+  var TR = [[0, 0], [100, 0], [128, 4], [140, 14], [120, 30], [0, 30]];
+  s += '<path d="' + pp(both(TR)) + '" fill="' + TREAD + '"/>';
+  [-82, -30, 30, 82].forEach(function (gx) { var p0 = Q([Math.abs(gx) - 7, 0], gx < 0 ? -1 : 1), p1 = Q([Math.abs(gx) + 7, 15], gx < 0 ? -1 : 1);
+    s += '<rect x="' + f(Math.min(p0[0], p1[0])) + '" y="' + f(p0[1] - 1) + '" width="' + f(Math.abs(p1[0] - p0[0])) + '" height="' + f(p1[1] - p0[1] + 1) + '" fill="' + PAPER + '" stroke="' + INK + '" stroke-width="1.6"/>'; });
+  // cap ply and the two steel belts under the tread
+  var line = function (y, x0, col, w, dash) { var a = Q([x0, y], -1), b = Q([x0, y], 1); return '<path d="M' + f(a[0]) + ' ' + f(a[1]) + ' L' + f(b[0]) + ' ' + f(b[1]) + '" stroke="' + col + '" stroke-width="' + f(w * sc) + '"' + (dash ? ' stroke-dasharray="' + dash + '"' : "") + ' stroke-linecap="round"/>'; };
+  s += line(31, 122, "#d9d2c0", 1.6, "4 3") + line(26, 116, hl === "steel" ? ORANGE : STEEL, hl === "steel" ? 5 : 4) + line(33, 108, hl === "steel" ? ORANGE : STEEL, hl === "steel" ? 5 : 4);
+  // the body ply: inside the casing from bead to bead, turned up round each bead wire
+  var PLYP = INN.slice(0, 8).map(function (p, i) { var q = OUT[Math.min(i, OUT.length - 1)]; return [p[0] + (q[0] - p[0]) * .22, p[1] - (i ? 0 : 0) - 4]; });
+  var plyR = PLYP.concat([[118, 176], [126, 176], [132, 166], [138, 140]]);
+  var plyAll = plyR.slice().reverse().map(function (p) { return Q(p, -1); }).concat(plyR.map(function (p) { return Q(p, 1); }));
+  s += '<path d="M' + plyAll.map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + '" fill="none" stroke="' + (hl === "ply" ? ORANGE : PLY) + '" stroke-width="' + f((hl === "ply" ? 5 : 3.4) * sc) + '" stroke-linejoin="round"/>';
+  // the apex filler and the bead wire bundles
+  [-1, 1].forEach(function (sd) {
+    s += '<path d="' + pp([Q([120, 164], sd), Q([132, 120], sd), Q([132, 164], sd)]) + '" fill="' + APEX + '" stroke="' + INK + '" stroke-width="1.2"/>';
+    for (var a2 = 0; a2 < 3; a2++) for (var b2 = 0; b2 < 2; b2++) { var p = Q([118 + a2 * 6, 170 + b2 * 6], sd); s += C(p[0], p[1], 3 * sc, hl === "bead" ? ORANGE : STEEL, 1); }
+  });
+  // the inner liner
+  var lin = R1(INN.slice().reverse(), -1).concat(R1(INN, 1));
+  s += '<path d="' + pp(lin).replace(" Z", "") + '" fill="none" stroke="' + LINER + '" stroke-width="' + f(3 * sc) + '"/>';
   return s;
 }
-
-// ── the driver in profile in his seat, with pedals and the steering wheel (car interior cut, sheet v18).
-//    o: {x, y (seat point), s, foot: "gas"|"brake"|"up", press 0..1, face, grip}. Faces right (the car's front).
+// ── the driver in profile inside the car (sheet v18: the car cut open from the side, seats and people showing).
+//    Local units around the seat point (X, Y), car facing right: roof -285, floor +128, sill +150, front wheel at +430,
+//    a compact sedan to the same scale as the person (H 1.75 m = 400 units → 1 m ≈ 229 units, so the 63 cm wheel r ≈ 72).
+//    o: {x, y, s, foot: "gas"|"brake"|"up", press 0..1, face, hlPedal}
+var CAB = "#efe6d2", SEATC = "#5d5750", SEATD = "#4a453f", DASHC = "#5f5a53", CARPET = "#7a7268";
+function pp(pts) { return "M" + pts.map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + " Z"; }
 function cockpit(o) {
-  var s = "", t = window.__t, sc = o.s || 1, X = o.x, Y = o.y;
-  var floorY = Y + 150 * sc;
-  // floor and firewall
-  s += P("M" + f(X - 160 * sc) + " " + f(floorY) + " L" + f(X + 230 * sc) + " " + f(floorY) + " L" + f(X + 290 * sc) + " " + f(floorY - 70 * sc) + " L" + f(X + 300 * sc) + " " + f(floorY - 200 * sc) + " L" + f(X + 400 * sc) + " " + f(floorY - 200 * sc) + " L" + f(X + 400 * sc) + " " + f(floorY + 60 * sc) + " L" + f(X - 160 * sc) + " " + f(floorY + 60 * sc) + " Z", "#8a8174", 2.2);
-  // seat: cushion and back
-  s += P("M" + f(X - 60 * sc) + " " + f(Y + 8 * sc) + " L" + f(X + 60 * sc) + " " + f(Y - 2 * sc) + " L" + f(X + 64 * sc) + " " + f(Y + 26 * sc) + " L" + f(X - 50 * sc) + " " + f(Y + 40 * sc) + " Z", "#6e675c", 2) +
-       P("M" + f(X - 62 * sc) + " " + f(Y + 14 * sc) + " L" + f(X - 96 * sc) + " " + f(Y - 190 * sc) + " Q" + f(X - 84 * sc) + " " + f(Y - 204 * sc) + " " + f(X - 70 * sc) + " " + f(Y - 192 * sc) + " L" + f(X - 36 * sc) + " " + f(Y + 4 * sc) + " Z", "#6e675c", 2) +
-       R(X - 104 * sc, Y - 250 * sc, 34 * sc, 52 * sc, "#6e675c", 2, 8) + P("M" + f(X - 50 * sc) + " " + f(Y + 40 * sc) + " L" + f(X - 40 * sc) + " " + f(floorY) + " M" + f(X + 40 * sc) + " " + f(Y + 30 * sc) + " L" + f(X + 46 * sc) + " " + f(floorY), "none", 4);
-  // the person: seated, leaning back a little, both hands forward on the wheel, the right foot on the chosen pedal
-  var press = clamp(o.press || 0);
+  var t = window.__t, g = "", press = clamp(o.press || 0);
+  // ── the car body around the cabin: one side outline, the door taken away so the cabin shows ──
+  var body = "M-345 150 L-352 30 Q-352 -80 -330 -118 L-262 -150 L-205 -246 Q-180 -270 -120 -278 L110 -284 Q150 -284 175 -266 L330 -140 L500 -116 Q560 -108 568 -60 L574 40 Q574 120 540 150 L505 150 A78 78 0 0 0 355 150 L-165 150 A78 78 0 0 0 -315 150 Z";
+  g += '<path d="' + body + '" fill="' + INK + '" opacity=".12" transform="translate(8 10)"/>' + P(body, BODYC, 2.8) + '<path d="' + body + '" fill="url(#hatch)" opacity=".3"/>';
+  var cab = "M-262 128 L-268 -110 L-196 -232 Q-176 -254 -120 -260 L110 -266 Q140 -266 160 -254 L300 -140 L318 128 Z";
+  g += P(cab, CAB, 2.2);
+  // roof lining and the floor carpet, firewall and footwell
+  g += P("M-196 -232 Q-176 -254 -120 -260 L110 -266 Q140 -266 160 -254 L150 -244 L-120 -246 Q-170 -242 -188 -222 Z", "#d9cfbb", 1.4);
+  g += P("M118 -92 L306 -124 L318 128 L150 128 Q170 20 118 -92 Z", "#d6cab2", 0) + '<path d="M118 -92 L306 -124 L318 128 L150 128 Q170 20 118 -92 Z" fill="url(#hatch)" opacity=".6"/>';
+  g += P("M-268 112 L180 112 Q230 112 262 80 L300 20 L318 128 L-262 128 Z", CARPET, 2);
+  g = R(-900, 222, 2200, 400, ASPH, 0) + '<path d="M-900 222 H1300" stroke="' + INK + '" stroke-width="2.6"/>' + g;
+  // the rear seat, faint behind
+  g += G("", P("M-250 40 L-150 30 L-146 60 L-250 70 Z M-252 40 L-262 -150 Q-252 -164 -238 -152 L-222 36 Z", "#8c857a", 1.6), .6);
+  // windscreen (glass edge-on) and the A-pillar, the window line of the cut door
+  g += P("M160 -258 L318 -132 L306 -124 L150 -246 Z", GLASS, 1.8) + '<path d="M182 -232 L270 -160" stroke="#f4f8f8" stroke-width="3" stroke-linecap="round"/>';
+  g += '<path d="M-262 -108 L300 -128" stroke="' + INK + '" stroke-width="1.4" stroke-dasharray="7 5" opacity=".5"/>';
+  // the front seat: rails, cushion, reclined backrest with its side bolster, headrest on two posts
+  g += P("M-70 120 L70 120 L66 112 L-66 112 Z", "#3e3a34", 1.6) + P("M-40 44 L-34 112 M40 34 L44 112", "none", 6);
+  g += P("M-96 40 Q-98 10 -70 6 L52 -6 Q78 -8 80 12 L78 26 Q74 40 48 42 L-60 52 Q-92 54 -96 40 Z", SEATC, 2.2) + '<path d="M-60 6 L40 -4" stroke="' + SEATD + '" stroke-width="2"/>';
+  g += P("M-96 40 L-60 10 L-82 -190 Q-90 -206 -110 -204 Q-132 -200 -128 -176 L-112 30 Z", SEATC, 2.2) + '<path d="M-74 0 L-96 -180" stroke="' + SEATD + '" stroke-width="2.2"/>';
+  g += P("M-108 -206 L-104 -224 M-94 -206 L-90 -226", "none", 4) + '<rect x="-132" y="-276" width="56" height="54" rx="16" transform="rotate(-10 -104 -249)" fill="' + SEATC + '" stroke="' + INK + '" stroke-width="2.2"/>';
+  // the person: seated, leaning back with the seat, both hands forward on the wheel, the right foot on the chosen pedal
   var leg0 = o.foot === "brake" ? { hip: 74, knee: 48 - 6 * press, ankle: -4 + 8 * press } : o.foot === "up" ? { hip: 72, knee: 40, ankle: -14 } : { hip: 76, knee: 44 - 6 * press, ankle: -6 + 14 * press };
-  var P1 = PERSON.side({ x: X, y: Y - 16 * sc, s: sc, dir: 1, lean: -12, outfit: "casual", breath: (Math.sin(t * 1.8) + 1) / 2,
+  var P1 = PERSON.side({ x: -6, y: -14, s: 1, dir: 1, lean: -12, outfit: "casual", breath: (Math.sin(t * 1.8) + 1) / 2,
     legs: [leg0, { hip: 80, knee: 56, ankle: 4 }], arms: [{ sh: 72, el: 24, wrist: -10 }, { sh: 68, el: 26, wrist: -10 }],
     face: o.face || { eyes: 1, brows: "neutral", mouth: "neutral" }, head: { tilt: 0 } });
   var J1 = P1.joints, ball = [lerp(J1.heel[0], J1.toe[0], .72), lerp(J1.heel[1], J1.toe[1], .72)];
-  // pedals: the pressed one sits under the ball of the foot; brake = a hanging pad, gas = a floor-hinged pad
-  var bAt = o.foot === "gas" ? [ball[0] - 18 * sc, ball[1] - 40 * sc] : ball, gAt = o.foot === "gas" ? ball : [ball[0] + 22 * sc, ball[1] + 34 * sc];
-  var pedal = function (at, kind) { var hl = o.hlPedal === kind, col = hl ? (kind === "brake" ? ORANGE : OLIVE) : "#4c463e";
-    return kind === "brake" ? P("M" + f(at[0] + 46 * sc) + " " + f(at[1] - 96 * sc) + " L" + f(at[0] + 8 * sc) + " " + f(at[1]), "none", 5 * sc) + G("rotate(-28 " + f(at[0]) + " " + f(at[1]) + ")", R(at[0] - 6 * sc, at[1] - 16 * sc, 12 * sc, 32 * sc, col, 2, 3))
-      : P("M" + f(at[0] + 18 * sc) + " " + f(floorY) + " L" + f(at[0] + 4 * sc) + " " + f(at[1] - 30 * sc) + " L" + f(at[0] - 8 * sc) + " " + f(at[1] - 26 * sc) + " L" + f(at[0] + 8 * sc) + " " + f(floorY) + " Z", col, 2); };
-  s += pedal(bAt, "brake") + pedal(gAt, "gas") + P1.svg;
-  // the steering wheel (edge-on: a tilted ellipse) where the hands are, its column to the dashboard
-  var wc = [J1.wrist[0] + 14 * sc, J1.wrist[1] - 6 * sc];
-  s += P("M" + f(wc[0]) + " " + f(wc[1]) + " L" + f(X + 300 * sc) + " " + f(Y - 40 * sc), "none", 9 * sc) + '<ellipse cx="' + f(wc[0]) + '" cy="' + f(wc[1]) + '" rx="' + f(10 * sc) + '" ry="' + f(54 * sc) + '" transform="rotate(-22 ' + f(wc[0]) + ' ' + f(wc[1]) + ')" fill="none" stroke="' + INK + '" stroke-width="' + f(9 * sc) + '"/>';
-  s += P("M" + f(X + 290 * sc) + " " + f(Y - 30 * sc) + " L" + f(X + 300 * sc) + " " + f(Y - 110 * sc) + " L" + f(X + 420 * sc) + " " + f(Y - 130 * sc) + " L" + f(X + 420 * sc) + " " + f(Y - 20 * sc) + " Z", "#7c7468", 2);   // dashboard
-  return { svg: s, joints: P1.joints, floorY: floorY };
+  // pedals hang from the pedal box under the dash; the pressed one sits under the ball of the foot
+  var bAt = o.foot === "gas" ? [ball[0] - 16, ball[1] - 36] : ball, gAt = o.foot === "gas" ? ball : [ball[0] + 22, ball[1] + 30];
+  var pedal = function (at, kind) { var hl = o.hlPedal === kind, col = hl ? (kind === "brake" ? ORANGE : OLIVE) : "#3e3a34";
+    return kind === "brake" ? P("M" + f(at[0] + 34) + " " + f(at[1] - 62) + " Q" + f(at[0] + 14) + " " + f(at[1] - 36) + " " + f(at[0] + 8) + " " + f(at[1] - 4), "none", 6) + R(at[0] + 24, at[1] - 74, 30, 16, "#3e3a34", 1.6, 3) + G("rotate(-26 " + f(at[0]) + " " + f(at[1]) + ")", R(at[0] - 7, at[1] - 17, 14, 34, col, 2, 4))
+      : P("M" + f(at[0] + 30) + " " + f(at[1] - 66) + " L" + f(at[0] + 10) + " " + f(at[1] - 30), "none", 4) + G("rotate(-34 " + f(at[0]) + " " + f(at[1]) + ")", R(at[0] - 6, at[1] - 30, 12, 50, col, 2, 4)); };
+  g += pedal(bAt, "brake") + pedal(gAt, "gas");
+  g += P1.svg;
+  // seat belt: from the pillar above the shoulder, across the chest to the buckle at the hip
+  var hd = J1.head; g += '<path d="M-150 -214 L' + f(hd[0] - 4) + ' ' + f(hd[1] + 60) + ' L' + f(hd[0] + 22) + ' ' + f(hd[1] + 120) + ' L28 -4" stroke="#3a352e" stroke-width="7" fill="none" stroke-linejoin="round"/>' + R(22, -10, 16, 12, "#9aa2ac", 1.4, 2);
+  // the dashboard: a moulded top from the windscreen back over the driver's knees, the instrument hood, the column and the wheel
+  var wc = [J1.wrist[0] + 12, J1.wrist[1] - 8];
+  g += P("M306 -124 L148 -112 Q120 -110 118 -92 L124 -70 Q150 -62 182 -58 L240 -30 Q290 -10 306 20 L318 20 Z", DASHC, 2.2);
+  g += P("M150 -112 Q160 -142 200 -140 L214 -116 Z", "#4a453f", 1.8) + '<circle cx="186" cy="-100" r="9" fill="#e9e1cf" stroke="' + INK + '" stroke-width="1.4"/>';
+  g += P("M" + f(wc[0]) + " " + f(wc[1]) + " L214 -74", "none", 12) + '<path d="M' + f(wc[0]) + ' ' + f(wc[1]) + ' L214 -74" stroke="#4a453f" stroke-width="7"/>';
+  g += '<ellipse cx="' + f(wc[0]) + '" cy="' + f(wc[1]) + '" rx="13" ry="58" transform="rotate(-20 ' + f(wc[0]) + ' ' + f(wc[1]) + ')" fill="none" stroke="' + INK + '" stroke-width="13"/>' +
+       '<ellipse cx="' + f(wc[0]) + '" cy="' + f(wc[1]) + '" rx="13" ry="58" transform="rotate(-20 ' + f(wc[0]) + ' ' + f(wc[1]) + ')" fill="none" stroke="#3e3a34" stroke-width="8"/>' +
+       '<ellipse cx="' + f(wc[0] + 6) + '" cy="' + f(wc[1]) + '" rx="10" ry="22" transform="rotate(-20 ' + f(wc[0]) + ' ' + f(wc[1]) + ')" fill="#3e3a34" stroke="' + INK + '" stroke-width="2"/>';
+  // the hands again over the rim, so they hold it
+  // front wheel in its arch, rear wheel
+  g += wheelSide(430, 150, 72, { spin: (o.spin || 0) }) + wheelSide(-240, 150, 72, { spin: (o.spin || 0) });
+  return { svg: G("translate(" + f(o.x) + " " + f(o.y) + ") scale(" + (o.s || 1) + ")", g), floorY: o.y + 128 * (o.s || 1) };
 }
 
 // ── the driver from the front, both hands on the wheel (person kit, front view), seat and the wheel rim before him
@@ -371,24 +413,68 @@ function sidewall(cx, cy, r, k, t) {
 }
 
 // ── shots (line numbers from script.txt). World 640 × 786.
-// 4 · «طب إيه اللي حصل للكاوتش؟»: the blown wheel close up, a question mark
-shot(4, push(300, 420, 1.0, 1.12), function (u, d, t) {
-  return paper() + ground(600) + wheelSide(300, 420, 180, { flat: .9, shred: t, spin: 0 }) + G("", T("؟", 520, 260, 140, ORANGE, 800), at(u, .3, .3));
-});
-// 5 · inside: cords of steel and fabric holding compressed air; the air carries the car
-shot(5, push(320, 420, 1.35, 1.42), function (u, d, t) {
-  var c = window.CHUNKS[5], D = LN[5].end - LN[5].start, hl = u < D * (c[1] || .4) ? (u < D * (c[1] || .4) * .5 ? "steel" : "ply") : "";
-  var s = paper() + ground(504, 100, 540) + tyreCut(320, 420, { hl: hl });
-  s += label(300, 484, 250, 600, "سلك صلب", OLIVE, at(u, .3, .5), 22) + label(458, 440, 462, 560, "قماش", OLIVE, at(u, 1.0, .5), 22);
-  s += label(260, 400, 230, 240, "هوا مضغوط", BLUE, at(u, D * (c[1] || .4), .5), 22) + label(360, 290, 400, 220, "الجنط", INK, at(u, D * (c[1] || .4) + .6, .5), 22);
-  if (u > D * (c[2] || .7)) for (var i = 0; i < 4; i++) s += arrow(220 + i * 60, 470, 220 + i * 60, 400 - 8 * Math.sin(t * 4 + i), BLUE, 5, at(u, D * (c[2] || .7), .4));
+// ── the side-view road: asphalt, a dashed lane line and roadside posts running past at speed v (px/s)
+function roadSide(y, t, v) {
+  var s = R(-2000, y, 5000, 600, ASPH, 0) + '<path d="M-2000 ' + y + ' H3000" stroke="' + INK + '" stroke-width="2.6"/>', off = (t * v) % 160;
+  for (var x = -2000 - off; x < 3000; x += 160) s += R(x, y + 40, 80, 8, "#f4efe3", 0);
+  var off2 = (t * v * .5) % 300; for (var x2 = -2000 - off2; x2 < 3000; x2 += 300) s += R(x2, y - 90, 8, 90, "#d9d2c0", 1.6) + R(x2 - 2, y - 96, 12, 14, ORANGE, 1.2);
   return s;
-}, { tr: "in" });
-// 6a · the air rushes out: the cut tyre empties and squashes onto the road
-shot(6, push(320, 440, 1.5, 1.6), function (u, d, t) {
-  var k = at(u, .2, 1.4), s = paper() + ground(504 - 20 * k, 100, 540) + tyreCut(320, 420 + 30 * k, { air: 1 - k });
-  for (var i = 0; i < 6; i++) { var p = ((t * 1.6 + i / 6) % 1); s += G("", '<path d="M' + f(180 - p * 160) + ' ' + f(380 + i * 10) + ' q-14 -8 -28 0" stroke="' + AIR + '" stroke-width="4" fill="none" stroke-linecap="round"/>', (1 - p) * (1 - k * .6)); }
-  return s + G("", T("الهوا بيطلع", 320, 230, 28, BLUE, 800), at(u, .3, .3));
+}
+// ── one wheel from the side with a window cut into the sidewall, the way a cut-away tyre is shown at a tyre shop:
+//    looking into the tyre from the side you meet, from the outside in, the tread with its grooves, the nylon cap ply,
+//    two steel belts, the body ply (fabric cords), the inner liner, then the air down to the rim. o: {open 0..1, air 0..1,
+//    flat 0..1, spin, hl: "steel"|"ply"|"air"|"rim"}
+function wheelCut(cx, cy, r, o) {
+  o = o || {}; var s = wheelSide(cx, cy, r, { flat: o.flat || 0, spin: o.spin || 0 }), op = clamp(o.open || 0), air = o.air == null ? 1 : o.air, t = window.__t, hl = o.hl || "";
+  if (op <= 0) return s;
+  var a0 = -150 * Math.PI / 180, a1 = a0 + op * 150 * Math.PI / 180, id = "wc" + (++CLIPN);
+  function pt(a, rr) { return [cx + Math.cos(a) * rr, cy + Math.sin(a) * rr]; }
+  var wedge = "M" + f(pt(a0, r * .6)[0]) + " " + f(pt(a0, r * .6)[1]) + " L" + f(pt(a0, r * 1.02)[0]) + " " + f(pt(a0, r * 1.02)[1]) + " A" + f(r * 1.02) + " " + f(r * 1.02) + " 0 0 1 " + f(pt(a1, r * 1.02)[0]) + " " + f(pt(a1, r * 1.02)[1]) + " L" + f(pt(a1, r * .6)[0]) + " " + f(pt(a1, r * .6)[1]) + " A" + f(r * .6) + " " + f(r * .6) + " 0 0 0 " + f(pt(a0, r * .6)[0]) + " " + f(pt(a0, r * .6)[1]) + " Z";
+  var g = "";
+  // the air space, from the liner down to the rim
+  g += C(cx, cy, r * .79, air > 0 ? "#cfdfe6" : "#e8e1cf", 0);
+  if (air > 0) for (var i = 0; i < 60; i++) { if (hash(i + 3) > air) continue; var aa = a0 + hash(i) * 2.2 + .05 * Math.sin(t * 2 + i), rr = r * (.66 + hash(i + 9) * .12); var p = pt(aa, rr + 3 * Math.sin(t * 3 + i)); g += '<circle cx="' + f(p[0]) + '" cy="' + f(p[1]) + '" r="' + f(r * .016) + '" fill="' + AIR + '"/>'; }
+  if (hl === "air") g += C(cx, cy, r * .79, "none", 0) + '<circle cx="' + f(cx) + '" cy="' + f(cy) + '" r="' + f(r * .72) + '" fill="none" stroke="' + BLUE + '" stroke-width="' + f(r * .12) + '" opacity=".35"/>';
+  // the casing rings, outside in
+  g += '<circle cx="' + f(cx) + '" cy="' + f(cy) + '" r="' + f(r * .9) + '" fill="none" stroke="' + TREAD + '" stroke-width="' + f(r * .2) + '"/>';   // tread rubber
+  for (var j = 0; j < 40; j++) { var b = j / 40 * Math.PI * 2 + (o.spin || 0) * Math.PI / 180, p1 = pt(b, r), p2 = pt(b, r * .93); g += '<path d="M' + f(p1[0]) + ' ' + f(p1[1]) + ' L' + f(p2[0]) + ' ' + f(p2[1]) + '" stroke="' + PAPER + '" stroke-width="' + f(r * .03) + '"/>'; }   // grooves
+  g += '<circle cx="' + f(cx) + '" cy="' + f(cy) + '" r="' + f(r * .9) + '" fill="none" stroke="#d9d2c0" stroke-width="' + f(r * .008) + '" stroke-dasharray="4 3"/>';   // cap ply
+  [.878, .852].forEach(function (k) { g += '<circle cx="' + f(cx) + '" cy="' + f(cy) + '" r="' + f(r * k) + '" fill="none" stroke="' + (hl === "steel" ? ORANGE : STEEL) + '" stroke-width="' + f(r * (hl === "steel" ? .024 : .02)) + '"/>'; });   // steel belts
+  g += '<circle cx="' + f(cx) + '" cy="' + f(cy) + '" r="' + f(r * .825) + '" fill="none" stroke="' + (hl === "ply" ? ORANGE : PLY) + '" stroke-width="' + f(r * (hl === "ply" ? .026 : .02)) + '" stroke-dasharray="' + f(r * .03) + ' ' + f(r * .01) + '"/>';   // body ply
+  g += '<circle cx="' + f(cx) + '" cy="' + f(cy) + '" r="' + f(r * .8) + '" fill="none" stroke="' + LINER + '" stroke-width="' + f(r * .012) + '"/>';   // inner liner
+  // the rim through the window
+  g += C(cx, cy, r * .64, hl === "rim" ? "#d8d2c4" : RIM, 2.4);
+  s += '<clipPath id="' + id + '"><path d="' + wedge + '"/></clipPath><g clip-path="url(#' + id + ')">' + g + '</g>';
+  // the cut faces: ink edges with hatching, like a section drawing
+  s += '<path d="' + wedge + '" fill="none" stroke="' + INK + '" stroke-width="3"/>';
+  [a0, a1].forEach(function (a) { var p1 = pt(a, r * .8), p2 = pt(a, r * 1.01); s += '<path d="M' + f(p1[0]) + ' ' + f(p1[1]) + ' L' + f(p2[0]) + ' ' + f(p2[1]) + '" stroke="' + ORANGE + '" stroke-width="' + f(r * .025) + '"/>'; });
+  return s;
+}
+// 4 · «طب إيه اللي حصل للكاوتش؟»: the car from the side, driving; the camera closes in on the front wheel
+var FW = [420, 482];   // the front wheel of sideCar(250, 520)
+shot(4, function (u, d) { var k = ease(clamp((u - .3) / (d - .3))); return [lerp(300, FW[0], k), lerp(440, FW[1], k), lerp(1.0, 5.2, k * k)]; }, function (u, d, t) {
+  var sp = 1 - .6 * clamp(u / d);
+  return paper() + roadSide(520, t, 520 * sp) + sideCar(250, 520, { spin: t * 900 * sp, flatF: .35 + .05 * Math.sin(t * 20) }) + G("", T("؟", FW[0] + 30, FW[1] - 60, 34, ORANGE, 800), at(u, d - .8, .3));
+});
+// 5 · close on the wheel, a window opens in the sidewall: steel and fabric cords holding compressed air; the air carries the car
+shot(5, push(320, 390, 1.2, 1.28), function (u, d, t) {
+  var c = window.CHUNKS[5], D = LN[5].end - LN[5].start, c1 = D * (c[1] || .4), c2 = D * (c[2] || .7);
+  var hl = u < c1 ? (u < c1 * .5 ? "steel" : "ply") : u < c2 ? "air" : "";
+  var s = paper() + roadSide(630, t, 40) + P("M60 260 Q320 150 580 260 L640 250 L640 120 L0 120 L0 250 Z", BODYC, 2.6) + '<path d="M60 260 Q320 150 580 260" fill="none" stroke="' + INK + '" stroke-width="3"/>';   // the wheel arch of the car
+  s += wheelCut(320, 430, 200, { open: at(u, .1, .9), hl: hl, spin: t * 8 });
+  var W = function (deg, k) { var a = deg * Math.PI / 180; return [320 + Math.cos(a) * 200 * k, 430 + Math.sin(a) * 200 * k]; }, p1 = W(-115, .865), p2 = W(-150, .825), p3 = W(-60, .72), p4 = W(25, .45);
+  s += label(p1[0], p1[1], 200, 190, "سلك صلب", OLIVE, at(u, .6, .5), 24) + label(p2[0], p2[1], 160, 300, "قماش", OLIVE, at(u, c1 * .5, .5), 24);
+  s += label(p3[0], p3[1], 420, 190, "هوا مضغوط", BLUE, at(u, c1, .5), 24) + label(p4[0], p4[1], 480, 590, "الجنط", INK, at(u, c1 + .6, .5), 24);
+  if (u > c2) { s += arrow(320, 60, 320, 200, ORANGE, 9, at(u, c2, .4)) + tag("وزن العربية", 320, 160, at(u, c2, .3), 22, ORANGE);
+    for (var i = 0; i < 3; i++) { var a = (-140 + i * 30) * Math.PI / 180; s += arrow(320 + Math.cos(a) * 120, 430 + Math.sin(a) * 120, 320 + Math.cos(a) * (165 + 4 * Math.sin(t * 5 + i)), 430 + Math.sin(a) * (165 + 4 * Math.sin(t * 5 + i)), BLUE, 6, at(u, c2 + .3, .4)); } }
+  return s;
+});
+// 6a · the air rushes out through the window; the tyre sinks onto the rim and flattens on the road
+shot(6, push(320, 400, 1.2, 1.24), function (u, d, t) {
+  var k = at(u, .2, 1.6), s = paper() + roadSide(630 - 0 * k, t, 30 * (1 - k)) + G("translate(0 " + f(40 * k) + ")", P("M60 260 Q320 150 580 260 L640 250 L640 120 L0 120 L0 250 Z", BODYC, 2.6) + '<path d="M60 260 Q320 150 580 260" fill="none" stroke="' + INK + '" stroke-width="3"/>');
+  s += G("translate(0 " + f(40 * k) + ")", wheelCut(320, 430, 200, { open: 1, air: 1 - k, flat: k, spin: 0 }));
+  for (var i = 0; i < 6; i++) { var p = ((t * 1.6 + i / 6) % 1); s += G("", '<path d="M' + f(160 - p * 140) + ' ' + f(300 + i * 14) + ' q-14 -8 -28 0" stroke="' + AIR + '" stroke-width="5" fill="none" stroke-linecap="round"/>', (1 - p) * (1 - k * .5)); }
+  return s + tag("الهوا بيطلع", 320, 190, at(u, .3, .3), 30, BLUE);
 });
 // 6b · flattened on the ground: like a brake working on one corner only
 shot([6, 1], push(310, 470, 1.2, 1.3), function (u, d, t) {
@@ -474,7 +560,7 @@ shot(15, push(320, 470, 1.3, 1.36), function (u, d, t) {
 shot(16, push(400, 430, 1.2, 1.3), function (u, d, t) {
   var k = at(u, .4, d - .6), v = lerp(120, 70, k);
   var ck = cockpit({ x: 220, y: 420, s: 1, foot: "gas", press: 1 - k, hlPedal: "gas", face: { eyes: 1, brows: "worried", mouth: "neutral" } });
-  return paper() + ck.svg + G("translate(480 330)", speedo(0, 0, 66, v)) + tag("بالراحة", 480, 440, at(u, .8, .3), 24, ORANGE);
+  return paper() + ck.svg + inset(520, 280, 70, speedo(0, 0, 62, v), 1) + tag("بالراحة", 400, 700, at(u, .8, .3), 26, ORANGE);
 });
 // 17 · at about 50: only then brake gently, hazard lights on, out to the shoulder
 shot(17, push(320, 400, 1.0, 1.05), function (u, d, t) {
