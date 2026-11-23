@@ -25,7 +25,16 @@ every episode.
 3. **You make the sound effects** from the kit, the episode's own clips and `audio/sfx.py`'s synthesized ones. When a moment
    needs a real recording the kit doesn't have, ask the user for it by name with Pixabay search terms; they fetch it.
 4. **Always finish with the reel cover and the titles** (section 7), without being asked: TikTok, Instagram (shared to the
-   Facebook page) and YouTube Shorts. It copies the look, pacing and narration of the «طب إزاي؟» series: 20 reference videos, measured in
+   Facebook page) and YouTube Shorts.
+
+**Locked by the user after «ليه الحبوب بتطلع في وشك وصاحبك لأ؟» (`videos/acne/`), for every sketch episode from now on:**
+5. **No side-to-side camera sway.** The frame never rocks right-left or up-down (it bothered many viewers). The camera only
+   moves one way inside a shot: the shot's own `push` / `pan` plus the template's slow one-way creep in. The intro art, the
+   bumper and the end cards only push in slowly. Never add a `Math.sin` wobble to the camera or to a whole card.
+6. **The shortest pauses between sentences.** Tighten the voice with `--max 0.15` (section 2), so the video runs fast. Never
+   speed the voice itself up.
+
+It copies the look, pacing and narration of the «طب إزاي؟» series: 20 reference videos, measured in
 `videos/_reference/tabizzay/STYLE.md`, with contact sheets, motion strips and transcripts. We make it under our own name.
 
 **The reference episode is `videos/tides/`.** Start every new episode from a copy of these files:
@@ -43,7 +52,7 @@ and fix them.
 
 ## 1. Script → `videos/<slug>/script.txt`
 
-**Length:** about 25–27 lines and 260–280 words. The voice comes out about 1:55, and about 1:45 after tightening.
+**Length:** about 25–27 lines and 260–280 words. The voice comes out about 1:55, and about 1:40 after tightening to 0.15 s pauses.
 
 **The fixed spine:**
 1. **Hook:** a fact from the viewer's own life, then its contradiction, spoken to «you», over 2–3 lines. These lines are
@@ -85,9 +94,9 @@ Speak in casual Egyptian Arabic (Cairo dialect), like a calm, confident teacher 
 
 ```
 M=<scratchpad>/asr/sherpa-onnx-whisper-small   # small-encoder.int8.onnx, small-decoder.int8.onnx, small-tokens.txt from huggingface.co/csukuangfj/sherpa-onnx-whisper-small
-python3 ../audio/tighten.py voice-raw.wav voice.wav --max 0.3
+python3 ../audio/tighten.py voice-raw.wav voice.wav --max 0.15
 python3 ../align_asr.py voice-raw.wav script.txt raw-timing.json --model $M --gap 0.08 --db -34
-python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max 0.3 --tempo 1.0
+python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max 0.15 --tempo 1.0
 ```
 
 - **Check the whole take with the stronger model** to catch invented sentences and misread numbers:
@@ -151,11 +160,13 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
 ## 4. Motion (qa.py must PASS)
 
 - **The template's built-in motion** is tuned so that calm shots still pass qa.py:
-  - the camera drift;
-  - the intro-art sway and the bumper push-in with its sweeping stopwatch hand;
-  - the end-card drift and the linear card crossfades.
+  - a slow **one-way** camera creep on every shot (zoom in about 3 %/s and a few px/s of pan, always the same way), on
+    top of the shot's own `push` / `pan`;
+  - the intro-art and end-card slow push-in, and the bumper push-in with its sweeping stopwatch hand;
+  - the linear card crossfades.
 
-  Don't weaken it.
+  **No sway** (rule 5): never bring back a side-to-side or breathing camera to pass qa.py. When a calm shot still reads as
+  a still, give the drawing its own life (below), not the camera.
 - **Sparse shots need their own life.** The tides fixes, any of which works:
   - balls bob and arrows pulse;
   - globes turn about 1.6°/s, or 22°/s for the polar spin;

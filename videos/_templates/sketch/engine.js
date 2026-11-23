@@ -69,10 +69,10 @@
     // intro card
     var iOp = t < introEnd ? 1 : 1 - clamp((t - introEnd) / XF);   // linear: an eased fade parks at both ends
     show(intro, iOp);
-    if (iOp > 0) { chrome($("introChrome"), ease(t / 0.5)); $("introArt").style.transform = "translate(" + (6 * Math.sin(t * 2.3)).toFixed(2) + "px," + (5 * Math.cos(t * 1.9)).toFixed(2) + "px) scale(" + (1.03 + 0.03 * Math.sin(t * 1.5)).toFixed(4) + ")"; var li = renderHook(t); if (S.intro) $("introArt").innerHTML = S.intro($("introArt"), t, li) || $("introArt").innerHTML; }
+    if (iOp > 0) { chrome($("introChrome"), ease(t / 0.5)); $("introArt").style.transform = "scale(" + (1.0 + 0.03 * t).toFixed(4) + ")"; var li = renderHook(t); if (S.intro) $("introArt").innerHTML = S.intro($("introArt"), t, li) || $("introArt").innerHTML; }
     // bumper
     var bOp = P < 0 ? 0 : t < introEnd ? 0 : t < mainStart ? 1 : 1 - ease((t - mainStart) / XF);
-    show(bumper, bOp); if (bOp > 0) { bumperArt(t); $("bumperArt").style.transform = "translate(" + (6 * Math.sin(t * 2.6)).toFixed(2) + "px," + (5 * Math.cos(t * 2.1)).toFixed(2) + "px) scale(" + (0.8 + 0.2 * Math.min(1, (t - introEnd) / 0.5) + 0.12 * (t - introEnd)).toFixed(4) + ")"; }
+    show(bumper, bOp); if (bOp > 0) { bumperArt(t); $("bumperArt").style.transform = "scale(" + (0.8 + 0.2 * Math.min(1, (t - introEnd) / 0.5) + 0.12 * (t - introEnd)).toFixed(4) + ")"; }
     // panel + captions
     var mOp = t < mainStart ? 0 : 1;
     show(main, mOp);
@@ -82,7 +82,7 @@
     show(outro, oOp);
     if (oOp > 0) {
       var u = t - tSum; chrome($("outroChrome"), 1);
-      outro.style.transform = "translate(" + (3 * Math.sin(u * 2.2)).toFixed(2) + "px," + (2.5 * Math.cos(u * 1.8)).toFixed(2) + "px) scale(" + (1 + 0.015 * u).toFixed(4) + ")";   // the camera never parks, even on the end cards
+      outro.style.transform = "scale(" + (1 + 0.015 * u).toFixed(4) + ")";   // a slow one-way push-in, never a side-to-side sway (the user's rule)
       outroEls.forEach(function (el, k) { if (el) el.style.opacity = ease((u - 0.15 * k) / 0.35).toFixed(3); });
       if (S.outro && $("outroArt")) $("outroArt").innerHTML = S.outro($("outroArt"), u, t) || $("outroArt").innerHTML;
       var aOp = CTA > SUM && t >= tCta ? ease((t - tCta) / 0.35) : 0;

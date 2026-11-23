@@ -100,7 +100,7 @@ window.SCENE.panel = function (A, B, t) {
   window.__t = t; CLIPN = 0; var i = 0; while (i < SH.length - 1 && SH[i + 1].a <= t) i++;
   function render(k, extraZ, op) {
     var sh = SH[k], next = k + 1 < SH.length ? SH[k + 1].a : window.TIMING.duration + 2, u = t - sh.a, d = Math.max(0.6, next - sh.a);
-    var c = sh.cam(u, d), cx = c[0] + 15 * Math.sin(t * 2.3), cy = c[1] + 12 * Math.cos(t * 1.9), z = c[2] * (1 + 0.035 * Math.sin(t * 1.5)) * extraZ;   // drift strong enough that qa.py never sees a parked frame
+    var c = sh.cam(u, d), cx = c[0] + 6 * u, cy = c[1] - 3 * u, z = c[2] * (1 + 0.03 * u) * extraZ;   // no side-to-side sway (the user's rule): only the shot's own one-way push / pan plus a slow one-way creep in
     return '<g opacity="' + op.toFixed(3) + '"><g transform="translate(320 393) scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g></g>';
   }
   var cur = SH[i], u = t - cur.a, x = i > 0 && u < XF ? ease(u / XF) : 1;
