@@ -44,6 +44,31 @@ paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                               
 
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
 // e.g. lab(5, 0.4); ding(L(6) + 1.6); scribble(L(9) + 1.2); sea(L(0), L(PROMISE) - L(0) + 0.6, 0.45);
+const motor = (i, dt, dur, g) => a(L(i) + (dt || 0), 'motor', g || 0.12, dur || D(i));               // the machine hums / pumps
+a(L(0) + 0.6, 'fill', 0.22, 2.4);                                                                       // hook: the red bag fills
+motor(1, 0.2, D(1) + D(2), 0.1); a(L(1) + 1.2, 'slosh', 0.15);                                          // the machine runs
+a(L(2) + 0.9, 'pop', 0.3); a(L(2) + 1.1, 'fill', 0.18, 1.6);                                            // the yellow inset
+lab(4, 0.6); ding(L(4) + 1.7); lab(4, 2.2);                                                             // 55%
+a(L(5) + 0.5, 'fill', 0.2, 2.0); paper(L(5) + 1.6);                                                     // the drop turns yellow, «أصفر» tag
+ding(L(6) + 1.0); for (let k = 0; k < 4; k++) a(L(6) + 1.6 + k * 0.3, 'plunk', 0.15);                   // 92% and the dissolved bits
+a(L(7) + 0.1, 'whoosh', 0.15); a(L(7) + 1.2, 'pop', 0.3); lab(7, 0.8);                                  // zoom into the plasma, soup icon
+motor(8, 0, D(8), 0.1); a(L(8) + 0.6, 'pop', 0.3);                                                      // «؟»
+paper(L(9) + 0.3);                                                                                      // the rule card
+a(L(10) + 0.5, 'drip', 0.2); a(L(10) + 2.0, 'drip', 0.2); lab(10, 1.0); lab(10, 1.8);                   // cells settle
+a(L(11) + 0.4, 'slosh', 0.18); lab(11, 1.2); a(L(11) + 0.8, 'pop', 0.25);                               // juice, the small tube
+rec(L(12) + 0.1, 'clock-ticking', 0.25, 0, D(12) - 0.3, 1.0, 'tick', 0.15); scribble(L(12) + 1.7);       // hours? ✗
+a(L(13) + 0.3, 'spin', 0.3, D(13)); ding(L(13) + 1.2);                                                  // the rotor spins up, 3,000+
+a(L(14), 'spin', 0.22, D(14)); a(L(14) + 0.5, 'whoosh', 0.18); a(L(14) + 1.0, 'pop', 0.25); paper(L(14) + 0.5);   // tubes fly out, washer, tag
+a(L(15) + 0.3, 'whoosh', 0.15); lab(15, 1.0); lab(15, 1.2); a(L(15) + 1.6, 'fill', 0.2, 2.2);           // red out, yellow in, the bag fills
+for (let k = 0; k < 4; k++) a(L(16) + 0.3 + k * 0.6, 'drip', 0.16); lab(16, 0.4); scribble(L(16) + 1.2); // citrate drips, ✗ on the clot
+a(L(17) + 0.1, 'whoosh', 0.15); paper(L(17) + 0.5); for (let k = 0; k < 3; k++) a(L(17) + 0.9 + k * 0.4, 'zap', 0.07);   // the face, tingling
+motor(18, 0, D(18), 0.1); for (let k = 0; k < 3; k++) a(L(18) + 0.6 + k * 0.6, 'pop', 0.28); paper(L(18) + 0.4);   // ① ② ③, the red cells back
+rec(L(19), 'clock-ticking', 0.2, 0, 2.2, 1.0, 'tick', 0.15); a(L(19) + 1.4, 'fill', 0.2, 2.4);           // an hour, the drop refills
+a(L(20) + 0.2, 'paper', 0.3); a(L(20) + 0.5, 'paper', 0.3); scribble(L(20) + 0.8);                      // two calendars, ✓
+for (const k of [0.3, 0.35, 0.65]) { a(L(21) + D(21) * k, 'pop', 0.28); } a(L(21) + 0.4, 'slosh', 0.15); // albumin, factors, antibodies
+paper(L(22) + 0.2); scribble(L(22) + 0.8); a(L(22) + 1.2, 'whoosh', 0.15);                              // myth ✗, the iron comes back
+motor(23, 0, D(23), 0.1); lab(23, 0.6); paper(L(23) + 1.4);                                             // recap
+for (let k = 0; k < 10; k++) a(L(24) + 0.3 + k * 0.38, 'tick', 0.12); ding(L(24) + 4.2);                // the bags count up to 1,000+
 
 // music plays only when sfx.py is run with --music, and that only when the user asked for music in this video
 const MUSIC = has('music-soft') ? 'music-soft' : null;

@@ -411,11 +411,12 @@ shot(20, push(320, 420, 1.0, 1.05), function (u, d, t) {
 // 21 · what it's used for: albumin (burns), clotting factors (haemophilia), antibodies — one after the other
 shot(21, push(320, 420, 1.0, 1.04), function (u, d, t) {
   var s = paper(), ks = [at(u, .3, .4), at(u, d * .35, .4), at(u, d * .65, .4)];
-  s += appear(ks[0], R(70, 180, 120, 200, "#f4f1ea", 2.4, 10) + R(90, 150, 80, 34, STEEL, 2) + R(76, 250, 108, 120, PLASMA_L, 0) + T("ألبيومين", 130, 420, 22, OLIVE, 800) + T("حروق", 130, 452, 18, ORANGE, 700));
-  s += appear(ks[1], R(270, 220, 100, 160, "#f4f1ea", 2.4, 8) + R(282, 196, 76, 28, ORANGE, 2) + R(276, 300, 88, 76, "#f6e9cc", 0) + T("عوامل تجلط", 320, 420, 22, OLIVE, 800) + T("هيموفيليا", 320, 452, 18, ORANGE, 700));
+  s += G("translate(0 " + f(8 * Math.sin(t * 2.2)) + ")", appear(ks[0], R(70, 180, 120, 200, "#f4f1ea", 2.4, 10) + R(90, 150, 80, 34, STEEL, 2) + R(76, 250, 108, 120, PLASMA_L, 0) + T("ألبيومين", 130, 420, 22, OLIVE, 800) + T("حروق", 130, 452, 18, ORANGE, 700)));
+  s += G("translate(0 " + f(8 * Math.sin(t * 2.2 + 2)) + ")", appear(ks[1], R(270, 220, 100, 160, "#f4f1ea", 2.4, 8) + R(282, 196, 76, 28, ORANGE, 2) + R(276, 300, 88, 76, "#f6e9cc", 0) + T("عوامل تجلط", 320, 420, 22, OLIVE, 800) + T("هيموفيليا", 320, 452, 18, ORANGE, 700)));
   var ab = ""; for (var i = 0; i < 5; i++) { var x = 470 + (i % 3) * 50, y = 230 + Math.floor(i / 3) * 70 + 6 * Math.sin(t * 2 + i); ab += G("translate(" + f(x) + " " + f(y) + ") rotate(" + f(20 * Math.sin(t + i)) + ")", '<path d="M0 30 V0 L-18 -22 M0 0 L18 -22" stroke="' + BLUE + '" stroke-width="7" fill="none" stroke-linecap="round"/>'); }
   s += appear(ks[2], ab + T("أجسام مضادة", 520, 420, 22, OLIVE, 800) + T("مناعة", 520, 452, 18, ORANGE, 700));
-  return s + G("translate(320 620)", bag(0, -80, 110, 150, .9, PLASMA, { text: "بلازما" }), 1);
+  var fl = ""; [[130, 470], [320, 470], [520, 470]].forEach(function (p, i) { fl += G("", line("M320 560 Q" + f((320 + p[0]) / 2) + " 520 " + f(p[0]) + " " + f(p[1] + 20), PLASMA, t * 2.5, -1, 6), ks[i]); });
+  return s + fl + G("rotate(" + f(5 * Math.sin(t * 2.6)) + " 320 540)", G("translate(320 620)", bag(0, -80, 130, 170, .9, PLASMA, { text: "بلازما" })));
 });
 // 22 · the myth: plasma donation takes iron — no, the iron is in the red cells and they came back
 shot(22, push(320, 420, 1.02, 0.98), function (u, d, t) {
