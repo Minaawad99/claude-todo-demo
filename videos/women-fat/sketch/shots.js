@@ -392,10 +392,10 @@ shot(9, push(320, 420, 0.94, 1.0), function (u, d, t) {
   for (var i = 0; i < n; i++) { var c = i % 10, r = Math.floor(i / 10); s += burger(78 + c * 54, 718 - r * 38, 1.05); }
   return s + '<rect x="200" y="40" width="240" height="96" fill="' + PAPER + '" stroke="' + INK + '" stroke-width="2"/>' + N(String(n), 320, 112, 64, ORANGE);
 });
-// 10: where it's kept — hips and thighs, then the thigh cut across (her fat layer is thick)
+// 10: where it's kept — the pelvis and the legs, then the thigh cut across (her fat layer is thick)
 shot(10, push(330, 410, 1.0, 1.06), function (u, d, t) {
   var p = woman(330, 380, 1.4, t, { face: { mouth: "smile" }, arms: HANDS_IN(330, 380, 1.4) });
-  return paper() + p.svg + fatZones(330, 380, 1.4, "f", at(u, .3, .6), t, true) + label(270, 380, 120, 300, "الوراك", OLIVE, at(u, .8, .5), 26) + label(272, 470, 120, 560, "الفخاد", OLIVE, at(u, 1.2, .5), 26);
+  return paper() + p.svg + fatZones(330, 380, 1.4, "f", at(u, .3, .6), t, true) + label(270, 380, 120, 300, "الحوض", OLIVE, at(u, .8, .5), 26) + label(272, 470, 120, 560, "الرجلين", OLIVE, at(u, 1.2, .5), 26);
 });
 shot([10, 2], push(320, 400, 1.06, 1.0), function (u, d, t) {
   var s = paper() + thighCut(300, 400, 220, 62, t, { hl: true });

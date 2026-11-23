@@ -44,7 +44,7 @@ paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                               
 
 // ── this episode («ليه الست محتاجة دهون أكتر من الراجل؟») ──
 const CH = (i, f) => L(i) + (T[i].end - T[i].start) * f;                 // a shot that starts on a caption chunk
-const subs = [[4, .4096], [7, .25], [10, .6711], [12, .5833], [13, .5075], [15, .6216], [16, .3176], [17, .4211], [19, .6102], [21, .8152], [22, .4217], [23, .5464], [23, .7526]];
+const subs = [[4, .4096], [7, .25], [10, .6951], [12, .5833], [13, .5075], [15, .6216], [16, .3176], [17, .4211], [19, .6102], [21, .8152], [22, .4217], [23, .5464], [23, .7526]];
 subs.forEach(q => rec(CH(q[0], q[1]) - 0.08, 'swipe', 0.26, 0.6, 0.42, 1.0, 'whoosh', 0.18));
 // hook: the two bodies, the fat zones glow in on each number
 a(L(1) + 0.3, 'pop', 0.3); ding(L(1) + 1.4); a(L(2) + 0.3, 'pop', 0.3); ding(L(2) + 1.2);
@@ -59,7 +59,7 @@ a(L(7) + 0.3, 'pop', 0.35); lab(7, 1.4); paper(CH(7, .25) + 0.6);
 for (let k = 0; k < 10; k++) a(L(8) + 0.5 + k * 0.24, 'tick', 0.12); ding(L(8) + 2.9);
 for (let k = 0; k < 13; k++) a(L(9) + 0.15 + k * 0.13, 'pop', 0.14); ding(L(9) + 1.9);
 // 10 · labels on hips and thighs; the thigh cut; the emergency bag
-lab(10, 0.8); lab(10, 1.2); lab(10, CH(10, .6711) - L(10) + 0.4); a(CH(10, .6711) + 1.1, 'pop', 0.35);
+lab(10, 0.8); lab(10, 1.2); lab(10, CH(10, .6951) - L(10) + 0.4); a(CH(10, .6951) + 1.1, 'pop', 0.35);
 // 11 · the baby, arrows up from the hips
 a(L(11) + 0.6, 'whoosh', 0.12); a(L(11) + 1.0, 'whoosh', 0.12); paper(L(11) + 0.5);
 // 12–13 · the tissue, blood flowing, leptin dots
