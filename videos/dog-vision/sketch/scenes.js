@@ -496,13 +496,13 @@ function snoutCut(t, o) {
 function noseFront(x, y, sc, t, o) {
   o = o || {}; var s = "";
   s += G("translate(" + x + " " + y + ") scale(" + sc + ")",
-    P("M-150 -60 C-150 -110 -60 -130 0 -130 C60 -130 150 -110 150 -60 C150 0 110 40 60 60 C30 72 14 90 0 110 C-14 90 -30 72 -60 60 C-110 40 -150 0 -150 -60 Z", DNOSE, 3) +
-    '<path d="M0 -10 V110" stroke="#0d0a08" stroke-width="5"/>' +
+    P("M-156 -64 C-158 -122 -70 -140 0 -140 C70 -140 158 -122 156 -64 C156 -14 130 18 86 26 C54 32 30 50 0 84 C-30 50 -54 32 -86 26 C-130 18 -156 -14 -156 -64 Z", DNOSE, 3) +
+    '<path d="M0 0 V84" stroke="#0d0a08" stroke-width="5"/><path d="M-120 20 C-90 8 -40 10 -14 30 M120 20 C90 8 40 10 14 30" stroke="#4a4038" stroke-width="3" fill="none"/>' +
     [-1, 1].map(function (sd) { var fl = 1 + .12 * Math.sin(t * 14) * (o.sniff || 0);
-      return G("translate(" + (sd * 62) + " -40) scale(" + f(sd * fl) + " " + f(fl) + ")", '<path d="M-34 -14 C-36 -38 -4 -46 14 -30 C30 -16 24 6 8 14 C20 26 40 34 60 56 C40 50 18 40 0 28 C-20 18 -32 4 -34 -14 Z" fill="#0d0a08" stroke="#6b6158" stroke-width="2"/>'); }).join("") +
+      return G("translate(" + (sd * 84) + " -52) scale(" + f(sd * fl) + " " + f(fl) + ")", '<path d="M-30 -8 C-34 -36 0 -46 18 -32 C32 -20 30 0 22 10 C34 14 50 18 66 30 C46 30 28 26 12 22 C-10 22 -28 10 -30 -8 Z" fill="#0d0a08" stroke="#6b6158" stroke-width="2"/>'); }).join("") +
     '<path d="M-110 -100 C-70 -116 -40 -118 -20 -116" stroke="#6b6158" stroke-width="6" fill="none" stroke-linecap="round" opacity=".7"/>');
   // the leather's pebbled texture
-  for (var i = 0; i < 40; i++) { var a = hash(i) * 6.28, r = 40 + hash(i + 7) * 90; s += '<circle cx="' + f(x + Math.cos(a) * r * sc) + '" cy="' + f(y - 40 * sc + Math.sin(a) * r * .5 * sc) + '" r="' + f(3 * sc) + '" fill="none" stroke="#4a4038" stroke-width="' + f(1.4 * sc) + '" opacity=".6"/>'; }
+  for (var i = 0; i < 90; i++) { var a = hash(i) * 6.28, r = 10 + hash(i + 7) * 130; s += '<circle cx="' + f(x + Math.cos(a) * r * sc) + '" cy="' + f(y - 60 * sc + Math.sin(a) * r * .55 * sc) + '" r="' + f(3 * sc) + '" fill="none" stroke="#4a4038" stroke-width="' + f(1.4 * sc) + '" opacity=".6"/>'; }
   return s;
 }
 // a muzzle around the front nose (fur, a little of the mouth)
@@ -650,7 +650,7 @@ shot(17, push(320, 380, 1.0, 1.06), function (u, d, t) {
     s += G("", arrow(320 + sd * 70, 120, 320 + sd * 62, 270, BLUE, 6, clamp(cyc * 2.4)), inh ? 1 : 0);
     for (var i = 0; i < 4; i++) { var p = clamp((cyc - .5) * 2 - i * .08); if (p > 0 && p < 1) s += '<path d="M' + f(320 + sd * (120 + p * 140)) + ' ' + f(340 + 30 + p * 60 + i * 12) + ' q' + f(sd * 14) + ' -10 ' + f(sd * 28) + ' 0" stroke="#9fbccb" stroke-width="6" fill="none" stroke-linecap="round" opacity="' + f(1 - p) + '"/>'; }
   });
-  return s + label(262, 330, 120, 600, "فتحة على الجنب", OLIVE, at(u, .8, .5), 24) + G("", tag(inh ? "شهيق" : "زفير", 320, 70, 1, 28, BLUE), at(u, .3, .3));
+  return s + label(182, 318, 230, 600, "فتحة على الجنب", OLIVE, at(u, .8, .5), 24) + G("", tag(inh ? "شهيق" : "زفير", 320, 70, 1, 28, BLUE), at(u, .3, .3));
 });
 // 18 · each nostril smells on its own, so he knows where it comes from (like your two ears)
 shot(18, push(330, 400, 1.0, 1.05), function (u, d, t) {
