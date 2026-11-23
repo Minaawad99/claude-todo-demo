@@ -170,54 +170,81 @@ function D2R(a) { return a * Math.PI / 180; }
 var BODY = "#cfc4a8", BODY_D = "#b3a585", GLASS = "#cfdde3", DARK = "#2f3034", DARK2 = "#3c3d42", CARPET = "#4a4a50",
     STEEL = "#9aa2ac", STEEL_D = "#6e757e", GLOW = "#e9f2a8", GLOW_D = "#b9c86a", TAIL = "#b8452e", SEAT = "#8a8173";
 
-// ── the car: a compact sedan in profile, front to the left, real size (1 m = 120 units): length 4.7 m (570), height
-// 1.47 m (177), wheelbase 2.6 m (308), wheels 0.63 m (r 38), trunk deck 1.08 m (130). Local y 0 = the ground, up is
-// negative. The trunk is cut open like v18 (dark inside, the person seen through the side); it is drawn a little deeper
-// than a real one (floor 0.4 m) so a grown man fits on the page, as the short the user sent does.
-var CAR_P = "M8 -44 L2 -84 Q4 -100 30 -104 L160 -118 L238 -172 Q248 -177 266 -177 L372 -175 Q384 -174 392 -168 L462 -130 L462 -100 L570 -100 L571 -52 Q569 -44 559 -44 L468 -44 A48 48 0 0 0 372 -44 L160 -44 A48 48 0 0 0 64 -44 Z";
-var CABIN = "M154 -48 L162 -114 L238 -166 L372 -166 L416 -138 L416 -48 Z";
-var WIN_F = "M168 -120 L240 -164 L300 -164 L300 -120 Z", WIN_R = "M310 -120 L310 -164 L370 -164 L410 -139 L410 -120 Z";
-var HINGE = [462, -130];
-var LID = "M462 -130 L556 -126 Q568 -124 570 -112 L570 -100 L562 -100 L562 -110 Q560 -118 552 -119 L464 -123 Z";   // closed: deck to the rear, then down the back to the latch
-var TRUNK = "M420 -126 L464 -123 L552 -119 Q562 -117 562 -108 L562 -48 L420 -48 Z";   // the space inside, cut on the centre line
-var TRUNK_OPEN = "M420 -126 L462 -130 L562 -100 L562 -48 L420 -48 Z", TRUNK_AIR = "M420 -126 L462 -130 L462 -400 L800 -400 L800 -100 L562 -100 L562 -48 L420 -48 Z";
-var LATCH = [566, -100], RW = 420;
-function wheel(x, t, spin, sw) { var a = (spin || 0) * t * 200, s = C(x, -38, 38, "#3a352e", 2.4 * sw) + C(x, -38, 24, "#a9a59c", 2 * sw) + C(x, -38, 7, INK, 0);
-  for (var i = 0; i < 5; i++) { var b = (a + i * 72) * Math.PI / 180; s += '<path d="M' + f(x + Math.cos(b) * 8) + ' ' + f(-38 + Math.sin(b) * 8) + ' L' + f(x + Math.cos(b) * 21) + ' ' + f(-38 + Math.sin(b) * 21) + '" stroke="' + INK + '" stroke-width="' + f(3 * sw) + '"/>'; } return s; }
-// o: {x, y (world point under the rear bumper), sc, t, lid (0 shut … 1 open, ~55°), shake (lid jolt 0..1),
-//    people (fn t → local SVG inside the trunk), lidIn (local SVG on the lid: the handle), dark (0..1), hlTail}
+// ── the car: a compact sedan in profile, front to the left, real size (1 m = 120 units): length 4.8 m, height 1.47 m,
+// wheelbase 2.6 m (308), wheels 0.63 m (r 38), trunk deck 1.1 m. Local y 0 = the ground, up is negative. Like reference
+// v18 the trunk is cut open on the centre line, and it shows what a real trunk has in section (refs/SOURCES.md):
+//   the back of the rear seat (with the seat belt) and the parcel shelf under the rear window; the carpeted floor board
+//   with the spare wheel lying flat in its well under it; the lid's inner panel (a ribbed frame with lightening holes) on
+//   two curved gooseneck hinges; at the rear edge of the lid the latch box, and on the body sill the striker; the back of
+//   the rear lamp housing in the corner; the bumper and the number plate outside.
+// The trunk is drawn a little roomier than a real one so a person fits on the page, as the short the user sent does.
+var CAR_P = "M8 -44 L2 -84 Q4 -100 30 -104 L160 -118 L238 -172 Q248 -177 266 -177 L372 -175 Q384 -174 392 -168 L456 -134 L456 -98 L574 -98 L576 -70 Q580 -66 579 -52 Q577 -42 566 -40 L556 -28 L478 -28 L468 -44 A48 48 0 0 0 372 -44 L160 -44 A48 48 0 0 0 64 -44 Z";
+var CABIN = "M154 -48 L162 -114 L238 -166 L372 -166 L420 -140 L420 -48 Z";
+var WIN_F = "M168 -120 L240 -164 L300 -164 L300 -120 Z", WIN_R = "M310 -120 L310 -164 L370 -164 L414 -141 L414 -120 Z";
+var HINGE = [452, -128];   // the gooseneck pivot, under the rear window's lower edge
+var LID = "M456 -134 L558 -130 Q572 -128 574 -114 L574 -98 L566 -98 L566 -112 Q564 -121 554 -122 L460 -126 Z";
+var TRUNK = "M436 -128 L460 -126 L554 -122 Q564 -121 566 -112 L566 -98 L562 -96 L562 -42 L436 -42 Z";
+var TRUNK_OPEN = "M436 -128 L456 -134 L566 -98 L562 -96 L562 -42 L436 -42 Z", TRUNK_AIR = "M436 -128 L456 -134 L456 -400 L800 -400 L800 -98 L562 -96 L562 -42 L436 -42 Z";
+var FLOOR = -46, LATCH = [565, -102], RW = 420;
+function wheel(x, t, spin, sw) { var a = (spin || 0) * t * 200, s = C(x, -38, 38, "#3a352e", 2.4 * sw) + C(x, -38, 25, "#a9a59c", 2 * sw) + C(x, -38, 8, "#5a554d", 1.4 * sw) + C(x, -38, 3, INK, 0);
+  for (var i = 0; i < 5; i++) { var b = (a + i * 72) * Math.PI / 180; s += '<path d="M' + f(x + Math.cos(b) * 10) + ' ' + f(-38 + Math.sin(b) * 10) + ' L' + f(x + Math.cos(b) * 23) + ' ' + f(-38 + Math.sin(b) * 23) + '" stroke="#6e695f" stroke-width="' + f(5 * sw) + '" stroke-linecap="round"/>'; } return s; }
+// the lid's inside: inner panel frame with holes, the gooseneck arm, the latch box at its rear edge (all in closed-lid coords)
+function lidInner(sw, lidIn) {
+  var g = P("M462 -126 L554 -122 Q563 -121 565 -112 L565 -104 L559 -104 L559 -111 Q557 -116 552 -116 L464 -120 Z", "#8e8778", 1.4 * sw);
+  [478, 502, 526].forEach(function (x) { g += '<ellipse cx="' + x + '" cy="' + f(-121.5 + (x - 478) * .04) + '" rx="7" ry="1.8" fill="' + DARK + '" stroke="' + INK + '" stroke-width="' + f(.8 * sw) + '"/>'; });
+  // the gooseneck hinge: a curved steel arm from the pivot, dipping into the trunk and up to the lid
+  g += '<path d="M452 -128 Q451 -112 464 -112 Q476 -112 480 -122" fill="none" stroke="' + INK + '" stroke-width="' + f(5.4 * sw) + '" stroke-linecap="round"/><path d="M452 -128 Q451 -112 464 -112 Q476 -112 480 -122" fill="none" stroke="' + STEEL + '" stroke-width="' + f(3 * sw) + '" stroke-linecap="round"/>' + C(452, -128, 2.6, STEEL, .8 * sw);
+  // the latch box on the lid's rear edge, the release cable running to it
+  g += R(557, -111, 9, 11, "#5f6166", 1.2 * sw, 1.5) + C(561.5, -104, 1.6, STEEL, .6 * sw);
+  return g + (lidIn || "");
+}
+// o: {x, y (world point under the rear bumper, local x 570), sc, t, lid (0 shut … 1 open, 55°), shake (lid jolt 0..1),
+//    people (fn t → local SVG inside the trunk), lidIn (local SVG hung on the lid: the handle), dark (0..1), hlTail, spare}
 function car(o) {
   var t = o.t || 0, sc = o.sc || 1, sw = 1 / Math.sqrt(sc), g = "";
-  g += '<ellipse cx="290" cy="2" rx="284" ry="8" fill="' + INK + '" opacity=".14"/>';
+  g += '<ellipse cx="290" cy="2" rx="290" ry="8" fill="' + INK + '" opacity=".14"/>';
   g += P(CAR_P, BODY, 2.6 * sw) + '<path d="' + CAR_P + '" fill="url(#hatch)" opacity=".3"/>';
   g += P(CABIN, "#efe6d2", 1.6 * sw);
   g += P("M154 -98 L202 -102 L204 -86 L156 -72 Z", "#7c7468", 1.6 * sw);
   g += P("M216 -66 L280 -66 L284 -52 L218 -50 Z", SEAT, 1.6 * sw) + P("M276 -66 L296 -146 Q304 -150 308 -142 L296 -58 Z", SEAT, 1.6 * sw) + R(294, -160, 16, 18, SEAT, 1.4 * sw, 4);
-  g += P("M338 -64 L396 -64 L400 -50 L340 -48 Z", SEAT, 1.6 * sw) + P("M390 -64 L402 -128 Q408 -132 414 -126 L410 -56 Z", SEAT, 1.6 * sw);
+  g += P("M346 -64 L406 -64 L410 -50 L348 -48 Z", SEAT, 1.6 * sw);
   g += wheel(112, t, o.spin, sw) + wheel(RW, t, o.spin, sw);
-  // the trunk, cut open (on the centre line, so the near wheel goes behind the cut)
+  // ── the trunk, cut on the centre line ──
   var tid = "tr" + (++CLIPN), lk = clamp((o.lid || 0) * 4);
-  g += P(TRUNK_OPEN, DARK, 1.6 * sw) + G("", P(TRUNK, DARK, 0), 1 - lk) + R(420, -52, 142, 4, CARPET, 0);
+  g += P(TRUNK_OPEN, DARK, 1.6 * sw) + G("", P(TRUNK, DARK, 0), 1 - lk);
+  // the rear seat's back (the trunk's front wall) with its belt, and the parcel shelf
+  g += P("M404 -62 L418 -132 Q424 -138 432 -134 L438 -128 L436 -42 L410 -46 Z", SEAT, 1.6 * sw) + '<path d="M414 -64 L426 -126" stroke="#766d60" stroke-width="' + f(1.2 * sw) + '"/>' + P("M424 -128 L430 -132 L431 -60 L425 -60 Z", "#4c4b4f", .9 * sw);
+  g += P("M430 -136 L458 -136 L458 -130 L432 -129 Z", "#5d5a55", 1.2 * sw);
+  // the spare-wheel well under the floor, with the spare lying flat (a slab of tyre and rim seen from the side)
+  g += P("M474 -42 L478 -30 L552 -30 L556 -42 Z", "#3a3b40", 1.4 * sw);
+  g += R(482, -41, 66, 10, "#2b2925", 1.4 * sw, 4) + R(498, -38.5, 34, 5, "#9a958a", 1 * sw, 2) + '<path d="M486 -36 h4 M540 -36 h4" stroke="#6e695f" stroke-width="' + f(2 * sw) + '"/>';
+  // the floor board with its carpet
+  g += R(436, FLOOR, 126, 4, CARPET, 1 * sw) + '<path d="M436 ' + (FLOOR + .8) + ' H562" stroke="#5e5e66" stroke-width="' + f(1.2 * sw) + '" stroke-dasharray="2 3"/>';
+  // the back of the rear lamp housing in the corner, with its bulb holder; the rear sill and the striker
+  g += P("M550 -84 L562 -84 L562 -70 L551 -70 Z", "#4a4b50", 1.1 * sw) + C(555.5, -77, 2.4, "#77787d", .8 * sw);
+  g += R(556, -98, 10, 3, STEEL_D, .8 * sw) + '<path d="M560 -98 L560 -101 L564 -101 L564 -98" fill="none" stroke="' + STEEL + '" stroke-width="' + f(1.6 * sw) + '"/>';
   g += '<clipPath id="' + tid + '"><path d="' + (lk > 0 ? TRUNK_AIR : TRUNK) + '"/></clipPath><g clip-path="url(#' + tid + ')">';
   if (o.people) g += o.people(t);
-  if (o.dark) g += '<rect x="420" y="-140" width="160" height="100" fill="#000" opacity="' + f(.22 * o.dark) + '"/>';
+  if (o.dark) g += '<rect x="420" y="-140" width="160" height="100" fill="#000" opacity="' + f(.2 * o.dark) + '"/>';
   g += '</g>' + P(lk > 0 ? TRUNK_OPEN : TRUNK, "none", 2 * sw);
+  // windows, pillars, doors, lights, bumper, plate
   g += '<g opacity=".7"><path d="' + WIN_F + '" fill="' + GLASS + '"/><path d="' + WIN_R + '" fill="' + GLASS + '"/></g>' + P(WIN_F, "none", 2 * sw) + P(WIN_R, "none", 2 * sw) + R(300, -166, 10, 120, BODY, 2 * sw);
-  g += '<path d="M160 -118 L156 -48 M300 -118 L300 -46 M416 -138 L416 -60" stroke="' + INK + '" stroke-width="' + f(1.8 * sw) + '" fill="none"/>' + R(258, -102, 22, 6, INK, 0, 3) + R(390, -102, 22, 6, INK, 0, 3);
+  g += '<path d="M160 -118 L156 -48 M300 -118 L300 -46 M420 -140 L420 -60" stroke="' + INK + '" stroke-width="' + f(1.8 * sw) + '" fill="none"/>' + R(258, -102, 22, 6, INK, 0, 3) + R(390, -102, 22, 6, INK, 0, 3);
   g += P("M6 -88 L26 -96 L28 -86 L8 -82 Z", "#f4efe3", 1.4 * sw);
-  g += P("M562 -100 L570.5 -100 L571 -80 L563 -80 Z", TAIL, 1.4 * sw, o.hlTail ? ' style="filter:drop-shadow(0 0 ' + f(5 * o.hlTail) + 'px ' + ORANGE + ')"' : "");
+  g += P("M566 -97 L574.5 -97 L576 -78 L567 -78 Z", TAIL, 1.4 * sw, o.hlTail ? ' style="filter:drop-shadow(0 0 ' + f(5 * o.hlTail) + 'px ' + ORANGE + ')"' : "") + '<path d="M567 -88 H575" stroke="#e7a08c" stroke-width="' + f(1.2 * sw) + '"/>';
+  g += P("M570 -66 Q581 -64 580 -52 Q579 -44 568 -43 L562 -43 L562 -66 Z", "#bdb196", 1.8 * sw);
+  // the lid: outer skin and the inner frame turn together round the gooseneck pivot; a kick makes it jolt
   var ang = -55 * ease(clamp(o.lid || 0)) - 1.4 * (o.shake || 0);
-  g += G("rotate(" + f(ang) + " " + HINGE[0] + " " + HINGE[1] + ")", P(LID, BODY, 2.2 * sw) + '<path d="' + LID + '" fill="url(#hatch)" opacity=".3"/>' + (o.lidIn || ""));
+  g += G("rotate(" + f(ang) + " " + HINGE[0] + " " + HINGE[1] + ")", lidInner(sw, o.lidIn) + P(LID, BODY, 2.2 * sw) + '<path d="' + LID + '" fill="url(#hatch)" opacity=".3"/>');
   return G("translate(" + f(o.x) + " " + f(o.y) + ") scale(" + f(sc) + ") translate(-570 0)", g);
 }
 
-// ── the person in the trunk: reclined on his back, head toward the rear (by the latch and the handle), knees up toward
-// the seat (as in the short the user sent). PERSON.side in the car's local units (s = .5, a 1.67 m man in 1 m = 120).
-// Legs and arms are posed by where the feet and hands must land (two-bone IK on the kit's real segment lengths), keeping
-// the knee flexion ≥ 0 and the elbow flexion ≥ 0, so the joints only bend the real way and stay in one flowing outline.
-var PS = .5, DIR = -1, THIGH = 98 * PS, SHIN = 98 * PS, UARM = 74 * PS, FARM = 58 * PS;
+// ── the boy in the trunk: his back against the back of the rear seat, his body and face toward the lid and the rear of
+// the car (the user's correction), knees up. PERSON.side facing right (DIR 1), in the car's local units: s = .44, a
+// 1.5 m youth at 1 m = 120. Legs and arms are posed by where the feet and hands must land (two-bone IK on the kit's real
+// segment lengths), keeping knee and elbow flexion ≥ 0, so joints only bend the real way inside one flowing outline.
+var PS = .44, DIR = 1, THIGH = 98 * PS, SHIN = 98 * PS, UARM = 74 * PS, FARM = 58 * PS;
 function ik2(a, b, l1, l2, side) { var dx = b[0] - a[0], dy = b[1] - a[1], d = Math.min(Math.hypot(dx, dy), l1 + l2 - .01), an = Math.atan2(dy, dx), c = Math.acos(clamp((l1 * l1 + d * d - l2 * l2) / (2 * l1 * Math.max(d, .01)))); return [a[0] + Math.cos(an + side * c) * l1, a[1] + Math.sin(an + side * c) * l1]; }
-// a world direction → the kit's local angle (deg from straight down, + forward) for a body at rot (deg), facing DIR
 function locA(dx, dy, rot) { var r = D2R(-rot), lx = (dx * Math.cos(r) - dy * Math.sin(r)) * DIR, ly = dx * Math.sin(r) + dy * Math.cos(r); return Math.atan2(lx, ly) * 180 / Math.PI; }
 function kitW(x, y, rot, p) { var a = D2R(rot), px = p[0] * PS * DIR, py = p[1] * PS; return [x + px * Math.cos(a) - py * Math.sin(a), y + px * Math.sin(a) + py * Math.cos(a)]; }
 function wrap(a) { return ((a % 360) + 540) % 360 - 180; }
@@ -229,29 +256,29 @@ function armTo(sh, wr, rot, straight) {
   var c = [1, -1].map(function (sd) { var el = straight ? L2(sh, wr, UARM / (UARM + FARM)) : ik2(sh, wr, UARM, FARM, sd), a1 = locA(el[0] - sh[0], el[1] - sh[1], rot), a2 = locA(wr[0] - el[0], wr[1] - el[1], rot); return { sh: a1, el: wrap(a2 - a1) }; });
   return c[0].el >= -1 && (c[1].el < -1 || c[0].el <= c[1].el) ? c[0] : c[1];
 }
-// o: {hip, rot, feet [[x,y],[x,y]] ankle targets, hands [[x,y] | null, …] wrist targets (null = on the belly), hk hand kinds,
-//     straight [bool, bool], ankle (foot tilt), face, tilt, t}
-var HIP = [452, -56], ROT = 62;
+// o: {hip, rot, feet [[x,y],[x,y]] ankle targets, hands [[x,y] | null, …] wrist targets, hk, straight, ankle, wrist, face, tilt, t}
+var HIP = [508, -51], ROT = -50;
 function trapped(o) {
   var t = o.t || 0, rot = o.rot == null ? ROT : o.rot, hip = o.hip || HIP, sh = kitW(hip[0], hip[1], rot, [-2, -117]);
-  var legs = o.feet.map(function (a) { var L = legTo(hip, a, rot); L.ankle = o.ankle == null ? 10 : o.ankle; return L; });
-  var belly = kitW(hip[0], hip[1], rot, [34, -50]), belly2 = kitW(hip[0], hip[1], rot, [30, -36]);
-  var arms = [0, 1].map(function (i) { var w = (o.hands && o.hands[i]) || (i ? belly2 : belly), A = armTo(sh, w, rot, o.straight && o.straight[i]); A.hand = (o.hk && o.hk[i]) || "relaxed"; if (o.wrist) A.wrist = o.wrist[i]; return A; });
-  var P_ = PERSON.side({ x: hip[0], y: hip[1], s: PS, dir: DIR, rot: rot, outfit: "casual", breath: (Math.sin(t * 3.1) + 1) / 2, legs: legs, arms: arms,
+  var legs = o.feet.map(function (a, i) { var L = legTo(hip, a, rot); L.ankle = (o.ankle && o.ankle.length ? o.ankle[i] : o.ankle) || 0; return L; });
+  var rest = [[hip[0] - 14, FLOOR - 1], [hip[0] - 20, FLOOR - 1]];
+  var arms = [0, 1].map(function (i) { var w = (o.hands && o.hands[i]) || rest[i], A = armTo(sh, w, rot, o.straight && o.straight[i]); A.hand = (o.hk && o.hk[i]) || "flat"; if (o.wrist) A.wrist = o.wrist[i]; return A; });
+  var P_ = PERSON.side({ x: hip[0], y: hip[1], s: PS, dir: DIR, rot: rot, outfit: { base: "casual", colors: { shirt: "#b9c7d4", shirtD: "#93a4b4", pants: "#4b5a6e", pantsD: "#38445a" } }, breath: (Math.sin(t * 3.1) + 1) / 2, legs: legs, arms: arms,
     head: { tilt: o.tilt || 0 }, face: Object.assign({ eyes: 1.2, brows: "worried", mouth: "open" }, o.face || {}) });
   return P_.svg;
 }
-// knees drawn in (k 0) … feet hit the lid (k 1)
-var FEET_IN = [[434, -98], [440, -94]], FEET_HIT = [[458, -122], [470, -121]];
+// the kick: leaning back on both hands, knees drawn up (k 0) … both feet driven up into the lid (k 1)
+var FEET_IN = [[542, -74], [534, -70]], FEET_HIT = [[552, -116], [541, -118]];
 function kickPose(k, t, face) {
-  var k2 = clamp(k * 1.2 - .15);
-  return trapped({ feet: [L2(FEET_IN[0], FEET_HIT[0], k), L2(FEET_IN[1], FEET_HIT[1], k2)], ankle: lerp(-20, -55, k), hands: [[492 - 3 * k, -53], [482, -54]], hk: ["flat", "flat"], wrist: [-60, -60], face: face, t: t, tilt: 6 * k });
+  var k2 = clamp(k * 1.15 - .1);
+  return trapped({ hip: [HIP[0], HIP[1] + 1.5 * k], rot: ROT - 6 * k, feet: [L2(FEET_IN[0], FEET_HIT[0], k), L2(FEET_IN[1], FEET_HIT[1], k2)], ankle: lerp(10, -50, k),
+    hands: [[452, FLOOR - 1], [446, FLOOR - 1]], hk: ["flat", "flat"], wrist: [-70, -70], face: face, t: t, tilt: -10 + 6 * k });
 }
-// slid down toward the seat, knees up, feet flat on the floor: the pose for reaching the handle over the face
-var HIP_R = [440, -60], FEET_R = [[414, -56], [422, -56]];
+// sitting up, back off the seat, an arm reaching forward and up to the handle by the latch; feet flat toward the rear
+var HIP_R = [519, -51], FEET_R = [[558, FLOOR - 4], [552, FLOOR - 4]];
 function reachPose(hand, t, o) {
   o = o || {};
-  return trapped(Object.assign({ hip: HIP_R, rot: 84, feet: FEET_R, ankle: 30, hands: [hand, [462, -54]], hk: ["fist", "relaxed"], t: t, tilt: -14, face: { eyes: 1.1, brows: "angry", mouth: "neutral" } }, o));
+  return trapped(Object.assign({ hip: HIP_R, rot: -34, feet: FEET_R, ankle: 0, hands: [hand, [486, FLOOR - 1]], hk: ["fist", "flat"], wrist: [0, 70], t: t, tilt: -16, face: { eyes: 1.1, brows: "angry", mouth: "neutral" } }, o));
 }
 function kickK(t, per) { var p = (t % per) / per; return p < .25 ? ease(p / .25) : 1 - ease((p - .25) / .75); }
 function kickHit(t, per) { var p = (t % per) / per; return p > .22 && p < .4 ? 1 - Math.abs(p - .28) / .12 : 0; }
@@ -319,7 +346,7 @@ function latchCut(cx, cy, s, open, hl, t) {
 // rear bumper at world (X, Y); Wp(local) gives the world point of a local car point.
 var X = 610, Y = 690, S = 3.6;
 function Wp(p, x, y, sc) { return [(x || X) + (p[0] - 570) * (sc || S), (y || Y) + p[1] * (sc || S)]; }
-var HD = [546, -119];   // where the handle hangs under the lid (local)
+var HD = [557, -101];   // where the handle hangs under the lid (local)
 function handleSmall(gl, pull, t) { return '<g transform="translate(' + HD[0] + ' ' + HD[1] + ') scale(.085)">' + handleT(0, 0, 1, gl, pull, t) + '</g>'; }
 function road(t, y, run) { return R(-600, y, 1840, 400, "#cbc2ad", 0) + '<path d="M-600 ' + y + ' H1240" stroke="' + INK + '" stroke-width="2.4"/>' + '<path d="M-600 ' + f(y + 50) + ' H1240" stroke="#efe9da" stroke-width="6" stroke-dasharray="54 40" stroke-dashoffset="' + f((run || 0) * t * 90) + '"/>'; }
 var FACE_KICK = { eyes: 1.25, brows: "angry", mouth: "open" };
@@ -343,7 +370,7 @@ shot([5, 1], push(320, 420, 1.12, 1.16), function (u, d, t) {
 });
 // 6 · «وإنت نايم متني كده…» — close in the trunk: no room, no angle
 shot(6, push(320, 440, 1.0, 1.06), function (u, d, t) {
-  var per = 1.4, a = Wp([476, -96]), b = Wp([466, -128]);
+  var per = 1.4, a = Wp([520, -96]), b = Wp([528, -124]);
   return paper() + road(0, Y) + car({ x: X, y: Y, sc: S, t: t, shake: kickHit(t, per) * .3, people: kicking(t, per, .75, { eyes: 1.2, brows: "worried", mouth: "frown" }) }) +
     G("", arrow(a[0] + 40, a[1], b[0] + 40, b[1], ORANGE, 6, 1) + T("مفيش مسافة", 330, 150, 36, ORANGE, 800), at(u, .8, .4));
 });
@@ -357,18 +384,18 @@ shot([7, 2], push(320, 420, 1.0, 1.06), function (u, d, t) {
 }, { tr: "in" });
 // 8 · where it is: under the lid over the latch, or by the rear lamps
 shot(8, push(330, 420, 1.0, 1.04), function (u, d, t) {
-  var h = Wp([HD[0], HD[1] + 8]), lmp = Wp([567, -90]);
+  var h = Wp([HD[0], HD[1] + 8]), lmp = Wp([556, -77]);
   return paper() + road(0, Y) + car({ x: X, y: Y, sc: S, t: t, hlTail: at(u, 2.4, .5), lidIn: handleSmall(1, 0, t), people: function (tt) { return reachPose(null, tt, { hands: [null, null], face: { eyes: 1.1, brows: "raised", mouth: "neutral" }, tilt: -18 }); } }) +
     label(h[0], h[1], 470, 120, "فوق القفل", OLIVE, at(u, .3, .5), 30) + label(lmp[0], lmp[1], 470, 770, "جنب الفانوس", ORANGE, at(u, 2.4, .5), 30) + inset(140, 150, 100, '<g transform="scale(1.2) translate(0 -70)">' + handleT(0, -20, .9, 1, 0, t) + '</g>', at(u, .6, .5));
 });
 // 9 · «اسحبه، وبعدين زق الغطا لفوق.» — the fist pulls the handle down, the latch lets go, both hands push the lid up
 function lidPt(p, lid) { var a = D2R(-55 * ease(clamp(lid))), dx = p[0] - HINGE[0], dy = p[1] - HINGE[1]; return [HINGE[0] + dx * Math.cos(a) - dy * Math.sin(a), HINGE[1] + dx * Math.sin(a) + dy * Math.cos(a)]; }
 shot(9, push(330, 430, 1.0, .9), function (u, d, t) {
-  var pull = at(u, .3, .5), lid = at(u, 1.3, 1.4), g = [HD[0] - 1, HD[1] + 10 + 4 * pull], hk = Math.min(lid, .45);
+  var pull = at(u, .3, .5), lid = .6 * at(u, 1.3, 1.6), g = [HD[0] - 1, HD[1] + 10 + 4 * pull], hk = lid;
   return paper() + road(0, Y) + car({ x: X, y: Y, sc: S, t: t, lid: lid, lidIn: handleSmall(1, pull * (1 - clamp(lid * 3)), t), people: function (tt) {
-      var h0 = lid > 0 ? lidPt([520, -118], hk) : g, h1 = lid > 0 ? lidPt([498, -120], hk) : null;
+      var h0 = lid > 0 ? lidPt([512, -122], hk) : g, h1 = lid > 0 ? lidPt([496, -124], hk) : null;
       if (lid > 0 && lid < .15) h0 = L2(g, h0, lid / .15);
-      return reachPose(h0, tt, { hands: [h0, h1 ? (lid < .15 ? L2([462, -54], h1, lid / .15) : h1) : null], hk: ["fist", lid > 0 ? "flat" : "relaxed"], wrist: lid > 0 ? [-80, -80] : null,
+      return reachPose(h0, tt, { rot: lerp(-34, -4, lid / .6), hands: [h0, h1 ? (lid < .15 ? L2([462, -54], h1, lid / .15) : h1) : null], hk: ["fist", lid > 0 ? "flat" : "relaxed"], wrist: lid > 0 ? [-80, -80] : null,
         face: { eyes: 1.1, brows: lid > .5 ? "raised" : "angry", mouth: lid > .5 ? "smile" : "neutral" }, tilt: -24 });
     } }) + G("", arrow(560, 130, 560, 230, ORANGE, 7, 1) + T("اسحب", 560, 110, 36, ORANGE, 800), at(u, .2, .3) * (1 - at(u, 1.2, .3))) + G("", arrow(150, 330, 150, 200, OLIVE, 7, 1) + T("زق", 150, 370, 40, OLIVE, 800), at(u, 1.3, .4));
 });
