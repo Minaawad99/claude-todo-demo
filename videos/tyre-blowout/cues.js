@@ -59,9 +59,9 @@ const flap = (t, dur, g) => { if (!has('flat')) { for (let k = 0; k * 0.11 < dur
   for (let k = 0; k * 3.0 < dur; k++) rec(t + k * 3.0, 'flat', (g || 0.1) * 2.6, 0.2, Math.min(3.1, dur - k * 3.0)); };   // flapping rubber 0.2–3.3 s (narration after 3.4 s left out)
 const hiss = (t, dur, g) => rec(t, 'air-hiss', g || 0.3, 0.05, Math.min(3.5, dur), 1.0, 'steam', g || 0.22);
 const hazard = (t, dur) => has('hazard') ? rec(t, 'hazard', 0.45, 1.9, Math.min(3.15, dur)) : (() => { for (let k = 0; k * 0.385 < dur; k++) a(t + k * 0.385, 'tick', 0.22); })();   // clicks every 0.35 s, 1.9–5.05 s
-// 0–2 · hook: the highway, the blowout at 45 % of line 0, the flapping tyre; the foot goes for the brake; the car spins
+// 0–2 · hook: the highway, the blowout on «طاخ», the flapping tyre; the foot goes for the brake; the car spins
 road(L(0), L(3) - L(0) + 0.3, 0.26);
-const BT = L(0) + (LE(0) - L(0)) * 0.45; blowout(BT); flap(BT + 0.25, L(2) - BT - 0.3, 0.1);
+const BT = L(1) + 0.5; blowout(BT); flap(BT + 0.3, L(2) - BT - 0.4, 0.1);   // the bang on the narrator's «طاخ» (word onset 0.5 s into line 1)
 a(L(1) + (LE(1) - L(1)) * 0.6 + 0.3, 'thud', 0.25, 0.3);
 squeal(L(2) + 0.1, D(2) + 0.2, 0.4); scribble(L(2) + 1.6);
 // 4–8 · the tyre: what's inside, the air rushing out, the squashed tyre, the pull, the trolley

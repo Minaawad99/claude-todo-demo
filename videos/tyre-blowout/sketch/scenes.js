@@ -630,18 +630,23 @@ shot(23, push(330, 420, 1.2, 1.3), function (u, d, t) {
 
 // ── opening card, bumper and summary art ──
 window.SCENE = window.SCENE || {};
+// the blowout lands on the narrator's «طاخ» in line 1 (the word starts 0.5 s into the line); cues.js plays the bang there too
+window.BANG_DT = 0.5;
+function hookRoad(t, s0) {   // the highway shot of the hook: steady at 120 until the bang, then the tyre bursts and the car pulls
+  var bt = LN[1].start + BANG_DT, k = clamp((t - bt) / 2.5), on = t > bt, s = "";
+  s += G("translate(-16 -40) scale(1)", road(t, 420 * (1 - .2 * k)) + track([[300, 760], [300, 600], [298, 540], [290, 500], [300 - 60 * k * k, 470]], ORANGE, k) + topCar(300 - 60 * k * k + (on ? 0 : 1.5 * Math.sin(t * 9)), 430, -12 * k, on ? { blown: "FL" } : {}) + spark(252 - 60 * k * k, 346, (t - bt) / .5));
+  s += G("translate(500 90)", speedo(0, 0, 62, 120 + (on ? 0 : 2 * Math.sin(t * 3))));
+  if (on) s += G("translate(480 230) scale(" + f(1 + .4 * (1 - clamp((t - bt) / .2))) + ")", T("طاخ!", 0, 0, 54, ORANGE, 800), clamp((t - bt) / .12));
+  // «اوعى تدوس فرامل»: the brake pedal, crossed out, from the first word
+  s += iconBox(110, 100, 130, G("rotate(-18)", P("M14 -22 L-2 26", "none", 7) + R(-22, 18, 40, 30, ORANGE, 2.4, 6)) + T("فرامل", 0, -38, 20, INK, 800), clamp((t - s0) / .3)) + cross(110, 104, 1.1, clamp((t - s0 - .5) / .4));
+  return s;
+}
 SCENE.intro = function (svg, t, li) {
-  // line 0: the car on the highway at 120, the front-left tyre bursts («طاخ»), the car starts to pull
-  // line 1: the foot goes for the brake. line 2: the car slews round, ✗
+  // line 0: the car on the highway at 120, the brake crossed out. line 1: «هتسمع طاخ» — the tyre bursts on the word, the car
+  // pulls; then inside the car the foot goes for the brake. line 2: the car slews round, ✗
   var s = "";
-  if (li === 0) {
-    var u = t - LN[0].start, bt = (LN[0].end - LN[0].start) * .45, k = clamp((u - bt) / 2.5);
-    s += G("translate(-16 -40) scale(1)", road(t, 420 * (1 - .2 * k)) + track([[300, 760], [300, 600], [298, 540], [290, 500], [300 - 60 * k * k, 470]], ORANGE, k) + topCar(300 - 60 * k * k, 430, -12 * k, u > bt ? { blown: "FL" } : {}) + spark(252 - 60 * k * k, 346, (u - bt) / .5) );
-    s += G("translate(500 90)", speedo(0, 0, 62, 120));
-    if (u > bt) s += G("", T("طاخ!", 480, 230, 54, ORANGE, 800), clamp((u - bt) / .25));
-    // «اوعى تدوس فرامل»: the brake pedal, crossed out, from the first word
-    s += iconBox(110, 100, 130, G("rotate(-18)", P("M14 -22 L-2 26", "none", 7) + R(-22, 18, 40, 30, ORANGE, 2.4, 6)) + T("فرامل", 0, -38, 20, INK, 800), clamp(u / .3)) + cross(110, 104, 1.1, clamp((u - .5) / .4));
-  } else if (li === 1) {
+  if (li === 0 || (li === 1 && t < LN[1].start + BANG_DT + 1.4)) s += hookRoad(t, LN[0].start);
+  else if (li === 1) {
     var u1 = t - LN[1].start, p = clamp((u1 - (LN[1].end - LN[1].start) * .6) / .5);
     s += G("translate(-230 -150) scale(1.35)", cockpit({ x: 220, y: 420, s: 1, foot: "brake", press: p, hlPedal: "brake", face: { eyes: 1.25, brows: "raised", mouth: "o" } }).svg);
   } else {

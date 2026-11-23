@@ -248,7 +248,7 @@
    "duck": 1
   },
   {
-   "t": 1.94,
+   "t": 4.98,
    "file": "sfx/px-blowout.mp3",
    "gain": 0.75,
    "from": 22.12,
@@ -256,25 +256,18 @@
    "duck": 1
   },
   {
-   "t": 2.23,
+   "t": 5.32,
    "file": "sfx/px-flat.mp3",
    "gain": 0.26,
    "from": 0.2,
    "dur": 3.1
   },
   {
-   "t": 5.23,
+   "t": 8.32,
    "file": "sfx/px-flat.mp3",
    "gain": 0.26,
    "from": 0.2,
-   "dur": 3.1
-  },
-  {
-   "t": 8.23,
-   "file": "sfx/px-flat.mp3",
-   "gain": 0.26,
-   "from": 0.2,
-   "dur": 1.2
+   "dur": 1.06
   },
   {
    "t": 7.62,
