@@ -23,4 +23,12 @@
 
 ## الأصوات
 - من مكتبة «اسكتش» (`videos/_templates/sketch/sfx/`): Paper Flipping، Paper Slide Short، Pencil on Paper Scribble 2، Minimal Ding SFX. الباقي أصوات مولّدة من `audio/sfx.py`.
-- طلبتها من صاحب القناة (Pixabay)، ولحد ما توصل فيه بدايل مولّدة: px-sniff، px-paws، px-bark، px-mri.
+### أصوات الحلقة دي (Pixabay، بعتها صاحب القناة، في `sfx/`)
+| الملف | الاسم على Pixabay | الحتة المستعملة | فين |
+|---|---|---|---|
+| px-sniff | Dog Sniffing Near Distance (freesound_community 83265) | 0.2–1.6 ث | كل مرة الكلب بيشم |
+| px-paws | Dog Paws on a Kitchen Floor (freesound_community 80302) | من 0.3 ث | الكلب بيجري أو بيمشي |
+| px-bark | Dog Bark 03 (Dragon Studio 472362) | 0–0.48 ث | الهوك والتوأم |
+| px-mri | MRI Machine Sound | من 0.95 ث | السطر 19، جهاز الرنين |
+
+الصوت: Gemini TTS، صوت Puck (AI Studio). التوقيت اتعمل بـ align_asr، وحدود السطر 20/21 اتظبطت بإيدي علشان «لأ.» تفضل في السطر بتاعها.

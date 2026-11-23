@@ -45,12 +45,13 @@ paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                               
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
 // e.g. lab(5, 0.4); ding(L(6) + 1.6); scribble(L(9) + 1.2); sea(L(0), L(PROMISE) - L(0) + 0.6, 0.45);
 // real recordings asked of the user (Pixabay), each with a synthesized stand-in until they land in sfx/:
-//   px-sniff (a dog sniffing), px-paws (paws trotting on a wooden floor), px-bark (one short happy bark), px-mri (MRI scanner hum)
-const sniff = (t, g) => rec(t, 'sniff', g || 0.5, 0, 1.4, 1.0, 'intake', 0.25);
-const paws = (t, dur) => has('paws') ? rec(t, 'paws', 0.35, 0, dur) : [0, 1, 2, 3, 4, 5, 6, 7].filter(k => k * 0.17 < dur).forEach(k => a(t + k * 0.17, 'tick', 0.12));
+//   px-sniff «Dog Sniffing Near Distance» (freesound_community 83265) 0.2–1.6 s, px-paws «Dog Paws on a Kitchen Floor» (freesound_community 80302) from 0.3 s,
+//   px-bark «Dog Bark 03» (Dragon Studio 472362) 0–0.48 s, px-mri «MRI Machine Sound» from 0.95 s. Asked for: px-sniff (a dog sniffing), px-paws (paws trotting on a wooden floor), px-bark (one short happy bark), px-mri (MRI scanner hum)
+const sniff = (t, g) => rec(t, 'sniff', g || 0.5, 0.2, 1.4, 1.0, 'intake', 0.25);
+const paws = (t, dur) => has('paws') ? rec(t, 'paws', 0.35, 0.3, dur) : [0, 1, 2, 3, 4, 5, 6, 7].filter(k => k * 0.17 < dur).forEach(k => a(t + k * 0.17, 'tick', 0.12));
 a(L(0) + 0.6, 'wipe', 0.25);                                     // the wipe into the dog's eye
 scribble(L(1) + 0.7);                                            // red / green crossed out
-paws(L(2) + 0.1, 1.2); rec(L(2) + 1.3, 'bark', 0.35, 0, 0.6); scribble(L(2) + 1.1);
+paws(L(2) + 0.1, 1.2); rec(L(2) + 1.3, 'bark', 0.35, 0, 0.48); scribble(L(2) + 1.1);
 lab(5, 1.4); scribble(L(5) + D(5) * 0.55); ding(L(5) + D(5) * 0.8);
 lab(6, 0.5); paws(L(6) + D(6) * 0.4, D(6) * 0.35); ding(L(6) + D(6) * 0.85);
 a(L(7) + 0.4, 'whoosh', 0.15); ding(L(7) + D(7) * 0.5);
@@ -65,11 +66,11 @@ sniff(L(15) + 0.2); sniff(L(15) + 1.6, 0.4);
 a(L(16) + 0.4, 'intake', 0.25); lab(16, D(16) * 0.45); lab(16, D(16) * 0.62);
 for (let k = 0; k * 1.11 < D(17); k++) { a(L(17) + k * 1.11, 'intake', 0.18); a(L(17) + k * 1.11 + 0.56, 'exhaust', 0.14); }
 sniff(L(18) + 0.4); ding(L(18) + D(18) * 0.55);
-rec(L(19), 'mri', 0.3, 0, D(19), 1.0, 'hum', 0.12); ding(L(19) + D(19) * 0.45);
+rec(L(19), 'mri', 0.22, 0.95, D(19), 1.0, 'hum', 0.12); ding(L(19) + D(19) * 0.45);
 scribble(L(20) + D(20) * 0.7);
 paws(L(21) + 0.4, 1.0); ding(L(21) + D(21) * 0.35);
 paper(L(22) + 0.2); paper(L(22) + D(22) * 0.3); paper(L(22) + D(22) * 0.55);
-sniff(L(23) + D(23) * 0.3); paws(L(23) + D(23) * 0.4, 1.2); scribble(L(23) + D(23) * 0.85); rec(L(23) + D(23) * 0.9, 'bark', 0.3, 0, 0.6);
+sniff(L(23) + D(23) * 0.3); paws(L(23) + D(23) * 0.4, 1.2); scribble(L(23) + D(23) * 0.85); rec(L(23) + D(23) * 0.9, 'bark', 0.3, 0, 0.48);
 
 // music plays only when sfx.py is run with --music, and that only when the user asked for music in this video
 const MUSIC = has('music-soft') ? 'music-soft' : null;

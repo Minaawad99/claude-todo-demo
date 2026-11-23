@@ -552,7 +552,7 @@ shot(4, push(330, 420, 1.0, 1.08), function (u, d, t) {
 shot(5, push(320, 390, 1.0, 1.05), function (u, d, t) {
   var k1 = at(u, .3, .8), k2 = at(u, (LN[5].end - LN[5].start) * .45, .8);
   var s = paper() + T("عينك", 320, 70, 30, INK, 800) + eyeCut(290, 220, 120, "human", t, { rays: k1 }) +
-    label(398, 220, 520, 120, "النقطة دي", ORANGE, at(u, 1.4, .5), 24) + G("", C(398, 220, 18, "none", 3).replace(INK, ORANGE), at(u, 1.4, .4));
+    label(398, 220, 470, 330, "النقطة دي", ORANGE, at(u, 1.4, .5), 24) + G("", C(398, 220, 18, "none", 3).replace(INK, ORANGE), at(u, 1.4, .4));
   s += G("", T("عينه", 320, 420, 30, INK, 800) + eyeCut(290, 570, 120, "dog", t, { rays: k2 }) + cross(470, 520, .7, at(u, (LN[5].end - LN[5].start) * .55, .4)) + T("مفيش", 470, 590, 24, ORANGE, 800), k2 > 0 ? 1 : 0);
   return s + numBox("÷4", 120, 420, at(u, (LN[5].end - LN[5].start) * .8, .3), 30, true);
 });
@@ -682,9 +682,9 @@ shot(21, pan(300, 400, 360, 400, 1.0), function (u, d, t) {
   return s + G("", tag("الحركة", 480, 520, 1, 26, ORANGE), at(u, d * .35, .3)) + G("", tag("الضلمة", 140, 180, 1, 26, BLUE), at(u, d * .6, .3));
 });
 // 22 · the recap: blurry eye, few colours, a nose that reads your smell like a fingerprint
-shot(22, push(320, 400, 1.04, 1.0), function (u, d, t) {
+shot(22, push(320, 400, 1.14, 0.98), function (u, d, t) {
   var s = paper(), ks = [at(u, .2, .4), at(u, d * .3, .4), at(u, d * .55, .4)];
-  s += G("", R(40, 60, 260, 200, "#f4ecdb", 2) + G("translate(170 160) scale(.42) translate(-290 -220)", eyeCut(290, 220, 120, "dog", t, {})) + T("مغبّشة", 170, 300, 26, INK, 800), ks[0]);
+  s += G("translate(" + f(8 * Math.sin(t * 1.7)) + " " + f(10 * Math.sin(t * 2.2)) + ")", G("", R(40, 60, 260, 200, "#f4ecdb", 2) + G("translate(170 160) scale(.42) translate(-290 -220)", eyeCut(290, 220, 120, "dog", t, {})) + T("مغبّشة", 170, 300, 26, INK, 800), ks[0]));
   s += G("", R(340, 60, 260, 200, "#f4ecdb", 2) + C(420, 160, 46, "#4a63b8", 2.4) + C(520, 160, 46, "#d9b44a", 2.4) + T("ألوان قليلة", 470, 300, 26, INK, 800), ks[1]);
   var fp = ""; for (var i = 0; i < 9; i++) fp += '<ellipse cx="0" cy="' + f(i * 1.2) + '" rx="' + f(16 + i * 11) + '" ry="' + f(22 + i * 13) + '" fill="none" stroke="' + ORANGE + '" stroke-width="4" stroke-dasharray="' + (i % 2 ? "30 6" : "60 8") + '" stroke-dashoffset="' + f(t * 20 * (i % 2 ? 1 : -1)) + '"/>';
   s += G("", R(140, 340, 360, 320, "#f4ecdb", 2) + G("translate(320 470)", fp) + noseFront(320, 560, .32, t, { sniff: 1 }) + T("ريحتك = بصمة", 320, 700, 28, ORANGE, 800), ks[2]);
