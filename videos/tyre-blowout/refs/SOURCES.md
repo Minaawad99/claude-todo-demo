@@ -25,4 +25,7 @@
 ### تسجيلات صاحب القناة (Pixabay، في `sfx/`)
 - `px-highway.mp3`: «Interior car on highway with high RPM engine and road noise» (jadeallencook, Pixabay 339224)، من 0.2 ث.
 - `px-squeal.mp3`: «Chrysler LHS tire squeal» (freesound_community, Pixabay 7154)، الصريخ العالي 4.3–7.0 ث.
-- لسه بأصوات مولّدة لحد ما تيجي تسجيلات: انفجار الكاوتش (`boom`)، وخبط الكاوتش المفرطح (`bump`)، والهوا الخارج من البلف (`steam`)، والفلاشر (`tick`).
+- `px-blowout.mp3`: انفجار كاوتش تريلا، من فيديو شورت بعته صاحب القناة؛ الخبطة بس 22.12–22.97 ث (قبلها كلاكسات وبعدها كلام).
+- `px-flat.mp3`: «Do not drive with a flat tire» (بعته صاحب القناة)؛ خبط الكاوتش 0.2–3.3 ث (بعدها تعليق صوتي).
+- `px-air-hiss.mp3`: «Tire leaking sound» (بعته صاحب القناة)، 0.05–3.6 ث.
+- `px-hazard.mp3`: «2020 Toyota RAV4 Turn Signal Sound» (بعته صاحب القناة)؛ التكات 1.9–5.05 ث كل 0.35 ث.

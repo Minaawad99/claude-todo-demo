@@ -46,14 +46,19 @@ paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                               
 // recordings sent by the channel for this episode (sfx/):
 //   px-highway  «Interior car on highway with high RPM engine and road noise» (jadeallencook, Pixabay 339224), steady from 0.2 s
 //   px-squeal   «Chrysler LHS tire squeal» (freesound_community, Pixabay 7154), loud squeal 4.3–7.0 s
+//   px-blowout  truck tyre blast (from a YouTube short the channel sent), the bang 22.12–22.97 s
+//   px-flat     «Do not drive with a flat tire» (sent by the channel), flapping 0.2–3.3 s (narration after)
+//   px-air-hiss «Tire leaking sound» (sent by the channel), 0.05–3.6 s
+//   px-hazard   «2020 Toyota RAV4 Turn Signal Sound» (sent by the channel), clicks 1.9–5.05 s
 const CH = JSON.parse(fs.readFileSync(__dirname + '/sketch/scenes.js', 'utf8').match(/window\.CHUNKS = (.*);/)[1]);
 const LE = i => T[i].end, CT = (i, k) => T[i].start + (T[i].end - T[i].start) * (CH[i][k] || 0);
 const road = (t, dur, g, from) => rec(t, 'highway', g || 0.22, from || 0.3, dur, 1.0, 'wind', 0.12);
 const squeal = (t, dur, g, from) => rec(t, 'squeal', g || 0.35, from || 4.3, dur || 2.7, 1.0, 'whoosh', 0.2);
-const blowout = t => rec(t, 'blowout', 0.6, 0, 1.2, 1.0, 'boom', 0.55);
-const flap = (t, dur, g) => { for (let k = 0; k * 0.11 < dur; k++) a(t + k * 0.11, 'bump', (g || 0.1) * (1 - 0.5 * k * 0.11 / dur)); };
-const hiss = (t, dur, g) => rec(t, 'air-hiss', g || 0.3, 0, dur, 1.0, 'steam', g || 0.22);
-const hazard = (t, dur) => { for (let k = 0; k * 0.385 < dur; k++) rec(t + k * 0.385, 'hazard', 0.3, 0, 0.3, 1.0, 'tick', 0.22); };
+const blowout = t => rec(t - 0.04, 'blowout', 0.75, 22.12, 0.85, 1.0, 'boom', 0.55);   // the bang only: horns before it and a voice after it are left out
+const flap = (t, dur, g) => { if (!has('flat')) { for (let k = 0; k * 0.11 < dur; k++) a(t + k * 0.11, 'bump', (g || 0.1) * (1 - 0.5 * k * 0.11 / dur)); return; }
+  for (let k = 0; k * 3.0 < dur; k++) rec(t + k * 3.0, 'flat', (g || 0.1) * 2.6, 0.2, Math.min(3.1, dur - k * 3.0)); };   // flapping rubber 0.2–3.3 s (narration after 3.4 s left out)
+const hiss = (t, dur, g) => rec(t, 'air-hiss', g || 0.3, 0.05, Math.min(3.5, dur), 1.0, 'steam', g || 0.22);
+const hazard = (t, dur) => has('hazard') ? rec(t, 'hazard', 0.45, 1.9, Math.min(3.15, dur)) : (() => { for (let k = 0; k * 0.385 < dur; k++) a(t + k * 0.385, 'tick', 0.22); })();   // clicks every 0.35 s, 1.9–5.05 s
 // 0–2 · hook: the highway, the blowout at 45 % of line 0, the flapping tyre; the foot goes for the brake; the car spins
 road(L(0), L(3) - L(0) + 0.3, 0.26);
 const BT = L(0) + (LE(0) - L(0)) * 0.45; blowout(BT); flap(BT + 0.25, L(2) - BT - 0.3, 0.1);
