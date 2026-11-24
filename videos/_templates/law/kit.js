@@ -21,7 +21,7 @@ if (!window.PERSON && document.currentScript) document.write('<script src="' + d
   function F(d, fill, o) { o = o || {}; return '<path d="' + d + '" fill="' + fill + '" stroke="' + (o.st || INK) + '" stroke-width="' + (o.sw == null ? 3 : o.sw) + '" stroke-linejoin="round"' + (o.op != null ? ' opacity="' + f(o.op) + '"' : "") + (o.fl ? ' filter="url(#' + o.fl + ')"' : "") + '/>'; }
   function C(x, y, r, fill, o) { o = o || {}; return '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(Math.max(0, r)) + '" fill="' + fill + '" stroke="' + (o.st || "none") + '" stroke-width="' + (o.sw || 0) + '"' + (o.op != null ? ' opacity="' + f(o.op) + '"' : "") + '/>'; }
   function T(text, x, y, sz, col, o) { o = o || {}; return '<text x="' + f(x) + '" y="' + f(y) + '" text-anchor="middle" style="font:' + (o.w || 900) + ' ' + sz + 'px Noto Sans Arabic;fill:' + (col || "#fff") + (o.stroke ? ';stroke:' + o.stroke + ';stroke-width:' + f(sz / 7) + ';paint-order:stroke' : "") + '">' + text + '</text>'; }
-  var GY = window.LAW_GY || 900;
+  var GY = window.LAW_GY != null ? window.LAW_GY : 900;
   var SOILTEX = (function () { var s = ""; for (var i = 0; i < 260; i++) { var x = -600 + hash(i) * 2300, y = GY + 50 + hash(i + 9) * 1500, rx = 14 + hash(i + 3) * 50; s += '<ellipse cx="' + f(x) + '" cy="' + f(y) + '" rx="' + f(rx) + '" ry="' + f(rx * (0.3 + hash(i + 5) * 0.3)) + '" fill="' + (hash(i + 7) > 0.5 ? "#5a3820" : "#9a6a40") + '" opacity="' + f(0.25 + hash(i + 2) * 0.3) + '"/>'; }
     for (var k = 0; k < 70; k++) { var gx = -600 + hash(k + 400) * 2300, gy = GY + 60 + hash(k + 500) * 1400, d = "M" + f(gx) + " " + f(gy); for (var j = 1; j < 6; j++) d += " q" + f(8 - hash(k + j) * 16) + " 22 " + f(4 - hash(k + j + 3) * 8) + " 44"; s += P(d, "#4a2c16", 2.4, ' opacity=".35"'); }
     for (var q = 0; q < 50; q++) { var sx = -600 + hash(q + 700) * 2300, sy = GY + 120 + hash(q + 800) * 1400, r = 8 + hash(q + 900) * 18; s += '<ellipse cx="' + f(sx) + '" cy="' + f(sy) + '" rx="' + f(r * 1.3) + '" ry="' + f(r) + '" fill="#a8927a" stroke="#5a4636" stroke-width="2" opacity=".75"/>'; }
@@ -203,7 +203,7 @@ if (!window.PERSON && document.currentScript) document.write('<script src="' + d
     var bk = clamp((u - (ub - 0.45)) / 0.45), pz = mixPose(pa, pb, ease(bk));
     if (!moving && (a.p || "stand") === "stand") { pz = mixPose(pz, { lean: Math.sin(t * 1.6) * 2, head: Math.sin(t * 1.1) * 3 }, 0.5); }
     var hip = a.hip ? [lerp(a.hip[0], (b.hip || a.hip)[0], kpos), lerp(a.hip[1], (b.hip || a.hip)[1], kpos)] : null;
-    return man({ x: x, y: y + Math.abs(Math.sin(u * 5)) * (moving ? 4 : 0), f: (kpos > 0.5 && b.f ? b.f : a.f) || 1, pose: pz, mood: u > ub - 0.3 && b.mood ? b.mood : a.mood, t: t, hip: hip, s: a.s || 1, shirt: a.shirt, shirtD: a.shirtD, vest: a.vest, hat: a.hat, phone: a.phone });
+    return man({ x: x, y: y + Math.abs(Math.sin(u * 5)) * (moving ? 4 : 0), f: (kpos > 0.5 && b.f ? b.f : a.f) || 1, pose: pz, mood: u > ub - 0.3 && b.mood ? b.mood : a.mood, t: t, hip: hip, s: a.s || 1, shirt: a.shirt, shirtD: a.shirtD, vest: a.vest, hat: a.hat, phone: a.phone, outfit: a.outfit });
   }
   // ── overlays: a dark pill label with a pointer, a red ✗, a green ✓, a yellow ring ──
   function pill(text, x, y, u, u0, o) { o = o || {}; var k = clamp((u - u0) / 0.35); if (k <= 0) return ""; var sz = o.sz || 40, w = text.length * sz * 0.52 + 44, col = o.bg || "#262a30";
@@ -225,12 +225,17 @@ if (!window.PERSON && document.currentScript) document.write('<script src="' + d
     var i = at(t); CUR = i; var sh = SH[i], next = i + 1 < SH.length ? SH[i + 1].a : L(LN.length), u = t - sh.a, d = Math.max(0.5, next - sh.a), k = ease(u / d);
     var cx = lerp(sh.c0[0], sh.c1[0], k) + 10 * Math.sin(t * 0.9), cy = lerp(sh.c0[1], sh.c1[1], k) + 8 * Math.cos(t * 0.8), z = lerp(sh.c0[2], sh.c1[2], k) * (1 + 0.012 * Math.sin(t * 1.1));
     if (i > 0 && u < 0.35) { var pc = SH[i - 1].c1, m = ease(u / 0.35); cx = lerp(pc[0], cx, m); cy = lerp(pc[1], cy, m); z = lerp(pc[2], z, m); }
-    svg.innerHTML = '<g transform="translate(540 960) scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g>';
+    // the camera is readable while drawing (window.LAW.cam, for screen-space overlays via LAW.scr); an episode may set
+    // window.LAW_BG(cam, t) to draw a screen-space background (sky, sun, far hills) under the world, e.g. for tall builds
+    var cam = window.LAW.cam = { cx: cx, cy: cy, z: z }, world = sh.draw(u, d, t), bg = window.LAW_BG ? window.LAW_BG(cam, t) : "";
+    svg.innerHTML = bg + '<g transform="translate(540 960) scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + world + '</g>';
     return i;
   };
+  // screen-space content (1080×1920 frame coordinates) drawn from inside a shot: pills and insets that keep their size
+  function scr(s) { var c = window.LAW.cam; return '<g transform="translate(' + f(c.cx - 540 / c.z) + ' ' + f(c.cy - 960 / c.z) + ') scale(' + (1 / c.z).toFixed(5) + ')">' + s + '</g>'; }
   window.LAW = { L: L, clamp: clamp, ease: ease, lerp: lerp, hash: hash, f: f, pop: pop, INK: INK, R: R, P: P, F: F, C: C, T: T, GY: GY,
     sky: sky, palm: palm, bush: bush, ground: ground, POSES: POSES, pose: pose, mixPose: mixPose, man: man, manOld: manOld, act: act,
     pill: pill, xmark: xmark, vmark: vmark, ring: ring, confetti: confetti, arrowH: arrowH, arrowV: arrowV,
-    shot: shot, steps: steps, has: has, setLine: function (n) { CUR = n; } };
+    shot: shot, steps: steps, has: has, setLine: function (n) { CUR = n; }, scr: scr, cam: { cx: 540, cy: 960, z: 1 } };
   window.__parts = window.LAW;
 })();
