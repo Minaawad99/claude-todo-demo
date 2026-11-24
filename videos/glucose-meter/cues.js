@@ -43,7 +43,48 @@ a(L(SUMMARY) + 0.1, 'chime', 0.35); for (let k = 0; k < 5; k++) a(L(SUMMARY) + 0
 paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                                                       // ask box
 
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
-// e.g. lab(5, 0.4); ding(L(6) + 1.6); scribble(L(9) + 1.2); sea(L(0), L(PROMISE) - L(0) + 0.6, 0.45);
+// 0–2 · hook: the drop appears, it falls next to a lentil, the meter counts with a stopwatch
+a(L(0) + 0.3, 'drip', 0.3); a(L(1) + 0.2, 'drop', 0.3); a(L(1) + 1.1, 'pop', 0.3); a(L(1) + 1.6, 'pop', 0.3);
+for (let k = 0; k < 4; k++) a(L(2) + 0.1 + k * 0.22, 'tick', 0.16); ding(L(2) + 0.9);
+// 4 · the eye, crossed out
+a(L(4) + 0.3, 'pop', 0.3); scribble(L(4) + D(4) * 0.55);
+// 5 · push into the strip
+a(L(5) + 0.2, 'whoosh', 0.15); lab(5, 0.9);
+// 6 · the channel sucks the blood up
+a(L(6) + 0.3, 'drip', 0.3); a(L(6) + 0.8, 'fill', 0.18, Math.min(2.5, D(6) - 1.2)); lab(6, 0.4); a(L(6) + 1.6, 'pop', 0.25);
+// 7 · the layers open
+a(L(7) + 0.2, 'whoosh', 0.14); lab(7, 0.8); lab(7, 1.2); lab(7, 2.2); lab(7, 2.8);
+// 8 · key and lock: the glucose clicks in, the other molecule bounces off
+lab(8, 0.2); a(L(8) + 1.7, 'clink', 0.25); scribble(L(8) + 1.8); a(L(8) + D(8) * 0.5, 'pop', 0.3);
+// 9 · electrons pulled out
+a(L(9) + 0.5, 'zap', 0.12); a(L(9) + 1.0, 'zap', 0.12); lab(9, 1.6);
+// 10 · the mediator carries them; delivery icon
+lab(10, 0.5); a(L(10) + 1.0, 'whoosh', 0.12); a(L(10) + 1.6, 'pop', 0.3);
+// 11 · the meter opens; battery, current meter, voltage
+a(L(11) + 0.2, 'clank', 0.15); lab(11, 1.2); lab(11, 1.8); a(L(11) + 2.6, 'hum', 0.08, 2.0);
+// 12 · more sugar, more current
+for (let k = 0; k < 6; k++) a(L(12) + 0.3 + k * 0.15, 'pop', 0.18); a(L(12) + 0.8, 'charge', 0.12, 2.0);
+// 13 · counting at the gate
+for (let k = 0; k < 8; k++) a(L(13) + 0.3 + k * 0.45, 'tick', 0.15); a(L(13) + 1.6, 'pop', 0.3);
+// 14 · the chip, the number counts up to 126
+lab(14, 0.3); a(L(14) + 0.6, 'zap', 0.1); for (let k = 0; k < 6; k++) a(L(14) + 1.6 + k * 0.25, 'tick', 0.15); ding(L(14) + 3.2);
+// 15 · the real device ✓, the calculator
+paper(L(15) + 0.25); scribble(L(15) + 0.6); a(L(15) + 2.4, 'pop', 0.3);
+// 16 · a crack, the number glitches, ✗
+a(L(16) + 0.3, 'snip', 0.3); a(L(16) + 1.0, 'zap', 0.12); scribble(L(16) + 1.6);
+// 17 · heat, humidity, expired
+a(L(17) + 0.2, 'sizzle', 0.12, 0.8); a(L(17) + 0.6, 'drip', 0.25); a(L(17) + 1.2, 'pop', 0.3); lab(17, 1.8);
+// 18 · juice on the finger → 180 ✗; wash → 126 ✓
+a(L(18) + 0.3, 'pop', 0.3); lab(18, 0.6); a(L(18) + 1.0, 'pop', 0.3); scribble(L(18) + 1.6); 
+rec(L(18) + D(18) * 0.62, 'water-rush', 0.18, 3, 1.4, 1.0, 'slosh', 0.2); ding(L(18) + D(18) * 0.62 + 0.6);
+// 19 · «بالظبط؟» crossed out
+paper(L(19) + 0.2); scribble(L(19) + D(19) * 0.7);
+// 20 · ±15 % range
+a(L(20) + 0.4, 'whoosh', 0.12); ding(L(20) + 0.9); lab(20, 1.4); lab(20, 2.0);
+// 21 · recap 1 → 2 → 3
+lab(21, 0.4); a(L(21) + 1.4, 'pop', 0.25); lab(21, 1.6); a(L(21) + 2.6, 'pop', 0.25); lab(21, 2.8); ding(L(21) + 3.4);
+// 22 · the 1970 meter
+a(L(22) + 0.2, 'thud', 0.3); paper(L(22) + 0.5); ding(L(22) + 1.6); a(L(22) + 2.4, 'pop', 0.25);
 
 // music plays only when sfx.py is run with --music, and that only when the user asked for music in this video
 const MUSIC = has('music-soft') ? 'music-soft' : null;
