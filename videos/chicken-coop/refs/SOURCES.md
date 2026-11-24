@@ -16,3 +16,8 @@ Facts checked:
 - Hens need ~14–16 h of light a day to keep laying; short winter days stop them; a lamp in the early morning fixes it:
   https://extension.psu.edu/artificial-lighting-for-winter-egg-production , https://pubs.ext.vt.edu/2902/2902-1097.html
 - One nest box per 4–5 hens, hens roost on a bar at night, dust bathing in sand/dirt: common extension guidance.
+
+## Drawing
+One rooftop scene in the «لو» 2.5D look on the shared kit: a cut-open coop that grows part by part (like the cut-open
+builds of the reference videos), with the owner drawn by the shared person kit. A Cairo roof (black water tank, dish,
+neighbour's roof behind a low parapet) instead of the uploaded video's grass backyard.
