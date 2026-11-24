@@ -272,11 +272,11 @@ function cutY(name, open) { var g = 30 * open, h = { base: 34, electrodes: 10, r
 function patient(x, y, s, t, opt) {
   opt = opt || {}; var H = 400 * s, shY = y - .298 * H, ra = -90;
   var p = PERSON.front({ x: x, y: y, s: s, legs: "sit", breath: .5 + .5 * Math.sin(t * 2),
-    arms: [{ to: [x - .2 * H, shY + .1 * H], bend: -1, hand: "point", rot: ra, front: true }, { to: [x + .16 * H, shY + .26 * H], bend: 1, hand: "fist", rot: -30 }],
+    arms: [{ to: [x - .19 * H, shY + .07 * H], bend: -1, hand: "point", rot: ra, front: true }, { to: [x + .14 * H, shY + .2 * H], bend: 1, hand: "fist", rot: -20 }],
     head: { tilt: -6 + 2 * Math.sin(t * 1.4), turn: -.25 }, face: Object.assign({ eyes: Math.sin(t * 2.3) > .97 ? .1 : 1, look: [-.7, -.2], brows: "raised", mouth: "o" }, opt.face || {}), outfit: "casual" });
   var w = p.joints.wr[0], w1 = p.joints.wr[1], tip = [w[0] + Math.cos(ra * Math.PI / 180) * .11 * H, w[1] + Math.sin(ra * Math.PI / 180) * .1 * H];
   var desk = R(x - .62 * H, y - .02 * H, 1.24 * H, .06 * H, "#b88a5c", 2.2) + R(x - .58 * H, y + .04 * H, 1.16 * H, .16 * H, WOOD, 2.2) + '<path d="M' + f(x - .58 * H) + ' ' + f(y + .12 * H) + ' h' + f(1.16 * H) + '" stroke="' + WOOD_D + '" stroke-width="2"/>';
-  return { svg: p.svg + meter(w1[0] + .03 * H, w1[1] - .06 * H, s * .2, { num: opt.num == null ? "" : opt.num, drop: opt.num == null, strip: 1, blood: opt.blood || 0 }) + desk, tip: tip, meterAt: [w1[0] + .03 * H, w1[1] - .06 * H] };
+  return { svg: meter(w1[0] + .01 * H, w1[1] - .05 * H, s * .2, { num: opt.num == null ? "" : opt.num, drop: opt.num == null, strip: 1, blood: opt.blood || 0 }) + p.svg + desk, tip: tip, meterAt: [w1[0] + .03 * H, w1[1] - .06 * H] };
 }
 // ── shots (panel world 640 × 786) ──
 // 3 · (bumper) · 4 · the meter doesn't look at the blood: an eye looking at the screen, crossed out
@@ -443,7 +443,7 @@ SCENE.intro = function (svg, t, li) {
   var s = "";
   if (li === 0) {
     var p = patient(320, 560, 1.75, t);
-    return p.svg + bloodDrop(p.tip[0], p.tip[1] - 12 + 2 * Math.sin(t * 3), .45, ease((t - LN[0].start) / .5)) + G("", T("؟", 500, 110, 90, ORANGE, 800), ease((t - LN[0].start - .6) / .4));
+    return p.svg + bloodDrop(p.tip[0], p.tip[1] - 3 + 1.5 * Math.sin(t * 3), .4, ease((t - LN[0].start) / .5)) + G("", T("؟", 500, 110, 90, ORANGE, 800), ease((t - LN[0].start - .6) / .4));
   }
   if (li === 1) {
     var u = t - LN[1].start;

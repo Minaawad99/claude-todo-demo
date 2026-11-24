@@ -298,11 +298,20 @@ function person(o) {
     var ang1 = Math.atan2(el[1] - sp[1], el[0] - sp[0]), ang2 = Math.atan2(dy, dx), bendA = Math.abs(((ang2 - ang1 + 3 * Math.PI) % (2 * Math.PI)) - Math.PI);
     var ap = [sp0, L2p(sp, el, .3, 0), L2p(sp, el, .75, 0), el, L2p(el, cuff, .35, 0), cuff], aw = [27 * s, 24.5 * s, 21.5 * s, 20.5 * s, 20 * s, 16.5 * s];
     var coat = OF.over === "labcoat", sc = coat ? c.coat : c.shirt, scD = coat ? c.coatD : c.shirtD, sleeve;
-    if (OF.top === "tshirt" && !coat) {   // bare arm, the short sleeve over its top
-      var bare = [sp0, L2p(sp, el, .3, 0), L2p(sp, el, .75, 0), el, L2p(el, wr, .35, 0), wr], bw = [24 * s, 21 * s, 18 * s, 16.5 * s, 17 * s, 13 * s];
-      var sv = [sp0, L2p(sp, el, .25, 0), L2p(sp, el, .5, 0)], sw2 = [28 * s, 26 * s, 25 * s];
-      sleeve = pLimbDraw(pLimb(bare, bw, false), c.skin, s, pShade(bare, bw, c.skinD, s, .45), 2.2) + pLimbDraw(pLimb(sv, sw2, false), sc, s, "", 2.3);
-    } else sleeve = pLimbDraw(pLimb(ap, aw, false), sc, s, pShade(ap, aw, scD, s), 2.3);
+    // the shoulder: a round cap of the same cloth that carries the torso's shoulder line over the top of the arm, so the
+    // sleeve grows out of the shirt (no flat-topped "shoulder pad"); the sleeve starts at the cap's centre, under its top.
+    var cc = T(hSh - 5, sd * 39), capR = 14 * s, ua = Math.atan2(el[1] - cc[1], el[0] - cc[0]);
+    var cap = '<circle cx="' + f(cc[0]) + '" cy="' + f(cc[1]) + '" r="' + f(capR) + '" fill="' + sc + '" stroke="' + INK + '" stroke-width="' + f(2.3 * s) + '"/>';
+    var capFill = '<circle cx="' + f(cc[0]) + '" cy="' + f(cc[1]) + '" r="' + f(capR - 1.2 * s) + '" fill="' + sc + '"/>';
+    sp0 = cc;
+    ap[0] = cc;
+    if (OF.top === "tshirt" && !coat) {   // bare arm, the short sleeve over its top, flaring a little at the hem
+      var bare = [cc, L2p(sp, el, .3, 0), L2p(sp, el, .75, 0), el, L2p(el, wr, .35, 0), wr], bw = [22 * s, 20 * s, 17.5 * s, 16.5 * s, 17 * s, 13 * s];
+      var sv = [cc, L2p(sp, el, .3, 0), L2p(sp, el, .52, 0)], sw2 = [27 * s, 25 * s, 25.5 * s];
+      sleeve = pLimbDraw(pLimb(bare, bw, false), c.skin, s, pShade(bare, bw, c.skinD, s, .45), 2.2) + cap + pLimbDraw(pLimb(sv, sw2, false), sc, s, "", 2.3) + capFill +
+        pLine([L2p(sp, el, .47, -9 * s), L2p(sp, el, .47, 9 * s)], scD, 1.1 * s);   // the hem stitch
+    } else sleeve = cap + pLimbDraw(pLimb(ap, aw, false), sc, s, pShade(ap, aw, scD, s), 2.3) + capFill;
+    void ua;
     // fabric bunching at the elbow: more folds the more the arm is bent, on the inside of the bend
     // the inside of the bend points from the elbow toward the middle of shoulder and wrist; folds sit there, inside the sleeve
     var mx = (sp[0] + wr[0]) / 2 - el[0], my = (sp[1] + wr[1]) / 2 - el[1], ml = Math.hypot(mx, my) || 1, vi = [mx / ml, my / ml], folds = "", nf = bendA > .35 ? 3 : 1;
