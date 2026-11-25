@@ -69,7 +69,7 @@
     // intro card
     var iOp = t < introEnd ? 1 : 1 - clamp((t - introEnd) / XF);   // linear: an eased fade parks at both ends
     show(intro, iOp);
-    if (iOp > 0) { chrome($("introChrome"), ease(t / 0.5)); $("introArt").style.transform = "scale(" + (1.0 + 0.012 * t).toFixed(4) + ")"; var li = renderHook(t); if (S.intro) $("introArt").innerHTML = S.intro($("introArt"), t, li) || $("introArt").innerHTML; }
+    if (iOp > 0) { chrome($("introChrome"), ease(t / 0.5)); $("introArt").style.transform = "none"; var li = renderHook(t); if (S.intro) $("introArt").innerHTML = S.intro($("introArt"), t, li) || $("introArt").innerHTML; }
     // bumper
     var bOp = P < 0 ? 0 : t < introEnd ? 0 : t < mainStart ? 1 : 1 - ease((t - mainStart) / XF);
     show(bumper, bOp); if (bOp > 0) { bumperArt(t); $("bumperArt").style.transform = "scale(" + (0.8 + 0.2 * Math.min(1, (t - introEnd) / 0.5) + 0.12 * (t - introEnd)).toFixed(4) + ")"; }

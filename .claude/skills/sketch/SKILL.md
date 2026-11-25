@@ -151,9 +151,15 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
 ## 4. Motion (qa.py must PASS)
 
 - **The frame never shakes (the user's rule after «الليزر», viewers said the left-right drift tired their eyes).** The template
-  no longer drifts or sways: the camera only does a slow one-way push-in (`1 + 0.012·u`) plus the shot's own `push` / `pan`;
-  the intro art and the bumper only zoom in one way. Never add a sine drift, sway or wobble to the camera or a card again.
-  The bumper's sweeping stopwatch hand, the end-card and the card crossfades stay.
+  no longer drifts or sways. Never add a sine drift, sway or wobble to the camera or a card again.
+  The bumper's push-in and sweeping stopwatch hand, the end-card and the card crossfades stay.
+- **Camera = the «طب إزاي؟» move** (measured frame by frame in the gastric-bypass reference): one drawing stays on screen
+  for several lines and the **frame holds dead still** (0.0 % zoom, 0 px pan) while parts appear, take colour and pulse;
+  then the camera **flies** in one eased slow-fast-slow move of **about 1.8 s** onto the part being talked about
+  (zoom ×1.2–2.4, with a pan toward it), holds still again, and later flies back out (×0.4–0.8). Moves alternate in / out
+  about every 4–10 s; in between, the caption card and small details change every 1.5–3 s. Chips and labels (HUD) stay
+  fixed on top while the camera moves. Use `fly([cx,cy,z], [cx,cy,z], 1.8)` and `still(cx,cy,z)` in `_helpers.js`;
+  crossfade to a new drawing (`tr: "fade"`) only when the subject really changes.
 - **Short cuts (same rule):** like the «طب إزاي؟» reference, change the shot every 1.5–3 s: split each line into 2–3 shots
   on its caption chunks (`[line, chunk]`), and keep caption chunks to 2–4 words. Tighten the voice to `--max 0.2`.
 - **Every shot needs its own life**, since the camera no longer supplies it. The tides fixes, any of which works:
