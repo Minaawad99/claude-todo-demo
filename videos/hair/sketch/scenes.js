@@ -1,4 +1,4 @@
-window.CHUNKS = [[0.0], [0.0], [0.0, 0.4194], [0.0, 0.25, 0.7692], [0.0, 0.7556], [0.0, 0.5455], [0.0], [0.0, 0.2909], [0.0, 0.4533, 0.8533], [0.0], [0.0], [0.0, 0.25, 0.75], [0.0], [0.0, 0.1705, 0.5, 0.7955], [0.0, 0.7925], [0.0, 0.4714, 0.6571], [0.0], [0.0, 0.4314], [0.0], [0.0, 0.4407], [0.0], [0.0, 0.5854, 0.8171], [0.0, 0.4848], [0.0, 0.439], [0.0, 0.122, 0.3171, 0.5854, 0.8049], [0.0, 0.4, 0.7524], [0.0], [0.0]];
+window.CHUNKS = [[0.0, 0.3667], [0.0], [0.0, 0.4194], [0.0, 0.2407, 0.5, 0.7407], [0.0, 0.3404, 0.766], [0.0, 0.3864, 0.6591], [0.0], [0.0, 0.2909, 0.5455, 0.7636], [0.0, 0.16, 0.4533, 0.64, 0.8533], [0.0, 0.4324], [0.0], [0.0, 0.25, 0.4375, 0.5875, 0.75], [0.0], [0.0, 0.1705, 0.3636, 0.5682, 0.7955], [0.0, 0.3208, 0.5094, 0.7925], [0.0, 0.2143, 0.4714, 0.6571, 0.8571], [0.0, 0.46, 0.7], [0.0, 0.4314, 0.7451], [0.0, 0.3171, 0.5854], [0.0, 0.3051, 0.5254, 0.8644], [0.0], [0.0, 0.1829, 0.439, 0.5854, 0.8171], [0.0, 0.2388, 0.4925, 0.6567, 0.9552], [0.0, 0.439, 0.7561], [0.0, 0.122, 0.3171, 0.4553, 0.5854, 0.6748, 0.8049, 0.878], [0.0, 0.0857, 0.2, 0.4, 0.619, 0.7524], [0.0, 0.4054], [0.0, 0.6304]];
 /* «إيه الحكاية؟» — «الرسم الهندسي» drawing helpers. build.py puts this file in front of the episode's shots.js, so every
    name here is in scope for the shots. The panel world is 640×786 (portrait, the panel's own aspect); a shot's camera
    [cx, cy, zoom] picks what is in view. Everything is redrawn every frame from t, so the render is deterministic.
@@ -170,8 +170,8 @@ function tag(text, x, y, k, sz, col) { k = pop(k == null ? 1 : k); if (k <= 0) r
 // histology references in refs/SOURCES.md). The two women are the shared person kit (hairStyle "curly" / "straight").
 
 // ── the two women ──
-var CURLY = { hairStyle: "curly", female: true, outfit: { base: "casual", colors: { shirt: "#d9a48f", shirtD: "#b9826d", pants: "#4a5a6c", pantsD: "#36445a", hair: "#5e3923", hairM: "#6e4529", hairL: "#b88555", hairD: "#2e1b10", skin: "#d8a07c", skinD: "#b77d5c", lip: "#c0685c", lipD: "#9e4f47", iris: "#5a361e", brow: "#2a1a10" } } };
-var STRAIGHT = { hairStyle: "straight", female: true, outfit: { base: "home", colors: { shirt: "#a9c3dc", shirtD: "#7f9bb6", pants: "#3d4656", pantsD: "#2b3240", hair: "#241b17", hairL: "#5e4c42", hairD: "#16110e", lip: "#c4746a", lipD: "#a4594f", iris: "#4a2e1c", brow: "#1e1612" } } };
+var CURLY = { hairStyle: "curly", female: true, outfit: { base: "womanCasual", colors: { shirt: "#d9a48f", shirtD: "#b9826d", pants: "#4a5a6c", pantsD: "#36445a", hair: "#5e3923", hairM: "#6e4529", hairL: "#b88555", hairD: "#2e1b10", skin: "#d8a07c", skinD: "#b77d5c", lip: "#c0685c", lipD: "#9e4f47", iris: "#5a361e", brow: "#2a1a10" } } };
+var STRAIGHT = { hairStyle: "straight", female: true, outfit: { base: "woman", colors: { shirt: "#a9c3dc", shirtD: "#7f9bb6", pants: "#3d4656", pantsD: "#2b3240", hair: "#241b17", hairL: "#5e4c42", hairD: "#16110e", lip: "#c4746a", lipD: "#a4594f", iris: "#4a2e1c", brow: "#1e1612" } } };
 function blink(t, seed) { var p = (t + seed) % 3.7; return p < .12 ? .05 : p < .2 ? .5 : 1; }
 // a woman from the front: head centre at (x, y), scale s; o: face, head, arms…
 function woman(who, x, y, s, t, o) {
@@ -285,78 +285,89 @@ function icDrip(t) {
     '<path d="M0 14 V60" stroke="' + INK + '" stroke-width="3"/><circle cx="0" cy="' + f(22 + dy) + '" r="3.5" fill="#e9c46a" stroke="' + INK + '" stroke-width="1"/>';
 }
 
+// seq(line, [[chunk, [cx, cy, zoom]], …]): the frame holds still and flies (eased, about 1.8 s) to the next framing at
+// each listed caption chunk of the line: the «طب إزاي؟» short cuts without crossfading the drawing
+function seq(line, keys) {
+  return function (u) {
+    var t0 = startOf(line), T = t0 + u, ks = keys.map(function (k) { return [startOf([line, k[0]]), k[1]]; }), i = 0;
+    while (i < ks.length - 1 && ks[i + 1][0] <= T) i++;
+    if (i === 0) return ks[0][1];
+    var a = ks[i - 1][1], b = ks[i][1], nx = i + 1 < ks.length ? ks[i + 1][0] : T + 9, dur = Math.min(1.8, (nx - ks[i][0]) * .85), k = ease((T - ks[i][0]) / dur);
+    return [lerp(a[0], b[0], k), lerp(a[1], b[1], k), a[2] * Math.pow(b[2] / a[2], k)];
+  };
+}
 // ── shots (line numbers from script.txt) ──
 var SK = 330;   // the skin surface in the cut-away shots
 // 3 · the rule: «خليك فاكرها» — a pinned card over a ghost of the skin
-shot(3, still(320, 400, 1.08), function (u, d, t) {
+shot(3, seq(3, [[0,[320,400,1.0]],[2,[320,240,1.5]]]), function (u, d, t) {
   return paper() + dim(1, skin(SK) + follicle(320, 590, SK, 0) + shaft(320, SK, "straight", 230, t)) +
     G("", '<rect x="120" y="150" width="400" height="180" fill="#f4ecdb" stroke="' + INK + '" stroke-width="2.4" transform="rotate(-3 320 240)"/>' + C(320, 156, 9, ORANGE, 2) +
       T("شكل الشعرة", 320, 222, 40, ORANGE, 800) + T("بيتحدد تحت الجلد", 320, 280, 34, INK, 700), at(u, .3, .4));
 });
 // 4 · what you see is dead cells: the shaft above the skin goes grey, labelled
-shot(4, still(320, 330, 1.0), function (u, d, t) {
+shot(4, seq(4, [[0,[320,450,1.0]],[1,[330,220,1.6]]]), function (u, d, t) {
   var k = at(u, .8, .8);
   return paper() + skin(SK) + follicle(320, 590, SK, 0) + dim(k * .8, shaft(320, SK, "straight", 280, t)) +
     label(324, 150, 450, 110, "خلايا ميتة", ORANGE, at(u, 1.2, .5), 28) + label(140, SK + 4, 90, 230, "الجلد", OLIVE, at(u, .3, .5), 24);
 });
 // 5 · its shape is set before it leaves the skin: an arrow down into the skin, the follicle lights up
-shot(5, still(320, 450, 1.1), function (u, d, t) {
+shot(5, seq(5, [[0,[320,300,1.4]],[1,[320,450,1.0]],[2,[340,560,1.6]]]), function (u, d, t) {
   var k = at(u, .5, .6);
   return paper() + skin(SK) + G("", '<ellipse cx="350" cy="480" rx="' + f(90 + 6 * Math.sin(t * 3)) + '" ry="170" fill="' + ORANGE + '" opacity=".16"/>', k) + follicle(320, 590, SK, 0) + dim(.8, shaft(320, SK, "straight", 280, t)) +
     arrow(470, 140, 400, 430, ORANGE, 6, at(u, .2, .6)) + tag("تحت الجلد", 500, 690, at(u, 1, .3), 30, ORANGE);
 });
 // 6 · «طب بيتحدد فين؟»: the curly woman, a magnified circle on her scalp
-shot(6, still(320, 360, 1.1), function (u, d, t) {
+shot(6, seq(6, [[0,[300,380,1.0]]]), function (u, d, t) {
   return paper() + woman("curly", 300, 400, 3.3, t, { face: { mouth: "neutral", look: [0, -.6] }, head: { tilt: -4 } }) +
     inset(470, 170, 120, skin(-40).replace(/stroke-width="2.4"/g, 'stroke-width="3"') + follicle(-10, 200, -40, .6) + shaft(-10, -40, "curl", 150, t, 1, "#5b3a26"), at(u, .4, .4)) +
     T("؟", 70, 150, 100, ORANGE, 800);
 }, { tr: "fade" });
 // 7 · under the scalp, every hair grows from a small sac: the follicle
-shot(7, still(320, 470, 0.98), function (u, d, t) {
+shot(7, seq(7, [[0,[320,430,0.95]],[2,[340,540,1.3]],[3,[380,600,1.4]]]), function (u, d, t) {
   var k = at(u, .2, 1);
   return paper() + skin(SK) + sweep(0, 300, 640, 500, k, "d", follicle(320, 600, SK, 0)) + shaft(320, SK, "straight", 240, t) +
-    label(358, 600, 520, 690, "البصيلة", OLIVE, at(u, 1.2, .5), 30) + label(296, 470, 140, 470, "الكيس", INK, at(u, 1.8, .5), 22);
+    label(358, 600, 450, 690, "البصيلة", OLIVE, at(u, 1.2, .5), 30) + label(334, 470, 460, 470, "الكيس", INK, at(u, 1.8, .5), 22);
 }, { tr: "in" });
 // 8 · inside it: new cells are born, fill with keratin and are pushed up
-shot(8, fly([320, 460, 1.0], [320, 540, 1.6], 1.8), function (u, d, t) {
+shot(8, seq(8, [[0,[360,560,1.3]],[1,[380,600,1.45]],[3,[360,480,1.3]],[4,[320,430,1.0]]]), function (u, d, t) {
   return paper() + skin(SK) + follicle(320, 600, SK, 0) + cells(320, 600, SK, 0, t, 0, at(u, 2.4, .5) > .5) + shaft(320, SK, "straight", 240, t) +
-    label(306, 600, 170, 660, "خلايا جديدة", OLIVE, at(u, .4, .5), 24) + label(308, 470, 170, 420, "الكيراتين", ORANGE, at(u, 2.6, .5), 26) + arrow(390, 560, 390, 420, ORANGE, 5, at(u, 3.4, .6));
+    label(334, 600, 420, 660, "خلايا جديدة", OLIVE, at(u, .4, .5), 24) + label(332, 470, 420, 420, "الكيراتين", ORANGE, at(u, 2.6, .5), 26) + arrow(390, 560, 390, 420, ORANGE, 5, at(u, 3.4, .6));
 }, { tr: "in" });
 // 9 · like toothpaste squeezed out of the tube
-shot(9, still(320, 440, 1.0), function (u, d, t) {
+shot(9, seq(9, [[0,[320,440,1.0]],[1,[420,260,1.3]]]), function (u, d, t) {
   return paper() + skin(SK) + follicle(320, 600, SK, 0) + cells(320, 600, SK, 0, t * 1.6, 0, true) + shaft(320, SK, "straight", 240, t) + arrow(390, 560, 390, 420, ORANGE, 5) +
     iconBox(490, 170, 180, G("scale(1.5)", icToothpaste(t)), at(u, .2, .3));
 });
 // 10 · «طب الشعر الناعم ليه ناعم؟»: the straight-haired woman
-shot(10, still(320, 380, 1.0), function (u, d, t) {
+shot(10, seq(10, [[0,[320,380,1.0]]]), function (u, d, t) {
   return paper() + woman("straight", 320, 370, 3.4, t, { head: { turn: .15 } }) + T("؟", 560, 170, 100, BLUE, 800);
 });
 // 11 · a straight follicle: the cells grow equally on both sides, the hair comes out straight
 hud(11, 12, function (u, t) { return chip("straight", 70, 80, 54, t, at(u, .1, .3)); });
-shot(11, still(320, 430, 1.08), function (u, d, t) {
+shot(11, seq(11, [[0,[320,430,1.0]],[1,[340,560,1.4]],[3,[360,600,1.5]],[4,[320,320,1.1]]]), function (u, d, t) {
   var k = at(u, .4, d - 1);
   return paper() + skin(SK + 40) + follicle(320, 640, SK + 40, 0) + cells(320, 640, SK + 40, 0, t, 0, true) + shaft(320, SK + 40, "straight", 300, t, .3 + .7 * k) +
     arrow(270, 560, 270, 470, BLUE, 5, at(u, 1.4, .4)) + arrow(370, 560, 370, 470, BLUE, 5, at(u, 1.4, .4)) + T("=", 320, 520, 44, BLUE, 800) +
-    label(305, 520, 140, 600, "مستقيمة", BLUE, at(u, .6, .5), 26) + tag("دُغري", 470, 150, at(u, d - 1.4, .3), 30, BLUE);
+    label(335, 520, 420, 600, "مستقيمة", BLUE, at(u, .6, .5), 26) + tag("دُغري", 470, 150, at(u, d - 1.4, .3), 30, BLUE);
 });
 // 12 · «طب والكيرلي؟»: the curly woman
-shot(12, still(320, 380, 1.08), function (u, d, t) {
+shot(12, seq(12, [[0,[320,380,1.0]]]), function (u, d, t) {
   return paper() + woman("curly", 320, 380, 3.3, t, { head: { turn: -.15 } }) + T("؟", 70, 150, 100, ORANGE, 800);
 });
 // 13 · a curved follicle: one side builds faster than the other, so the hair turns round as it grows
 hud(13, 16, function (u, t) { return chip("curly", 70, 80, 54, t, at(u, .1, .3)); });
-shot(13, fly([320, 440, 1.0], [340, 560, 1.5], 1.8), function (u, d, t) {
+shot(13, seq(13, [[0,[260,560,1.4]],[1,[270,580,1.5]],[3,[270,600,1.5]],[4,[300,290,1.1]]]), function (u, d, t) {
   var k = at(u, 1.5, d - 1.8);
   return paper() + skin(SK + 40) + follicle(300, 650, SK + 40, .9, { hair: "#5b3a26" }) + cells(300, 650, SK + 40, .9, t, .9, true) + shaft(300, SK + 40, "curl", 300, t, .15 + .85 * k, "#5b3a26") +
-    label(318, 520, 160, 580, "معووجة", ORANGE, at(u, .4, .5), 28) + arrow(430, 640, 420, 520, ORANGE, 7, at(u, 1.6, .4)) + arrow(330, 650, 330, 600, BLUE, 4, at(u, 1.6, .4));
+    label(318, 520, 200, 580, "معووجة", ORANGE, at(u, .4, .5), 28) + arrow(430, 640, 420, 520, ORANGE, 7, at(u, 1.6, .4)) + arrow(330, 650, 330, 600, BLUE, 4, at(u, 1.6, .4));
 });
 // 14 · like gift ribbon pulled over a scissor blade, it curls by itself
-shot(14, still(320, 420, 1.0), function (u, d, t) {
+shot(14, seq(14, [[0,[320,420,1.0]],[2,[440,230,1.4]]]), function (u, d, t) {
   return paper() + skin(SK + 40) + follicle(300, 650, SK + 40, .9, { hair: "#5b3a26" }) + cells(300, 650, SK + 40, .9, t, .9, true) + shaft(300, SK + 40, "curl", 300, t, 1, "#5b3a26") +
     iconBox(490, 170, 180, G("scale(1.4)", icRibbon(t)), at(u, .2, .3));
 });
 // 15 · the more the follicle bends, the tighter the curl: from a soft wave to a spring
-shot(15, still(320, 420, 1.04), function (u, d, t) {
+shot(15, seq(15, [[0,[320,420,1.0]],[1,[320,560,1.3]],[3,[110,300,1.6]],[4,[530,300,1.6]]]), function (u, d, t) {
   var s = paper() + skin(SK + 60);
   [[110, .25, "wave", "موجة"], [320, .6, "curl", "كيرلي"], [530, 1, "coil", "سوستة"]].forEach(function (q, i) {
     var k = at(u, .3 + i * 1.1, 1);
@@ -365,21 +376,21 @@ shot(15, still(320, 420, 1.04), function (u, d, t) {
   return s;
 }, { tr: "out" });
 // 16 · cut the hair across and look at it under the microscope
-shot(16, still(320, 420, 1.04), function (u, d, t) {
+shot(16, seq(16, [[0,[320,420,1.0]],[1,[330,400,1.5]],[2,[480,220,1.4]]]), function (u, d, t) {
   var k = at(u, .3, .6);
   return paper() + shaft(220, 760, "straight", 640, t, 1) + shaft(440, 760, "curl", 640, t, 1, "#5b3a26") +
     draw("M150 " + f(400) + " L520 " + f(400), k, ORANGE, 3, ' stroke-dasharray="10 7"') + G("translate(" + f(lerp(130, 540, k)) + " 400) rotate(-90)", icRibbon(0).split("<path d=\"M10 6")[0], k > 0 && k < 1 ? 1 : 0) +
     iconBox(500, 170, 170, G("scale(1.3)", icMicroscope()), at(u, 1, .3));
 });
 // 17 · straight: round; curly: flat oval
-shot(17, fly([320, 400, 0.9], [320, 400, 1.05], 1.8), function (u, d, t) {
+shot(17, seq(17, [[0,[320,400,0.9]],[1,[190,390,1.6]],[2,[455,390,1.6]]]), function (u, d, t) {
   return paper() + '<circle cx="320" cy="390" r="290" fill="#f7f1e2" stroke="' + INK + '" stroke-width="4"/>' + '<circle cx="320" cy="390" r="276" fill="none" stroke="' + INK + '" stroke-width="1.2"/>' +
     section(190, 390, 80 + 2 * Math.sin(t * 2), 80 + 2 * Math.sin(t * 2), "#2a211c", at(u, .3, .5)) + T("ناعم", 190, 520, 30, BLUE, 800) +
     section(455, 390, 100 + 2 * Math.sin(t * 2 + 1), 50 + 2 * Math.sin(t * 2 + 1), "#5b3a26", at(u, 1.8, .5)) + G("", T("كيرلي", 455, 520, 30, ORANGE, 800), at(u, 1.8, .4)) +
     tag("دايرة", 190, 720, at(u, .9, .3), 28, BLUE) + tag("بيضاوي", 455, 720, at(u, 2.4, .3), 28, ORANGE);
 });
 // 18 · like spaghetti and ribbon pasta
-shot(18, still(320, 420, 1.06), function (u, d, t) {
+shot(18, seq(18, [[0,[320,420,1.0]],[1,[160,330,1.5]],[2,[460,330,1.5]]]), function (u, d, t) {
   var s = paper(), k1 = at(u, .2, .5), k2 = at(u, 1, .5);
   for (var i = 0; i < 4; i++) s += G("", '<path d="M' + (110 + i * 22) + ' 640 Q' + f(100 + i * 22 + 10 * Math.sin(t + i)) + ' 420 ' + (130 + i * 18) + ' 230" stroke="' + INK + '" stroke-width="10" fill="none"/><path d="M' + (110 + i * 22) + ' 640 Q' + f(100 + i * 22 + 10 * Math.sin(t + i)) + ' 420 ' + (130 + i * 18) + ' 230" stroke="#ecc66a" stroke-width="7" fill="none"/><circle cx="' + (130 + i * 18) + '" cy="230" r="6" fill="#ecc66a" stroke="' + INK + '" stroke-width="2"/>', k1);
   for (i = 0; i < 3; i++) s += G("", '<path d="M' + (400 + i * 44) + ' 640 Q' + f(390 + i * 44 + 12 * Math.sin(t + i)) + ' 420 ' + (410 + i * 40) + ' 230" stroke="' + INK + '" stroke-width="26" fill="none"/><path d="M' + (400 + i * 44) + ' 640 Q' + f(390 + i * 44 + 12 * Math.sin(t + i)) + ' 420 ' + (410 + i * 40) + ' 230" stroke="#ecc66a" stroke-width="22" fill="none"/><rect x="' + (398 + i * 40) + '" y="225" width="24" height="9" fill="#ecc66a" stroke="' + INK + '" stroke-width="2"/>', k2);
@@ -387,44 +398,44 @@ shot(18, still(320, 420, 1.06), function (u, d, t) {
     inset(160, 150, 60, C(0, 0, 26, "#ecc66a", 3), at(u, .6, .3)) + inset(460, 150, 60, '<rect x="-44" y="-12" width="88" height="24" rx="8" fill="#ecc66a" stroke="' + INK + '" stroke-width="3"/>', at(u, 1.4, .3));
 });
 // 19 · who decides the follicle's shape? the genes
-shot(19, still(320, 400, 1.08), function (u, d, t) {
+shot(19, seq(19, [[0,[320,420,1.0]],[1,[460,410,1.5]],[3,[180,420,1.2]]]), function (u, d, t) {
   return paper() + G("", '<path d="M-200 600 L840 600 L840 1200 L-200 1200 Z" fill="none"/>') + appear(at(u, .2, .5), G("translate(170 400) scale(2.3)", icDNA(t, 70, 200))) +
     appear(at(u, 1.6, .5), clipBox(330, 250, 260, 330, G("scale(.6) translate(260 160)", skin(SK) + follicle(320, 600, SK, 0) + shaft(320, SK, "straight", 200, t) + follicle(560, 600, SK, .9, { hair: "#5b3a26" }) + shaft(560, SK, "curl", 200, t, 1, "#5b3a26")))) +
     tag("الوراثة", 170, 690, at(u, d - 1.6, .3), 32, OLIVE);
 });
 // 20 · genes from the father and the mother
-shot(20, still(320, 400, 1.0), function (u, d, t) {
+shot(20, seq(20, [[0,[320,420,1.0]]]), function (u, d, t) {
   var dad = PERSON.front({ x: 150, y: 300 + 166 * 1.5, s: 1.5, outfit: "casual", breath: (Math.sin(t * 1.6) + 1) / 2, face: { mouth: "smile", eyes: blink(t, .4) } }).svg;
   var mom = woman("straight", 490, 300, 1.5, t);
   return paper() + appear(at(u, .1, .4), dad) + appear(at(u, .4, .4), mom) + T("الأب", 150, 150, 30, OLIVE, 800) + T("الأم", 490, 150, 30, OLIVE, 800) +
     arrow(190, 520, 290, 640, OLIVE, 5, at(u, .6, .4)) + arrow(450, 520, 350, 640, OLIVE, 5, at(u, .6, .4)) + G("translate(320 700) rotate(90)", icDNA(t, 46, 120));
 }, { tr: "fade" });
 // 21 · the same shampoo, the same oil: one stays straight, the other curly
-shot(21, still(320, 380, 0.98), function (u, d, t) {
+shot(21, seq(21, [[0,[320,380,1.0]],[1,[320,160,1.6]],[3,[170,360,1.5]],[4,[470,360,1.5]]]), function (u, d, t) {
   return paper() + woman("straight", 170, 330, 1.75, t, { head: { turn: .2 } }) + woman("curly", 470, 330, 1.75, t, { head: { turn: -.2 } }) +
     iconBox(320, 130, 130, G("scale(.9)", icBottle()), at(u, .2, .3)) + check(60, 470, 1.3, at(u, d * .6, .4), BLUE) + check(590, 470, 1.3, at(u, d * .8, .4), ORANGE);
 });
 // 22 · the myth: shave it to zero and it comes back different — no
-shot(22, still(320, 440, 1.08), function (u, d, t) {
+shot(22, seq(22, [[0,[320,440,1.0]],[1,[330,420,1.5]],[3,[480,260,1.4]],[4,[320,440,1.0]]]), function (u, d, t) {
   var k = at(u, .4, 1), cut = 1 - k;
   return paper() + skin(SK + 40) + follicle(320, 650, SK + 40, .9, { hair: "#5b3a26" }) + shaft(320, SK + 40, "curl", 280, t, Math.max(.03, cut), "#5b3a26") +
     G("translate(" + f(lerp(560, 330, k)) + " " + f(SK - 10) + ") rotate(-12)", icRazor(), at(u, .2, .3) * (1 - at(u, 1.6, .3))) +
     G("", shaft(470, SK + 40, "straight", 220, t, 1, "#5b3a26"), at(u, 2.2, .4)) + T("؟", 520, 200, 70, INK, 800) + cross(480, 250, 1.4, at(u, d - 1.2, .5));
 });
 // 23 · the follicle is unchanged: the hair grows back as it was
-shot(23, still(320, 440, 1.0), function (u, d, t) {
+shot(23, seq(23, [[0,[360,520,1.4]],[1,[320,330,1.2]],[2,[320,440,1.0]]]), function (u, d, t) {
   var k = at(u, .4, d - .8);
   return paper() + skin(SK + 40) + follicle(320, 650, SK + 40, .9, { hair: "#5b3a26" }) + cells(320, 650, SK + 40, .9, t, .9, true) + shaft(320, SK + 40, "curl", 300, t, .05 + .95 * k, "#5b3a26") +
-    label(392, 560, 500, 640, "زي ما هي", OLIVE, at(u, .3, .5), 26) + check(520, 200, 1.4, at(u, d - 1, .4), OLIVE);
+    label(392, 560, 440, 640, "زي ما هي", OLIVE, at(u, .3, .5), 26) + check(520, 200, 1.4, at(u, d - 1, .4), OLIVE);
 });
 // 24 · «يعني من الآخر»: both follicles side by side, labelled, the genes above
-shot(24, fly([320, 420, 1.4], [320, 420, 0.94], 1.8), function (u, d, t) {
+shot(24, seq(24, [[0,[320,420,0.94]],[1,[320,700,1.5]],[2,[440,560,1.6]],[4,[230,560,1.5]],[6,[320,160,1.6]],[7,[320,420,0.94]]]), function (u, d, t) {
   return paper() + skin(SK + 40) + follicle(170, 640, SK + 40, 0) + shaft(170, SK + 40, "straight", 260, t) + follicle(440, 650, SK + 40, .9, { hair: "#5b3a26" }) + shaft(440, SK + 40, "curl", 260, t, 1, "#5b3a26") +
-    tag("تحت الجلد", 320, 740, at(u, .3, .3), 28, INK) + label(184, 520, 290, 580, "مستقيمة", BLUE, at(u, 1.6, .5), 24) + label(512, 560, 520, 640, "معووجة", ORANGE, at(u, 2.6, .5), 24) +
+    tag("تحت الجلد", 320, 740, at(u, .3, .3), 28, INK) + label(184, 520, 290, 580, "مستقيمة", BLUE, at(u, 1.6, .5), 24) + label(512, 560, 470, 640, "معووجة", ORANGE, at(u, 2.6, .5), 24) +
     iconBox(320, 130, 120, G("scale(.8)", icDNA(t, 50, 100)), at(u, 4.8, .3));
 }, { tr: "out" });
 // 25 · the odd fact: after chemotherapy the follicle can change and straight hair grows back curly
-shot(25, still(320, 440, 1.08), function (u, d, t) {
+shot(25, seq(25, [[0,[500,180,1.5]],[2,[320,500,1.4]],[3,[280,600,1.4]],[5,[320,440,1.0]]]), function (u, d, t) {
   var k = at(u, 2, 2), c = lerp(0, .7, k);
   return paper() + skin(SK + 40) + follicle(320, 650, SK + 40, c, { hair: "#2a211c" }) + cells(320, 650, SK + 40, c, t, c, true) +
     shaft(320, SK + 40, k < .5 ? "straight" : "curl", 280, t, k < .5 ? 1 - k * 2 : (k - .5) * 2, "#2a211c") +

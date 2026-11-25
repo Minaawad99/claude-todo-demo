@@ -7,6 +7,7 @@ episode.py sets:
         optional: "libs": extra scripts loaded before scenes.js (default ["../../lib/geo.min.js"], which globe() needs).
         The shared person kit ../../_templates/people/person.js is always loaded first (the user's rule: every person is drawn with it)
         optional: "intro_lines" (how many hook lines before the promise), "promise", "summary", "cta" (line indexes)
+        optional: "chunk": about how many words per caption chunk (default 5.5; 3.5 gives the «طب إزاي؟» short-cut pace)
   K   = {line: {word: "o" | "b" | "g" | "u" | "gr" | "o u"}}   key words in the caption / hook:
         o orange (action, danger, heat, numbers) · b blue (water, air, cold, the technical term) · g olive (the named part)
         u underline · gr grey (a line that carries on in the next shot). Words must match the caption text exactly.
@@ -49,7 +50,7 @@ def chunks_of(i):
         if cur: parts.append(cur)
         out = []
         for p in parts:   # long chunks: split into pieces of about 5 words
-            k = max(1, round(len(p) / 5.5))
+            k = max(1, round(len(p) / CFG.get("chunk", 5.5)))   # CFG["chunk"]: words per caption chunk (3.5 for the short-cut pace)
             size = -(-len(p) // k)
             out += [p[s:s + size] for s in range(0, len(p), size)]
         parts = out
@@ -85,7 +86,6 @@ for k, v in [("/*TITLE*/", CFG.get("title", "")), ("/*CATEGORY*/", CFG.get("cate
              ("/*WATERMARK*/", html.escape(CFG.get("watermark", ""))),
              ("/*LIBS*/", "".join('<script src="%s"></script>' % src for src in ["../../_templates/people/person.js"] + [l for l in CFG.get("libs", ["../../lib/geo.min.js"]) if "people/person.js" not in l])), ("/*DATA*/", "window.DATA = " + json.dumps(data, ensure_ascii=False) + ";")]:
     page = page.replace(k, v)
-if CFG.get("css"): page = page.replace("</style>", CFG["css"] + "\n</style>", 1)   # an episode look that overrides the paper and accent colours
 open(os.path.join(HERE, "index.html"), "w", encoding="utf-8").write(page)
 print("built: %d lines, %d caption chunks · hook lines 0-%d · promise %d · summary %d · ask %d"
       % (n, sum(len(c) for c in caps), intro_lines - 1, promise, summary, cta))
