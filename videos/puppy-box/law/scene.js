@@ -470,5 +470,5 @@
     s += act(u, [[0, { x: 180, y: FLR, f: 1, p: "wave", mood: "happy" }]], t);
     return s + pill("قولولنا!", 580, 760, u, 0.3, { col: "#ffd23a", sz: 56 });
   });
-  window.__pups = { scene: scene, front: front, frontPen: frontPen, litter: litter, act: act, W: W, FLR: FLR };
+  window.__pups = { scene: scene, front: front, frontPen: frontPen, litter: litter, act: act, W: W, FLR: FLR, pup: pup, HOLD: HOLD, MANX: MANX };
 })();
