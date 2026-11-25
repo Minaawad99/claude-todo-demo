@@ -150,13 +150,13 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
 
 ## 4. Motion (qa.py must PASS)
 
-- **The template's built-in motion** is tuned so that calm shots still pass qa.py:
-  - the camera drift;
-  - the intro-art sway and the bumper push-in with its sweeping stopwatch hand;
-  - the end-card drift and the linear card crossfades.
-
-  Don't weaken it.
-- **Sparse shots need their own life.** The tides fixes, any of which works:
+- **The frame never shakes (the user's rule after «الليزر», viewers said the left-right drift tired their eyes).** The template
+  no longer drifts or sways: the camera only does a slow one-way push-in (`1 + 0.012·u`) plus the shot's own `push` / `pan`;
+  the intro art and the bumper only zoom in one way. Never add a sine drift, sway or wobble to the camera or a card again.
+  The bumper's sweeping stopwatch hand, the end-card and the card crossfades stay.
+- **Short cuts (same rule):** like the «طب إزاي؟» reference, change the shot every 1.5–3 s: split each line into 2–3 shots
+  on its caption chunks (`[line, chunk]`), and keep caption chunks to 2–4 words. Tighten the voice to `--max 0.2`.
+- **Every shot needs its own life**, since the camera no longer supplies it. The tides fixes, any of which works:
   - balls bob and arrows pulse;
   - globes turn about 1.6°/s, or 22°/s for the polar spin;
   - bulges breathe;

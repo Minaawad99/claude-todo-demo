@@ -3,7 +3,7 @@
    [cx, cy, zoom] picks what is in view. Everything is redrawn every frame from t, so the render is deterministic.
    Rules from the reference (videos/_reference/tabizzay/STYLE.md):
    - no hard cuts: a shot crossfades into the next (tr: "fade"), or the camera flies into a detail ("in") or back out ("out");
-   - the camera never parks (a slow push / pan per shot plus a small drift added here);
+   - the frame never shakes (user's rule after viewers complained): the camera only does a slow one-way push / pan per shot; motion comes from the drawing (pulses, flows, things appearing);
    - a thing appears grey and faint first, then takes its colour (appear); the part being talked about takes the accent
      colour, often swept along its length (sweep), while the rest dims (dim). */
 var LN = window.TIMING.lines;
@@ -100,7 +100,7 @@ window.SCENE.panel = function (A, B, t) {
   window.__t = t; CLIPN = 0; var i = 0; while (i < SH.length - 1 && SH[i + 1].a <= t) i++;
   function render(k, extraZ, op) {
     var sh = SH[k], next = k + 1 < SH.length ? SH[k + 1].a : window.TIMING.duration + 2, u = t - sh.a, d = Math.max(0.6, next - sh.a);
-    var c = sh.cam(u, d), cx = c[0] + 15 * Math.sin(t * 2.3), cy = c[1] + 12 * Math.cos(t * 1.9), z = c[2] * (1 + 0.035 * Math.sin(t * 1.5)) * extraZ;   // drift strong enough that qa.py never sees a parked frame
+    var c = sh.cam(u, d), cx = c[0], cy = c[1], z = c[2] * (1 + 0.012 * u) * extraZ;   // steady frame (the user's rule: no left-right shake, it tired viewers' eyes); only a slow one-way push-in. The life qa.py needs comes from the drawing itself
     return '<g opacity="' + op.toFixed(3) + '"><g transform="translate(320 393) scale(' + z.toFixed(4) + ') translate(' + f(-cx) + ' ' + f(-cy) + ')">' + sh.draw(u, d, t) + '</g></g>';
   }
   var cur = SH[i], u = t - cur.a, x = i > 0 && u < XF ? ease(u / XF) : 1;
