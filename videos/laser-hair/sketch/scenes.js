@@ -174,7 +174,7 @@ var WOMAN = { hair: "long", fem: true }, WCOL = Object.assign({}, PERSON.colors,
 function pulse(t) { return Math.max(0, 1 - ((t * 1.4) % 1) * 2.6); }                       // a flash every 0.7 s
 function face(x, y, sz, fc, k) {   // the woman's face in a framed box (iconBox look)
   return iconBox(x, y, sz, '<clipPath id="fc' + (++CLIPN) + '"><rect x="' + f(-sz / 2 + 3) + '" y="' + f(-sz / 2 + 3) + '" width="' + f(sz - 6) + '" height="' + f(sz - 6) + '"/></clipPath><g clip-path="url(#fc' + CLIPN + ')">' +
-    PERSON.head([0, sz * .1], sz / 80, 0, { face: fc, _of: WOMAN }, WCOL) + '</g>', k);
+    PERSON.head([0, sz * .1 + 2 * Math.sin(window.__t * 1.6)], sz / 80, 3 * Math.sin(window.__t * 1.1), { face: Object.assign({ eyes: (Math.sin(window.__t * 2.3) > .96 ? .05 : 1) * (fc.eyes || 1) }, fc, { eyes: (Math.sin(window.__t * 2.3) > .96 ? .05 : (fc.eyes || 1)) }), _of: WOMAN }, WCOL) + '</g>', k);   // she breathes, tilts and blinks
 }
 function block(fol, o) { return LZ.skinBlock(BX, BY, BW, fol, o).svg; }
 function laser(x, y, t, on, L, col) { var p = on ? pulse(t) : 0; return LZ.beam(x, y, L || 300, on ? (.35 + .65 * p) : 0, col) + LZ.handpiece(x, y, .8, p); }

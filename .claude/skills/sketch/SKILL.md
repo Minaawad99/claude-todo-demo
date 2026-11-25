@@ -162,14 +162,22 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
   crossfade to a new drawing (`tr: "fade"`) only when the subject really changes.
 - **Short cuts (same rule):** like the «طب إزاي؟» reference, change the shot every 1.5–3 s: split each line into 2–3 shots
   on its caption chunks (`[line, chunk]`), and keep caption chunks to 2–4 words. Tighten the voice to `--max 0.2`.
-- **Every shot needs its own life**, since the camera no longer supplies it. The tides fixes, any of which works:
+- **How much life (the user chose test A after «الليزر», measured against the «طب إزاي؟» reference):** calm, and only
+  on what the narrator is talking about: light particles running down a beam, blood running in a vessel, heat running
+  down a hair, a glow that breathes, hairs or leaves swaying a little, a blink. Never busy motion everywhere (test B,
+  three times the reference's motion, was turned down: it tires the eye the same way the drift did). Measured on the
+  same metric as qa.py: the reference is still 46 % of the time (median change 0.29, longest hold 4.6 s); test A was
+  still 40 % (median 0.37, longest 1 s). Aim there.
+- **qa.py and stills.js for a sketch episode:** `python3 qa.py out.mp4 --steady` (a still stretch may last up to 5 s, stills
+  up to half the video) and `node tools/stills.js <index.html> 0 <duration> 5`. Fix any hold longer than 5 s; holds under
+  that are the style. Without `--steady` the old drifting-camera rule (0.75 s) still applies to the other skills. The tides fixes, any of which works:
   - balls bob and arrows pulse;
   - globes turn about 1.6°/s, or 22°/s for the polar spin;
   - bulges breathe;
   - waves run at about 48–70 px/s;
   - a moving wave line goes over a static arrow.
-- **Before every render** run `node tools/stills.js <abs index.html> 0 <duration>`. It uses qa.py's own metric over the full
-  frame. Fix every run until none is over 0.5 s. A failed 20-minute render costs far more.
+- **Before every render** run `node tools/stills.js <abs index.html> 0 <duration> 5`. It uses qa.py's own metric over the
+  full frame. Fix every hold over 5 s (the steady-frame limit). A failed 20-minute render costs far more.
 - Check frames with `node tools/strip.js <abs index.html> out.png 6 <times…>` and look at them (full review).
 
 ## 5. Sound
@@ -225,10 +233,10 @@ Credit every clip in `refs/SOURCES.md`.
 ```
 TAIL=3 node render.js $PWD/<slug>/sketch/index.html <mix.wav> <scratchpad>/<slug>.mp4
 ffmpeg -y -i <mp4> -c:v copy -af "volume=1.6dB,alimiter=limit=0.6:level=false:attack=1:release=60" -c:a aac -b:a 192k -ar 48000 <fixed.mp4>
-python3 qa.py <fixed.mp4>
+python3 qa.py <fixed.mp4> --steady
 ```
 
-- **QA must say PASS:** no still over 0.75 s, frozen total inside the budget, loudness about -14/-15 LUFS.
+- **QA must say PASS** with `--steady`: no hold over 5 s, stills under half the video, loudness about -14/-15 LUFS.
 - **Send the video** with SendUserFile under an Arabic name, e.g. `<الموضوع>-إيه-الحكاية.mp4`.
 - **Code:** commit and push it. Keep the mp4 and the mix in the scratchpad.
 - **A sound-only change** doesn't need a render: remux the new mix onto the video with the same audio chain.

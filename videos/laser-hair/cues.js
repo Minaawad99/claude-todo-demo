@@ -43,7 +43,53 @@ a(L(SUMMARY) + 0.1, 'chime', 0.35); for (let k = 0; k < 5; k++) a(L(SUMMARY) + 0
 paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                                                       // ask box
 
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
-// e.g. lab(5, 0.4); ding(L(6) + 1.6); scribble(L(9) + 1.2); sea(L(0), L(PROMISE) - L(0) + 0.6, 0.45);
+// chunk start times (the shots start on caption chunks), from the built page
+const CH = JSON.parse(fs.readFileSync(__dirname + '/sketch/scenes.js', 'utf8').split('\n')[0].replace(/^window\.CHUNKS = /, '').replace(/;$/, ''));
+const C = (i, j) => T[i].start + (T[i].end - T[i].start) * CH[i][j];
+const zap = (t, g) => a(t, 'laser', g || 0.16);             // the handpiece fires (soft, under the voice)
+const heat = (t, d, g) => a(t, 'sizzle', g || 0.1, d);       // heat in the hair
+const fly = t => a(t, 'whoosh', 0.1, 1.6);                   // the camera flies in or out
+const pop = (t, g) => a(t, 'pop', g || 0.3);
+// 0–2 · hook card: the handpiece on her leg, her surprise, the calendar, hairs falling
+zap(L(0) + 0.4); zap(L(0) + 1.1); pop(L(1) + 0.1, 0.35); paper(L(2) + 0.05); a(L(2) + 0.6, 'whoosh', 0.12, 1.2);
+// 4 · the question
+zap(L(4) + 0.3); pop(L(4) + 0.6, 0.3);
+// 5 · the pulse into the skin; the blinking eye
+zap(L(5) + 0.35); zap(C(5, 1) + 0.1); pop(C(5, 2) + 0.1, 0.3);
+// 6 · the light goes down, the fly in, melanin lights up and is named
+a(L(6) + 0.1, 'charge', 0.08, 0.8); fly(C(6, 2)); lab(6, C(6, 5) - L(6) + 0.2); ding(C(6, 5) + 0.3);
+// 7 · it drinks the light, turns it to heat
+heat(C(7, 1), 1.4); lab(7, C(7, 1) - L(7) + 0.4);
+// 8 · the blouses in the sun, the thermometer climbs
+pop(L(8) + 0.2, 0.25); a(L(8) + 0.6, 'fill', 0.08, 1.4); pop(C(8, 1) + 0.15, 0.3);
+// 9 · heat runs down the hair, fly to the bulb
+heat(L(9), D(9) * 0.7, 0.09); fly(C(9, 2));
+// 10 · the factory tag, the depth, the hair growing
+paper(L(10) + 0.3); fly(C(10, 1)); lab(10, C(10, 1) - L(10) + 0.6); a(C(10, 3) + 0.2, 'whoosh', 0.08, 0.8);
+// 11 · the cells hurt, weakened, crossed
+fly(L(11)); heat(L(11) + 0.4, 1.2, 0.1); pop(C(11, 2) + 0.1, 0.3); scribble(C(11, 2) + 0.8);
+// 12–13 · why doesn't it fall: back out; the skin pushes it out; 1–3 weeks
+fly(L(12)); pop(L(12) + 1.2, 0.3); lab(13, 0.2); paper(C(13, 2) + 0.1); a(C(13, 2) + 0.4, 'whoosh', 0.12, 1.4);
+// 14 · how many sessions: six numbers pop
+for (let k = 0; k < 6; k++) pop(L(14) + 0.2 + k * 0.12, 0.22);
+// 15–16 · three phases, named in turn
+a(L(15) + 0.1, 'whoosh', 0.1); for (let j = 0; j < 3; j++) pop(C(16, j) + 0.05, 0.3);
+// 17 · the growing hair heats hardest; fly in to its bulb
+zap(L(17) + 0.5); heat(L(17) + 0.6, 1.6, 0.09); fly(C(17, 3)); lab(17, C(17, 3) - L(17) + 1.6);
+// 18 · weeks pass, the sleeping one wakes, session 2
+fly(L(18)); paper(L(18) + 1.2); a(C(18, 2) + 0.1, 'whoosh', 0.1, 0.9); pop(C(18, 3) + 0.1, 0.3); zap(C(18, 3) + 0.3);
+// 19 · dark hair, light skin ✓
+zap(L(19) + 0.2); pop(L(19) + 1.0, 0.25); pop(L(19) + 1.6, 0.25); scribble(L(19) + 2.2);
+// 20 · dark skin, a longer wave
+pop(C(20, 1) + 0.1, 0.3); zap(C(20, 1) + 0.3, 0.14); heat(C(20, 1) + 0.6, 1.5, 0.08); lab(20, C(20, 4) - L(20) + 0.1);
+// 21 · «for ever»? No.
+pop(C(21, 2) + 0.05, 0.3); scribble(C(21, 2) + 0.5);
+// 22 · fewer, finer: before / after
+a(L(22) + 0.3, 'whoosh', 0.08, 1.2); pop(C(22, 1) + 0.2, 0.3); pop(L(22) + 1.4, 0.25);
+// 23 · recap: numbered 1–4
+fly(L(23)); pop(C(23, 1), 0.3); pop(C(23, 1) + 0.6, 0.3); pop(C(23, 2), 0.3); pop(C(23, 2) + 0.6, 0.3);
+// 24 · white hair: the light goes straight through, ✗
+fly(L(24)); zap(C(24, 3) + 0.2); lab(24, C(24, 3) - L(24) + 0.2); scribble(C(24, 3) + 0.9);
 
 // music plays only when sfx.py is run with --music, and that only when the user asked for music in this video
 const MUSIC = has('music-soft') ? 'music-soft' : null;
