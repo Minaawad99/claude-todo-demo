@@ -18,7 +18,9 @@
      o.head: {tilt (deg), turn (-1..1, three-quarter turn), nod (0..1, chin to chest)}
      o.face: {eyes (0 closed .. 1 open, 1.25 wide), look [dx, dy] (-1..1), brows: "neutral" | "raised" | "worried" | "angry",
              mouth: "neutral" | "smile" | "grin" | "open" | "o" | "frown" | "yawn", tired: bool}
-     o.colors: {shirt, shirtD, pants, pantsD, hair, skin, skinD, socks}
+     o.colors: {shirt, shirtD, pants, pantsD, hair, hairL, hairD, skin, skinD, lip, socks}
+     o.hairStyle: "short" (default) | "straight" (long, sleek, side part) | "curly" (coils and ringlets) · o.hairT: seconds, for a
+             gentle sway of long hair · o.female: lashes, tinted lips, finer brows (front and side)
    returns {svg, joints}: joints has the shoulder, elbow, wrist, hip, knee, ankle points and the head centre. */
 (function () {
 // own small helpers, so the kit works in any skill (sketch, animation, story-2d, law…) without the sketch helpers loaded
@@ -141,23 +143,114 @@ function pHand(w, ang, kind, side, s, colors, palm) {
   return out;
 }
 // ── the head: centre hc, local units (head 52 tall, 37 wide); turn shifts the features for a three-quarter view ──
+
+// ── hair styles (o.hairStyle): "short" (the default cap) | "straight" (long, sleek, chest length, side part) | "curly" (big
+//    volume of coils, ringlets framing the face). o.hairT (seconds) makes long hair sway a little; o.female adds lashes,
+//    tinted lips and finer brows. Colours: c.hair, c.hairL (strands, highlights), c.hairD (shadow inside the mass).
+function hRnd(i) { var x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+function hSway(t, amp) { return function (p) { var k = Math.max(0, (p[1] - 10) / 80); return [p[0] + Math.sin(t * 1.3 + p[1] * .035) * amp * k, p[1]]; }; }
+function hCurl(x, y, r, a, col, w) {   // one small coil mark: an open spiral, quiet and thin
+  var ca = Math.cos(a), sa = Math.sin(a), P = function (u, v) { return f(x + (u * ca - v * sa) * r) + " " + f(y + (u * sa + v * ca) * r); };
+  return '<path d="M' + P(-1, .2) + ' C' + P(-1.1, -1) + ' ' + P(.9, -1.2) + ' ' + P(1, 0) + ' C' + P(1.05, .9) + ' ' + P(-.2, 1.1) + ' ' + P(-.3, .2) + '" stroke="' + col + '" stroke-width="' + f(w || 1) + '" fill="none" stroke-linecap="round"/>';
+}
+function hRinglet(x, y, n, sd, c, t, seed) {   // a hanging ringlet: one smooth coil (a helix seen from the side), outlined, with a lit edge
+  var pts = [], len = n * 6.4, r0 = 5.2;
+  for (var th = 0; th <= n * Math.PI * 2 * .62; th += .22) { var k = th / (n * Math.PI * 2 * .62), r = r0 * (1 - .25 * k), sw = Math.sin((t || 0) * 1.3 + seed) * 1.2 * k;
+    pts.push([x + Math.sin(th + seed) * r + sd * 1.5 * k + sw, y + k * len + Math.cos(th + seed) * r * .35]); }
+  var d = "M" + pts.map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L");
+  return '<path d="' + d + '" stroke="' + INK + '" stroke-width="7.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
+         '<path d="' + d + '" stroke="' + c.hair + '" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
+         '<path d="' + d + '" stroke="' + c.hairL + '" stroke-width="1.3" fill="none" stroke-linecap="round" transform="translate(-.8 -1)" opacity=".9"/>';
+}
+function hScallop(pts, bump) {   // a closed outline made of round bumps (the edge of a curly mass)
+  var n = pts.length, cx = 0, cy = 0; pts.forEach(function (p) { cx += p[0] / n; cy += p[1] / n; });
+  var d = "M" + f(pts[0][0]) + " " + f(pts[0][1]);
+  for (var i = 0; i < n; i++) { var a = pts[i], b = pts[(i + 1) % n], m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], dx = m[0] - cx, dy = m[1] - cy, dl = Math.hypot(dx, dy) || 1, bb = bump * (.8 + .4 * hRnd(i * 3.1));
+    d += " Q" + f(m[0] + dx / dl * bb) + " " + f(m[1] + dy / dl * bb) + " " + f(b[0]) + " " + f(b[1]); }
+  return d + " Z";
+}
+function hairBack(style, c, t) {   // the part of the hair behind the head and shoulders (head-local units)
+  var g = "";
+  if (style === "straight") {
+    var S = hSway(t || 0, 1.8);
+    var back = [[-22, -20], [-15, -32], [0, -36], [15, -32], [22, -20], [26, 0], [29, 30], [32, 60], [33, 90], [22, 97], [8, 94], [-6, 95], [-20, 98], [-33, 90], [-32, 60], [-29, 30], [-26, 0]].map(S);
+    g += '<path d="' + pPath(back, true) + '" fill="' + c.hairD + '" stroke="' + INK + '" stroke-width="1.8"/>';
+    [-1, 1].forEach(function (sd) { for (var q = 0; q < 3; q++) g += '<path d="' + pPath([[sd * (17 + q * 3), 20], [sd * (19 + q * 3.2), 50], [sd * (21 + q * 3), 86]].map(S), false) + '" stroke="' + c.hair + '" stroke-width="1" fill="none" opacity=".9"/>'; });
+  } else if (style === "curly") {
+    var pts = [];
+    for (var i = 0; i < 26; i++) { var a = -Math.PI / 2 + i / 26 * Math.PI * 2, rx = 41 + 3 * hRnd(i), ry = 54 + 3 * hRnd(i + 9);
+      pts.push([Math.cos(a) * rx + Math.sin((t || 0) * 1.1 + i) * .5, 4 + Math.sin(a) * ry * (Math.sin(a) > 0 ? .98 : .95)]); }
+    g += '<path d="' + hScallop(pts, 4.2) + '" fill="' + c.hairD + '" stroke="' + INK + '" stroke-width="1.8" stroke-linejoin="round"/>';
+    // coils inside the mass, kept sparse and close in tone so the eye rests
+    for (var k = 0; k < 46; k++) { var aa = hRnd(k * 7.3) * Math.PI * 2, rr = Math.sqrt(.25 + .75 * hRnd(k * 2.9)), x = Math.cos(aa) * 36 * rr, y = 4 + Math.sin(aa) * 48 * rr;
+      if (Math.abs(x) < 20 && y > -30 && y < 30) continue;
+      g += hCurl(x, y, 3 + 1.4 * hRnd(k), hRnd(k * 5.1) * 6.3, c.hair, 1.5) + hCurl(x + .6, y - .6, 2.2 + hRnd(k), hRnd(k * 5.1) * 6.3 + .8, c.hairL, .8); }
+    // ringlets along the lower rim
+    [-34, -25, 25, 34].forEach(function (x, j) { g += hRinglet(x, 34 + (j % 2 ? 4 : 0), 4, x < 0 ? -1 : 1, c, t, j * 1.7); });
+  }
+  return g;
+}
+function hairFront(style, c, t, tr) {   // the part over the scalp and the locks in front, drawn over the face's edges
+  var g = "", X = function (u) { return u + (tr || 0) * 4.5; };
+  if (style === "straight") {
+    var S = hSway(t || 0, 1.4), px = X(-5);
+    var L = [[px, -34], [-9, -34.5], [-17, -30.5], [-22.5, -19], [-25.5, -4], [-27, 18], [-30, 48], [-32.5, 78], [-33, 96], [-26, 93], [-20, 98], [-18.5, 70], [-18, 40], [-16.8, 14], [-16, -6], [-13, -17], [X(-8), -22.5], [px, -24.8]].map(S);
+    var Rr = [[px, -34], [4, -35.5], [14, -33], [21.5, -25], [25, -10], [26.5, 8], [28, 26], [30.5, 52], [32.5, 80], [33, 96], [25, 92], [19.5, 97], [18.5, 70], [18, 40], [17, 14], [16.5, -2], [X(13), -14], [X(7), -18.6], [X(1), -21.4], [px, -24.8]].map(S);
+    g += '<path d="' + pPath(L, true) + '" fill="' + c.hair + '" stroke="' + INK + '" stroke-width="1.8" stroke-linejoin="round"/>';
+    g += '<path d="' + pPath(Rr, true) + '" fill="' + c.hair + '" stroke="' + INK + '" stroke-width="1.8" stroke-linejoin="round"/>';
+    // long smooth strands from the part, and one soft sheen across the crown
+    [[-10, -32, -21, -12, -24, 40, -28, 90], [-7, -30, -18, -14, -21, 36, -23, 88], [0, -34, 17, -26, 24, 30, 28, 90], [-1, -30, 12, -22, 21, 14, 23, 70], [-2, -27, 7, -21, 14, -12, 20, 30]].forEach(function (q) {
+      g += '<path d="' + pPath([[X(q[0]), q[1]], [q[2], q[3]], [q[4], q[5]], [q[6], q[7]]].map(S), false) + '" stroke="' + c.hairL + '" stroke-width=".9" fill="none" opacity=".85"/>'; });
+    g += '<path d="M' + f(X(-15)) + ' -27 Q' + f(X(-4)) + ' -33.5 ' + f(X(12)) + ' -29" stroke="' + c.hairL + '" stroke-width="3.2" fill="none" stroke-linecap="round" opacity=".55"/>';
+    g += pLine([[px, -33.5], [px + .5, -27]], c.skinD, 1.1);
+  } else if (style === "curly") {
+    // the crown and a fringe of small coils, its lower edge made of round bumps
+    var top = [[-23, -14], [-24, -26], [-16, -38], [-4, -43], [8, -42], [19, -36], [24, -24], [23, -14]];
+    var fr = [];
+    for (var i = 0; i <= 8; i++) fr.push([X(20 - i * 5), -15 - 2.5 * Math.sin(i / 8 * Math.PI) + (i % 2 ? 1.2 : 0)]);
+    g += '<path d="' + hScallop(top.concat(fr), 3.4) + '" fill="' + c.hair + '" stroke="' + INK + '" stroke-width="1.8" stroke-linejoin="round"/>';
+    for (var k = 0; k < 16; k++) { var x = -18 + (k % 6) * 7.2 + (k > 5 ? 3.5 : 0) + hRnd(k) * 2, y = -35 + Math.floor(k / 6) * 7.5 + hRnd(k + 3) * 2;
+      if (k > 11) { x = -16 + (k - 12) * 10.5; y = -19.5; }
+      g += hCurl(X(x), y, 2.8 + hRnd(k * 1.7), hRnd(k * 4.3) * 6.3, c.hairL, 1); }
+    // ringlets framing the face on both sides
+    [[-1, -23, -11, 6], [-1, -31, -3, 6], [1, 23, -11, 6], [1, 31, -3, 6]].forEach(function (q, j) { g += hRinglet(X(q[1]), q[2], q[3], q[0], c, t, j * 2.3); });
+  } else {
+    var hair = [[-19.5, -2], [-20.5, -16], [-14, -28.5], [-2, -32.5], [11, -31], [19.5, -21], [20, -4], [17.5, -9], [16, -15.5], [X(9), -17.5], [X(3), -15], [X(-2), -18], [X(-9), -16], [-15.5, -14], [-17.5, -7]];
+    g += '<path d="' + pPath(hair, true) + '" fill="' + c.hair + '" stroke="' + INK + '" stroke-width="1.8"/>';
+    g += pLine([[-12, -27], [-6, -23], [0, -24]], c.hairL, 1.2) + pLine([[2, -29], [8, -25], [12, -25]], c.hairL, 1.2) + pLine([[-17, -18], [-14, -13]], c.hairL, 1.1);
+  }
+  return g;
+}
+function hairSide(style, c, t) {   // profile, facing +x: [behind the head, over the scalp]
+  var S = hSway(t || 0, 1.6);
+  if (style === "straight") return ['<path d="' + pPath([[-6, -31], [-19, -25], [-25, -8], [-27, 20], [-29, 60], [-27, 90], [-14, 92], [-12, 60], [-12, 20], [-6, 0]].map(S), true) + '" fill="' + c.hairD + '" stroke="' + INK + '" stroke-width="1.8"/>',
+    '<path d="' + pPath([[-24, 6], [-24.5, -10], [-17, -26], [-4, -32], [10, -30], [18.5, -21], [17, -13], [10, -17], [2, -15], [-6, -12], [-12, -6], [-11, 4], [-14, 14], [-16, 40], [-18, 80], [-26, 84], [-26, 40]].map(S), true) + '" fill="' + c.hair + '" stroke="' + INK + '" stroke-width="1.8"/>' +
+    pLine([[-14, -26], [-20, -8], [-21, 40], [-22, 76]].map(S), c.hairL, .9) + '<path d="M-14 -28 Q2 -33 14 -24" stroke="' + c.hairL + '" stroke-width="3" fill="none" opacity=".55" stroke-linecap="round"/>'];
+  if (style === "curly") { var pts = []; for (var i = 0; i < 20; i++) { var a = i / 20 * Math.PI * 2; pts.push([-8 + Math.cos(a) * 34, -2 + Math.sin(a) * 44]); }
+    var bk = '<path d="' + hScallop(pts, 4) + '" fill="' + c.hairD + '" stroke="' + INK + '" stroke-width="1.8"/>';
+    for (var k = 0; k < 22; k++) { var x = -8 + (hRnd(k) - .5) * 56, y = -2 + (hRnd(k + 5) - .5) * 76; if (x > 2 && y > -26 && y < 26) continue; bk += hCurl(x, y, 3, hRnd(k * 3) * 6, c.hairL, .9); }
+    var fr = '<path d="' + hScallop([[-22, 4], [-24, -14], [-16, -30], [-2, -36], [12, -32], [20, -20], [14, -16], [6, -18], [-4, -14], [-10, -6], [-14, 4]], 3) + '" fill="' + c.hair + '" stroke="' + INK + '" stroke-width="1.6"/>';
+    for (var q = 0; q < 6; q++) fr += hCurl(-14 + q * 5, -26 + (q % 2) * 6, 2.6, q, c.hairL, .9);
+    return [bk, fr]; }
+  return ["", '<path d="' + pPath([[-23.5, 6], [-24, -10], [-17, -25], [-4, -31], [10, -29], [18, -21], [16, -15], [9, -18], [2, -16], [-6, -14], [-12, -8], [-10, -2], [-16, 4], [-19, 12]], true) + '" fill="' + c.hair + '" stroke="' + INK + '" stroke-width="1.8"/>' + pLine([[-16, -20], [-6, -24], [4, -25]], c.hairL, 1.2) + pLine([[-20, -6], [-17, 2]], c.hairL, 1.1)];
+}
 function pHead(hc, s, rot, o, c) {
   var fc = o.face || {}, hd = o.head || {}, tr = hd.turn || 0, eo = fc.eyes == null ? 1 : fc.eyes, look = fc.look || [0, 0], mo = fc.mouth || "neutral", br = fc.brows || "neutral";
-  var g = "", X = function (u) { return u + tr * 4.5; };
+  var g = "", X = function (u) { return u + tr * 4.5; }, hs = o.hairStyle || "short";
+  c = Object.assign({ hairD: c.hairD || c.hair }, c);
+  if (!o._backDone) g += hairBack(hs, c, o.hairT);
   var shape = [[0, -27.5], [12, -26], [18.4, -15], [18.8, -2], [17, 9], [12.5, 18.5], [6, 24.5], [0, 26.2], [-6, 24.5], [-12.5, 18.5], [-17, 9], [-18.8, -2], [-18.4, -15], [-12, -26]].map(function (p) { return [p[0] - tr * (p[0] > 0 ? 1.5 : -.5), p[1]]; });
   var ear = function (sd) { var ex = sd * (18.6 - tr * sd * 1.4); return '<path d="M' + f(ex) + ' -5 C' + f(ex + sd * 6) + ' -8 ' + f(ex + sd * 6.5) + ' 6 ' + f(ex + sd * .5) + ' 8 Z" fill="' + c.skin + '" stroke="' + INK + '" stroke-width="1.6" stroke-linejoin="round"/><path d="M' + f(ex + sd * 1.5) + ' -2 C' + f(ex + sd * 4) + ' -3 ' + f(ex + sd * 4) + ' 3 ' + f(ex + sd * 1.5) + ' 4" stroke="' + c.skinD + '" stroke-width="1.1" fill="none"/>'; };
   g += ear(-1) + ear(1);
   g += '<path d="' + pPath(shape, true) + '" fill="' + c.skin + '" stroke="' + INK + '" stroke-width="2.2"/>';
   // shading: the far cheek and jaw, a soft shadow under the hair line
   g += '<path d="M' + f(X(9)) + ' -12 C' + f(X(17)) + ' -6 ' + f(X(16)) + ' 12 ' + f(X(6)) + ' 23 C' + f(X(13)) + ' 18 17 8 18.4 -2 C18.4 -9 16 -13 ' + f(X(9)) + ' -12 Z" fill="' + c.skinD + '" opacity=".45"/>';
-  // hair: a full dark cap with a short fringe, a few lighter strands
-  var hair = [[-19.5, -2], [-20.5, -16], [-14, -28.5], [-2, -32.5], [11, -31], [19.5, -21], [20, -4], [17.5, -9], [16, -15.5], [X(9), -17.5], [X(3), -15], [X(-2), -18], [X(-9), -16], [-15.5, -14], [-17.5, -7]];
-  g += '<path d="' + pPath(hair, true) + '" fill="' + c.hair + '" stroke="' + INK + '" stroke-width="1.8"/>';
-  g += pLine([[-12, -27], [-6, -23], [0, -24]], c.hairL, 1.2) + pLine([[2, -29], [8, -25], [12, -25]], c.hairL, 1.2) + pLine([[-17, -18], [-14, -13]], c.hairL, 1.1);
+  // hair: the short cap is drawn here; long styles draw over the face's edges after the face (below)
+  if (hs === "short") g += hairFront(hs, c, o.hairT, tr);
   // brows
   var bv = { neutral: [0, 0], raised: [-3, 0], worried: [-1.5, -2.6], angry: [1, 2.4] }[br] || [0, 0];
   [-1, 1].forEach(function (sd) { var cx = X(sd * 7.6), inner = cx - sd * 3.6, outer = cx + sd * 4.2, y0 = -8.2 + bv[0];
-    g += '<path d="M' + f(inner) + ' ' + f(y0 + bv[1] * .5 + (br === "worried" ? -1 : 0)) + ' Q' + f(cx) + ' ' + f(y0 - 2.2) + ' ' + f(outer) + ' ' + f(y0 + 1 - bv[1] * .3) + '" stroke="' + c.hair + '" stroke-width="2.6" fill="none" stroke-linecap="round"/>'; });
+    g += '<path d="M' + f(inner) + ' ' + f(y0 + bv[1] * .5 + (br === "worried" ? -1 : 0)) + ' Q' + f(cx) + ' ' + f(y0 - 2.2) + ' ' + f(outer) + ' ' + f(y0 + 1 - bv[1] * .3) + '" stroke="' + c.hair + '" stroke-width="' + (o.female ? 1.9 : 2.6) + '" fill="none" stroke-linecap="round"/>'; });
   // eyes: almond whites, iris and pupil looking at look[], upper lid heavier; closed = a curved lid line with lashes
   [-1, 1].forEach(function (sd) {
     var cx = X(sd * 7.6), cy = -1.5, w = sd * tr > 0 ? 3.2 : 3.7, hh = 2.9 * eo, id = "ey" + (++CLIPN);
@@ -168,6 +261,8 @@ function pHead(hc, s, rot, o, c) {
       g += '<g clip-path="url(#' + id + ')"><circle cx="' + f(cx + look[0] * 1.6 + tr * .8) + '" cy="' + f(cy - hh * .1 + look[1] * 1) + '" r="2.15" fill="' + PSN.iris + '"/><circle cx="' + f(cx + look[0] * 1.6 + tr * .8) + '" cy="' + f(cy - hh * .1 + look[1] * 1) + '" r="1.05" fill="#140d08"/><circle cx="' + f(cx + look[0] * 1.6 + tr * .8 - .7) + '" cy="' + f(cy - hh * .1 + look[1] - .8) + '" r=".55" fill="#fff"/>' +
            (eo < .7 ? '<rect x="' + f(cx - w - 1) + '" y="' + f(cy - 4) + '" width="' + f(2 * w + 2) + '" height="' + f(3.6 * (1 - eo / .7) + .5) + '" fill="' + c.skinD + '"/>' : "") + '</g>';
       g += '<path d="M' + f(cx - w - .4) + ' ' + f(cy + .2) + ' Q' + f(cx - w * .2) + ' ' + f(cy - hh * 1.25 - .4) + ' ' + f(cx + w + .3) + ' ' + f(cy - hh * .15) + '" stroke="' + INK + '" stroke-width="1.7" fill="none" stroke-linecap="round"/>';
+      if (o.female) { var ox = sd > 0 ? cx + w : cx - w, oy = sd > 0 ? cy - hh * .15 : cy + .2;
+        g += pLine([[ox, oy], [ox + sd * 2.2, oy - 1.6]], INK, 1.1) + pLine([[ox - sd * 1.4, oy - hh * .55], [ox + sd * .6, oy - hh * .55 - 2]], INK, 1) + pLine([[cx + sd * w * .1, cy - hh * 1.05], [cx + sd * w * .2 + sd * .8, cy - hh * 1.05 - 1.9]], INK, .9); }
       g += '<path d="M' + f(cx - w * .5) + ' ' + f(cy + hh * .55) + ' Q' + f(cx + w * .2) + ' ' + f(cy + hh * .8) + ' ' + f(cx + w * .8) + ' ' + f(cy + hh * .2) + '" stroke="' + c.skinD + '" stroke-width=".9" fill="none"/>';
     }
     if (fc.tired) g += '<path d="M' + f(cx - w * .7) + ' ' + f(cy + 3.4) + ' Q' + f(cx) + ' ' + f(cy + 5.2) + ' ' + f(cx + w * .8) + ' ' + f(cy + 3.2) + '" stroke="' + c.skinD + '" stroke-width="1.1" fill="none"/>';
@@ -187,7 +282,10 @@ function pHead(hc, s, rot, o, c) {
     frown: '<path d="M' + f(mx - 5) + ' ' + f(my + 1.6) + ' Q' + f(mx) + ' ' + f(my - 2) + ' ' + f(mx + 5) + ' ' + f(my + 1.4) + '" stroke="' + INK + '" stroke-width="1.6" fill="none" stroke-linecap="round"/>',
     yawn: '<ellipse cx="' + f(mx) + '" cy="' + f(my + 2.8) + '" rx="5" ry="6.2" fill="#5a2a22" stroke="' + INK + '" stroke-width="1.7"/><path d="M' + f(mx - 3) + ' ' + f(my + 6.6) + ' q3 -2.2 6 0" fill="' + PSN.lip + '"/><path d="M' + f(mx - 3.4) + ' ' + f(my - 2) + ' h6.8" stroke="#fff" stroke-width="1.4"/>'
   };
+  if (o.female && (mo === "neutral" || mo === "smile" || mo === "frown")) g += '<path d="M' + f(mx - 4.6) + ' ' + f(my + (mo === "smile" ? .4 : .3)) + ' Q' + f(mx) + ' ' + f(my + (mo === "smile" ? 5.4 : 4.6)) + ' ' + f(mx + 4.6) + ' ' + f(my + (mo === "smile" ? .2 : .1)) + ' Q' + f(mx) + ' ' + f(my + 1.6) + ' ' + f(mx - 4.6) + ' ' + f(my + .3) + ' Z" fill="' + c.lip + '" opacity=".75"/>' +
+       (mo === "smile" ? "" : '<path d="M' + f(mx - 4.4) + ' ' + f(my - .2) + ' Q' + f(mx - 2) + ' ' + f(my - 2.4) + ' ' + f(mx) + ' ' + f(my - 1.2) + ' Q' + f(mx + 2) + ' ' + f(my - 2.4) + ' ' + f(mx + 4.4) + ' ' + f(my - .4) + ' Z" fill="' + c.lip + '" opacity=".6"/>');
   g += M[mo] || M.neutral;
+  if (hs !== "short") g += hairFront(hs, c, o.hairT, tr);
   // jaw shadow and chin line
   g += '<path d="M' + f(X(-3)) + ' 22.5 Q' + f(X(0)) + ' 23.8 ' + f(X(3)) + ' 22.5" stroke="' + c.skinD + '" stroke-width="1" fill="none"/>';
   g += pHat(o._of && o._of.hat, c, false);
@@ -242,6 +340,9 @@ function person(o) {
              (OF.feet === "boots" ? '<path d="M' + f(an[0] - 12 * s) + ' ' + f(an[1] - 6 * s) + ' L' + f(an[0] - 12 * s) + ' ' + f(an[1] - 24 * s) + ' L' + f(an[0] + 12 * s) + ' ' + f(an[1] - 24 * s) + ' L' + f(an[0] + 12 * s) + ' ' + f(an[1] - 6 * s) + ' Z" fill="' + c.shoes + '" stroke="' + INK + '" stroke-width="' + f(2 * s) + '"/>' + pLine([[an[0] - 12 * s, an[1] - 20 * s], [an[0] + 12 * s, an[1] - 20 * s]], "#5a534c", 1.2 * s) : "");
   });
   svg += OF.feet === "boots" ? legSvg + feet : feet + legSvg;
+  var backH = "";
+  if ((o.hairStyle || "short") !== "short") { var hcB = T(166 - 10 * sl - 26 * nod + br, 0), cB = Object.assign({ hairD: c.hairD || c.hair }, c);
+    backH = G("translate(" + f(hcB[0]) + " " + f(hcB[1]) + ") rotate(" + f((hd.tilt || 0) + (o.lean || 0)) + ") scale(" + f(s) + ")", hairBack(o.hairStyle, cB, o.hairT)); o._backDone = true; }
   // ── trunk: sweater with ribbed hem, crew collar, side folds; the trousers' waist under the hem ──
   var wy = 7 + br * .3;
   svg += '<path d="' + pPath([T(-8, -40), T(10, -38), T(10, 38), T(-8, 40), T(-16, 0)], true) + '" fill="' + c.pants + '" stroke="' + INK + '" stroke-width="' + f(2.2 * s) + '"/>';
@@ -319,7 +420,10 @@ function person(o) {
   });
   // arms reaching up over the head (a stretch, a hand on the forehead) are drawn after the head
   var front = [arms[0] && arms[0].front, arms[1] && arms[1].front];
-  svg += (front[0] ? "" : armSvg[0]) + (front[1] ? "" : armSvg[1]) + headSvg + (front[0] ? armSvg[0] : "") + (front[1] ? armSvg[1] : "");
+  // o.female: the same skeleton drawn a little narrower across (shoulders, chest, hips, arms); the head keeps its size
+  var NW = o.female ? .87 : 1, W = function (x) { return NW === 1 || !x ? x : '<g transform="translate(' + f(H[0]) + ' 0) scale(' + NW + ' 1) translate(' + f(-H[0]) + ' 0)">' + x + '</g>'; };
+  if (NW !== 1) ["hip", "knee", "ankle", "sh", "el", "wr"].forEach(function (k) { J[k] = J[k].map(function (p) { return [H[0] + (p[0] - H[0]) * NW, p[1]]; }); });
+  svg = (typeof backH === "string" ? backH : "") + W(svg + (front[0] ? "" : armSvg[0]) + (front[1] ? "" : armSvg[1])) + headSvg + W((front[0] ? armSvg[0] : "") + (front[1] ? armSvg[1] : ""));
   return { svg: svg, joints: J };
 }
 // tween two poses (numbers, points and arrays blend; strings switch at the midpoint)
@@ -402,16 +506,17 @@ function personSide(o) {
   var tilt = (hd.tilt || 0) + (o.lean || 0), hc = T(166 + br * .5, 6);
   var neck = '<path d="M' + f(T(116, -8)[0]) + ' ' + f(T(116, -8)[1]) + ' L' + f(T(146, -10)[0]) + ' ' + f(T(146, -10)[1]) + ' L' + f(T(146, 10)[0]) + ' ' + f(T(146, 10)[1]) + ' L' + f(T(116, 13)[0]) + ' ' + f(T(116, 13)[1]) + ' Z" fill="' + c.skin + '" stroke="' + INK + '" stroke-width="2"/>' +
              '<path d="' + pPath([T(118, -11), T(124, 2), T(118, 15)], false) + '" stroke="' + INK + '" stroke-width="2" fill="' + c.shirt + '"/>' + pLine([T(119.5, -8), T(123, 2), T(119.5, 12)], c.shirtD, 1);
-  var eo = fc.eyes == null ? 1 : fc.eyes, mo = fc.mouth || "neutral", h = "";
+  var eo = fc.eyes == null ? 1 : fc.eyes, mo = fc.mouth || "neutral", hSd = hairSide(o.hairStyle || "short", Object.assign({ hairD: c.hairD || c.hair }, c), o.hairT), h = hSd[0];
   var shape = [[-23, -4], [-19, -20], [-6, -28], [8, -26], [17, -18], [20.5, -8], [20.5, -4], [22, 0], [27.5, 7.5], [23, 10], [22.5, 12.5], [23, 15], [22, 17.5], [21, 22], [16, 25.5], [6, 25], [-2, 20], [-10, 15], [-17, 12], [-22, 6]];
   h += '<path d="' + pPath(shape, true) + '" fill="' + c.skin + '" stroke="' + INK + '" stroke-width="2.2"/>';
   h += '<path d="M10 8 C14 16 14 21 8 24 C14 24 19 21 20 14 Z" fill="' + c.skinD + '" opacity=".35"/>';   // jaw shade
   h += '<path d="M-5 -4 C3 -6 5 8 -3 10 C-1 6 -1 0 -5 -4 Z" fill="' + c.skin + '" stroke="' + INK + '" stroke-width="1.7"/><path d="M-2.5 -1 C1 -1 1.5 5 -1.5 6" stroke="' + c.skinD + '" stroke-width="1.1" fill="none"/>';   // ear
-  h += '<path d="' + pPath([[-23.5, 6], [-24, -10], [-17, -25], [-4, -31], [10, -29], [18, -21], [16, -15], [9, -18], [2, -16], [-6, -14], [-12, -8], [-10, -2], [-16, 4], [-19, 12]], true) + '" fill="' + c.hair + '" stroke="' + INK + '" stroke-width="1.8"/>' + pLine([[-16, -20], [-6, -24], [4, -25]], c.hairL, 1.2) + pLine([[-20, -6], [-17, 2]], c.hairL, 1.1);
+  h += hSd[1];
   var bv = { neutral: 0, raised: -2.6, worried: -1.2, angry: 1.6 }[fc.brows || "neutral"] || 0;
   h += '<path d="M9 ' + f(-8 + bv) + ' Q14 ' + f(-10 + bv) + ' 18.5 ' + f(-7.5 + bv * .4) + '" stroke="' + c.hair + '" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
   if (eo < .12) h += '<path d="M10.5 -2 Q14 0.6 17.5 -1.2" stroke="' + INK + '" stroke-width="1.6" fill="none" stroke-linecap="round"/>';
   else { var eh = 2.8 * eo; h += '<path d="M10.5 -1.5 Q14.5 ' + f(-1.5 - eh) + ' 18 -2.6 Q17 ' + f(-1.5 + eh * .5) + ' 13 ' + f(-1 + eh * .45) + ' Z" fill="' + PSN.white + '" stroke="' + INK + '" stroke-width="1.2"/><circle cx="16.2" cy="' + f(-2 + eh * .05) + '" r="' + f(Math.min(1.9, eh * .7)) + '" fill="' + PSN.iris + '"/><path d="M10.5 -1.5 Q14.5 ' + f(-1.7 - eh) + ' 18.3 -2.6" stroke="' + INK + '" stroke-width="1.8" fill="none" stroke-linecap="round"/>'; }
+  if (o.female && eo >= .12) h += pLine([[18.2, -2.8], [20.4, -4.4]], INK, 1) + pLine([[16.5, -4.2], [18, -6.2]], INK, .9);
   h += '<path d="M21 -1 C22.5 3 25.5 6 27.4 7.6 C26 9.4 23.5 9.6 22.5 9" stroke="' + INK + '" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M23 7.6 q1.2 .3 1.8 1.4" stroke="' + INK + '" stroke-width="1" fill="none"/>';
   var M = { neutral: '<path d="M18 14.6 L22.6 14.4" stroke="' + INK + '" stroke-width="1.5" stroke-linecap="round"/>', smile: '<path d="M17 13.2 Q19.5 15.6 22.8 14.2" stroke="' + INK + '" stroke-width="1.6" fill="none" stroke-linecap="round"/>',
     grin: '<path d="M16.8 13 Q19.5 17.4 22.9 14 Z" fill="#fff" stroke="' + INK + '" stroke-width="1.4"/>', open: '<path d="M18.5 13.6 Q22.8 13 22.8 14.6 Q22.4 17.6 19 17 Z" fill="#5a2a22" stroke="' + INK + '" stroke-width="1.4"/>',
@@ -452,7 +557,7 @@ function personSide(o) {
 function sideHipY(o, floorY) { var p = personSide(Object.assign({}, o, { y: 0 })), lo = -1e9; ["foot0", "foot1"].forEach(function (k) { p.joints[k].forEach(function (q) { lo = Math.max(lo, q[1]); }); }); return floorY - lo; }
 
 // export: window.PERSON for every skill; plain globals too where the name is free (the story kit has its own person())
-var API = { outfits: OUTFITS, front: person, side: personSide, walkPose: walkPose, sideHipY: sideHipY, mix: personMix, sofaFront: sofaFront, hand: pHand, head: pHead, colors: PSN,
+var API = { outfits: OUTFITS, front: person, side: personSide, walkPose: walkPose, sideHipY: sideHipY, mix: personMix, sofaFront: sofaFront, hand: pHand, head: pHead, colors: PSN, hairStyles: ["short", "straight", "curly"],
   setInk: function (c) { INK = c; } };
 window.PERSON = API;
 [["person", person], ["personSide", personSide], ["walkPose", walkPose], ["sideHipY", sideHipY], ["personMix", personMix], ["sofaFront", sofaFront], ["pHand", pHand], ["pHead", pHead], ["PSN", PSN]].forEach(function (q) { if (!(q[0] in window)) window[q[0]] = q[1]; });

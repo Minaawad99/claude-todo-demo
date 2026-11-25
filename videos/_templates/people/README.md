@@ -93,8 +93,22 @@ PERSON.front({ ..., outfit: { top: "shirt", tie: true, over: "labcoat", hat: nul
   - `colors` for any of them (shirt, pants, tie, vest, coat, hat, shoes…).
 - **The time and place:** clothes match the setting too. Period clothes in a story, the right uniform for the job, the
   weather, the country.
-- **A missing outfit:** a firefighter, police, a nurse, a galabeya, a woman's dress, a child, a diver. Add it to
+- **A missing outfit:** a firefighter, police, a nurse, a galabeya, a woman's dress or hijab, a child, a diver. Add it to
   `person.js` as a new part or preset, front and side, and add it to `outfits.html`. Never draw a different body for it.
+
+## Women and hair
+
+- **`female: true`** gives lashes, tinted lips and finer brows, and draws the same skeleton a little narrower across
+  (shoulders, chest, hips; ×0.87). The head and the proportions up and down don't change. Works in `front()` and `side()`.
+- **`hairStyle`:**
+  - `"short"` (the default cap);
+  - `"straight"`: long and sleek to the chest, a side part, smooth strands and one soft sheen on the crown;
+  - `"curly"`: a big rounded mass with a bumpy edge, small quiet coil marks inside, a coiled fringe, and ringlets (smooth
+    helix coils) framing the face.
+- **`hairT`** (seconds): long hair sways a little, so pass the page time.
+- **Colours:** `hair`, `hairL` (strands and highlights), `hairD` (the shadow inside the mass), through `colors` or an outfit's
+  colours. Keep the coil marks close in tone to the hair so the eye rests (the user asked for hair that is easy on the eye).
+- **Demo:** `videos/person-demo/women.html`. First used in «ليه في ناس شعرها كيرلي…» (`videos/hair/`).
 
 ## In each skill
 

@@ -1,0 +1,16 @@
+<!doctype html><html><head><meta charset="utf-8"><style>body{margin:0;background:#eee5d0}</style></head><body>
+<svg id="s" width="1080" height="1100" viewBox="0 0 1080 1100"></svg>
+<script src="../_templates/people/person.js"></script>
+<script>
+var CURLY = { hairStyle: "curly", female: true, outfit: { base: "casual", colors: { shirt: "#d9a48f", shirtD: "#b9826d", pants: "#4a5a6c", pantsD: "#36445a", hair: "#5b3a26", hairL: "#8a5e40", hairD: "#45291a", skin: "#d39c7b", skinD: "#b07a5c", lip: "#b0604f" } } };
+var STRAIGHT = { hairStyle: "straight", female: true, outfit: { base: "home", colors: { shirt: "#a9c3dc", shirtD: "#7f9bb6", pants: "#3d4656", pantsD: "#2b3240", hair: "#221b17", hairL: "#4d423a", hairD: "#16110e", lip: "#b56b5c" } } };
+function P(base, o) { return Object.assign({}, base, o); }
+var t = +(location.hash.slice(1) || 0), out = "", MODE = location.search;
+out += PERSON.front(P(STRAIGHT, { x: 200, y: 560, s: 1.1, hairT: t, face: { mouth: "smile" }, head: { turn: .15 } })).svg;
+out += PERSON.front(P(CURLY, { x: 520, y: 560, s: 1.1, hairT: t, face: { mouth: "smile" }, head: { turn: -.15 } })).svg;
+var w = PERSON.walkPose(.9), o = P(CURLY, Object.assign({ x: 800, s: 1, hairT: t }, w)); o.y = PERSON.sideHipY(o, 1000); out += PERSON.side(o).svg;
+var o2 = P(STRAIGHT, Object.assign({ x: 960, s: 1, hairT: t }, w)); o2.y = PERSON.sideHipY(o2, 1000); out += PERSON.side(o2).svg;
+if (MODE) out = ""; out += '<g>' + PERSON.front(P(STRAIGHT, { x: 270, y: 1100, s: 3.6, hairT: t, face: { mouth: "neutral" } })).svg + '</g>';
+out += PERSON.front(P(CURLY, { x: 800, y: 1100, s: 3.6, hairT: t, face: { mouth: "neutral" } })).svg;
+document.getElementById("s").innerHTML = out;
+</script></body></html>
