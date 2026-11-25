@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """Measured quality gate for a rendered video. Run it before sending anything.
 
-  python3 videos/qa.py out.mp4 [--sheet sheet.jpg]
+  python3 videos/qa.py out.mp4 [--sheet sheet.jpg] [--steady]
+
+--steady: the «اسكتش» steady frame (the user's rule after «الليزر», measured on the «طب إزاي؟» reference: still 46% of
+the time, longest hold 4.6 s). A still stretch may last up to 5 s and stills may add up to half the video; without it
+the old drifting-camera rule holds (no still over 0.75 s, about 1 s per 30 s).
 
 Checks (taken from PLAYBOOK §7):
   - frozen screen: no still stretch > 0.5s, at most ~1s frozen per 30s
@@ -65,6 +69,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("video")
     ap.add_argument("--sheet", help="contact sheet path (default: next to the video)")
+    ap.add_argument("--steady", action="store_true", help="«اسكتش» steady frame: stills up to 5 s, up to half the video")
     a = ap.parse_args()
 
     fps = 30
@@ -74,7 +79,8 @@ def main():
 
     st = frozen_stretches(fr, fps)
     frozen_total = sum(e - s for s, e in st)
-    budget = dur / 30 * 1.0
+    max_still = 5.0 if a.steady else 0.75
+    budget = dur * 0.5 if a.steady else dur / 30 * 1.0
     longest = max([e - s for s, e in st], default=0)
     print(f"duration        {dur:6.2f}s")
     print(f"frozen total    {frozen_total:6.2f}s  (budget {budget:.2f}s)")
@@ -82,8 +88,8 @@ def main():
         print(f"  still {s:6.2f}–{e:6.2f}  ({e - s:.2f}s)")
     # the outro tail (last 1.5s, TAIL in render.js) is allowed to hold
     body = [(s, e) for s, e in st if e < dur - 1.6]
-    if any(e - s > 0.75 for s, e in body):
-        fails.append(f"still stretch longer than 0.75s ({max(e - s for s, e in body):.2f}s)")
+    if any(e - s > max_still for s, e in body):
+        fails.append(f"still stretch longer than {max_still}s ({max(e - s for s, e in body):.2f}s)")
     if sum(e - s for s, e in body) > budget:
         fails.append("too much frozen screen")
 

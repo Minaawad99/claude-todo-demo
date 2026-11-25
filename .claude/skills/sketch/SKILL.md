@@ -78,22 +78,39 @@ the style in two code blocks for Google AI Studio. Settings: Single-speaker, Puc
 made this way. The style text, with the topic and key words filled in:
 
 ```
-Speak in casual Egyptian Arabic (Cairo dialect), like a calm, confident teacher explaining to a friend <topic>. Warm and clear, more teacher than hype, with quiet amazement on the surprising facts and numbers. Natural, relaxed conversational speed, not rushed. Take a short natural breath between sentences, and don't stop at commas. Emphasize key words like <word>, <word>, <word>. Make the opening line intriguing and the question "إيه الحكاية؟" playful. Never use Modern Standard Arabic pronunciation; pronounce ق as a glottal stop like Cairenes.
+Speak in casual Egyptian Arabic (Cairo dialect), like a calm, confident teacher explaining to a friend <topic>. Warm and clear, more teacher than hype, with quiet amazement on the surprising facts and numbers. Natural, relaxed conversational speed, not rushed. Take a short natural breath between sentences, and don't stop at commas. Emphasize key words like <word>, <word>, <word>. Make the opening line intriguing and the question "إيه الحكاية؟" playful. Never use Modern Standard Arabic pronunciation; pronounce ق as a glottal stop like Cairenes. Keep the exact same Cairene Egyptian accent and the same voice from the first word to the last, never drifting into another dialect.
 ```
+
+- **Keep this style text as it is.** Only the topic, the key words and a note on the opening (a warning, a question) change.
+  Asking for a "reel narrator", a "brisk" or "fast" delivery made the take drift into two accents in «الموبايل في الشاحن»,
+  and the user rejected it. Speed comes from the edit below, never from the style text.
+
+**Pace (locked by the user after «الموبايل في الشاحن», for every sketch episode).** The user's reference is a «طب إزاي»
+reel on gastric sleeve surgery: about 176 words a minute, pauses about 0.15 s. Ours matches it with pauses capped at
+**0.12 s** and the take sped up **5%** with `atempo` (pitch unchanged): about 172 words a minute. Use exactly these
+numbers; don't go back to 0.3 s or to an untouched tempo.
 
 **Timing.** The whisper-small model for `align_asr.py` comes from Hugging Face; GitHub releases often answer 504 here.
 
 ```
 M=<scratchpad>/asr/sherpa-onnx-whisper-small   # small-encoder.int8.onnx, small-decoder.int8.onnx, small-tokens.txt from huggingface.co/csukuangfj/sherpa-onnx-whisper-small
-python3 ../audio/tighten.py voice-raw.wav voice.wav --max 0.3
+python3 ../audio/tighten.py voice-raw.wav <scratchpad>/tight.wav --max 0.12
+ffmpeg -y -i <scratchpad>/tight.wav -af atempo=1.05 voice.wav
 python3 ../align_asr.py voice-raw.wav script.txt raw-timing.json --model $M --gap 0.08 --db -34
-python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max 0.3 --tempo 1.0
+python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max 0.12 --tempo 1.05
 ```
 
 - **Check the whole take with the stronger model** to catch invented sentences and misread numbers:
-  `~/.cache/hyperframes/whisper/whisper.cpp/build/bin/whisper-cli -m ~/.cache/hyperframes/whisper/models/ggml-large-v3-turbo.bin -l ar` (16 kHz mono).
+  `~/.cache/hyperframes/whisper/whisper.cpp/build/bin/whisper-cli -m ~/.cache/hyperframes/whisper/models/ggml-large-v3-turbo.bin -l ar` (16 kHz mono). If the model is missing, fetch `ggml-large-v3-turbo-q5_0.bin` from
+  huggingface.co/ggerganov/whisper.cpp.
 - **Fix line boundaries by hand** in `raw-timing.json` where whisper-small drifts. Tides: line 23 started 0.7 s early.
-- **Never speed the voice up.** Tightening the pauses is all.
+- **The tempo is 1.05, never more.** If the voice is still long, cut words from the script.
+- **Send the voice to the user before drawing.** They listen for the accent and the pace; you can't hear either.
+- **If the user hears the accent drift** (it went Gulf halfway through a 2-minute take in «الموبايل في الشاحن»), don't
+  regenerate again: give them the script and the style for AI Studio, as above, and suggest two halves if it drifts there
+  too. Their WAV goes in as `voice-raw.wav` (24 kHz mono), then the same tighten, tempo and timing steps.
+- **Reference photos:** when Wikimedia answers 429, ask the user for the few photos that matter (a settings screenshot,
+  a teardown, the real thing next to the fake one) with search terms; their photos made «الموبايل في الشاحن» much closer to life.
 - Tell the user any second that needs their ear (tides: «4 سنتي» heard as «4 سنة»).
 
 ## 3. Drawings: real shapes, the reference's hand
@@ -150,20 +167,34 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
 
 ## 4. Motion (qa.py must PASS)
 
-- **The template's built-in motion** is tuned so that calm shots still pass qa.py:
-  - the camera drift;
-  - the intro-art sway and the bumper push-in with its sweeping stopwatch hand;
-  - the end-card drift and the linear card crossfades.
-
-  Don't weaken it.
-- **Sparse shots need their own life.** The tides fixes, any of which works:
+- **The frame never shakes (the user's rule after «الليزر», viewers said the left-right drift tired their eyes).** The template
+  no longer drifts or sways. Never add a sine drift, sway or wobble to the camera or a card again.
+  The bumper's push-in and sweeping stopwatch hand, the end-card and the card crossfades stay.
+- **Camera = the «طب إزاي؟» move** (measured frame by frame in the gastric-bypass reference): one drawing stays on screen
+  for several lines and the **frame holds dead still** (0.0 % zoom, 0 px pan) while parts appear, take colour and pulse;
+  then the camera **flies** in one eased slow-fast-slow move of **about 1.8 s** onto the part being talked about
+  (zoom ×1.2–2.4, with a pan toward it), holds still again, and later flies back out (×0.4–0.8). Moves alternate in / out
+  about every 4–10 s; in between, the caption card and small details change every 1.5–3 s. Chips and labels (HUD) stay
+  fixed on top while the camera moves. Use `fly([cx,cy,z], [cx,cy,z], 1.8)` and `still(cx,cy,z)` in `_helpers.js`;
+  crossfade to a new drawing (`tr: "fade"`) only when the subject really changes.
+- **Short cuts (same rule):** like the «طب إزاي؟» reference, change the shot every 1.5–3 s: split each line into 2–3 shots
+  on its caption chunks (`[line, chunk]`), and keep caption chunks to 2–4 words. Keep the voice pace of section 2 (pauses 0.12 s, tempo 1.05).
+- **How much life (the user chose test A after «الليزر», measured against the «طب إزاي؟» reference):** calm, and only
+  on what the narrator is talking about: light particles running down a beam, blood running in a vessel, heat running
+  down a hair, a glow that breathes, hairs or leaves swaying a little, a blink. Never busy motion everywhere (test B,
+  three times the reference's motion, was turned down: it tires the eye the same way the drift did). Measured on the
+  same metric as qa.py: the reference is still 46 % of the time (median change 0.29, longest hold 4.6 s); test A was
+  still 40 % (median 0.37, longest 1 s). Aim there.
+- **qa.py and stills.js for a sketch episode:** `python3 qa.py out.mp4 --steady` (a still stretch may last up to 5 s, stills
+  up to half the video) and `node tools/stills.js <index.html> 0 <duration> 5`. Fix any hold longer than 5 s; holds under
+  that are the style. Without `--steady` the old drifting-camera rule (0.75 s) still applies to the other skills. The tides fixes, any of which works:
   - balls bob and arrows pulse;
   - globes turn about 1.6°/s, or 22°/s for the polar spin;
   - bulges breathe;
   - waves run at about 48–70 px/s;
   - a moving wave line goes over a static arrow.
-- **Before every render** run `node tools/stills.js <abs index.html> 0 <duration>`. It uses qa.py's own metric over the full
-  frame. Fix every run until none is over 0.5 s. A failed 20-minute render costs far more.
+- **Before every render** run `node tools/stills.js <abs index.html> 0 <duration> 5`. It uses qa.py's own metric over the
+  full frame. Fix every hold over 5 s (the steady-frame limit). A failed 20-minute render costs far more.
 - Check frames with `node tools/strip.js <abs index.html> out.png 6 <times…>` and look at them (full review).
 
 ## 5. Sound
@@ -219,10 +250,10 @@ Credit every clip in `refs/SOURCES.md`.
 ```
 TAIL=3 node render.js $PWD/<slug>/sketch/index.html <mix.wav> <scratchpad>/<slug>.mp4
 ffmpeg -y -i <mp4> -c:v copy -af "volume=1.6dB,alimiter=limit=0.6:level=false:attack=1:release=60" -c:a aac -b:a 192k -ar 48000 <fixed.mp4>
-python3 qa.py <fixed.mp4>
+python3 qa.py <fixed.mp4> --steady
 ```
 
-- **QA must say PASS:** no still over 0.75 s, frozen total inside the budget, loudness about -14/-15 LUFS.
+- **QA must say PASS** with `--steady`: no hold over 5 s, stills under half the video, loudness about -14/-15 LUFS.
 - **Send the video** with SendUserFile under an Arabic name, e.g. `<الموضوع>-إيه-الحكاية.mp4`.
 - **Code:** commit and push it. Keep the mp4 and the mix in the scratchpad.
 - **A sound-only change** doesn't need a render: remux the new mix onto the video with the same audio chain.
