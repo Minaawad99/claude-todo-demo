@@ -1,5 +1,6 @@
 // Sound cues from the line timings: node cues.js → cues.json. Sound effects only, no music.
-// Recorded sounds (sfx/px-*.mp3) are Pixabay sound effects (Pixabay Content License) from the sketch kit: ding, wind gust, paper, swipe.
+// Recorded sounds (sfx/px-*.mp3) are Pixabay sound effects (Pixabay Content License) from the sketch kit: ding, wind gust, paper, swipe;
+// px-dog-crying.mp3 is «dog crying 05» by scottishperson (Pixabay, sent by the user), cut into short pup cries.
 global.window = {}; eval(require('fs').readFileSync(__dirname + '/timing.js', 'utf8'));
 const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration : T[i].start, D = i => L(i + 1) - L(i), c = [];
 const a = (t, fx, gain, dur) => c.push(Object.assign({ t: +t.toFixed(2), fx, gain }, dur ? { dur } : {}));
@@ -31,5 +32,9 @@ a(L(21) + 0.3, 'clink', 0.3); a(L(21) + 0.6, 'pop', 0.6); a(L(21) + 1.4, 'chime'
 a(L(22) + 0.3, 'pop', 0.5); a(L(22) + 0.8, 'motor', 0.15, 2.6); a(L(22) + 1.0, 'pop', 0.5); a(L(22) + 3.2, 'pop', 0.6); rec(L(22) + 3.4, 'ding', 0.25, 0, 1.1, 1.0);
 a(L(23) + 0.4, 'chime', 0.5); for (let k = 0; k < 6; k++) a(L(23) + 0.3 + k * 0.25, 'pop', 0.35);
 a(L(24) + 0.4, 'pop', 0.7); a(L(24) + 0.5, 'chime', 0.5);
+const cry = (t, from, dur, gain) => rec(t, 'dog-crying', gain, from, dur, 1.0);
+cry(L(1) + 3.2, 0.85, 1.4, 0.3); cry(L(3) + 2.2, 4.3, 1.2, 0.22); cry(L(5) + 3.0, 0.49, 0.25, 0.28); cry(L(5) + 3.5, 6.66, 0.55, 0.28);
+cry(L(7) + 1.9, 0.85, 1.2, 0.3); cry(L(9) + 3.0, 6.1, 0.4, 0.3); cry(L(11) + 2.0, 4.3, 1.0, 0.22); cry(L(13) + 0.3, 7.39, 0.4, 0.18);
+cry(L(16) + 3.35, 0, 0.25, 0.3); cry(L(20) + 1.2, 0, 0.25, 0.35);
 require('fs').writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: c }, null, 1));
 console.log(c.length + ' cues');
