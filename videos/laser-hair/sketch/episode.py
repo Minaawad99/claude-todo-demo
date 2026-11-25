@@ -6,7 +6,7 @@ CFG = {
     "chunk": 3.5,
     "outro": '<div class="q">إزاي الليزر بيشيل الشعر؟</div><div class="art"><svg id="outroArt" viewBox="0 0 600 280"></svg></div>'
              '<div class="leg"><span><b>1</b>نبضة الضوء</span><span><b>2</b>الميلانين</span><span><b>3</b>الحرارة</span><span><b>4</b>البُصيلة</span></div>'
-             '<div class="stat"><div class="n">6–8</div><div class="t">جلسات تقريبًا،<br>عشان الشعر مش كله في مرحلة النمو</div></div>'
+             '<div class="stat"><div class="n" dir="ltr">6–8</div><div class="t">جلسات تقريبًا،<br>عشان الشعر مش كله في مرحلة النمو</div></div>'
              '<div class="pts">1. الميلانين اللي في الشعرة بيشرب الضوء ويحوّله لحرارة.<br>'
              '2. الحرارة بتنزل للبُصيلة وبتضعفها، والشعرة بتقع بعد أسبوع لتلاتة.<br>'
              '3. الليزر بيقلّل الشعر، مش بيشيله للأبد، واللي بيرجع أخف وأرفع.'
