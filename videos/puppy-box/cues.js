@@ -1,0 +1,35 @@
+// Sound cues from the line timings: node cues.js → cues.json. Sound effects only, no music.
+// Recorded sounds (sfx/px-*.mp3) are Pixabay sound effects (Pixabay Content License) from the sketch kit: ding, wind gust, paper, swipe.
+global.window = {}; eval(require('fs').readFileSync(__dirname + '/timing.js', 'utf8'));
+const T = window.TIMING.lines, L = i => i >= T.length ? window.TIMING.duration : T[i].start, D = i => L(i + 1) - L(i), c = [];
+const a = (t, fx, gain, dur) => c.push(Object.assign({ t: +t.toFixed(2), fx, gain }, dur ? { dur } : {}));
+const rec = (t, file, gain, from, dur, duck) => c.push(Object.assign({ t: +Math.max(0, t).toFixed(2), file: 'sfx/px-' + file + '.mp3', gain: +(gain * 1.2).toFixed(2), from: from || 0 }, dur ? { dur: +dur.toFixed(2) } : {}, duck != null ? { duck } : {}));
+const taps = (i, t0, t1, step) => { for (let t = t0; t < t1; t += step) { a(L(i) + t, 'thud', 0.28); a(L(i) + t + 0.02, 'clink', 0.12); } };
+for (let i = 1; i < T.length; i++) a(L(i) - 0.08, 'whoosh', 0.28);
+a(L(0) + 0.8, 'pop', 0.6); a(L(0) + 2.4, 'pop', 0.6); a(L(0) + 2.8, 'chime', 0.35);
+for (let k = 0; k < 3; k++) a(L(1) + 0.4 + k * 0.5, 'drip', 0.35); a(L(1) + 1.0, 'pop', 0.6); a(L(1) + 1.4, 'pop', 0.4); a(L(1) + 3.1, 'thud', 0.4); rec(L(1) + 3.1, 'wind-gust', 0.22, 0, 1.6, 1.0);
+taps(2, 0.65, 3.0, 0.77); a(L(2) + 2.6, 'pop', 0.6); a(L(2) + 4.6, 'pop', 0.6); rec(L(2) + 4.7, 'ding', 0.3, 0, 1.1, 1.0);
+rec(L(3) + 1.4, 'wind-gust', 0.25, 0, 2.0, 1.0); a(L(3) + 1.6, 'pop', 0.6); a(L(3) + 2.8, 'pop', 0.5);
+a(L(4) + 0.2, 'servo', 0.25, 1.3); a(L(4) + 1.0, 'pop', 0.6); a(L(4) + 1.6, 'zap', 0.25); a(L(4) + 1.7, 'hum', 0.08, D(4) - 1.7); a(L(4) + 2.0, 'pop', 0.5); a(L(4) + 3.4, 'chime', 0.35); a(L(4) + 4.0, 'pop', 0.5);
+rec(L(5) + 0.1, 'swipe', 0.3, 0, 0.8, 1.0); a(L(5) + 0.5, 'pop', 0.6); a(L(5) + 2.8, 'thud', 0.3); a(L(5) + 3.0, 'beep', 0.25); a(L(5) + 3.0, 'pop', 0.6);
+rec(L(6) + 0.3, 'swipe', 0.3, 0, 1.0, 1.0); a(L(6) + 0.5, 'wipe', 0.25); a(L(6) + 1.0, 'pop', 0.6); a(L(6) + 2.8, 'pop', 0.5); rec(L(6) + 3.2, 'ding', 0.28, 0, 1.1, 1.0);
+a(L(7) + 1.2, 'thud', 0.45); a(L(7) + 2.0, 'beep', 0.25); a(L(7) + 2.0, 'pop', 0.6); a(L(7) + 2.2, 'pop', 0.6);
+taps(8, 0.45, 2.8, 0.77); a(L(8) + 2.8, 'pop', 0.6); for (let k = 0; k < 3; k++) a(L(8) + 2.65 + k * 0.12, 'tick', 0.25); a(L(8) + 5.2, 'chime', 0.35); a(L(8) + 6.0, 'pop', 0.6); rec(L(8) + 6.2, 'ding', 0.3, 0, 1.1, 1.0);
+a(L(9) + 0.2, 'slosh', 0.25, 1.2); a(L(9) + 2.8, 'splash', 0.45); a(L(9) + 2.9, 'pop', 0.6); a(L(9) + 3.1, 'beep', 0.25);
+rec(L(10) + 0.3, 'swipe', 0.25, 0, 1.2, 1.0); a(L(10) + 1.4, 'pop', 0.6); a(L(10) + 1.6, 'clink', 0.3); a(L(10) + 1.8, 'chime', 0.35);
+for (let k = 0; k < 6; k++) a(L(11) + 0.2 + k * 0.12, 'tick', 0.3); a(L(11) + 0.2, 'pop', 0.5); a(L(11) + 2.0, 'pop', 0.6); a(L(11) + 2.1, 'beep', 0.2);
+a(L(12) + 0.4, 'pop', 0.6); a(L(12) + 0.6, 'ping', 0.25); a(L(12) + 2.0, 'beep', 0.25); a(L(12) + 2.0, 'pop', 0.6); a(L(12) + 3.8, 'pop', 0.5); a(L(12) + 4.4, 'chime', 0.35);
+a(L(13) + 0.3, 'pop', 0.5); a(L(13) + 0.8, 'pop', 0.6); a(L(13) + 1.2, 'pop', 0.4);
+a(L(14) + 0.3, 'tick', 0.3); a(L(14) + 1.2, 'pop', 0.6); a(L(14) + 2.6, 'thud', 0.4); a(L(14) + 2.8, 'beep', 0.25); a(L(14) + 2.8, 'pop', 0.5);
+a(L(15) + 0.2, 'charge', 0.18, 1.2); a(L(15) + 0.3, 'pop', 0.6); a(L(15) + 1.9, 'pop', 0.5); rec(L(15) + 2.2, 'ding', 0.3, 0, 1.1, 1.0);
+a(L(16) + 0.4, 'pop', 0.6); a(L(16) + 1.0, 'pop', 0.5); for (let k = 0; k < 6; k++) a(L(16) + 1.6 + k * 0.25, 'tick', 0.15); a(L(16) + 3.2, 'pop', 0.6); a(L(16) + 3.3, 'thud', 0.35);
+for (let k = 0; k < 4; k++) a(L(17) + 0.5 + k * 0.4, 'clank', 0.22); a(L(17) + 2.4, 'pop', 0.6); a(L(17) + 2.8, 'chime', 0.35);
+[0.4, 1.0, 1.6, 2.0].forEach(t => a(L(18) + t, 'drip', 0.4)); a(L(18) + 1.2, 'pop', 0.6); a(L(18) + 2.2, 'beep', 0.2);
+rec(L(19) + 0.2, 'paper', 0.35, 0, 1.4, 1.0); a(L(19) + 0.8, 'pop', 0.6); a(L(19) + 1.8, 'pop', 0.5); rec(L(19) + 3.6, 'ding', 0.3, 0, 1.1, 1.0);
+a(L(20) + 0.3, 'pop', 0.5); a(L(20) + 1.2, 'bump', 0.4); a(L(20) + 1.2, 'pop', 0.6); a(L(20) + 2.0, 'thud', 0.3);
+a(L(21) + 0.3, 'clink', 0.3); a(L(21) + 0.6, 'pop', 0.6); a(L(21) + 1.4, 'chime', 0.3); a(L(21) + 1.6, 'pop', 0.5);
+a(L(22) + 0.3, 'pop', 0.5); a(L(22) + 0.8, 'motor', 0.15, 2.6); a(L(22) + 1.0, 'pop', 0.5); a(L(22) + 3.2, 'pop', 0.6); rec(L(22) + 3.4, 'ding', 0.25, 0, 1.1, 1.0);
+a(L(23) + 0.4, 'chime', 0.5); for (let k = 0; k < 6; k++) a(L(23) + 0.3 + k * 0.25, 'pop', 0.35);
+a(L(24) + 0.4, 'pop', 0.7); a(L(24) + 0.5, 'chime', 0.5);
+require('fs').writeFileSync(__dirname + '/cues.json', JSON.stringify({ bed: false, cues: c }, null, 1));
+console.log(c.length + ' cues');
