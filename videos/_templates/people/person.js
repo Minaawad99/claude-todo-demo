@@ -39,7 +39,7 @@ var OUTFITS = {
   worker: { top: "tshirt", over: "vest", hat: "hardhat", feet: "boots", colors: { shirt: "#7f97a6", shirtD: "#61798a", pants: "#4b5a6e", pantsD: "#38445a" } },
   pilot:  { top: "shirt", tie: true, epaulettes: true, hat: "pilot", feet: "shoes", colors: { shirt: "#f4f2ec", shirtD: "#d6d2c6", pants: "#262a36", pantsD: "#191c25", tie: "#262a36" } },
   chef:   { top: "shirt", over: "apron", hat: "cap", feet: "shoes", colors: { shirt: "#f4f2ec", shirtD: "#d6d2c6", pants: "#3b3f4a", pantsD: "#2a2d36", hat: "#f4f2ec", hatD: "#d6d2c6" } },
-  // a woman: the same body, long hair over the shoulders, lashes and tinted lips (hair: "long", fem: true work with any outfit)
+  // a woman: the same joints; long hair over the shoulders, lashes, tinted lips, softer shoulders, a waist, the bust and wider hips and seat (front and side) (hair: "long", fem: true work with any outfit)
   woman:  { top: "sweater", feet: "shoes", hair: "long", fem: true, colors: { shirt: "#d79b8e", shirtD: "#b57a6e", pants: "#4b5a6e", pantsD: "#38445a", hair: "#3b2519", hairL: "#7a5238", lip: "#b8545c" } },
   womanCasual: { top: "tshirt", feet: "shoes", hair: "long", fem: true, colors: { shirt: "#e9d6c3", shirtD: "#c9b29c", pants: "#5a6b80", pantsD: "#435266", hair: "#3b2519", hairL: "#7a5238", lip: "#b8545c" } }
 };
@@ -276,11 +276,24 @@ function person(o) {
   svg += OF.feet === "boots" ? legSvg + feet : feet + legSvg;
   // ── trunk: sweater with ribbed hem, crew collar, side folds; the trousers' waist under the hem ──
   var wy = 7 + br * .3;
+  if (OF.fem) {   // a woman's hips: wider below a slimmer waist, flowing into the thighs (filled, outlined only on the outer curves)
+    var hipF = [T(12, -35), T(-4, -43), T(-22, -47.5), T(-42, -46), T(-60, -42), T(-84, -33.5), T(-70, -14), T(-40, -2), T(-40, 2), T(-70, 14), T(-84, 33.5), T(-60, 42), T(-42, 46), T(-22, 47.5), T(-4, 43), T(12, 35)];
+    svg += '<path d="' + pPath(hipF, true) + '" fill="' + c.pants + '"/>';
+    [-1, 1].forEach(function (sd) { svg += '<path d="' + pPath([T(12, sd * 35), T(-4, sd * 43), T(-22, sd * 47.5), T(-42, sd * 46), T(-60, sd * 42), T(-84, sd * 33.5)], false) + '" stroke="' + INK + '" stroke-width="' + f(2.3 * s) + '" fill="none" stroke-linecap="round"/>'; });
+    svg += pLine([T(-10, 0), T(-40, 0)], INK, 1.8 * s) + pLine([T(-14, -26), T(-30, -34)], c.pantsD, 1.2 * s) + pLine([T(-14, 26), T(-30, 34)], c.pantsD, 1.2 * s);
+  } else
   svg += '<path d="' + pPath([T(-8, -40), T(10, -38), T(10, 38), T(-8, 40), T(-16, 0)], true) + '" fill="' + c.pants + '" stroke="' + INK + '" stroke-width="' + f(2.2 * s) + '"/>';
   var tor = [T(wy, -37), T(30, -33 - br * .3), T(70, -38 - br * .4), T(96, -42), T(hSh + 2, -46 + 2 * sl), T(hSh + 8, -30), T(hNeck + 2, -13), T(hNeck + 2, 13), T(hSh + 8, 30), T(hSh + 2, 46 - 2 * sl), T(96, 42), T(70, 38 + br * .4), T(30, 33 + br * .3), T(wy, 37)];
   if (OF.fem) tor = [T(wy, -36), T(28, -31 - br * .3), T(60, -34 - br * .4), T(92, -41), T(hSh, -45 + 2 * sl), T(hSh + 6, -33), T(hNeck + 2, -12), T(hNeck + 2, 12), T(hSh + 6, 33), T(hSh, 45 - 2 * sl), T(92, 41), T(60, 34 + br * .4), T(28, 31 + br * .3), T(wy, 36)];   // the same joints; softer shoulders, a slight waist
   svg += '<path d="' + pPath(tor, true) + '" fill="' + c.shirt + '" stroke="' + INK + '" stroke-width="' + f(2.4 * s) + '"/>';
   svg += '<path d="' + pPath([T(hSh, 22), T(90, 36), T(50, 33), T(wy + 6, 34), T(wy + 6, 22), T(50, 24), T(86, 22)], true) + '" fill="' + c.shirtD + '" opacity=".55"/>';   // shaded far side
+  if (OF.fem) {   // the bust under the sweater: a soft shadow and the lower curve of each side, nothing more
+    [-1, 1].forEach(function (sd) {
+      svg += '<path d="' + pPath([T(94, sd * 31), T(82, sd * 29), T(75, sd * 18), T(77, sd * 7), T(84, sd * 3)], false) + '" stroke="' + c.shirtD + '" stroke-width="' + f(5 * s) + '" fill="none" opacity=".45" stroke-linecap="round"/>';
+      svg += '<path d="' + pPath([T(88, sd * 30), T(79, sd * 26), T(75, sd * 17), T(77, sd * 9)], false) + '" stroke="' + c.shirtD + '" stroke-width="' + f(1.6 * s) + '" fill="none" stroke-linecap="round"/>';
+    });
+    svg += pLine([T(50, -20), T(42, -10)], c.shirtD, 1.3 * s) + pLine([T(40, 12), T(32, 20)], c.shirtD, 1.3 * s);
+  } else
   svg += pLine([T(60, -20), T(52, -6), T(56, 6)], c.shirtD, 1.4 * s) + pLine([T(34, 8), T(26, 18)], c.shirtD, 1.3 * s) + pLine([T(40, -26), T(30, -16)], c.shirtD, 1.3 * s);
   var hem = [T(wy, -37), T(wy + 9, -36), T(wy + 9, 36), T(wy, 37)];
   svg += '<path d="M' + hem.map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + ' Z" fill="' + c.shirt + '" stroke="' + INK + '" stroke-width="' + f(2 * s) + '"/>';
@@ -419,7 +432,10 @@ function personSide(o) {
   });
   // ── trunk in profile: chest, back, the sweater's hem and collar ──
   var fr = [[-4, 27], [10, 28], [30, 25], [56, 27 + br], [80, 31 + br], [98, 30], [110, 23], [120, 13]], bk = [[121, -13], [110, -25], [88, -28], [62, -23], [38, -25], [16, -30], [-2, -29]];
+  if (OF.fem) { fr = [[-4, 27], [10, 27], [30, 23], [52, 24 + br], [66, 28 + br], [74, 36 + br], [86, 38 + br], [98, 33], [110, 23], [120, 13]]; bk = [[121, -13], [110, -24], [88, -26], [62, -20], [40, -21], [18, -28], [-2, -31]]; }
   var torso = fr.concat(bk).map(function (q) { return T(q[0], q[1]); });
+  var seat = OF.fem ? '<path d="' + pPath([T(18, -27), T(2, -33), T(-16, -38), T(-36, -36), T(-54, -27), T(-66, -14), T(-60, 6), T(-10, 10), T(14, 2)], true) + '" fill="' + c.pants + '"/>' +   // the seat: filled, outlined only along the back curve
+      '<path d="' + pPath([T(2, -31), T(-16, -38), T(-36, -36), T(-54, -27), T(-66, -14)], false) + '" stroke="' + INK + '" stroke-width="2.3" fill="none" stroke-linecap="round"/>' + pLine([T(-24, -32), T(-46, -26)], c.pantsD, 1.2) : "";
   var trunk = '<path d="' + pPath(torso, true) + '" fill="' + c.shirt + '" stroke="' + INK + '" stroke-width="2.4"/>';
   trunk += '<path d="' + pPath([T(112, -16), T(86, -20), T(60, -15), T(30, -18), T(8, -22), T(8, -10), T(40, -8), T(80, -10)], true) + '" fill="' + c.shirtD + '" opacity=".45"/>';
   trunk += '<path d="' + pPath([T(2, 27), T(10, 27.5), T(10, -28), T(1, -28)], false) + '" stroke="' + INK + '" stroke-width="1.8" fill="none"/>';
@@ -476,7 +492,7 @@ function personSide(o) {
     part.arm[i] = g; if (!i) { J.wrist = wr; J.elbow = el; }
   });
   var coatSvg = OF.over === "labcoat" ? '<path d="' + pPath([T(121, -14), T(121, 16), T(96, 34), T(30, 32), T(-66, 38), T(-68, -34), T(30, -32), T(96, -30)], true) + '" fill="' + c.coat + '" stroke="' + INK + '" stroke-width="2.2"/>' + pLine([T(112, 18), T(70, 30), T(60, 33)], c.coatD, 2) + pLine([T(-10, 30), T(-60, 34)], c.coatD, 1.3) : "";
-  var body = part.arm[1] + part.leg[1] + trunk + part.leg[0] + coatSvg + neck + head + part.arm[0];
+  var body = part.arm[1] + part.leg[1] + seat + trunk + part.leg[0] + coatSvg + neck + head + part.arm[0];
   var s = o.s || 1, dir = o.dir || 1;
   J.toLocal = function (p) { return p; };
   var tr = "translate(" + f(o.x) + " " + f(o.y) + ") rotate(" + f(o.rot || 0) + ") scale(" + f(s * dir) + " " + f(s) + ")";
