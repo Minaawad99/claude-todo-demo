@@ -162,6 +162,20 @@ function hRinglet(x, y, n, sd, c, t, seed) {   // a hanging ringlet: one smooth 
          '<path d="' + d + '" stroke="' + c.hair + '" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
          '<path d="' + d + '" stroke="' + c.hairL + '" stroke-width="1.3" fill="none" stroke-linecap="round" transform="translate(-.8 -1)" opacity=".9"/>';
 }
+function hCoil(x, y, ang, len, r, w, c, t, seed, col) {   // one defined ringlet: a coil that leaves the scalp at `ang` (deg, 90 = down) and falls with gravity
+  ang = ((ang + 90) % 360 + 360) % 360 - 90;   // keep the start angle in (-90, 270] so gravity turns it the short way
+  var pts = [], a0 = ang * Math.PI / 180, pitch = 6.4 + 1.4 * hRnd(seed), px = x, py = y, n = Math.ceil(len / .8);
+  for (var i = 0; i <= n; i++) {
+    var u = i / n, a = a0 + (Math.PI / 2 - a0) * Math.min(1, u * 1.3) * .75, sw = Math.sin((t || 0) * 1.2 + seed) * 1.4 * u;
+    if (i) { px += Math.cos(a) * len / n; py += Math.sin(a) * len / n; }
+    var th = u * len / pitch * Math.PI * 2 + seed, rr = r * (.55 + .45 * Math.min(1, u * 4)) * (1 - .2 * u);
+    pts.push([px - Math.sin(a) * Math.sin(th) * rr + sw, py + Math.cos(a) * Math.sin(th) * rr + Math.cos(th) * rr * .45]);
+  }
+  var d = "M" + pts.map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L");
+  return '<path d="' + d + '" stroke="' + (c.hairD || INK) + '" stroke-width="' + f(w + 1.6) + '" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
+         '<path d="' + d + '" stroke="' + (col || c.hair) + '" stroke-width="' + f(w) + '" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
+         '<path d="' + d + '" stroke="' + c.hairL + '" stroke-width="' + f(w * .22) + '" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(-.6 -.8)" opacity=".7"/>';
+}
 function hScallop(pts, bump) {   // a closed outline made of round bumps (the edge of a curly mass)
   var n = pts.length, cx = 0, cy = 0; pts.forEach(function (p) { cx += p[0] / n; cy += p[1] / n; });
   var d = "M" + f(pts[0][0]) + " " + f(pts[0][1]);
@@ -177,16 +191,15 @@ function hairBack(style, c, t) {   // the part of the hair behind the head and s
     g += '<path d="' + pPath(back, true) + '" fill="' + c.hairD + '" stroke="' + INK + '" stroke-width="1.8"/>';
     [-1, 1].forEach(function (sd) { for (var q = 0; q < 3; q++) g += '<path d="' + pPath([[sd * (17 + q * 3), 20], [sd * (19 + q * 3.2), 50], [sd * (21 + q * 3), 86]].map(S), false) + '" stroke="' + c.hair + '" stroke-width="1" fill="none" opacity=".9"/>'; });
   } else if (style === "curly") {
+    // the shadowed mass behind, then ringlets all round it, radiating from the head and falling to the shoulders
     var pts = [];
-    for (var i = 0; i < 26; i++) { var a = -Math.PI / 2 + i / 26 * Math.PI * 2, rx = 41 + 3 * hRnd(i), ry = 54 + 3 * hRnd(i + 9);
-      pts.push([Math.cos(a) * rx + Math.sin((t || 0) * 1.1 + i) * .5, 4 + Math.sin(a) * ry * (Math.sin(a) > 0 ? .98 : .95)]); }
-    g += '<path d="' + hScallop(pts, 4.2) + '" fill="' + c.hairD + '" stroke="' + INK + '" stroke-width="1.8" stroke-linejoin="round"/>';
-    // coils inside the mass, kept sparse and close in tone so the eye rests
-    for (var k = 0; k < 46; k++) { var aa = hRnd(k * 7.3) * Math.PI * 2, rr = Math.sqrt(.25 + .75 * hRnd(k * 2.9)), x = Math.cos(aa) * 36 * rr, y = 4 + Math.sin(aa) * 48 * rr;
-      if (Math.abs(x) < 20 && y > -30 && y < 30) continue;
-      g += hCurl(x, y, 3 + 1.4 * hRnd(k), hRnd(k * 5.1) * 6.3, c.hair, 1.5) + hCurl(x + .6, y - .6, 2.2 + hRnd(k), hRnd(k * 5.1) * 6.3 + .8, c.hairL, .8); }
-    // ringlets along the lower rim
-    [-34, -25, 25, 34].forEach(function (x, j) { g += hRinglet(x, 34 + (j % 2 ? 4 : 0), 4, x < 0 ? -1 : 1, c, t, j * 1.7); });
+    for (var i = 0; i < 28; i++) { var a = -Math.PI / 2 + i / 28 * Math.PI * 2, rx = 47 + 3 * hRnd(i), ry = 58 + 3 * hRnd(i + 9);
+      pts.push([Math.cos(a) * rx, 8 + Math.sin(a) * ry * (Math.sin(a) > 0 ? 1.05 : .92)]); }
+    g += '<path d="' + hScallop(pts, 4.5) + '" fill="' + c.hairD + '" stroke="' + INK + '" stroke-width="1.8" stroke-linejoin="round"/>';
+    // rows of ringlets hanging from the top of the mass and leaning out a little, the outer ones longest
+    [[-44, 52, 11], [-30, 40, 6]].forEach(function (row, ri) {
+      for (var xi = 0; xi < row[2]; xi++) { var x = row[0] - 2 * row[0] * xi / (row[2] - 1); var e = x / -row[0], y0 = -48 + ri * 8 + 22 * e * e, len = row[1] + 26 * e * e + 8 * hRnd(x + ri * 50);
+        g += hCoil(x, y0, 90 - x * .85, len, 4.4, 5, c, t, x * .37 + ri * 3, (xi + ri) % 2 ? c.hair : c.hairM || c.hair); } });
   }
   return g;
 }
@@ -204,16 +217,14 @@ function hairFront(style, c, t, tr) {   // the part over the scalp and the locks
     g += '<path d="M' + f(X(-15)) + ' -27 Q' + f(X(-4)) + ' -33.5 ' + f(X(12)) + ' -29" stroke="' + c.hairL + '" stroke-width="3.2" fill="none" stroke-linecap="round" opacity=".55"/>';
     g += pLine([[px, -33.5], [px + .5, -27]], c.skinD, 1.1);
   } else if (style === "curly") {
-    // the crown and a fringe of small coils, its lower edge made of round bumps
-    var top = [[-23, -14], [-24, -26], [-16, -38], [-4, -43], [8, -42], [19, -36], [24, -24], [23, -14]];
-    var fr = [];
-    for (var i = 0; i <= 8; i++) fr.push([X(20 - i * 5), -15 - 2.5 * Math.sin(i / 8 * Math.PI) + (i % 2 ? 1.2 : 0)]);
-    g += '<path d="' + hScallop(top.concat(fr), 3.4) + '" fill="' + c.hair + '" stroke="' + INK + '" stroke-width="1.8" stroke-linejoin="round"/>';
-    for (var k = 0; k < 16; k++) { var x = -18 + (k % 6) * 7.2 + (k > 5 ? 3.5 : 0) + hRnd(k) * 2, y = -35 + Math.floor(k / 6) * 7.5 + hRnd(k + 3) * 2;
-      if (k > 11) { x = -16 + (k - 12) * 10.5; y = -19.5; }
-      g += hCurl(X(x), y, 2.8 + hRnd(k * 1.7), hRnd(k * 4.3) * 6.3, c.hairL, 1); }
-    // ringlets framing the face on both sides
-    [[-1, -23, -11, 6], [-1, -31, -3, 6], [1, 23, -11, 6], [1, 31, -3, 6]].forEach(function (q, j) { g += hRinglet(X(q[1]), q[2], q[3], q[0], c, t, j * 2.3); });
+    // the crown: ringlets from a middle part out over the top; then ringlets framing the face and falling over the shoulders
+    var cap = [[-21, -10], [-22, -24], [-14, -33], [0, -36], [14, -33], [22, -24], [21, -10], [16, -18], [8, -22], [0, -23], [-8, -22], [-16, -18]];
+    g += '<path d="' + pPath(cap, true) + '" fill="' + c.hairD + '" stroke="' + INK + '" stroke-width="1.6"/>';
+    [-1, 1].forEach(function (sd) {
+      for (var k = 0; k < 3; k++) g += hCoil(X(sd * (2 + k * 5.5)), -35 + k * 2.4, 90 - sd * (62 - k * 12), 15 + k * 4, 3.6, 4.8, c, t, sd * 3 + k, k % 2 ? c.hairM || c.hair : c.hair);   // from the part, out over the crown
+      g += hCoil(X(sd * 15), -26, 90 - sd * 20, 12, 3.2, 4.6, c, t, sd * 5 + 9);                              // a short curl at the temple
+      for (var q = 0; q < 3; q++) g += hCoil(sd * (20 + q * 7), -18 + q * 6, 90 - sd * (6 + q * 5), 48 + q * 10, 4.2, 5, c, t, sd * 7 + q * 2.3, q === 1 ? c.hairM || c.hair : c.hair);   // locks framing the face
+    });
   } else {
     var hair = [[-19.5, -2], [-20.5, -16], [-14, -28.5], [-2, -32.5], [11, -31], [19.5, -21], [20, -4], [17.5, -9], [16, -15.5], [X(9), -17.5], [X(3), -15], [X(-2), -18], [X(-9), -16], [-15.5, -14], [-17.5, -7]];
     g += '<path d="' + pPath(hair, true) + '" fill="' + c.hair + '" stroke="' + INK + '" stroke-width="1.8"/>';
@@ -234,6 +245,62 @@ function hairSide(style, c, t) {   // profile, facing +x: [behind the head, over
     return [bk, fr]; }
   return ["", '<path d="' + pPath([[-23.5, 6], [-24, -10], [-17, -25], [-4, -31], [10, -29], [18, -21], [16, -15], [9, -18], [2, -16], [-6, -14], [-12, -8], [-10, -2], [-16, 4], [-19, 12]], true) + '" fill="' + c.hair + '" stroke="' + INK + '" stroke-width="1.8"/>' + pLine([[-16, -20], [-6, -24], [4, -25]], c.hairL, 1.2) + pLine([[-20, -6], [-17, 2]], c.hairL, 1.1)];
 }
+
+// ── a woman's face (o.female): shaped full brows, big almond eyes with a thick lash line and a flick, a large iris with two
+//    highlights, a small nose, full lips with a cupid's bow, soft blush. Head-local units, like the rest of pHead.
+function femaleFace(o, c, X, tr, eo, look, mo, br, fc) {
+  var g = "", brow = c.brow || c.hairD || c.hair, iris = c.iris || "#5b3a22";
+  var bv = { neutral: [0, 0], raised: [-3, 0], worried: [-1.5, -2.6], angry: [1, 2.4] }[br] || [0, 0];
+  [-1, 1].forEach(function (sd) {
+    var y = -10.6 + bv[0], a = [X(sd * 3.4), y + 1.4 + bv[1] * .5], b = [X(sd * 7.6), y - 1.8], e = [X(sd * 12.6), y + .6 - bv[1] * .3];
+    g += '<path d="M' + f(a[0]) + ' ' + f(a[1] - 1.3) + ' Q' + f(b[0]) + ' ' + f(b[1] - 1.4) + ' ' + f(e[0]) + ' ' + f(e[1]) + ' Q' + f(b[0]) + ' ' + f(b[1] + .9) + ' ' + f(a[0]) + ' ' + f(a[1] + 1.1) + ' Z" fill="' + brow + '" stroke="' + brow + '" stroke-width=".6" stroke-linejoin="round"/>';
+  });
+  [-1, 1].forEach(function (sd) {
+    var cx = X(sd * 8), cy = -1.2, w = sd * tr > 0 ? 4.8 : 5.5, hh = 4.3 * eo, id = "fy" + (++CLIPN), inn = cx - sd * w, out = cx + sd * w;
+    // the crease above the lid
+    g += '<path d="M' + f(cx - sd * w * .7) + ' ' + f(cy - 4.6) + ' Q' + f(cx + sd * w * .1) + ' ' + f(cy - 6.4) + ' ' + f(cx + sd * w * .9) + ' ' + f(cy - 4.4) + '" stroke="' + c.skinD + '" stroke-width=".9" fill="none"/>';
+    if (eo < .12) {
+      g += '<path d="M' + f(inn) + ' ' + f(cy) + ' Q' + f(cx) + ' ' + f(cy + 2.4) + ' ' + f(out + sd * 1.2) + ' ' + f(cy - .6) + '" stroke="' + INK + '" stroke-width="2.2" fill="none" stroke-linecap="round"/>';
+      for (var q = 0; q < 3; q++) { var lx = cx + sd * (w * (.1 + q * .38)); g += pLine([[lx, cy + 1.6 - q * .3], [lx + sd * .9, cy + 3.2 - q * .3]], INK, .9); }
+      return;
+    }
+    var top = cy - hh * 1.15, eye = 'M' + f(inn) + ' ' + f(cy + .3) + ' C' + f(cx - sd * w * .5) + ' ' + f(top) + ' ' + f(cx + sd * w * .5) + ' ' + f(top) + ' ' + f(out) + ' ' + f(cy - .6) + ' C' + f(cx + sd * w * .4) + ' ' + f(cy + hh * .75) + ' ' + f(cx - sd * w * .5) + ' ' + f(cy + hh * .7) + ' ' + f(inn) + ' ' + f(cy + .3) + ' Z';
+    var ix = cx + look[0] * 1.5 + tr * .8, iy = cy - .2 + look[1] * .9;
+    g += '<clipPath id="' + id + '"><path d="' + eye + '"/></clipPath><path d="' + eye + '" fill="' + PSN.white + '"/>';
+    g += '<g clip-path="url(#' + id + ')"><circle cx="' + f(ix) + '" cy="' + f(iy) + '" r="3.7" fill="' + iris + '"/><circle cx="' + f(ix) + '" cy="' + f(iy) + '" r="3.7" fill="none" stroke="#2a1a10" stroke-width=".7"/>' +
+         '<path d="M' + f(ix - 2.2) + ' ' + f(iy + 1.2) + ' A2.4 2.4 0 0 0 ' + f(ix + 2.2) + ' ' + f(iy + 1.2) + '" stroke="#a8784e" stroke-width=".9" fill="none" opacity=".8"/>' +
+         '<circle cx="' + f(ix) + '" cy="' + f(iy) + '" r="1.7" fill="#140d08"/><circle cx="' + f(ix - 1.3) + '" cy="' + f(iy - 1.4) + '" r="1.15" fill="#fff"/><circle cx="' + f(ix + 1.2) + '" cy="' + f(iy + 1) + '" r=".45" fill="#fff"/>' +
+         '<path d="' + eye + '" fill="none" stroke="' + c.skinD + '" stroke-width="1.2" opacity=".35" transform="translate(0 -1)"/></g>';
+    // the thick upper lash line with a flick at the outer corner, three lashes, a fine lower line
+    g += '<path d="M' + f(inn - sd * .3) + ' ' + f(cy + .4) + ' C' + f(cx - sd * w * .5) + ' ' + f(top - .5) + ' ' + f(cx + sd * w * .5) + ' ' + f(top - .5) + ' ' + f(out) + ' ' + f(cy - .6) + ' L' + f(out + sd * 1.9) + ' ' + f(cy - 2.6) + '" stroke="' + INK + '" stroke-width="2.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
+    [[.45, -1.1, 1.2], [.75, -.6, 1.6], [.98, .2, 1.8]].forEach(function (L) { var px = cx + sd * w * L[0], py = cy - hh * (.95 - L[0] * .55) + L[1] * .3;
+      g += '<path d="M' + f(px) + ' ' + f(py) + ' q' + f(sd * .6) + ' -1 ' + f(sd * L[2]) + ' -1.6" stroke="' + INK + '" stroke-width="1" fill="none" stroke-linecap="round"/>'; });
+    g += '<path d="M' + f(cx - sd * w * .6) + ' ' + f(cy + hh * .62) + ' Q' + f(cx + sd * w * .1) + ' ' + f(cy + hh * .82) + ' ' + f(out - sd * .3) + ' ' + f(cy - .2) + '" stroke="' + brow + '" stroke-width=".8" fill="none" opacity=".8"/>';
+    if (fc.tired) g += '<path d="M' + f(cx - w * .7) + ' ' + f(cy + 4) + ' Q' + f(cx) + ' ' + f(cy + 5.6) + ' ' + f(cx + w * .8) + ' ' + f(cy + 3.8) + '" stroke="' + c.skinD + '" stroke-width="1.1" fill="none"/>';
+  });
+  // blush
+  [-1, 1].forEach(function (sd) { g += '<ellipse cx="' + f(X(sd * 11.2)) + '" cy="8.4" rx="4.4" ry="2.5" fill="#e3806e" opacity=".26"/>'; });
+  // nose: a soft bridge shadow, the tip and two small nostrils
+  var nx = X(tr * 2);
+  g += '<path d="M' + f(nx + .6) + ' 0 C' + f(nx + 1.6) + ' 3.5 ' + f(nx + 2) + ' 6 ' + f(nx + 1.5) + ' 8" stroke="' + c.skinD + '" stroke-width="1.4" fill="none" opacity=".55"/>' +
+       '<path d="M' + f(nx - 2.6) + ' 8.6 Q' + f(nx - 1.4) + ' 10.2 ' + f(nx) + ' 9.6 Q' + f(nx + 1.4) + ' 10.2 ' + f(nx + 2.6) + ' 8.6" stroke="' + INK + '" stroke-width="1.2" fill="none" stroke-linecap="round"/>' +
+       '<ellipse cx="' + f(nx - 1.3) + '" cy="9.3" rx=".55" ry=".35" fill="#6a3a2a"/><ellipse cx="' + f(nx + 1.3) + '" cy="9.3" rx=".55" ry=".35" fill="#6a3a2a"/>';
+  // lips
+  var mx = X(tr * 1.5), my = 15.6, up = mo === "smile" || mo === "grin" ? 1 : mo === "frown" ? -1 : 0, lipD = c.lipD || "#a9564f", lip = c.lip || "#c46d64";
+  if (mo === "open" || mo === "o" || mo === "yawn" || mo === "grin") {
+    var rx = mo === "o" ? 2.6 : 4.4, ry = mo === "yawn" ? 5.6 : mo === "o" ? 3.2 : 2.8;
+    g += '<ellipse cx="' + f(mx) + '" cy="' + f(my + 1.2) + '" rx="' + f(rx + 1.4) + '" ry="' + f(ry + 1.3) + '" fill="' + lip + '" stroke="' + INK + '" stroke-width="1.2"/><ellipse cx="' + f(mx) + '" cy="' + f(my + 1.2) + '" rx="' + f(rx) + '" ry="' + f(ry) + '" fill="#5a2a22"/>' +
+         (mo === "grin" ? '<path d="M' + f(mx - rx) + ' ' + f(my) + ' h' + f(2 * rx) + '" stroke="#fff" stroke-width="1.6"/>' : "");
+  } else {
+    var L = mx - 5.8, Rr = mx + 5.8, cy2 = my - up * .9;
+    g += '<path d="M' + f(L) + ' ' + f(cy2) + ' Q' + f(mx - 3) + ' ' + f(my - 3.1) + ' ' + f(mx) + ' ' + f(my - 2) + ' Q' + f(mx + 3) + ' ' + f(my - 3.1) + ' ' + f(Rr) + ' ' + f(cy2) + ' Q' + f(mx) + ' ' + f(my + .4 + up * .6) + ' ' + f(L) + ' ' + f(cy2) + ' Z" fill="' + lipD + '" stroke="' + INK + '" stroke-width=".9" stroke-linejoin="round"/>';
+    g += '<path d="M' + f(L + .5) + ' ' + f(cy2 + .2) + ' Q' + f(mx) + ' ' + f(my + 5.2 + up * .4) + ' ' + f(Rr - .5) + ' ' + f(cy2 + .2) + ' Q' + f(mx) + ' ' + f(my + .6 + up * .6) + ' ' + f(L + .5) + ' ' + f(cy2 + .2) + ' Z" fill="' + lip + '" stroke="' + INK + '" stroke-width=".9" stroke-linejoin="round"/>';
+    g += '<path d="M' + f(L - .2) + ' ' + f(cy2) + ' Q' + f(mx) + ' ' + f(my + .6 + up * .8) + ' ' + f(Rr + .2) + ' ' + f(cy2) + '" stroke="' + INK + '" stroke-width="1.4" fill="none" stroke-linecap="round"/>';
+    g += '<path d="M' + f(mx - 2) + ' ' + f(my + 2.8) + ' q2 .8 3.6 -.2" stroke="#fff" stroke-width=".9" fill="none" opacity=".55" stroke-linecap="round"/>';
+    if (up > 0) g += '<path d="M' + f(L - 1) + ' ' + f(cy2 - .6) + ' q.5 .9 1.2 1.1 M' + f(Rr + 1) + ' ' + f(cy2 - .6) + ' q-.5 .9 -1.2 1.1" stroke="' + c.skinD + '" stroke-width=".9" fill="none"/>';
+  }
+  return g;
+}
 function pHead(hc, s, rot, o, c) {
   var fc = o.face || {}, hd = o.head || {}, tr = hd.turn || 0, eo = fc.eyes == null ? 1 : fc.eyes, look = fc.look || [0, 0], mo = fc.mouth || "neutral", br = fc.brows || "neutral";
   var g = "", X = function (u) { return u + tr * 4.5; }, hs = o.hairStyle || "short";
@@ -247,6 +314,8 @@ function pHead(hc, s, rot, o, c) {
   g += '<path d="M' + f(X(9)) + ' -12 C' + f(X(17)) + ' -6 ' + f(X(16)) + ' 12 ' + f(X(6)) + ' 23 C' + f(X(13)) + ' 18 17 8 18.4 -2 C18.4 -9 16 -13 ' + f(X(9)) + ' -12 Z" fill="' + c.skinD + '" opacity=".45"/>';
   // hair: the short cap is drawn here; long styles draw over the face's edges after the face (below)
   if (hs === "short") g += hairFront(hs, c, o.hairT, tr);
+  if (o.female) g += femaleFace(o, c, X, tr, eo, look, mo, br, fc);
+  else {
   // brows
   var bv = { neutral: [0, 0], raised: [-3, 0], worried: [-1.5, -2.6], angry: [1, 2.4] }[br] || [0, 0];
   [-1, 1].forEach(function (sd) { var cx = X(sd * 7.6), inner = cx - sd * 3.6, outer = cx + sd * 4.2, y0 = -8.2 + bv[0];
@@ -285,6 +354,7 @@ function pHead(hc, s, rot, o, c) {
   if (o.female && (mo === "neutral" || mo === "smile" || mo === "frown")) g += '<path d="M' + f(mx - 4.6) + ' ' + f(my + (mo === "smile" ? .4 : .3)) + ' Q' + f(mx) + ' ' + f(my + (mo === "smile" ? 5.4 : 4.6)) + ' ' + f(mx + 4.6) + ' ' + f(my + (mo === "smile" ? .2 : .1)) + ' Q' + f(mx) + ' ' + f(my + 1.6) + ' ' + f(mx - 4.6) + ' ' + f(my + .3) + ' Z" fill="' + c.lip + '" opacity=".75"/>' +
        (mo === "smile" ? "" : '<path d="M' + f(mx - 4.4) + ' ' + f(my - .2) + ' Q' + f(mx - 2) + ' ' + f(my - 2.4) + ' ' + f(mx) + ' ' + f(my - 1.2) + ' Q' + f(mx + 2) + ' ' + f(my - 2.4) + ' ' + f(mx + 4.4) + ' ' + f(my - .4) + ' Z" fill="' + c.lip + '" opacity=".6"/>');
   g += M[mo] || M.neutral;
+  }
   if (hs !== "short") g += hairFront(hs, c, o.hairT, tr);
   // jaw shadow and chin line
   g += '<path d="M' + f(X(-3)) + ' 22.5 Q' + f(X(0)) + ' 23.8 ' + f(X(3)) + ' 22.5" stroke="' + c.skinD + '" stroke-width="1" fill="none"/>';

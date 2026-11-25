@@ -85,6 +85,7 @@ for k, v in [("/*TITLE*/", CFG.get("title", "")), ("/*CATEGORY*/", CFG.get("cate
              ("/*WATERMARK*/", html.escape(CFG.get("watermark", ""))),
              ("/*LIBS*/", "".join('<script src="%s"></script>' % src for src in ["../../_templates/people/person.js"] + [l for l in CFG.get("libs", ["../../lib/geo.min.js"]) if "people/person.js" not in l])), ("/*DATA*/", "window.DATA = " + json.dumps(data, ensure_ascii=False) + ";")]:
     page = page.replace(k, v)
+if CFG.get("css"): page = page.replace("</style>", CFG["css"] + "\n</style>", 1)   # an episode look that overrides the paper and accent colours
 open(os.path.join(HERE, "index.html"), "w", encoding="utf-8").write(page)
 print("built: %d lines, %d caption chunks · hook lines 0-%d · promise %d · summary %d · ask %d"
       % (n, sum(len(c) for c in caps), intro_lines - 1, promise, summary, cta))

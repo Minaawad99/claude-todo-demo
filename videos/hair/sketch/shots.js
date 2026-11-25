@@ -4,8 +4,8 @@
 // histology references in refs/SOURCES.md). The two women are the shared person kit (hairStyle "curly" / "straight").
 
 // ── the two women ──
-var CURLY = { hairStyle: "curly", female: true, outfit: { base: "casual", colors: { shirt: "#d9a48f", shirtD: "#b9826d", pants: "#4a5a6c", pantsD: "#36445a", hair: "#5b3a26", hairL: "#8a5e40", hairD: "#45291a", skin: "#d39c7b", skinD: "#b07a5c", lip: "#b0604f" } } };
-var STRAIGHT = { hairStyle: "straight", female: true, outfit: { base: "home", colors: { shirt: "#a9c3dc", shirtD: "#7f9bb6", pants: "#3d4656", pantsD: "#2b3240", hair: "#2a211c", hairL: "#5a4a40", hairD: "#1a1411", lip: "#b56b5c" } } };
+var CURLY = { hairStyle: "curly", female: true, outfit: { base: "casual", colors: { shirt: "#d9a48f", shirtD: "#b9826d", pants: "#4a5a6c", pantsD: "#36445a", hair: "#5e3923", hairM: "#6e4529", hairL: "#b88555", hairD: "#2e1b10", skin: "#d8a07c", skinD: "#b77d5c", lip: "#c0685c", lipD: "#9e4f47", iris: "#5a361e", brow: "#2a1a10" } } };
+var STRAIGHT = { hairStyle: "straight", female: true, outfit: { base: "home", colors: { shirt: "#a9c3dc", shirtD: "#7f9bb6", pants: "#3d4656", pantsD: "#2b3240", hair: "#241b17", hairL: "#5e4c42", hairD: "#16110e", lip: "#c4746a", lipD: "#a4594f", iris: "#4a2e1c", brow: "#1e1612" } } };
 function blink(t, seed) { var p = (t + seed) % 3.7; return p < .12 ? .05 : p < .2 ? .5 : 1; }
 // a woman from the front: head centre at (x, y), scale s; o: face, head, arms…
 function woman(who, x, y, s, t, o) {
@@ -141,9 +141,9 @@ shot(5, push(320, 450, 1.0, 1.1), function (u, d, t) {
 });
 // 6 · «طب بيتحدد فين؟»: the curly woman, a magnified circle on her scalp
 shot(6, push(320, 360, 1.0, 1.1), function (u, d, t) {
-  return paper() + woman("curly", 320, 380, 2.6, t, { face: { mouth: "neutral", look: [0, -.6] }, head: { tilt: -6 } }) +
+  return paper() + woman("curly", 300, 400, 3.3, t, { face: { mouth: "neutral", look: [0, -.6] }, head: { tilt: -4 } }) +
     inset(470, 170, 120, skin(-40).replace(/stroke-width="2.4"/g, 'stroke-width="3"') + follicle(-10, 200, -40, .6) + shaft(-10, -40, "curl", 150, t, 1, "#5b3a26"), at(u, .4, .4)) +
-    T("؟", 150, 230, 110, ORANGE, 800);
+    T("؟", 70, 150, 100, ORANGE, 800);
 }, { tr: "fade" });
 // 7 · under the scalp, every hair grows from a small sac: the follicle
 shot(7, push(320, 470, 1.08, 0.98), function (u, d, t) {
@@ -163,7 +163,7 @@ shot(9, push(320, 440, 1.04, 1.0), function (u, d, t) {
 });
 // 10 · «طب الشعر الناعم ليه ناعم؟»: the straight-haired woman
 shot(10, push(320, 380, 1.08, 1.0), function (u, d, t) {
-  return paper() + woman("straight", 320, 360, 2.6, t, { head: { turn: .15 } }) + T("؟", 530, 220, 110, BLUE, 800);
+  return paper() + woman("straight", 320, 370, 3.4, t, { head: { turn: .15 } }) + T("؟", 560, 170, 100, BLUE, 800);
 });
 // 11 · a straight follicle: the cells grow equally on both sides, the hair comes out straight
 hud(11, 12, function (u, t) { return chip("straight", 70, 80, 54, t, at(u, .1, .3)); });
@@ -175,7 +175,7 @@ shot(11, push(320, 430, 1.0, 1.08), function (u, d, t) {
 });
 // 12 · «طب والكيرلي؟»: the curly woman
 shot(12, push(320, 380, 1.0, 1.08), function (u, d, t) {
-  return paper() + woman("curly", 320, 360, 2.6, t, { head: { turn: -.15 } }) + T("؟", 110, 220, 110, ORANGE, 800);
+  return paper() + woman("curly", 320, 380, 3.3, t, { head: { turn: -.15 } }) + T("؟", 70, 150, 100, ORANGE, 800);
 });
 // 13 · a curved follicle: one side builds faster than the other, so the hair turns round as it grows
 hud(13, 16, function (u, t) { return chip("curly", 70, 80, 54, t, at(u, .1, .3)); });
