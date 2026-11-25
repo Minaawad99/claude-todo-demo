@@ -13,7 +13,7 @@ function panel(i, cap, inner) {
     '<text x="320" y="822" text-anchor="middle" style="font:800 26px \'Noto Sans Arabic\';fill:#2a2016">' + cap + '</text></g>';
 }
 // 1 hook: the leg, the handpiece on the shin, the treated patch bracketed; hairs still there
-panel(0, "هتلاقي الشعر لسه موجود", Z.leg(60, 470, 1, { bracket: [120, 300] }) + Z.handpiece(250, 436, .9, 1) +
+panel(0, "هتلاقي الشعر لسه موجود", Z.leg(38, 470, .97, { bracket: [130, 310] }) + Z.handpiece(250, 438, .9, 1) +
   '<g transform="translate(440 36)"><clipPath id="ins"><rect width="170" height="170"/></clipPath><rect width="170" height="170" fill="#eee5d0"/><g clip-path="url(#ins)">' + PERSON.head([85, 96], 2.1, 0, { face: { mouth: "o", eyes: 1.25, brows: "raised", look: [0, .6] }, _of: { hair: "long", fem: true } }, Object.assign({}, PERSON.colors, { hair: "#3b2519", hairL: "#7a5238", lip: "#b8545c" })) + '</g><rect width="170" height="170" fill="none" stroke="#2a2016" stroke-width="2.4"/></g>');
 // 2 the pulse into the skin, the melanin takes it
 var b2 = Z.skinBlock(40, 300, 520, [{ x: .14 }, { x: .38, k: .3 }, { x: .62 }, { x: .86 }]);

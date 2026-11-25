@@ -101,16 +101,34 @@ function beam(x, y, L, k, col) {
   return '<path d="M' + f(x - w) + ' ' + f(y) + ' L' + f(x + w) + ' ' + f(y) + ' L' + f(x + w * 1.8) + ' ' + f(y + L * k) + ' L' + f(x - w * 1.8) + ' ' + f(y + L * k) + ' Z" fill="' + col + '" opacity=".6"/>' +
     line([[x - w, y], [x - w * 1.8, y + L * k]], "#9fd0e2", 1.6, ' stroke-dasharray="6 6"') + line([[x + w, y], [x + w * 1.8, y + L * k]], "#9fd0e2", 1.6, ' stroke-dasharray="6 6"');
 }
-// a bare lower leg in profile (knee at left, foot at right), skin hairs along the shin; bracket = treated patch [x1, x2]
+// a bare lower leg in profile, lying shin-up (knee at left, the foot standing up at the right, toes to the ceiling), after real leg anatomy: the kneecap's bump, the
+// straight shin (tibia), the calf muscle bulging below in its upper third, the Achilles tendon thinning to the heel, the
+// ankle bone, the instep, the arch under the foot and the toes with the big toenail. bracket = treated patch [x1, x2]
 function leg(x0, y0, s, o) {
   o = o || {}; var g = '<g transform="translate(' + f(x0) + ' ' + f(y0) + ') scale(' + s + ')">';
-  var out = [[-40, -38], [80, -40], [200, -36], [320, -30], [372, -28], [410, -20], [470, -4], [530, 10], [566, 18], [576, 30], [562, 42], [470, 44], [400, 46], [362, 46], [344, 38], [338, 24], [318, 18], [262, 22], [182, 36], [112, 52], [50, 58], [0, 54], [-40, 46]];   // shin on top, the calf bulging below, ankle, heel and foot
-  g += shape(out, SKIN, 2.4);
-  g += line([[20, 44], [100, 40], [200, 26], [300, 14]], SKIND, 3, ' opacity=".55"') + line([[372, -24], [380, 0], [372, 20]], SKIND, 1.6) + '<ellipse cx="368" cy="10" rx="8" ry="6" fill="' + SKIND + '" opacity=".5"/>' + line([[540, 24], [566, 26]], SKIND, 1.4);
-  for (var i = 0; i < 26; i++) { var hx = -20 + i * 15, hy = -40 + (hx > 330 ? 12 : hx / 330 * 14) * 0 + (hx < 300 ? -2 - hx * .045 + 0 : -26 + 26) ; hy = interpTop(hx); if (o.cleared && hx > o.cleared[0] && hx < o.cleared[1]) continue; g += line([[hx, hy + 2], [hx + 9, hy - 12 - rnd(i) * 5]], HAIR, 2); }
-  if (o.bracket) { var b = o.bracket; [[b[0], -1], [b[1], 1]].forEach(function (q) { g += line([[q[0] + q[1] * -14, -80], [q[0], -80], [q[0], -64]], "#4f8a7a", 3) + line([[q[0] + q[1] * -14, 80], [q[0], 80], [q[0], 64]], "#4f8a7a", 3); }); }
+  var top = [[-70, -46], [-20, -50], [10, -55], [42, -53], [66, -44], [120, -40], [200, -36], [290, -32], [334, -34], [350, -48], [360, -72], [370, -102], [382, -138], [394, -170], [404, -192], [412, -205], [424, -210]];
+  var bot = [[436, -206], [444, -192], [448, -166], [448, -134], [442, -104], [442, -70], [450, -36], [458, -4], [456, 24], [440, 44], [412, 54], [384, 50], [362, 38], [346, 22], [334, 12], [300, 10], [262, 16], [196, 32], [130, 52], [80, 61], [32, 60], [-6, 54], [-40, 52], [-70, 53]];
+  g += shape(top.concat(bot), SKIN, 2.4);
+  // shading: the underside of the calf, the heel and the sole side of the foot
+  g += '<path d="' + P([[-60, 44], [20, 50], [90, 52], [170, 36], [260, 12], [330, 4], [352, 24], [384, 42], [424, 34], [440, 6], [432, -40], [430, -90], [434, -140], [438, -190], [444, -192], [448, -134], [442, -70], [458, -4], [440, 44], [384, 50], [346, 22], [262, 16], [130, 52], [32, 60], [-60, 53]]) + ' Z" fill="' + SKIND + '" opacity=".38"/>';
+  // the kneecap and the crease behind the knee
+  g += line([[-8, -46], [8, -36], [34, -36], [52, -45]], SKIND, 2) + line([[-30, 40], [-12, 48], [4, 50]], SKIND, 1.8);
+  // the shin bone's edge, a long faint line just under the front
+  g += line([[80, -34], [180, -28], [280, -24], [330, -24]], SKIND, 2, ' opacity=".7"');
+  // the calf muscle's bulge and the Achilles tendon narrowing to the heel
+  g += line([[30, 46], [90, 44], [160, 32], [230, 18]], SKIND, 2) + line([[250, 14], [300, 8], [336, 8], [356, 22]], SKIND, 1.6);
+  // the ankle bone, the crease at the front of the ankle, the tendon down the instep
+  g += '<ellipse cx="394" cy="-6" rx="13" ry="11" fill="' + SKIND + '" opacity=".55"/>' + line([[386, -19], [396, -21], [405, -17]], INK, 1.2, ' opacity=".5"') + line([[340, -36], [352, -46]], SKIND, 1.6) + line([[368, -80], [380, -126], [392, -160]], SKIND, 1.5);
+  // the heel's round, the arch hollow on the sole, the ball of the foot
+  g += line([[420, 44], [442, 30], [450, 6]], SKIND, 1.6) + line([[440, -40], [434, -76], [436, -110]], SKIND, 2) + line([[440, -140], [444, -162]], SKIND, 1.6);
+  // the toes at the top: the big toe in front with its nail, the toe creases
+  g += '<path d="M405 -196 q 3 -9 12 -11 q 5 4 3 11 q -8 4 -15 0 z" fill="#f4d7c9" stroke="' + INK + '" stroke-width="1.3"/>' + line([[398, -178], [412, -180], [424, -180]], INK, 1.2, ' opacity=".55"') + line([[430, -208], [434, -194], [442, -190]], INK, 1.2, ' opacity=".55"') + line([[438, -203], [442, -194]], INK, 1, ' opacity=".5"');
+  // the hairs: along the shin, slanting toward the foot, thinning out at the knee and the ankle
+  var ti = function (x) { for (var k = 1; k < top.length; k++) if (top[k][0] >= x) { var a = top[k - 1], b2 = top[k], t = (x - a[0]) / (b2[0] - a[0]); return a[1] + (b2[1] - a[1]) * t; } return -30; };
+  for (var i = 0; i < 30; i++) { var hx = 70 + i * 9.6 + rnd(i) * 4, hy = ti(hx); if (o.cleared && hx > o.cleared[0] && hx < o.cleared[1]) continue; g += line([[hx, hy + 1.5], [hx + 9 + rnd(i + 3) * 3, hy - 10 - rnd(i) * 5]], HAIR, 1.9); }
+  for (var m = 0; m < 10; m++) { var lx = 110 + m * 24 + rnd(m + 7) * 8, ly = ti(lx) + 10 + rnd(m) * 16; g += line([[lx, ly], [lx + 7, ly - 6]], HAIR, 1.4, ' opacity=".55"'); }   // hairs on the side of the leg
+  if (o.bracket) { var b = o.bracket; [[b[0], -1], [b[1], 1]].forEach(function (q) { g += line([[q[0] + q[1] * -14, -80], [q[0], -80], [q[0], -64]], "#4f8a7a", 3) + line([[q[0] + q[1] * -14, 84], [q[0], 84], [q[0], 68]], "#4f8a7a", 3); }); }
   return g + '</g>';
-  function interpTop(x) { for (var k = 1; k < out.length; k++) if (out[k][0] >= x) { var a = out[k - 1], b2 = out[k], t = (x - a[0]) / (b2[0] - a[0]); return a[1] + (b2[1] - a[1]) * t; } return -30; }
 }
 return { follicle: follicle, skinBlock: skinBlock, handpiece: handpiece, beam: beam, leg: leg, tag: tag, line: line, shape: shape,
   C: { INK: INK, ORANGE: ORANGE, BLUE: BLUE, OLIVE: OLIVE, PAPER: PAPER, SKIN: SKIN, HAIR: HAIR } };
