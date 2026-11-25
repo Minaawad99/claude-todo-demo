@@ -1,0 +1,20 @@
+<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@700;800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#eee5d0}svg{display:block}</style></head><body>
+<svg id="s" width="1500" height="1000" viewBox="0 0 1500 1000"></svg>
+<script src="../_templates/people/person.js"></script>
+<script>
+// the woman: the same body, face and hands as everyone else; long hair, lashes, tinted lips (outfit "woman" / "womanCasual")
+var out = "", s = 1.05;
+var poses = [
+  { outfit: "woman", face: { mouth: "smile" } },
+  { outfit: "woman", face: { mouth: "o", eyes: 1.25, brows: "raised" }, arms: [{ rel: [-20, 40], hand: "open" }, { to: null }] },
+  { outfit: "womanCasual", head: { turn: .5 }, face: { mouth: "smile", look: [.6, 0] }, arms: [{}, { rel: [70, -40], hand: "point", straight: true }] },
+  { outfit: "woman", face: { mouth: "frown", brows: "worried" } }
+];
+poses.forEach(function (p, i) { var o = Object.assign({ x: 150 + i * 280, y: 480 - 208 * s, s: s }, p); if (o.arms && !o.arms[1].rel && !o.arms[1].to) delete o.arms; out += PERSON.front(o).svg; });
+// big head close-up
+out += '<g transform="translate(1270 650) scale(2.2)">' + PERSON.front({ x: 0, y: 0, s: 1, outfit: "woman", face: { mouth: "smile" } }).svg.replace(/^/, '') + '</g>';
+var w = PERSON.walkPose(.9), o = Object.assign({ x: 700, s: s * .95, outfit: "woman", face: { mouth: "smile" } }, w); o.y = PERSON.sideHipY(o, 960); out += PERSON.side(o).svg;
+var o2 = Object.assign({ x: 1010, s: s * .95, outfit: "womanCasual", face: { mouth: "neutral" } }, PERSON.walkPose(2.5)); o2.y = PERSON.sideHipY(o2, 960); out += PERSON.side(o2).svg;
+document.getElementById("s").innerHTML = '<path d="M0 482 H1500 M0 962 H1500" stroke="#2a2016" stroke-width="2"/>' + out;
+</script></body></html>

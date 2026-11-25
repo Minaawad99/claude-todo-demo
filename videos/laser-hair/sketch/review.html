@@ -1,0 +1,40 @@
+<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@700;800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#d9d0bb}svg{display:block}</style></head><body>
+<svg id="s" width="1980" height="1780" viewBox="0 0 1980 1780"></svg>
+<script src="../../_templates/people/person.js"></script>
+<script src="draw.js"></script>
+<script>
+var Z = LZ, C = Z.C, out = "";
+function panel(i, cap, inner) {
+  var x = 20 + (i % 3) * 660, y = 20 + Math.floor(i / 3) * 880, id = "c" + i;
+  var grid = ""; for (var gx = 0; gx <= 640; gx += 32) grid += '<path d="M' + gx + ' 0 V786" stroke="#d9ccb0" stroke-width="1"/>'; for (var gy = 0; gy <= 786; gy += 32) grid += '<path d="M0 ' + gy + ' H640" stroke="#d9ccb0" stroke-width="1"/>';
+  out += '<g transform="translate(' + x + ' ' + y + ')"><clipPath id="' + id + '"><rect width="640" height="786"/></clipPath><rect width="640" height="840" fill="#eee5d0" stroke="#2a2016" stroke-width="2"/>' +
+    '<g clip-path="url(#' + id + ')">' + grid + inner + '</g><path d="M40 786 H600" stroke="#2a2016" stroke-width="1.5"/>' +
+    '<text x="320" y="822" text-anchor="middle" style="font:800 26px \'Noto Sans Arabic\';fill:#2a2016">' + cap + '</text></g>';
+}
+// 1 hook: the leg, the handpiece on the shin, the treated patch bracketed; hairs still there
+panel(0, "هتلاقي الشعر لسه موجود", Z.leg(38, 470, .97, { bracket: [130, 310] }) + Z.handpiece(250, 438, .9, 1) +
+  '<g transform="translate(440 36)"><clipPath id="ins"><rect width="170" height="170"/></clipPath><rect width="170" height="170" fill="#eee5d0"/><g clip-path="url(#ins)">' + PERSON.head([85, 96], 2.1, 0, { face: { mouth: "o", eyes: 1.25, brows: "raised", look: [0, .6] }, _of: { hair: "long", fem: true } }, Object.assign({}, PERSON.colors, { hair: "#3b2519", hairL: "#7a5238", lip: "#b8545c" })) + '</g><rect width="170" height="170" fill="none" stroke="#2a2016" stroke-width="2.4"/></g>');
+// 2 the pulse into the skin, the melanin takes it
+var b2 = Z.skinBlock(40, 300, 520, [{ x: .14 }, { x: .38, k: .3 }, { x: .62 }, { x: .86 }]);
+panel(1, "نبضة ضوء، أقصر من رمشة عين", b2.svg + Z.beam(262, 236, 330, 1) + Z.handpiece(262, 236, .8, 1) + Z.tag(258, 566, "الميلانين", C.ORANGE, -1));
+// 3 one follicle, close: the heat runs down to the bulb, «the factory»
+panel(2, "الحرارة بتمشي لحد البُصيلة", '<g transform="translate(-260 -180) scale(1.9)">' + Z.skinBlock(150, 200, 260, [{ x: .5, k: .95, labels: false, out: 50 }]).svg + '</g>' +
+  Z.tag(268, 690, "البُصيلة = المصنع", C.ORANGE, 1) + Z.tag(300, 300, "غدة دهنية", C.OLIVE, 1));
+// 4 the analogy: a black and a white blouse in the sun
+function blouse(x, y, col) { return Z.shape([[x - 70, y], [x - 34, y - 14], [x - 16, y - 4], [x + 16, y - 4], [x + 34, y - 14], [x + 70, y], [x + 96, y + 56], [x + 66, y + 70], [x + 54, y + 44], [x + 56, y + 170], [x - 56, y + 170], [x - 54, y + 44], [x - 66, y + 70], [x - 96, y + 56]], col, 2.4) + Z.line([[x - 16, y - 4], [x, y + 12], [x + 16, y - 4]], "#2a2016", 2); }
+function thermo(x, y, k) { return '<rect x="' + (x - 9) + '" y="' + y + '" width="18" height="120" rx="9" fill="#fbf8f1" stroke="#2a2016" stroke-width="2"/><circle cx="' + x + '" cy="' + (y + 128) + '" r="15" fill="#bd552f" stroke="#2a2016" stroke-width="2"/><rect x="' + (x - 4) + '" y="' + (y + 120 - 110 * k) + '" width="8" height="' + (110 * k + 10) + '" fill="#bd552f"/>'; }
+var sun = '<circle cx="320" cy="120" r="46" fill="#e9b949" stroke="#2a2016" stroke-width="2.4"/>'; for (var r = 0; r < 12; r++) { var a = r * Math.PI / 6; sun += Z.line([[320 + Math.cos(a) * 62, 120 + Math.sin(a) * 62], [320 + Math.cos(a) * 82, 120 + Math.sin(a) * 82]], "#c9962a", 4); }
+[[180, 240], [460, 240]].forEach(function (p) { sun += Z.line([[320 - (320 - p[0]) * .25, 180], [p[0], p[1] + 40]], "#e9b949", 3, ' stroke-dasharray="10 8"'); });
+panel(3, "زي البلوزة السودا في الشمس", sun + blouse(180, 300, "#2f2a28") + blouse(460, 300, "#f6f2ea") + thermo(150, 520, .85) + thermo(430, 520, .3) +
+  '<text x="180" y="720" text-anchor="middle" style="font:800 30px \'Noto Sans Arabic\';fill:#bd552f">بتسخن أسرع</text>');
+// 5 the three phases
+var b5 = Z.skinBlock(40, 250, 540, [{ x: .2, phase: "grow" }, { x: .52, phase: "stop" }, { x: .83, phase: "rest", out: 30 }]);
+var chips = [["نمو", "#4f8a7a", 148], ["واقف", "#2a2016", 321], ["نايم", "#2a2016", 488]].map(function (q) { return '<rect x="' + (q[2] - 44) + '" y="700" width="88" height="40" rx="8" fill="' + q[1] + '"/><text x="' + q[2] + '" y="728" text-anchor="middle" style="font:800 22px \'Noto Sans Arabic\';fill:#fbf8f1">' + q[0] + '</text>'; }).join("");
+panel(4, "نمو، وواقف، ونايم", b5.svg + chips);
+// 6 white hair / dark skin: light passes the white hair (no melanin) ✗; dark skin takes a longer wave
+var b6 = Z.skinBlock(40, 300, 520, [{ x: .28, white: true }, { x: .72 }], { skinMel: false });
+panel(5, "الشعر الأبيض مابيتأثرش", b6.svg + Z.beam(186, 236, 380, 1) + Z.handpiece(186, 236, .8, 1) + Z.tag(200, 540, "مافيهوش ميلانين", "#6d6a64", 1) +
+  Z.line([[110, 500], [150, 540]], "#bd552f", 6) + Z.line([[150, 500], [110, 540]], "#bd552f", 6));
+document.getElementById("s").innerHTML = out;
+</script></body></html>

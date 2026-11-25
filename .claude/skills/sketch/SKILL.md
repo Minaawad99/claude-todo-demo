@@ -28,7 +28,8 @@ every episode.
    Facebook page) and YouTube Shorts. It copies the look, pacing and narration of the «طب إزاي؟» series: 20 reference videos, measured in
 `videos/_reference/tabizzay/STYLE.md`, with contact sheets, motion strips and transcripts. We make it under our own name.
 
-**The reference episode is `videos/tides/`.** Start every new episode from a copy of these files:
+**The reference episodes are `videos/tides/` (drawings) and `videos/laser-hair/` (the current pace: voice, short
+cuts, steady frame, calm life, flies in and out).** The tides files: Start every new episode from a copy of these files:
 - `script.txt` and `style.txt`;
 - `sketch/episode.py` and `sketch/shots.js`;
 - `cues.js` and `refs/SOURCES.md`.
@@ -43,7 +44,8 @@ and fix them.
 
 ## 1. Script → `videos/<slug>/script.txt`
 
-**Length:** about 25–27 lines and 260–280 words. The voice comes out about 1:55, and about 1:45 after tightening.
+**Length:** about 25–27 lines and 230–260 words (the faster «الليزر» pace: 238 words came out 1:25 after tightening).
+Captions in short chunks: `"chunk": 3.5` in `CFG`, and `SPLIT` for any chunk over 4 words.
 
 **The fixed spine:**
 1. **Hook:** a fact from the viewer's own life, then its contradiction, spoken to «you», over 2–3 lines. These lines are
@@ -73,44 +75,40 @@ and fix them.
 python3 ../tools/tts.py script.txt style.txt voice-raw.wav --voice Puck --model gemini-3.8-flash-tts
 ```
 
+**The voice style is the «طب إزاي؟» pace (the user's rule after «الليزر», `videos/laser-hair/style.txt`):** a young,
+upbeat creator talking to a friend, quick and punchy, very short breaths between sentences, a lift on every «طب…؟».
+Measured on the user's reference (the gastric-bypass «طب إزاي؟» video): about 157 words a minute, median pause 0.17 s;
+the speed you feel comes from the tiny pauses and the short caption cards, not from talking faster. The style text, with
+the topic, the person spoken to and the key words filled in (`style.txt`):
+
+```
+Speak in casual Egyptian Arabic (Cairo dialect), like a young, upbeat science creator explaining to a friend <topic>. Energetic and clear, friendly peer more than lecturer, with a quick, punchy rhythm of about 160 words per minute. Keep pauses between sentences very short, just a quick breath, so each sentence flows into the next; never stop at commas. Every question that starts with "طب" gets a quick upward lift, then the answer follows right away. Stress key words like <word>, <word>, <word>. Make the opening line intriguing and the question "إيه الحكاية؟" playful. Never use Modern Standard Arabic pronunciation; pronounce ق as a glottal stop like Cairenes.
+```
+
+- **Who is spoken to:** when the topic's audience is mostly women (laser, beauty, pregnancy…), write the script in the
+  feminine (عملتي، إنتي، محتاجة، بتستني، بشرتك) and add to the style «explaining to a female friend (he addresses her in
+  the feminine: …)». The narrator stays the male Puck voice (the user's choice). Draw the person as the kit's woman
+  (`outfit: "woman"` / `"womanCasual"`).
+- **Tightening:** `tighten.py --max 0.2` (not 0.3), then `map_timing.py … --max 0.2`. Never speed the voice up.
+- **Check the take** by transcribing it (Gemini `gemini-3.5-flash` with the audio inline works when the whisper models
+  are missing) and compare it with the script line by line.
+
 **When the free quota is gone** (HTTP 429, it resets about 10:00 Cairo time): don't retry. Give the user the script and
-the style in two code blocks for Google AI Studio. Settings: Single-speaker, Puck, Temperature 1, WAV. The tides voice was
-made this way. The style text, with the topic and key words filled in:
-
-```
-Speak in casual Egyptian Arabic (Cairo dialect), like a calm, confident teacher explaining to a friend <topic>. Warm and clear, more teacher than hype, with quiet amazement on the surprising facts and numbers. Natural, relaxed conversational speed, not rushed. Take a short natural breath between sentences, and don't stop at commas. Emphasize key words like <word>, <word>, <word>. Make the opening line intriguing and the question "إيه الحكاية؟" playful. Never use Modern Standard Arabic pronunciation; pronounce ق as a glottal stop like Cairenes. Keep the exact same Cairene Egyptian accent and the same voice from the first word to the last, never drifting into another dialect.
-```
-
-- **Keep this style text as it is.** Only the topic, the key words and a note on the opening (a warning, a question) change.
-  Asking for a "reel narrator", a "brisk" or "fast" delivery made the take drift into two accents in «الموبايل في الشاحن»,
-  and the user rejected it. Speed comes from the edit below, never from the style text.
-
-**Pace (locked by the user after «الموبايل في الشاحن», for every sketch episode).** The user's reference is a «طب إزاي»
-reel on gastric sleeve surgery: about 176 words a minute, pauses about 0.15 s. Ours matches it with pauses capped at
-**0.12 s** and the take sped up **5%** with `atempo` (pitch unchanged): about 172 words a minute. Use exactly these
-numbers; don't go back to 0.3 s or to an untouched tempo.
+the style above in two code blocks for Google AI Studio. Settings: Single-speaker, Puck, Temperature 1, WAV.
 
 **Timing.** The whisper-small model for `align_asr.py` comes from Hugging Face; GitHub releases often answer 504 here.
 
 ```
 M=<scratchpad>/asr/sherpa-onnx-whisper-small   # small-encoder.int8.onnx, small-decoder.int8.onnx, small-tokens.txt from huggingface.co/csukuangfj/sherpa-onnx-whisper-small
-python3 ../audio/tighten.py voice-raw.wav <scratchpad>/tight.wav --max 0.12
-ffmpeg -y -i <scratchpad>/tight.wav -af atempo=1.05 voice.wav
+python3 ../audio/tighten.py voice-raw.wav voice.wav --max 0.2
 python3 ../align_asr.py voice-raw.wav script.txt raw-timing.json --model $M --gap 0.08 --db -34
-python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max 0.12 --tempo 1.05
+python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max 0.2 --tempo 1.0
 ```
 
 - **Check the whole take with the stronger model** to catch invented sentences and misread numbers:
-  `~/.cache/hyperframes/whisper/whisper.cpp/build/bin/whisper-cli -m ~/.cache/hyperframes/whisper/models/ggml-large-v3-turbo.bin -l ar` (16 kHz mono). If the model is missing, fetch `ggml-large-v3-turbo-q5_0.bin` from
-  huggingface.co/ggerganov/whisper.cpp.
+  `~/.cache/hyperframes/whisper/whisper.cpp/build/bin/whisper-cli -m ~/.cache/hyperframes/whisper/models/ggml-large-v3-turbo.bin -l ar` (16 kHz mono).
 - **Fix line boundaries by hand** in `raw-timing.json` where whisper-small drifts. Tides: line 23 started 0.7 s early.
-- **The tempo is 1.05, never more.** If the voice is still long, cut words from the script.
-- **Send the voice to the user before drawing.** They listen for the accent and the pace; you can't hear either.
-- **If the user hears the accent drift** (it went Gulf halfway through a 2-minute take in «الموبايل في الشاحن»), don't
-  regenerate again: give them the script and the style for AI Studio, as above, and suggest two halves if it drifts there
-  too. Their WAV goes in as `voice-raw.wav` (24 kHz mono), then the same tighten, tempo and timing steps.
-- **Reference photos:** when Wikimedia answers 429, ask the user for the few photos that matter (a settings screenshot,
-  a teardown, the real thing next to the fake one) with search terms; their photos made «الموبايل في الشاحن» much closer to life.
+- **Never speed the voice up.** Tightening the pauses is all.
 - Tell the user any second that needs their ear (tides: «4 سنتي» heard as «4 سنة»).
 
 ## 3. Drawings: real shapes, the reference's hand
@@ -178,7 +176,7 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
   fixed on top while the camera moves. Use `fly([cx,cy,z], [cx,cy,z], 1.8)` and `still(cx,cy,z)` in `_helpers.js`;
   crossfade to a new drawing (`tr: "fade"`) only when the subject really changes.
 - **Short cuts (same rule):** like the «طب إزاي؟» reference, change the shot every 1.5–3 s: split each line into 2–3 shots
-  on its caption chunks (`[line, chunk]`), and keep caption chunks to 2–4 words. Keep the voice pace of section 2 (pauses 0.12 s, tempo 1.05).
+  on its caption chunks (`[line, chunk]`), and keep caption chunks to 2–4 words. Tighten the voice to `--max 0.2`.
 - **How much life (the user chose test A after «الليزر», measured against the «طب إزاي؟» reference):** calm, and only
   on what the narrator is talking about: light particles running down a beam, blood running in a vessel, heat running
   down a hair, a glow that breathes, hairs or leaves swaying a little, a blink. Never busy motion everywhere (test B,

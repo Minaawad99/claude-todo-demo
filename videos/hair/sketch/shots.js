@@ -4,8 +4,8 @@
 // histology references in refs/SOURCES.md). The two women are the shared person kit (hairStyle "curly" / "straight").
 
 // ── the two women ──
-var CURLY = { hairStyle: "curly", female: true, outfit: { base: "casual", colors: { shirt: "#d9a48f", shirtD: "#b9826d", pants: "#4a5a6c", pantsD: "#36445a", hair: "#5e3923", hairM: "#6e4529", hairL: "#b88555", hairD: "#2e1b10", skin: "#d8a07c", skinD: "#b77d5c", lip: "#c0685c", lipD: "#9e4f47", iris: "#5a361e", brow: "#2a1a10" } } };
-var STRAIGHT = { hairStyle: "straight", female: true, outfit: { base: "home", colors: { shirt: "#a9c3dc", shirtD: "#7f9bb6", pants: "#3d4656", pantsD: "#2b3240", hair: "#241b17", hairL: "#5e4c42", hairD: "#16110e", lip: "#c4746a", lipD: "#a4594f", iris: "#4a2e1c", brow: "#1e1612" } } };
+var CURLY = { hairStyle: "curly", female: true, outfit: { base: "womanCasual", colors: { shirt: "#d9a48f", shirtD: "#b9826d", pants: "#4a5a6c", pantsD: "#36445a", hair: "#5e3923", hairM: "#6e4529", hairL: "#b88555", hairD: "#2e1b10", skin: "#d8a07c", skinD: "#b77d5c", lip: "#c0685c", lipD: "#9e4f47", iris: "#5a361e", brow: "#2a1a10" } } };
+var STRAIGHT = { hairStyle: "straight", female: true, outfit: { base: "woman", colors: { shirt: "#a9c3dc", shirtD: "#7f9bb6", pants: "#3d4656", pantsD: "#2b3240", hair: "#241b17", hairL: "#5e4c42", hairD: "#16110e", lip: "#c4746a", lipD: "#a4594f", iris: "#4a2e1c", brow: "#1e1612" } } };
 function blink(t, seed) { var p = (t + seed) % 3.7; return p < .12 ? .05 : p < .2 ? .5 : 1; }
 // a woman from the front: head centre at (x, y), scale s; o: face, head, arms…
 function woman(who, x, y, s, t, o) {
