@@ -384,7 +384,7 @@ shot(18, push(320, 420, 1.0, 1.06), function (u, d, t) {
 // 19 · who decides the follicle's shape? the genes
 shot(19, push(320, 400, 1.0, 1.08), function (u, d, t) {
   return paper() + G("", '<path d="M-200 600 L840 600 L840 1200 L-200 1200 Z" fill="none"/>') + appear(at(u, .2, .5), G("translate(170 400) scale(2.3)", icDNA(t, 70, 200))) +
-    appear(at(u, 1.6, .5), clipBox(330, 250, 260, 330, G("scale(.6) translate(400 160)", skin(SK) + follicle(320, 600, SK, 0) + shaft(320, SK, "straight", 200, t) + follicle(560, 600, SK, .9, { hair: "#5b3a26" }) + shaft(560, SK, "curl", 200, t, 1, "#5b3a26")))) +
+    appear(at(u, 1.6, .5), clipBox(330, 250, 260, 330, G("scale(.6) translate(260 160)", skin(SK) + follicle(320, 600, SK, 0) + shaft(320, SK, "straight", 200, t) + follicle(560, 600, SK, .9, { hair: "#5b3a26" }) + shaft(560, SK, "curl", 200, t, 1, "#5b3a26")))) +
     tag("الوراثة", 170, 690, at(u, d - 1.6, .3), 32, OLIVE);
 });
 // 20 · genes from the father and the mother
@@ -397,7 +397,7 @@ shot(20, push(320, 400, 1.06, 1.0), function (u, d, t) {
 // 21 · the same shampoo, the same oil: one stays straight, the other curly
 shot(21, push(320, 380, 1.04, 0.98), function (u, d, t) {
   return paper() + woman("straight", 170, 330, 1.75, t, { head: { turn: .2 } }) + woman("curly", 470, 330, 1.75, t, { head: { turn: -.2 } }) +
-    iconBox(320, 130, 130, G("scale(.9)", icBottle()), at(u, .2, .3)) + check(170, 640, 1.3, at(u, d * .6, .4), BLUE) + check(470, 640, 1.3, at(u, d * .8, .4), ORANGE);
+    iconBox(320, 130, 130, G("scale(.9)", icBottle()), at(u, .2, .3)) + check(60, 470, 1.3, at(u, d * .6, .4), BLUE) + check(590, 470, 1.3, at(u, d * .8, .4), ORANGE);
 });
 // 22 · the myth: shave it to zero and it comes back different — no
 shot(22, push(320, 440, 1.0, 1.08), function (u, d, t) {

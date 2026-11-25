@@ -39,7 +39,7 @@
     s += '<rect width="540" height="960" fill="#1b1d22"/><rect width="540" height="960" fill="url(#grid)" opacity=".18"/>';
     s += '<circle cx="270" cy="470" r="250" fill="#ffd27a" opacity=".35" filter="url(#soft)"/><circle cx="270" cy="460" r="150" fill="#ffe08a" opacity=".3" filter="url(#soft)"/>';
     // the two women: curly and straight, the question of the video
-    s += woman("straight", 150, 390, 2.05, t, { head: { turn: .2 } }) + woman("curly", 392, 390, 2.05, t, { head: { turn: -.2 } });
+    s += woman("straight", 140, 390, 2.05, t, { head: { turn: .2 } }) + woman("curly", 372, 390, 2.05, t, { head: { turn: -.2 } });
     // the inset: the two follicles under the skin, straight and curved
     var ix = 270, iy = 610, k = .3;
     s += '<circle cx="' + ix + '" cy="' + iy + '" r="96" fill="#ffd27a" opacity=".25" filter="url(#soft)"/>' + inset(ix, iy, 84, '<g transform="scale(' + k + ') translate(-310 -470)">' + paper() + skin(330) + follicle(200, 600, 330, 0) + shaft(200, 330, "straight", 200, t) + follicle(420, 610, 330, .9, { hair: "#5b3a26" }) + shaft(420, 330, "curl", 200, t, 1, "#5b3a26") + '</g>', 1);
