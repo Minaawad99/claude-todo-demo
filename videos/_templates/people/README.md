@@ -84,6 +84,10 @@ PERSON.front({ ..., outfit: { top: "shirt", tie: true, over: "labcoat", hat: nul
 - **Presets** (`PERSON.outfits`): `home` (sweater, socks; the default), `casual` (T-shirt, shoes), `office` (shirt and tie),
   `doctor` (shirt, tie, lab coat), `worker` (T-shirt, hi-vis vest, hard hat, boots), `pilot` (white shirt, tie, epaulettes,
   pilot's cap), `chef` (shirt, apron, cap). See them all, front and side: `videos/person-demo/outfits.html`.
+- **A woman** (added for «الليزر», approved by the user): `woman` (rose sweater, jeans) and `womanCasual` (T-shirt). The
+  same joints; `hair: "long"` (wavy hair over the shoulders, a side parting, a fringe) and `fem: true` (lashes, tinted lips,
+  blush, softer shoulders, a waist, the bust, wider hips and seat, front and side), which work with any outfit, e.g.
+  `{ base: "doctor", hair: "long", fem: true }`. Demo: `videos/person-demo/woman.html`. Keep it modest and clothed.
 - **The parts:**
   - `top`: `sweater`, `tshirt` (bare forearms), `shirt` (collar, buttons, pocket, cuffs);
   - `over`: `labcoat`, `vest`, `apron`;

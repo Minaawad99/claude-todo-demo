@@ -28,7 +28,8 @@ every episode.
    Facebook page) and YouTube Shorts. It copies the look, pacing and narration of the «طب إزاي؟» series: 20 reference videos, measured in
 `videos/_reference/tabizzay/STYLE.md`, with contact sheets, motion strips and transcripts. We make it under our own name.
 
-**The reference episode is `videos/tides/`.** Start every new episode from a copy of these files:
+**The reference episodes are `videos/tides/` (drawings) and `videos/laser-hair/` (the current pace: voice, short
+cuts, steady frame, calm life, flies in and out).** The tides files: Start every new episode from a copy of these files:
 - `script.txt` and `style.txt`;
 - `sketch/episode.py` and `sketch/shots.js`;
 - `cues.js` and `refs/SOURCES.md`.
@@ -43,7 +44,8 @@ and fix them.
 
 ## 1. Script → `videos/<slug>/script.txt`
 
-**Length:** about 25–27 lines and 260–280 words. The voice comes out about 1:55, and about 1:45 after tightening.
+**Length:** about 25–27 lines and 230–260 words (the faster «الليزر» pace: 238 words came out 1:25 after tightening).
+Captions in short chunks: `"chunk": 3.5` in `CFG`, and `SPLIT` for any chunk over 4 words.
 
 **The fixed spine:**
 1. **Hook:** a fact from the viewer's own life, then its contradiction, spoken to «you», over 2–3 lines. These lines are
@@ -73,21 +75,34 @@ and fix them.
 python3 ../tools/tts.py script.txt style.txt voice-raw.wav --voice Puck --model gemini-3.8-flash-tts
 ```
 
-**When the free quota is gone** (HTTP 429, it resets about 10:00 Cairo time): don't retry. Give the user the script and
-the style in two code blocks for Google AI Studio. Settings: Single-speaker, Puck, Temperature 1, WAV. The tides voice was
-made this way. The style text, with the topic and key words filled in:
+**The voice style is the «طب إزاي؟» pace (the user's rule after «الليزر», `videos/laser-hair/style.txt`):** a young,
+upbeat creator talking to a friend, quick and punchy, very short breaths between sentences, a lift on every «طب…؟».
+Measured on the user's reference (the gastric-bypass «طب إزاي؟» video): about 157 words a minute, median pause 0.17 s;
+the speed you feel comes from the tiny pauses and the short caption cards, not from talking faster. The style text, with
+the topic, the person spoken to and the key words filled in (`style.txt`):
 
 ```
-Speak in casual Egyptian Arabic (Cairo dialect), like a calm, confident teacher explaining to a friend <topic>. Warm and clear, more teacher than hype, with quiet amazement on the surprising facts and numbers. Natural, relaxed conversational speed, not rushed. Take a short natural breath between sentences, and don't stop at commas. Emphasize key words like <word>, <word>, <word>. Make the opening line intriguing and the question "إيه الحكاية؟" playful. Never use Modern Standard Arabic pronunciation; pronounce ق as a glottal stop like Cairenes.
+Speak in casual Egyptian Arabic (Cairo dialect), like a young, upbeat science creator explaining to a friend <topic>. Energetic and clear, friendly peer more than lecturer, with a quick, punchy rhythm of about 160 words per minute. Keep pauses between sentences very short, just a quick breath, so each sentence flows into the next; never stop at commas. Every question that starts with "طب" gets a quick upward lift, then the answer follows right away. Stress key words like <word>, <word>, <word>. Make the opening line intriguing and the question "إيه الحكاية؟" playful. Never use Modern Standard Arabic pronunciation; pronounce ق as a glottal stop like Cairenes.
 ```
+
+- **Who is spoken to:** when the topic's audience is mostly women (laser, beauty, pregnancy…), write the script in the
+  feminine (عملتي، إنتي، محتاجة، بتستني، بشرتك) and add to the style «explaining to a female friend (he addresses her in
+  the feminine: …)». The narrator stays the male Puck voice (the user's choice). Draw the person as the kit's woman
+  (`outfit: "woman"` / `"womanCasual"`).
+- **Tightening:** `tighten.py --max 0.2` (not 0.3), then `map_timing.py … --max 0.2`. Never speed the voice up.
+- **Check the take** by transcribing it (Gemini `gemini-3.5-flash` with the audio inline works when the whisper models
+  are missing) and compare it with the script line by line.
+
+**When the free quota is gone** (HTTP 429, it resets about 10:00 Cairo time): don't retry. Give the user the script and
+the style above in two code blocks for Google AI Studio. Settings: Single-speaker, Puck, Temperature 1, WAV.
 
 **Timing.** The whisper-small model for `align_asr.py` comes from Hugging Face; GitHub releases often answer 504 here.
 
 ```
 M=<scratchpad>/asr/sherpa-onnx-whisper-small   # small-encoder.int8.onnx, small-decoder.int8.onnx, small-tokens.txt from huggingface.co/csukuangfj/sherpa-onnx-whisper-small
-python3 ../audio/tighten.py voice-raw.wav voice.wav --max 0.3
+python3 ../audio/tighten.py voice-raw.wav voice.wav --max 0.2
 python3 ../align_asr.py voice-raw.wav script.txt raw-timing.json --model $M --gap 0.08 --db -34
-python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max 0.3 --tempo 1.0
+python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max 0.2 --tempo 1.0
 ```
 
 - **Check the whole take with the stronger model** to catch invented sentences and misread numbers:
