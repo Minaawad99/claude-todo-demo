@@ -1,0 +1,54 @@
+<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@700;800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#d9d0bb}svg{display:block}</style></head><body>
+<svg id="s" width="1980" height="2660" viewBox="0 0 1980 2660"></svg>
+<script src="../../_templates/people/person.js"></script>
+<script src="draw.js"></script>
+<script>
+window.__t = 0.6;
+var Z = DD, C = Z.C, out = "", INK = C.INK;
+function panel(i, cap, inner) {
+  var x = 20 + (i % 3) * 660, y = 20 + Math.floor(i / 3) * 880, id = "c" + i;
+  var grid = ""; for (var gx = 0; gx <= 640; gx += 32) grid += '<path d="M' + gx + ' 0 V786" stroke="#d9ccb0" stroke-width="1"/>'; for (var gy = 0; gy <= 786; gy += 32) grid += '<path d="M0 ' + gy + ' H640" stroke="#d9ccb0" stroke-width="1"/>';
+  out += '<g transform="translate(' + x + ' ' + y + ')"><clipPath id="' + id + '"><rect width="640" height="786"/></clipPath><rect width="640" height="840" fill="#eee5d0" stroke="#2a2016" stroke-width="2"/>' +
+    '<g clip-path="url(#' + id + ')">' + grid + inner + '</g><path d="M40 786 H600" stroke="#2a2016" stroke-width="1.5"/>' +
+    '<text x="320" y="822" text-anchor="middle" style="font:800 26px \'Noto Sans Arabic\';fill:#2a2016">' + cap + '</text></g>';
+}
+function T(t, x, y, sz, col) { return '<text x="' + x + '" y="' + y + '" text-anchor="middle" style="font:800 ' + sz + 'px \'Noto Sans Arabic\';fill:' + (col || INK) + '">' + t + '</text>'; }
+// a man from the waist up (person kit), dark T-shirt; flakes: white specks on the shoulders; scratch: hand in the hair
+function man(cx, hipY, s, o) {
+  o = o || {}; var dark = { shirt: "#343a48", shirtD: "#262b36", pants: "#4b5a6e", pantsD: "#38445a" };
+  var base = { x: cx, y: hipY, s: s, outfit: { base: "casual", colors: o.colors || dark }, breath: .5, face: o.face || {}, head: o.head || {}, arms: [{ rel: [-12, 70], hand: "relaxed" }, { rel: [12, 70], hand: "relaxed" }] };
+  var p = PERSON.front(base), h = p.joints.head;
+  if (o.scratch) { base.arms = [{ rel: [-12, 70], hand: "relaxed" }, { to: [h[0] + 14 * s, h[1] - 30 * s], bend: 1, hand: "open", rot: -150 }]; p = PERSON.front(base); }
+  var g = p.svg;
+  if (o.flakes) { var sh = p.joints.sh; for (var i = 0; i < 26; i++) { var side = i % 2 ? sh[1] : sh[0], dir = i % 2 ? 1 : -1; g += Z.speck(side[0] - dir * (Z.rnd(i) * 40 * s) + dir * 6 * s, side[1] - 4 * s + Z.rnd(i + 9) * 26 * s, 2.2 * s * (.6 + Z.rnd(i + 3) * .6), i); }
+    for (var j = 0; j < 14; j++) g += Z.speck(h[0] + (Z.rnd(j + 30) - .5) * 44 * s, h[1] - 30 * s + Z.rnd(j + 40) * 14 * s, 1.5 * s, j + 50); }
+  return g;
+}
+// 1 hook: two friends; one scratching with flakes on his shoulders, the other fine
+panel(0, "ليه إنت آه… وصاحبك لأ؟", man(190, 860, 1.75, { flakes: true, scratch: true, face: { brows: "worried", mouth: "frown", look: [.3, 0] }, head: { tilt: -6 } }) +
+  man(470, 860, 1.75, { colors: { shirt: "#2f3a3a", shirtD: "#222b2b" }, face: { mouth: "smile", brows: "neutral", look: [-.4, 0] }, head: { tilt: 4 } }) +
+  T("؟", 330, 170, 120, C.ORANGE) + Z.tag(150, 520, "قشرة", C.ORANGE, -1, 18));
+// 2 the scalp cut open, 3D, with labels
+var b = Z.scalpBlock(60, 330, 470, { labels: true, oil: 1 });
+panel(1, "فروة الراس من جوه", b.svg);
+// 3 the lens on the scalp: yeast among the hairs, on almost everyone
+panel(2, "خميرة «مالاسيزيا» على كل راس تقريبًا", Z.lens(320, 380, 230, Z.surface(320, 380, 230, { yeast: 1, oil: .6 }), 40) + Z.tag(260, 400, "مالاسيزيا", C.OLIVE, -1, 20));
+// 4 the yeast eats the oil and leaves leftovers (close)
+panel(3, "بتاكل الدهون… وتسيب بواقي", Z.surface(320, 393, 420, {}) + '<rect width="640" height="786" fill="#eee5d0" opacity=".35"/>' +
+  Z.oil(150, 330, 34) + Z.yeast(330, 380, 70, -25, { bud: .8, eat: .5 }) + Z.bits(470, 520, 14, 60, 7) + Z.tag(470, 520, "بواقي", C.ORANGE, 1, 20) + Z.tag(150, 330, "دهون", "#b98a22", -1, 20));
+// 5 calm vs irritated scalp
+var cA = Z.scalpBlock(30, 470, 230, { back: 2, cut: false }), cB = Z.scalpBlock(340, 470, 230, { back: 2, cut: false, irritated: 1, flakes: 1 });
+panel(4, "فروة عادية… وفروة حساسة", '<g transform="translate(0 0)">' + cA.svg + cB.svg + '</g>' +
+  '<rect x="40" y="690" width="170" height="40" rx="8" fill="#4f8a7a"/>' + T("عادية", 125, 718, 22, "#fbf8f1") + '<rect x="370" y="690" width="170" height="40" rx="8" fill="' + C.RED + '"/>' + T("متهيّجة", 455, 718, 22, "#fbf8f1"));
+// 6 epidermis up close: normal turnover, cells shed one by one
+panel(5, "في العادي: بتقع حتت صغيرة جدًا", Z.epiStack(110, 230, 420, 470, { phase: 3.55 }) + Z.tag(470, 650, "جلد جديد", "#4f8a7a", 1, 17) + Z.tag(170, 262, "جلد قديم", INK, -1, 17));
+// 7 irritated: twice as fast, the cells come off stuck together
+panel(6, "المتهيّج: أسرع الضعف… وتقع لازقة", Z.epiStack(110, 230, 420, 470, { phase: 3.55, fast: true }) + '<rect x="400" y="60" width="180" height="44" rx="8" fill="' + C.RED + '"/>' + T("أسرع ×2", 490, 91, 24, "#fbf8f1"));
+// 8 a flake close up: a sheet of cells (your own skin), on a hair with its cuticle scales
+panel(7, "القشرة = جلدك إنت", Z.strand(-20, 600, 700, 470, 70, {}) + Z.flake(330, 300, 1.7, -8, { seed: 4, curl: true }) + Z.flake(470, 520, .55, 20, { seed: 7 }) + Z.tag(250, 250, "آلاف الخلايا", C.ORANGE, -1, 18) + Z.tag(560, 470, "شعرة متكبّرة", INK, -1, 17));
+// 9 what helps: the shampoo, 3–5 minutes, no oil, the dermatologist
+var doc = PERSON.front({ x: 470, y: 930, s: 1.75, outfit: "doctor", face: { mouth: "smile" }, arms: [{ rel: [-12, 70], hand: "relaxed" }, { rel: [12, 70], hand: "relaxed" }] }).svg;
+panel(8, "الشامبو، 3–5 دقايق، ومن غير زيت", Z.bottle(130, 400, 1.05, "#4f8a7a") + Z.timer(300, 190, 70, 4, 1) + Z.oilBottle(160, 700, .75) + '<path d="M95 520 L225 700 M225 520 L95 700" stroke="' + C.ORANGE + '" stroke-width="10" stroke-linecap="round"/>' + doc);
+document.getElementById("s").innerHTML = out;
+</script></body></html>
