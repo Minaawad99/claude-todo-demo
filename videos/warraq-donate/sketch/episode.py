@@ -3,7 +3,7 @@
 CFG = {
     "title": "اتبرع لمصابي حريق الوراق",
     "category": "خير وسلامة",
-    "libs": ["draw.js"],
+    "libs": ["draw.js", "real.js"],
     "chunk": 3.5,
     "intro_lines": 2,
     "promise": -1,

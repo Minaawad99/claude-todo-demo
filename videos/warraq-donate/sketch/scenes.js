@@ -208,7 +208,7 @@ function bedScene(t, o) {
   s += R(60, 230, 8, 410, "#8d887e", 1.8) + P("M40 230 L88 230 L84 300 L44 300 Z", "#d7e6ec", 2) + '<path d="M64 300 Q70 400 200 450" stroke="' + INK + '" stroke-width="1.4" fill="none"/>' + C(64, 280 + 14 * ((t * .8) % 1), 3, "#9fbfd0", 0);
   return s + monitor(560, 300, t);
 }
-shot(2, still(340, 440, 1.35), function (u, d, t) { return bedScene(t); });
+shot(2, still(350, 420, 1), function (u, d, t) { return burnICU(t, { nurse: 1 }); });
 // «وفيهم حروق وصلت لسبعين في المية من الجسم.»: a standing figure, 70 % of the body shaded orange
 shot([2, 1], still(320, 400, 1), function (u, d, t) {
   var k = at(u, .1, 1.2), body = pf({ x: 230, y: 650 - 210 * 1.1, s: 1.1, outfit: { base: "casual", colors: { shirt: "#cfe0ee", shirtD: "#a6bfd3" } }, face: { eyes: blink(t), brows: "worried" }, arms: [{ rel: [-30, 150], hand: "relaxed" }, { rel: [30, 150], hand: "relaxed" }] });
@@ -238,7 +238,7 @@ shot(5, still(320, 420, 1), function (u, d, t) { return skinCut(t, 0) + label(56
 // «ولما يتحرق، الجسم بيبقى مفتوح.»
 shot([5, 2], fly([320, 420, 1], [320, 400, 1.2], 1.8), function (u, d, t) { return skinCut(t, at(u, 0, .8)) + label(320, 395, 470, 250, "مفتوح", ORANGE, at(u, .8, .5), 30); });
 // 6 · «فالمريض محتاج أوضة معقمة،»: a clean room: the bed behind glass, filtered air
-function cleanRoom(t, k) { var s = bedScene(t); s += '<rect x="20" y="180" width="600" height="460" fill="#d7e6ec" opacity=".25" stroke="' + BLUE + '" stroke-width="4" stroke-dasharray="14 8"/>'; for (var i = 0; i < 4; i++) { var p = (t * .4 + i / 4) % 1; s += arrow(120 + i * 130, 190 + p * 120, 120 + i * 130, 220 + p * 120, BLUE, 3, 1); } return s + R(250, 150, 140, 30, "#c6c3bb", 2) + tag("معقمة", 320, 120, k, 32, BLUE); }
+function cleanRoom(t, k) { var s = burnICU(t, { glass: k }); s += '<rect x="20" y="180" width="600" height="460" fill="#d7e6ec" opacity=".25" stroke="' + BLUE + '" stroke-width="4" stroke-dasharray="14 8"/>'; for (var i = 0; i < 4; i++) { var p = (t * .4 + i / 4) % 1; s += arrow(120 + i * 130, 190 + p * 120, 120 + i * 130, 220 + p * 120, BLUE, 3, 1); } return s + R(250, 150, 140, 30, "#c6c3bb", 2) + tag("معقمة", 320, 120, k, 32, BLUE); }
 shot(6, still(330, 420, 1), function (u, d, t) { return cleanRoom(t, at(u, .2, .4)); });
 // «وغيار على الجرح كل يوم،»: gauze winding round a forearm
 function forearmD(k, t) {
@@ -268,8 +268,11 @@ function hospital(x, y, name, sign, o) {
   s += R(x + 150, y - 382, 50, 50, "#fff", 2, 4) + '<path d="M' + (x + 175) + ' ' + (y - 372) + ' V' + (y - 342) + ' M' + (x + 160) + ' ' + (y - 357) + ' H' + (x + 190) + '" stroke="' + RED + '" stroke-width="9"/>';
   return s + T(name, x, y + 50, 26, INK, 800);
 }
-shot(9, still(320, 400, 1), function (u, d, t) { return paper() + floorL(640) + hospital(320, 640, "قصر العيني · جامعة القاهرة", "مستشفى 185", { signCol: "#8a2f5c" }) + T("للحوادث والحروق", 320, 200, 28, "#8a2f5c", 800); });
-shot([9, 2], still(320, 400, 1), function (u, d, t) { return paper() + floorL(640) + hospital(320, 640, "قصر العيني · جامعة القاهرة", "مستشفى 185", { signCol: "#8a2f5c" }) + T("للحوادث والحروق", 320, 200, 28, "#8a2f5c", 800) + tag("حكومي", 320, 130, at(u, .2, .4), 40, OLIVE) + check(450, 120, 1.1, at(u, .5, .4), OLIVE); });
+// Qasr El-Ainy from the photo, a yellow ambulance pulling up in front, the «185» sign
+function qasrScene(u, t) { return paper() + floorL(640) + qasrAiny(320, 640, .62) + R(-600, 640, 1840, 160, ASPH, 0) + '<path d="M-600 640 H1240" stroke="' + INK + '" stroke-width="2.4"/>' + place(lerp(700, 330, ease(clamp(u / 2.2))), 700, .42, ambulanceEG({ t: t, spin: -6 * (u < 2.2 ? 1 : 0), flash: 1 })); }
+function sign185(k) { k = pop(k); if (k <= 0) return ""; return G("translate(320 120) scale(" + f(k) + ")", R(-200, -40, 400, 80, "#8a2f5c", 2.4, 8) + T("مستشفى 185 · قصر العيني", 0, -4, 28, "#fff", 900) + T("للحوادث والحروق", 0, 26, 18, "#f4d6e4", 700)); }
+shot(9, still(320, 420, 1), function (u, d, t) { return qasrScene(u, t) + sign185(at(u, .2, .4)); });
+shot([9, 2], still(320, 420, 1), function (u, d, t) { return qasrScene(u + 3, t) + sign185(1) + tag("حكومي · جامعة القاهرة", 320, 210, at(u, .2, .4), 28, OLIVE) + check(520, 210, 1, at(u, .5, .4), OLIVE); });
 // 10 · the three ways, each number on its own card (from the committee's official post)
 function payCard(y, k, head, col, big, small) { k = pop(k); if (k <= 0) return ""; return G("translate(320 " + f(y) + ") scale(" + f(k) + ")", R(-280, -70, 560, 140, "#f4ecdb", 2.4, 10) + R(-280, -70, 150, 140, col, 2.4, 10) + T(head, -205, 8, 22, "#fff", 900) + N(big, 70, -2, big.length > 12 ? 30 : 40, INK) + T(small, 70, 44, 17, MUTE, 700)); }
 function payCards(u, n) { return paper() + payCard(180, n > 0 ? 1 : 0, "فودافون كاش", "#c93c2a", "*9*155#", "من موبايلك") + payCard(360, n > 1 ? 1 : 0, "فوري", "#e2a33a", "لجنة زكاة 185", "ابحث عن: القصر العيني") + payCard(540, n > 2 ? 1 : 0, "إنستاباي", "#5b3c8f", "01115010062322", "بنك القاهرة · لجنة زكاة مستشفى 185"); }
