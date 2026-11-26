@@ -30,7 +30,7 @@ function G(tr, inner, op) { return '<g' + (tr ? ' transform="' + tr + '"' : "") 
 function R(x, y, w, h, fill, sw, rx, ex) { return '<rect x="' + f(x) + '" y="' + f(y) + '" width="' + f(w) + '" height="' + f(h) + '"' + (rx ? ' rx="' + rx + '"' : "") + ' fill="' + fill + '" stroke="' + INK + '" stroke-width="' + (sw == null ? 2 : sw) + '"' + (ex || "") + '/>'; }
 // outfits: the body never changes, the clothes follow the topic. o.outfit = a preset name or {base, top, over, tie, epaulettes, hat, feet, colors}
 //   top: "sweater" (ribbed) | "tshirt" (short sleeves) | "shirt" (collar, buttons, cuffs) · over: "labcoat" | "vest" (hi-vis) | "apron"
-//   hat: "hardhat" | "cap" | "pilot" · feet: "socks" | "shoes" | "boots" · tie, epaulettes: true · hair: "long" · fem: true (lashes, lips)
+//   hat: "hardhat" | "cap" | "pilot" · feet: "socks" | "shoes" | "boots" | "bare" (skin, toes) · tie, epaulettes: true · hair: "long" · fem: true (lashes, lips)
 var OUTFITS = {
   home:   { top: "sweater", feet: "socks" },
   casual: { top: "tshirt", feet: "shoes", colors: { shirt: "#c9a77c", shirtD: "#a5845c", pants: "#4b5a6e", pantsD: "#38445a" } },
@@ -269,8 +269,8 @@ function person(o) {
     }
     legSvg += g;
     var fx = an[0] + sd * 3 * s, fy = an[1] + 14 * s;
-    feet += '<path d="M' + f(an[0] - 10 * s) + ' ' + f(an[1] - 6 * s) + ' L' + f(an[0] + 10 * s) + ' ' + f(an[1] - 6 * s) + ' L' + f(fx + 13 * s + sd * 3 * s) + ' ' + f(fy - 3 * s) + ' Q' + f(fx + 14 * s + sd * 4 * s) + ' ' + f(fy + 2 * s) + ' ' + f(fx + 6 * s) + ' ' + f(fy + 2 * s) + ' L' + f(fx - 8 * s) + ' ' + f(fy + 2 * s) + ' Q' + f(fx - 15 * s + sd * 2 * s) + ' ' + f(fy + 1 * s) + ' ' + f(fx - 13 * s + sd * 2 * s) + ' ' + f(fy - 4 * s) + ' Z" fill="' + (OF.feet === "socks" ? c.socks : c.shoes) + '" stroke="' + INK + '" stroke-width="' + f(2 * s) + '" stroke-linejoin="round"/>' +
-             pLine([[fx - 9 * s, fy - 2 * s], [fx + 8 * s, fy - 2 * s]], OF.feet === "socks" ? "#6e6e75" : "#5a534c", 1.2 * s) +
+    feet += '<path d="M' + f(an[0] - 10 * s) + ' ' + f(an[1] - 6 * s) + ' L' + f(an[0] + 10 * s) + ' ' + f(an[1] - 6 * s) + ' L' + f(fx + 13 * s + sd * 3 * s) + ' ' + f(fy - 3 * s) + ' Q' + f(fx + 14 * s + sd * 4 * s) + ' ' + f(fy + 2 * s) + ' ' + f(fx + 6 * s) + ' ' + f(fy + 2 * s) + ' L' + f(fx - 8 * s) + ' ' + f(fy + 2 * s) + ' Q' + f(fx - 15 * s + sd * 2 * s) + ' ' + f(fy + 1 * s) + ' ' + f(fx - 13 * s + sd * 2 * s) + ' ' + f(fy - 4 * s) + ' Z" fill="' + (OF.feet === "socks" ? c.socks : OF.feet === "bare" ? c.skin : c.shoes) + '" stroke="' + INK + '" stroke-width="' + f(2 * s) + '" stroke-linejoin="round"/>' +
+             (OF.feet === "bare" ? [-6, -1, 4, 9].map(function (q) { return pLine([[fx + q * s, fy - 2 * s], [fx + q * s, fy + 1.5 * s]], c.skinD, 1.1 * s); }).join("") : pLine([[fx - 9 * s, fy - 2 * s], [fx + 8 * s, fy - 2 * s]], OF.feet === "socks" ? "#6e6e75" : "#5a534c", 1.2 * s)) +
              (OF.feet === "boots" ? '<path d="M' + f(an[0] - 12 * s) + ' ' + f(an[1] - 6 * s) + ' L' + f(an[0] - 12 * s) + ' ' + f(an[1] - 24 * s) + ' L' + f(an[0] + 12 * s) + ' ' + f(an[1] - 24 * s) + ' L' + f(an[0] + 12 * s) + ' ' + f(an[1] - 6 * s) + ' Z" fill="' + c.shoes + '" stroke="' + INK + '" stroke-width="' + f(2 * s) + '"/>' + pLine([[an[0] - 12 * s, an[1] - 20 * s], [an[0] + 12 * s, an[1] - 20 * s]], "#5a534c", 1.2 * s) : "");
   });
   svg += OF.feet === "boots" ? legSvg + feet : feet + legSvg;
@@ -424,9 +424,9 @@ function personSide(o) {
     // the foot: heel behind the ankle, sole along fw, toes 47 ahead (foot 61 = 0.152H)
     var P = function (u, v) { return [an[0] + fw[0] * u + dn[0] * v, an[1] + fw[1] * u + dn[1] * v]; };
     var foot = [P(-14, -4), P(-15, 8), P(-10, 14), P(30, 14), P(46, 12), P(48, 6), P(40, 0), P(22, -6), P(6, -10), P(-8, -10)];
-    var fcol = OF.feet === "socks" ? (i ? "#46464b" : c.socks) : (i ? "#1e1b18" : c.shoes);
+    var fcol = OF.feet === "socks" ? (i ? "#46464b" : c.socks) : OF.feet === "bare" ? (i ? c.skinD : c.skin) : (i ? "#1e1b18" : c.shoes);   // bare: skin, toes, no sole line
     var boot = OF.feet === "boots" ? '<path d="' + pPath([P(-15, 6), P(-15, -24), P(12, -24), P(14, 0)], false) + '" fill="' + fcol + '" stroke="' + INK + '" stroke-width="2"/>' : "";
-    g = '<path d="' + pPath(foot, true) + '" fill="' + fcol + '" stroke="' + INK + '" stroke-width="2" stroke-linejoin="round"/>' + pLine([P(-12, 12), P(44, 11)], OF.feet === "socks" ? "#6e6e75" : "#5a534c", 1.1) + g + boot;
+    g = '<path d="' + pPath(foot, true) + '" fill="' + fcol + '" stroke="' + INK + '" stroke-width="2" stroke-linejoin="round"/>' + (OF.feet === "bare" ? pLine([P(36, 3), P(40, 11)], c.skinD, 1.2) + pLine([P(28, 0), P(31, 12)], c.skinD, 1.1) + pLine([P(-6, -2), P(4, 2)], c.skinD, 1.1) : pLine([P(-12, 12), P(44, 11)], OF.feet === "socks" ? "#6e6e75" : "#5a534c", 1.1)) + g + boot;
     part.leg[i] = g; if (!i) { J.knee = kn; J.ankle = an; J.toe = P(48, 6); J.heel = P(-14, 13); }
     J["foot" + i] = [P(-14, 14), P(48, 13)];
   });

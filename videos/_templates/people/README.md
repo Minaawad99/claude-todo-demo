@@ -93,7 +93,7 @@ PERSON.front({ ..., outfit: { top: "shirt", tie: true, over: "labcoat", hat: nul
   - `over`: `labcoat`, `vest`, `apron`;
   - `tie`, `epaulettes`;
   - `hat`: `hardhat`, `cap`, `pilot`;
-  - `feet`: `socks`, `shoes`, `boots`;
+  - `feet`: `socks`, `shoes`, `boots`, `bare` (bare feet with toe lines, added for «الشراب»); the sock colour is `colors.socks`;
   - `colors` for any of them (shirt, pants, tie, vest, coat, hat, shoes…).
 - **The time and place:** clothes match the setting too. Period clothes in a story, the right uniform for the job, the
   weather, the country.
