@@ -47,7 +47,12 @@ its own `person()`, so in `story-2d` always call `PERSON.front` / `PERSON.side`.
    the cloth folds inside the bend. Never a circle at a joint.
 3. **A reaching arm is a straight line** (`straight: true`): a stretch overhead or a reach to a shelf goes from the
    shoulder to the fingertips with no elbow sticking out. Elbows bend only forward and up; knees bend only backward.
-4. **Hands with five fingers**:
+4. **Hands with five fingers, drawn as one piece with the arm** (the user's rule after «حريق دائري الوراق»):
+   - one flowing outline from inside the forearm through the wrist, the heel, the palm and the fingers, with clefts
+     between the fingers and the thumb's web; never a seam or a step between the arm and the hand;
+   - real size: the palm is wider than the wrist (about 22 units across the knuckles against 13.5 at the wrist, H = 400);
+     in a close-up the forearm is about 1.35 times the hand's length and the hand starts at the wrist's width;
+   - details visible: knuckles, joint creases, nails, the tendons on the back of the hand or the palm's lines;
    - each finger has three joints, tapers to the tip, and has a nail;
    - the thumb grows out of the palm's heel;
    - poses: `open`, `relaxed`, `flat`, `fist`, `point`, `thumb`;

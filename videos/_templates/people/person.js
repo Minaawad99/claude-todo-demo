@@ -99,48 +99,73 @@ function pShade(pts, ws, col, s, k) {
   return '<path d="' + pPath(P, false) + '" stroke="' + col + '" stroke-width="' + f(Math.min.apply(null, ws) * .3) + '" fill="none" stroke-linecap="round" opacity="' + (k || .55) + '"/>';
 }
 // ── the hand: wrist point w, direction ang (radians, wrist → fingertips), side ±1 puts the thumb on one side ──
-// palm 24 long, 16 wide at the wrist and 21 across the knuckles; fingers index 17 · middle 19 · ring 18 · little 14 in three
-// tapering joints (45 / 30 / 25 %), each finger thinner at the tip with a nail; the thumb grows out of the palm's heel.
+// Drawn as ONE flowing outline (the user's rule after «حريق دائري الوراق»): it starts inside the forearm at the wrist's own
+// width, so arm and hand read as one piece with no seam; the heel of the hand swells into a palm as wide as a real one
+// (hand breadth 0.054H ≈ 22 units across the knuckles, wrist 0.033H ≈ 13.5, from anthropometric tables); the four
+// fingers come out of the palm with clefts between them (index 17 · middle 19 · ring 18 · little 14, three tapering joints
+// 45 / 30 / 25 %); the thumb grows out of the heel with its web to the index. Details: knuckles, joint creases, nails,
+// back-of-hand tendons, or the palm's lines when palm is true.
 function pHand(w, ang, kind, side, s, colors, palm) {
-  var c = colors || PSN, ca = Math.cos(ang), sa = Math.sin(ang);
+  var c = colors || PSN, ca = Math.cos(ang), sa = Math.sin(ang), SW = Math.min(s, 1.5);   // line widths stop growing past 1.5× so a close-up hand keeps a fine outline
   function P(x, y) { y *= side; return [w[0] + (x * ca - y * sa) * s, w[1] + (x * sa + y * ca) * s]; }
+  function PP(a) { return a.map(function (p) { return P(p[0], p[1]); }); }
   // per finger: [spread angle (deg), curl 0..1]; then the thumb: [angle, curl]
-  var F = { open: [[-15, 0], [-5, .02], [5, .04], [15, .06], [-60, 0]], relaxed: [[-7, .32], [-2, .38], [3, .44], [8, .52], [-36, .15]],
-            flat: [[-3, .02], [-1, .02], [1, .03], [3, .05], [-22, .02]], fist: [[0, 1], [0, 1], [0, 1], [0, 1], [24, .35]],
+  var F = { open: [[-14, 0], [-4, .02], [5, .04], [15, .06], [-42, 0]], relaxed: [[-6, .3], [-2, .36], [3, .42], [8, .5], [-34, .15]],
+            flat: [[-3, .02], [-1, .02], [1, .03], [3, .05], [-20, .02]], fist: [[0, 1], [0, 1], [0, 1], [0, 1], [24, .35]],
             point: [[-3, 0], [0, 1], [0, 1], [0, 1], [18, .3]], thumb: [[0, 1], [0, 1], [0, 1], [0, 1], [-90, 0]] }[kind] || null;
-  F = F || [[-7, .32], [-2, .38], [3, .44], [8, .52], [-36, .15]];
-  var bases = [[22, -7.4], [23.6, -2.5], [23, 2.4], [21, 6.9]], lens = [17, 19, 18, 14], wds = [4.9, 5.1, 4.8, 4.2], out = "", fing = "", nails = "";
-  function chain(bx, by, a0, len, wd, curl, nail) {
-    var pts = [[bx - 2.5, by]], ws = [wd * 1.05], x = bx, y = by, a = a0 * Math.PI / 180, segs = [.45, .3, .25], bend = [.35, .5, .45];
-    pts.push([x, y]); ws.push(wd);
-    for (var j = 0; j < 3; j++) { a += curl * bend[j] * .45; var L = len * segs[j] * (1 - curl * [.28, .78, .96][j]); if (L < .4) L = .4; x += Math.cos(a) * L; y += Math.sin(a) * L; pts.push([x, y]); ws.push(wd * [.97, .9, .8][j]); }
-    var lb = pLimb(pts.map(function (p) { return P(p[0], p[1]); }), ws.map(function (v) { return v * s; }), true);
-    var r = pLimbDraw(lb, c.skin, s, "", 2.1);
-    // joint creases across the finger, short and curved
-    for (var k = 2; k <= 3; k++) { var p0 = pts[k], aa = Math.atan2(pts[k + 1][1] - pts[k - 1][1], pts[k + 1][0] - pts[k - 1][0]), hw = ws[k] * .32; r += '<path d="M' + f(P(p0[0] - Math.sin(aa) * hw, p0[1] + Math.cos(aa) * hw)[0]) + ' ' + f(P(p0[0] - Math.sin(aa) * hw, p0[1] + Math.cos(aa) * hw)[1]) + ' L' + f(P(p0[0] + Math.sin(aa) * hw, p0[1] - Math.cos(aa) * hw)[0]) + ' ' + f(P(p0[0] + Math.sin(aa) * hw, p0[1] - Math.cos(aa) * hw)[1]) + '" stroke="' + c.skinD + '" stroke-width="' + f(.8 * s) + '" opacity=".8"/>'; }
-    if (nail && curl < .6) { var t = pts[4], u = pts[3], na = Math.atan2(t[1] - u[1], t[0] - u[0]), nc = [t[0] - Math.cos(na) * 2.6, t[1] - Math.sin(na) * 2.6], q = P(nc[0], nc[1]);
-      r += '<ellipse cx="' + f(q[0]) + '" cy="' + f(q[1]) + '" rx="' + f(2.3 * s) + '" ry="' + f(wd * .3 * s) + '" transform="rotate(' + f((ang + side * na) * 180 / Math.PI) + ' ' + f(q[0]) + ' ' + f(q[1]) + ')" fill="' + c.skinL + '" stroke="' + c.skinD + '" stroke-width="' + f(.7 * s) + '"/>'; }
-    return r;
+  F = F || [[-6, .3], [-2, .36], [3, .42], [8, .5], [-34, .15]];
+  // knuckle line (index … little), lengths and widths
+  var bases = [[23, -8.0], [24.6, -2.7], [24, 2.6], [21.8, 7.6]], lens = [17.5, 19.5, 18.5, 14.5], wds = [5.6, 5.8, 5.5, 4.8];
+  function chain(i) {   // the finger's centre line: base, three joints; widths along it
+    var b = bases[i], a = F[i][0] * Math.PI / 180, curl = F[i][1], pts = [[b[0] - 3, b[1]], [b[0], b[1]]], ws = [wds[i] * 1.06, wds[i]], x = b[0], y = b[1];
+    var segs = [.45, .3, .25], bend = [.35, .5, .45];
+    for (var j = 0; j < 3; j++) { a += curl * bend[j] * .5; var L = lens[i] * segs[j] * (1 - curl * [.28, .78, .96][j]); if (L < .5) L = .5; x += Math.cos(a) * L; y += Math.sin(a) * L; pts.push([x, y]); ws.push(wds[i] * [.96, .88, .78][j]); }
+    return { pts: pts, ws: ws, curl: curl };
   }
-  for (var i = 3; i >= 0; i--) fing += chain(bases[i][0], bases[i][1], F[i][0], lens[i], wds[i], F[i][1], !palm);
-  // the palm: narrower at the wrist, the heel of the hand, outlined on its two sides only so the fingers flow out of it
-  var pp = [[-1, -7.5], [6, -9.5], [14, -10.2], [22.5, -9.4], [25, -4], [25, 4], [22.5, 9.3], [14, 10.6], [5, 9.6], [-1, 7.5]].map(function (p) { return P(p[0], p[1]); });
-  var thumbFront = kind === "fist" || kind === "point", thumbSvg = "";
-  out += fing + '{THUMB_BACK}<path d="' + pPath(pp, true) + '" fill="' + c.skin + '"/>';
-  out += '<path d="' + pPath(pp.slice(0, 4), false) + '" fill="none" stroke="' + INK + '" stroke-width="' + f(2.2 * s) + '" stroke-linecap="round"/><path d="' + pPath(pp.slice(6), false) + '" fill="none" stroke="' + INK + '" stroke-width="' + f(2.2 * s) + '" stroke-linecap="round"/>';
-  if (F[0][1] > .9 || F[1][1] > .9) out += '<path d="' + pPath([P(21, -8), P(24.5, -3), P(24.5, 3), P(21, 8)], false) + '" stroke="' + INK + '" stroke-width="' + f(1.6 * s) + '" fill="none"/>';
-  // back-of-hand tendons, or the palm's crease lines
-  out += palm ? '<path d="' + pPath([P(5, -5), P(12, -1), P(19, 2)], false) + '" stroke="' + c.skinD + '" stroke-width="' + f(.9 * s) + '" fill="none"/><path d="' + pPath([P(8, 4), P(15, 5), P(21, 4)], false) + '" stroke="' + c.skinD + '" stroke-width="' + f(.9 * s) + '" fill="none"/>'
-               : '<path d="M' + f(P(6, -2)[0]) + ' ' + f(P(6, -2)[1]) + ' L' + f(P(19, -3.5)[0]) + ' ' + f(P(19, -3.5)[1]) + ' M' + f(P(6, 2)[0]) + ' ' + f(P(6, 2)[1]) + ' L' + f(P(19, 2.5)[0]) + ' ' + f(P(19, 2.5)[1]) + '" stroke="' + c.skinD + '" stroke-width="' + f(.8 * s) + '" opacity=".55"/>';
-  // the thumb: from inside the palm's heel, two joints, a nail
-  var T0 = F[4], ta = T0[0] * Math.PI / 180, tx = 6, ty = -6, tp = [[tx - 3, ty + 1], [tx, ty]], tw = [6.6, 6.4];
-  var tl = [8, 7], cx = tx, cy = ty, aa = ta;
-  for (var j = 0; j < 2; j++) { aa += T0[1] * .6; cx += Math.cos(aa) * tl[j]; cy += Math.sin(aa) * tl[j]; tp.push([cx, cy]); tw.push([5.6, 4.9][j]); }
-  var tlb = pLimb(tp.map(function (p) { return P(p[0], p[1]); }), tw.map(function (v) { return v * s; }), true);
-  thumbSvg += thumbFront ? '<path d="' + tlb.fill + '" fill="' + c.skin + '" stroke="' + INK + '" stroke-width="' + f(2.1 * s) + '" stroke-linejoin="round"/>' : pLimbDraw(tlb, c.skin, s, "", 2.1);
-  if (!palm) { var nq = P(cx - Math.cos(aa) * 2.6, cy - Math.sin(aa) * 2.6); thumbSvg += '<ellipse cx="' + f(nq[0]) + '" cy="' + f(nq[1]) + '" rx="' + f(2.4 * s) + '" ry="' + f(1.7 * s) + '" transform="rotate(' + f((ang + side * aa) * 180 / Math.PI) + ' ' + f(nq[0]) + ' ' + f(nq[1]) + ')" fill="' + c.skinL + '" stroke="' + c.skinD + '" stroke-width="' + f(.7 * s) + '"/>'; }
-  out = thumbFront ? out.replace('{THUMB_BACK}', '') + thumbSvg : out.replace('{THUMB_BACK}', thumbSvg);
-  out += '<path d="' + pPath([P(4, -7.5), P(8, -4), P(9, 1)], false) + '" stroke="' + c.skinD + '" stroke-width="' + f(.9 * s) + '" fill="none" opacity=".7"/>';
+  function sides(ch) {   // the two edges of a finger (+y side and −y side) and its rounded tip, in hand units
+    var n = ch.pts.length, Lp = [], Rp = [];
+    for (var k = 1; k < n; k++) { var a0 = ch.pts[Math.max(0, k - 1)], b0 = ch.pts[Math.min(n - 1, k + 1)], dx = b0[0] - a0[0], dy = b0[1] - a0[1], d = Math.hypot(dx, dy) || 1, nx = -dy / d, ny = dx / d, hw = ch.ws[k] / 2;
+      Lp.push([ch.pts[k][0] + nx * hw, ch.pts[k][1] + ny * hw]); Rp.push([ch.pts[k][0] - nx * hw, ch.pts[k][1] - ny * hw]); }
+    var e = ch.pts[n - 1], q = ch.pts[n - 2], ex = e[0] - q[0], ey = e[1] - q[1], el = Math.hypot(ex, ey) || 1; ex /= el; ey /= el;
+    var we = ch.ws[n - 1] / 2, tip = [[e[0] + (-ey * .75 + ex * .6) * we, e[1] + (ex * .75 + ey * .6) * we], [e[0] + ex * we * 1.05, e[1] + ey * we * 1.05], [e[0] + (ey * .75 + ex * .6) * we, e[1] + (-ex * .75 + ey * .6) * we]];
+    return { plus: Lp, minus: Rp, tip: tip };
+  }
+  var ch = [0, 1, 2, 3].map(chain), sd = ch.map(sides);
+  // the thumb: root inside the heel, two joints
+  var T0 = F[4], ta = T0[0] * Math.PI / 180, tch = { pts: [[6, -6.4], [10, -8.4]], ws: [7.4, 6.8], curl: T0[1] }, tx = 10, ty = -8.4, tA = ta;
+  [8.5, 7].forEach(function (L, j) { tA += T0[1] * .6; tx += Math.cos(tA) * L; ty += Math.sin(tA) * L; tch.pts.push([tx, ty]); tch.ws.push([5.9, 5][j]); });
+  var tsd = sides(tch), thumbFront = kind === "fist" || kind === "point";
+  // ── one contour: wrist (little-finger side) → heel → palm edge → little, ring, middle, index → web → thumb → wrist ──
+  var ring = [[-7, 6.8], [0, 7], [7, 9.2], [14, 10.6], [19.5, 10.4]];
+  for (var i = 3; i >= 0; i--) {
+    var S = sd[i];
+    ring = ring.concat(S.plus, S.tip, S.minus.slice().reverse());
+    if (i > 0) { var nb = bases[i - 1], cb = bases[i]; ring.push([(nb[0] + cb[0]) / 2 + 1.4, (nb[1] + cb[1]) / 2]); }   // the cleft between two fingers
+  }
+  ring.push([21.5, -10.2]);   // the index's knuckle on the thumb side
+  if (thumbFront) ring.push([12, -11.2], [4, -9.6], [0, -7.2], [-7, -6.8]);
+  else { ring.push([16, -10.4]); ring = ring.concat(tsd.plus.slice(1), tsd.tip, tsd.minus.slice(1).reverse(), [[5, -8.6], [0, -7.2], [-7, -6.8]]); }
+  var R = PP(ring), sw = 2.2 * SW;
+  var out = '<path d="' + pPath(R, true) + '" fill="' + c.skin + '"/>';
+  // the shaded little-finger side of the palm and the underside of the fingers
+  out += '<path d="' + pPath(PP([[2, 5.6], [10, 8], [18, 8.4], [21, 6]]), false) + '" stroke="' + c.skinD + '" stroke-width="' + f(3.2 * SW) + '" fill="none" stroke-linecap="round" opacity=".4"/>';
+  // the outline, open across the wrist so the forearm flows into the hand
+  out += '<path d="' + pPath(R, false) + '" fill="none" stroke="' + INK + '" stroke-width="' + f(sw) + '" stroke-linejoin="round" stroke-linecap="round"/>';
+  // details: the fingers' joint creases, the knuckles, nails, tendons or palm lines
+  ch.forEach(function (C, i) {
+    for (var k = 2; k <= 4; k++) { if (k === 4 && C.curl < .9) continue; var p0 = C.pts[k], p1 = C.pts[Math.min(C.pts.length - 1, k + 1)], pm = C.pts[k - 1], aa = Math.atan2(p1[1] - pm[1], p1[0] - pm[0]), hw = C.ws[k] * .3;
+      out += '<path d="' + pPath(PP([[p0[0] - Math.sin(aa) * hw, p0[1] + Math.cos(aa) * hw], [p0[0] - Math.cos(aa) * .8, p0[1] - Math.sin(aa) * .8], [p0[0] + Math.sin(aa) * hw, p0[1] - Math.cos(aa) * hw]]), false) + '" stroke="' + c.skinD + '" stroke-width="' + f(.9 * SW) + '" fill="none" stroke-linecap="round"/>'; }
+    if (!palm && C.curl < .6) { var t = C.pts[4], u = C.pts[3], na = Math.atan2(t[1] - u[1], t[0] - u[0]), nc = [t[0] - Math.cos(na) * 2.4, t[1] - Math.sin(na) * 2.4], q = P(nc[0], nc[1]);
+      out += '<ellipse cx="' + f(q[0]) + '" cy="' + f(q[1]) + '" rx="' + f(2.4 * s) + '" ry="' + f(C.ws[4] * .3 * s) + '" transform="rotate(' + f((ang + side * na) * 180 / Math.PI) + ' ' + f(q[0]) + ' ' + f(q[1]) + ')" fill="' + c.skinL + '" stroke="' + c.skinD + '" stroke-width="' + f(.7 * SW) + '"/>'; }
+  });
+  if (palm) out += '<path d="' + pPath(PP([[5, -5.5], [12, -1.5], [19, 1.5]]), false) + '" stroke="' + c.skinD + '" stroke-width="' + f(1 * SW) + '" fill="none"/><path d="' + pPath(PP([[8, 4.5], [15, 5.5], [21, 4]]), false) + '" stroke="' + c.skinD + '" stroke-width="' + f(1 * SW) + '" fill="none"/><path d="' + pPath(PP([[3, -4], [6, 1], [5, 6]]), false) + '" stroke="' + c.skinD + '" stroke-width="' + f(.9 * SW) + '" fill="none"/>';
+  else { [-7.6, -2.6, 2.5, 7.2].forEach(function (yy, k) { out += '<path d="' + pPath(PP([[3, yy * .35], [11, yy * .7], [19.5, yy]]), false) + '" stroke="' + c.skinD + '" stroke-width="' + f(.75 * SW) + '" fill="none" opacity=".55"/>'; });
+    if (F[1][1] > .5) bases.forEach(function (b) { out += '<path d="' + pPath(PP([[b[0] - 1, b[1] - 2.2], [b[0] + 1.4, b[1]], [b[0] - 1, b[1] + 2.2]]), false) + '" stroke="' + c.skinD + '" stroke-width="' + f(1 * SW) + '" fill="none"/>'; }); }
+  // the thumb in front of the fingers (a fist, pointing): its own outline on top
+  if (thumbFront) { var tl = pLimb(PP(tch.pts), tch.ws.map(function (v) { return v * s; }), true); out += '<path d="' + tl.fill + '" fill="' + c.skin + '" stroke="' + INK + '" stroke-width="' + f(2.1 * SW) + '" stroke-linejoin="round"/>'; }
+  if (!palm) { var tp = tch.pts[3], tq = tch.pts[2], tna = Math.atan2(tp[1] - tq[1], tp[0] - tq[0]), nq = P(tp[0] - Math.cos(tna) * 2.6, tp[1] - Math.sin(tna) * 2.6);
+    out += '<ellipse cx="' + f(nq[0]) + '" cy="' + f(nq[1]) + '" rx="' + f(2.6 * s) + '" ry="' + f(1.9 * s) + '" transform="rotate(' + f((ang + side * tna) * 180 / Math.PI) + ' ' + f(nq[0]) + ' ' + f(nq[1]) + ')" fill="' + c.skinL + '" stroke="' + c.skinD + '" stroke-width="' + f(.7 * SW) + '"/>'; }
+  out += '<path d="' + pPath(PP([[9, -9], [11, -6], [13, -3.5]]), false) + '" stroke="' + c.skinD + '" stroke-width="' + f(.9 * SW) + '" fill="none" opacity=".7"/>';   // the thumb's web crease
   return out;
 }
 // ── the head: centre hc, local units (head 52 tall, 37 wide); turn shifts the features for a three-quarter view ──
@@ -359,7 +384,7 @@ function person(o) {
     var cp = [cuff, [wr[0] + dx / dl * 1.5 * s, wr[1] + dy / dl * 1.5 * s]], cuffSvg = OF.top === "tshirt" && !coat ? "" : pLimbDraw(pLimb(cp, [17.5 * s, 16.5 * s], false), coat ? c.shirt : sc, s, "", 2), rib = "";
     if (OF.top === "sweater" && !coat) for (var qq = -6; qq <= 6; qq += 3) { var nx2 = -dy / dl, ny2 = dx / dl; rib += pLine([[cuff[0] + nx2 * qq * s, cuff[1] + ny2 * qq * s], [cuff[0] + nx2 * qq * s + dx / dl * 8 * s, cuff[1] + ny2 * qq * s + dy / dl * 8 * s]], c.shirtD, .9 * s); }
     var ha = A.rot != null ? A.rot * Math.PI / 180 : Math.atan2(dy, dx), side = A.side || (sd * (Math.cos(ha) >= 0 ? -1 : 1));
-    var hand = pHand([wr[0] - Math.cos(ha) * 1 * s, wr[1] - Math.sin(ha) * 1 * s], ha, A.hand || "relaxed", side, s, c, A.palm);
+    var hand = pHand([wr[0] + Math.cos(ha) * 1 * s, wr[1] + Math.sin(ha) * 1 * s], ha, A.hand || "relaxed", side, s, c, A.palm);
     if (OF.top === "tshirt" && !coat) folds = "";
     armSvg[i] = sleeve + folds.replace(new RegExp(c.shirtD, "g"), scD) + hand + cuffSvg + rib;
   });

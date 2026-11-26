@@ -14,7 +14,7 @@ var RD = 560, VS = .42;   // the deck surface in side views, vehicle scale (1 m 
 function nightSky() { return paper() + '<rect x="-2000" y="-2000" width="5000" height="5000" fill="' + NIGHT + '" opacity=".62"/>'; }
 function nightRoad(t, scroll, inner, k) {
   var sc = ((scroll % 520) + 520) % 520;
-  return nightSky() + skyline(RD - 120, t, -700, 1400) + G("translate(" + f(-sc) + " 0)", deckSide(RD, { night: 1, lx: 120, tx: 360 })) + inner + nightWash(.35 * (k == null ? 1 : k));
+  return nightSky() + skyline(RD - 120, t, -700, 1400) + G("translate(" + f(sc - 520) + " 0)", deckSide(RD, { night: 1, lx: 120, tx: 360, x1: 2300 })) + inner + nightWash(.35 * (k == null ? 1 : k));
 }
 function dayRoad(t, inner) { return paper() + deckSide(RD, { lx: 120, tx: 360 }) + inner; }
 function traffic(t, o) {   // a sedan, a microbus and the tanker, side by side in the flow
@@ -43,7 +43,7 @@ function tankScene(t, o) { o = o || {}; return place(TLX, RD, TLS, tankerLying({
 // ── 0–1 · the hook card: the Ring Road at night over the underpass, traffic flowing ──
 SCENE.intro = function (svg, t, li) {
   var sc = (t * 40) % 520, s = '<rect x="0" y="0" width="608" height="660" fill="' + PAPER + '"/>' + skyline(330, t, -60, 700);
-  s += G("translate(" + f(-sc) + " 0)", deckSide(430, { night: 1, lx: 100, tx: 300, x0: -200, x1: 1300 }));
+  s += G("translate(" + f(sc - 520) + " 0)", deckSide(430, { night: 1, lx: 100, tx: 300, x0: -200, x1: 1900 }));
   s += place(20, 430, .36, microbus({ lights: 1, t: t, spin: -7 })) + place(250, 430, .36, sedan({ lights: 1, t: t, spin: -7, col: "#a7b4b9" })) + place(440, 430, .36, sedan({ lights: 1, t: t, spin: -7, col: "#c9b28f" }));
   s += nightWash(1);
   if (li >= 1) { var k = ease((t - LS(1)) / .5); s += label(470, 560, 540, 610, "نفق عشرة", "#efe6d2", k, 24) + tag("الطريق الدائري", 304, 300, ease((t - LS(1) - .4) / .5), 26); }
@@ -235,14 +235,45 @@ shot([15, 2], still(330, 420, 1), function (u, d, t) { return victimStand(t, .7)
 // «وينام على الأرض،»: he lies flat on his back
 function victimLying(t, fl, roll, o) { o = o || {}; var po = { x: 330 + (o.dx || 0), y: 610, s: 1.05, dir: 1, rot: -90 + (roll || 0), legs: [{ hip: 0, knee: 0 }, { hip: 0, knee: 0 }], arms: [{ sh: 6, el: 10, hand: "relaxed" }, { sh: -6, el: 10, hand: "relaxed" }], face: { eyes: blink(t), brows: "worried", mouth: "neutral" }, outfit: VIC };
   return paper() + R(-400, 640, 1440, 300, "#e3d7bd", 0) + '<path d="M-400 640 H1040" stroke="' + INK + '" stroke-width="2.4"/>' + ps(po) + (fl > 0 ? flame(300, 612, 90 * fl, t, 1, 50) + flame(220, 616, 60 * fl, t, 4, 40) : ""); }
-shot([15, 3], still(330, 420, 1), function (u, d, t) { return victimLying(t, .55) + tag("نام", 520, 160, at(u, 0, .4), 40, ORANGE) + numBox("2", 140, 160, at(u, 0, .3), 34, true); });
+shot([15, 3], still(340, 545, 1.3), function (u, d, t) { return victimLying(t, .55) + tag("نام", 500, 400, at(u, 0, .4), 40, ORANGE) + numBox("2", 180, 400, at(u, 0, .3), 34, true); });
 // «ويتقلّب.»: he rolls side to side, the flames get smaller
-shot([15, 4], still(330, 420, 1), function (u, d, t) { return victimLying(t, .55 * (1 - clamp(u / 1.6)), 0, { dx: 30 * Math.sin(u * 5) }) + tag("اتقلّب", 520, 160, at(u, 0, .4), 40, ORANGE) + numBox("3", 140, 160, at(u, 0, .3), 34, true) + arrow(240, 560, 420, 560, ORANGE, 5, at(u, .2, .5)) + arrow(420, 520, 240, 520, ORANGE, 5, at(u, .6, .5)); });
+// a real roll about his long axis: on his back (profile) → on his side, his front to us → on his belly (profile, face
+// down) → back again. Each change of view squashes through the body's thickness about the line it rests on.
+function victimRoll(t, th, fl) {
+  var base = paper() + R(-400, 640, 1440, 300, "#e3d7bd", 0) + '<path d="M-400 640 H1040" stroke="' + INK + '" stroke-width="2.4"/>';
+  var a = ((th % 360) + 360) % 360; if (a > 180) a = 360 - a;   // 0 back · 90 side · 180 belly
+  var prof = { x: 330, y: 612, s: 1.05, dir: 1, rot: -90, legs: [{ hip: 0, knee: 0 }, { hip: 0, knee: 0 }], arms: [{ sh: 4, el: 6, hand: "flat" }, { sh: -4, el: 6, hand: "flat" }], face: { eyes: .2, brows: "worried", mouth: "frown" }, outfit: VIC };
+  var side = { x: 330, y: 582, s: 1.05, outfit: VIC, legs: "stand", arms: [{ rel: [-14, 152], hand: "flat" }, { rel: [14, 152], hand: "flat" }], face: { eyes: .2, brows: "worried", mouth: "frown" } };
+  var body, k;
+  if (a < 45) { k = a / 45; body = G("translate(0 612) scale(1 " + f(lerp(1, .3, k)) + ") translate(0 -612)", ps(prof)); }
+  else if (a < 135) { k = 1 - Math.abs(a - 90) / 45; body = G("translate(0 582) scale(1 " + f(lerp(.3, 1, k)) + ") translate(0 -582)", G("rotate(-90 330 582)", pf(side))); }
+  else { k = (180 - a) / 45; body = G("translate(0 612) scale(1 " + f(-lerp(1, .3, k)) + ") translate(0 -612)", ps(prof)); }
+  var fls = fl > 0 ? flame(300, 612, 90 * fl, t, 1, 50) + flame(220, 616, 60 * fl, t, 4, 40) : "";
+  return base + body + fls;
+}
+shot([15, 4], still(340, 545, 1.3), function (u, d, t) { var th = 180 * (.5 - .5 * Math.cos(Math.PI * 2 * u / 1.7)); return victimRoll(t, th, .55 * (1 - clamp(u / 1.8))) + tag("اتقلّب", 500, 400, at(u, 0, .4), 40, ORANGE) + numBox("3", 180, 400, at(u, 0, .3), 34, true) + G("", '<path d="M250 520 A80 50 0 1 1 410 520" fill="none" stroke="' + ORANGE + '" stroke-width="5" stroke-dasharray="12 9"/>' + arrow(402, 500, 412, 524, ORANGE, 5, 1), at(u, .2, .4)); });
 // 16 · «وغطّيه بجاكيت قطن، أو بطانية…»: a blanket laid over him
-shot([16, 0], still(330, 420, 1), function (u, d, t) { var k = at(u, .1, .9); return victimLying(t, .35 * (1 - k)) + G("translate(0 " + f(-160 * (1 - k)) + ")", blanket(120, 636, 440, 70, "#8e6a4e"), clamp(k * 3)) + label(420, 590, 540, 470, "قطن", OLIVE, at(u, .9, .5), 28); });
-shot([16, 1], still(330, 420, 1), function (u, d, t) { return victimLying(t, 0) + blanket(120, 636, 440, 70, "#8e6a4e") + label(420, 590, 540, 470, "قطن", OLIVE, 1, 28) + tag("بطانية", 200, 300, at(u, .1, .4), 32); });
+// a cotton blanket laid over him: it comes down rippling, settles on the body's outline and its ends fall to the ground in folds
+var BODYH = [[60, 0], [100, 0], [112, 30], [130, 56], [160, 60], [200, 48], [240, 58], [300, 62], [360, 56], [420, 40], [480, 34], [540, 30], [568, 52], [585, 30], [600, 0], [640, 0]];
+function bodyTop(x) { for (var i = 1; i < BODYH.length; i++) if (x <= BODYH[i][0]) { var a = BODYH[i - 1], b = BODYH[i]; return lerp(a[1], b[1], (x - a[0]) / (b[0] - a[0])); } return 0; }
+function drape(k, t, col) {
+  col = col || "#8e6a4e"; var G0 = 640, x0 = 70, x1 = 640, top = [], bot = [], ke = ease(clamp(k)), Y = lerp(300, 560, ke), rip = (1 - ke) * 16, land = clamp((k - .55) / .45);
+  for (var x = x0; x <= x1; x += 10) {
+    var env = 0; for (var dx = -40; dx <= 40; dx += 10) env = Math.max(env, bodyTop(x + dx) - Math.abs(dx) * .55);   // the cloth bridges the dips
+    var yt = Math.min(G0 - env - 4, Y + 26 * (1 - ke) * Math.sin(Math.PI * (x - x0) / (x1 - x0)) + rip * .4 * Math.sin(x * .02 + t * 3)), edge = Math.min(1, Math.min(x - x0, x1 - x) / 60);
+    if (land > 0) yt = Math.min(G0 - 3, lerp(yt, Math.max(yt, G0 - env - 4 + (1 - edge) * 40 * land), land));
+    var th2 = lerp(30, 12, ke) * (1 + .12 * Math.sin(x * .03 - t * 3) * (1 - ke)); top.push([x, yt]); bot.push([x, Math.min(G0, yt + th2 + (G0 - yt) * land)]);
+  }
+  var d = "M" + top.map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + " L" + bot.slice().reverse().map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + " Z";
+  var s = '<path d="' + d + '" fill="' + col + '" stroke="' + INK + '" stroke-width="2.4" stroke-linejoin="round"/><path d="' + d + '" fill="url(#hatch)" opacity=".6"/>';
+  s += '<path d="M' + top.map(function (p) { return f(p[0]) + " " + f(p[1] + 5); }).join(" L") + '" stroke="#b08a6a" stroke-width="3" fill="none" opacity=".7"/>';   // the lit top of the cloth
+  for (var i = 2; i < top.length - 1; i += 4) { var p = top[i], b = bot[i], h = b[1] - p[1]; if (h > 16) s += '<path d="M' + f(p[0]) + ' ' + f(p[1] + 6) + ' Q' + f(p[0] + 6 + 4 * Math.sin(i + t)) + ' ' + f(p[1] + h * .55) + ' ' + f(p[0] - 2) + ' ' + f(b[1] - 3) + '" stroke="#5e4532" stroke-width="1.6" fill="none" opacity=".75"/>'; }
+  return s;
+}
+shot([16, 0], still(340, 545, 1.3), function (u, d, t) { var k = at(t - LS(16), .25, 1.7), th = 162 * (1 - ease(clamp(u / .7))); return (u < .7 ? victimRoll(t, th, .3 * (1 - k)) : victimLying(t, .3 * (1 - k))) + drape(k, t) + label(300, 560, 200, 440, "قطن", OLIVE, at(u, 1.3, .5), 28); });
+shot([16, 1], still(340, 545, 1.3), function (u, d, t) { return victimLying(t, 0) + drape(at(t - LS(16), .25, 1.7), t) + label(300, 560, 200, 440, "قطن", OLIVE, 1, 28) + tag("بطانية", 220, 430, at(u, .1, .4), 32); });
 // «عشان النار تتخنق.»: no air for the fire: O₂ crossed out
-shot([16, 2], fly([330, 420, 1], [330, 520, 1.5], 1.8), function (u, d, t) { return victimLying(t, 0) + blanket(120, 636, 440, 70, "#8e6a4e") + G("", T("الأكسجين", 330, 390, 30, BLUE, 800) + wave(240, 440, 420, 440, t, BLUE, 5, 30, 1, 3), at(u, .2, .4)) + cross(330, 440, 1, at(u, .8, .5)); });
+shot([16, 2], fly([340, 545, 1.3], [330, 540, 1.6], 1.8), function (u, d, t) { return victimLying(t, 0) + drape(1, t) + G("", T("الأكسجين", 330, 390, 30, BLUE, 800) + wave(240, 440, 420, 440, t, BLUE, 5, 30, 1, 3), at(u, .2, .4)) + cross(330, 440, 1, at(u, .8, .5)); });
 // 17 · «والحرق… مية جارية عادية، 20 دقيقة.»: the burnt forearm under a running tap
 function sinkScene(u, t, flow) {
   var p = { x: 230, y: 640 - 210, s: 1.05, outfit: { base: "casual", colors: { shirt: "#c9a77c", shirtD: "#a5845c" } }, face: { eyes: blink(t), brows: "worried", look: [.8, .4] }, head: { turn: .4, tilt: 6 },
@@ -250,7 +281,7 @@ function sinkScene(u, t, flow) {
   return paper() + R(380, 400, 300, 240, "#c6c3bb", 2.2) + R(370, 390, 320, 20, "#a9a59c", 2.2) + R(400, 410, 260, 60, "#8d887e", 1.6) + pf(p) + tap(470, 230, flow, t) + '<ellipse cx="448" cy="330" rx="30" ry="12" fill="#d98a6a" opacity=".55"/>';
 }
 shot([17, 0], still(380, 380, 1.1), function (u, d, t) { return sinkScene(u, t, 0) + label(448, 334, 560, 520, "الحرق", ORANGE, at(u, .1, .5), 26); });
-shot([17, 1], still(380, 380, 1.1), function (u, d, t) { return sinkScene(u, t, at(u, 0, .4)) + label(458, 380, 560, 520, "مية عادية", BLUE, at(u, .3, .5), 26); });
+shot([17, 1], still(380, 380, 1.1), function (u, d, t) { return sinkScene(u, t, at(u, 0, .4)) + draw('M470 380 L520 440', at(u, .3, .4), INK, 1.4) + tag("مية عادية", 540, 470, at(u, .5, .4), 24, BLUE); });
 shot([17, 2], still(380, 380, 1.1), function (u, d, t) { return sinkScene(u, t, 1) + stopwatch(170, 150, 60, clamp(u / 1.8)) + numBox("20", 170, 264, at(u, .1, .3), 34) + T("دقيقة", 170, 310, 22, INK, 800); });
 // 18 · the myth: toothpaste and ice
 shot([18, 0], still(320, 400, 1), function (u, d, t) { return paper() + tag("ناس كتير فاكرة…", 320, 200, at(u, 0, .4), 32); });
@@ -258,17 +289,24 @@ shot([18, 1], still(320, 400, 1), function (u, d, t) { return paper() + G("", to
 shot([18, 2], still(320, 400, 1), function (u, d, t) { return paper() + toothpaste(190, 400, 1.4) + iceCube(470, 400, 64) + T("معجون السنان", 190, 520, 26, INK, 800) + T("التلج", 470, 520, 26, BLUE, 800); });
 shot([18, 3], still(320, 400, 1), function (u, d, t) { return paper() + toothpaste(190, 400, 1.4) + iceCube(470, 400, 64) + T("معجون السنان", 190, 520, 26, INK, 800) + T("التلج", 470, 520, 26, BLUE, 800) + cross(190, 400, 2.2, at(u, .1, .5)) + cross(470, 400, 2.2, at(u, .4, .5)) + tag("لأ", 320, 640, at(u, 0, .3), 44, ORANGE); });
 // 19 · «ومتشدّش هدوم لازقة في الجلد…»: a forearm with the cloth stuck to the burn
-function forearm(o) { o = o || {}; var sk = PERSON.colors.skin || "#e0b294", s = P("M-80 420 L-80 540 C120 500 300 470 470 452 L466 392 C300 400 120 416 -80 420 Z", "#c9a77c", 0) + P("M-60 444 C120 424 300 404 470 392 Q486 420 470 452 C300 466 120 494 -60 520 Z", sk, 2.4) + PERSON.hand([476, 422], -0.08, "relaxed", 1, 2.6, PERSON.colors) + P("M-80 420 C-40 418 -30 430 -20 440 L-24 526 C-40 530 -60 536 -80 540 Z", "#c9a77c", 2.4);
-  s += '<ellipse cx="260" cy="440" rx="80" ry="26" fill="#d98a6a" opacity=".6"/>';
-  if (o.stuck) s += P("M200 418 L320 404 L330 452 Q260 470 206 466 Z", "#c9a77c", 2) + '<path d="M210 430 L300 420" stroke="#a5845c" stroke-width="2"/>';
-  if (o.cloth) s += G("translate(0 " + f(-120 * (1 - o.cloth)) + ")", P("M150 400 L380 380 Q392 430 380 470 L156 492 Q140 450 150 400 Z", "#f4f2ec", 2.2) + '<path d="M170 420 L360 404 M168 450 L366 436" stroke="#d6d2c6" stroke-width="2"/>', clamp(o.cloth * 3));
-  return s; }
-shot([19, 0], still(250, 420, 1), function (u, d, t) { var pull = Math.max(0, Math.sin(u * 4)) * 14 * at(u, .3, .3); return paper() + forearm({ stuck: 1 }) + arrow(330, 400, 420, 300, ORANGE, 6, at(u, .2, .4)) + cross(380, 330, 1.2, at(u, .8, .5)); });
-shot([19, 1], still(250, 420, 1), function (u, d, t) { return paper() + forearm({ stuck: 1 }) + label(270, 430, 400, 260, "لازقة في الجلد", ORANGE, at(u, 0, .5), 26) + cross(380, 330, 1.2, 1); });
+function forearm(o) {   // a close-up forearm and hand at real proportions: forearm 58 : hand 43, wrist 13.5 units wide → ×4.6
+  o = o || {}; var sk = PERSON.colors.skin || "#e0a98a", sc = 4.6, wx = 330, wy = 430, s = "";
+  s += P("M-120 380 L-120 520 L-40 506 L-40 392 Z", "#c9a77c", 2.4);   // the sleeve rolled back
+  s += '<path d="M-44 392 C40 388 200 398 ' + (wx + 4) + ' ' + f(wy - 31) + ' L' + (wx + 4) + ' ' + f(wy + 31) + ' C200 470 40 500 -44 506 Z" fill="' + sk + '"/>';
+  s += '<path d="M-44 392 C40 388 200 398 ' + (wx + 4) + ' ' + f(wy - 31) + ' M' + (wx + 4) + ' ' + f(wy + 31) + ' C200 470 40 500 -44 506" stroke="' + INK + '" stroke-width="2.6" fill="none"/>';
+  s += '<path d="M10 470 C110 462 220 450 300 446" stroke="' + PERSON.colors.skinD + '" stroke-width="6" fill="none" opacity=".35" stroke-linecap="round"/>';
+  s += PERSON.hand([wx - 4, wy], 0, "relaxed", 1, sc, PERSON.colors, false);
+  s += '<ellipse cx="140" cy="440" rx="80" ry="30" fill="#d98a6a" opacity=".6"/>';
+  if (o.stuck) s += P("M86 410 L196 404 L202 462 Q140 474 90 470 Z", "#c9a77c", 2) + '<path d="M96 426 L188 420" stroke="#a5845c" stroke-width="2"/>';
+  if (o.cloth) s += G("translate(0 " + f(-120 * (1 - o.cloth)) + ")", P("M40 396 L250 392 Q262 440 250 482 L44 496 Q30 446 40 396 Z", "#f4f2ec", 2.2) + '<path d="M60 418 L236 412 M58 452 L240 446" stroke="#d6d2c6" stroke-width="2"/>', clamp(o.cloth * 3));
+  return s;
+}
+shot([19, 0], still(250, 420, 1), function (u, d, t) { var pull = Math.max(0, Math.sin(u * 4)) * 14 * at(u, .3, .3); return paper() + forearm({ stuck: 1 }) + arrow(190, 404, 270, 300, ORANGE, 6, at(u, .2, .4)) + cross(250, 320, 1.2, at(u, .8, .5)); });
+shot([19, 1], still(250, 420, 1), function (u, d, t) { return paper() + forearm({ stuck: 1 }) + label(150, 430, 280, 260, "لازقة في الجلد", ORANGE, at(u, 0, .5), 26) + cross(250, 320, 1.2, 1); });
 // «غطّيه بقماشة نضيفة،»
-shot([19, 2], still(250, 420, 1), function (u, d, t) { return paper() + forearm({ stuck: 1, cloth: at(u, 0, .8) }) + label(280, 400, 420, 260, "قماشة نضيفة", OLIVE, at(u, .7, .5), 26) + check(110, 300, 1.4, at(u, .9, .4), OLIVE); });
+shot([19, 2], still(250, 420, 1), function (u, d, t) { return paper() + forearm({ stuck: 1, cloth: at(u, 0, .8) }) + label(150, 400, 300, 260, "قماشة نضيفة", OLIVE, at(u, .7, .5), 26) + check(110, 300, 1.4, at(u, .9, .4), OLIVE); });
 // «لحد ما الإسعاف يوصل.»: the ambulance arrives
-shot([19, 3], still(320, 420, 1), function (u, d, t) { return dayRoad(t, place(lerp(900, 120, ease(clamp(u / 2))), RD, .62, ambulance(t))); });
+shot([19, 3], still(320, 420, 1), function (u, d, t) { return dayRoad(t, place(lerp(640, 120, ease(clamp(u / 2))), RD, .62, ambulance(t))); });
 // 20 · «ولو الدخان حواليك…»: smoke fills from the top; «وطّي على الأرض،»: he moves bent low; «الهوا النضيف تحت.»
 function smokeRoom(t, k, o) {
   o = o || {}; var s = paper() + R(-400, 640, 1440, 300, "#e3d7bd", 0) + '<path d="M-400 640 H1040" stroke="' + INK + '" stroke-width="2.4"/>';
