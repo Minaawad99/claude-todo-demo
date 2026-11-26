@@ -15,3 +15,9 @@
 
 ## Voice
 Gemini TTS, Puck, gemini-3.8-flash-tts, a warm heartfelt appeal style (style.txt), not the explainer pace.
+
+## Drawing references
+- Egyptian Ambulance Organization Mercedes Sprinter: Wikimedia Commons «Ambulance in Egypt 02.jpg».
+- Qasr El-Ainy, the clock-tower front: Wikimedia Commons «قصر العيني.jpg».
+- Ahl Masr Burn Hospital front and a patient room: photos sent by the user (refs/photos/).
+- A burns ICU (radiant warmer, monitor, infusion pumps, gas panel, glass partition): standard burn-unit layout.

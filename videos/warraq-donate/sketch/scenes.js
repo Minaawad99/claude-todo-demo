@@ -281,8 +281,8 @@ shot([10, 1], still(320, 393, 1), function (u, d, t) { return payCards(u, 2); })
 shot([10, 2], still(320, 393, 1), function (u, d, t) { return payCards(u, 3); });
 shot([10, 3], fly([320, 393, 1], [320, 393, .92], 1.6), function (u, d, t) { return payCards(u, 3) + T("بنك مصر: 1430001000008742", 320, 680, 22, INK, 800); });
 // 11 · «تاني مكان: مستشفى أهل مصر للحروق… بيعالج الحروق ببلاش.»
-shot(11, still(320, 400, 1), function (u, d, t) { return paper() + floorL(640) + hospital(320, 640, "مستشفى أهل مصر لعلاج الحروق", "أهل مصر", { signCol: "#3f8aa8" }); });
-shot([11, 1], still(320, 400, 1), function (u, d, t) { return paper() + floorL(640) + hospital(320, 640, "مستشفى أهل مصر لعلاج الحروق", "أهل مصر", { signCol: "#3f8aa8" }) + tag("ببلاش", 320, 130, at(u, .1, .4), 44, OLIVE); });
+shot(11, still(320, 500, 1.35), function (u, d, t) { return paper() + R(-600, 640, 1840, 160, ASPH, 0) + '<path d="M-600 640 H1240" stroke="' + INK + '" stroke-width="2.4"/>' + ahlMasr(320, 640, .66); });
+shot([11, 1], still(330, 400, 1), function (u, d, t) { return ahlRoom(t) + tag("ببلاش", 320, 120, at(u, .1, .4), 44, OLIVE) + check(470, 120, 1.1, at(u, .5, .4), OLIVE); });
 // 12 · «كلمهم على الخط الساخن…»: 16863 · «ومندوب يوصلك لحد باب البيت.»: the courier at your door
 shot(12, still(320, 400, 1), function (u, d, t) { var s = paper(); s += handPhone(320, 440, 1.2, '<rect x="-60" y="-104" width="120" height="212" fill="#dfe7e2"/>' + N("16863", 0, -30, 30, INK) + T("أهل مصر", 0, 0, 14, "#3f8aa8", 800) + C(0, 60, 22 + 2 * Math.sin(t * 8), GREEN, 2), t); return s + numBox("16863", 320, 150, at(u, .2, .4), 46, true); });
 function door(x, y) { return R(x - 80, y - 260, 160, 260, "#a9784d", 2.6) + R(x - 64, y - 244, 128, 110, "#b98a5e", 1.6) + R(x - 64, y - 120, 128, 110, "#b98a5e", 1.6) + C(x + 58, y - 130, 7, "#e2b93a", 1.6) + R(x - 100, y - 280, 200, 20, "#c6c3bb", 2); }

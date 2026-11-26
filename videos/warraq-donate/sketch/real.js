@@ -80,3 +80,45 @@ function burnICU(t, o) {
   if (o.glass) s += '<rect x="-30" y="120" width="680" height="520" fill="#cfe3ea" opacity="' + f(.22 * o.glass) + '" stroke="' + BLUE + '" stroke-width="' + f(5 * o.glass) + '"/><path d="M40 180 L120 140 M60 230 L180 160" stroke="#fff" stroke-width="5" opacity="' + f(.6 * o.glass) + '"/>';
   return s;
 }
+
+// ── the Ahl Masr Burn Hospital (photos sent by the user, refs/photos/ahl-masr-front.jpg): a light-grey middle block with
+// the round arrows logo on dark glass, the bilingual name above it, two black glass towers either side, long white wings
+// with horizontal fins, dark window bands and a timber-slat band, a grey entrance canopy, palms and a white railing.
+function ahlLogo(x, y, r) {
+  var s = C(x, y, r, "#2f3438", 0) + T("أهل مصر", x, y + r * .18, r * .52, "#f4f2ec", 900), cols = ["#e8743c", "#3f9aa0", "#c93c2a", "#3f9aa0", "#e8743c", "#3f9aa0", "#c93c2a", "#3f9aa0"];
+  for (var i = 0; i < 8; i++) { var a = i * Math.PI / 4 - Math.PI / 2, ax = x + Math.cos(a) * r * .8, ay = y + Math.sin(a) * r * .8; s += G("translate(" + f(ax) + " " + f(ay) + ") rotate(" + f(a * 180 / Math.PI) + ")", '<path d="M' + f(r * .14) + ' 0 L' + f(-r * .06) + ' ' + f(-r * .1) + ' L' + f(-r * .06) + ' ' + f(r * .1) + ' Z" fill="' + cols[i] + '"/>'); }
+  return s;
+}
+function ahlMasr(cx, gy, s) {
+  var W2 = "#eceef0", W2D = "#c9ced2", GL = "#2f3438", g = "";
+  // the wings
+  [-1, 1].forEach(function (sd) { var x0 = sd < 0 ? -470 : 170;
+    g += R(x0, -250, 300, 250, W2, 2.4);
+    for (var r = 0; r < 4; r++) { g += R(x0 + 10, -236 + r * 58, 280, 30, GL, 1.6) + R(x0, -206 + r * 58, 300, 10, W2D, 1.4); }
+    g += R(x0 + 10, -244, 280, 8, "#a9784d", 1.2) + R(x0 + 10, -100, 280, 8, "#a9784d", 1.2); });
+  // the middle block: two dark glass towers and the light panel with the logo
+  g += R(-200, -330, 400, 330, "#d9dde0", 2.6);
+  [-200, 120].forEach(function (x) { g += R(x, -360, 80, 360, GL, 2.4); for (var k = 1; k < 4; k++) g += '<path d="M' + (x + k * 20) + ' -360 V0" stroke="#4a5157" stroke-width="1.5"/>'; g += '<path d="M' + (x + 8) + ' -340 L' + (x + 30) + ' -300" stroke="#9fb3bd" stroke-width="3" opacity=".5"/>'; });
+  g += R(-90, -240, 180, 180, GL, 2) + ahlLogo(0, -150, 70);
+  g += T("مستشفى حروق أهل مصر", 0, -298, 19, "#3a3f44", 800) + '<text x="0" y="-272" text-anchor="middle" style="font:800 11px Noto Sans;fill:#3a3f44;letter-spacing:1px;direction:ltr">AHL MASR BURN HOSPITAL</text>';
+  // the entrance canopy, the railing, palms
+  g += R(-120, -60, 240, 18, "#9aa0a6", 2) + R(-60, -42, 120, 42, "#6f7f86", 1.8);
+  for (var x = -470; x <= 470; x += 14) g += '<path d="M' + x + ' -40 V0" stroke="#f4f2ec" stroke-width="3"/><path d="M' + x + ' -40 V0" stroke="' + INK + '" stroke-width=".6"/>';
+  g += '<path d="M-470 -40 H470" stroke="' + INK + '" stroke-width="1.6"/>';
+  [[-150, 1], [150, .9], [-330, .8]].forEach(function (p) { var tx = p[0], h = 120 * p[1]; g += '<path d="M' + tx + ' 0 Q' + (tx + 6) + ' ' + f(-h / 2) + ' ' + tx + ' ' + f(-h) + '" stroke="#8a6a4a" stroke-width="6" fill="none"/>'; for (var i = 0; i < 6; i++) { var a = -Math.PI / 2 + (i - 2.5) * .5; g += '<path d="M' + tx + ' ' + f(-h) + ' Q' + f(tx + Math.cos(a) * 30) + ' ' + f(-h + Math.sin(a) * 30 - 10) + ' ' + f(tx + Math.cos(a) * 55) + ' ' + f(-h + Math.sin(a) * 40 + 14) + '" stroke="#5e7a46" stroke-width="6" fill="none" stroke-linecap="round"/>'; } });
+  g += R(-480, -18, 960, 18, "#c93c2a", 0, 0, ' opacity=".35"');   // the red flower beds
+  return G("translate(" + f(cx) + " " + f(gy) + ") scale(" + (s || 1) + ")", g);
+}
+// a patient room at Ahl Masr (refs/photos/ahl-masr-room.jpg): white walls with a mint stripe, a ceiling pendant, the window
+// with curtains, a child in the bed, a monitor; calm and clean
+function ahlRoom(t) {
+  var s = '<rect x="-600" y="-600" width="1840" height="1240" fill="#f2f3ef"/>' + R(-600, 360, 1840, 18, "#bfe0cf", 0) + R(-600, 640, 1840, 600, "#e4e7e2", 0) + '<path d="M-600 640 H1240" stroke="' + INK + '" stroke-width="2.4"/>';
+  s += R(380, 140, 220, 260, "#d7e6ec", 2.4) + '<path d="M490 140 V400" stroke="' + INK + '" stroke-width="2"/>' + P("M360 130 Q380 280 370 420 L410 420 Q420 280 400 130 Z", "#cfd3cc", 2) + P("M600 130 Q590 280 600 420 L630 420 Q620 280 620 130 Z", "#cfd3cc", 2);
+  s += R(200, 60, 24, 120, "#e9ebe7", 2) + R(170, 170, 84, 30, "#e9ebe7", 2, 8);   // the pendant
+  s += R(110, 500, 400, 26, "#c6c3bb", 2.2) + R(100, 420, 14, 220, "#d6d2c6", 1.8) + R(120, 470, 380, 32, "#fff", 2.2, 10) + R(130, 448, 86, 26, "#fff", 2, 12) + R(120, 526, 12, 114, "#d6d2c6", 1.6) + R(490, 526, 12, 114, "#d6d2c6", 1.6);
+  s += PERSON.side({ x: 300, y: 474, s: .62, dir: 1, rot: -90, legs: [{ hip: 0, knee: 0 }, { hip: 0, knee: 0 }], arms: [{ sh: 8, el: 10, hand: "relaxed" }, { sh: -6, el: 10, hand: "relaxed" }], face: { eyes: blink(t, 2), mouth: "smile" }, outfit: { base: "casual", colors: { shirt: "#e9d08a", shirtD: "#c9b06a" } }, breath: .5 + .5 * Math.sin(t * 1.6) }).svg;
+  s += P("M210 470 Q340 440 500 470 L500 500 L210 500 Z", "#f6edc8", 2.2);
+  s += R(-40, 240, 110, 80, "#2f2b27", 2.2, 6) + R(-32, 248, 94, 56, "#203028", 1) + '<path d="M-28 280 l20 0 l6 -14 l6 24 l6 -10 l40 0" stroke="#7fd08a" stroke-width="2" fill="none"/>';
+  s += C(-120, 220, 36, "#9fd0c4", 0, ' opacity=".6"') + C(-80, 280, 24, "#f2b6a0", 0) + C(640, 260, 30, "#9fd0c4", 0);   // the wall decals for the children
+  return s;
+}
