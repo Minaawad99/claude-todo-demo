@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8"><title>The Cairo Ring Road Fire — What Happened?</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Arabic:wght@600;700;800&family=Noto+Serif:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* «إيه الحكاية؟» — the «الرسم الهندسي» look, measured from 20 reference videos (videos/_reference/tabizzay/STYLE.md).
+     360×640 canvas (render.js SCALE 3 → 1080×1920). Reference sizes are at 720 wide, so here they are halved.
+     Phases, all driven by TIMING: intro card (hook lines) → bumper (promise line) → panel + captions → summary card → ask box. */
+  :root { --paper: #eee5d0; --ink: #2a2016; --mute: #8f8576; --orange: #bd552f; --blue: #4a6f8a; --olive: #5e653a; --tan: #ddd2b8; }
+  html, body { margin: 0; background: var(--paper); }
+  .canvas { position: relative; width: 360px; height: 640px; background: var(--paper); overflow: hidden; font-family: "Inter", sans-serif; color: var(--ink); }
+  .layer { position: absolute; inset: 0; }
+  /* the main card: one 1px frame 14px in, the panel fills its top, a rule, the caption */
+  #frame { position: absolute; left: 14px; top: 14px; width: 332px; height: 612px; box-sizing: border-box; border: 1.1px solid var(--ink); }
+  .panel { position: absolute; left: 15px; top: 15px; width: 330px; height: 405px; overflow: hidden; }
+  .panel svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #rule { position: absolute; left: 32px; right: 32px; top: 431px; border-top: .6px solid var(--ink); }
+  #wm { position: absolute; left: 0; right: 0; top: 440px; text-align: center; font: 500 8.5px "Inter"; color: #b3a995; }
+  #cap { position: absolute; left: 30px; right: 30px; top: 458px; text-align: center; font: 700 14px/1.75 "Inter", sans-serif; }
+  .k-o { color: var(--orange); } .k-b { color: var(--blue); } .k-g { color: var(--olive); } .k-gr { color: var(--mute); }
+  .k-u { text-decoration: underline; text-decoration-thickness: 1.2px; text-underline-offset: 4px; }
+  /* cards (intro + summary): paper, double frame drawn as SVG so it can draw itself in, crop marks outside the corners */
+  .card { position: absolute; inset: 0; background: var(--paper); display: none; }
+  .card .chrome { position: absolute; inset: 0; width: 360px; height: 640px; }
+  .logo { position: absolute; right: 30px; top: 28px; display: flex; align-items: center; gap: 4px; font: 500 8px "Inter"; color: #6f6556; }
+  .logo svg { width: 11px; height: 11px; }
+  #intro .cat { position: absolute; left: 0; right: 0; top: 100px; text-align: center; font: 600 8px "Inter"; color: var(--orange); }
+  #intro .r { position: absolute; left: 157px; width: 46px; border-top: .6px solid var(--ink); }
+  #intro .hook { position: absolute; left: 26px; right: 26px; top: 124px; min-height: 80px; text-align: center; font: 800 17px/1.6 "Inter"; }
+  #intro .hook span { transition: none; }
+  #introArt { position: absolute; left: 28px; top: 236px; width: 304px; height: 330px; }
+  #bumper { position: absolute; inset: 0; display: none; background: var(--paper); }
+  #bumper svg { position: absolute; left: 90px; top: 98px; width: 180px; height: 200px; }
+  #bumper .name { position: absolute; left: 0; right: 0; top: 310px; text-align: center; font: 700 22px "Inter"; }
+  #bumper .sub { position: absolute; left: 0; right: 0; top: 352px; text-align: center; font: 600 9.5px "Inter"; }
+  /* summary card */
+  #outro .q { position: absolute; left: 28px; right: 28px; top: 50px; font: 800 12.5px/1.55 "Inter"; }
+  #outro .art { position: absolute; left: 28px; right: 28px; top: 98px; height: 140px; background: var(--tan); overflow: hidden; }
+  #outro .art svg { width: 100%; height: 100%; display: block; }
+  #outro .leg { position: absolute; left: 28px; right: 28px; top: 246px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font: 600 7.5px "Inter"; }
+  #outro .leg b { display: inline-grid; place-items: center; width: 10px; height: 10px; border: .8px solid var(--ink); border-radius: 50%; font: 700 6px "Noto Serif"; margin-left: 4px; vertical-align: -2px; }
+  #outro .stat { position: absolute; left: 28px; right: 28px; top: 290px; display: flex; align-items: center; gap: 9px; }
+  #outro .stat .n { font: 800 34px/1 "Noto Serif", serif; color: var(--orange); direction: ltr; white-space: nowrap; }
+  #outro .stat .t { font: 700 8px/1.55 "Inter"; }
+  #outro .pts { position: absolute; left: 28px; right: 28px; top: 342px; border-top: .6px solid var(--ink); padding-top: 7px; font: 600 7.5px/1.75 "Inter"; }
+  #outro .more { margin-top: 5px; font: 500 6.8px/1.6 "Inter"; color: var(--mute); }
+  #outro .ask { position: absolute; left: 34px; right: 34px; top: 448px; height: 120px; border: 1px solid var(--ink); text-align: center; display: none; }
+  #outro .ask::after { content: ""; position: absolute; inset: 3px; border: .5px solid var(--ink); }
+  #outro .ask .l1 { margin-top: 20px; font: 600 9px "Inter"; }
+  #outro .ask .l2 { margin-top: 6px; font: 700 12px "Inter"; }
+  #outro .ask .l3 { margin-top: 8px; font: 700 13px "Inter"; color: var(--orange); }
+  #outro .ask .blank { display: inline-block; width: 64px; border-bottom: 1.2px solid var(--orange); margin: 0 4px; position: relative; height: 14px; vertical-align: -2px; }
+  #outro .ask .caret { position: absolute; left: 4px; bottom: 2px; width: 1.4px; height: 13px; background: var(--ink); }
+  /* English episode: every SVG label in Inter; the panel SVGs keep direction:rtl so the shared label() anchors stay right */
+  text[style*="Noto Sans Arabic"] { font-family: "Inter", sans-serif !important; letter-spacing: -.2px; }
+  .panel svg, #introArt, #outroArt, #bumperArt { direction: rtl; }
+  #cap { font-weight: 700; letter-spacing: -.1px; }
+  #outro .leg b { margin-left: 0; margin-right: 4px; }
+</style></head>
+<body>
+<div class="canvas">
+  <div class="layer" id="main">
+    <div class="panel"><svg id="panelA" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg><svg id="panelB" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg></div>
+    <div id="frame"></div><div id="rule"></div><div id="wm"></div><div id="cap"></div>
+  </div>
+  <div class="card" id="intro"><svg class="chrome" id="introChrome"></svg>
+    <div class="logo"><span>What Happened?</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="cat">Accidents & Safety</div><div class="r" style="top:118px"></div><div class="hook" id="hook"></div><div class="r" id="hookRule" style="top:214px"></div>
+    <svg id="introArt" viewBox="0 0 608 660"></svg></div>
+  <div id="bumper"><svg id="bumperArt" viewBox="0 0 180 200"></svg><div class="name">What happened?</div><div class="sub">In one <span class="k-o">minute.</span></div></div>
+  <div class="card" id="outro"><svg class="chrome" id="outroChrome"></svg>
+    <div class="logo"><span>What Happened?</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="q">The Cairo Ring Road fire</div><div class="art"><svg id="outroArt" viewBox="0 0 600 280"></svg></div><div class="leg"><span><b>1</b>Get away, upwind</span><span><b>2</b>Call 911</span><span><b>3</b>Cover the flames</span><span><b>4</b>Cool the burn with water</span></div><div class="stat"><div class="n">30</div><div class="t">lives lost.<br>Rest in peace. Strength to their families, and a full recovery to the injured.</div></div><div class="pts">1. Leave the car and get far away, upwind.<br>2. Call 911 (or your local number) and give the exact location.<br>3. Clothes on fire: stop, drop and roll, then cover with cotton or a blanket.<br>4. Burns: cool running water for 20 minutes. No toothpaste, no ice.<div class="more">Send this to someone you love. One day, it might save a life.</div></div>
+    <div class="ask" id="ask"><div class="l1">Tell us…</div><div class="l2">what should we</div><div class="l3">explain next<span class="blank"><span class="caret" id="caret"></span></span>?</div></div>
+  </div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="mark"><rect x="84" y="4" width="32" height="10" fill="#2a2016"/><rect x="94" y="14" width="12" height="14" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" fill="#f4ecdb" stroke="#2a2016" stroke-width="9" stroke-linejoin="round"/><text x="106" y="140" text-anchor="middle" style="font:800 120px Noto Sans Arabic;fill:#bd552f">؟</text></g>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".15"/></pattern>
+  <pattern id="hatchW" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#fff" stroke-width="1" opacity=".25"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#e1d5ba" stroke-width="1.3" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .05 0"/></filter>
+</defs></svg>
+<script src="../timing.js"></script>
+<script>window.DATA = {"caps": [[{"f": 0.0, "h": "<span class=\"k-o\">Wednesday,</span> November 25th…"}, {"f": 0.7429, "h": "at night."}], [{"f": 0.0, "h": "The <span class=\"k-b\">Ring</span> <span class=\"k-b\">Road</span> in Cairo,"}, {"f": 0.2376, "h": "over the <span class=\"k-u\">Ashara</span>"}, {"f": 0.396, "h": "underpass in Warraq…"}, {"f": 0.604, "h": "people heading home,"}, {"f": 0.8119, "h": "like any other day."}], [{"f": 0.0, "h": "Then suddenly…"}, {"f": 0.2174, "h": "a truck loaded with <span class=\"k-o\">fuel,</span>"}, {"f": 0.5942, "h": "and the driver lost control."}], [{"f": 0.0, "h": "It slammed into the concrete barrier…"}, {"f": 0.6909, "h": "and <span class=\"k-o\">flipped</span> <span class=\"k-o\">over.</span>"}], [{"f": 0.0, "h": "Fuel poured across the asphalt…"}, {"f": 0.381, "h": "and in under <span class=\"k-u\">30</span> seconds,"}, {"f": 0.6786, "h": "the whole road was on <span class=\"k-o\">fire.</span>"}], [{"f": 0.0, "h": "The fire jumped from car to car,"}, {"f": 0.4714, "h": "one after another…"}, {"f": 0.7429, "h": "more than <span class=\"k-o\">20</span> cars."}], [{"f": 0.0, "h": "People inside their cars…"}, {"f": 0.5778, "h": "didn&#x27;t make it out."}], [{"f": 0.0, "h": "In the end…"}, {"f": 0.2143, "h": "<span class=\"k-o\">30</span> lives were lost,"}, {"f": 0.5714, "h": "and dozens were injured."}], [{"f": 0.0, "h": "So how did the fire"}, {"f": 0.5405, "h": "spread that fast?"}], [{"f": 0.0, "h": "Because it&#x27;s not"}, {"f": 0.2297, "h": "the liquid fuel that burns…"}, {"f": 0.6081, "h": "it&#x27;s the <span class=\"k-b\">vapor</span>"}, {"f": 0.8108, "h": "coming off it."}], [{"f": 0.0, "h": "And that vapor"}, {"f": 0.1685, "h": "is <span class=\"k-o\">heavier</span> than air…"}, {"f": 0.4045, "h": "it creeps along the ground,"}, {"f": 0.7191, "h": "and slips <span class=\"k-b\">under</span> the cars."}], [{"f": 0.0, "h": "And the first <span class=\"k-o\">spark…</span>"}, {"f": 0.2386, "h": "from a <span class=\"k-o\">hot</span> engine,"}, {"f": 0.4545, "h": "or a car&#x27;s <span class=\"k-o\">wiring…</span>"}, {"f": 0.6705, "h": "lights up everything at once."}], [{"f": 0.0, "h": "So if you&#x27;re ever"}, {"f": 0.3462, "h": "in that situation…"}, {"f": 0.7115, "h": "what do you do?"}], [{"f": 0.0, "h": "First: leave the car,"}, {"f": 0.2651, "h": "and get <span class=\"k-g\">away,</span> <span class=\"k-b\">upwind,</span>"}, {"f": 0.5301, "h": "far away…"}, {"f": 0.6506, "h": "because the tank can <span class=\"k-o\">explode.</span>"}], [{"f": 0.0, "h": "Second:"}, {"f": 0.1026, "h": "call <span class=\"k-o\">911,</span>"}, {"f": 0.2308, "h": "or your local emergency number…"}, {"f": 0.641, "h": "and give the <span class=\"k-u\">exact</span> location."}], [{"f": 0.0, "h": "If someone&#x27;s"}, {"f": 0.1605, "h": "clothes catch fire…"}, {"f": 0.4074, "h": "they need to <span class=\"k-o\">stop,</span>"}, {"f": 0.642, "h": "<span class=\"k-o\">drop</span> to the ground,"}, {"f": 0.8889, "h": "and <span class=\"k-o\">roll.</span>"}], [{"f": 0.0, "h": "Cover them with a <span class=\"k-g\">cotton</span> jacket,"}, {"f": 0.4783, "h": "or a <span class=\"k-g\">blanket…</span>"}, {"f": 0.6812, "h": "to smother the flames."}], [{"f": 0.0, "h": "For the burn…"}, {"f": 0.2857, "h": "cool <span class=\"k-b\">running</span> water,"}, {"f": 0.6939, "h": "for <span class=\"k-o\">20</span> minutes."}], [{"f": 0.0, "h": "A lot of people think"}, {"f": 0.2785, "h": "toothpaste or ice"}, {"f": 0.5063, "h": "helps a burn…"}, {"f": 0.6835, "h": "<span class=\"k-o\">nope,</span> they make it worse."}], [{"f": 0.0, "h": "Don&#x27;t pull off clothes"}, {"f": 0.2556, "h": "stuck to the skin…"}, {"f": 0.4667, "h": "cover it with a <span class=\"k-g\">clean</span> cloth,"}, {"f": 0.7889, "h": "until help arrives."}], [{"f": 0.0, "h": "If there&#x27;s <span class=\"k-gr\">smoke</span> around you…"}, {"f": 0.4143, "h": "get <span class=\"k-o\">low,</span>"}, {"f": 0.5429, "h": "the <span class=\"k-b\">clean</span> air is near the floor."}], [{"f": 0.0, "h": "And your phone,"}, {"f": 0.2319, "h": "in a moment like this…"}, {"f": 0.5652, "h": "has one job:"}, {"f": 0.7536, "h": "to call for <span class=\"k-g\">help.</span>"}], [{"f": 0.0, "h": "Not to stand there <span class=\"k-o\">filming…</span>"}, {"f": 0.3218, "h": "and block the way"}, {"f": 0.5287, "h": "for a <span class=\"k-o\">fire</span> <span class=\"k-o\">truck</span>"}, {"f": 0.7241, "h": "that could save someone."}], [{"f": 0.0, "h": "So, bottom line…"}, {"f": 0.2698, "h": "get <span class=\"k-g\">away,</span> <span class=\"k-g\">call,</span>"}, {"f": 0.5238, "h": "<span class=\"k-g\">cover,</span> and <span class=\"k-b\">cool</span> it with water."}], [{"f": 0.0, "h": "Rest in peace to"}, {"f": 0.1735, "h": "everyone we lost…"}, {"f": 0.3571, "h": "strength to their families…"}, {"f": 0.6429, "h": "and a full recovery"}, {"f": 0.8469, "h": "to the injured."}], [{"f": 0.0, "h": "Send this to"}, {"f": 0.2131, "h": "someone you love…"}, {"f": 0.5082, "h": "one day,"}, {"f": 0.6557, "h": "it might save a life."}]], "hook": [[{"w": "Wednesday,", "c": "k-o", "f": 0.0}, {"w": "November", "c": "", "f": 0.2558}, {"w": "twenty-fifth…", "c": "", "f": 0.4651}, {"w": "at", "c": "", "f": 0.7907}, {"w": "night.", "c": "", "f": 0.8605}], [{"w": "The", "c": "", "f": 0.0}, {"w": "Ring", "c": "k-b", "f": 0.0396}, {"w": "Road", "c": "k-b", "f": 0.0891}, {"w": "in", "c": "", "f": 0.1386}, {"w": "Cairo,", "c": "", "f": 0.1683}, {"w": "over", "c": "", "f": 0.2376}, {"w": "the", "c": "", "f": 0.2871}, {"w": "Ashara", "c": "k-u", "f": 0.3267}, {"w": "underpass", "c": "", "f": 0.396}, {"w": "in", "c": "", "f": 0.495}, {"w": "Warraq…", "c": "", "f": 0.5248}, {"w": "people", "c": "", "f": 0.604}, {"w": "heading", "c": "", "f": 0.6733}, {"w": "home,", "c": "", "f": 0.7525}, {"w": "like", "c": "", "f": 0.8119}, {"w": "any", "c": "", "f": 0.8614}, {"w": "other", "c": "", "f": 0.901}, {"w": "day.", "c": "", "f": 0.9604}]], "introLines": 2, "promise": -1, "summary": 24, "cta": 99, "watermark": ""};</script>
+<script src="../../_templates/people/person.js"></script><script src="draw.js"></script>
+<script src="scenes.js"></script>
+<script src="../../_templates/sketch/engine.js"></script>
+</body></html>

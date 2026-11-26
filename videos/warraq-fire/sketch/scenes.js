@@ -345,7 +345,7 @@ function bayClose(t, hot, sp) {
   return s;
 }
 shot([11, 0], still(300, 430, 1), function (u, d, t) { return creepScene(t, 1) + engineBay(t, 1, 0) + inset(330, 240, 170, G("scale(.56)", bayClose(t, at(u, 0, .8), u > .7 ? 1 : 0)), at(u, 0, .4)) + '<path d="M' + f(CAR2 + 50) + ' ' + f(RD - 25) + ' L240 390" stroke="' + INK + '" stroke-width="1.6"/>'; });
-shot([11, 1], still(300, 430, 1), function (u, d, t) { return creepScene(t, 1) + engineBay(t, 1, 1) + inset(330, 240, 170, G("scale(.56)", bayClose(t, 1, 1)), 1) + label(450, 230, 560, 470, "موتور سخن", ORANGE, at(u, .1, .5), 24); });
+shot([11, 1], still(300, 430, 1), function (u, d, t) { return creepScene(t, 1) + engineBay(t, 1, 1) + inset(330, 240, 170, G("scale(.56)", bayClose(t, 1, 1)), 1) + label(440, 250, 150, 455, "موتور سخن", ORANGE, at(u, .1, .5), 24); });
 shot([11, 2], still(300, 430, 1), function (u, d, t) { return creepScene(t, 1) + engineBay(t, 1, 2) + inset(330, 240, 170, G("scale(.56)", bayClose(t, 1, 2)), 1) + label(250, 175, 80, 470, "كهربا", ORANGE, at(u, .1, .5), 24); });
 // «تولّع المكان كله مرة واحدة.»: fly out; the flame front runs back along the vapour to the tanker
 shot([11, 3], fly([300, 430, 1], [420, 420, .8], 1.6), function (u, d, t) { return creepScene(t, 1, { fire: clamp(u / 1.4) }) + engineBay(t, 1, 1); });
@@ -437,7 +437,7 @@ function drape(k, t, col) {
   return s;
 }
 shot([16, 0], still(340, 545, 1.3), function (u, d, t) { var k = at(t - LS(16), .25, 1.7), th = 162 * (1 - ease(clamp(u / .7))); return (u < .7 ? victimRoll(t, th, .3 * (1 - k)) : victimLying(t, .3 * (1 - k))) + drape(k, t) + label(300, 560, 200, 440, "قطن", OLIVE, at(u, 1.3, .5), 28); });
-shot([16, 1], still(340, 545, 1.3), function (u, d, t) { return victimLying(t, 0) + drape(at(t - LS(16), .25, 1.7), t) + label(300, 560, 200, 440, "قطن", OLIVE, 1, 28) + tag("بطانية", 220, 430, at(u, .1, .4), 32); });
+shot([16, 1], still(340, 545, 1.3), function (u, d, t) { return victimLying(t, 0) + drape(at(t - LS(16), .25, 1.7), t) + label(300, 560, 200, 440, "قطن", OLIVE, 1, 28) + tag("بطانية", 430, 400, at(u, .1, .4), 32); });
 // «عشان النار تتخنق.»: no air for the fire: O₂ crossed out
 shot([16, 2], fly([340, 545, 1.3], [330, 540, 1.6], 1.8), function (u, d, t) { return victimLying(t, 0) + drape(1, t) + G("", T("الأكسجين", 330, 390, 30, BLUE, 800) + wave(240, 440, 420, 440, t, BLUE, 5, 30, 1, 3), at(u, .2, .4)) + cross(330, 440, 1, at(u, .8, .5)); });
 // 17 · «والحرق… مية جارية عادية، 20 دقيقة.»: the burnt forearm under a running tap
