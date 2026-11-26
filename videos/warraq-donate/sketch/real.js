@@ -122,3 +122,27 @@ function ahlRoom(t) {
   s += C(-120, 220, 36, "#9fd0c4", 0, ' opacity=".6"') + C(-80, 280, 24, "#f2b6a0", 0) + C(640, 260, 30, "#9fd0c4", 0);   // the wall decals for the children
   return s;
 }
+
+// ── the entrance of Hospital 185, Qasr El-Ainy Emergency & Burns (photo sent by the user, refs/photos/qasr-185-entrance.jpg):
+// a cream wall with two teal bands and the bilingual name in steel letters, a mint-green lower wall with teal rails, three
+// glass doorways in light frames, a no-smoking sign, a notice board, and the chequered tile floor running toward us.
+function entrance185(t) {
+  var CR = "#ece2c6", TL = "#2f6f78", MN = "#cfe0d6", s = "";
+  s += '<rect x="-600" y="-600" width="1840" height="1240" fill="' + CR + '"/>' + R(-600, -40, 1840, 60, "#3a3f44", 0) + '<path d="M-600 20 H1240" stroke="' + INK + '" stroke-width="2"/>';   // the upper gallery
+  s += R(-600, 60, 1840, 10, TL, 0) + R(-600, 230, 1840, 10, TL, 0);
+  s += T("مستشفى ١٨٥ قصر العيني للحوادث والحروق", 320, 135, 27, "#55595c", 900);
+  s += '<text x="320" y="196" text-anchor="middle" style="font:800 19px Noto Sans;fill:#6f7377;letter-spacing:.5px;direction:ltr">185 KASR EL EINY EMERGENCY &amp; BURNS HOSPITAL</text>';
+  s += R(-600, 250, 1840, 16, "#d8d2be", 1.6);   // the ceiling edge
+  s += R(-600, 266, 1840, 374, MN, 0) + R(-600, 470, 1840, 12, TL, 0) + R(-600, 560, 1840, 12, TL, 0);
+  // three doorways: glass in light frames, people seen inside
+  [[60, 170], [300, 180], [560, 150]].forEach(function (d, i) { var x = d[0], w = d[1];
+    s += R(x, 290, w, 350, "#e9ece6", 2.4) + R(x + 12, 302, w - 24, 330, i === 1 ? "#a9c4bf" : "#c9dcd6", 1.6) + '<path d="M' + (x + w / 2) + ' 302 V632" stroke="' + INK + '" stroke-width="1.6"/>';
+    s += R(x + w / 2 - 34, 270, 68, 16, "#9fd0e0", 1.2, 2); });
+  s += PERSON.front({ x: 390, y: 600 - 210 * .62, s: .62, outfit: { base: "doctor", tie: false, colors: { coat: "#3f8a80", coatD: "#2f6a62", shirt: "#3f8a80", shirtD: "#2f6a62", pants: "#3f8a80", pantsD: "#2f6a62" } }, face: { eyes: blink(t, 3) }, head: { turn: -.3 }, arms: [{ rel: [-20, 140], hand: "relaxed" }, { rel: [20, 140], hand: "relaxed" }], breath: .5 + .5 * Math.sin(t * 1.6) }).svg;
+  s += R(-60, 300, 90, 150, "#7fb7c4", 2) + R(230, 400, 26, 26, "#fff", 1.4) + C(243, 413, 9, "none", 2.4) + '<path d="M236 406 L250 420" stroke="#c93c2a" stroke-width="2.4"/>';
+  // the chequered floor in perspective
+  s += R(-600, 640, 1840, 600, "#d9cfb2", 2.4);
+  for (var i = -8; i <= 16; i++) s += '<path d="M' + (320 + i * 40) + ' 640 L' + (320 + i * 140) + ' 1100" stroke="#4a4f52" stroke-width="4"/>';
+  [680, 740, 830, 960].forEach(function (y) { s += '<path d="M-600 ' + y + ' H1240" stroke="#4a4f52" stroke-width="3"/>'; });
+  return s;
+}

@@ -271,8 +271,10 @@ function hospital(x, y, name, sign, o) {
 // Qasr El-Ainy from the photo, a yellow ambulance pulling up in front, the «185» sign
 function qasrScene(u, t) { return paper() + floorL(640) + qasrAiny(320, 640, .62) + R(-600, 640, 1840, 160, ASPH, 0) + '<path d="M-600 640 H1240" stroke="' + INK + '" stroke-width="2.4"/>' + place(lerp(700, 330, ease(clamp(u / 2.2))), 700, .42, ambulanceEG({ t: t, spin: -6 * (u < 2.2 ? 1 : 0), flash: 1 })); }
 function sign185(k) { k = pop(k); if (k <= 0) return ""; return G("translate(320 120) scale(" + f(k) + ")", R(-200, -40, 400, 80, "#8a2f5c", 2.4, 8) + T("مستشفى 185 · قصر العيني", 0, -4, 28, "#fff", 900) + T("للحوادث والحروق", 0, 26, 18, "#f4d6e4", 700)); }
-shot(9, still(320, 420, 1), function (u, d, t) { return qasrScene(u, t) + sign185(at(u, .2, .4)); });
-shot([9, 2], still(320, 420, 1), function (u, d, t) { return qasrScene(u + 3, t) + sign185(1) + tag("حكومي · جامعة القاهرة", 320, 210, at(u, .2, .4), 28, OLIVE) + check(520, 210, 1, at(u, .5, .4), OLIVE); });
+shot(9, still(320, 420, 1), function (u, d, t) { return qasrScene(u, t); });
+// «قصر العيني للحوادث والحروق…»: in through the doors of Hospital 185 itself (the user's photo)
+shot([9, 1], fly([320, 420, .95], [320, 430, 1.02], 1.8), function (u, d, t) { return entrance185(t); }, { tr: "in" });
+shot([9, 2], still(320, 430, 1.02), function (u, d, t) { return entrance185(t) + tag("حكومي · جامعة القاهرة", 320, 330, at(u, .2, .4), 30, OLIVE) + check(520, 330, 1, at(u, .5, .4), OLIVE); });
 // 10 · the three ways, each number on its own card (from the committee's official post)
 function payCard(y, k, head, col, big, small) { k = pop(k); if (k <= 0) return ""; return G("translate(320 " + f(y) + ") scale(" + f(k) + ")", R(-280, -70, 560, 140, "#f4ecdb", 2.4, 10) + R(-280, -70, 150, 140, col, 2.4, 10) + T(head, -205, 8, 22, "#fff", 900) + N(big, 70, -2, big.length > 12 ? 30 : 40, INK) + T(small, 70, 44, 17, MUTE, 700)); }
 function payCards(u, n) { return paper() + payCard(180, n > 0 ? 1 : 0, "فودافون كاش", "#c93c2a", "*9*155#", "من موبايلك") + payCard(360, n > 1 ? 1 : 0, "فوري", "#e2a33a", "لجنة زكاة 185", "ابحث عن: القصر العيني") + payCard(540, n > 2 ? 1 : 0, "إنستاباي", "#5b3c8f", "01115010062322", "بنك القاهرة · لجنة زكاة مستشفى 185"); }
