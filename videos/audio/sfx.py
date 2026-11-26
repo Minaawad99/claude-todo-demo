@@ -270,6 +270,21 @@ def fx_rotor(d=4.0, rate=6.5):   # main rotor "chop": low thumps per blade pass 
 def fx_windmill(d=3.0):          # rotor coasting without the engine: slower chop, airy
     return fx_rotor(d, 4.2) * 0.6 + lp_fast(noise(int(d * SR)), 1200, 1) * 0.3 * env(int(d * SR), .5, .5)
 
+def fx_fire(d=4.0):              # a big fire: low roar of burning gas + random wood/plastic crackles
+    n = int(d * SR); t = t_(d); roar = lp_fast(noise(n), 260, 3) * 6 * (1 + .25 * np.sin(2 * np.pi * .7 * t) + .15 * np.sin(2 * np.pi * 1.9 * t))
+    cr = np.zeros(n, np.float32); k = int(d * 38)
+    for p in rng.integers(0, max(1, n - 2400), k):
+        m = rng.integers(200, 2200); cr[p:p + m] += hp_fast(noise(m), 1800) * np.exp(-np.arange(m) / SR * rng.uniform(40, 140)) * rng.uniform(.2, 1)
+    return (roar + 0.55 * cr).astype(np.float32) * env(n, .4, .6)
+def fx_siren(d=3.0):             # an emergency siren far away: a wail rising and falling, filtered by distance
+    t = t_(d); f = 700 + 500 * (0.5 - 0.5 * np.cos(2 * np.pi * t / 1.6)); ph = 2 * np.pi * np.cumsum(f) / SR
+    x = np.sin(ph) + 0.25 * np.sin(2 * ph)
+    return lp_fast(x, 2400, 1).astype(np.float32) * env(len(t), .6, .8)
+def fx_traffic(d=6.0):           # a road at night: tyre hiss and distant engines passing, slow swells
+    n = int(d * SR); t = t_(d); x = lp_fast(noise(n), 900, 2) * 3 * (0.6 + 0.4 * np.sin(2 * np.pi * t / 4.3) ** 2)
+    x += 0.35 * np.sin(2 * np.pi * 52 * t) * (0.5 + 0.5 * np.sin(2 * np.pi * t / 3.1))
+    return x.astype(np.float32) * env(n, 1.0, 1.0)
+
 FX = {k[3:]: v for k, v in globals().items() if k.startswith("fx_")}
 
 # ── music bed: soft chords + plucks, 84 bpm, voice band carved out ──
