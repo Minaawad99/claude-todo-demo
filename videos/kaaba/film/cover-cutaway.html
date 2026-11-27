@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Kaaba cutaway cover</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;700;800;900&display=block" rel="stylesheet">
+<style>
+  /* the reel cover «الكعبة من جوّه بتتغسل بإيه؟» (the user's cutaway idea, drawn our way): the episode's own 3D interior
+     inside a Kaaba shell (kiswa, gold belt, the gold door up its stair) with the front-right corner cut away like a
+     section drawing, on the series' cover layout (dark card, one warm glow, white title, yellow line). 540×960, shot at 2x.
+     Everything that matters stays in y 120–840 and away from the right-hand buttons. */
+  @font-face { font-family: "AmiriK"; src: url(../sim/fonts/amiri-700.woff2) format("woff2"); font-weight: 700; }
+  html, body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #1b1d22; }
+  .glow { position: absolute; left: 20px; top: 330px; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(#ffd27a 0, rgba(255, 210, 122, 0) 68%); opacity: .38; }
+  #gl { position: absolute; left: 0; top: 0; width: 540px; height: 960px; display: block; }
+  .fB { position: absolute; left: 0; right: 0; top: 700px; height: 260px; background: linear-gradient(rgba(27,29,34,0), rgba(27,29,34,.85) 35%, #1b1d22); }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 10px rgba(0,0,0,.6); }
+  .hl { background: #f3c94a; color: #1f1810; border-radius: 10px; padding: 0 10px; line-height: 1.2; display: inline-block; text-shadow: none; }
+  .lab { position: absolute; font: 800 14px "Noto Sans Arabic"; color: #1f1810; background: #fbf4e2; padding: 3px 11px; border-radius: 999px; box-shadow: 0 3px 10px rgba(0,0,0,.4); white-space: nowrap; transform: translate(-50%, -100%); }
+  .lab::after { content: ""; position: absolute; left: 50%; bottom: -10px; width: 2px; height: 10px; background: #fbf4e2; }
+</style>
+</head>
+<body>
+<div class="cover" id="cover">
+  <div class="glow"></div>
+  <canvas id="gl" width="1080" height="1920"></canvas>
+  <div class="fB"></div>
+  <p class="t" style="top:112px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
+  <p class="t" style="top:150px;font:900 42px/1.4 'Noto Sans Arabic';color:#fff">الكعبة <span class="hl">من جوّه</span><br>بتتغسل بإيه؟</p>
+  <p class="t" style="top:270px;font:800 22px/1.3 'Noto Sans Arabic';color:#f2c230">مرة واحدة بس في السنة</p>
+  <div id="labs"></div>
+  <p class="t" style="top:742px;font:800 31px/1.35 'Noto Sans Arabic';color:#fff">مية <span style="color:#f2c230">زمزم</span> وورد وعود<br><span style="font-size:22px;color:#d9d4c8">وكله بالإيد… من غير صابون!</span></p>
+</div>
+<script src="../timing.js"></script>
+<script src="../../_templates/people/person.js"></script>
+<script src="../../lib/three.min.js"></script>
+<script>
+  // world.js makes its own renderer on #gl: let it keep a transparent background so the card and glow show behind
+  (function () { var R0 = THREE.WebGLRenderer; THREE.WebGLRenderer = function (o) { o = o || {}; o.alpha = true; return new R0(o); }; })();
+  window.GL_RATIO = 2;
+  function load(src) { return new Promise(function (r) { var s = document.createElement("script"); s.src = src; s.onload = r; document.body.appendChild(s); }); }
+  window.READY = Promise.all([document.fonts.load("700 40px AmiriK", "لا إله"), document.fonts.load("900 42px 'Noto Sans Arabic'", "الكعبة")])
+    .then(function () { return load("world.js"); }).then(function () { return WORLD.ready; })
+    .then(function () { return load("props.js"); }).then(function () { return PROPS.ready(); })
+    .then(function () { return load("cutaway.js"); }).then(function () { document.title = "ready"; });
+</script>
+</body>
+</html>
