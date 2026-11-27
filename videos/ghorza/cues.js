@@ -47,8 +47,10 @@ paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                               
 const C = (i, j) => { const l = T[i], f = (window.CHUNKS_F || {})[i]; return l.start + (l.end - l.start) * (f ? f[j] : 0); };
 eval(fs.readFileSync(__dirname + '/sketch/scenes.js', 'utf8').split('\n')[0].replace('window.CHUNKS', 'window.CHUNKS_F'));
 // hook: the traffic under the hook card, a whoosh as he weaves, a tick on the stopwatch
-a(L(0) + 0.2, 'wind', 0.08, L(PROMISE) - 0.2); a(L(0) + 0.9, 'whoosh', 0.22); for (let k = 0; k < 4; k++) a(L(0) + 0.8 + k * 0.4, 'tick', 0.12);
-a(L(1) + 0.3, 'whoosh', 0.18); a(L(2) + 0.2, 'pop', 0.25);
+a(L(0) + 0.2, 'wind', 0.08, L(PROMISE) - 0.2); for (let k = 0; k < 4; k++) a(L(0) + 0.8 + k * 0.4, 'tick', 0.1);
+[1.5, 3.4, 4.35].forEach(x => a(x, 'whoosh', 0.26));                    // each cut across a lane (the hook choreography in shots.js)
+[1.55, 3.8, 4.6].forEach(x => { a(x, 'pop', 0.3); a(x + 0.05, 'thud', 0.12); });   // each car he cuts in front of jolts and brakes
+a(L(2) + 0.2, 'pop', 0.25);
 // 4–6: the Ring Road, the weave, the hit
 a(L(4), 'wind', 0.08, L(7) - L(4)); a(L(4), 'idle', 0.05, L(7) - L(4));
 a(C(4, 2) + 0.4, 'whoosh', 0.25); a(L(5) + 0.4, 'rev', 0.18); ding(L(5) + 0.7); a(C(5, 1) + 0.3, 'whoosh', 0.25); a(C(5, 1) + 1.1, 'whoosh', 0.22);

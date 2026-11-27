@@ -46,7 +46,11 @@ function jerseyTop(xa, xb, y0, y1, sc) {
 function carTop(x, y, col, ang, o) {
   o = o || {}; var s = "";
   s += '<ellipse cx="3" cy="6" rx="27" ry="64" fill="' + INK + '" opacity=".12"/>';                    // shadow
+  [[-1, -38], [1, -38], [-1, 40], [1, 40]].forEach(function (w) { s += '<rect x="' + (w[0] * 27 - 4) + '" y="' + (w[1] - 10) + '" width="8" height="20" rx="3" fill="' + TYRE + '" stroke="' + INK + '" stroke-width="1"/>'; });   // tyres peeking out
   s += P("M-22 -54 Q-25 -62 -14 -63 L14 -63 Q25 -62 22 -54 L25 -20 L25 48 Q25 62 12 62 L-12 62 Q-25 62 -25 48 L-25 -20 Z", col, 2);   // body
+  s += '<path d="M15 -60 Q23 -58 22 -52 L25 -20 L25 48 Q25 60 14 61 L17 46 L17 -40 Z" fill="' + INK + '" opacity=".13"/>';         // the shaded flank: volume
+  s += '<path d="M-22 -50 L-21 -30 M-23 -14 L-23 40" stroke="#fff" stroke-width="2" opacity=".35" fill="none"/>';                 // highlight on the lit side
+  s += P("M-25 8 H-19 M25 8 H19 M-25 26 H-20 M25 26 H20", "none", 1.1, ' opacity=".55"') + P("M-25 -8 L-25 46 M25 -8 L25 46", "none", 1.2, ' opacity=".2"');   // door seams
   s += P("M-21 -26 Q0 -34 21 -26 L18 -6 Q0 -10 -18 -6 Z", GLASS, 1.6) + P("M-16 -24 L-6 -28", "none", 1.6, ' stroke="' + GLASSL + '"');   // windscreen
   s += P("M-18 -6 Q0 -10 18 -6 L18 30 Q0 33 -18 30 Z", o.roof || col, 1.4);                            // roof
   s += P("M-18 30 Q0 33 18 30 L20 44 Q0 48 -20 44 Z", GLASS, 1.6);                                     // rear window

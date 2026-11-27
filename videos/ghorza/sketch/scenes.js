@@ -390,15 +390,28 @@ shot([26, 3], still(OV[0], OV[1], OV[2]), function (u, d, t) {
 
 // ── opening card, bumper and summary art ──
 window.SCENE = window.SCENE || {};
+// The hook: one choreographed weave, every move into a real gap. Each car he cuts in front of reacts: it brakes (lights),
+// drops back and twitches away (left or right), with a startle mark — never an overlap.
+var HK = { A: [1, 380], B: [2, 175], C: [1, -125], D: [3, 60], E: [0, 280], F: [3, 330], G: [0, -60], H: [0, 470] };
+var HW = [[0, 350, 640], [1.4, 350, 362], [2.6, 250, 262], [3.4, 250, 62], [4.3, 350, -40], [5.2, 450, -160], [7.4, 450, -420]];
+var HR = { A: [1.5, -1, 72], B: [3.75, 1, 56], D: [4.55, 1, 60] };   // reaction start, swerve side, how far it drops back
+function hookWeaver(t) { var p = kf(HW, t), q = kf(HW, t + .05); return [p[0], p[1], Math.atan2(q[0] - p[0], -(q[1] - p[1]) + 9) * 57.3]; }
+function react(t, r) {   // → {dx, dy, ang, brake, jolt}
+  if (!r || t < r[0]) return { dx: 0, dy: 0, ang: 0, brake: false, jolt: 0 };
+  var u = t - r[0], out = ease(u / .35) * (1 - ease((u - 1.1) / 1.3)), back = ease(u / 1.2);
+  return { dx: r[1] * 20 * out, dy: r[2] * back, ang: r[1] * 9 * out * (u < .5 ? 1 : 1 - ease((u - .5) / .8)), brake: u < 2.4, jolt: u < .9 ? 1 - u / .9 : 0 };
+}
+function startle(x, y, k) { if (k <= 0) return ""; var s = ""; [-40, -14, 14, 40].forEach(function (a) { var r = a * Math.PI / 180; s += '<path d="M' + f(x + Math.sin(r) * 36) + ' ' + f(y - Math.cos(r) * 36) + ' L' + f(x + Math.sin(r) * (52 + 10 * (1 - k))) + ' ' + f(y - Math.cos(r) * (52 + 10 * (1 - k))) + '" stroke="' + ORANGE + '" stroke-width="4" stroke-linecap="round" opacity="' + f(k) + '"/>'; }); return s + G("", T("!", x, y - 64, 30, ORANGE, 900), k); }
 SCENE.intro = function (svg, t, li) {
-  // line 0: the weave on the road (a stopwatch: a few seconds). line 1: only his car ringed. line 2: every car round him ringed
-  var s = '<g transform="translate(64 250) scale(.75)">' + Z.road({ scroll: t * SPEED, y0: 0, y1: 520 }) + '<clipPath id="ic"><rect x="-90" y="0" width="720" height="520"/></clipPath><g clip-path="url(#ic)">';
-  var L = [[0, 130, 0], [2, 80, 2], [1, 330, 1], [3, 260, 5], [2, 470, 4]];
-  L.forEach(function (c, i) { s += Z.carTop(LANE(c[0]), c[1] + 5 * Math.sin(t + i), CC[c[2]], 0, { ring: li >= 2 ? ease((t - LN[2].start - i * .12) / .3) : 0 }); });
-  var p = (t * .35) % 1, wx = 250 + 100 * Math.sin(p * Math.PI * 2), wy = 420 - 200 * p;
-  s += Z.carTop(wx, wy, ORANGE, 22 * Math.cos(p * Math.PI * 2), { ring: li === 1 ? ease((t - LN[1].start) / .3) : 0 });
+  // line 0: the weave, a stopwatch «a few seconds». line 1: only his car ringed. line 2: every car he endangered ringed
+  var s = '<clipPath id="ic"><rect x="-30" y="0" width="668" height="660"/></clipPath><g clip-path="url(#ic)"><g transform="translate(4 150)">' + Z.road({ scroll: t * SPEED, y0: -200, y1: 560 });
+  Object.keys(HK).forEach(function (k, i) {
+    var c = HK[k], r = react(t, HR[k]), x = LANE(c[0]) + r.dx, y = c[1] + r.dy + 3 * Math.sin(t * .9 + i);
+    s += Z.carTop(x, y, CC[i % 6], r.ang, { brake: r.brake, ring: li >= 2 ? ease((t - LN[2].start - i * .1) / .3) : 0 }) + startle(x, y - 40, r.jolt);
+  });
+  var w = hookWeaver(t); s += Z.carTop(w[0], w[1], ORANGE, w[2], { blink: Math.abs(w[2]) > 4 ? (w[2] > 0 ? 1 : -1) : 0, ring: li === 1 ? ease((t - LN[1].start) / .3) : 0 });
   s += '</g></g>';
-  if (li === 0) s += G("", Z.watch(520, 160, 60, (t * .6) % 1) + T("كام ثانية", 520, 260, 26, ORANGE, 800), ease((t - .8) / .3));
+  if (li === 0) s += G("", Z.watch(562, 64, 38, (t * .6) % 1) + tag("كام ثانية", 556, 140, 1, 18, ORANGE), ease((t - .8) / .3));
   return s;
 };
 SCENE.bumper = function (u, t) {
