@@ -253,7 +253,7 @@ function fat(cx, cy, s, o) {
   for (var r = 0; r < 4; r++) for (var c = 0; c < 4; c++) cells.push([(c - 1.5) * 92 + (r % 2 ? 46 : 0) + (rnd(r * 4 + c) - .5) * 14, (r - 1.5) * 80 + (rnd(r * 4 + c + 50) - .5) * 12]);
   g += '<rect x="' + f(cx - 230 * s) + '" y="' + f(cy - 180 * s) + '" width="' + f(460 * s) + '" height="' + f(360 * s) + '" fill="#f1dfd2" stroke="none"/>';
   cells.forEach(function (p, i) {
-    var rr = (50 - 18 * sh) * s * (1 + .02 * Math.sin(t * 1.4 + i)), x = cx + p[0] * s, y = cy + p[1] * s, poly = [];
+    var rr = (50 - 18 * sh) * s * (1 + .045 * Math.sin(t * 1.4 + i)), x = cx + p[0] * s, y = cy + p[1] * s, poly = [];
     for (var a = 0; a < 7; a++) { var an = a / 7 * Math.PI * 2 + i, rj = rr * (1 + (rnd(i * 7 + a) - .5) * .18); poly.push([x + Math.cos(an) * rj, y + Math.sin(an) * rj]); }
     g += blob(poly, "#f6efd9", 2) + blob(poly.map(function (q) { return [x + (q[0] - x) * .84, y + (q[1] - y) * .84]; }), lerpCol(FATC, "#f6efd9", sh * .6), 1.2);
     var na = i * 1.7; g += ell(x + Math.cos(na) * rr * .9, y + Math.sin(na) * rr * .9, 9 * s, 4.5 * s, "#8a6a8a", 1.2, na * 57.3 + 90);
@@ -277,6 +277,7 @@ function muscle(cx, cy, s, o) {
 function plate(x, y, s, k) {
   var g = ell(x, y + 6 * s, 112 * s, 40 * s, "#d9cdb4", 2) + ell(x, y, 110 * s, 38 * s, CREAM, 2.2) + ell(x, y, 80 * s, 26 * s, "#f3ede0", 1.4);
   k = clamp(k == null ? 1 : k); if (k <= 0) return g;
+  for (var st = 0; st < 3; st++) { var su = (now() * .35 + st / 3) % 1; g += G("", '<path d="M' + f(x + (-30 + st * 30) * s) + ' ' + f(y - (30 + su * 70) * s) + ' q' + f(8 * s) + ' ' + f(-10 * s) + ' 0 ' + f(-20 * s) + ' t0 ' + f(-20 * s) + '" stroke="#b9ad96" stroke-width="' + f(5 * s) + '" fill="none" stroke-linecap="round"/>', Math.sin(su * Math.PI) * .8); }
   var rice = [], n = Math.round(22 * k);
   g += blob(tr([[-60, 0], [-50, -18], [-20, -26], [10, -20], [20, -4], [0, 10], [-40, 12]], x - 12 * s * (1 - k), y, s * (.5 + .5 * k)), "#f4ecd0", 1.8);
   for (var i = 0; i < n; i++) rice.push(ell(x + (-60 + rnd(i) * 70) * s * (.5 + .5 * k), y + (-18 + rnd(i + 30) * 26) * s * (.5 + .5 * k), 4 * s, 1.6 * s, "#fbf6e6", .8, rnd(i + 7) * 180));
@@ -320,7 +321,7 @@ function scale(x, y, s, num, col) {
 }
 // a two-pan balance: tilt -1 (left down) .. 1 (right down). left and right: SVG drawn around (0,0) on each pan
 function balance(x, y, s, tilt, left, right) {
-  var a = tilt * 12 * Math.PI / 180, L = 170 * s, lx = x - Math.cos(a) * L, ly = y - Math.sin(a) * L, rx = x + Math.cos(a) * L, ry = y + Math.sin(a) * L, g = "";
+  var a = (tilt * 12 + 1.6 * Math.sin(now() * 1.3)) * Math.PI / 180, L = 170 * s, lx = x - Math.cos(a) * L, ly = y - Math.sin(a) * L, rx = x + Math.cos(a) * L, ry = y + Math.sin(a) * L, g = "";
   g += '<path d="M' + f(x - 70 * s) + ' ' + f(y + 300 * s) + ' H' + f(x + 70 * s) + ' L' + f(x + 20 * s) + ' ' + f(y + 270 * s) + ' H' + f(x - 20 * s) + ' Z" fill="#b8a07a" stroke="' + INK + '" stroke-width="2.4"/>';
   g += '<rect x="' + f(x - 8 * s) + '" y="' + f(y) + '" width="' + f(16 * s) + '" height="' + f(272 * s) + '" fill="#cdb791" stroke="' + INK + '" stroke-width="2.2"/>';
   g += seg([[lx, ly], [rx, ry]], INK, 10 * s) + seg([[lx, ly], [rx, ry]], "#cdb791", 6 * s) + circ(x, y, 12 * s, "#e0c98e", 2.2);
@@ -342,6 +343,8 @@ function graph(x, y, w, h, o) {
   var dA = function (k) { var n = Math.max(1, Math.round(k * 50)), pts = []; for (var i = 0; i <= n; i++) { var u = i / 50, q = along(A, u); pts.push([X(q[0]), Y(q[1])]); } return pts; };
   if (o.k1) g += seg(dA(clamp(o.k1)), "#5e8a4a", 5);
   if (o.k2) { var n2 = Math.max(1, Math.round(clamp(o.k2) * 40)), pts2 = []; for (var j = 0; j <= n2; j++) { var q2 = along(B, j / 40); pts2.push([X(q2[0]), Y(q2[1])]); } g += seg(pts2, ORANGE, 5); }
+  var endW = o.k2 ? along(B, clamp(o.k2)) : o.k1 ? along(A, clamp(o.k1)) : null;
+  if (endW) g += circ(X(endW[0]), Y(endW[1]), 10 + 6 * Math.sin(now() * 4), o.k2 ? ORANGE : "#5e8a4a", 2);
   if (o.stop) g += seg([[X(68), y - 20], [X(68), y + h + 10]], INK, 2, ' stroke-dasharray="8 6"') + txt("وقف الحقنة", X(68), y - 30, 18, INK);
   return g;
 }
@@ -350,7 +353,7 @@ function gila(x, y, s, o) {
   o = o || {}; var t = now(), g = "", P = function (pts) { return tr(pts, x, y, s); };
   var legs = [[[-110, -34], [-124, -66], [-142, -76]], [[-110, 34], [-124, 66], [-142, 76]], [[60, -34], [52, -68], [36, -80]], [[60, 34], [52, 68], [36, 80]]];
   legs.forEach(function (L) { g += line(P(L), INK, 28 * s) + line(P(L), "#3a2a24", 23 * s); var e = P([L[2]])[0], dy = L[2][1] > 0 ? 1 : -1; for (var c = -2; c <= 2; c++) g += seg([e, [e[0] - 14 * s + c * 2 * s, e[1] + (c * 6 + dy * 8) * s]], INK, 3 * s); });
-  var body = P([[-200, 0], [-176, -34], [-130, -46], [-60, -50], [10, -50], [70, -42], [130, -28], [190, -16], [226, 0], [190, 16], [130, 28], [70, 42], [10, 50], [-60, 50], [-130, 46], [-176, 34]]);
+  var sw = 22 * Math.sin(t * 1.4), body = P([[-200, 0], [-176, -34], [-130, -46], [-60, -50], [10, -50], [70, -42], [130, -28 + sw * .4], [190, -16 + sw * .8], [226, sw], [190, 16 + sw * .8], [130, 28 + sw * .4], [70, 42], [10, 50], [-60, 50], [-130, 46], [-176, 34]]);
   g += blob(body, "#2f2420", 2.6);
   var bands = [-150, -100, -50, 0, 50, 100, 150, 190];
   bands.forEach(function (bx, i) { var hw = (bx < 60 ? 44 : 44 - (bx - 60) * .26); g += blob(P([[bx - 12, -hw * .8], [bx + 4, -hw * .9], [bx + 16, -hw * .3], [bx + 8, hw * .2], [bx + 14, hw * .8], [bx - 6, hw * .9], [bx - 14, hw * .2], [bx - 8, -hw * .3]]), i % 2 ? "#e08a5a" : "#d9714a", 1.4); });
@@ -359,7 +362,7 @@ function gila(x, y, s, o) {
   g += blob(P([[-176, -32], [-214, -38], [-250, -28], [-266, 0], [-250, 28], [-214, 38], [-176, 32]]), "#3a2c26", 2.6);
   g += blob(P([[-214, -22], [-238, -14], [-240, 10], [-214, 22], [-206, 0]]), "#d97a52", 1.4);
   g += circ(x - 222 * s, y - 20 * s, 4 * s, "#1a1310", 1) + circ(x - 222 * s, y + 20 * s, 4 * s, "#1a1310", 1);
-  var tg = clamp(o.tongue == null ? Math.max(0, Math.sin(t * 2.4)) : o.tongue);
+  var tg = clamp(o.tongue == null ? .3 + .7 * Math.abs(Math.sin(t * 2.4)) : o.tongue);
   if (tg > .05) g += seg(P([[-262, 0], [-262 - 34 * tg, 0], [-262 - 44 * tg, -7 * tg]]), "#7a3a4a", 3.4 * s) + seg(P([[-262 - 34 * tg, 0], [-262 - 44 * tg, 7 * tg]]), "#7a3a4a", 3.4 * s);
   return g;
 }

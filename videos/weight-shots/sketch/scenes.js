@@ -187,7 +187,7 @@ function diner(x, fl, s, t, k, o) {
     face: Object.assign({ eyes: blink(t), brows: "neutral", mouth: "neutral" }, o.face || {}), arms: arms });
   var tb = '<rect x="' + f(x - 230 * s) + '" y="' + f(top) + '" width="' + f(460 * s) + '" height="' + f(18 * s) + '" fill="#b98a5c" stroke="' + INK + '" stroke-width="2.2"/>' +
     '<rect x="' + f(x - 220 * s) + '" y="' + f(top + 18 * s) + '" width="' + f(440 * s) + '" height="' + f(fl - top - 18 * s) + '" fill="#a77a4f" stroke="' + INK + '" stroke-width="2.2"/>';
-  return P.svg + tb + GW.plate(x, top - 8 * s, s * .9, k);
+  return glowP(x, top - 40 * s, 200, '#e9b949', t) + P.svg + tb + GW.plate(x, top - 8 * s, s * .9, k);
 }
 // the man with the cut-away window over his belly and the stations numbered
 function stations(t, o) {
@@ -208,6 +208,7 @@ function face(x, y, sz, fc, k) {   // the man's face in a framed box
   return iconBox(x, y, sz, '<clipPath id="fc' + (++CLIPN) + '"><rect x="' + f(-sz / 2 + 3) + '" y="' + f(-sz / 2 + 3) + '" width="' + f(sz - 6) + '" height="' + f(sz - 6) + '"/></clipPath><g clip-path="url(#fc' + CLIPN + ')">' +
     PERSON.head([0, sz * .1 + 2 * Math.sin(window.__t * 1.6)], sz / 80, 3 * Math.sin(window.__t * 1.1), { face: Object.assign({ eyes: blink(window.__t) }, fc) }, PERSON.colors) + '</g>', k);
 }
+function glowP(x, y, r, col, t) { return '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(r) + '" fill="' + (col || '#e9b949') + '" opacity="' + (.16 + .12 * Math.sin(t * 3)).toFixed(3) + '"/>'; }
 function lineT(i, c) { var l = LN[i], cs = window.CHUNKS[i]; return l.start + (l.end - l.start) * (cs[c] || 0); }
 
 // 4 · before we explain, a small rule… remember it
@@ -224,7 +225,7 @@ var P0h = [320, 300];   // the head point for «remember it» (set once below fr
 
 // 5 · the body only draws on its fat when the food in is less than what it spends
 var BAL = [320, 300];
-function bal(tilt, kFood, extra) { return GW.balance(BAL[0], BAL[1], 1, tilt, GW.plate(0, -20, .62, kFood), GW.flame(1, window.__t)) + (extra || ""); }
+function bal(tilt, kFood, extra) { return glowP(490, 330, 150, '#e9874a', window.__t) + GW.balance(BAL[0], BAL[1], 1, tilt, GW.plate(0, -20, .62, kFood), GW.flame(1, window.__t)) + (extra || ""); }
 function balTags(k) { return G("", T("الأكل الداخل", 150, 560, 22, INK, 800) + T("اللي بيصرفه", 490, 560, 22, INK, 800), k); }
 shot(5, still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + bal(0, 1) + balTags(at(u, .3, .4)); });
 shot([5, 2], still(FULL[0], FULL[1], 1), function (u, d, t) { var k = at(u, .1, 1.2); return paper() + bal(-.0 + .0, 1 - .55 * k) + balTags(1); });
@@ -324,8 +325,8 @@ shot([16, 1], still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + 
 
 // 17 · third stop: the pancreas, more insulin when the sugar rises
 var PA = [330, 500, 1.15];
-function panc(o) { return GW.pancreas(PA[0], PA[1], PA[2], o); }
-shot(17, still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + panc({ labels: 1 }) + callout("3", 560, 100, 1, 24); });
+function panc(o) { return glowP(330, 470, 240, '#e9b949', window.__t) + GW.pancreas(PA[0], PA[1], PA[2], o); }
+shot(17, still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + panc({ labels: 1, sugar: .6 }) + callout("3", 560, 100, 1, 24); });
 shot([17, 2], still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + panc({ labels: 2, islets: at(u, .2, .8), insulin: at(u, .6, .8), sugar: .6 }) + label(560, 282, 520, 180, "إنسولين", "#b8862a", at(u, .9, .5), 22); });
 shot([17, 3], still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + panc({ labels: 2, islets: 1, insulin: 1, sugar: 1 }) + label(560, 282, 520, 180, "إنسولين", "#b8862a", 1, 22) + label(140, 282, 120, 170, "سكر", INK, at(u, .1, .5), 22); });
 
@@ -344,8 +345,8 @@ function pie(x, y, r, part, k) {   // fat vs muscle share of the weight lost
   if (a > .01) g += '<path d="M' + f(x) + ' ' + f(y) + ' L' + f(x) + ' ' + f(y - r) + ' A' + r + ' ' + r + ' 0 ' + (a > Math.PI ? 1 : 0) + ' 1 ' + f(x + Math.sin(a) * r) + ' ' + f(y - Math.cos(a) * r) + ' Z" fill="' + GW.C.MUSC + '" stroke="' + INK + '" stroke-width="2.4"/>';
   return g;
 }
-shot(20, still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + pie(320, 400, 190, 0, 0) + T("كله دهون؟", 320, 410, 40, INK, 800) + GW.scale(320, 700, 1, "78"); });
-shot([20, 2], still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + pie(320, 400, 190, 0, 0) + T("كله دهون؟", 320, 410, 40, INK, 800) + GW.scale(320, 700, 1, "78") + cross(320, 400, 2.2, at(u, 0, .5)); });
+shot(20, still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + pie(320, 400, 190 + 12 * Math.sin(t * 2.2), 0, 0) + T("كله دهون؟", 320, 410 + 14 * Math.sin(t * 2.2), 40, INK, 800) + GW.scale(320, 700, 1, "78"); });
+shot([20, 2], still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + pie(320, 400, 190, 0, 0) + T("كله دهون؟", 320, 410 + 6 * Math.sin(t * 2.2), 40, INK, 800) + GW.scale(320, 700, 1, "78") + cross(320, 400, 2.2 + .15 * Math.sin(t * 3), at(u, 0, .5)); });
 
 // 21 · in studies a quarter to a third of the weight lost was muscle; so protein and exercise
 shot(21, still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + pie(320, 380, 190, .3, at(u, .2, 1.4)) + G("", T("دهون", 250, 470, 30, INK, 800), at(u, .3, .4)) + G("", T("عضل", 400, 290, 30, "#fbf8f1", 800), at(u, 1.2, .4)); });
@@ -356,24 +357,25 @@ shot([21, 3], still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + 
 
 // 22 · stop the injection and the hunger comes back; in a big study people regained two-thirds in a year
 var GR = [70, 280, 520, 300];
-function gr(o) { return GW.graph(GR[0], GR[1], GR[2], GR[3], o) + T("الوزن", 70, 250, 20, INK, 800) + T("أسابيع", 560, 620, 18, INK, 700); }
+function gr(o) { return glowP(380, 420, 230, '#e9b949', window.__t) + GW.graph(GR[0], GR[1], GR[2], GR[3], o) + T("الوزن", 70, 250, 20, INK, 800) + T("أسابيع", 560, 620, 18, INK, 700); }
 shot(22, still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + gr({ k1: 1, stop: at(u, .2, .4) > .5 }) + G("", T("على الحقنة", 230, 680, 22, "#5e8a4a", 800), at(u, 0, .4)); });
-shot([22, 1], still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + gr({ k1: 1, stop: true, k2: at(u, .2, 1.6) * .4 }) + T("على الحقنة", 230, 680, 22, "#5e8a4a", 800) + chip("الجوع بيرجع", 470, 150, ORANGE, at(u, 0, .3)); });
-shot([22, 3], still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + gr({ k1: 1, stop: true, k2: .4 + .6 * at(u, 0, 1.4) }) + T("على الحقنة", 230, 680, 22, "#5e8a4a", 800) + chip("الجوع بيرجع", 470, 150, ORANGE, 1) + bigNum("⅔", "رجع في سنة", 500, 520, at(u, .8, .4), ORANGE, 76); });
+shot([22, 1], still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + gr({ k1: 1, stop: true, k2: clamp((t - lineT(22, 1)) / (lineT(22, 3) - lineT(22, 1))) * .45 }) + T("على الحقنة", 230, 680, 22, "#5e8a4a", 800) + chip("الجوع بيرجع", 470, 150, ORANGE, at(u, 0, .3)); });
+shot([22, 3], still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + gr({ k1: 1, stop: true, k2: .45 + .55 * clamp(u / 1.8) }) + T("على الحقنة", 230, 680, 22, "#5e8a4a", 800) + chip("الجوع بيرجع", 470, 150, ORANGE, 1) + bigNum("⅔", "رجع في سنة", 500, 520, at(u, .8, .4), ORANGE, 76); });
 
 // 23 · bottom line: calms hunger, slows the stomach, you eat less, the body does the burning
 shot(23, still(FULL[0], FULL[1], 1), function (u, d, t) {
   var M = MAN11(t, 1, { mouth: "smile" }), h = M.head, c = window.CHUNKS[23], l = LN[23];
-  var ks = c.map(function (q) { return at(t - (l.start + (l.end - l.start) * q), 0, .3); });
+  var ks = c.map(function (q) { return at(t - (l.start + (l.end - l.start) * q), 0, .3); }), cur = 0; for (var j = 0; j < c.length; j++) if (t >= l.start + (l.end - l.start) * c[j]) cur = j;
+  var RP = [[h[0] + 130, h[1] - 30], [h[0] + 130, h[1] - 30], [M.bx + 170, M.by - 30], [520, 500], [450, 700]], rp = RP[cur], ring = cur ? C(rp[0], rp[1], 30 + 10 * Math.sin(t * 4), 'none', 3).replace('stroke="' + INK, 'stroke="' + ORANGE) : '';
   return paper() + M.svg + callout("1", h[0] + 130, h[1] - 30, ks[1], 22) + G("", T("الجوع", h[0] + 130, h[1] + 14, 22, OLIVE, 800), ks[1]) +
     callout("2", M.bx + 170, M.by - 30, ks[2], 22) + G("", T("المعدة", M.bx + 170, M.by + 14, 22, OLIVE, 800), ks[2]) +
     G("", '<g transform="translate(520 560)">' + GW.plate(0, 0, .62, .45) + '</g>' + callout("3", 520, 500, 1, 22) + T("أقل", 520, 620, 22, ORANGE, 800), ks[3]) +
-    G("", '<g transform="translate(520 760)">' + GW.flame(1.1, t) + '</g>' + callout("4", 450, 700, 1, 22), ks[4]);
+    G("", '<g transform="translate(520 760)">' + GW.flame(1.1, t) + '</g>' + callout("4", 450, 700, 1, 22), ks[4]) + ring;
 });
 
 // 24 · the oddest: the first drug of this kind came from the spit of a venomous lizard, the Gila monster
 shot(24, still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + iconBox(320, 300, 220, GW.pen(-90, 0, 180, .6, {}), at(u, 0, .3)) + T("أول دوا", 320, 470, 30, INK, 800); });
-function sand() { return '<rect x="-60" y="600" width="760" height="300" fill="#e6d3a3" stroke="' + INK + '" stroke-width="2"/><path d="M-60 640 Q100 625 260 640 T640 636" fill="none" stroke="#d2b77e" stroke-width="3"/>'; }
+function sand() { return glowP(360, 470, 260, '#e9b949', window.__t) + '<rect x="-60" y="600" width="760" height="300" fill="#e6d3a3" stroke="' + INK + '" stroke-width="2"/><path d="M-60 640 Q100 625 260 640 T640 636" fill="none" stroke="#d2b77e" stroke-width="3"/>'; }
 shot([24, 2], still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + sand() + G("", GW.gila(370, 470, 1.0, {}), at(u, 0, .4)) + G("", '<path d="M88 494 q8 18 0 26 q-8 -8 0 -26 Z" fill="#cfe3ea" stroke="' + INK + '" stroke-width="2"/>', at(u, .6, .4)) + label(92, 512, 70, 660, "لعاب", BLUE, at(u, .7, .5), 24); });
 shot([24, 3], still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + sand() + GW.gila(370, 470, 1.0, {}) + label(92, 512, 70, 660, "لعاب", BLUE, 1, 24) + chip("سامّة", 470, 230, ORANGE, at(u, 0, .3)); });
 shot([24, 4], still(FULL[0], FULL[1], 1), function (u, d, t) { return paper() + sand() + GW.gila(370, 470, 1.0, {}) + label(92, 512, 70, 660, "لعاب", BLUE, 1, 24) + chip("سامّة", 470, 230, ORANGE, 1) + tag("وحش جيلا", 320, 130, at(u, 0, .3), 34, INK); });
@@ -384,14 +386,14 @@ SCENE.intro = function (svg, t, li) {
   // line 0: he stands on the scale, the reading drops from 98 to 78. line 1: the fat «melting»? line 2: the fat cell with a crossed flame
   var s = "";
   if (li === 0) {
-    var k = clamp((t - .8) / 2.6), P = PERSON.front({ x: 304, y: 600 - 208 * 1.25, s: 1.25, legs: "stand", outfit: "casual", breath: br(t), face: { eyes: blink(t), brows: "raised", mouth: k > .6 ? "smile" : "neutral", look: [0, .7] },
+    var k = clamp((t - .3) / 3.4), P = PERSON.front({ x: 304, y: 600 - 208 * 1.25, s: 1.25, legs: "stand", outfit: "casual", breath: br(t), face: { eyes: blink(t), brows: "raised", mouth: k > .6 ? "smile" : "neutral", look: [0, .7] },
       arms: [{ to: [304 - 62, 600 - 260 + 20], hand: "relaxed", bend: 1 }, { to: [304 + 62, 600 - 260 + 20], hand: "relaxed", bend: -1 }] });
-    s += GW.scale(304, 612, 1.3, "") + P.svg + '<g transform="translate(470 130)">' + GW.scale(0, 0, 1.1, (98 - 20 * ease(k)).toFixed(0)) + '</g>' + iconBox(110, 130, 150, GW.pen(-60, 0, 180, .4, {}), 1);
+    s += glowP(470, 160, 150, '#9be08a', t) + GW.scale(304, 612, 1.3, "") + P.svg + '<g transform="translate(470 130)">' + GW.scale(0, 0, 1.1, (98 - 20 * ease(k)).toFixed(0)) + '</g>' + arrow(470, 200 + 22 * Math.sin(t * 3), 470, 280 + 22 * Math.sin(t * 3), ORANGE, 8, 1) + iconBox(110, 130, 150, GW.pen(-60, 0, 180, .4, {}), 1);
   } else {
     var drop = li === 1 ? clamp((t - LN[1].start) / 1.6) : 1;
-    s += '<g transform="translate(304 330) scale(1.05)">' + GW.fat(0, 0, 1, { shrink: li === 1 ? .25 * drop : .25 }) + '</g>';
+    s += glowP(304, 520, 200, '#e9874a', t) + '<g transform="translate(304 330) scale(1.05)">' + GW.fat(0, 0, 1, { shrink: li === 1 ? .25 * drop : .25 }) + '</g>';
     if (li === 1) s += T("بتدوّب؟", 304, 640, 44, ORANGE, 800);
-    if (li >= 2) { var k2 = clamp((t - LN[2].start - .3) / .5); s += G("", '<g transform="translate(304 600)">' + GW.flame(1.4, t) + '</g>', k2) + cross(304, 560, 1.4, clamp((t - LN[2].start - .9) / .6)); }
+    if (li >= 2) { var k2 = clamp((t - LN[2].start - .3) / .5); s += G("", '<g transform="translate(304 600)">' + GW.flame(1.4 * (1 + .18 * Math.sin(t * 5)), t) + '</g>', k2) + cross(304, 560, 1.4, clamp((t - LN[2].start - .9) / .6)); }
   }
   return s;
 };
