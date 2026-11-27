@@ -4,6 +4,7 @@
 (function () {
   var W = window.W3, T = W.T, cam = W.cam, R = W.R, LN = TIMING.lines;
   function L(i) { return LN[i].start; } function E(i) { return LN[i].end; }
+  var BIO = TIMING.bio;   // «ولو عايز تعرف تعمل فيديوهات زي كده…» said after line 23, kept out of LN so the line numbers stay
   function clamp(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
   function eio(x) { x = clamp(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
   function eout(x) { x = clamp(x); return 1 - Math.pow(1 - x, 3); }
@@ -61,7 +62,7 @@
     [L(18), "high", { fly: 1.8, push: .05 }],
     [L(20), "doorKey", { fly: 1.8, push: .03 }],
     [L(22), "center", { fly: 1.6, push: .06 }],
-    [L(23), "vessels", { fly: 1.4, push: .03 }],
+    [BIO.end - .1, "vessels", { fly: 1.4, push: .03 }],
     [L(25), "bucket", { fly: 1.4, push: .03 }],
     [L(26), "wash", { fly: 1.6, push: .06 }],
     [L(27), "wallW", { fly: 1.8, push: .05 }],
@@ -105,7 +106,7 @@
 
   // ── washing cues ──────────────────────────────────────────
   C.bucket = [L(1) - .2, L(2) - .1]; C.bucket2 = [L(25) - .4, L(26) + .3]; C.soapOut = L(25) + 1.0;
-  C.vessels = [L(23) - .3, L(25) - .1]; C.pour = [L(24) + .4, L(24) + 3.0];
+  C.vessels = [BIO.end - .4, L(25) - .1]; C.pour = [L(24) + .4, L(24) + 3.0];
   C.wet = [L(26) + .2, E(28) + 1]; C.spray = [L(26) + .1, L(26) + 2.4];
   C.key = [L(20) - .2, E(21) + .3];
   C.smoke = [L(29) + .3, E(29) + .6];
@@ -132,6 +133,7 @@
     { t: [L(7) + .8, E(7) + .4], y: 400, html: '<span class="chip gold">حوالي <b>280 كيلو</b> دهب</span>' },
     { t: [L(9) + .2, E(9) + .3], y: 404, html: '<span class="chip"><span class="x">✗</span>كرسي</span><span class="chip"><span class="x">✗</span>سجادة</span><span class="chip"><span class="x">✗</span>منبر</span><span class="chip"><span class="x">✗</span>نجفة</span>', stag: .5 },
     { t: [L(13) + .3, E(13) + .3], y: 404, html: '<span class="chip gold">3 عواميد خشب</span>' },
+    { t: [BIO.start + 1.2, BIO.end + .2], y: 404, html: '<span class="chip gold">اللينك في البايو ↑</span>' },
     { t: [L(19) + .2, E(19) + .5], y: 404, html: '<span class="chip gold">مرة واحدة في السنة</span><span class="chip">15 محرّم</span>', stag: .6 },
     { t: [L(20) + 1.4, E(21) + .3], y: 404, html: '<span class="chip gold">عيلة بني شيبة</span>' },
     { t: [L(25) + .1, E(25) + .3], y: 404, html: '<span class="chip"><span class="x">✗</span>صابون</span><span class="chip"><span class="x">✗</span>منظفات</span>', stag: .5 },
@@ -150,9 +152,9 @@
   var KEY = { 0: ["بتتغسل"], 1: ["بمية؟", "بصابون؟"], 3: ["إيه", "الحكاية؟"], 5: ["عالي"], 6: ["سلّم", "خشب"], 7: ["280", "دهب"], 8: ["فاضية"], 10: ["رخام"], 11: ["خضرا."],
     12: ["لا", "إله", "إلا", "الله"], 13: ["تلات", "عواميد"], 14: ["قناديل"], 15: ["باب", "التوبة."], 16: ["السطح", "سطح"], 17: ["فتح", "مكة."], 19: ["مرة", "واحدة"], 20: ["بني", "شيبة."],
     21: ["قبل", "الإسلام…"], 24: ["زمزم…", "ورد", "طايفي", "عود."], 25: ["لا", "صابون"], 26: ["بالإيد"], 27: ["مية", "الورد…"], 28: ["بالإيد."], 29: ["بالعود…"], 30: ["لأ،", "بدعوة", "رسمية"],
-    31: ["زمزم،", "طايفي،", "وإيدين،"], 32: ["متحف"], 33: ["1300"], 34: ["الكعبة"] };
-  var chunks = [];
-  LN.forEach(function (l, i) {
+    31: ["زمزم،", "طايفي،", "وإيدين،"], 32: ["متحف"], 33: ["1300"], 34: ["الكعبة"], bio: ["اللينك"] };
+  var chunks = [], LNC = LN.slice(0, 24).concat([{ start: BIO.start, end: BIO.end, text: BIO.text, bio: 1 }], LN.slice(24));
+  LNC.forEach(function (l, ci) { var i = l.bio ? "bio" : LN.indexOf(l);
     var text = CAPTEXT[i] || l.text, words = text.split(/\s+/), parts = [], cur = [];
     words.forEach(function (w, j) { cur.push(w); var brk = /[…،؟.!:]$/.test(w) || cur.length >= 4; if (brk && (j < words.length - 1 ? true : true)) { parts.push(cur); cur = []; } });
     if (cur.length) parts.push(cur);
@@ -161,7 +163,7 @@
     var total = parts.reduce(function (s, p) { return s + p.join(" ").length; }, 0), t0 = l.start, span = l.end - l.start;
     parts.forEach(function (p, k) { var len = p.join(" ").length, a = t0; t0 += span * len / total;
       var html = p.map(function (w) { var bare = w; return (KEY[i] || []).indexOf(bare) >= 0 ? "<b>" + w.replace(/[…،.]$/, "") + "</b>" + (w.match(/[…،.]$/) || [""])[0] : w; }).join(" ");
-      chunks.push({ a: a - .08, b: k === parts.length - 1 ? (i + 1 < LN.length ? Math.min(l.end + .5, LN[i + 1].start - .05) : l.end + 1) : t0 - .02, html: html, line: i }); });
+      chunks.push({ a: a - .08, b: k === parts.length - 1 ? (ci + 1 < LNC.length ? Math.min(l.end + .5, LNC[ci + 1].start - .05) : l.end + 1) : t0 - .02, html: html, line: i }); });
   });
   var capEl = document.getElementById("cap"), capBox = document.getElementById("capbox"), lastCap = -1;
 
