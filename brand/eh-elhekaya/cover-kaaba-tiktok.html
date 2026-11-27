@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — the Kaaba from inside</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* the reel cover for «الكعبة من جوة»: full bleed 540×960 (1080×1920 at 2x). The art is a clean still of the episode's own 3D
+     interior (green silk, a pillar, the lamps, an official with the censer), a warm glow, one inset of the real washing
+     (Al-Mamlaka clip, an official wiping a pillar inside) ringed in orange, and the tag. Everything that matters stays in y 120–840. */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #1b1d22; }
+  .art { position: absolute; left: -60px; top: -170px; width: 660px; }
+  .glow { position: absolute; left: 60px; top: 300px; width: 420px; height: 420px; border-radius: 50%; background: radial-gradient(#ffd27a 0, rgba(255, 210, 122, 0) 70%); opacity: .28; }
+  .fT { position: absolute; left: 0; right: 0; top: 0; height: 420px; background: linear-gradient(rgba(0,0,0,.96), rgba(0,0,0,.86) 74%, rgba(0,0,0,0)); }
+  .fB { position: absolute; left: 0; right: 0; top: 660px; height: 300px; background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.72) 30%, rgba(0,0,0,.95)); }
+  .ins { position: absolute; left: 300px; top: 380px; width: 200px; height: 200px; border-radius: 50%; overflow: hidden; border: 6px solid #e8743c; box-shadow: 0 0 0 4px #fbf4e2, 0 12px 30px rgba(0,0,0,.55); }
+  .ins img { width: 100%; height: 100%; object-fit: cover; }
+  .real { position: absolute; left: 318px; top: 590px; font: 800 13px "Noto Sans Arabic"; color: #2a2016; background: #f3c94a; padding: 3px 12px; border-radius: 999px; }
+  .tag { position: absolute; left: 300px; top: 330px; font: 800 19px "Noto Sans Arabic"; color: #fff; background: #c4532c; padding: 4px 14px; border-radius: 6px; box-shadow: 0 6px 16px rgba(0,0,0,.4); }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 10px rgba(0,0,0,.6); }
+</style></head><body>
+<div class="cover">
+  <img class="art" src="kaaba-cover-art.jpg" alt="">
+  <div class="glow"></div>
+  <div class="fT"></div><div class="fB"></div>
+  <div class="ins"><img src="kaaba-cover-inset.jpg" alt=""></div>
+  <div class="real">من جوة الكعبة</div>
+  <div class="tag">مرة واحدة في السنة</div>
+  <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
+  <p class="t" style="top:154px;font:900 40px/1.25 'Noto Sans Arabic';color:#fff">الكعبة بتتغسل<br>من جوة إزاي؟</p>
+  <p class="t" style="top:262px;font:800 24px/1.3 'Noto Sans Arabic';color:#f2c230">بمية؟ ولا بصابون؟</p>
+  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff">مية <span style="color:#f2c230">زمزم</span> وورد وعود<br><span style="font-size:24px;color:#d9d4c8">وكله بالإيد… من غير صابون!</span></p>
+</div>
+</body></html>
