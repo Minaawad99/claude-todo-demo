@@ -5,7 +5,7 @@ var _label = label; label = function () { return _label.apply(null, arguments).r
 var UX = 320, UY = 200, US = .95;                                  // the uterus in the panel
 function L2P(p) { return [UX + p[0] * US, UY + p[1] * US]; }       // local uterus units → panel
 var U = [320, 393, 1], CAV = [320, 300, 1.75], COIL = [320, 300, 2.3], CERV = [320, 500, 2.3], TUBE = [120, 220, 2.1], MID = [320, 330, 1.4];
-var WOMAN = { base: "woman" }, DOC = "doctor";
+var WOMAN = { base: "woman" }, DOC = { base: "doctor", tie: false, hair: "long", fem: true, colors: { hair: "#2e1d14", hairL: "#5a3c2a", lip: "#b8545c", tie: "#4a6f8a" } };   // a woman doctor (the user asked for «دكتورة»)
 function U1(o) { return IU.uterus(UX, UY, US, o); }
 function chip(txt, x, y, col, k, sz) { k = pop(k == null ? 1 : k); if (k <= 0) return ""; sz = sz || 22; var w = txt.length * sz * .62 + 30; return G('translate(' + f(x) + ' ' + f(y) + ') scale(' + f(k) + ')', '<rect x="' + f(-w / 2) + '" y="' + f(-sz * .95) + '" width="' + f(w) + '" height="' + f(sz * 1.8) + '" rx="8" fill="' + col + '"/>' + T(txt, 0, sz * .4, sz, "#fbf8f1", 800)); }
 function cAt(li, ci) { var l = LN[li], c = window.CHUNKS[li]; return l.start + (l.end - l.start) * (c[ci] || 0); }   // page time of a caption chunk

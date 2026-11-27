@@ -1,4 +1,4 @@
-window.CHUNKS = [[0.0, 0.4583, 0.6875], [0.0, 0.5], [0.0, 0.4783], [0.0, 0.4194], [0.0, 0.4828], [0.0, 0.2353, 0.7647], [0.0, 0.2396, 0.4479, 0.6354, 0.8542], [0.0, 0.625], [0.0, 0.2895, 0.6974], [0.0, 0.4375], [0.0, 0.325, 0.45, 0.6875], [0.0, 0.3542, 0.5833], [0.0, 0.2059, 0.4265, 0.7353], [0.0, 0.1795, 0.4103, 0.6282], [0.0, 0.6667], [0.0, 0.5862], [0.0, 0.2295, 0.4426, 0.8525], [0.0, 0.2131, 0.4262, 0.6393], [0.0, 0.3409, 0.6591], [0.0, 0.2658, 0.4051, 0.6329, 0.8354], [0.0, 0.1897, 0.4483], [0.0, 0.381, 0.9286], [0.0, 0.2881, 0.4746, 0.661], [0.0, 0.1515, 0.4545, 0.7475], [0.0, 0.268, 0.5155, 0.6495, 0.8866], [0.0], [0.0, 0.6304]];
+window.CHUNKS = [[0.0, 0.4583, 0.6875], [0.0, 0.5], [0.0, 0.4783], [0.0, 0.4194], [0.0, 0.4828], [0.0, 0.2353, 0.7647], [0.0, 0.2396, 0.4479, 0.6354, 0.8542], [0.0, 0.625], [0.0, 0.2895, 0.6974], [0.0, 0.4375], [0.0, 0.325, 0.45, 0.6875], [0.0, 0.3542, 0.5833], [0.0, 0.2059, 0.4265, 0.7353], [0.0, 0.1795, 0.4103, 0.6282], [0.0, 0.6667], [0.0, 0.5862], [0.0, 0.2295, 0.4426, 0.8525], [0.0, 0.2131, 0.4262, 0.6393], [0.0, 0.3556, 0.6667], [0.0, 0.2658, 0.4051, 0.6329, 0.8354], [0.0, 0.1897, 0.4483], [0.0, 0.381, 0.9286], [0.0, 0.2881, 0.4746, 0.661], [0.0, 0.1515, 0.4545, 0.7475], [0.0, 0.268, 0.5155, 0.6495, 0.8866], [0.0], [0.0, 0.6304]];
 /* «إيه الحكاية؟» — «الرسم الهندسي» drawing helpers. build.py puts this file in front of the episode's shots.js, so every
    name here is in scope for the shots. The panel world is 640×786 (portrait, the panel's own aspect); a shot's camera
    [cx, cy, zoom] picks what is in view. Everything is redrawn every frame from t, so the render is deterministic.
@@ -171,7 +171,7 @@ var _label = label; label = function () { return _label.apply(null, arguments).r
 var UX = 320, UY = 200, US = .95;                                  // the uterus in the panel
 function L2P(p) { return [UX + p[0] * US, UY + p[1] * US]; }       // local uterus units → panel
 var U = [320, 393, 1], CAV = [320, 300, 1.75], COIL = [320, 300, 2.3], CERV = [320, 500, 2.3], TUBE = [120, 220, 2.1], MID = [320, 330, 1.4];
-var WOMAN = { base: "woman" }, DOC = "doctor";
+var WOMAN = { base: "woman" }, DOC = { base: "doctor", tie: false, hair: "long", fem: true, colors: { hair: "#2e1d14", hairL: "#5a3c2a", lip: "#b8545c", tie: "#4a6f8a" } };   // a woman doctor (the user asked for «دكتورة»)
 function U1(o) { return IU.uterus(UX, UY, US, o); }
 function chip(txt, x, y, col, k, sz) { k = pop(k == null ? 1 : k); if (k <= 0) return ""; sz = sz || 22; var w = txt.length * sz * .62 + 30; return G('translate(' + f(x) + ' ' + f(y) + ') scale(' + f(k) + ')', '<rect x="' + f(-w / 2) + '" y="' + f(-sz * .95) + '" width="' + f(w) + '" height="' + f(sz * 1.8) + '" rx="8" fill="' + col + '"/>' + T(txt, 0, sz * .4, sz, "#fbf8f1", 800)); }
 function cAt(li, ci) { var l = LN[li], c = window.CHUNKS[li]; return l.start + (l.end - l.start) * (c[ci] || 0); }   // page time of a caption chunk
