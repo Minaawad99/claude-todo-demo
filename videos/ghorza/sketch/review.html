@@ -1,0 +1,23 @@
+<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@700;800&family=Noto+Serif:wght@800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#d9d0bb}svg{display:block}</style></head><body>
+<svg id="s" width="1980" height="1780" viewBox="0 0 1980 1780"><defs><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".15"/></pattern></defs><g id="g"></g></svg>
+<script src="../../_templates/people/person.js"></script>
+<script src="draw.js"></script>
+<script>
+window.__t = 1.3;
+var Z = GZ, out = "";
+function panel(i, cap, inner) {
+  var x = 20 + (i % 3) * 660, y = 20 + Math.floor(i / 3) * 880, id = "c" + i;
+  out += '<g transform="translate(' + x + ' ' + y + ')"><clipPath id="' + id + '"><rect width="640" height="786"/></clipPath><rect width="640" height="840" fill="#eee5d0" stroke="#2a2016" stroke-width="2"/>' +
+    '<g clip-path="url(#' + id + ')">' + inner + '</g><text x="320" y="822" text-anchor="middle" style="font:800 26px \'Noto Sans Arabic\';fill:#2a2016">' + cap + '</text></g>';
+}
+var traffic = Z.road({ scroll: 40 }) + Z.carTop(Z.LANE(0), 560, Z.CARC[0]) + Z.carTop(Z.LANE(1), 250, Z.CARC[1]) + Z.carTop(Z.LANE(2), 640, Z.CARC[2]) + Z.carTop(250, 470, "#bd552f", -14, { ring: 1 }) + Z.tankerTop(Z.LANE(3), 60, 0);
+panel(0, "الدائري من فوق", traffic);
+panel(1, "الخبطة", Z.road({}) + Z.tankerTop(Z.LANE(3), -40, 0) + Z.carTop(Z.LANE(2) + 40, 470, "#bd552f", 18) + Z.burst(Z.LANE(3) + 30, 380, .5));
+panel(2, "الناقلة اتقلبت", '<rect x="0" y="560" width="640" height="226" fill="#b9b2a3"/>' + Z.jerseySection(520, 560, 150, 1) + Z.tankerRear(260, 560, 110, 38) + Z.spill(380, 575, 160, 1, .15) + Z.flames(380, 572, 260, 200, 1));
+panel(3, "عربية من الجنب", '<path d="M0 500 H640" stroke="#2a2016" stroke-width="2"/>' + Z.carSide(60, 500, 110, "#bd552f") );
+panel(4, "الناقلة من الجنب", '<path d="M0 500 H640" stroke="#2a2016" stroke-width="2"/>' + Z.tankerSide(20, 500, 31));
+var drv = PERSON.front({ x: 320, y: 640, s: 1.3, legs: "sit", outfit: "casual", face: { mouth: "smile" }, arms: [{ to: [250, 560], hand: "fist" }, { to: [390, 560], hand: "fist" }] }).svg;
+panel(5, "السواق", drv + '<ellipse cx="320" cy="580" rx="110" ry="40" fill="none" stroke="#2a2016" stroke-width="12"/>' + Z.watch(520, 120, 60, .3, "10:55"));
+document.getElementById("g").innerHTML = out;
+</script></body></html>

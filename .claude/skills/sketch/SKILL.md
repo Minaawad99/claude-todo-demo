@@ -26,6 +26,12 @@ every episode.
    needs a real recording the kit doesn't have, ask the user for it by name with Pixabay search terms; they fetch it.
 4. **Always finish with the reel cover and the titles** (section 7), without being asked: TikTok, Instagram (shared to the
    Facebook page) and YouTube Shorts. It copies the look, pacing and narration of the «طب إزاي؟» series: 20 reference videos, measured in
+5. **The mid-video bio line, in every sketch video (the user's rule after «الغرزة», `videos/ghorza/`):** about 55–70 % in,
+   right after a line that opens a question («بس فيه حاجة واحدة… عمرك ما هتعرف تتحكم فيها.»), the narrator says, word for
+   word, «ولو عايز تعرف تعمل فيديوهات زي كده إزاي… دوس على اللينك اللي في البايو.», then «نرجع لـ…» and the next line
+   answers the question. On screen: the scene stays (dimmed) and a yellow pill «اللينك في البايو ↑» pops in near the top
+   (`hud()` in `videos/ghorza/sketch/shots.js`), with one soft `pop`. In the style text: "Say the bio line warmly and
+   quickly, like a friendly aside, then drop back into the topic."
 `videos/_reference/tabizzay/STYLE.md`, with contact sheets, motion strips and transcripts. We make it under our own name.
 
 **The reference episodes are `videos/tides/` (drawings) and `videos/laser-hair/` (the current pace: voice, short
@@ -57,6 +63,7 @@ Captions in short chunks: `"chunk": 3.5` in `CFG`, and `SPLIT` for any chunk ove
 6. **The myth:** «وناس كتير فاكرة إن… لأ.»
 7. **The recap:** «يعني من الآخر…» in 3–4 short clauses.
 8. **The odd fact:** «والأغرب…»
+8b. **The bio line** (rule 5 at the top): a question line, the bio line, «نرجع لـ…», the answer, placed 55–70 % in.
 9. **Sign-off:** «ودي كانت حكاية …»
 10. **Last line:** «قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟»
 

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — the weave (الغرزة) (sketch style)</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* the reel cover for «الغرزة», full bleed 540×960 (1080×1920 at 2x): dark slate, one warm glow behind the Ring Road in
+     plan view; the orange car cutting between the lanes into the tanker's rear (inset on the contact). Safe area y 120–840. */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #000; }
+  #art { position: absolute; inset: 0; width: 540px; height: 960px; }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 10px rgba(0,0,0,.6); }
+</style></head><body>
+<div class="cover">
+  <svg id="art" viewBox="0 0 540 960"></svg>
+  <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
+  <p class="t" style="top:154px;font:900 40px/1.25 'Noto Sans Arabic';color:#fff">الغرزة على الدائري<br>بتوفّرلك كام؟</p>
+  <p class="t" style="top:262px;font:800 24px/1.3 'Noto Sans Arabic';color:#f2c230">النيابة: سبب حادث الوراق غرزة</p>
+  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff">في 20 كيلو بتوفّر <span style="color:#f2c230">دقيقة</span> واحدة<br><span style="font-size:24px;color:#d9d4c8">وتمنها ممكن يبقى أرواح</span></p>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2b2b2b" stroke-width="1" opacity=".16"/></pattern>
+  <pattern id="hatchW" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#fff" stroke-width="1" opacity=".25"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#dccfb2" stroke-width="1.2" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="soft2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .06 0"/></filter>
+  <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e4e6e2"/><stop offset=".5" stop-color="#d3d6d1"/><stop offset="1" stop-color="#c7cbc5"/></linearGradient>
+  <radialGradient id="glowO" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ff8a3a" stop-opacity=".85"/><stop offset="1" stop-color="#ff8a3a" stop-opacity="0"/></radialGradient>
+  <radialGradient id="glowW" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff3c8" stop-opacity=".95"/><stop offset="1" stop-color="#fff3c8" stop-opacity="0"/></radialGradient>
+  <linearGradient id="cone" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff6d8" stop-opacity=".9"/><stop offset="1" stop-color="#fff6d8" stop-opacity="0"/></linearGradient>
+  <linearGradient id="rayCone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fb8cc" stop-opacity=".55"/><stop offset="1" stop-color="#9fb8cc" stop-opacity=".08"/></linearGradient>
+</defs></svg>
+<script src="../../videos/_templates/people/person.js"></script>
+<script src="../../videos/ghorza/timing.js"></script>
+<script src="../../videos/ghorza/sketch/draw.js"></script>
+<script src="../../videos/ghorza/sketch/scenes.js"></script>
+<script>
+  (function () {
+    window.__t = 2.0; var s = "", Z = GZ, L = Z.LANE;
+    s += '<rect width="540" height="960" fill="#1b1d22"/><rect width="540" height="960" fill="url(#grid)" opacity=".18"/>';
+    s += '<circle cx="270" cy="520" r="260" fill="#ffd27a" opacity=".30" filter="url(#soft)"/>';
+    // the road in plan view: the tanker in lane 2, cars round it, the orange car cutting in at its right rear
+    var road = Z.road({ scroll: 30, y0: -200, y1: 1100 }) + Z.carTop(L(0), 330, Z.CARC[3]) + Z.carTop(L(1), 180, Z.CARC[1]) + Z.carTop(L(0), 640, Z.CARC[0]) + Z.carTop(L(1), 700, Z.CARC[4]) + Z.carTop(L(3), 160, Z.CARC[5]) + Z.carTop(L(2), 760, Z.CARC[2]) +
+      Z.tankerTop(L(2), 40, 0) + '<path d="M150 900 C150 760 250 700 250 650 S350 610 350 600 S450 590 450 560" fill="none" stroke="#c4532c" stroke-width="5" stroke-dasharray="14 10"/>' + Z.carTop(430, 524, "#bd552f", -24);
+    s += '<g transform="translate(-30 140) scale(.94)">' + road + '</g>';
+    var ix = 410, iy = 395;
+    s += '<circle cx="' + ix + '" cy="' + iy + '" r="96" fill="#ffd27a" opacity=".22" filter="url(#soft)"/>' + inset(ix, iy, 84, '<g transform="scale(2.2) translate(-392 -468)">' + road + Z.burst(392, 478, .4) + '</g>', 1);
+    s += '<circle cx="' + ix + '" cy="' + iy + '" r="86" fill="none" stroke="#c4532c" stroke-width="4"/><path d="M' + (ix - 40) + ' ' + (iy + 76) + ' L333 589" stroke="#c4532c" stroke-width="3" stroke-dasharray="7 6"/>';
+    s += '<g transform="translate(215 640)"><rect x="-58" y="-22" width="116" height="38" rx="5" fill="#c4532c"/><text x="0" y="6" text-anchor="middle" style="font:800 21px Noto Sans Arabic;fill:#fff">غرزة</text></g>';
+    s += '<defs><linearGradient id="fadeT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".95"/><stop offset=".75" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>' +
+         '<linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset=".3" stop-color="#000" stop-opacity=".7"/><stop offset="1" stop-color="#000" stop-opacity=".95"/></linearGradient></defs>';
+    s += '<rect width="540" height="330" fill="url(#fadeT)"/><rect y="680" width="540" height="280" fill="url(#fadeB)"/>';
+    document.getElementById("art").innerHTML = s + '<rect width="540" height="960" filter="url(#paperN)"/>';
+  })();
+</script>
+</body></html>
