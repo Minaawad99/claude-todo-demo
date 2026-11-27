@@ -8,6 +8,9 @@ episode.py sets:
         The shared person kit ../../_templates/people/person.js is always loaded first (the user's rule: every person is drawn with it)
         optional: "intro_lines" (how many hook lines before the promise), "promise", "summary", "cta" (line indexes)
         optional: "chunk": about how many words per caption chunk (default 5.5; 3.5 gives the «طب إزاي؟» short-cut pace)
+        optional: "lang": "en" for an American English episode (left to right, Noto Sans, the English brand «Here's the Deal»
+                  as in car-us / airplane-us; the promise line holds "here's the deal", the summary starts "And that's the
+                  story", the ask line holds "break down next")
   K   = {line: {word: "o" | "b" | "g" | "u" | "gr" | "o u"}}   key words in the caption / hook:
         o orange (action, danger, heat, numbers) · b blue (water, air, cold, the technical term) · g olive (the named part)
         u underline · gr grey (a line that carries on in the next shot). Words must match the caption text exactly.
@@ -26,10 +29,16 @@ def find(pred, default):
     for i, l in enumerate(lines):
         if pred(l): return i
     return default
-promise = CFG.get("promise", find(lambda l: "إيه الحكاية" in l and "هشرح" in l, -1))
+EN = CFG.get("lang") == "en"
+if EN:
+    promise = CFG.get("promise", find(lambda l: "here's the deal" in l.lower(), -1))
+    summary = CFG.get("summary", find(lambda l: l.lower().startswith("and that's the story"), n - 2))
+    cta = CFG.get("cta", find(lambda l: "break down next" in l.lower(), n - 1))
+else:
+    promise = CFG.get("promise", find(lambda l: "إيه الحكاية" in l and "هشرح" in l, -1))
+    summary = CFG.get("summary", find(lambda l: l.startswith("ودي كانت") or l.startswith("وده كان"), n - 2))
+    cta = CFG.get("cta", find(lambda l: "قولولنا" in l, n - 1))
 intro_lines = CFG.get("intro_lines", promise if promise > 0 else 1)
-summary = CFG.get("summary", find(lambda l: l.startswith("ودي كانت") or l.startswith("وده كان"), n - 2))
-cta = CFG.get("cta", find(lambda l: "قولولنا" in l, n - 1))
 
 def words_html(ws, keys):
     out = []
@@ -78,10 +87,22 @@ for i in range(intro_lines):
 data = {"caps": caps, "hook": hook, "introLines": intro_lines, "promise": promise, "summary": summary, "cta": cta, "watermark": CFG.get("watermark", "")}
 chunks = [[c["f"] for c in cs] for cs in caps]
 
-open(os.path.join(HERE, "scenes.js"), "w", encoding="utf-8").write(
-    "window.CHUNKS = " + json.dumps(chunks) + ";\n" + open(os.path.join(TPL, "_helpers.js"), encoding="utf-8").read() + "\n" +
+scenes = ("window.CHUNKS = " + json.dumps(chunks) + ";\n" + open(os.path.join(TPL, "_helpers.js"), encoding="utf-8").read() + "\n" +
     open(os.path.join(HERE, "shots.js"), encoding="utf-8").read())
 page = open(os.path.join(TPL, "template.html"), encoding="utf-8").read()
+if EN:   # English: left to right, Noto Sans, the English brand and lines
+    scenes = scenes.replace("Noto Sans Arabic", "Noto Sans").replace('left ? "start" : "end"', 'left ? "end" : "start"')
+    for a, b in [('lang="ar" dir="rtl"', 'lang="en" dir="ltr"'), ("family=Noto+Sans+Arabic:", "family=Noto+Sans:"),
+                 ("Noto Sans Arabic", "Noto Sans"), ("— إيه الحكاية؟</title>", "— Here's the Deal</title>"),
+                 ('<span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg>', '<svg viewBox="0 0 200 200"><use href="#mark"/></svg><span>Here\'s the Deal</span>'),
+                 ('<div class="name">إيه الحكاية؟</div>', '<div class="name">Here\'s the Deal</div>'),
+                 ('هشرحهالك في <span class="k-o">دقيقة.</span>', 'Let me break it down in <span class="k-o">a minute.</span>'),
+                 ('<div class="l1">قولولنا…</div><div class="l2">عايزين تعرفوا</div><div class="l3">حكاية<span class="blank"><span class="caret" id="caret"></span></span>؟</div>',
+                  '<div class="l1">So…</div><div class="l2">what should we</div><div class="l3">break down<span class="blank"><span class="caret" id="caret"></span></span>next?</div>'),
+                 (">؟</text></g>", ">?</text></g>"), ("margin-left: 4px; vertical-align", "margin-right: 4px; vertical-align"),
+                 (".logo { position: absolute; right: 30px;", ".logo { position: absolute; left: 30px;")]:
+        page = page.replace(a, b)
+open(os.path.join(HERE, "scenes.js"), "w", encoding="utf-8").write(scenes)
 for k, v in [("/*TITLE*/", CFG.get("title", "")), ("/*CATEGORY*/", CFG.get("category", "")), ("/*OUTRO*/", CFG.get("outro", "")),
              ("/*WATERMARK*/", html.escape(CFG.get("watermark", ""))),
              ("/*LIBS*/", "".join('<script src="%s"></script>' % src for src in ["../../_templates/people/person.js"] + [l for l in CFG.get("libs", ["../../lib/geo.min.js"]) if "people/person.js" not in l])), ("/*DATA*/", "window.DATA = " + json.dumps(data, ensure_ascii=False) + ";")]:
