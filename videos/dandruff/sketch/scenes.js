@@ -164,6 +164,20 @@ function measure(x1, y1, x2, y2, k, text, sz) {
 // an Arabic word in a framed box (numBox is for digits in serif; tag is for words like «أعلى مد»)
 function tag(text, x, y, k, sz, col) { k = pop(k == null ? 1 : k); if (k <= 0) return ""; sz = sz || 30; var w = text.length * sz * .55 + 34; return G('translate(' + f(x) + ' ' + f(y) + ') scale(' + f(k) + ')', '<rect x="' + f(-w / 2) + '" y="' + f(-sz * 1.05) + '" width="' + f(w) + '" height="' + f(sz * 1.65) + '" fill="#f4ecdb" stroke="' + INK + '" stroke-width="2"/>' + T(text, 0, sz * .3, sz, col || INK, 800)); }
 
+// ── the mid-video ask (the user's rule after «القشرة»: every sketch episode says «ولو عايز تعمل فيديوهات زي دي، دوس على
+// اللينك اللي في البايو… ونكمّل.»): a phone with the channel's profile, the «اللينك» button pulsing, a finger tapping it.
+// k 0..1 brings the finger in and taps (a ring spreads once it lands). Panel units, centred on 320.
+function bioPhone(t, k) {
+  var g = '<rect x="198" y="128" width="260" height="520" rx="34" fill="' + INK + '" opacity=".14"/><rect x="190" y="120" width="260" height="520" rx="34" fill="#2f3138" stroke="' + INK + '" stroke-width="2.6"/><rect x="204" y="150" width="232" height="460" rx="14" fill="#fbf8f1"/>';
+  g += '<circle cx="320" cy="225" r="44" fill="' + SKIN + '" stroke="' + INK + '" stroke-width="2"/><circle cx="306" cy="210" r="12" fill="#fff" opacity=".45"/>' + T("إيه الحكاية؟", 320, 300, 22, INK, 800);
+  g += '<rect x="240" y="320" width="160" height="8" rx="4" fill="#cfc6b2"/><rect x="255" y="338" width="130" height="8" rx="4" fill="#cfc6b2"/>';
+  var p = 1 + .06 * Math.sin(t * 5); g += G('translate(320 385) scale(' + f(p) + ')', '<rect x="-86" y="-22" width="172" height="44" rx="22" fill="' + ORANGE + '" stroke="' + INK + '" stroke-width="2"/>' + T("اللينك", 0, 8, 20, "#fbf8f1", 800));
+  for (var i = 0; i < 6; i++) g += '<rect x="' + (218 + (i % 3) * 70) + '" y="' + (440 + Math.floor(i / 3) * 80) + '" width="64" height="74" fill="' + BEIGE + '" stroke="' + INK + '" stroke-width="1.2"/>';
+  k = clamp(k || 0);
+  if (k > 0) { var ty = lerp(560, 400, ease(k)); g += PERSON.hand([360, ty + 70], -1.9, "point", 1, 2.2, PERSON.colors); if (k > .9) { var r = (t * 1.5) % 1; g += '<circle cx="330" cy="388" r="' + f(20 + 30 * r) + '" fill="none" stroke="' + ORANGE + '" stroke-width="3" opacity="' + f(1 - r) + '"/>'; } }
+  return g;
+}
+
 // ── «ليه شعرك فيه قشرة؟» — shots. Drawings in draw.js (DD.*), people from the shared person kit.
 // Camera: the «طب إزاي؟» move: the frame holds dead still on one drawing, then flies (eased ~1.8 s) onto the part being
 // talked about and back out. The life is inside the drawing: hairs sway, blood runs, yeast breathes, skin cells rise.
@@ -211,7 +225,7 @@ function phone(t, k) {
   g += '<rect x="240" y="320" width="160" height="8" rx="4" fill="#cfc6b2"/><rect x="255" y="338" width="130" height="8" rx="4" fill="#cfc6b2"/>';
   var p = 1 + .06 * Math.sin(t * 5); g += G('translate(320 385) scale(' + f(p) + ')', '<rect x="-86" y="-22" width="172" height="44" rx="22" fill="' + ORANGE + '" stroke="' + INK + '" stroke-width="2"/>' + T("اللينك 🔗", 0, 8, 20, "#fbf8f1", 800));
   for (var i = 0; i < 6; i++) g += '<rect x="' + (218 + (i % 3) * 70) + '" y="' + (440 + Math.floor(i / 3) * 80) + '" width="64" height="74" fill="#d8ccae" stroke="' + INK + '" stroke-width="1.2"/>';
-  if (k > 0) { var ty = lerp(560, 400, ease(k)); g += PERSON.hand([360, ty + 70], -100, "point", 1, 2.2, PERSON.colors); if (k > .9) g += '<circle cx="330" cy="388" r="' + f(20 + 30 * ((t * 1.5) % 1)) + '" fill="none" stroke="' + ORANGE + '" stroke-width="3" opacity="' + f(1 - (t * 1.5) % 1) + '"/>'; }
+  if (k > 0) { var ty = lerp(560, 400, ease(k)); g += PERSON.hand([360, ty + 70], -1.9, "point", 1, 2.2, PERSON.colors); if (k > .9) g += '<circle cx="330" cy="388" r="' + f(20 + 30 * ((t * 1.5) % 1)) + '" fill="none" stroke="' + ORANGE + '" stroke-width="3" opacity="' + f(1 - (t * 1.5) % 1) + '"/>'; }
   return g;
 }
 function doctor(t, x, y, s) { return PERSON.front({ x: x, y: y, s: s, outfit: "doctor", breath: brt(t), face: { mouth: "smile", eyes: blink(t, 3) }, head: { tilt: 2 * Math.sin(t) }, arms: [{ rel: [-12, 70], hand: "relaxed" }, { rel: [12, 70], hand: "relaxed" }] }).svg; }

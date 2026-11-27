@@ -12,7 +12,7 @@
   videos and our own episodes; the big media sits in the private repo `Minaawad99/claude-media`), look at how it was
   drawn there, then draw it in the skill's own style. Never copy a drawing or a script.
 - **New videos are made in the «اسكتش» style unless the user names another:** `.claude/skills/sketch/SKILL.md`.
-  **Locked for every sketch episode:** the drawing style of «لو حد شرق قدامك» (`videos/choking/`) with people from the
+  **Locked for every sketch episode:** the mid-video line «ولو عايز تعمل فيديوهات زي دي، دوس على اللينك اللي في البايو… ونكمّل.» about a third of the way in, with the phone shot (skill section 1, step 4); the drawing style of «لو حد شرق قدامك» (`videos/choking/`) with people from the
   shared person kit; **no background music** (narrator plus sound effects only, unless the user asks for music in that video); Claude makes the effects and asks the user
   for any real recording it needs; and every video ends with the reel cover and the TikTok, Instagram (shared to Facebook)
   and YouTube Shorts titles, without being asked.

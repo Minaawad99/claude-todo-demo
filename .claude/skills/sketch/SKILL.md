@@ -53,6 +53,15 @@ Captions in short chunks: `"chunk": 3.5` in `CFG`, and `SPLIT` for any chunk ove
 2. **Promise:** «إيه الحكاية؟ هشرحهالك في دقيقة.»
 3. **Optional rule:** «قبل ما نشرح محتاجين نوضّح قاعدة صغيرة… خليك فاكرها.», with one law.
 4. **The steps:** each opens with a «طب…؟» question, then the answer, then a home analogy «زي…».
+   **The mid-video ask (the user's fixed rule after «القشرة», `videos/dandruff/`, in every sketch episode without being
+   asked):** about a third of the way in (after the first step's answer and analogy, before the next «طب…؟»), one line,
+   word for word: «ولو عايز تعمل فيديوهات زي دي، دوس على اللينك اللي في البايو… ونكمّل.» Split it
+   `"ولو عايز تعمل فيديوهات زي دي، | دوس على اللينك | اللي في البايو… | ونكمّل."`, key words `{"اللينك": "o", "البايو…": "o"}`,
+   tell the voice in `style.txt` to say it quickly and casually, like an aside, then carry straight on. The shot is the
+   shared `bioPhone(t, k)` in `_helpers.js` (the phone with the profile, the pulsing «اللينك» button, a finger tapping it):
+   `shot(n, still(320, 393, 1), (u, d, t) => paper() + bioPhone(t, 0))`, `shot([n, 1], …bioPhone(t, at(u, 0, .8)))`,
+   `shot([n, 3], fly([320, 393, 1], [320, 393, 1.25], 1.8), …bioPhone(t, 1))`; sounds: a paper slide, a tick and a pop as
+   the finger taps. It counts toward the 230–260 words.
 5. **«ونتيجة لإيه»:** what else drives it, and what changes it.
 6. **The myth:** «وناس كتير فاكرة إن… لأ.»
 7. **The recap:** «يعني من الآخر…» in 3–4 short clauses.

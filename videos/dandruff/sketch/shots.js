@@ -45,7 +45,7 @@ function phone(t, k) {
   g += '<rect x="240" y="320" width="160" height="8" rx="4" fill="#cfc6b2"/><rect x="255" y="338" width="130" height="8" rx="4" fill="#cfc6b2"/>';
   var p = 1 + .06 * Math.sin(t * 5); g += G('translate(320 385) scale(' + f(p) + ')', '<rect x="-86" y="-22" width="172" height="44" rx="22" fill="' + ORANGE + '" stroke="' + INK + '" stroke-width="2"/>' + T("اللينك 🔗", 0, 8, 20, "#fbf8f1", 800));
   for (var i = 0; i < 6; i++) g += '<rect x="' + (218 + (i % 3) * 70) + '" y="' + (440 + Math.floor(i / 3) * 80) + '" width="64" height="74" fill="#d8ccae" stroke="' + INK + '" stroke-width="1.2"/>';
-  if (k > 0) { var ty = lerp(560, 400, ease(k)); g += PERSON.hand([360, ty + 70], -100, "point", 1, 2.2, PERSON.colors); if (k > .9) g += '<circle cx="330" cy="388" r="' + f(20 + 30 * ((t * 1.5) % 1)) + '" fill="none" stroke="' + ORANGE + '" stroke-width="3" opacity="' + f(1 - (t * 1.5) % 1) + '"/>'; }
+  if (k > 0) { var ty = lerp(560, 400, ease(k)); g += PERSON.hand([360, ty + 70], -1.9, "point", 1, 2.2, PERSON.colors); if (k > .9) g += '<circle cx="330" cy="388" r="' + f(20 + 30 * ((t * 1.5) % 1)) + '" fill="none" stroke="' + ORANGE + '" stroke-width="3" opacity="' + f(1 - (t * 1.5) % 1) + '"/>'; }
   return g;
 }
 function doctor(t, x, y, s) { return PERSON.front({ x: x, y: y, s: s, outfit: "doctor", breath: brt(t), face: { mouth: "smile", eyes: blink(t, 3) }, head: { tilt: 2 * Math.sin(t) }, arms: [{ rel: [-12, 70], hand: "relaxed" }, { rel: [12, 70], hand: "relaxed" }] }).svg; }
