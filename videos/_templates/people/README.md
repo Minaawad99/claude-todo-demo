@@ -88,6 +88,9 @@ PERSON.front({ ..., outfit: { top: "shirt", tie: true, over: "labcoat", hat: nul
   same joints; `hair: "long"` (wavy hair over the shoulders, a side parting, a fringe) and `fem: true` (lashes, tinted lips,
   blush, softer shoulders, a waist, the bust, wider hips and seat, front and side), which work with any outfit, e.g.
   `{ base: "doctor", hair: "long", fem: true }`. Demo: `videos/person-demo/woman.html`. Keep it modest and clothed.
+- **The Gulf** (added for «الكعبة من جوة»): `saudi` (white thobe to the ankles, white ghutra, black agal), `saudiShemagh`
+  (the red-checked shemagh), `bisht` (the thobe under a black cloak with a gold edge, for officials). Front and side.
+  Demo: `videos/person-demo/gulf.html`.
 - **The parts:**
   - `top`: `sweater`, `tshirt` (bare forearms), `shirt` (collar, buttons, pocket, cuffs);
   - `over`: `labcoat`, `vest`, `apron`;
