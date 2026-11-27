@@ -188,7 +188,8 @@ function swarm(n, k, t, o) {
   }
   return s;
 }
-function routeLine(k, col) { return '<path d="' + IU.routeD(k) + '" stroke="' + (col || ORANGE) + '" stroke-width="3" stroke-dasharray="8 7" fill="none"/>'; }
+function routeLine(k, col) { return '<path d="' + IU.routeD(k) + '" stroke="' + (col || ORANGE) + '" stroke-width="3" stroke-dasharray="8 7" stroke-dashoffset="' + f(-window.__t * 24) + '" fill="none"/>'; }   // the dashes march along the route
+function gl(t, ph) { return .55 + .45 * Math.sin(t * 2.6 + (ph || 0)); }   // a calm breathing glow on a device
 function eggAt(k) { return IU.egg(IU.EGG[0], IU.EGG[1], 13, k); }
 
 // 4 · «اللولب نوعين: نحاسي، وهرموني.» — the two real devices side by side (copper on the right: it is read first)
@@ -298,13 +299,13 @@ shot([14, 1], still(MID[0], MID[1], MID[2]), function (u, d, t) {
     G("translate(450 190)", IU.drop(0, 0, .55 + .25 * (1 - at(u, .2, 1)), "#b8463a"), at(u, 0, .3));
 });
 // 15 · both work more than 99 %
-shot(15, still(320, 393, 1), function (u, d, t) {
-  return paper() + IU.device(470, 260, .9, "copper") + IU.device(170, 260, .9, "hormonal") + G("", N("+" + count(99, at(u, .2, 1.6)) + "%", 320, 610, 92, ORANGE), at(u, .1, .3)) + T("كفاءة", 320, 680, 28, INK, 800);
-});
+function card15(t) { var u = t - LN[15].start; return paper() + IU.device(470, 260, .9, "copper", { glow: gl(t) }) + IU.device(170, 260, .9, "hormonal", { glow: gl(t, 1.6) }) + G("", N("+" + count(99, at(u, .2, 1.6)) + "%", 320, 610, 92, ORANGE), at(u, .1, .3)) + T("كفاءة", 320, 680, 28, INK, 800); }
+shot(15, still(320, 393, 1), function (u, d, t) { return card15(t); });
+shot([15, 1], fly([320, 393, 1], [320, 560, 1.35], 1.8), function (u, d, t) { return card15(t); });
 // 16 · copper lasts up to 10 years, hormonal 3 to 8 depending on the type
-shot(16, still(320, 393, 1), function (u, d, t) { return paper() + IU.device(470, 200, .9, "copper", { glow: .5 }) + IU.device(170, 200, .9, "hormonal") + G("", IU.calendar(470, 630, 1.5, "10 سنين"), at(u, .3, .4)); });
+shot(16, still(320, 393, 1), function (u, d, t) { return paper() + IU.device(470, 200, .9, "copper", { glow: gl(t) }) + IU.device(170, 200, .9, "hormonal") + G("", IU.calendar(470, 630 + 4 * Math.sin(t * 2), 1.5, "10 سنين"), at(u, .3, .4)); });
 shot([16, 2], still(320, 393, 1), function (u, d, t) {
-  return paper() + IU.device(470, 200, .9, "copper") + IU.device(170, 200, .9, "hormonal", { glow: .5 }) + IU.calendar(470, 630, 1.5, "10 سنين") + G("", IU.calendar(170, 630, 1.5, "3–8 سنين", OLIVE), at(u, 0, .4));
+  return paper() + IU.device(470, 200, .9, "copper") + IU.device(170, 200, .9, "hormonal", { glow: gl(t) }) + IU.calendar(470, 630, 1.5, "10 سنين") + G("", IU.calendar(170, 630 + 4 * Math.sin(t * 2), 1.5, "3–8 سنين", OLIVE), at(u, 0, .4));
 });
 // 17 · what to do after it's fitted: after every period, check the thread is there
 shot(17, still(320, 393, 1), function (u, d, t) { return paper() + woman(320, 480, 1.05, { mouth: "neutral", brows: "raised", look: [.5, -.4] }, t) + G("", T("؟", 500, 220, 120, ORANGE, 800), at(u, .3, .3)); });
@@ -322,18 +323,19 @@ shot([18, 2], still(320, 393, 1), function (u, d, t) {
 // 19 · warning signs: bad pain, fever, strange discharge, the thread gone → go straight away
 var SIG = [[470, 150, "وجع جامد"], [170, 150, "سخونية"], [470, 400, "إفرازات غريبة"], [170, 400, "الخيط اختفى"]];
 function sign(i, k, t) {
-  var x = SIG[i][0], y = SIG[i][1], ic = [IU.bolt(0, 0, 1.1), IU.thermometer(0, 0, .9, .85 + .1 * Math.sin(t * 3)), IU.drop(0, 0, 1, "#b6b06a"), IU.ln([[-6, -50], [-10, -10], [-4, 30]], "#3a2a22", 3) + '<text x="22" y="10" style="font:800 56px Noto Sans Arabic" fill="' + ORANGE + '" text-anchor="middle">؟</text>'][i];
-  return G("", iconBox(x, y, 150, ic, k) + G("", T(SIG[i][2], x, y + 110, 22, INK, 800), k), 1);
+  var x = SIG[i][0], y = SIG[i][1], w = Math.sin(t * 2.4 + i * 1.3), ic = [G("rotate(" + f(6 * w) + ")", IU.bolt(0, 0, 1.1 + .08 * w)), IU.thermometer(0, 0, .9, .7 + .25 * (.5 + .5 * w)), IU.drop(0, 6 * w, 1, "#b6b06a"), IU.ln([[-6, -50], [-10 + 8 * w, -10], [-4 - 10 * w, 30]], "#3a2a22", 3) + '<text x="22" y="10" style="font:800 56px Noto Sans Arabic" fill="' + ORANGE + '" text-anchor="middle">؟</text>'][i];
+  var b = 1 + .04 * Math.sin(t * 2.2 + i * 1.6);   // each box breathes a little (calm life on a still card)
+  return G("translate(" + f(x) + " " + f(y) + ") scale(" + b.toFixed(4) + ") translate(" + f(-x) + " " + f(-y) + ")", iconBox(x, y, 150, ic, k)) + G("", T(SIG[i][2], x, y + 110, 22, INK, 800), k);
 }
 function signs(n, kl, t) { var s = ""; for (var i = 0; i < n; i++) s += sign(i, i === n - 1 ? kl : 1, t); return s; }
 shot(19, still(320, 393, 1), function (u, d, t) { return paper() + signs(1, at(u, 0, .3), t); });
 shot([19, 1], still(320, 393, 1), function (u, d, t) { return paper() + signs(2, at(u, 0, .3), t); });
-shot([19, 2], still(320, 393, 1), function (u, d, t) { return paper() + signs(3, at(u, 0, .3), t); });
-shot([19, 3], still(320, 393, 1), function (u, d, t) { return paper() + signs(4, at(u, 0, .3), t); });
-shot([19, 4], still(320, 393, 1), function (u, d, t) { return paper() + signs(4, 1, t) + chip("روحي على طول", 320, 690, ORANGE, at(u, 0, .3), 26); });
+shot([19, 2], fly([320, 393, 1], [320, 330, 1.3], 1.8), function (u, d, t) { return paper() + signs(3, at(u, 0, .3), t); });
+shot([19, 3], still(320, 330, 1.3), function (u, d, t) { return paper() + signs(4, at(u, 0, .3), t); });
+shot([19, 4], fly([320, 330, 1.3], [320, 393, 1], 1.6), function (u, d, t) { return paper() + signs(4, 1, t) + chip("روحي على طول", 320, 600, ORANGE, at(u, 0, .3), 26); });
 // 20 · it doesn't protect against sexually transmitted infections
-shot(20, still(320, 393, 1), function (u, d, t) { return paper() + IU.device(320, 220, 1, "copper") + G("", IU.shield(480, 560, 1.6), at(u, .2, .4)); });
-shot([20, 1], still(320, 393, 1), function (u, d, t) { return paper() + IU.device(320, 220, 1, "copper") + IU.shield(480, 560, 1.6) + cross(480, 560, 1.2, at(u, .1, .5)) + chip("مبيحميش", 200, 640, ORANGE, at(u, .3, .3), 24); });
+shot(20, still(320, 393, 1), function (u, d, t) { return paper() + IU.device(320, 220, 1, "copper", { glow: gl(t) }) + G("", IU.shield(480, 560 + 5 * Math.sin(t * 2), 1.6), at(u, .2, .4)); });
+shot([20, 1], still(320, 393, 1), function (u, d, t) { return paper() + IU.device(320, 220, 1, "copper", { glow: gl(t) }) + IU.shield(480, 560 + 5 * Math.sin(t * 2), 1.6) + cross(480, 560, 1.2, at(u, .1, .5)) + chip("مبيحميش", 200, 640, ORANGE, at(u, .3, .3), 24); });
 // 21 · many think the IUD causes abortion. No.
 shot(21, still(320, 393, 1), function (u, d, t) { return paper() + woman(220, 480, 1.05, { mouth: "frown", brows: "worried", look: [.5, -.2] }, t) + chip("إجهاض؟", 470, 200, INK, at(u, .6, .3), 26); });
 shot([21, 2], still(320, 393, 1), function (u, d, t) { return paper() + woman(220, 480, 1.05, { mouth: "smile", brows: "raised" }, t) + chip("إجهاض؟", 470, 200, INK, 1, 26) + cross(470, 200, 1, at(u, 0, .4)); });
@@ -356,17 +358,17 @@ shot([23, 3], still(U[0], U[1], U[2]), function (u, d, t) {
 });
 // 24 · the oddest: a copper IUD fitted within 5 days after sex is the strongest emergency contraception
 shot(24, still(320, 393, 1), function (u, d, t) { return paper() + IU.device(320, 170, 1.05, "copper", { glow: .5 + .3 * Math.sin(t * 2) }); });
-shot([24, 1], still(320, 393, 1), function (u, d, t) { return paper() + IU.device(470, 170, .95, "copper", { glow: .5 }) + G("", IU.calendar(190, 260, 2, "5 أيام"), at(u, 0, .4)); });
-shot([24, 3], still(320, 393, 1), function (u, d, t) { return paper() + IU.device(470, 170, .95, "copper", { glow: .5 }) + IU.calendar(190, 260, 2, "5 أيام") + tag("طوارئ", 320, 640, at(u, 0, .3), 34, ORANGE) + check(470, 640, .8, at(u, .6, .4)); });
+shot([24, 1], fly([320, 393, 1], [230, 300, 1.3], 1.8), function (u, d, t) { return paper() + IU.device(470, 170, .95, "copper", { glow: .5 }) + G("", IU.calendar(190, 260, 2, "5 أيام"), at(u, 0, .4)); });
+shot([24, 3], fly([230, 300, 1.3], [320, 393, 1], 1.6), function (u, d, t) { return paper() + IU.device(470, 170, .95, "copper", { glow: .5 }) + IU.calendar(190, 260, 2, "5 أيام") + tag("طوارئ", 320, 640, at(u, 0, .3), 34, ORANGE) + check(470, 640, .8, at(u, .6, .4)); });
 
 // ── opening card, bumper and summary art ──
 window.SCENE = window.SCENE || {};
 SCENE.intro = function (svg, t, li) {
   // line 0: the copper T beside a fingertip, about 3 cm. line 1: placed in the uterus. line 2: the cavity stays open round it
   var k1 = li >= 1 ? ease((t - LN[1].start) / .6) : 0, s = "";
-  if (li === 0) s += IU.device(380, 200, .9, "copper", { thread: 120 }) + IU.finger(170, 330, 1.3) + measure(470, 200 + 4, 470, 200 + 190 * .9, ease((t - .8) / .8), "") + G("", T("3 سم", 540, 300, 26, ORANGE, 800), ease((t - 1.6) / .3));
+  if (li === 0) s += G("rotate(" + f(2.5 * Math.sin(t * 1.8)) + " 380 200)", IU.device(380, 200, .9, "copper", { thread: 120, glow: gl(t) })) + IU.finger(170, 330 + 8 * Math.sin(t * 2.1), 1.3) + measure(470, 200 + 4, 470, 200 + 190 * .9, ease((t - .8) / .8), "") + G("", T("3 سم", 540, 300, 26, ORANGE, 800), ease((t - 1.6) / .3));
   else {
-    s += IU.uterus(304, 170, .82, { over: IU.inUterus("copper") + (li >= 2 ? '<path d="M0 420 L0 250 L-60 110 L-150 20" stroke="' + ORANGE + '" stroke-width="4" stroke-dasharray="10 8" fill="none"/>' + IU.sperm(-70, 90, -2, 1.3, 0) : "") });
+    s += IU.uterus(304, 170, .82, { inner: IU.ions(0, 130, 14, 100, 1, t) + IU.sperm(-30 + 20 * Math.sin(t * 1.3), 150, 1.2 + .4 * Math.sin(t), 1.3, 0) + IU.sperm(40, 90 + 20 * Math.sin(t * 1.1), 2.6, 1.3, 2), over: IU.inUterus("copper", { glow: gl(t) }) + (li >= 2 ? '<path d="M0 420 L0 250 L-60 110 L-150 20" stroke="' + ORANGE + '" stroke-width="4" stroke-dasharray="10 8" fill="none"/>' + IU.sperm(-70, 90, -2, 1.3, 0) : "") });
     if (li >= 2) s += G("", T("؟", 520, 110, 110, ORANGE, 800), ease((t - LN[2].start - .3) / .3));
   }
   return s;

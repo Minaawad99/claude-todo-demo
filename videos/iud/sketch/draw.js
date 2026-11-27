@@ -83,7 +83,7 @@ function uterus(cx, cy, s, o) {
   s2 += path(sm(CANAL, true), o.hl === "cervix" ? "#f6c7b0" : CAV, 1.8);
   if (mu > 0) {   // cervical mucus: watery strands, or a thick blue jelly plug that fills the canal
     s2 += '<path d="' + sm(CANAL, true) + '" fill="' + MUC + '" opacity="' + f(.25 + .65 * mu) + '"/>';
-    for (var q = 0; q < 9; q++) { var yq = 262 + q * 15, wq = 6 + 4 * Math.sin(q); s2 += '<path d="M' + f(-wq) + ' ' + f(yq + 3 * Math.sin(t * 1.5 + q)) + ' Q0 ' + f(yq - 6) + ' ' + f(wq) + ' ' + f(yq + 3 * Math.cos(t * 1.5 + q)) + '" stroke="' + MUCD + '" stroke-width="' + f(1 + 1.6 * mu) + '" fill="none" opacity="' + f(.4 + .6 * mu) + '"/>'; }
+    for (var q = 0; q < 9; q++) { var yq = 262 + q * 15, wq = 6 + 4 * Math.sin(q); s2 += '<path d="M' + f(-wq) + ' ' + f(yq + 5 * Math.sin(t * 2 + q)) + ' Q0 ' + f(yq - 6 + 3 * Math.sin(t * 1.7 + q)) + ' ' + f(wq) + ' ' + f(yq + 5 * Math.cos(t * 2 + q)) + '" stroke="' + MUCD + '" stroke-width="' + f(1 + 1.6 * mu) + '" fill="none" opacity="' + f(.4 + .6 * mu) + '"/>'; }
   }
   if (o.inner) s2 += cavityClip(id, 0) + '<g clip-path="url(#' + id + ')">' + o.inner + '</g>';
   s2 += '</g>';
