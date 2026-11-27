@@ -11,7 +11,9 @@
 | A loaded heavy truck needs a much longer stopping distance than a car | general road-safety guidance (no number given in the script) |
 
 ## Drawings
-Wikimedia Commons answered HTTP 429 for every request in this session, so the shapes are drawn from published dimensions:
+Checked against the photo «Cairo Ring Road, Giza, GG, EGY (47902575861).jpg» (Wikimedia Commons, CC BY-SA, via Flickr): a
+segmented New Jersey concrete barrier on the road edge and tall lamp posts, as drawn. Other Commons requests answered
+HTTP 429, so the rest is drawn from published dimensions:
 Cairo Ring Road four lanes each way (3.6 m), New Jersey concrete barrier (0.81 m high, 0.61 m base, 0.15 m top), a
 saloon 4.5 × 1.8 m, a cab-over tractor with a three-axle elliptical tank semi-trailer (about 16.5 m, 2.5 m wide, 4
 compartments with manholes, handrail, rear ladder, hazard diamond). Style after «طب إزاي؟» v05 (road, car side views,
