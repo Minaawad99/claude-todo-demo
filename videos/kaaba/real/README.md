@@ -20,3 +20,11 @@ Use: framed cards over the 3D interior. The user downloaded these from YouTube S
 | p6 | an AI thumbnail from another channel: not real, not ours, do not use | — |
 
 Also sent: a second copy of the user's style reference video (identical file), not kept.
+
+## Added later
+| file | what it shows | use |
+|---|---|---|
+| v8-inside-360-720p | a 360° **computer render** of the interior (YouTube EAC layout, not real footage). Flatten with `ffmpeg -vf "v360=eac:flat:h_fov=80:v_fov=110:w=1080:h=1920:yaw=<deg>"`; yaw sweeps make slow pans | 3D reference; label as «محاكاة» if shown |
+| p10 / p11 zubayr pillar | the old teak pillar from Ibn al-Zubayr's rebuilding in the Exhibition of the Two Holy Mosques Architecture (p11 from alharaman.gov.sa) | 33–34 |
+
+v7 logo: `crop=720:660:0:320` removes the Al-Ain logo and the lower-third (source footage: Al-Ekhbariya).
