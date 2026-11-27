@@ -28,3 +28,4 @@ Also sent: a second copy of the user's style reference video (identical file), n
 | p10 / p11 zubayr pillar | the old teak pillar from Ibn al-Zubayr's rebuilding in the Exhibition of the Two Holy Mosques Architecture (p11 from alharaman.gov.sa) | 33–34 |
 
 v7 logo: `crop=720:660:0:320` removes the Al-Ain logo and the lower-third (source footage: Al-Ekhbariya).
+| v9-washing-inside-almamlaka-1080p | Al-Mamlaka TV, 1080×1920, the washing inside: 0–8 s outside + captions; 8.2–32.4 s an official wiping the inner wall; 32.4–43.3 s the gold band of a pillar wiped with a white cloth (best hook shot); 43.3–48.4 s the stair; 48.4–60.3 s people inside; 60.3–65.6 s pillar wiped; 65.6–73 s stair and the Haram from above; 73 s+ channel end card | hook (lines 1–3), 27–29, 23. Crop the frame graphics: `crop=1080:1640:0:250` |
