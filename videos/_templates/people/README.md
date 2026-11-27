@@ -90,6 +90,8 @@ PERSON.front({ ..., outfit: { top: "shirt", tie: true, over: "labcoat", hat: nul
   `{ base: "doctor", hair: "long", fem: true }`. Demo: `videos/person-demo/woman.html`. Keep it modest and clothed.
 - **The Gulf** (added for «الكعبة من جوة»): `saudi` (white thobe to the ankles, white ghutra, black agal), `saudiShemagh`
   (the red-checked shemagh), `bisht` (the thobe under a black cloak with a gold edge, for officials). Front and side.
+  In profile the robe's skirt hangs plumb from the hips and drapes over bent knees, so bending and kneeling read right. Kneeling
+  to wipe the floor: `lean: 58, legs: [{ hip: 72, knee: 160, ankle: 40 }, { hip: 62, knee: 155, ankle: 40 }], arms: [{ sh: -16, el: 6, hand: "flat" }, …]`.
   Demo: `videos/person-demo/gulf.html`.
 - **The parts:**
   - `top`: `sweater`, `tshirt` (bare forearms), `shirt` (collar, buttons, pocket, cuffs);

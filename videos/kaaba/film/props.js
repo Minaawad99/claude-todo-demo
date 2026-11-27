@@ -34,8 +34,8 @@
       r.svg += cloth(r.joints.wrist[0] + 6, r.joints.wrist[1] - 4); return r; });
   });
   // bending to wipe the marble floor (side), the cloth sweeping back and forth
-  frames("floor-saudi", 8, function (k) { var a = k * 6.283, r = sideAt({ s: 1, outfit: "saudi", lean: 38, legs: [{ hip: 18, knee: 24 }, { hip: -6, knee: 10 }], arms: [{ sh: 46 + 14 * Math.sin(a), el: 10, hand: "flat" }, { sh: 20, el: 30 }] });
-    r.svg += cloth(r.joints.wrist[0] + 4, r.joints.wrist[1] + 4); return r; });
+  frames("floor-saudi", 8, function (k) { var a = k * 6.283, r = sideAt({ s: 1, outfit: "saudi", lean: 58 + 3 * Math.sin(a), legs: [{ hip: 72, knee: 160, ankle: 40 }, { hip: 62, knee: 155, ankle: 40 }], arms: [{ sh: -16 + 12 * Math.sin(a), el: 6, hand: "flat" }, { sh: -14, el: 14 }] });
+    r.svg += cloth(r.joints.wrist[0] + 8, r.joints.wrist[1] + 10); return r; });
   // walking in through the door (side, 8 frames of the stride)
   ["saudi", "bisht", "saudiShemagh"].forEach(function (of) {
     frames("walk-" + of, 8, function (k) { var wp = P.walkPose(k * 6.283, 1); return sideAt(Object.assign({ s: 1, outfit: of }, wp)); });
@@ -57,16 +57,17 @@
 
   // ── the washing: vessels, soap, water on the marble, droplets ─
   var vessels = new T.Group(); vessels.position.set(-1.6, 0, 2.3); scene.add(vessels); vessels.visible = false;
-  var glassM = new T.MeshPhysicalMaterial({ color: 0xbfd6dc, roughness: .05, transparent: true, opacity: .22, metalness: .1, clearcoat: 1, envMapIntensity: 1.5 });
+  var glassM = new T.MeshPhysicalMaterial({ color: 0x9fbcc4, roughness: .05, transparent: true, opacity: .34, metalness: .1, clearcoat: 1, envMapIntensity: 1.5, depthWrite: false });
   function jug(x, liquid, hgt, rad, lvl) {
     var g = new T.Group(); g.position.set(x, 0, 0); vessels.add(g);
     var pts = [[0, 0], [rad, 0], [rad + .02, .04], [rad + .02, hgt * .75], [rad * .55, hgt * .92], [rad * .45, hgt], [rad * .5, hgt + .03], [0, hgt + .03]];
-    var outer = new T.Mesh(W.lathe(pts, 48), glassM); g.add(outer);
-    var liq = new T.Mesh(new T.CylinderGeometry(rad - .005, rad - .005, 1, 40), new T.MeshStandardMaterial({ color: liquid, roughness: .1, transparent: true, opacity: .92 })); liq.position.y = .5; g.add(liq);
+    var outer = new T.Mesh(W.lathe(pts, 48), glassM); outer.renderOrder = 3; g.add(outer);
+    var collar = new T.Mesh(new T.CylinderGeometry(rad * .55, rad * .55, .035, 32), MT.gold); collar.position.y = hgt + .005; g.add(collar);   // a gold neck ring so the glass reads on the white marble
+    var liq = new T.Mesh(new T.CylinderGeometry(rad - .005, rad - .005, 1, 40), new T.MeshStandardMaterial({ color: liquid, roughness: .15 })); liq.position.y = .5; liq.renderOrder = 1; g.add(liq);
     g.userData = { liq: liq, lvl: lvl, h: hgt * .74 }; liq.scale.y = hgt * .74 * lvl; liq.position.y = liq.scale.y / 2 + .01; return g;
   }
-  var jZ = jug(-.32, 0x5f9fc0, .5, .12, .85), jR = jug(.0, 0xe0708e, .42, .1, .8), jO = jug(.28, 0x7a3e10, .26, .065, .7);
-  var tray = new T.Mesh(new T.CylinderGeometry(.52, .55, .03, 64), MT.gold); tray.position.y = -.0; vessels.add(tray); [jZ, jR, jO].forEach(function (j) { j.position.y = .03; });
+  var jZ = jug(-.26, 0x3f86b0, .5, .12, .85), jR = jug(.02, 0xd8577c, .42, .1, .8), jO = jug(.26, 0x6a3208, .26, .065, .7);
+  var tray = new T.Mesh(new T.CylinderGeometry(.44, .47, .03, 64), MT.gold); tray.position.y = -.0; vessels.add(tray); [jZ, jR, jO].forEach(function (j) { j.position.y = .03; });
   var bucket = new T.Group(); bucket.position.set(1.4, 0, 2.0); scene.add(bucket); bucket.visible = false;
   bucket.add(new T.Mesh(new T.CylinderGeometry(.26, .2, .38, 40, 1, true), new T.MeshStandardMaterial({ color: 0x9aa3a8, roughness: .25, metalness: .9, side: T.DoubleSide })));
   [.02, .2, .37].forEach(function (y) { var r = new T.Mesh(new T.TorusGeometry(.2 + y * .16, .008, 8, 48), MT.silver); r.rotation.x = Math.PI / 2; r.position.y = y; bucket.add(r); });

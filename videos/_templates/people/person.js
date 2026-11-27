@@ -530,10 +530,20 @@ function personSide(o) {
     part.arm[i] = g; if (!i) { J.wrist = wr; J.elbow = el; }
   });
   var coatSvg = OF.over === "labcoat" ? '<path d="' + pPath([T(121, -14), T(121, 16), T(96, 34), T(30, 32), T(-66, 38), T(-68, -34), T(30, -32), T(96, -30)], true) + '" fill="' + c.coat + '" stroke="' + INK + '" stroke-width="2.2"/>' + pLine([T(112, 18), T(70, 30), T(60, 33)], c.coatD, 2) + pLine([T(-10, 30), T(-60, 34)], c.coatD, 1.3) : "";
-  if (OF.over === "thobe" || OF.over === "bisht") {   // the robe in profile, to just above the ankles; it hangs plumb and swings a little with the stride
-    coatSvg = '<path d="' + pPath([T(121, -16), T(124, 14), T(100, 30), T(40, 32), T(-60, 36), T(-140, 42), T(-186, 46), T(-189, 10), T(-187, -34), T(-140, -38), T(-60, -36), T(30, -32), T(98, -30)], true) + '" fill="' + c.coat + '" stroke="' + INK + '" stroke-width="2.2"/>' +
-      pLine([T(20, 20), T(-170, 30)], c.coatD, 1.4) + pLine([T(-40, -10), T(-180, -14)], c.coatD, 1.2);
-    if (OF.over === "bisht") coatSvg += '<path d="' + pPath([T(126, -20), T(128, 6), T(100, 18), T(-60, 26), T(-184, 34), T(-188, -40), T(-60, -40), T(60, -36), T(110, -30)], true) + '" fill="' + c.cloak + '" stroke="' + INK + '" stroke-width="2.2"/>' + pLine([T(126, 6), T(100, 19), T(-60, 27), T(-184, 35)], c.trim, 3.2) + pLine([T(0, -10), T(-170, -18)], "#3a373c", 1.3);
+  if (OF.over === "thobe" || OF.over === "bisht") {   // the robe in profile: the top follows the trunk, the skirt hangs plumb from the hips over the thighs and
+    // knees to just above the lowest ankle, so a bend, a kneel or a stride drapes the cloth instead of tilting it like a board
+    var kx = [], ax = [], ay = []; legs.forEach(function (L) { var kn = [V(L.hip)[0] * 98, 2 + V(L.hip)[1] * 98], b = L.hip - (L.knee || 0); kx.push(kn); ax.push(kn[0] + V(b)[0] * 98); ay.push(kn[1] + V(b)[1] * 98); });
+    var F0 = T(6, 34), B0 = T(6, -36), hemY = Math.max(ay[0], ay[1]) - 12, kf = kx[0][0] > kx[1][0] ? kx[0] : kx[1];
+    var frontX = Math.max(F0[0] + 8, Math.max(ax[0], ax[1]) + 12, kf[0] + 18), backX = Math.min(B0[0] - 8, Math.min(ax[0], ax[1]) - 10, Math.min(kx[0][0], kx[1][0]) - 12);
+    var skF = kf[0] > F0[0] + 20 ? [F0, [kf[0] + 6, Math.min(F0[1], kf[1] - 26)], [frontX, Math.min(hemY - 20, kf[1] + 10)], [frontX - 2, hemY]] : [F0, [frontX - 2, (F0[1] + hemY) / 2], [frontX, hemY]];
+    var skB = [[backX, hemY + 2], [backX - 2, (B0[1] + hemY) / 2], B0];
+    var robe = [T(121, -16), T(124, 14), T(100, 30), T(40, 32)].concat(skF, [[(frontX + backX) / 2, hemY + 4]], skB, [T(30, -32), T(98, -30)]);
+    coatSvg = '<path d="' + pPath(robe, true) + '" fill="' + c.coat + '" stroke="' + INK + '" stroke-width="2.2"/>' +
+      pLine([T(20, 20), [frontX - 12, hemY - 8]], c.coatD, 1.4) + pLine([T(-10, -14), [backX + 16, hemY - 6]], c.coatD, 1.2);
+    if (OF.over === "bisht") { var cf = frontX - 16, cb = backX - 4;
+      var cloak = [T(126, -20), T(128, 6), T(100, 18), T(30, 24)].concat(skF.length > 3 ? [[kf[0] - 6, Math.min(F0[1], kf[1] - 30)], [cf, hemY - 4]] : [[cf, (F0[1] + hemY) / 2], [cf, hemY - 4]], [[cb, hemY]], [[cb - 2, (B0[1] + hemY) / 2], T(4, -40), T(60, -40), T(110, -30)]);
+      var trim = [T(126, 6), T(100, 19), T(30, 25)].concat(cloak.slice(4, 6));
+      coatSvg += '<path d="' + pPath(cloak, true) + '" fill="' + c.cloak + '" stroke="' + INK + '" stroke-width="2.2"/>' + pLine(trim, c.trim, 3.2) + pLine([T(0, -10), [cb + 14, hemY - 10]], "#3a373c", 1.3); }
   }
   var body = part.arm[1] + part.leg[1] + seat + trunk + part.leg[0] + coatSvg + neck + head + part.arm[0];
   var s = o.s || 1, dir = o.dir || 1;
