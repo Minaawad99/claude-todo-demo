@@ -1,0 +1,14 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Gulf outfits</title>
+<style>html,body{margin:0;background:#eee5d0}svg{display:block}</style></head><body>
+<svg id="s" width="1000" height="560" viewBox="0 0 1000 560"></svg>
+<script src="../_templates/people/person.js"></script>
+<script>
+var g = "";
+g += PERSON.front({ x: 120, y: 280, s: .62, outfit: "saudi", face: { mouth: "smile" } }).svg;
+g += PERSON.front({ x: 300, y: 280, s: .62, outfit: "saudiShemagh", head: { turn: .4 }, arms: [{}, { to: [380, 120], straight: true, hand: "open" }] }).svg;
+g += PERSON.front({ x: 500, y: 280, s: .62, outfit: "bisht", face: { mouth: "neutral" } }).svg;
+var wp = PERSON.walkPose(.8, 1);
+g += PERSON.side(Object.assign({ x: 700, y: PERSON.sideHipY(Object.assign({ outfit: "saudi", s: .62 }, wp), 532), s: .62, outfit: "saudi" }, wp)).svg;
+g += PERSON.side({ x: 880, y: PERSON.sideHipY({ outfit: "bisht", s: .62 }, 532), s: .62, outfit: "bisht", dir: -1 }).svg;
+document.getElementById("s").innerHTML = g; document.title = "ready";
+</script></body></html>

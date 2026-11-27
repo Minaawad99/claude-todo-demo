@@ -1,0 +1,22 @@
+[
+ {"id":"c00","line":0,"from":0.0,"to":1.0,"src":"v9-washing-inside-almamlaka-1080p","ss":33.0,"crop":"1080:1640:0:250","tag":"فيديو حقيقي · غسيل الكعبة"},
+ {"id":"c02","line":2,"from":0.0,"to":1.0,"src":"v9-washing-inside-almamlaka-1080p","ss":11.5,"crop":"1080:1640:0:250","tag":"فيديو حقيقي"},
+ {"id":"c05","line":5,"from":0.0,"to":1.0,"src":"v3-door-and-inside","ss":6.0,"tag":"فيديو حقيقي · باب الكعبة"},
+ {"id":"c06","line":6,"from":0.0,"to":1.0,"src":"v5-stairs-to-door-1447","ss":3.5,"tag":"فيديو حقيقي · السلّم"},
+ {"id":"c07","line":7,"from":0.0,"to":0.55,"src":"v4-gold-door","ss":0.3,"tag":"فيديو حقيقي"},
+ {"id":"c09","line":9,"from":0.15,"to":1.0,"src":"v6-inside-pillars-lamps","ss":0.5,"tag":"فيديو حقيقي · من جوة"},
+ {"id":"c13","line":13,"from":0.25,"to":1.0,"src":"v3-door-and-inside","ss":14.0,"tag":"محاكاة · من جوة"},
+ {"id":"c14","line":14,"from":0.45,"to":1.0,"src":"v6-inside-pillars-lamps","ss":17.5,"tag":"فيديو حقيقي · القناديل"},
+ {"id":"p15","line":15,"from":0.4,"to":1.0,"photo":"p9-tawba-door-inside.webp","tag":"صورة حقيقية · باب التوبة"},
+ {"id":"c21","line":21,"from":0.0,"to":1.0,"src":"v2-shaibi-key-stairs","ss":4.0,"tag":"فيديو حقيقي · سادن الكعبة"},
+ {"id":"c22","line":22,"from":0.35,"to":1.0,"src":"v5-stairs-to-door-1447","ss":16.0,"tag":"فيديو حقيقي"},
+ {"id":"c24","line":24,"from":0.4,"to":1.0,"src":"v1-rose-water-outside","ss":4.5,"crop":"1080:1300:0:520","tag":"فيديو حقيقي · مية الورد"},
+ {"id":"c26","line":26,"from":0.45,"to":1.0,"src":"v9-washing-inside-almamlaka-1080p","ss":49.0,"crop":"1080:1640:0:250","tag":"فيديو حقيقي"},
+ {"id":"c27","line":27,"from":0.0,"to":0.55,"src":"v9-washing-inside-almamlaka-1080p","ss":14.0,"crop":"1080:1640:0:250","tag":"فيديو حقيقي · مسح الحيطان"},
+ {"id":"p27","line":27,"from":0.6,"to":1.0,"photo":"p7-wiping-inside-wall.jpg","tag":"صورة حقيقية"},
+ {"id":"c28","line":28,"from":0.0,"to":1.0,"src":"v9-washing-inside-almamlaka-1080p","ss":60.5,"crop":"1080:1640:0:250","tag":"فيديو حقيقي · بالإيد"},
+ {"id":"p29","line":29,"from":0.62,"to":1.0,"photo":"p3-incense.jpg","tag":"صورة حقيقية · المبخرة"},
+ {"id":"c30","line":30,"from":0.5,"to":1.0,"src":"v5-stairs-to-door-1447","ss":22.0,"tag":"فيديو حقيقي"},
+ {"id":"p32","line":32,"from":0.35,"to":1.0,"photo":"p11-zubayr-pillar-museum-haramain.jpg","tag":"صورة حقيقية · معرض عمارة الحرمين"},
+ {"id":"p33","line":33,"from":0.0,"to":1.0,"photo":"p10-zubayr-pillar-museum.jpg","tag":"صورة حقيقية · عمود من سنة 65 هـ"}
+]

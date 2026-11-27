@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>الكعبة من جوة — إيه الحكاية؟</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@500;700;800;900&display=block" rel="stylesheet">
+<style>
+  @font-face { font-family: "AmiriK"; src: url(../sim/fonts/amiri-700.woff2) format("woff2"); font-weight: 700; }
+  *, *::before, *::after { box-sizing: border-box; transition: none !important; animation: none !important; }
+  html, body { margin: 0; width: 360px; height: 640px; overflow: hidden; background: #14261c; font-family: "Noto Sans Arabic", sans-serif; }
+  #gl { position: absolute; inset: 0; width: 360px; height: 640px; display: block; }
+  .vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 44%, transparent 52%, rgba(18, 12, 6, .5) 100%); }
+  .fade { position: absolute; inset: 0; background: #0d0a07; opacity: 0; }
+  .brand { position: absolute; right: 12px; top: 14px; display: flex; gap: 5px; align-items: center; font: 800 10.5px "Noto Sans Arabic"; color: #2a2016; background: #f6efdd; padding: 4px 9px 4px 7px; border-radius: 999px; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+  .brand i { width: 13px; height: 13px; border-radius: 3px; background: #2a2016; color: #f3c94a; font: 900 10px/13px "Noto Sans Arabic"; text-align: center; font-style: normal; }
+  /* the real clip / photo card */
+  .card { position: absolute; left: 22px; right: 22px; top: 62px; height: 330px; opacity: 0; transform-origin: 50% 40%; }
+  .card .ph { position: absolute; inset: 0; border-radius: 14px; overflow: hidden; background: #111; border: 5px solid #fbf6ea; box-shadow: 0 10px 34px rgba(0,0,0,.45); }
+  .card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card .tag { position: absolute; right: 10px; bottom: -13px; font: 800 10px "Noto Sans Arabic"; color: #2a2016; background: #f3c94a; padding: 3px 9px; border-radius: 999px; box-shadow: 0 2px 6px rgba(0,0,0,.3); white-space: nowrap; }
+  /* captions: one short chunk at a time, a cream box, the key word on yellow */
+  .cap { position: absolute; left: 18px; right: 18px; top: 468px; display: grid; place-items: center; }
+  .cap.low { top: 520px; }
+  .cap p { margin: 0; font: 800 19px/1.55 "Noto Sans Arabic"; color: #1f1810; background: #fbf4e2; padding: 8px 16px 9px; border-radius: 14px; text-align: center; box-shadow: 0 6px 22px rgba(0,0,0,.35); text-wrap: balance; opacity: 0; }
+  .cap b { background: #f3c94a; padding: 0 5px; border-radius: 6px; font-weight: 900; }
+  /* chips and labels */
+  .chips { position: absolute; left: 0; right: 0; display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; padding: 0 20px; }
+  .chip { font: 800 14px "Noto Sans Arabic"; color: #1f1810; background: #fbf4e2; padding: 5px 12px; border-radius: 999px; box-shadow: 0 4px 14px rgba(0,0,0,.35); opacity: 0; white-space: nowrap; display: flex; gap: 6px; align-items: center; }
+  .chip .x { color: #c2412d; font-weight: 900; } .chip .v { color: #3f7a3a; font-weight: 900; }
+  .chip.gold { background: #f3c94a; }
+  .big { position: absolute; left: 0; right: 0; text-align: center; font: 900 54px/1 "Noto Sans Arabic"; color: #fbf4e2; text-shadow: 0 4px 18px rgba(0,0,0,.55); opacity: 0; }
+  .big small { display: block; font: 800 17px/1.6 "Noto Sans Arabic"; }
+  .lab { position: absolute; transform: translate(-50%, -100%); font: 800 12.5px "Noto Sans Arabic"; color: #1f1810; background: #fbf4e2; padding: 3px 10px; border-radius: 999px; white-space: nowrap; box-shadow: 0 3px 10px rgba(0,0,0,.35); opacity: 0; }
+  .lab::after { content: ""; position: absolute; left: 50%; bottom: -7px; width: 2px; height: 7px; background: #fbf4e2; }
+  .ask { position: absolute; left: 26px; right: 26px; top: 220px; background: #fbf4e2; border-radius: 20px; padding: 20px 18px 22px; text-align: center; box-shadow: 0 14px 40px rgba(0,0,0,.45); opacity: 0; }
+  .ask h3 { margin: 0 0 6px; font: 900 22px/1.5 "Noto Sans Arabic"; color: #1f1810; }
+  .ask p { margin: 0; font: 700 14px/1.6 "Noto Sans Arabic"; color: #5a4a36; }
+  .ask .btns { display: flex; gap: 12px; justify-content: center; margin-top: 14px; }
+  .ask .btns span { width: 46px; height: 46px; border-radius: 50%; background: #f3c94a; display: grid; place-items: center; font: 900 22px "Noto Sans Arabic"; color: #7a2a22; box-shadow: 0 4px 12px rgba(0,0,0,.25); }
+</style>
+</head>
+<body>
+<canvas id="gl" width="1080" height="1920"></canvas>
+<div class="vig"></div>
+<div id="labs"></div>
+<div class="card" id="card"><div class="ph"><img id="cimg" alt=""></div><div class="tag" id="ctag"></div></div>
+<div id="hud"></div>
+<div class="cap" id="capbox"><p id="cap"></p></div>
+<div class="ask" id="ask"><h3>عايزين تعرفوا حكاية إيه المرة الجاية؟</h3><p>اكتبولنا في الكومنتات</p><div class="btns"><span>♥</span><span>↗</span><span>✎</span></div></div>
+<div class="brand"><i>؟</i>إيه الحكاية؟</div>
+<div class="fade" id="fade"></div>
+<script src="../timing.js"></script>
+<script src="cards.js"></script>
+<script src="../../_templates/people/person.js"></script>
+<script src="../../lib/three.min.js"></script>
+<script>
+  // load the calligraphy font before the textures are painted, then the 3D world, the props and the timeline
+  function load(src) { return new Promise(function (r) { var s = document.createElement("script"); s.src = src; s.onload = r; document.body.appendChild(s); }); }
+  window.READY = Promise.all([document.fonts.load("700 40px AmiriK", "لا إله"), document.fonts.load("800 19px 'Noto Sans Arabic'", "الكعبة")])
+    .then(function () { return load("world.js"); }).then(function () { return WORLD.ready; })
+    .then(function () { return load("props.js"); }).then(function () { return PROPS.ready(); })
+    .then(function () { return load("shots.js"); }).then(function () { return renderAt(0); }).then(function () { document.title = "ready"; });
+</script>
+</body>
+</html>
