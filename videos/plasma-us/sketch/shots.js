@@ -6,27 +6,50 @@ var DONOR = { outfit: { base: "casual", colors: { shirt: "#6f8fa8", shirtD: "#55
 var TECH = { outfit: { base: "casual", colors: { shirt: "#5e9c96", shirtD: "#467d78", pants: "#5e9c96", pantsD: "#467d78" } } };   // scrubs: top and trousers the same teal
 function blink(t, ph) { return Math.sin(t * 2.1 + (ph || 0)) > .985 ? .08 : 1; }
 function spinA(t) { return t * 7; }
-// the donor in the chair, his right arm (viewer's right) stretched along the arm board toward the machine
-function donor(x, floor, s, t, o) {
-  o = o || {}; var hipY = floor - 112 * s;
-  var p = PERSON.front(Object.assign({ x: x, y: hipY, s: s, legs: "sit", breath: .5 + .5 * Math.sin(t * 1.6),
-    head: { tilt: (o.tilt || 0) + 2 * Math.sin(t * .8), turn: o.turn == null ? .25 : o.turn },
-    face: Object.assign({ eyes: blink(t), look: [.5, .1], brows: "neutral", mouth: "smile" }, o.face || {}),
-    arms: [{ to: [x - 84 * s, hipY - 22 * s], bend: -1, hand: "relaxed" }, { to: [x + 158 * s, hipY - 44 * s], straight: true, hand: o.fist ? "fist" : "relaxed" }] }, DONOR));
-  return p;
+// the donor reclined on the donation bed, seen from the side (the user's note: side view, the bed and the arm showing),
+// his near arm stretched along the arm rest toward the machine beside the bed
+var REC = -52;   // how far the bed tips him back (deg)
+function donor(x, hipY, s, t, o) {
+  o = o || {};
+  return PERSON.side(Object.assign({ x: x, y: hipY, s: s, dir: 1, rot: REC, breath: .5 + .5 * Math.sin(t * 1.6),
+    legs: [{ hip: 58, knee: 34, ankle: -12 }, { hip: 54, knee: 38, ankle: -12 }],
+    arms: [{ sh: 30 + (o.armUp || 0), el: 2, hand: o.fist ? "fist" : "relaxed" }, { sh: 6, el: 18, hand: "relaxed" }],
+    head: { tilt: 18 + 2 * Math.sin(t * .8) }, face: Object.assign({ eyes: blink(t), brows: "neutral", mouth: "smile" }, o.face || {}) }, DONOR));
 }
-function room(t, o) {   // the whole station: chair, donor, arm board, tube to the machine, the machine
-  o = o || {}; var s = 1.02, fl = 700, x = 200;
-  var m = PL.machine(400, 150, .95, { k: o.k || 0, spin: o.run ? spinA(t) : 0, flow: o.run, glow: o.glow, ml: o.ml }, t);
-  var p = donor(x, fl, s, t, o.donor);
-  var w = p.joints && p.joints.elbow ? p.joints.elbow[1] : [x + 100 * s, fl - 150 * s];
+// the donation bed in profile, built round the donor's joints: base and post, seat, tipped back rest with a head pillow,
+// raised leg rest, and the padded arm rest (white pad on top, as in the photo) under the stretched arm
+function bed(J, s, H) {
+  var K = J.knee, A = J.ankle || [K[0] + 80, K[1] + 40];
+  var a = REC * Math.PI / 180, ux = -Math.sin(-a), uy = -Math.cos(-a);   // along the back rest, toward the head
+  var px = Math.cos(a), py = Math.sin(a);                               // across it
+  var off = 30 * s, b0 = [H[0] - px * off, H[1] + 48 * s], len = 250 * s;
+  function Pt(u, v) { return [b0[0] + ux * u + px * v, b0[1] + uy * u + py * v]; }
+  var back = PL.shape([Pt(0, -4 * s), Pt(len, -4 * s), Pt(len + 10 * s, 26 * s), Pt(0, 40 * s)], "#5d6b62", 2.6);
+  var pillow = PL.shape([Pt(len - 70 * s, -18 * s), Pt(len + 4 * s, -18 * s), Pt(len + 8 * s, 4 * s), Pt(len - 70 * s, 6 * s)], "#e9e4d6", 2.2);
+  var seat = R(H[0] - 70 * s, H[1] + 34 * s, (K[0] - H[0]) + 110 * s, 40 * s, "#5d6b62", 2.6, 12);
+  var lr0 = [K[0] + 16 * s, K[1] + 40 * s], lr1 = [A[0] + 50 * s, A[1] + 30 * s];
+  var legrest = PL.shape([[lr0[0] - 30 * s, lr0[1] - 10 * s], [lr1[0], lr1[1] - 6 * s], [lr1[0] + 4 * s, lr1[1] + 30 * s], [lr0[0] - 30 * s, lr0[1] + 32 * s]], "#5d6b62", 2.6);
+  var fl = H[1] + 230 * s, base = R(H[0] - 110 * s, fl - 26 * s, 300 * s, 26 * s, "#8c8c86", 2.4, 6) + R(H[0] + 10 * s, H[1] + 74 * s, 34 * s, fl - H[1] - 100 * s, "#8c8c86", 2.2) +
+    C(H[0] - 90 * s, fl + 6 * s, 9 * s, "#4a4a48", 1.6) + C(H[0] + 170 * s, fl + 6 * s, 9 * s, "#4a4a48", 1.6);
+  return { under: base + legrest + seat + back + pillow, floor: fl };
+}
+function armRest(J, s) {   // the arm rest sits under the stretched near arm, from the elbow to past the hand
+  var e = J.elbow0 || J.elbow, w = J.wrist0 || J.wrist; if (!e || !w) return "";
+  var y = Math.max(e[1], w[1]) + 14 * s, x0 = e[0] - 70 * s, x1 = w[0] + 70 * s;
+  return R(x0, y, x1 - x0, 22 * s, "#46524a", 2.2, 8) + R(x0 + 6 * s, y - 7 * s, x1 - x0 - 12 * s, 9 * s, "#f6f3ea", 1.6, 4) + R((x0 + x1) / 2 - 8 * s, y + 22 * s, 16 * s, 130 * s, "#8c8c86", 2);
+}
+function room(t, o) {   // the whole station, from the side: the bed with the donor, the tube to the machine beside it
+  o = o || {}; var s = .9, hx = 250, hy = 540;
+  var m = PL.machine(452, 190, .82, { k: o.k || 0, spin: o.run ? spinA(t) : 0, flow: o.run, glow: o.glow, ml: o.ml }, t);
+  var p = donor(hx, hy, s, t, o.donor), J = p.joints, b = bed(J, s, [hx, hy]);
+  var e = J.elbow0 || J.elbow || [hx + 100, hy - 60];
   var tubeCol = o.k != null || o.run ? PL.RED : "#e4e0d6";
-  var d = "M" + f(w[0]) + " " + f(w[1] + 4) + " C" + f(w[0] + 40) + " " + f(w[1] + 90) + " " + f(m.J.inlet[0] - 70) + " " + f(m.J.inlet[1] + 30) + " " + f(m.J.inlet[0]) + " " + f(m.J.inlet[1]);
-  return { svg: PL.chair(x, fl, s) + PL.armBoard(x + 70, fl - 180 * s + 30, 150, s) + p.svg + PL.tube(d, tubeCol, 5, o.run ? 1 : 0, t) + m.svg, J: m.J, wrist: w, joints: p.joints };
+  var d = "M" + f(e[0] + 10) + " " + f(e[1] + 6) + " C" + f(e[0] + 110) + " " + f(e[1] + 30) + " " + f(m.J.inlet[0] - 90) + " " + f(m.J.inlet[1] + 10) + " " + f(m.J.inlet[0]) + " " + f(m.J.inlet[1]);
+  var floor = '<rect x="-400" y="' + f(b.floor + 14) + '" width="1500" height="400" fill="#ddd2b8"/>' + PL.line([[-400, b.floor + 14], [1100, b.floor + 14]], INK, 2.2);
+  return { svg: floor + b.under + armRest(J, s) + p.svg + PL.tube(d, tubeCol, 5, o.run ? 1 : 0, t) + m.svg, J: m.J, wrist: [e[0] + 10, e[1] + 6], joints: J };
 }
-
 // ── small drawings for single shots ──
-var ROOM = [355, 440, 1.08], BOWLZ = [560, 352, 2.5], BOTTLEZ = [579, 640, 2.3], ARMZ = [340, 565, 2.0];
+var ROOM = [330, 455, 1.0], BOWLZ = [596, 362, 2.6], BOTTLEZ = [600, 620, 2.3], ARMZ = [340, 565, 2.0];
 function chip(txt, x, y, col, k, sz) { k = pop(k); if (k <= 0) return ""; sz = sz || 22; var w = txt.length * sz * .58 + 30; return G('translate(' + f(x) + ' ' + f(y) + ') scale(' + f(k) + ')', '<rect x="' + f(-w / 2) + '" y="' + f(-sz * .95) + '" width="' + f(w) + '" height="' + f(sz * 1.8) + '" rx="8" fill="' + col + '"/>' + T(txt, 0, sz * .38, sz, "#fbf8f1", 800)); }
 function qmark(x, y, k, sz) { return G("", T("?", x, y, sz || 130, ORANGE, 800), k == null ? 1 : k); }
 function stopwatch(x, y, r, k, t) { var a = k * Math.PI * 2; return C(x, y, r, "#fbf8f1", 3) + R(x - 8, y - r - 16, 16, 12, INK, 0) + '<path d="M' + f(x) + ' ' + f(y) + ' L' + f(x) + ' ' + f(y - r) + ' A' + r + ' ' + r + ' 0 ' + (k > .5 ? 1 : 0) + ' 1 ' + f(x + Math.sin(a) * r) + ' ' + f(y - Math.cos(a) * r) + ' Z" fill="' + ORANGE + '" opacity=".35"/>' + PL.line([[x, y], [x + Math.sin(a) * r * .85, y - Math.cos(a) * r * .85]], ORANGE, 5) + C(x, y, 5, ORANGE, 0); }
@@ -90,27 +113,37 @@ shot([8, 1], still(330, 400, 1), function (u, d, t) { return armScene(t, { needl
 // 9 · So where does the blood go? — the tube fills, then the question
 shot(9, still(330, 400, 1), function (u, d, t) { return armScene(t, { needle: 1, k: 1, flow: 1, squeeze: true }) + qmark(560, 200, at(u, .5, .3), 130); });
 // 10 · Into a machine with a bowl that spins thousands of times a minute.
-shot(10, still(ROOM[0], ROOM[1], ROOM[2]), function (u, d, t) { return paper() + room(t, { run: true, k: .05 }).svg; });
-shot([10, 1], fly(ROOM, BOWLZ, 1.8), function (u, d, t) { return paper() + room(t, { run: true, k: .05, glow: at(u, 1.2, .4) }).svg + label(560, 300, 470, 250, "bowl", OLIVE, at(u, 1.4, .4), 14); });
-shot([10, 2], still(320, 400, 1), function (u, d, t) { return paper() + bowlScene(t, 0) + chip("1000s of spins a minute", 320, 70, ORANGE, at(u, .3, .3), 24); });
+shot(10, fly(ROOM, BOWLZ, 1.6), function (u, d, t) { return paper() + room(t, { run: true, k: .05, glow: at(u, 1.0, .4) }).svg + label(BOWLZ[0] - 20, BOWLZ[1] - 50, BOWLZ[0] - 90, BOWLZ[1] - 90, "centrifuge", OLIVE, at(u, 1.2, .4), 12); });
+// the centrifuge up close, as it sits in the machine (the user's note: show it still first, then spinning)
+// speed: still for the first stretch, then an eased spin-up; the angle is the integral of the speed so the ribs never jump
+var SPIN0 = 0;   // set per shot: when the bowl starts turning (absolute time)
+function spinAt(t, t0, ramp) { var x = t - t0; if (x <= 0) return { w: 0, a: 0 }; var r = ramp || 1.6; return x < r ? { w: x / r, a: 9 * x * x / (2 * r) } : { w: 1, a: 9 * r / 2 + 9 * (x - r) }; }
+function rpmBox(w, k) { return numBox(w < .02 ? "0 rpm" : Math.round(4800 * ease(w) / 50) * 50 + " rpm", 320, 712, k == null ? 1 : k, 30, true); }
+function cf(t, o) { return PL.centrifuge(320, 430, 150, o, t); }
+shot([10, 1], still(320, 400, 1), function (u, d, t) {
+  var t0 = LN[10].start + (LN[10].end - LN[10].start) * window.CHUNKS[10][2] + .15, sp = spinAt(t, t0, 1.6), fill = at(u, 0, .9);
+  return paper() + cf(t, { fill: fill, w: sp.w, a: sp.a, flowIn: 1 }) + (sp.w > 0 ? "" : chip("still", 320, 90, MUTE, at(u, .1, .3), 24)) + G("", chip("spinning", 320, 90, ORANGE, 1, 24), clamp(sp.w * 3)) + rpmBox(sp.w);
+});
+shot([10, 3], still(320, 400, 1), function (u, d, t) { var sp = spinAt(t, LN[10].start + (LN[10].end - LN[10].start) * window.CHUNKS[10][2] + .15, 1.6); return paper() + cf(t, { fill: 1, w: sp.w, a: sp.a, flowIn: 1 }) + chip("1000s of spins a minute", 320, 90, ORANGE, 1, 24) + rpmBox(sp.w); });
 // 11 · like fresh juice: the pulp sinks, the clear part floats; except this takes seconds
 shot(11, still(320, 400, 1), function (u, d, t) { return paper() + PL.juice(320, 380, 2.2, 0) + T("fresh juice", 320, 690, 28, INK, 800); });
 shot([11, 2], still(320, 400, 1), function (u, d, t) { var k = at(u, 0, 2.2); return paper() + PL.juice(320, 380, 2.2, k) + label(330, 480, 480, 600, "pulp sinks", ORANGE, at(u, .4, .5), 22) + label(320, 300, 470, 200, "clear part floats", BLUE, at(u, 1.6, .5), 22); });
-shot([11, 4], still(320, 400, 1), function (u, d, t) { var k = at(u, .2, 1.6); return paper() + bowlScene(t, k) + iconBox(540, 120, 150, stopwatch(0, 8, 46, (u * .5) % 1, t), at(u, 0, .3)); });
-// 12 · red cells flung outward; the plasma flows into a plastic bottle
-shot(12, still(320, 400, 1), function (u, d, t) { return paper() + bowlScene(t, 1) + arrow(200, 400, 160, 400, PL.RED, 6, at(u, .2, .4)) + arrow(440, 400, 480, 400, PL.RED, 6, at(u, .2, .4)) + label(470, 330, 540, 170, "red cells", PL.RED, at(u, .6, .5), 24); });
-shot([12, 2], still(320, 400, 1), function (u, d, t) { var b = PL.bowl(320, 420, 160, { sep: 1, a: spinA(t) }, t); return paper() + b + label(320, 440, 470, 700, "plasma", ORANGE, at(u, .1, .5), 26) + PL.tube("M320 100 V60 H700", PL.PLASMA, 10, 1, t); });
+shot([11, 4], still(320, 400, 1), function (u, d, t) { var k = at(u, .2, 1.6), a = 9 * (t - 20); return paper() + cf(t, { fill: 1, sep: k, w: 1, a: a, flowIn: 1 }) + rpmBox(1) + iconBox(540, 120, 150, stopwatch(0, 8, 46, (u * .5) % 1, t), at(u, 0, .3)); });
+// 12 · red cells flung outward (the bowl in the machine, then cut open); the plasma flows out to a plastic bottle
+shot(12, still(320, 400, 1), function (u, d, t) { var a = 9 * (t - 20); return paper() + cf(t, { fill: 1, sep: 1, w: 1, a: a, flowIn: 1 }) + arrow(250, 520, 185, 520, PL.RED, 7, at(u, .2, .4)) + arrow(390, 520, 455, 520, PL.RED, 7, at(u, .2, .4)) + label(470, 470, 600, 330, "red cells", PL.RED, at(u, .6, .5), 22) +
+  inset(110, 180, 80, '<ellipse rx="70" ry="70" fill="' + PL.RED + '" stroke="' + INK + '" stroke-width="2"/><circle r="40" fill="' + PL.PLASMA + '" stroke="' + INK + '" stroke-width="2"/>' + '<g transform="rotate(' + f(a * 57.3 % 360) + ')"><path d="M0 -55 A55 55 0 0 1 55 0" stroke="#fff" stroke-width="3" fill="none" opacity=".6"/></g>', at(u, .9, .3)) + G("", T("from above", 110, 285, 18, INK, 800), at(u, 1.1, .3)); });
+shot([12, 2], still(320, 400, 1), function (u, d, t) { var a = 9 * (t - 20); return paper() + cf(t, { fill: 1, sep: 1, w: 1, a: a, flowIn: 1, flowOut: 1 }) + label(320, 470, 180, 640, "plasma", ORANGE, at(u, .1, .5), 26) + arrow(560, 190, 630, 190, ORANGE, 6, at(u, .3, .5)); });
 shot([12, 3], fly(BOWLZ, BOTTLEZ, 1.8), function (u, d, t) { return paper() + room(t, { run: true, k: .1 + .2 * at(u, 0, d) }).svg; });
 // 13 · So what about the red cells?
-shot(13, still(320, 400, 1), function (u, d, t) { return paper() + bowlScene(t, 1) + '<rect x="148" y="170" width="78" height="500" fill="none" stroke="' + ORANGE + '" stroke-width="4" stroke-dasharray="12 9" rx="10"/>' + qmark(560, 180, at(u, .2, .3), 120); });
+shot(13, still(320, 400, 1), function (u, d, t) { var a = 9 * (t - 20); return paper() + cf(t, { fill: 1, sep: 1, w: 1, a: a, flowIn: 1, flowOut: 1 }) + '<rect x="150" y="300" width="70" height="300" fill="none" stroke="' + ORANGE + '" stroke-width="4" stroke-dasharray="12 9" rx="10"/><rect x="420" y="300" width="70" height="300" fill="none" stroke="' + ORANGE + '" stroke-width="4" stroke-dasharray="12 9" rx="10"/>' + qmark(560, 180, at(u, .2, .3), 120); });
 // 14 · pumped back into you, through the same needle, with some salt water
-shot(14, still(ROOM[0], ROOM[1], ROOM[2]), function (u, d, t) { var r = room(t, { run: true, k: .35 }), w = r.wrist; return paper() + r.svg + arrow(392, 524, w[0] + 40, w[1] + 50, ORANGE, 6, at(u, .3, .8)) + G("", T("back", 330, 760, 30, ORANGE, 800), at(u, .8, .3)); });
+shot(14, still(ROOM[0], ROOM[1], ROOM[2]), function (u, d, t) { var r = room(t, { run: true, k: .35 }), w = r.wrist; return paper() + r.svg + arrow(r.J.inlet[0] - 6, r.J.inlet[1] + 14, w[0] + 50, w[1] + 34, ORANGE, 6, at(u, .3, .8)) + G("", T("back", 330, 760, 30, ORANGE, 800), at(u, .8, .3)); });
 shot([14, 2], still(330, 400, 1), function (u, d, t) { return armScene(t, { needle: 1, k: 1, flow: -1 }) + chip("same needle", 400, 250, ORANGE, at(u, .2, .3), 24); });
-shot([14, 3], fly(ROOM, [545, 130, 2.0], 1.6), function (u, d, t) { return paper() + room(t, { run: true, k: .4 }).svg + label(545, 140, 460, 90, "salt water", BLUE, at(u, 1.2, .5), 14); });
+shot([14, 3], fly(ROOM, [590, 200, 2.0], 1.4), function (u, d, t) { return paper() + room(t, { run: true, k: .4 }).svg + label(578, 185, 500, 160, "salt water", BLUE, at(u, .9, .5), 14); });
 // 15 · Draw, spin, return. Over and over, for about an hour.
 function cycle(u, t, n) {
   var r = room(t, { run: true, k: .45 + .1 * at(u, 0, 3) }), w = r.wrist;
-  return paper() + r.svg + callout("1", w[0] + 60, w[1] + 70, n >= 1 ? 1 : 0, 22) + callout("2", 600, 270, n >= 2 ? 1 : 0, 22) + callout("3", 330, 470, n >= 3 ? 1 : 0, 22);
+  return paper() + r.svg + callout("1", w[0] + 60, w[1] - 40, n >= 1 ? 1 : 0, 22) + callout("2", 600, 280, n >= 2 ? 1 : 0, 22) + callout("3", w[0] + 130, w[1] + 70, n >= 3 ? 1 : 0, 22);
 }
 shot(15, still(ROOM[0], ROOM[1], ROOM[2]), function (u, d, t) { var l = LN[15], c = (t - l.start) / (l.end - l.start); return cycle(u, t, c < .14 ? 1 : c < .26 ? 2 : 3); });
 shot([15, 1], still(ROOM[0], ROOM[1], ROOM[2]), function (u, d, t) { return cycle(u, t, 3) + iconBox(130, 160, 150, stopwatch(0, 8, 46, at(u, 0, d + .5), t) + T("1 hour", 0, 66, 18, INK, 800), at(u, .3, .3)); });
@@ -143,10 +176,10 @@ shot([21, 1], still(ROOM[0], 440, ROOM[2]), function (u, d, t) { return paper() 
 shot(22, still(320, 400, 1), function (u, d, t) { return paper() + waterDrop(220, 330, 120) + T("water", 220, 520, 30, BLUE, 800) + G("", T("+ protein", 470, 360, 34, ORANGE, 800), at(u, .9, .3)); });
 shot([22, 2], still(320, 400, 1), function (u, d, t) { return paper() + G("translate(200 380) scale(1.6) translate(-200 -380)", glassW(200, 380)) + G("translate(450 380) scale(1.5) translate(-450 -380)", sandwich(450, 360)) + check(320, 640, 1.8, at(u, .6, .5), "#3b7a4c"); });
 // 23 · So basically: needle, spin, plasma in the bottle, red cells back in you
-function recap(u, t, n) { var r = room(t, { run: true, k: .8 }), w = r.wrist; return paper() + r.svg + callout("1", w[0] - 20, w[1] - 50, n >= 1 ? 1 : 0, 22) + callout("2", 610, 300, n >= 2 ? 1 : 0, 22) + callout("3", 530, 700, n >= 3 ? 1 : 0, 22) + callout("4", 330, 470, n >= 4 ? 1 : 0, 22); }
+function recap(u, t, n) { var r = room(t, { run: true, k: .8 }), w = r.wrist; return paper() + r.svg + callout("1", w[0] - 10, w[1] - 50, n >= 1 ? 1 : 0, 22) + callout("2", 600, 280, n >= 2 ? 1 : 0, 22) + callout("3", 570, 590, n >= 3 ? 1 : 0, 22) + callout("4", w[0] + 130, w[1] + 70, n >= 4 ? 1 : 0, 22); }
 shot(23, still(ROOM[0], ROOM[1], ROOM[2]), function (u, d, t) { var l = LN[23], c = window.CHUNKS[23], x = (t - l.start) / (l.end - l.start); return recap(u, t, x < c[1] ? 0 : x < c[1] + .12 ? 1 : 2); });
 shot([23, 2], still(ROOM[0], ROOM[1], ROOM[2]), function (u, d, t) { return recap(u, t, 3); });
-shot([23, 3], still(ROOM[0], ROOM[1], ROOM[2]), function (u, d, t) { return recap(u, t, 4) + arrow(392, 524, r0x(t) + 40, r0y(t) + 50, ORANGE, 6, at(u, .1, .8)); });
+shot([23, 3], still(ROOM[0], ROOM[1], ROOM[2]), function (u, d, t) { return recap(u, t, 4) + arrow(449 - 6, 511 + 14, r0x(t) + 50, r0y(t) + 34, ORANGE, 6, at(u, .1, .8)); });
 function r0x(t) { return room(t, {}).wrist[0]; } function r0y(t) { return room(t, {}).wrist[1]; }
 // 24 · one immune disorder patient needs about 130 donations a year
 shot(24, still(320, 400, 1), function (u, d, t) { return paper() + patient(320, 470, 1.1, t) + qmark(540, 200, at(u, .5, .3), 110); });
@@ -170,5 +203,5 @@ SCENE.bumper = function (u, t) {   // a drop of blood: plasma on top, red cells 
 };
 SCENE.outro = function (svg, u, t) {
   var r = room(t, { run: true, k: .9 }), w = r.wrist;
-  return '<g transform="translate(70 -60) scale(.48)">' + r.svg + '</g>' + callout("1", 70 + .48 * (w[0] - 20), -60 + .48 * (w[1] - 50), ease(u / .3)) + callout("2", 70 + .48 * 610, -60 + .48 * 300, ease(u / .3 - .5)) + callout("3", 70 + .48 * 530, -60 + .48 * 700, ease(u / .3 - 1)) + callout("4", 70 + .48 * 330, -60 + .48 * 470, ease(u / .3 - 1.5));
+  return '<g transform="translate(70 -60) scale(.48)">' + r.svg + '</g>' + callout("1", 70 + .48 * (w[0] - 10), -60 + .48 * (w[1] - 50), ease(u / .3)) + callout("2", 70 + .48 * 600, -60 + .48 * 280, ease(u / .3 - .5)) + callout("3", 70 + .48 * 570, -60 + .48 * 590, ease(u / .3 - 1)) + callout("4", 70 + .48 * (w[0] + 130), -60 + .48 * (w[1] + 70), ease(u / .3 - 1.5));
 };

@@ -76,12 +76,10 @@ var PL = (function () {
     [[48, 160], [128, 288], [130, 352], [180, 400]].forEach(function (p) { sv += C(X(p[0]), Y(p[1]), 10 * s, "#e6e2d8", 1.6) + R(X(p[0]) - 4 * s, Y(p[1]) - 6 * s, 8 * s, 12 * s, "#bdb9ae", 1.2); });
     // the separation chamber (the spinning bowl) top right: housing, window, the red rotor inside
     var bx = X(176), by = Y(148);
-    sv += P("M" + f(bx - 30 * s) + " " + f(by + 8 * s) + " Q" + f(bx) + " " + f(by - 12 * s) + " " + f(bx + 30 * s) + " " + f(by + 8 * s) + " V" + f(by + 22 * s) + " H" + f(bx - 30 * s) + " Z", "#ebe8df", 2);
     var bh = 78 * s, glow = o.glow || 0;
-    sv += R(bx - 18 * s, by + 22 * s, 36 * s, bh, RED, 2, 4);
-    for (var b = 0; b < 4; b++) { var ph = ((spin * 1.3 / (Math.PI * 2)) + b / 4) % 1, xx = bx - 18 * s + 36 * s * ph; sv += line([[xx, by + 24 * s], [xx, by + 20 * s + bh]], RED_D, 2.2, ' opacity="' + f(Math.sin(ph * Math.PI)) + '"'); }
-    sv += R(bx - 18 * s, by + 22 * s, 9 * s, bh, "#fff", 0, 0, ' opacity=".18"') + R(bx - 18 * s, by + 22 * s, 36 * s, bh, "none", 2, 4);
-    if (glow > 0) sv += R(bx - 26 * s, by + 14 * s, 52 * s, bh + 16 * s, "none", 3, 8, ' stroke="' + ORANGE + '" stroke-dasharray="7 6" opacity="' + f(glow) + '"');
+    sv += R(bx - 30 * s, by + 4 * s, 60 * s, 104 * s, "#3f4446", 2.2, 6) + R(bx - 26 * s, by + 8 * s, 52 * s, 96 * s, "#5a6064", 0, 4);   // the centrifuge window: the bowl in its well
+    sv += '<g transform="translate(' + f(bx) + ' ' + f(by + 64 * s) + ') scale(' + f(.17 * s) + ') translate(-320 -430)">' + centrifuge(320, 430, 150, { fill: o.flow ? 1 : 0, sep: o.flow ? 1 : 0, w: o.flow ? 1 : 0, a: spin * 1.3, noArrows: true, flowIn: o.flow ? 1 : 0, flowOut: o.flow ? 1 : 0 }, t) + '</g>';
+    if (glow > 0) sv += R(bx - 36 * s, by - 2 * s, 72 * s, 116 * s, "none", 3, 8, ' stroke="' + ORANGE + '" stroke-dasharray="7 6" opacity="' + f(glow) + '"');
     sv += R(bx + 18 * s, by + 56 * s, 16 * s, 20 * s, "#ebe8df", 1.6, 3) + R(bx + 26 * s, by + 60 * s, 10 * s, 12 * s, CLIP, 1.2, 2);
     J.bowl = [bx, by + 22 * s + bh / 2];
     // tubing on the panel: whole blood (dark red), plasma (yellow), saline (clear)
@@ -195,6 +193,57 @@ var PL = (function () {
     return R(c - 10 * s, y - 230 * s, 20 * s, 216 * s, "#e8e4da", 2) + R(c - 30 * s, y - 262 * s, 92 * s, 48 * s, "#e8e4da", 2, 5) + R(c - 22 * s, y - 254 * s, 76 * s, 32 * s, SCREEN, 1.6, 3) + T(val, c + 16 * s, y - 231 * s, 18 * s, INK, 800); }
   function monitor(cx, cy, s, sys, dia, pulse) { return R(cx - 80 * s, cy - 60 * s, 160 * s, 120 * s, "#e8e4da", 2.4, 8) + R(cx - 66 * s, cy - 48 * s, 132 * s, 78 * s, SCREEN, 1.8, 4) + T(sys + "/" + dia, cx, cy - 6 * s, 30 * s, INK, 800) + T("♥ " + pulse, cx, cy + 22 * s, 16 * s, ORANGE, 800) + C(cx, cy + 46 * s, 7 * s, "#c8352c", 1.4); }
 
-  return { WHITE: WHITE, RED: RED, PLASMA: PLASMA, PLASMA_L: PLASMA_L, NAVY: NAVY, GREEN: GREEN, SKINC: SKINC,
+
+  // ── the centrifuge, the way you see it in the machine (3/4 from above and the side): the clear bell-shaped bowl on its
+  // spinning chuck, the white header that stays still on top with its two ports, the metal well cut open in front.
+  // o.fill 0..1 blood in the bowl · o.sep 0..1 separated · o.w 0..1 speed (0 = still) · o.a rotation angle (rad) · o.rpm text
+  function centrifuge(cx, cy, r, o, t) {
+    o = o || {}; var fill = clamp(o.fill == null ? 1 : o.fill), sep = clamp(o.sep || 0), w = clamp(o.w || 0), a = o.a || 0, ry = r * .32, h = r * 1.15;
+    var yb = cy + h * .55, ym = cy - h * .15, yt = ym - r * .5, rn = r * .42, sv = "", id = "cf" + (++CLIPN);
+    // the well: back wall, floor, motor shaft
+    sv += '<ellipse cx="' + f(cx) + '" cy="' + f(yb + 30) + '" rx="' + f(r * 1.45) + '" ry="' + f(ry * 1.45) + '" fill="#8d8f8f" stroke="' + INK + '" stroke-width="2.4"/>' +
+      P("M" + f(cx - r * 1.45) + " " + f(yb + 30) + " V" + f(ym - 10) + " A" + f(r * 1.45) + " " + f(ry * 1.45) + " 0 0 1 " + f(cx + r * 1.45) + " " + f(ym - 10) + " V" + f(yb + 30), "#a9abab", 2.4) +
+      hatch("M" + f(cx - r * 1.45) + " " + f(yb + 30) + " V" + f(ym - 10) + " A" + f(r * 1.45) + " " + f(ry * 1.45) + " 0 0 1 " + f(cx + r * 1.45) + " " + f(ym - 10) + " V" + f(yb + 30));
+    sv += R(cx - r * .16, yb + 10, r * .32, 70, "#6d7070", 2) + '<ellipse cx="' + f(cx) + '" cy="' + f(yb + 8) + '" rx="' + f(r * 1.08) + '" ry="' + f(ry * 1.08) + '" fill="#5d6060" stroke="' + INK + '" stroke-width="2.2"/>';   // the chuck
+    // the bowl outline: cylinder, shoulder up to the neck
+    var body = "M" + f(cx - r) + " " + f(yb) + " V" + f(ym) + " C" + f(cx - r) + " " + f(ym - r * .3) + " " + f(cx - rn) + " " + f(yt + 10) + " " + f(cx - rn) + " " + f(yt) +
+      " H" + f(cx + rn) + " C" + f(cx + rn) + " " + f(yt + 10) + " " + f(cx + r) + " " + f(ym - r * .3) + " " + f(cx + r) + " " + f(ym) + " V" + f(yb) + " A" + f(r) + " " + f(ry) + " 0 0 1 " + f(cx - r) + " " + f(yb) + " Z";
+    sv += '<clipPath id="' + id + '"><path d="' + body + '"/></clipPath><path d="' + body + '" fill="#eef3f3" fill-opacity=".9"/><g clip-path="url(#' + id + ')">';
+    // what is inside: mixed blood up to the fill level; once separated, red pressed to the wall, yellow plasma in the middle
+    var top = yb + ry - (yb + ry - (yt + 6)) * fill;
+    if (fill > 0) {
+      sv += R(cx - r - 4, top, 2 * r + 8, yb + ry - top + 4, sep < .02 ? "#8f3a2c" : PLASMA, 0);
+      if (sep >= .02) { var bw = lerp(r, r * .3, sep); sv += R(cx - r - 4, top, bw + 4, yb + ry - top + 4, RED, 0) + R(cx + r - bw, top, bw + 4, yb + ry - top + 4, RED, 0) + R(cx - r + bw - 2, top, 4, yb + ry - top, "#f4efe2", 0) + R(cx + r - bw - 2, top, 4, yb + ry - top, "#f4efe2", 0); }
+      for (var i = 0; i < 40; i++) {   // red cells, sliding to the wall as it separates
+        var hx = hash(i * 2.3) * 2 - 1, side = hx < 0 ? -1 : 1, x0 = cx + hx * r * .9, x1 = cx + side * (r - hash(i) * r * .27 - 4);
+        var yy = lerp(top + 6, yb + ry * .6, hash(i * 5.1)), xx = lerp(x0, x1, sep);
+        sv += '<ellipse cx="' + f(xx) + '" cy="' + f(yy) + '" rx="' + f(r * .055) + '" ry="' + f(r * .035) + '" fill="#c0463a" stroke="' + RED_D + '" stroke-width="1"/>';
+      }
+      // the liquid surface seen from above: a red ring round a yellow disc
+      sv += '<ellipse cx="' + f(cx) + '" cy="' + f(top) + '" rx="' + f(r) + '" ry="' + f(ry * .9) + '" fill="' + (sep < .02 ? "#a0473a" : RED) + '" stroke="' + RED_D + '" stroke-width="1.4"/>';
+      if (sep >= .02) sv += '<ellipse cx="' + f(cx) + '" cy="' + f(top) + '" rx="' + f(r - lerp(r, r * .3, sep)) + '" ry="' + f((r - lerp(r, r * .3, sep)) * .29) + '" fill="' + PLASMA_L + '" stroke="' + INK + '" stroke-width="1"/>';
+    }
+    // ribs on the plastic turn with the bowl; fast, they blur into streaks
+    for (var k = 0; k < 6; k++) {
+      var aa = a + k * Math.PI / 3, c = Math.cos(aa); if (c < 0) continue;
+      var xx2 = cx + Math.sin(aa) * r, op = (.25 + .5 * c) * (1 - .75 * w);
+      sv += PL_line([[xx2, ym + 6], [xx2, yb + ry * c * .9]], "#ffffff", 4, ' opacity="' + f(op) + '"') + PL_line([[xx2 + 2, ym + 6], [xx2 + 2, yb + ry * c * .9]], INK, 1.2, ' opacity="' + f(op * .6) + '"');
+    }
+    if (w > .05) for (var j = 0; j < 5; j++) { var yj = ym + 20 + j * (yb - ym - 20) / 5, ph = (a * .6 + j * .37) % 1; sv += '<path d="M' + f(cx - r * .9) + ' ' + f(yj) + ' Q' + f(cx) + ' ' + f(yj + ry * .7) + ' ' + f(cx + r * .9) + ' ' + f(yj) + '" stroke="#fff" stroke-width="2.5" fill="none" stroke-dasharray="' + f(30 + 60 * w) + ' 40" stroke-dashoffset="' + f(-ph * 200) + '" opacity="' + f(.5 * w) + '"/>'; }
+    sv += '<rect x="' + f(cx - r * .8) + '" y="' + f(yt) + '" width="' + f(r * .18) + '" height="' + f(yb - yt) + '" fill="#fff" opacity=".3"/></g>' + P(body, "none", 3);
+    // the front lip of the well, over the bowl's foot
+    sv += P("M" + f(cx - r * 1.45) + " " + f(yb + 30) + " A" + f(r * 1.45) + " " + f(ry * 1.45) + " 0 0 0 " + f(cx + r * 1.45) + " " + f(yb + 30), "none", 2.4);
+    // the header: stays still while the bowl turns under it; two ports, the tubes, the clamp arm holding it
+    sv += '<ellipse cx="' + f(cx) + '" cy="' + f(yt) + '" rx="' + f(rn) + '" ry="' + f(rn * .3) + '" fill="#f6f4ee" stroke="' + INK + '" stroke-width="2.4"/>' +
+      R(cx - rn * .7, yt - r * .42, rn * 1.4, r * .42, "#f6f4ee", 2.4, 6) + '<ellipse cx="' + f(cx) + '" cy="' + f(yt - r * .42) + '" rx="' + f(rn * .7) + '" ry="' + f(rn * .2) + '" fill="#e8e5dc" stroke="' + INK + '" stroke-width="2"/>' +
+      PL_tube("M" + f(cx - rn * .3) + " " + f(yt - r * .42) + " C" + f(cx - rn * .3) + " " + f(yt - r * .9) + " " + f(cx - r * 1.2) + " " + f(yt - r * .7) + " " + f(cx - r * 1.9) + " " + f(yt - r * .9), RED, 8, o.flowIn || 0, t) +
+      PL_tube("M" + f(cx + rn * .3) + " " + f(yt - r * .42) + " C" + f(cx + rn * .3) + " " + f(yt - r * .9) + " " + f(cx + r * 1.2) + " " + f(yt - r * .7) + " " + f(cx + r * 1.9) + " " + f(yt - r * .9), sep > .5 ? PLASMA : "#e4e0d6", 8, o.flowOut || 0, t) +
+      R(cx + r * 1.2, yt - r * .62, r * .5, 22, "#c9c7c0", 2, 4) + PL_line([[cx + rn * .6, yt - r * .3], [cx + r * 1.2, yt - r * .5]], "#8a877f", 8);
+    // spin arrows round the top once it turns
+    if (w > .05 && !o.noArrows) for (var q = 0; q < 2; q++) { var a0 = -a * 0 + q * Math.PI + t * 3 * w, x1 = cx + Math.cos(a0) * r * 1.25, y1 = ym + Math.sin(a0) * ry * 1.25, x2 = cx + Math.cos(a0 + .8) * r * 1.25, y2 = ym + Math.sin(a0 + .8) * ry * 1.25; sv += G("", arrow(x1, y1, x2, y2, ORANGE, 5, 1), w); }
+    return sv;
+  }
+  function PL_line(p, c, w, e) { return line(p, c, w, e); } function PL_tube(d, c, w, fl, t) { return tube(d, c, w, fl, t); }
+  return { centrifuge: centrifuge, WHITE: WHITE, RED: RED, PLASMA: PLASMA, PLASMA_L: PLASMA_L, NAVY: NAVY, GREEN: GREEN, SKINC: SKINC,
     shape: shape, line: line, tube: tube, bottle: bottle, salineBag: salineBag, machine: machine, chair: chair, armBoard: armBoard, arm: arm, bowl: bowl, testTube: testTube, juice: juice, scale: scale, monitor: monitor };
 })();

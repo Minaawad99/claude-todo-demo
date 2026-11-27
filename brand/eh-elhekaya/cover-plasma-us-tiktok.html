@@ -41,13 +41,14 @@
     s += '<rect width="540" height="960" fill="#1b1d22"/><rect width="540" height="960" fill="url(#grid)" opacity=".18"/>';
     s += '<circle cx="270" cy="500" r="250" fill="#ffd27a" opacity=".35" filter="url(#soft)"/><circle cx="300" cy="480" r="150" fill="#ffe08a" opacity=".3" filter="url(#soft)"/>';
     // the station: the donor in the chair, the tube to the machine, the bottle filling with plasma
-    s += '<g transform="translate(290 530) scale(.72) translate(-370 -440)">' + room(t, { run: true, k: .7 }).svg + '</g>';
+    s += '<g transform="translate(290 560) scale(.76) translate(-330 -455)">' + room(t, { run: true, k: .7 }).svg + '</g>';
     // the bowl cut open: red cells on the wall, plasma in the core
-    var ix = 74, iy = 452;
-    s += '<circle cx="' + ix + '" cy="' + iy + '" r="72" fill="#ffd27a" opacity=".25" filter="url(#soft)"/>' + inset(ix, iy, 62, '<g transform="scale(.27) translate(-320 -420)">' + PL.bowl(320, 420, 160, { sep: 1, a: 1.2 }, t) + '</g>', 1);
+    var ix = 262, iy = 398;
+    s += '<circle cx="' + ix + '" cy="' + iy + '" r="72" fill="#ffd27a" opacity=".25" filter="url(#soft)"/>' + inset(ix, iy, 62, '<g transform="scale(.3) translate(-320 -400)">' + PL.centrifuge(320, 430, 150, { fill: 1, sep: 1, w: 1, a: 1.2, noArrows: true }, t) + '</g>', 1);
     s += '<circle cx="' + ix + '" cy="' + iy + '" r="64" fill="none" stroke="#c4532c" stroke-width="4"/>';
+    s += '<path d="M' + (ix + 60) + ' ' + (iy + 20) + ' L488 490" stroke="#c4532c" stroke-width="3" stroke-dasharray="7 5"/><circle cx="492" cy="492" r="18" fill="none" stroke="#c4532c" stroke-width="3"/>';
     s += '<g transform="translate(96 336)"><rect x="-56" y="-22" width="112" height="38" rx="5" fill="#c4532c"/><text x="0" y="6" text-anchor="middle" style="font:800 21px Noto Sans;fill:#fff">$50</text></g>';
-    s += '<g transform="translate(452 336)"><rect x="-62" y="-20" width="124" height="34" rx="5" fill="#f4ecdb" stroke="#2a2016" stroke-width="2"/><text x="0" y="5" text-anchor="middle" style="font:800 18px Noto Sans;fill:#c4532c">2× a week</text></g>';
+    s += '<g transform="translate(100 412)"><rect x="-62" y="-20" width="124" height="34" rx="5" fill="#f4ecdb" stroke="#2a2016" stroke-width="2"/><text x="0" y="5" text-anchor="middle" style="font:800 18px Noto Sans;fill:#c4532c">2× a week</text></g>';
     s += '<defs><linearGradient id="fadeT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".95"/><stop offset=".75" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>' +
          '<linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset=".3" stop-color="#000" stop-opacity=".7"/><stop offset="1" stop-color="#000" stop-opacity=".95"/></linearGradient></defs>';
     s += '<rect width="540" height="300" fill="url(#fadeT)"/><rect y="680" width="540" height="280" fill="url(#fadeB)"/>';
