@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8"><title>TikTok cover — plasma donation (Gemini art, US)</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* the plasma (American English) reel cover on the Gemini illustration the user made from our prompt
+     (plasma-us-gemini-art.jpg, 768×1376: the donor reclined from the side, the machine, the centrifuge inset). Full bleed
+     540×960 (1080×1920 at 2x). Text in our fonts and colours over dark fades at the top and bottom; everything that matters
+     stays inside y 120–840 and away from the right-hand buttons. */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #1b1d22; }
+  .art { position: absolute; inset: 0; width: 540px; height: 960px; object-fit: cover; }
+  .fade { position: absolute; left: 0; right: 0; }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 10px rgba(0,0,0,.7); }
+  .tag { position: absolute; font: 800 19px 'Noto Sans'; color: #fff; background: #c4532c; padding: 2px 14px 4px; border-radius: 5px; box-shadow: 0 2px 8px rgba(0,0,0,.4); }
+</style></head><body>
+<div class="cover">
+  <img class="art" src="plasma-us-gemini-art.jpg">
+  <div class="fade" style="top:0;height:262px;background:linear-gradient(#000f 0%,#000e 50%,#000a 72%,#0004 86%,#0000)"></div>
+  <div class="fade" style="top:700px;height:260px;background:linear-gradient(#0000,#0006 16%,#000c 30%,#000f 55%)"></div>
+  <p class="t" style="top:92px;font:600 15px 'Noto Sans';color:#d9d4c8">Here's the Deal</p>
+  <p class="t" style="top:116px;font:900 34px/1.2 'Noto Sans';color:#fff">They pay you for <span style="color:#f2c230">your blood</span>…</p>
+  <p class="t" style="top:204px;font:800 22px/1.3 'Noto Sans';color:#f2c230">then give most of it back!</p>
+  <span class="tag" style="left:30px;top:300px">$50 a visit</span>
+  <p class="t" style="top:752px;font:800 32px/1.3 'Noto Sans';color:#fff"><span style="color:#f2c230">70%</span> of the world's plasma<br><span style="font-size:23px;color:#d9d4c8">comes from America</span></p>
+</div>
+</body></html>
