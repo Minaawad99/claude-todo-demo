@@ -58,6 +58,16 @@ Captions in short chunks: `"chunk": 3.5` in `CFG`, and `SPLIT` for any chunk ove
 7. **The recap:** «يعني من الآخر…» in 3–4 short clauses.
 8. **The odd fact:** «والأغرب…»
 9. **Sign-off:** «ودي كانت حكاية …»
+
+**The bio line, in every video (the user's fixed rule, restated after «حقن التخسيس», where it was missing):** about 50–65%
+into the video, right after a small cliffhanger so nobody leaves, three lines:
+- the cliffhanger, in the topic's words (e.g. «بس لسه فيه محطة تالتة… ومحدش بيتكلم عنها خالص.»);
+- the bio line, word for word: «ولو عايز تعرف تعمل فيديوهات زي كده إزاي… دوس على اللينك اللي في البايو.»;
+- back in: «نرجع لـ…» and the next step pays off the cliffhanger.
+
+On screen the cliffhanger frame keeps breathing and a yellow pill «اللينك في البايو ↑» pops in near the top (one soft
+`pop`). In `style.txt` add: say the bio line warmly and quickly, like a friendly aside, then drop straight back in.
+`videos/weight-shots/` shows it (lines 17–19).
 10. **Last line:** «قولولنا، عايزين تعرفوا حكاية إيه المرة الجاية؟»
 
 **Wording:**
@@ -153,6 +163,11 @@ python3 ../map_timing.py voice-raw.wav raw-timing.json voice.wav timing.js --max
   - **Hands and face:** five-finger hands with nails, in the right pose. The face shows every reaction.
   - **Placing him:** put hands on the real spot (forehead, throat, belly). Furniture is to the same scale. Keep him
     breathing and blinking.
+  - **Natural joints (the user's rule after «حقن التخسيس»):** a man pointing or reaching up uses a straight arm
+    (`straight: true`), and the sleeve grows out of the shoulder (the kit's shoulder cap does it); the arm never pokes
+    out above the shoulder, the elbow never twists like a rope. A hand on the belly keeps the elbow out to the side
+    (`bend` toward the outside), never crossing the chest. At a table, hands rest in the lap or on the table near the
+    body; no winged elbows. Look at every pose in a full-size frame before rendering.
   - **Clothes follow the topic:** dress every person for who they are in this video with `outfit` (presets `home`,
     `casual`, `office`, `doctor`, `worker`, `pilot`, `chef`, or your own parts and colours; see
     `videos/person-demo/outfits.html`). Add a missing outfit to the kit, front and side.

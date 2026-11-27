@@ -62,6 +62,10 @@ var PSN = { skin: "#e0a98a", skinD: "#c07f62", skinL: "#efc3a8", lip: "#b56b5c",
   shoes: "#2e2a26", apron: "#f4f2ec", apronD: "#d6d2c6", button: "#f4f2ec" };
 function pPath(pts, close) { var d = "M" + f(pts[0][0]) + " " + f(pts[0][1]); for (var i = 1; i < pts.length; i++) { var m = [(pts[i - 1][0] + pts[i][0]) / 2, (pts[i - 1][1] + pts[i][1]) / 2]; d += " Q" + f(pts[i - 1][0]) + " " + f(pts[i - 1][1]) + " " + f(m[0]) + " " + f(m[1]); } var L = pts[pts.length - 1]; return d + (close ? " Q" + f(L[0]) + " " + f(L[1]) + " " + f(pts[0][0]) + " " + f(pts[0][1]) + " Z" : " L" + f(L[0]) + " " + f(L[1])); }
 function pLine(pts, col, w, ex) { return '<path d="M' + pts.map(function (p) { return f(p[0]) + " " + f(p[1]); }).join(" L") + '" stroke="' + col + '" stroke-width="' + f(w) + '" fill="none" stroke-linecap="round" stroke-linejoin="round"' + (ex || "") + '/>'; }
+function pHull(P) { var p = P.slice().sort(function (a, b) { return a[0] - b[0] || a[1] - b[1]; }), cr = function (o, a, b) { return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]); }, lo = [], up = [];
+  p.forEach(function (q) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); });
+  p.slice().reverse().forEach(function (q) { while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); });
+  return lo.slice(0, -1).concat(up.slice(0, -1)); }
 function L2p(a, b, k, off) { var dx = b[0] - a[0], dy = b[1] - a[1], d = Math.hypot(dx, dy) || 1; return [a[0] + dx * k - dy / d * (off || 0), a[1] + dy * k + dx / d * (off || 0)]; }
 function pIK(sh, tg, l1, l2, bend) { var dx = tg[0] - sh[0], dy = tg[1] - sh[1], d = Math.min(Math.hypot(dx, dy), l1 + l2 - .01), a = Math.atan2(dy, dx), c = Math.acos(clamp((l1 * l1 + d * d - l2 * l2) / (2 * l1 * Math.max(d, .01)))); return [sh[0] + Math.cos(a + bend * c) * l1, sh[1] + Math.sin(a + bend * c) * l1]; }
 // a limb segment: ink outline, fill, and a shadow strip on the side away from the light (upper left)
@@ -345,10 +349,18 @@ function person(o) {
     var ap = [sp0, L2p(sp, el, .3, 0), L2p(sp, el, .75, 0), el, L2p(el, cuff, .35, 0), cuff], aw = [27 * s, 24.5 * s, 21.5 * s, 20.5 * s, 20 * s, 16.5 * s];
     var coat = OF.over === "labcoat", sc = coat ? c.coat : c.shirt, scD = coat ? c.coatD : c.shirtD, sleeve;
     if (OF.top === "tshirt" && !coat) {   // bare arm, the short sleeve over its top
-      var bare = [sp0, L2p(sp, el, .3, 0), L2p(sp, el, .75, 0), el, L2p(el, wr, .35, 0), wr], bw = [24 * s, 21 * s, 18 * s, 16.5 * s, 17 * s, 13 * s];
-      var sv = [sp0, L2p(sp, el, .25, 0), L2p(sp, el, .5, 0)], sw2 = [28 * s, 26 * s, 25 * s];
-      sleeve = pLimbDraw(pLimb(bare, bw, false), c.skin, s, pShade(bare, bw, c.skinD, s, .45), 2.2) + pLimbDraw(pLimb(sv, sw2, false), sc, s, "", 2.3);
+      var bare = [L2p(sp, el, .22, 0), L2p(sp, el, .4, 0), L2p(sp, el, .75, 0), el, L2p(el, wr, .35, 0), wr], bw = [22 * s, 20.5 * s, 18 * s, 16.5 * s, 17 * s, 13 * s];   // starts under the sleeve, so its top never shows above the shoulder
+      sleeve = pLimbDraw(pLimb(bare, bw, false), c.skin, s, pShade(bare, bw, c.skinD, s, .45), 2.2);
     } else sleeve = pLimbDraw(pLimb(ap, aw, false), sc, s, pShade(ap, aw, scD, s), 2.3);
+    // the shoulder cap: the sleeve grows out of the shirt's shoulder seam, whatever the arm does (raised, bent, down), so
+    // the cloth follows the shoulder and the arm never pokes out above it. One outline round the seam points on the trunk
+    // and the sleeve's hem across the upper arm (a T-shirt's short sleeve; a long sleeve simply carries on below it).
+    var tee = OF.top === "tshirt" && !coat, hf = tee ? .5 : .36, ud = [(el[0] - sp[0]), (el[1] - sp[1])], ul = Math.hypot(ud[0], ud[1]) || 1, nn = [-ud[1] / ul, ud[0] / ul], hw = (tee ? 14.5 : 12.5) * s, Hm = L2p(sp, el, hf, 0);
+    var capPts = [T(hSh + 7, sd * 25), T(hSh + 4, sd * 47.5), T(hSh - 14, sd * 49), T(hSh - 32, sd * 39), [Hm[0] + nn[0] * hw, Hm[1] + nn[1] * hw], [Hm[0] - nn[0] * hw, Hm[1] - nn[1] * hw]];
+    var hull = pHull(capPts), seamA = capPts[0], seamB = capPts[3];
+    if (tee) sleeve += '<path d="' + pPath(hull, true) + '" fill="' + sc + '" stroke="' + INK + '" stroke-width="' + f(2.3 * s) + '" stroke-linejoin="round"/>';
+    if (tee) sleeve += '<path d="' + pPath([seamA, L2p(seamA, seamB, .5, -sd * 4 * s), seamB], false) + '" stroke="' + scD + '" stroke-width="' + f(1.3 * s) + '" fill="none" stroke-linecap="round"/>';
+    if (tee) sleeve += '<path d="M' + f(Hm[0] + nn[0] * (hw - 3 * s) - ud[0] / ul * 4 * s) + ' ' + f(Hm[1] + nn[1] * (hw - 3 * s) - ud[1] / ul * 4 * s) + ' L' + f(Hm[0] - nn[0] * (hw - 3 * s) - ud[0] / ul * 4 * s) + ' ' + f(Hm[1] - nn[1] * (hw - 3 * s) - ud[1] / ul * 4 * s) + '" stroke="' + scD + '" stroke-width="' + f(1.2 * s) + '"/>';
     // fabric bunching at the elbow: more folds the more the arm is bent, on the inside of the bend
     // the inside of the bend points from the elbow toward the middle of shoulder and wrist; folds sit there, inside the sleeve
     var mx = (sp[0] + wr[0]) / 2 - el[0], my = (sp[1] + wr[1]) / 2 - el[1], ml = Math.hypot(mx, my) || 1, vi = [mx / ml, my / ml], folds = "", nf = bendA > .35 ? 3 : 1;
