@@ -5,7 +5,7 @@
    a dense row of gold, silver and copper lamps and incense burners, the gold door, Bab al-Tawba in the corner. */
 (function () {
   var T = THREE, FONT = "700 {s}px AmiriK, serif";
-  var W = 12, D = 10, H = 9, LOW = 2.7, SK = .32, ROD = 5.4;
+  var W = 12, D = 10, H = 9, LOW = 3.0, SK = .34, ROD = 5.6;
   var canvas = document.getElementById("gl");
   var R = new T.WebGLRenderer({ canvas: canvas, antialias: true, preserveDrawingBuffer: true });
   R.setPixelRatio(window.devicePixelRatio || 1); R.setSize(360, 640, false);
@@ -61,7 +61,7 @@
   var T_FRIEZE2 = tex(2048, 96, function (x, w, h) { x.fillStyle = "#0a3a26"; x.fillRect(0, 0, w, h);
     x.fillStyle = "#c9a34e"; x.fillRect(0, 5, w, 3); x.fillRect(0, h - 8, w, 3);
     textRow(x, w, h, "سبحان الله والحمد لله ولا إله إلا الله والله أكبر", "#e8d9a8", 44, true); }, 2, 1);
-  var T_MARBLE = tex(1024, 1024, function (x, w, h) { x.fillStyle = "#f3f0ea"; x.fillRect(0, 0, w, h); veins(x, w, h, 11, "#8a8478", 40);
+  var T_MARBLE = tex(1024, 1024, function (x, w, h) { x.fillStyle = "#f3f0ea"; x.fillRect(0, 0, w, h); veins(x, w, h, 11, "#6f6a60", 70);
     x.strokeStyle = "rgba(140,130,115,.45)"; x.lineWidth = 2; x.strokeRect(1, 1, w - 2, h - 2); x.beginPath(); x.moveTo(w / 2, 0); x.lineTo(w / 2, h); x.stroke(); }, 5, 1);
   var T_FLOOR = tex(1024, 1024, function (x, w, h) { x.fillStyle = "#f1eee7"; x.fillRect(0, 0, w, h); veins(x, w, h, 21, "#8f8a80", 50);
     x.strokeStyle = "rgba(120,112,100,.5)"; x.lineWidth = 2.5; for (var i = 0; i <= 2; i++) { x.beginPath(); x.moveTo(i * w / 2, 0); x.lineTo(i * w / 2, h); x.stroke(); x.beginPath(); x.moveTo(0, i * h / 2); x.lineTo(w, i * h / 2); x.stroke(); } }, 5, 4);
@@ -70,6 +70,11 @@
     x.fillStyle = "#eae4d6"; x.fillRect(0, 10, w, 4); x.fillRect(0, h - 14, w, 4);
     for (var i = 0; i < w; i += 64) { x.save(); x.translate(i + 32, h / 2); x.rotate(Math.PI / 4); x.strokeStyle = "#eae4d6"; x.lineWidth = 5; x.strokeRect(-17, -17, 34, 34); x.restore();
       x.fillStyle = "#eae4d6"; x.beginPath(); x.arc(i + 32, h / 2, 6, 0, Math.PI * 2); x.fill(); } }, 6, 1);
+  var T_DIAM = tex(1024, 256, function (x, w, h) { x.fillStyle = "#f2efe8"; x.fillRect(0, 0, w, h); veins(x, w, h, 71, "#8a8478", 16);
+    x.strokeStyle = "rgba(140,130,115,.45)"; x.lineWidth = 2; for (var j = 0; j <= w; j += w / 4) { x.beginPath(); x.moveTo(j, 0); x.lineTo(j, h); x.stroke(); }
+    x.fillStyle = "#1c1b19"; for (var i = 0; i < 8; i++) { var cx = i * w / 8 + w / 16, cy = h / 2;
+      [[0, -26], [0, 26], [-26, 0], [26, 0]].forEach(function (d) { x.save(); x.translate(cx + d[0], cy + d[1]); x.rotate(Math.PI / 4); x.fillRect(-11, -11, 22, 22); x.restore(); });
+      x.save(); x.translate(cx, cy); x.rotate(Math.PI / 4); x.fillRect(-6, -6, 12, 12); x.restore(); } }, 3, 1);
   var T_WOOD = tex(512, 1024, function (x, w, h) { var r = rnd(3); var g = x.createLinearGradient(0, 0, w, 0); g.addColorStop(0, "#4a2312"); g.addColorStop(.5, "#6a3519"); g.addColorStop(1, "#4a2312");
     x.fillStyle = g; x.fillRect(0, 0, w, h);
     for (var i = 0; i < 160; i++) { x.strokeStyle = r() < .55 ? "rgba(30,12,4,.35)" : "rgba(160,95,55,.22)"; x.lineWidth = .8 + r() * 3; var px = r() * w; x.beginPath(); x.moveTo(px, 0);
@@ -98,9 +103,11 @@
     x.strokeStyle = "#6f4c10"; x.lineWidth = 5; x.strokeRect(40, 40, w - 80, 120); x.font = font(40); x.textAlign = "center"; x.textBaseline = "middle"; x.fillText("باب التوبة", w / 2, 102);
     for (var r = 0; r < 3; r++) { var cy = 270 + r * 255; x.strokeRect(48, cy - 105, w - 96, 210); x.save(); x.translate(w / 2, cy); x.rotate(Math.PI / 4); x.lineWidth = 6; x.strokeRect(-62, -62, 124, 124); x.lineWidth = 2; x.strokeRect(-46, -46, 92, 92); x.restore();
       flower(x, w / 2, cy, 34, "#6f4c10", "#f2d684"); } });
-  function plaqueTex(lines) { return tex(640, 400, function (x, w, h) { x.fillStyle = "#0f3d2a"; x.fillRect(0, 0, w, h); veins(x, w, h, 51, "#3d7a5d", 12);
-      x.strokeStyle = "#cfa64a"; x.lineWidth = 10; x.strokeRect(10, 10, w - 20, h - 20); x.lineWidth = 3; x.strokeRect(30, 30, w - 60, h - 60);
-      x.fillStyle = "#e7c76f"; x.textAlign = "center"; x.textBaseline = "middle"; lines.forEach(function (l, i) { x.font = font(i ? 40 : 46); x.fillText(l, w / 2, 90 + i * 76); }); }); }
+  function plaqueTex(lines, tint) { return tex(512, 720, function (x, w, h) { x.fillStyle = tint; x.fillRect(0, 0, w, h); veins(x, w, h, 51, "#6f7a70", 20);
+      x.strokeStyle = "rgba(60,70,60,.6)"; x.lineWidth = 6; x.strokeRect(8, 8, w - 16, h - 16);
+      x.fillStyle = "#1f3a2c"; x.textAlign = "center"; x.textBaseline = "middle";
+      x.font = font(30); x.fillText(lines[0], w / 2, 60); x.font = font(64); x.fillText(lines[1], w / 2, 140);
+      x.font = font(30); for (var i = 2; i < lines.length; i++) x.fillText(lines[i], w / 2, 230 + (i - 2) * 58); }); }
   var T_SPOT = tex(256, 256, function (x, w, h) { x.fillStyle = "#c2ab86"; x.fillRect(0, 0, w, h); veins(x, w, h, 61, "#6d5a3e", 24); x.strokeStyle = "#b08a3a"; x.lineWidth = 8; x.strokeRect(4, 4, w - 8, h - 8); });
 
   // ── environment (for metals) ─────────────────────────────
@@ -129,26 +136,29 @@
       var lx = Math.abs(s[2] - s[0]) || wdt, lz = Math.abs(s[3] - s[1]) || wdt, b = new T.Mesh(new T.BoxGeometry(lx + (lz === wdt ? wdt : 0), .006, lz), mGreenM);
       b.position.set((s[0] + s[2]) / 2, .003, (s[1] + s[3]) / 2); b.receiveShadow = true; room.add(b); }); }
   inlay(-W / 2 + .35, -D / 2 + .35, W / 2 - .35, D / 2 - .35, .42); inlay(-W / 2 + 1.0, -D / 2 + 1.0, W / 2 - 1.0, D / 2 - 1.0, .08);
-  var skirtM = M({ map: T_SKIRT, roughness: .25 }), dadoM = P({ map: T_MARBLE, roughness: .25, clearcoat: .3 });
+  var diamM = P({ map: T_DIAM, roughness: .25, clearcoat: .3 }), dadoM = P({ map: T_MARBLE, roughness: .25, clearcoat: .3 });
   var silkM = M({ map: T_SILK, roughness: .55 }), friezeM = M({ map: T_FRIEZE, roughness: .4, metalness: .2 }), frieze2M = M({ map: T_FRIEZE2, roughness: .4, metalness: .2 });
   var walls = [[W, 0, -D / 2, 0], [W, 0, D / 2, Math.PI], [D, -W / 2, 0, Math.PI / 2], [D, W / 2, 0, -Math.PI / 2]];
   walls.forEach(function (s, i) {
     var len = s[0], nx = Math.sin(s[3]), nz = Math.cos(s[3]), o = function (d) { return [s[1] + nx * d, s[2] + nz * d]; };
-    var a = o(.0); plane(len, SK, skirtM, a[0], SK / 2, a[1], s[3]);
+    var a = o(.0), b = o(.05);
+    bar(len, SK, .12, mGreenM, b[0], SK / 2, b[1], s[3]); bar(len, .14, .16, mGreenM, b[0], .07, b[1], s[3]);   // stepped dark green skirting
     plane(len, LOW - SK, dadoM, a[0], SK + (LOW - SK) / 2, a[1], s[3]);
-    var b = o(.04); bar(len, .1, .08, mGold, b[0], LOW + .05, b[1], s[3]);
-    plane(len, .42, frieze2M, a[0] + nx * .001, LOW + .31, a[1] + nz * .001, s[3]);
-    bar(len, .05, .07, mGold, b[0], LOW + .54, b[1], s[3]);
-    var top = H - .75; plane(len, top - LOW - .56, silkM, a[0], LOW + .56 + (top - LOW - .56) / 2, a[1], s[3]);
+    bar(len, .24, .14, mGreenM, b[0], LOW + .12, b[1], s[3]); bar(len, .05, .18, mGreenM, b[0], LOW + .02, b[1], s[3]);
+    plane(len, .9, diamM, a[0], LOW + .24 + .45, a[1], s[3]);
+    var c2 = LOW + 1.14; bar(len, .26, .16, mGreenM, b[0], c2 + .13, b[1], s[3]); bar(len, .04, .19, mGold, b[0], c2 + .27, b[1], s[3]);
+    var top = H - .75, s0 = c2 + .29; plane(len, top - s0, silkM, a[0], s0 + (top - s0) / 2, a[1], s[3]);
     bar(len, .06, .1, mGold, b[0], top, b[1], s[3]);
     plane(len, .75, friezeM, a[0] + nx * .001, top + .375, a[1] + nz * .001, s[3]);
-    // framed inscription plaques on the marble
-    var texts = [["بسم الله الرحمن الرحيم", "إن أول بيت وضع للناس", "للذي ببكة مباركا"], ["بسم الله الرحمن الرحيم", "وإذ يرفع إبراهيم القواعد", "من البيت وإسماعيل"]];
+    // marble inscription plaques (as in the photos: pale marble, dark lettering)
+    var texts = [["بسم الله الرحمن الرحيم", "الحمد لله رب العالمين", "إن أول بيت وضع للناس", "للذي ببكة مباركا", "وهدى للعالمين", "فيه آيات بينات"],
+                 ["بسم الله الرحمن الرحيم", "والصلاة والسلام", "على سيدنا محمد", "وعلى آله وصحبه أجمعين", "وإذ يرفع إبراهيم القواعد", "من البيت وإسماعيل"]];
     var n = len > 11 ? 3 : 2;
-    for (var k = 0; k < n; k++) { var along = (k - (n - 1) / 2) * (len / n); if (i === 1 && k === 0) continue;   // door wall: leave room for the door
-      var pq = new T.Mesh(new T.BoxGeometry(1.05, .66, .03), [mGoldDk, mGoldDk, mGoldDk, mGoldDk, M({ map: plaqueTex(texts[(i + k) % 2]), roughness: .3 }), mGoldDk]);
+    for (var k = 0; k < n; k++) { var along = (k - (n - 1) / 2) * (len / n); if (i === 1 && k === 0) continue; if (i === 3 && k === 0) continue;
+      var pq = new T.Mesh(new T.BoxGeometry(.78, 1.1, .03), M({ color: 0xbfc8bd, roughness: .3 }));
+      pq.material = [pq.material, pq.material, pq.material, pq.material, M({ map: plaqueTex(texts[(i + k) % 2], (i + k) % 2 ? "#e9ece6" : "#c9d6cb"), roughness: .25 }), pq.material];
       var px = s[1] + Math.cos(s[3]) * along + nx * .02, pz = s[2] - Math.sin(s[3]) * along + nz * .02;
-      pq.position.set(px, 1.75, pz); pq.rotation.y = s[3]; room.add(pq); }
+      pq.position.set(px, 1.95, pz); pq.rotation.y = s[3]; room.add(pq); }
   });
   // ceiling: silk with a gold frame and beams
   plane(W, D, M({ map: T_SILK_C, roughness: .6 }), 0, H, 0, 0, Math.PI / 2);
@@ -215,15 +225,30 @@
 
   // ── the door (inside face) and Bab al-Tawba ──────────────
   var door = new T.Group(); door.position.set(-3.0, 0, D / 2 - .02); door.rotation.y = Math.PI; room.add(door);
-  var frame = new T.Mesh(new T.BoxGeometry(2.1, 3.5, .1), mWood); frame.position.y = 1.75; door.add(frame);
+  var frame = new T.Mesh(new T.BoxGeometry(2.0, 2.95, .1), mWood); frame.position.y = 1.475; door.add(frame);
   var leafM = M({ map: T_DOOR, bumpMap: T_DOOR, bumpScale: .01, metalness: 1, roughness: .28 });
-  [-.43, .43].forEach(function (dx) { var lf = new T.Mesh(new T.BoxGeometry(.84, 3.2, .06), [mGold, mGold, mGold, mGold, leafM, mGold]); lf.position.set(dx, 1.68, .06); door.add(lf); });
+  [-.43, .43].forEach(function (dx) { var lf = new T.Mesh(new T.BoxGeometry(.84, 2.8, .06), [mGold, mGold, mGold, mGold, leafM, mGold]); lf.position.set(dx, 1.48, .06); door.add(lf); });
   var lock = new T.Mesh(new T.BoxGeometry(.12, .3, .06), mGoldDk); lock.position.set(0, 1.5, .11); door.add(lock);
-  var tawba = new T.Group(); tawba.position.set(W / 2 - .02, 0, D / 2 - 1.0); tawba.rotation.y = -Math.PI / 2; room.add(tawba);
-  var tf = new T.Mesh(new T.BoxGeometry(1.25, 2.85, .08), mWood); tf.position.y = 1.42; tawba.add(tf);
-  var tM = M({ map: T_TAWBA, bumpMap: T_TAWBA, bumpScale: .01, metalness: 1, roughness: .28 });
-  var tl = new T.Mesh(new T.BoxGeometry(1.05, 2.7, .06), [mGold, mGold, mGold, mGold, tM, mGold]); tl.position.set(0, 1.37, .05); tawba.add(tl);
-  var ring = new T.Mesh(new T.TorusGeometry(.07, .012, 8, 24), mGoldDk); ring.position.set(-.36, 1.3, .1); tawba.add(ring);
+  var tawba = new T.Group(); tawba.position.set(W / 2 - .02, 0, D / 2 - .9); tawba.rotation.y = -Math.PI / 2; room.add(tawba);
+  var TW = .95, TH2 = 2.55, TY = SK;   // leaf stands on the skirting step
+  var mG2 = M({ color: 0xf2c25a, metalness: 1, roughness: .18 });
+  function tb(w, h, d, x, y, z, m) { var b = new T.Mesh(new T.BoxGeometry(w, h, d), m || mG2); b.position.set(x, TY + y, z); b.castShadow = true; tawba.add(b); return b; }
+  tb(TW + .1, TH2 + .08, .05, 0, TH2 / 2, .02, mGoldDk);                 // frame
+  tb(TW, TH2, .05, 0, TH2 / 2, .05);                                     // leaf
+  tb(TW - .1, .05, .04, 0, TH2 - .06, .09); tb(TW - .1, .05, .04, 0, .06, .09);
+  [.05, -.05].forEach(function (dz) {});
+  [-TW / 2 + .06, TW / 2 - .06].forEach(function (x) { tb(.05, TH2 - .1, .04, x, TH2 / 2, .09); });
+  // top: three raised horizontal bars with a small boss at each end
+  [TH2 - .2, TH2 - .36, TH2 - .52].forEach(function (y) { var c = new T.Mesh(new T.CylinderGeometry(.045, .045, TW - .3, 24), mG2); c.rotation.z = Math.PI / 2; c.position.set(0, TY + y, .1); tawba.add(c); });
+  [-TW / 2 + .16, TW / 2 - .16].forEach(function (x) { var h = new T.Mesh(new T.SphereGeometry(.07, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), mG2); h.rotation.x = Math.PI / 2; h.position.set(x, TY + TH2 - .2, .08); tawba.add(h); });
+  tb(TW - .14, .03, .03, 0, TH2 - .66, .09);
+  // middle boss and the big lower boss, each in a raised frame
+  function boss(y, r) { var f = new T.Mesh(new T.TorusGeometry(r + .04, .018, 10, 48), mGoldDk); f.position.set(0, TY + y, .09); tawba.add(f);
+    var h = new T.Mesh(new T.SphereGeometry(r, 40, 20, 0, Math.PI * 2, 0, Math.PI / 2), mG2); h.rotation.x = Math.PI / 2; h.scale.set(1, .45, 1); h.position.set(0, TY + y, .075); h.castShadow = true; tawba.add(h); }
+  tb(TW - .14, .5, .02, 0, TH2 - 1.0, .085, mGoldDk); boss(TH2 - 1.0, .16);
+  tb(.42, .06, .06, -.08, TH2 - 1.36, .11, mGoldDk); tb(.06, .14, .07, .16, TH2 - 1.36, .12, mGoldDk);   // the latch
+  tb(TW - .14, .7, .02, 0, .78, .085, mGoldDk); boss(.78, .25);
+  [.25, .34].forEach(function (y) { var c = new T.Mesh(new T.CylinderGeometry(.03, .03, TW - .3, 20), mG2); c.rotation.z = Math.PI / 2; c.position.set(0, TY + y, .1); tawba.add(c); });
   // the marked prayer spot
   var spot = new T.Mesh(new T.BoxGeometry(.9, .01, .6), [mGold, mGold, M({ map: T_SPOT, roughness: .2 }), mGold, mGold, mGold]); spot.position.set(-1.8, .005, -D / 2 + 1.7); room.add(spot);
 
@@ -239,7 +264,7 @@
     pillar: { p: [-.9, 1.0, 1.5], l: [0, 4.2, 0], f: 58 },          // up a pillar to the lamps
     lamps:  { p: [-1.6, 4.9, 1.9], l: [-.4, 4.6, 0], f: 46 },
     band:   { p: [-.85, 1.45, .75], l: [0, 1.45, 0], f: 40 },
-    tawba:  { p: [2.2, 1.7, 1.6], l: [6, 1.45, 4.0], f: 56 },
+    tawba:  { p: [3.2, 1.75, 2.2], l: [6, 1.6, 4.1], f: 60 },
     door:   { p: [-3.0, 1.7, 1.2], l: [-3.0, 1.9, 5], f: 60 },
     floor:  { p: [-.8, 2.4, -2.0], l: [-1.8, 0, -3.3], f: 50 }
   };
