@@ -193,7 +193,7 @@ function standing(x, y, s, o) {
     head: { tilt: 2 * Math.sin(t * .7) }, face: { eyes: (t % 3.7) < .12 ? .05 : (o.eyes == null ? 1 : o.eyes), brows: o.brows || "neutral", mouth: o.mouth || "neutral", tired: !!o.tired },
     arms: [{ rel: [-14, 130], bend: -1, hand: "relaxed" }, { rel: [14, 130], bend: 1, hand: "relaxed" }] });
   var J = Pp.joints, g = Pp.svg;
-  if (o.core > 0) { var pk = cl(o.core) * (.85 + .15 * Math.sin(t * 2.2)); g += '<ellipse cx="' + f(x) + '" cy="' + f(y - 60 * s) + '" rx="' + f(44 * s) + '" ry="' + f(70 * s) + '" fill="' + ORANGE + '" opacity="' + f(.45 * pk) + '"/><ellipse cx="' + f(x) + '" cy="' + f(y - 60 * s) + '" rx="' + f(24 * s) + '" ry="' + f(42 * s) + '" fill="' + ORANGE + '" opacity="' + f(.4 * pk) + '"/>'; }
+  if (o.core > 0) { var pk = cl(o.core) * (.7 + .3 * Math.sin(t * 2.6)); g += '<ellipse cx="' + f(x) + '" cy="' + f(y - 60 * s) + '" rx="' + f(44 * s) + '" ry="' + f(70 * s) + '" fill="' + ORANGE + '" opacity="' + f(.45 * pk) + '"/><ellipse cx="' + f(x) + '" cy="' + f(y - 60 * s) + '" rx="' + f(24 * s) + '" ry="' + f(42 * s) + '" fill="' + ORANGE + '" opacity="' + f(.4 * pk) + '"/>'; }
   if (o.hands > 0) J.wr.forEach(function (w, i) { g += heat(w[0] + (i ? 18 : -18) * s, w[1] + 30 * s, 30 * s, 3, o.hands, .8 * s, i ? 60 : -60); });
   if (o.feet > 0) J.ankle.forEach(function (a, i) { g += heat(a[0] + (i ? 26 : -26) * s, a[1] + 10 * s, 30 * s, 3, o.feet, .8 * s, i ? 75 : -75); });
   return { svg: g, J: J };

@@ -12,7 +12,7 @@
 - Kräuchi K, Cajochen C, Werth E, Wirz-Justice A. *Warm feet promote the rapid onset of sleep.* Nature 1999;401:36–37.
   Distal (hands and feet) vasodilation and the drop in core temperature predict how fast we fall asleep.
 - Core body temperature falls about 0.5–1 °C at night; its daily minimum comes about 2 hours before habitual waking
-  (standard circadian physiology, e.g. Refinetti & Menaker 1992, *Physiol Behav* 51:613).
+  (standard circadian physiology).
 - Arteriovenous anastomoses (AVAs) in the glabrous skin of the hands and feet open (warm) and close (cold) to release or
   keep body heat (Walløe L., *Temperature* 2016;3:92–103).
 - Short habitual sleep and cardiometabolic disease: Cappuccio et al., *Eur Heart J* 2011 (heart disease); AHA «Life's
