@@ -1,0 +1,7 @@
+<!doctype html><html lang="ar"><head><meta charset="utf-8"><title>Kaaba interior test</title>
+<style>html,body{margin:0;width:360px;height:640px;overflow:hidden;background:#222}#gl{width:360px;height:640px;display:block}</style>
+</head><body><canvas id="gl"></canvas>
+<script src="../../lib/three.min.js"></script>
+<script src="world.js"></script>
+<script>var q=new URLSearchParams(location.search);WORLD.draw(+(q.get("t")||0),q.get("view")||"wide");</script>
+</body></html>
