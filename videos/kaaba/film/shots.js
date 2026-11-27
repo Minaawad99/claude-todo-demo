@@ -181,9 +181,9 @@
     PROPS.update(t, cam);
     R.render(W.scene, cam);
     // card
-    var card = null; for (var c = 0; c < CARDS.length; c++) if (t >= CARDS[c].a - .05 && t <= CARDS[c].b + .3) { card = CARDS[c]; break; }
+    var card = null; for (var c = 0; c < CARDS.length; c++) if (t >= (CARDS[c].a < .5 ? 0 : CARDS[c].a - .05) && t <= CARDS[c].b + .3) { card = CARDS[c]; break; }
     var k = 0, p = Promise.resolve();
-    if (card) { k = clamp((t - card.a) / .35) * clamp((card.b + .3 - t) / .3);
+    if (card) { k = (card.a < .5 ? 1 : clamp((t - card.a) / .35)) * clamp((card.b + .3 - t) / .3);   // the first card is already up on frame one
       var fi = card.photo ? 1 : Math.min(card.n, Math.max(1, 1 + Math.floor((t - card.a) * 30))), src = "frames/" + card.id + "/" + String(fi).padStart(4, "0") + ".jpg";
       if (src !== lastSrc) { img.src = src; lastSrc = src; p = img.decode().catch(function () {}); }
       tagEl.textContent = card.tag;
@@ -192,9 +192,10 @@
     cardEl.style.opacity = k.toFixed(3); cardEl.style.transform = "translateY(" + ((1 - eout(k)) * 18).toFixed(1) + "px) scale(" + (.94 + .06 * eout(k)).toFixed(4) + ")";
     glEl.style.filter = k > 0 ? "blur(" + (3.5 * k).toFixed(2) + "px) brightness(" + (1 - .18 * k).toFixed(3) + ")" : "none"; glEl.style.transform = k > 0 ? "scale(" + (1 + .05 * k).toFixed(4) + ")" : "none";
     // captions sit lower when a card is up
+    if (chunks[0].a < .5) chunks[0].a = 0;   // the hook caption is up on frame one
     var ch = null; for (var q = 0; q < chunks.length; q++) if (t >= chunks[q].a && t < chunks[q].b) { ch = chunks[q]; break; }
     if (ch && ch !== lastCap) { capEl.innerHTML = ch.html; lastCap = ch; }
-    var ca = ch ? clamp((t - ch.a) / .12) : 0; capEl.style.opacity = ca.toFixed(3); capEl.style.transform = "translateY(" + ((1 - eout(ca)) * 6).toFixed(1) + "px)";
+    var ca = ch ? (ch.a === 0 ? 1 : clamp((t - ch.a) / .12)) : 0; capEl.style.opacity = ca.toFixed(3); capEl.style.transform = "translateY(" + ((1 - eout(ca)) * 6).toFixed(1) + "px)";
     capBox.className = "cap" + (k > .01 ? " low" : "");
     // 3D labels
     LABS.forEach(function (b) { var a = win(t, b.t[0], b.t[1], .3); if (a <= 0) { b.el.style.opacity = 0; return; }
