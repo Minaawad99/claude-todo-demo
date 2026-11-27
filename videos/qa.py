@@ -9,6 +9,7 @@ the old drifting-camera rule holds (no still over 0.75 s, about 1 s per 30 s).
 
 Checks (taken from PLAYBOOK §7):
   - frozen screen: no still stretch > 0.5s, at most ~1s frozen per 30s
+  - no dead panel: a flat dark block over 40% of the frame for more than 1 s (a broken render, not a fade)
   - frame one is a finished picture (has detail, isn't mid-fade from blank)
   - loudness about -14 LUFS, true peak under -0.5 dBTP
   - writes a contact sheet (one frame every 0.2s near the start, then every 2s)
@@ -39,6 +40,22 @@ def frozen_stretches(frames, fps, thresh=0.25, min_len=0.5):
     still = d < thresh
     out, start = [], None
     for i, s in enumerate(np.append(still, False)):
+        if s and start is None:
+            start = i
+        elif not s and start is not None:
+            if (i - start) / fps >= min_len:
+                out.append((start / fps, i / fps))
+            start = None
+    return out
+
+
+def dead_panels(frames, fps, min_len=1.0):
+    # share of the frame covered by flat (8x8 std < 2) dark (mean < 60) blocks; a fade to dark lasts well under 1 s
+    n, h, w = frames.shape
+    b = frames[:, :h // 8 * 8, :w // 8 * 8].reshape(n, h // 8, 8, w // 8, 8)
+    dead = ((b.std(axis=(2, 4)) < 2) & (b.mean(axis=(2, 4)) < 60)).mean(axis=(1, 2)) > 0.4
+    out, start = [], None
+    for i, s in enumerate(np.append(dead, False)):
         if s and start is None:
             start = i
         elif not s and start is not None:
@@ -92,6 +109,10 @@ def main():
         fails.append(f"still stretch longer than {max_still}s ({max(e - s for s, e in body):.2f}s)")
     if sum(e - s for s, e in body) > budget:
         fails.append("too much frozen screen")
+
+    for s, e in dead_panels(fr, fps):
+        print(f"  dead panel {s:6.2f}–{e:6.2f}  ({e - s:.2f}s)")
+        fails.append(f"flat dark panel over the picture at {s:.2f}–{e:.2f}s (broken render)")
 
     f0 = fr[0]
     detail = np.abs(np.diff(f0, axis=1)).mean() + np.abs(np.diff(f0, axis=0)).mean()

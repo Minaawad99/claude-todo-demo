@@ -13,6 +13,7 @@ const [, , outdir, W, WN, CS] = process.argv; const FPS = +(process.env.FPS || 3
   const end = await p.evaluate(() => window.VIDEO_END), total = Math.ceil(end * FPS), per = Math.round(csec * FPS), nC = Math.ceil(total / per);
   for (let c = +W; c < nC; c += +WN) {
     const name = path.join(outdir, 'chunk-' + String(c).padStart(3, '0') + '.mp4'); if (fs.existsSync(name)) continue;
+    if (c !== +W) { await p.reload(); await p.waitForFunction(() => document.title === 'ready', null, { timeout: 600000 }); } // fresh WebGL state per chunk: a long-lived page once rendered whole chunks as a flat dark panel
     const f0 = c * per, n = Math.min(per, total - f0), part = name + '.part.mp4', st = Date.now();
     const ff = spawn('ffmpeg', ['-v', 'error', '-y', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-', '-c:v', 'libx264', '-profile:v', 'high',
       '-preset', 'medium', '-crf', '16', '-pix_fmt', 'yuv420p', '-r', String(FPS), part], { stdio: ['pipe', 'inherit', 'inherit'] });
