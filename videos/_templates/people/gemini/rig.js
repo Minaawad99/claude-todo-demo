@@ -16,7 +16,7 @@
    (hands, head) so a prop can be placed in a hand. */
 (function () {
 var base = (function () { var s = document.currentScript && document.currentScript.src; return s ? s.replace(/[^/]*$/, "") + "rig/" : "rig/"; })();
-var SZ = {"head":[276,371],"neck":[108,136],"torso":[359,629],"hips":[301,238],"uarmA":[171,352],"uarmB":[187,343],"farmA":[104,200],"farmB":[91,181],"thighA":[160,392],"thighB":[156,385],"shinA":[161,405],"shinB":[189,401]};
+var SZ = {"legA":[185,671],"legB":[226,667],"head":[276,371],"neck":[108,136],"torso":[359,629],"hips":[301,238],"uarmA":[171,352],"uarmB":[187,343],"farmA":[104,200],"farmB":[91,181],"thighA":[160,392],"thighB":[156,385],"shinA":[161,405],"shinB":[189,401]};
 // joints of each part in its own pixels: [from, to] (from = the joint nearer the body)
 var J = {
   torso: { hip: [190, 600], neck: [197, 40], shN: [52, 180], shF: [312, 180] },
@@ -25,7 +25,8 @@ var J = {
   uarmA: [[118, 48], [48, 296]], farmA: [[42, 22], [72, 182]],
   uarmB: [[66, 48], [138, 292]], farmB: [[56, 20], [42, 165]],
   thighA: [[80, 40], [84, 352]], shinA: [[44, 22], [56, 296]],
-  thighB: [[78, 40], [80, 342]], shinB: [[52, 18], [62, 296]]
+  thighB: [[78, 40], [80, 342]], shinB: [[52, 18], [62, 296]],
+  legA: [[80, 40], [71, 562]], legB: [[80, 40], [90, 562]]   // thigh and shin stitched into one straight leg (no knee break)
 };
 // hands: wrist point and the direction of the fingers in the image
 var HAND = { relaxed: [[63, 205], -90], fist: [[60, 150], -90], palm: [[70, 205], -90], point: [[63, 212], -90], thumbs: [[8, 112], 0], grip: [[14, 332], -20] };
@@ -38,11 +39,13 @@ var FS = { "eyeL-open": [72, 44], "eyeR-open": [72, 44], "eyeL-half": [73, 51], 
 var SKIN = "#d59879", f = function (n) { return (+n).toFixed(2); }, R = Math.PI / 180;
 function img(name, w, h) { return '<image href="' + base + name + '.png" x="0" y="0" width="' + w + '" height="' + h + '"/>'; }
 // place a part so that its joint a lands on world point A and its axis a→b points along ang (deg)
-function seg(name, A, ang, ja, jb) { var s = SZ[name], phi = Math.atan2(jb[1] - ja[1], jb[0] - ja[0]) / R;
-  return '<g transform="translate(' + f(A[0]) + ' ' + f(A[1]) + ') rotate(' + f(ang - phi) + ') translate(' + f(-ja[0]) + ' ' + f(-ja[1]) + ')">' + img(name, s[0], s[1]) + '</g>'; }
-function end(A, ang, ja, jb) { var L = Math.hypot(jb[0] - ja[0], jb[1] - ja[1]); return [A[0] + Math.cos(ang * R) * L, A[1] + Math.sin(ang * R) * L]; }
+var CLIPID = 0;
+function seg(name, A, ang, ja, jb, st, fromY) { var s = SZ[name], phi = Math.atan2(jb[1] - ja[1], jb[0] - ja[0]) / R, inner = img(name, s[0], s[1]);
+  if (fromY != null) { var id = "rgc" + (++CLIPID); inner = '<clipPath id="' + id + '"><rect x="0" y="' + fromY + '" width="' + s[0] + '" height="' + (s[1] - fromY) + '"/></clipPath><g clip-path="url(#' + id + ')">' + inner + '</g>'; }   // only the part below fromY (the rolled cuff)
+  return '<g transform="translate(' + f(A[0]) + ' ' + f(A[1]) + ') rotate(' + f(ang) + ') scale(' + f(st || 1) + ' 1) rotate(' + f(-phi) + ') translate(' + f(-ja[0]) + ' ' + f(-ja[1]) + ')">' + inner + '</g>'; }
+function end(A, ang, ja, jb, st) { var L = Math.hypot(jb[0] - ja[0], jb[1] - ja[1]) * (st || 1); return [A[0] + Math.cos(ang * R) * L, A[1] + Math.sin(ang * R) * L]; }
 function hand(kind, W, ang, two) { var h = HAND[kind] || HAND.relaxed, s = (two ? HS2 : HS)[kind] || HS.relaxed, nm = (two ? "hand2-" : "hand-") + (HAND[kind] ? kind : "relaxed");
-  return '<g transform="translate(' + f(W[0]) + ' ' + f(W[1]) + ') rotate(' + f(ang - h[1]) + ') scale(.68) translate(' + f(-h[0][0]) + ' ' + f(-h[0][1]) + ')">' + img(nm, s[0], s[1]) + '</g>'; }
+  return '<g transform="translate(' + f(W[0]) + ' ' + f(W[1]) + ') rotate(' + f(ang - h[1]) + ') scale(.86) translate(' + f(-h[0][0]) + ' ' + f(-h[0][1]) + ')">' + img(nm, s[0], s[1]) + '</g>'; }
 function facePart(name, at, sc) { var s = FS[name]; if (!s) return ""; return '<g transform="translate(' + f(at[0] - s[0] * sc / 2) + ' ' + f(at[1] - s[1] * sc / 2) + ') scale(' + f(sc) + ')">' + img(name, s[0], s[1]) + '</g>'; }
 var PRESET = {
   stand: { lean: 0, head: 0, armN: [100, 96, "relaxed"], armF: [82, 86, "relaxed"], legN: [92, 90], legF: [86, 89], eyes: "open", brows: "neutral", mouth: "smile" },
@@ -72,10 +75,14 @@ function build(p, x, fy, h, t, wantJoints) {
   var tor = J.torso, ta = -90 + lean, tphi = Math.atan2(tor.neck[1] - tor.hip[1], tor.neck[0] - tor.hip[0]) / R;
   var TT = function (j) { var dx = j[0] - tor.hip[0], dy = j[1] - tor.hip[1], a = (ta - tphi) * R; return [P[0] + dx * Math.cos(a) - dy * Math.sin(a), P[1] - 8 + br * .3 + dx * Math.sin(a) + dy * Math.cos(a)]; };
   var shN = TT(tor.shN), shF = TT(tor.shF), nk = TT(tor.neck);
-  function arm(A, sh, nm, two) { var u = nm === "A" ? J.uarmA : J.uarmB, fr = nm === "A" ? J.farmA : J.farmB, el = end(sh, A[0], u[0], u[1]), wr = end(el, A[1], fr[0], fr[1]);
+  var FST = 1.16;   // the forearm part is drawn short: stretch it to the real forearm length (0.146 H against the upper arm's 0.186 H)
+  function arm(A, sh, nm, two) { var u = nm === "A" ? J.uarmA : J.uarmB, fr = nm === "A" ? J.farmA : J.farmB, el = end(sh, A[0], u[0], u[1]), wr0 = end(el, A[1], fr[0], fr[1], FST), wr = end(el, A[1], fr[0], fr[1], FST * .94);
     var ha = A[1] + (A[3] || 0), prop = A[4] ? '<g transform="translate(' + f(wr[0]) + ' ' + f(wr[1]) + ') rotate(' + f(ha) + ')">' + A[4] + '</g>' : "";
-    return { svg: seg("uarm" + nm, sh, A[0], u[0], u[1]) + seg("farm" + nm, el, A[1], fr[0], fr[1]) + prop + hand(A[2] || "relaxed", wr, ha, two), wr: wr, el: el, ha: ha }; }
-  function leg(L, hip, nm) { var th = J["thigh" + nm], sh = J["shin" + nm], kn = end(hip, L[0], th[0], th[1]);
+    // upper arm, then hand and forearm over it (a bent arm folds in front), then the rolled cuff again round the elbow
+    var cuffY = nm === "A" ? 248 : 244;
+    return { svg: seg("uarm" + nm, sh, A[0], u[0], u[1]) + prop + hand(A[2] || "relaxed", wr, ha, two) + seg("farm" + nm, el, A[1], fr[0], fr[1], FST) + seg("uarm" + nm, sh, A[0], u[0], u[1], 1, cuffY), wr: wr, el: el, ha: ha }; }
+  function leg(L, hip, nm) { if (Math.abs(L[0] - L[1]) < 8) return seg("leg" + nm, hip, (L[0] + L[1]) / 2, J["leg" + nm][0], J["leg" + nm][1]);
+    var th = J["thigh" + nm], sh = J["shin" + nm], kn = end(hip, L[0], th[0], th[1]);
     return seg("shin" + nm, kn, L[1], sh[0], sh[1]) + seg("thigh" + nm, hip, L[0], th[0], th[1]); }
   var aF = arm(p.armF, shF, "B", true), aN = arm(p.armN, shN, "A", false);
   // far arm, legs, hips, torso, neck, head, near arm
