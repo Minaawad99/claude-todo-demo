@@ -2,6 +2,7 @@
 <style>body{margin:0;background:#d9d0bb}svg{display:block}</style></head><body>
 <svg id="s" width="1980" height="3540" viewBox="0 0 1980 3540"></svg>
 <script src="../../_templates/people/person.js"></script>
+<script src="../../_templates/people/gemini/sprites.js"></script>
 <script src="draw.js"></script>
 <script>
 var Z = MW, C = Z.C, T = Z.T, out = "", SHEET = +(location.hash.slice(1) || 1), PR = "../refs/product/", LOGO = PR + "logo.png", VF = PR + "frames/";
@@ -32,10 +33,8 @@ if (SHEET === 1) {
     Z.brushSide(70, 360, 210, { col: "#7fb2d6" }) + Z.T("فرشاتك", 160, 540, 26, C.INK) +
     Z.arrow(420, 600, 230, 600, C.INK, 3) + Z.T("قبل", 520, 610, 22, "#7d7364") + Z.T("دلوقتي", 160, 610, 22, "#7d7364"));
   // 3 · most of us tried it once… and threw it away after two days
-  var p3 = PERSON.front({ x: 250, y: 500, s: 1.05, outfit: "casual", legs: "stand", breath: .5,
-    arms: [{ rel: [-10, 150], hand: "relaxed" }, { to: [380, 380], bend: 1, hand: "fist" }], head: { tilt: 6, turn: .25 }, face: { mouth: "frown", brows: "worried", look: [.8, .3] } });
   panel("أغلبنا جرّبها مرة… ورماها بعد يومين",
-    Z.stick(p3.joints.wr[1][0] + 6, p3.joints.wr[1][1] - 70, p3.joints.wr[1][0] + 40, p3.joints.wr[1][1] + 80, 13, { fray: .7, dry: .8 }) + p3.svg + Z.bin(520, 760, 1.1) + Z.stick(490, 680, 560, 650, 12, { dry: 1, fray: .6 }) + Z.calendar(520, 160, 1.2, "يومين"));
+    PERSON.sprite("beard-miswak-sad", 260, 770, 640) + Z.bin(520, 760, 1.1) + Z.stick(490, 680, 560, 650, 12, { dry: 1, fray: .6 }) + Z.calendar(520, 160, 1.2, "يومين"));
   // 5 · the Arak shrub; the stick is a twig of it
   panel("فرع من شجرة اسمها الأراك",
     '<rect x="0" y="560" width="640" height="230" fill="#e2cf9f"/>' + Z.line([[0, 560], [640, 560]], C.INK, 2) + [[90, 610], [260, 660], [470, 620], [560, 700]].map(function (p) { return '<ellipse cx="' + p[0] + '" cy="' + p[1] + '" rx="18" ry="5" fill="#cdb682"/>'; }).join("") +
@@ -90,9 +89,8 @@ if (SHEET === 1) {
     Z.brushEnd(40, 380, 112, 530, { hard: true, col: "#c9cdd1" }) + [0, 1, 2].map(function (k) { return Z.line([[96 + k * 8, 532 + k * 6], [110 + k * 8, 540 + k * 6]], "#a8322a", 4); }).join("") + Z.cross(80, 250, 26) +
     Z.brushEnd(350, 380, 422, 530, { taper: true, miswak: true, bend: .8 }) + Z.check(390, 250, 26) + Z.chip(120, 730, "خشنة", "#6d6a64") + Z.chip(430, 730, "ناعمة", C.OLIVE));
   // 19 · use it without paste when you're out: at work or travelling
-  var p19 = PERSON.front({ x: 360, y: 500, s: 1.05, outfit: "office", legs: "stand", breath: .5, arms: [{ rel: [-10, 150], hand: "relaxed" }, { to: [470, 390], bend: 1, hand: "fist" }], head: { tilt: 4, turn: .2 }, face: { mouth: "smile", brows: "raised", look: [.6, .2] } });
   panel("من غير معجون وانت برّه البيت، في الشغل أو السفر",
-    Z.G("translate(" + (p19.joints.wr[1][0] + 10) + " " + (p19.joints.wr[1][1] + 50) + ") rotate(-80) scale(.5)", Z.brushSide(-60, 0, 230, { miswak: true, h: 50, col: "#f2a7b6" })) + p19.svg +
+    PERSON.sprite("c-office", 400, 770, 640) +
     Z.box(110, 170, 160, '<rect x="-56" y="-30" width="112" height="76" rx="8" fill="#8d5d35" stroke="#2a2016" stroke-width="2"/><rect x="-22" y="-44" width="44" height="16" rx="5" fill="none" stroke="#2a2016" stroke-width="4"/>' + Z.T("الشغل", 0, 70, 17)) +
     Z.box(110, 370, 160, Z.poly([[-60, 6], [50, -6], [62, 0], [50, 6], [-60, 8]], "#d9dde1", 2) + Z.poly([[-6, 2], [20, -36], [30, -36], [14, 2]], "#c3c9ce", 2) + Z.poly([[-50, 2], [-60, -20], [-52, -20], [-38, 2]], "#c3c9ce", 2) + Z.T("السفر", 0, 70, 17)) + Z.logo(LOGO, 510, 62, 220));
   // 20 · a kids' size and a small pocket one with a cap (real photo)

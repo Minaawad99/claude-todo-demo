@@ -1,12 +1,14 @@
 # إيه الحكاية؟ — project notes for Claude
 
 - Talk to the user in Egyptian Arabic.
-- **People in every video, in every skill (sketch, animation, story-2d, law, and any skill made later): always the shared
-  person kit** `videos/_templates/people/person.js`, following its `README.md` (demo `videos/person-demo/`). It gives real
-  proportions, joints hidden in flowing limbs, straight reaching arms, five-finger hands and a face that acts; front view
-  and side view (walking, lying flat). No other way of drawing people. **The clothes change with every topic** (doctor's lab
-  coat, worker's vest and hard hat, pilot's uniform, period clothes in a story): pick an `outfit` preset or build one, and add
-  any missing outfit to the kit; the body, face and hands stay the same.
+- **People in every video, in every skill (sketch, animation, story-2d, law, and any skill made later): the Gemini person
+  kit** `videos/_templates/people/gemini/` (read its `README.md`; `PERSON.sprite(name, x, feetY, height, {t})` from
+  `sprites.js`, every sprite in `catalog.png`). The user chose it after the miswak review (Nov 2026): figures from Gemini
+  character sheets, cut out as transparent sprites, never people drawn by code again. One character per episode; other
+  people in the story from the outfit sets (office, doctor, worker, home, galabeya, a woman in hijab). A pose or outfit
+  that is missing: make a new sheet with the prompts in that README (the user runs them in Gemini, or Claude does through
+  the connected Gemini API) and cut it with `cutout.py`. The old vector kit `people/person.js` stays only for episodes
+  already made.
 - **The reference videos are the model for how anything is drawn, in every style and every skill:** before drawing any
   object or scene, look it up in `videos/_reference/README.md` (subject index of the 20 «طب إزاي؟» videos, the 14 «لو»
   videos and our own episodes; the big media sits in the private repo `Minaawad99/claude-media`), look at how it was

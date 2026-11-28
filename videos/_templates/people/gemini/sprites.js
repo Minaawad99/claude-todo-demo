@@ -1,0 +1,18 @@
+/* «إيه الحكاية؟» — the Gemini person kit (the user's choice after the miswak review, Nov 2026): real figures cut from the
+   Gemini character sheets in ./sheets (prompts in README.md), as transparent PNG sprites in ./sprites. New episodes in every
+   skill draw people from here; the old vector person.js stays for episodes already made.
+   PERSON.sprite(name, x, footY, height, o) -> SVG <image>: (x, footY) = the middle of the feet (a hand: its wrist end, at the
+   bottom); height in page units. o.flip: mirror; o.t: the page time, adds calm breathing (a 0.6 percent rise) and a tiny
+   sway; o.op: opacity; o.rot: degrees about the feet. PERSON.spriteNames() lists them; PERSON.spriteSize(name) = [w, h]. */
+(function () {
+var IDX = {"a-doctor": [298, 838], "a-galabeya": [294, 795], "a-home": [300, 847], "a-home2": [282, 791], "a-office": [287, 838], "a-office2": [272, 795], "a-woman-hijab": [256, 787], "a-worker": [290, 842], "b-doctor": [415, 1160], "b-galabeya": [427, 1145], "b-home": [415, 1144], "b-office": [409, 1160], "b-woman-hijab": [400, 1147], "b-worker": [410, 1184], "beard-arms-crossed": [210, 686], "beard-belly": [273, 722], "beard-brushing": [297, 722], "beard-explain": [455, 695], "beard-miswak-sad": [281, 715], "beard-point-up": [298, 722], "beard-sit": [410, 611], "beard-sit2": [381, 630], "beard-talk": [372, 639], "beard-walk": [341, 698], "c-doctor-scrubs": [337, 1113], "c-home": [349, 1114], "c-home2": [333, 1106], "c-office": [333, 1113], "c-thobe": [339, 1106], "c-thobe2": [337, 1106], "c-woman-hijab": [308, 1091], "c-worker": [332, 1129], "cap-arms-crossed": [237, 784], "cap-belly": [306, 894], "cap-brushing": [346, 895], "cap-miswak-sad": [291, 887], "cap-point-up": [325, 895], "cap-sit": [395, 691], "cap-sit2": [373, 689], "cap-talk": [409, 807], "cap-walk": [351, 807], "curly-arms-crossed": [270, 739], "curly-belly": [279, 800], "curly-brushing": [334, 800], "curly-explain": [481, 769], "curly-miswak-sad": [335, 787], "curly-point-up": [324, 801], "curly-sit": [404, 702], "curly-stand-3q": [275, 680], "curly-talk": [316, 672], "curly-walk": [357, 771], "hand-back-open": [290, 509], "hand-back-open2": [289, 520], "hand-back": [318, 523], "hand-belly": [464, 276], "hand-fist": [257, 362], "hand-grip-stick": [238, 577], "hand-palm": [321, 546], "hand-point": [248, 537], "hand-relaxed-back": [266, 540], "hand-relaxed-side": [195, 554], "hand-rest": [483, 276], "hand-thumbsup": [345, 365], "hand-toothbrush": [292, 567], "hand-wave": [339, 540], "tshirt-3q": [343, 1456], "tshirt-back": [430, 1440], "tshirt-front": [433, 1453], "tshirt-side": [233, 1441]};
+var base = (function () { var s = document.currentScript && document.currentScript.src; return s ? s.replace(/[^/]*$/, "") + "sprites/" : "sprites/"; })();
+function sprite(name, x, fy, h, o) {
+  o = o || {}; var d = IDX[name]; if (!d) return "";
+  var w = h * d[0] / d[1], t = o.t == null ? 0 : o.t, br = o.t == null ? 1 : 1 + .006 * Math.sin(t * 1.7), sw = o.t == null ? 0 : .35 * Math.sin(t * .9);
+  var tr = 'translate(' + x.toFixed(1) + ' ' + fy.toFixed(1) + ') rotate(' + ((o.rot || 0) + sw).toFixed(2) + ') scale(' + (o.flip ? -1 : 1) + ' ' + br.toFixed(4) + ')';
+  return '<g transform="' + tr + '"' + (o.op != null && o.op < 1 ? ' opacity="' + o.op.toFixed(3) + '"' : '') + '><image href="' + base + name + '.png" x="' + (-w / 2).toFixed(1) + '" y="' + (-h).toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + h.toFixed(1) + '"/></g>';
+}
+window.PERSON = window.PERSON || {};
+window.PERSON.sprite = sprite; window.PERSON.spriteNames = function () { return Object.keys(IDX); }; window.PERSON.spriteSize = function (n) { return IDX[n]; };
+})();
