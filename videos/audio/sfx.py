@@ -106,6 +106,18 @@ def fx_whoosh(d=0.7):         # paper out / scene change
     return x * 1.4
 def fx_pop(d=0.18):           # UI pop for numbers / icons
     t = t_(d); return (np.sin(2 * np.pi * (520 + 900 * t) * t) * np.exp(-t * 28)).astype(np.float32)
+def fx_brush(d=1.6, rate=7.0):  # toothbrush scrubbing: bristle hiss, one stroke each way
+    t = t_(d); n = len(t); x = hp_fast(noise(n), 2200) * (0.25 + 0.75 * np.abs(np.sin(np.pi * rate * t)) ** 1.5)
+    return lp_fast(x, 7000, 1) * env(n, .05, .2) * 1.2
+def fx_sand(d=1.6, rate=3.5):   # sandpaper on wood: rough, lower rasp, slower strokes
+    t = t_(d); n = len(t); g = (rng.random(n) < 0.35).astype(np.float32)
+    x = hp_fast(noise(n) * (0.5 + g), 900) * (0.2 + 0.8 * np.abs(np.sin(np.pi * rate * t)) ** 1.2)
+    return lp_fast(x, 4500, 1) * env(n, .05, .2) * 1.2
+def fx_pour(d=1.4):           # juice poured into a glass: gurgle of small bubbles over a soft stream
+    n = int(d * SR); return (bubbles(d, 22, 300, 900) * 0.7 + lp_fast(noise(n), 1400, 1) * 0.35) * env(n, .08, .3)
+def fx_spit(d=0.35):          # a short "tff": a puff of breath and a drop
+    t = t_(d); x = lp_fast(hp_fast(noise(len(t)), 900), 5000, 1) * np.exp(-t * 18)
+    return x.astype(np.float32)
 def fx_tick(d=0.05):
     t = t_(d); return (np.sin(2 * np.pi * 2200 * t) * np.exp(-t * 120)).astype(np.float32)
 # ── water & metal foley (physically inspired) ─────────────
