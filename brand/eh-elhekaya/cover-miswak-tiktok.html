@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>TikTok cover — miswak (sketch style)</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* the reel cover for «المسواك» (Smart Miswak), full bleed 540×960 (1080×1920 at 2x): dark slate, one warm glow, the host
+     (the puppet rig) showing the brush, an inset on the bristle tips at the gum line. Text inside y 120–840. */
+  body { margin: 0; background: #000; }
+  .cover { position: relative; width: 540px; height: 960px; overflow: hidden; background: #000; }
+  #art { position: absolute; inset: 0; width: 540px; height: 960px; }
+  .t { position: absolute; left: 24px; right: 64px; margin: 0; text-align: center; text-shadow: 0 3px 10px rgba(0,0,0,.6); }
+</style></head><body>
+<div class="cover">
+  <svg id="art" viewBox="0 0 540 960"></svg>
+  <p class="t" style="top:132px;font:600 15px 'Noto Sans Arabic';color:#d9d4c8">إيه الحكاية؟</p>
+  <p class="t" style="top:154px;font:900 41px/1.2 'Noto Sans Arabic';color:#fff">فرشاة سنان بتطلع على الشجر؟</p>
+  <p class="t" style="top:262px;font:800 24px/1.3 'Noto Sans Arabic';color:#f2c230">المسواك… في فرشاة</p>
+  <p class="t" style="top:722px;font:800 34px/1.35 'Noto Sans Arabic';color:#fff">بتوصل لحد <span style="color:#f2c230">خط اللثة</span><br><span style="font-size:22px;color:#b9b4a8">والمسواك نفسه عمره آلاف السنين</span></p>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#dccfb2" stroke-width="1.2" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+</defs></svg>
+<script src="../../videos/_templates/people/gemini/sprites.js"></script>
+<script src="../../videos/_templates/people/gemini/rig.js"></script>
+<script src="../../videos/miswak/sketch/draw.js"></script>
+<script>
+  (function () {
+    var Z = MW, s = "";
+    s += '<rect width="540" height="960" fill="#1b1d22"/><rect width="540" height="960" fill="url(#grid)" opacity=".18"/>';
+    s += '<circle cx="230" cy="500" r="230" fill="#ffd27a" opacity=".35" filter="url(#soft)"/><circle cx="230" cy="500" r="130" fill="#ffe08a" opacity=".3" filter="url(#soft)"/>';
+    var brush = '<g transform="translate(40 0) rotate(90) scale(1.5)">' + Z.brushSide(-120, 0, 210, { miswak: true, taper: true, h: 38, col: "#9cc79a" }) + '</g>';
+    var p = PERSON.rigPose("show"); p.armN = [60, -100, "fist", 0, brush]; p.mouth = "smile"; p.brows = "raised";
+    s += PERSON.rig(p, 200, 960, 700, .2);
+    // the inset: one tooth cut from the side, the fine tips at the gum line, ringed in orange
+    s += '<g transform="translate(420 440)"><clipPath id="ins"><circle r="96"/></clipPath><circle r="96" fill="#eee5d0"/><g clip-path="url(#ins)"><g transform="scale(.42) translate(-330 -470)">' +
+      Z.jawCut(-20, 660, 520, [360], { w: 190, h: 230, r: 240 }) + Z.brushEnd(150, 330, 262, 506, { miswak: true, taper: true }) + '</g></g><circle r="96" fill="none" stroke="#bd552f" stroke-width="6"/></g>';
+    s += '<rect x="0" y="0" width="540" height="300" fill="url(#fadeT)"/>';
+    s = s.replace('<rect x="0" y="0" width="540" height="300" fill="url(#fadeT)"/>', '<defs><linearGradient id="fadeT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b1d22"/><stop offset="1" stop-color="#1b1d22" stop-opacity="0"/></linearGradient><linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b1d22" stop-opacity="0"/><stop offset="1" stop-color="#1b1d22"/></linearGradient></defs><rect x="0" y="0" width="540" height="300" fill="url(#fadeT)"/><rect x="0" y="680" width="540" height="280" fill="url(#fadeB)"/>');
+    document.getElementById("art").innerHTML = s;
+  })();
+</script></body></html>
