@@ -17,10 +17,11 @@ description: |
 > **People: the Gemini person kit, in this skill and every other (the user's fixed rule, Nov 2026; it overrides every
 > mention of `person.js`, `PERSON.front` or `PERSON.side` below).** Every human comes from
 > `videos/_templates/people/gemini/` (read its `README.md`, see `catalog.png`): load `gemini/sprites.js` and place
-> figures with `PERSON.sprite(name, x, feetY, height, { t: window.__t })`. **The channel's main character is the T-shirt
-> man** (`tshirt-*`: sand-beige T-shirt, dark jeans, sneakers; the user said: no galabeya for him), used in every episode;
+> figures with `PERSON.sprite(name, x, feetY, height, { t: window.__t })`. **The channel's main character is the host**
+> (`host-*`: open slate-blue shirt, sleeves rolled to the elbow, white T-shirt, khaki chinos, white sneakers, short hair
+> combed back; the user's choice, no galabeya), used in every episode;
 > other people in a story come from the outfit sets (`a-/b-/c-office`, `-doctor`, `-worker`, `-home`, `-woman-hijab`…).
-> A pose the kit lacks: write the pose-sheet prompt from that README (attach `gemini/sheets/s1.jpg`), ask the user to run
+> A pose the kit lacks: write the pose-sheet prompt from that README (attach `gemini/sheets/s9-host.jpg`), ask the user to run
 > it in Gemini (or run it through the Gemini API if image quota allows), cut it with `cutout.py`, add the sprites, never
 > draw a person by code. Keep the old vector kit only when editing an episode already made with it.
 

@@ -18,7 +18,9 @@ PERSON.spriteNames()                                                            
 - `(x, feetY)` is the middle of the feet; `height` in page units (a standing adult ≈ 0.8 of the panel height looks right).
 - `t` adds calm breathing and a tiny sway, so the person is never frozen; `flip` mirrors; `rot` turns about the feet.
 - A hand sprite (`hand-*`) is anchored at its wrist end (the bottom of the image): use it for close-ups.
-- **The main character in every episode is the T-shirt man** (`tshirt-*`; the user's choice, Nov 2026: no galabeya for him).
+- **The main character in every episode is the host** (`host-*`: open slate-blue shirt, sleeves rolled, white T-shirt,
+  khaki chinos, white sneakers, short hair combed back; the user's choice, Nov 2026, no galabeya). `tshirt-*` is the first
+  draft of him (beige T-shirt, buzz cut): don't use it as the main character.
   `beard-*`, `cap-*`, `curly-*` (galabeya characters) only as other people in a story that needs them. Outfits for other people in
   the story: `a-*`, `b-*`, `c-*` (office, doctor, worker, home, galabeya, a woman in hijab).
 - `catalog.png` shows every sprite with its name.
@@ -27,7 +29,8 @@ PERSON.spriteNames()                                                            
 
 | set | names |
 |---|---|
-| turnaround | tshirt-front, tshirt-3q, tshirt-side, tshirt-back |
+| the host (main character) | host-front, host-3q, host-side, host-back |
+| first draft | tshirt-front, tshirt-3q, tshirt-side, tshirt-back |
 | hands | hand-relaxed-side, hand-relaxed-back, hand-palm, hand-back, hand-point, hand-grip-stick, hand-toothbrush, hand-fist, hand-wave, hand-thumbsup, hand-rest, hand-back-open, hand-back-open2, hand-belly |
 | poses ×3 characters | {beard,cap,curly}-point-up, -miswak-sad, -brushing, -belly, -walk, -sit, -arms-crossed, -talk; beard/curly-explain; beard-sit2, cap-sit2, curly-stand-3q |
 | outfits | a-office, a-doctor, a-worker, a-home, a-office2, a-home2, a-galabeya, a-woman-hijab · b-office, b-doctor, b-worker, b-home, b-galabeya, b-woman-hijab · c-office, c-doctor-scrubs, c-worker, c-home, c-home2, c-thobe, c-thobe2, c-woman-hijab |

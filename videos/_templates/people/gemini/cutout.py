@@ -9,7 +9,7 @@ src, out, pre = sys.argv[1], sys.argv[2], sys.argv[3]
 im = np.asarray(Image.open(src).convert("RGB")).astype(float); H, W, _ = im.shape
 bg = np.median(np.concatenate([im[:8].reshape(-1, 3), im[-8:].reshape(-1, 3), im[:, :8].reshape(-1, 3), im[:, -8:].reshape(-1, 3)]), 0)
 d = np.sqrt(((im - bg) ** 2).sum(2))
-near = d < 34
+near = d < float(os.environ.get("NEAR", "34"))
 # thin horizontal lines (guides, ground lines): rows where a dark-ish run spans most of the width; erase pixels whose vertical run is short
 lines = np.zeros_like(near)
 for y in range(H):
