@@ -3,7 +3,7 @@ name: law
 description: >
   Make an «إيه الحكاية؟» build-along explainer in the user's «لو» style, end to end, matching the 14 reference videos the
   user sent (videos/_reference/law/, series «ابنيها بنفسك!»): a full-screen 9:16 "2.5D" vector drawing of one cut-open scene
-  that grows part by part, one big caption word at a time, a real-proportion man (the shared person kit, videos/_templates/people/person.js) who acts out and reacts to every step,
+  that grows part by part, one big caption word at a time, a real-proportion man (the T-shirt man from the Gemini person kit, videos/_templates/people/gemini/) who acts out and reacts to every step,
   and the script shape «لو… يبقى عندك…» → «بس المشكلة إن…» → «عشان كده…» → «وده اسمه…» → «والغريب إن…» → «ومبروك عليك،
   عملت … بنفسك» in casual Cairo Egyptian Arabic. Covers topic choice, script, Gemini voice, alignment, the scene on the
   shared kit, joint-correct acting, checks, sound effects (no music), 1080×1920 render, qa.py, the reel cover and the
@@ -12,6 +12,16 @@ description: >
 ---
 
 # «إيه الحكاية؟» — the «لو» style (build it yourself, step by step)
+
+> **People: the Gemini person kit, in this skill and every other (the user's fixed rule, Nov 2026; it overrides every
+> mention of `person.js`, `PERSON.front` or `PERSON.side` below).** Every human comes from
+> `videos/_templates/people/gemini/` (read its `README.md`, see `catalog.png`): load `gemini/sprites.js` and place
+> figures with `PERSON.sprite(name, x, feetY, height, { t: window.__t })`. **The channel's main character is the T-shirt
+> man** (`tshirt-*`: sand-beige T-shirt, dark jeans, sneakers; the user said: no galabeya for him), used in every episode;
+> other people in a story come from the outfit sets (`a-/b-/c-office`, `-doctor`, `-worker`, `-home`, `-woman-hijab`…).
+> A pose the kit lacks: write the pose-sheet prompt from that README (attach `gemini/sheets/s1.jpg`), ask the user to run
+> it in Gemini (or run it through the Gemini API if image quota allows), cut it with `cutout.py`, add the sprites, never
+> draw a person by code. Keep the old vector kit only when editing an episode already made with it.
 
 Talk to the user in Egyptian Arabic. This file is complete on its own: a new session can make a «لو» video from it alone.
 

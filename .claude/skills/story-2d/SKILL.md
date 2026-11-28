@@ -4,7 +4,7 @@ description: |
   Make an «إيه الحكاية؟» true-story video the way the Titanic video «تيتانيك» was made (the user's best-performing
   video, fixed as the standard for every story): a cinematic cold open that grabs the eye in the first second, a calm
   storyteller in Egyptian Arabic telling the night hour by hour, drawn as full-screen cinematic 2D frames — cel-shaded
-  SVG with dark outlines, hard light, light rays, dust and film grain, characters drawn with the shared person kit (videos/_templates/people/person.js) —
+  SVG with dark outlines, hard light, light rays, dust and film grain, characters from the Gemini person kit (videos/_templates/people/gemini/) —
   1080×1920 60 fps. Reference build `videos/titanic/`. Use whenever the user asks for a story: "اعملي قصة",
   "عايز أعمل قصة", "قصة عن…", "حكاية…", "القصة 2D", "زي فيديو تيتانيك", "زي فيديو هيروشيما الأولاني" or "story 2D style"
   (the 3D «القصة» skill only when the user says 3D). Every story opens on a REAL recording or real footage of the event
@@ -13,6 +13,16 @@ description: |
 ---
 
 # «إيه الحكاية؟» — the «القصة 2D» style (the Titanic recipe)
+
+> **People: the Gemini person kit, in this skill and every other (the user's fixed rule, Nov 2026; it overrides every
+> mention of `person.js`, `PERSON.front` or `PERSON.side` below).** Every human comes from
+> `videos/_templates/people/gemini/` (read its `README.md`, see `catalog.png`): load `gemini/sprites.js` and place
+> figures with `PERSON.sprite(name, x, feetY, height, { t: window.__t })`. **The channel's main character is the T-shirt
+> man** (`tshirt-*`: sand-beige T-shirt, dark jeans, sneakers; the user said: no galabeya for him), used in every episode;
+> other people in a story come from the outfit sets (`a-/b-/c-office`, `-doctor`, `-worker`, `-home`, `-woman-hijab`…).
+> A pose the kit lacks: write the pose-sheet prompt from that README (attach `gemini/sheets/s1.jpg`), ask the user to run
+> it in Gemini (or run it through the Gemini API if image quota allows), cut it with `cutout.py`, add the sprites, never
+> draw a person by code. Keep the old vector kit only when editing an episode already made with it.
 
 **This is the standard for every story.** When the user says "اعملي قصة" (or any story request without naming 3D),
 use this skill and the Titanic recipe below: the Titanic video got the channel's highest views, and the user fixed its

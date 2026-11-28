@@ -12,6 +12,16 @@ description: >
 
 # «إيه الحكاية؟» — the «اسكتش» style
 
+> **People: the Gemini person kit, in this skill and every other (the user's fixed rule, Nov 2026; it overrides every
+> mention of `person.js`, `PERSON.front` or `PERSON.side` below).** Every human comes from
+> `videos/_templates/people/gemini/` (read its `README.md`, see `catalog.png`): load `gemini/sprites.js` and place
+> figures with `PERSON.sprite(name, x, feetY, height, { t: window.__t })`. **The channel's main character is the T-shirt
+> man** (`tshirt-*`: sand-beige T-shirt, dark jeans, sneakers; the user said: no galabeya for him), used in every episode;
+> other people in a story come from the outfit sets (`a-/b-/c-office`, `-doctor`, `-worker`, `-home`, `-woman-hijab`…).
+> A pose the kit lacks: write the pose-sheet prompt from that README (attach `gemini/sheets/s1.jpg`), ask the user to run
+> it in Gemini (or run it through the Gemini API if image quota allows), cut it with `cutout.py`, add the sprites, never
+> draw a person by code. Keep the old vector kit only when editing an episode already made with it.
+
 **Reference before every drawing (the user's rule for every skill):** before you draw any object, body part, machine, place or scene, look it up in `videos/_reference/README.md` (a subject index of the 34 reference videos and of our own episodes), open the frames that show it and see how it was cut open, labelled and framed. Then draw it in this skill's own style. Never copy a drawing.
 
 **The user named this style «اسكتش»** and locked it after «المد والجزر». Use the same drawings, narration and sounds in

@@ -4,7 +4,8 @@
 - **People in every video, in every skill (sketch, animation, story-2d, law, and any skill made later): the Gemini person
   kit** `videos/_templates/people/gemini/` (read its `README.md`; `PERSON.sprite(name, x, feetY, height, {t})` from
   `sprites.js`, every sprite in `catalog.png`). The user chose it after the miswak review (Nov 2026): figures from Gemini
-  character sheets, cut out as transparent sprites, never people drawn by code again. One character per episode; other
+  character sheets, cut out as transparent sprites, never people drawn by code again. **The main character in every episode is
+  the T-shirt man** (`tshirt-*`, no galabeya; the user's choice); other
   people in the story from the outfit sets (office, doctor, worker, home, galabeya, a woman in hijab). A pose or outfit
   that is missing: make a new sheet with the prompts in that README (the user runs them in Gemini, or Claude does through
   the connected Gemini API) and cut it with `cutout.py`. The old vector kit `people/person.js` stays only for episodes

@@ -18,8 +18,8 @@ PERSON.spriteNames()                                                            
 - `(x, feetY)` is the middle of the feet; `height` in page units (a standing adult ≈ 0.8 of the panel height looks right).
 - `t` adds calm breathing and a tiny sway, so the person is never frozen; `flip` mirrors; `rot` turns about the feet.
 - A hand sprite (`hand-*`) is anchored at its wrist end (the bottom of the image): use it for close-ups.
-- Pick one character per episode and keep it: `beard-*` (white thobe, grey vest), `cap-*` (grey galabeya, cap),
-  `curly-*` (white thobe, beige vest), `tshirt-*` (the turnaround: front, 3q, side, back). Outfits for other people in
+- **The main character in every episode is the T-shirt man** (`tshirt-*`; the user's choice, Nov 2026: no galabeya for him).
+  `beard-*`, `cap-*`, `curly-*` (galabeya characters) only as other people in a story that needs them. Outfits for other people in
   the story: `a-*`, `b-*`, `c-*` (office, doctor, worker, home, galabeya, a woman in hijab).
 - `catalog.png` shows every sprite with its name.
 
