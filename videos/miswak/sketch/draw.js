@@ -203,7 +203,7 @@ function photo(href, x, y, w, h, rot) {
     '<rect x="-34" y="' + f(-h / 2 - 22) + '" width="68" height="22" fill="#e9dcae" opacity=".85" transform="rotate(-4)"/>');
 }
 // the brand corner (right side, as the user asked): the company logo in a white rounded card. href = the logo file
-function logo(href, x, y, w) { return '<rect x="' + f(x - w / 2) + '" y="' + f(y - w * .3) + '" width="' + w + '" height="' + f(w * .6) + '" rx="12" fill="#ffffff" stroke="' + INK + '" stroke-width="2"/>' + (href ? img(href, x - w / 2 + 10, y - w * .3 + 8, w - 20, w * .6 - 16, ' preserveAspectRatio="xMidYMid meet"') : T("لوجو الشركة", x, y + 7, 18, "#9a9184")); }
+function logo(href, x, y, w) { var h = w * .34; return '<rect x="' + f(x - w / 2) + '" y="' + f(y - h / 2) + '" width="' + w + '" height="' + f(h) + '" rx="10" fill="#ffffff" stroke="' + INK + '" stroke-width="2"/>' + (href ? '<image href="' + href + '" x="' + f(x - w / 2 + 10) + '" y="' + f(y - h / 2 + 7) + '" width="' + f(w - 20) + '" height="' + f(h - 14) + '" preserveAspectRatio="xMidYMid meet"/>' : T("لوجو الشركة", x, y + 7, 18, "#9a9184")); }
 return { C: { INK: INK, ORANGE: ORANGE, BLUE: BLUE, OLIVE: OLIVE, PAPER: PAPER, CREAM: CREAM, GUM: GUM, ENAMEL: ENAMEL, FIB: FIB, BRUSH: BRUSH, SILICA: SILICA, LEAF: LEAF, BERRY: BERRY, BARK: BARK, WOOD: WOOD },
   f: f, P: P, line: line, blob: blob, poly: poly, T: T, G: G, tag: tag, chip: chip, box: box, cross: cross, check: check, arrow: arrow, rnd: rnd,
   stick: stick, scissors: scissors, leaf: leaf, berries: berries, branch: branch, shrub: shrub, tooth: tooth, jawCut: jawCut, arch: arch,

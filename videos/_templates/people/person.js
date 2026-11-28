@@ -88,6 +88,15 @@ function pLimb(pts, ws, cap) {
   var ring = L.concat(tip, Rr.slice().reverse());
   return { fill: pPath(ring, true), line: pPath(ring, false), mid: pts };
 }
+// a limb that grows out of the body (the arm from the shoulder slope): filled all round; ink on the outer side from the
+// start, across the far end, and on the inner side only from point `from` on, so the cap melts into the torso, no seam
+function pLimbGrow(pts, ws, from, ref) {
+  var A = [], B = [], n = pts.length;
+  for (var i = 0; i < n; i++) { var a = pts[Math.max(0, i - 1)], b = pts[Math.min(n - 1, i + 1)], dx = b[0] - a[0], dy = b[1] - a[1], d = Math.hypot(dx, dy) || 1, nx = -dy / d, ny = dx / d, w = ws[i] / 2;
+    A.push([pts[i][0] + nx * w, pts[i][1] + ny * w]); B.push([pts[i][0] - nx * w, pts[i][1] - ny * w]); }
+  var k = Math.min(2, n - 1), inA = Math.hypot(A[k][0] - ref[0], A[k][1] - ref[1]) < Math.hypot(B[k][0] - ref[0], B[k][1] - ref[1]), out = inA ? B : A, inn = inA ? A : B;
+  return { fill: pPath(out.concat(inn.slice().reverse()), true), line: pPath(out.concat(inn.slice(from).reverse()), false), out: out, inn: inn };
+}
 function pLimbDraw(lb, col, s, colD, sw) {
   return '<path d="' + lb.fill + '" fill="' + col + '"/>' + (colD ? colD : "") + '<path d="' + lb.line + '" fill="none" stroke="' + INK + '" stroke-width="' + f((sw || 2.3) * s) + '" stroke-linejoin="round" stroke-linecap="round"/>';
 }
@@ -101,7 +110,36 @@ function pShade(pts, ws, col, s, k) {
 // ── the hand: wrist point w, direction ang (radians, wrist → fingertips), side ±1 puts the thumb on one side ──
 // palm 24 long, 16 wide at the wrist and 21 across the knuckles; fingers index 17 · middle 19 · ring 18 · little 14 in three
 // tapering joints (45 / 30 / 25 %), each finger thinner at the tip with a nail; the thumb grows out of the palm's heel.
+// hands drawn as one silhouette for the poses seen most (after real hands and the channel's reference art): fingers held
+// together with their separation lines, knuckles, the thumb as its own shape with a nail. relaxed: hanging, fingers lightly
+// curled; fist / grip: closed round an object (draw the object before the person so the fingers wrap in front of it);
+// point: the fist with the index finger straight. Units as pHand (wrist at 0, toward the fingertips +x, thumb side -y).
+function pHandShape(w, ang, kind, side, s, c) {
+  var ca = Math.cos(ang), sa = Math.sin(ang);
+  function P(x, y) { y *= side; return [w[0] + (x * ca - y * sa) * s, w[1] + (x * sa + y * ca) * s]; }
+  function path(pts, close) { return pPath(pts.map(function (p) { return P(p[0], p[1]); }), close); }
+  function ln(pts, col, wd) { return '<path d="' + path(pts, false) + '" stroke="' + col + '" stroke-width="' + f(wd * s) + '" fill="none" stroke-linecap="round"/>'; }
+  var sk = '" fill="' + c.skin + '" stroke="' + INK + '" stroke-width="' + f(2.1 * s) + '" stroke-linejoin="round"/>', g = "";
+  function nail(x, y, a) { var q = P(x, y); return '<ellipse cx="' + f(q[0]) + '" cy="' + f(q[1]) + '" rx="' + f(2.6 * s) + '" ry="' + f(1.8 * s) + '" transform="rotate(' + f((ang + side * (a || 0)) * 180 / Math.PI) + ' ' + f(q[0]) + ' ' + f(q[1]) + ')" fill="' + c.skinL + '" stroke="' + c.skinD + '" stroke-width="' + f(.8 * s) + '"/>'; }
+  if (kind === "relaxed") {
+    g += '<path d="' + path([[0, -8.5], [9, -10.5], [18, -11], [25, -10.6], [32, -9.2], [38, -7], [42.5, -3.5], [44, .5], [42.5, 4.5], [38.5, 7.5], [32, 9.6], [25, 10.6], [17, 10.5], [8, 9.6], [0, 8.5]], true) + sk;
+    g += ln([[25, -5.4], [34, -4.6], [42, -2]], c.skinD, 1.1) + ln([[25, -.4], [34, .1], [42.8, 1.6]], c.skinD, 1.1) + ln([[25, 4.6], [33, 5.4], [40, 5.6]], c.skinD, 1.1);   // fingers side by side
+    g += ln([[22.5, -8], [24, -6.2]], c.skinD, 1) + ln([[23, -3], [24.4, -1.4]], c.skinD, 1) + ln([[23, 2], [24.4, 3.6]], c.skinD, 1) + ln([[22.5, 6.6], [23.8, 8.2]], c.skinD, 1);   // knuckles
+    g += ln([[32.5, -8.6], [33.5, -6.8]], c.skinD, .9) + ln([[33.5, 7.6], [34.5, 9.2]], c.skinD, .9) + ln([[6, -4], [18, -3.5]], c.skinD, .8) + ln([[6, 3], [18, 3.5]], c.skinD, .8);
+    g += '<path d="' + path([[4, -6], [11, -9.6], [18, -11.6], [24.5, -12], [28, -10.4], [26.6, -7.8], [19.5, -6.8], [11, -4.6]], true) + sk + nail(25.4, -10.2, .1);   // the thumb lies along the front of the hand
+  } else if (kind === "fist" || kind === "point" || kind === "grip") {
+    g += '<path d="' + path([[0, -8.5], [9, -10.5], [18, -11.2], [24.5, -11.2], [29.5, -10.6], [33.8, -7.4], [35.6, -2.4], [35.6, 2.6], [34, 7.4], [29.5, 10.6], [20, 11.2], [10, 10.2], [0, 8.5]], true) + sk;
+    g += ln([[28.5, -5.2], [35.2, -4.8]], c.skinD, 1.1) + ln([[28.5, -.1], [35.6, 0]], c.skinD, 1.1) + ln([[28.5, 4.9], [35, 5.2]], c.skinD, 1.1);   // the curled fingers, side by side
+    [-7.6, -2.6, 2.5, 7.3].forEach(function (y) { g += ln([[26.6, y - 1.8], [28.2, y], [26.6, y + 1.8]], c.skinD, 1.1); });   // the knuckle row
+    g += ln([[6, -4], [19, -3.5]], c.skinD, .8) + ln([[6, 3], [19, 3.4]], c.skinD, .8);
+    if (kind === "point") { var ip = [[26, -7.6], [30, -7.6], [40, -7.4], [50, -7.2]].map(function (p) { return P(p[0], p[1]); }), lb = pLimb(ip, [5.6 * s, 5.4 * s, 5 * s, 4.4 * s], true);
+      g += '<path d="' + lb.fill + '" fill="' + c.skin + '"/><path d="' + lb.line + '" fill="none" stroke="' + INK + '" stroke-width="' + f(2.1 * s) + '" stroke-linecap="round"/>' + ln([[39, -9.6], [39, -5.4]], c.skinD, .8) + nail(47.5, -7.2, 0); }
+    g += '<path d="' + path([[6, -8], [14, -12.2], [22, -13.4], [29, -13], [33.4, -10.4], [32.4, -7.2], [26, -8.2], [16, -7.6]], true) + sk + nail(30.6, -10.6, .3);   // the thumb wraps over the fingers
+  } else return null;
+  return g;
+}
 function pHand(w, ang, kind, side, s, colors, palm) {
+  if (!palm && (kind === "relaxed" || kind === "fist" || kind === "point" || kind === "grip" || kind == null)) { var hs = pHandShape(w, ang, kind || "relaxed", side, s, colors || PSN); if (hs) return hs; }
   var c = colors || PSN, ca = Math.cos(ang), sa = Math.sin(ang);
   function P(x, y) { y *= side; return [w[0] + (x * ca - y * sa) * s, w[1] + (x * sa + y * ca) * s]; }
   // per finger: [spread angle (deg), curl 0..1]; then the thumb: [angle, curl]
@@ -283,7 +321,7 @@ function person(o) {
     svg += pLine([T(-10, 0), T(-40, 0)], INK, 1.8 * s) + pLine([T(-14, -26), T(-30, -34)], c.pantsD, 1.2 * s) + pLine([T(-14, 26), T(-30, 34)], c.pantsD, 1.2 * s);
   } else
   svg += '<path d="' + pPath([T(-8, -40), T(10, -38), T(10, 38), T(-8, 40), T(-16, 0)], true) + '" fill="' + c.pants + '" stroke="' + INK + '" stroke-width="' + f(2.2 * s) + '"/>';
-  var tor = [T(wy, -37), T(30, -33 - br * .3), T(70, -38 - br * .4), T(96, -42), T(hSh + 2, -46 + 2 * sl), T(hSh + 8, -30), T(hNeck + 2, -13), T(hNeck + 2, 13), T(hSh + 8, 30), T(hSh + 2, 46 - 2 * sl), T(96, 42), T(70, 38 + br * .4), T(30, 33 + br * .3), T(wy, 37)];
+  var tor = [T(wy, -37), T(30, -33 - br * .3), T(70, -38 - br * .4), T(94, -43), T(hSh - 4, -47 + 2 * sl), T(hSh + 7, -41 + 2 * sl), T(hSh + 10, -27), T(hNeck + 2, -13), T(hNeck + 2, 13), T(hSh + 10, 27), T(hSh + 7, 41 - 2 * sl), T(hSh - 4, 47 - 2 * sl), T(94, 43), T(70, 38 + br * .4), T(30, 33 + br * .3), T(wy, 37)];
   if (OF.fem) tor = [T(wy, -36), T(28, -31 - br * .3), T(60, -34 - br * .4), T(92, -41), T(hSh, -45 + 2 * sl), T(hSh + 6, -33), T(hNeck + 2, -12), T(hNeck + 2, 12), T(hSh + 6, 33), T(hSh, 45 - 2 * sl), T(92, 41), T(60, 34 + br * .4), T(28, 31 + br * .3), T(wy, 36)];   // the same joints; softer shoulders, a slight waist
   svg += '<path d="' + pPath(tor, true) + '" fill="' + c.shirt + '" stroke="' + INK + '" stroke-width="' + f(2.4 * s) + '"/>';
   svg += '<path d="' + pPath([T(hSh, 22), T(90, 36), T(50, 33), T(wy + 6, 34), T(wy + 6, 22), T(50, 24), T(86, 22)], true) + '" fill="' + c.shirtD + '" opacity=".55"/>';   // shaded far side
@@ -344,11 +382,22 @@ function person(o) {
     var ang1 = Math.atan2(el[1] - sp[1], el[0] - sp[0]), ang2 = Math.atan2(dy, dx), bendA = Math.abs(((ang2 - ang1 + 3 * Math.PI) % (2 * Math.PI)) - Math.PI);
     var ap = [sp0, L2p(sp, el, .3, 0), L2p(sp, el, .75, 0), el, L2p(el, cuff, .35, 0), cuff], aw = [27 * s, 24.5 * s, 21.5 * s, 20.5 * s, 20 * s, 16.5 * s];
     var coat = OF.over === "labcoat", sc = coat ? c.coat : c.shirt, scD = coat ? c.coatD : c.shirtD, sleeve;
+    // the shoulder cap: the sleeve starts on the shoulder slope and rounds over the deltoid into the arm (one outline)
+    var cap0 = T(hSh + 10, sd * 22), ref = T(70, 0), elK = "";
     if (OF.top === "tshirt" && !coat) {   // bare arm, the short sleeve over its top
-      var bare = [sp0, L2p(sp, el, .3, 0), L2p(sp, el, .75, 0), el, L2p(el, wr, .35, 0), wr], bw = [24 * s, 21 * s, 18 * s, 16.5 * s, 17 * s, 13 * s];
-      var sv = [sp0, L2p(sp, el, .25, 0), L2p(sp, el, .5, 0)], sw2 = [28 * s, 26 * s, 25 * s];
-      sleeve = pLimbDraw(pLimb(bare, bw, false), c.skin, s, pShade(bare, bw, c.skinD, s, .45), 2.2) + pLimbDraw(pLimb(sv, sw2, false), sc, s, "", 2.3);
-    } else sleeve = pLimbDraw(pLimb(ap, aw, false), sc, s, pShade(ap, aw, scD, s), 2.3);
+      var bare = [sp0, L2p(sp, el, .3, 0), L2p(sp, el, .75, 0), el, L2p(el, wr, .35, 0), wr], bw = [24 * s, 21.5 * s, 18.5 * s, 16.5 * s, 17.5 * s, 13.5 * s];
+      var sv = [cap0, sp, L2p(sp, el, .28, 0), L2p(sp, el, .52, 0)], sw2 = [17 * s, 30 * s, 27.5 * s, 26.5 * s], sl2 = pLimbGrow(sv, sw2, 2, ref);
+      sleeve = pLimbDraw(pLimb(bare, bw, false), c.skin, s, pShade(bare, bw, c.skinD, s, .45), 2.2) +
+        '<path d="' + sl2.fill + '" fill="' + sc + '"/><path d="' + sl2.line + '" fill="none" stroke="' + INK + '" stroke-width="' + f(2.3 * s) + '" stroke-linejoin="round" stroke-linecap="round"/>' +
+        pLine([L2p(sv[2], sv[3], .7, 0), L2p(sv[2], sv[3], .7, 0)], sc, 1) + '<path d="' + pPath([sl2.out[3], L2p(sl2.out[3], sl2.inn[3], .5, 0), sl2.inn[3]].map(function (p, j) { return [p[0] + (sv[2][0] - sv[3][0]) * .18, p[1] + (sv[2][1] - sv[3][1]) * .18]; }), false) + '" stroke="' + scD + '" stroke-width="' + f(1.2 * s) + '" fill="none"/>';   // the hem stitch
+      // the elbow: a small crease on its outside, and the wrist bone
+      var ux = (wr[0] - sp[0]), uy = (wr[1] - sp[1]); var mx0 = (sp[0] + wr[0]) / 2 - el[0], my0 = (sp[1] + wr[1]) / 2 - el[1], ml0 = Math.hypot(mx0, my0) || 1;
+      if (ml0 > 2 * s) { var ox = -mx0 / ml0, oy = -my0 / ml0, e0 = [el[0] + ox * 5 * s, el[1] + oy * 5 * s]; elK += '<path d="M' + f(e0[0] - oy * 4 * s) + ' ' + f(e0[1] + ox * 4 * s) + ' Q' + f(e0[0] + ox * 2 * s) + ' ' + f(e0[1] + oy * 2 * s) + ' ' + f(e0[0] + oy * 4 * s) + ' ' + f(e0[1] - ox * 4 * s) + '" stroke="' + c.skinD + '" stroke-width="' + f(1.2 * s) + '" fill="none" stroke-linecap="round"/>'; }
+    } else {
+      var ap2 = [cap0].concat(ap), aw2 = [17 * s].concat([29 * s, 24.5 * s, 21.5 * s, 20.5 * s, 20 * s, 16.5 * s]), lg = pLimbGrow(ap2, aw2, 2, ref);
+      sleeve = '<path d="' + lg.fill + '" fill="' + sc + '"/>' + pShade(ap, aw, scD, s) + '<path d="' + lg.line + '" fill="none" stroke="' + INK + '" stroke-width="' + f(2.3 * s) + '" stroke-linejoin="round" stroke-linecap="round"/>';
+      if (OF.top !== "sweater") sleeve += '<path d="' + pPath([L2p(cap0, sp, .55, 0), L2p(sp, el, .08, sd * 0)], false) + '" stroke="' + scD + '" stroke-width="' + f(1.1 * s) + '" fill="none" opacity=".8"/>';   // the shoulder seam
+    }
     // fabric bunching at the elbow: more folds the more the arm is bent, on the inside of the bend
     // the inside of the bend points from the elbow toward the middle of shoulder and wrist; folds sit there, inside the sleeve
     var mx = (sp[0] + wr[0]) / 2 - el[0], my = (sp[1] + wr[1]) / 2 - el[1], ml = Math.hypot(mx, my) || 1, vi = [mx / ml, my / ml], folds = "", nf = bendA > .35 ? 3 : 1;
@@ -359,9 +408,9 @@ function person(o) {
     var cp = [cuff, [wr[0] + dx / dl * 1.5 * s, wr[1] + dy / dl * 1.5 * s]], cuffSvg = OF.top === "tshirt" && !coat ? "" : pLimbDraw(pLimb(cp, [17.5 * s, 16.5 * s], false), coat ? c.shirt : sc, s, "", 2), rib = "";
     if (OF.top === "sweater" && !coat) for (var qq = -6; qq <= 6; qq += 3) { var nx2 = -dy / dl, ny2 = dx / dl; rib += pLine([[cuff[0] + nx2 * qq * s, cuff[1] + ny2 * qq * s], [cuff[0] + nx2 * qq * s + dx / dl * 8 * s, cuff[1] + ny2 * qq * s + dy / dl * 8 * s]], c.shirtD, .9 * s); }
     var ha = A.rot != null ? A.rot * Math.PI / 180 : Math.atan2(dy, dx), side = A.side || (sd * (Math.cos(ha) >= 0 ? -1 : 1));
-    var hand = pHand([wr[0] - Math.cos(ha) * 1 * s, wr[1] - Math.sin(ha) * 1 * s], ha, A.hand || "relaxed", side, s, c, A.palm);
+    var HS = s * (o.handScale || 1.22), hand = pHand([wr[0] - Math.cos(ha) * 1 * s, wr[1] - Math.sin(ha) * 1 * s], ha, A.hand || "relaxed", side, HS, c, A.palm);
     if (OF.top === "tshirt" && !coat) folds = "";
-    armSvg[i] = sleeve + folds.replace(new RegExp(c.shirtD, "g"), scD) + hand + cuffSvg + rib;
+    armSvg[i] = sleeve + elK + folds.replace(new RegExp(c.shirtD, "g"), scD) + hand + cuffSvg + rib;
   });
   // arms reaching up over the head (a stretch, a hand on the forehead) are drawn after the head
   var front = [arms[0] && arms[0].front, arms[1] && arms[1].front];

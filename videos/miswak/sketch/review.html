@@ -1,10 +1,10 @@
 <!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@700;800&display=swap" rel="stylesheet">
 <style>body{margin:0;background:#d9d0bb}svg{display:block}</style></head><body>
-<svg id="s" width="1980" height="2660" viewBox="0 0 1980 2660"></svg>
+<svg id="s" width="1980" height="3540" viewBox="0 0 1980 3540"></svg>
 <script src="../../_templates/people/person.js"></script>
 <script src="draw.js"></script>
 <script>
-var Z = MW, C = Z.C, T = Z.T, out = "", SHEET = +(location.hash.slice(1) || 1), PR = "../refs/product/";
+var Z = MW, C = Z.C, T = Z.T, out = "", SHEET = +(location.hash.slice(1) || 1), PR = "../refs/product/", LOGO = PR + "logo.png", VF = PR + "frames/";
 var panels = [];
 function panel(cap, inner) { panels.push([cap, inner]); }
 function flush() {
@@ -33,9 +33,9 @@ if (SHEET === 1) {
     Z.arrow(420, 600, 230, 600, C.INK, 3) + Z.T("قبل", 520, 610, 22, "#7d7364") + Z.T("دلوقتي", 160, 610, 22, "#7d7364"));
   // 3 · most of us tried it once… and threw it away after two days
   var p3 = PERSON.front({ x: 250, y: 500, s: 1.05, outfit: "casual", legs: "stand", breath: .5,
-    arms: [{ rel: [-10, 150], hand: "relaxed" }, { to: [372, 372], bend: 1, hand: "fist" }], head: { tilt: 6, turn: .25 }, face: { mouth: "frown", brows: "worried", look: [.8, .3] } });
+    arms: [{ rel: [-10, 150], hand: "relaxed" }, { to: [380, 380], bend: 1, hand: "fist" }], head: { tilt: 6, turn: .25 }, face: { mouth: "frown", brows: "worried", look: [.8, .3] } });
   panel("أغلبنا جرّبها مرة… ورماها بعد يومين",
-    p3.svg + Z.stick(352, 330, 420, 440, 13, { fray: .7, dry: .8 }) + Z.bin(520, 760, 1.1) + Z.stick(490, 680, 560, 650, 12, { dry: 1, fray: .6 }) + Z.calendar(520, 160, 1.2, "يومين"));
+    Z.stick(p3.joints.wr[1][0] + 6, p3.joints.wr[1][1] - 70, p3.joints.wr[1][0] + 40, p3.joints.wr[1][1] + 80, 13, { fray: .7, dry: .8 }) + p3.svg + Z.bin(520, 760, 1.1) + Z.stick(490, 680, 560, 650, 12, { dry: 1, fray: .6 }) + Z.calendar(520, 160, 1.2, "يومين"));
   // 5 · the Arak shrub; the stick is a twig of it
   panel("فرع من شجرة اسمها الأراك",
     '<rect x="0" y="560" width="640" height="230" fill="#e2cf9f"/>' + Z.line([[0, 560], [640, 560]], C.INK, 2) + [[90, 610], [260, 660], [470, 620], [560, 700]].map(function (p) { return '<ellipse cx="' + p[0] + '" cy="' + p[1] + '" rx="18" ry="5" fill="#cdb682"/>'; }).join("") +
@@ -52,7 +52,7 @@ if (SHEET === 1) {
   panel("بتلمّع سطح السنة بالراحة، زي قماشة التلميع",
     Z.jawCut(-20, 660, 520, [150, 470], { w: 230, h: 210, r: 230, stain: 1, stainK: .5 }) +
     Z.stick(150, 300, -60, 170, 34, { fray: 1 }) + [0, 1, 2].map(function (k) { return Z.line([[250 + k * 12, 330 + k * 22], [268 + k * 12, 318 + k * 22]], "#ffffff", 4); }).join("") +
-    Z.tag(560, 330, "المينا", C.OLIVE, -1, -70) +
+    Z.tag(560, 330, "المينا", C.OLIVE, -1, -70) + Z.tag(88, 430, "العاج", C.INK, 1, 170) + Z.tag(460, 560, "العصب", "#a8443a", -1, 150) + Z.tag(310, 505, "اللثة", "#b5544a", 1, 150) +
     Z.box(120, 120, 180, '<rect x="-60" y="-20" width="120" height="44" fill="#c7d6e6" stroke="#2a2016" stroke-width="2"/>' + Z.blob([[-40, -40], [30, -50], [50, -10], [-10, 0], [-50, -10]], "#e9b949", 2) + Z.T("قماشة تلميع", 0, 62, 17, "#2a2016")));
   // 9 · and the WHO itself encouraged its use, in the eighties
   panel("ومنظمة الصحة العالمية نفسها شجّعت على استخدامه",
@@ -71,19 +71,19 @@ if (SHEET === 1) {
 } else {
   // 13 · what if we took the miswak and made it a brush?
   panel("طب لو أخدنا المسواك وحطيناه في شكل فرشاة؟",
-    Z.stick(80, 250, 400, 250, 30, { fray: 1 }) + Z.arrow(320, 330, 320, 430, C.ORANGE, 5) + Z.G("translate(120 560)", Z.brushSide(0, 0, 400, { miswak: true, h: 70 })) + Z.T("؟", 560, 300, 120, C.ORANGE) + Z.logo("", 540, 80, 150));
+    Z.stick(80, 250, 400, 250, 30, { fray: 1 }) + Z.arrow(320, 330, 320, 430, C.ORANGE, 5) + Z.G("translate(120 560)", Z.brushSide(0, 0, 400, { miswak: true, h: 70 })) + Z.T("؟", 560, 300, 120, C.ORANGE) + Z.logo(LOGO, 510, 62, 220));
   // 14 · the brand: the real product, logo on the right
   panel("في اليابان عملوا فرشاة اسمها سمارت مسواك",
-    Z.photo(PR + "mizuha-powder.jpg", 280, 420, 400, 400, -2) + Z.logo("", 540, 80, 150) + Z.tag(250, 300, "بودرة المسواك", C.ORANGE, 1, -90) + Z.chip(320, 700, "صنع اليابان", C.INK));
+    Z.photo(PR + "mizuha-powder.jpg", 250, 400, 360, 360, -2) + Z.photo(VF + "v19.8.jpg", 500, 520, 170, 302, 4) + Z.logo(LOGO, 510, 62, 220) + Z.tag(250, 300, "بودرة المسواك", C.ORANGE, 1, -90) + Z.chip(320, 700, "صنع اليابان", C.INK));
   // 15 · the bristles are needle-fine at the end, like a pencil point
   panel("الشعيرات رفيعة جدًا من الطرف، زي سن القلم",
     Z.bristle(200, 640, 420, 70, false) + Z.bristle(440, 640, 420, 70, true) + Z.chip(200, 700, "عادية", "#6d6a64") + Z.chip(440, 700, "مدبّبة", C.ORANGE) +
-    Z.box(110, 110, 170, Z.pencil(0, 0, .9, -30)) + Z.logo("", 540, 80, 150));
+    Z.box(110, 110, 170, Z.pencil(0, 0, .9, -30)) + Z.logo(LOGO, 510, 62, 220));
   // 16 · into the gaps between the teeth, down to the gum line: one tooth cut from the side (outer face on the left), the brush
   //      head cut across at 45° with its fine tips in the gum margin; inset: two crowns from the front, tips in the gap
   panel("فبتدخل بين السنان وتوصل لحد خط اللثة",
     Z.jawCut(-20, 660, 520, [360], { w: 190, h: 230, r: 240 }) + Z.brushEnd(150, 330, 262, 506, { miswak: true, taper: true }) +
-    Z.tag(262, 512, "خط اللثة", C.OLIVE, -1, 120) + Z.box(130, 130, 200, Z.G("scale(.62)", Z.frontTeeth(0, 70, 110, 190, true))) + Z.T("بين السنان", 130, 262, 20, C.ORANGE) + Z.logo("", 540, 80, 150));
+    Z.tag(262, 512, "خط اللثة", C.OLIVE, -1, 120) + Z.tag(470, 300, "المينا", C.OLIVE, 1, -60) + Z.tag(520, 560, "اللثة", "#b5544a", -1, 140) + Z.box(130, 130, 200, Z.G("scale(.62)", Z.frontTeeth(0, 70, 110, 190, true))) + Z.T("بين السنان", 130, 262, 20, C.ORANGE) + Z.logo(LOGO, 510, 62, 220));
   // 17-18 · the myth: hard filaments jab the gum (red scratches); soft fine ones bow along it
   panel("الخشنة ممكن تجرح اللثة… والناعمة لأ",
     Z.jawCut(-20, 660, 540, [190, 500], { w: 150, h: 190, r: 200 }) +
@@ -92,16 +92,22 @@ if (SHEET === 1) {
   // 19 · use it without paste when you're out: at work or travelling
   var p19 = PERSON.front({ x: 360, y: 500, s: 1.05, outfit: "office", legs: "stand", breath: .5, arms: [{ rel: [-10, 150], hand: "relaxed" }, { to: [470, 390], bend: 1, hand: "fist" }], head: { tilt: 4, turn: .2 }, face: { mouth: "smile", brows: "raised", look: [.6, .2] } });
   panel("من غير معجون وانت برّه البيت، في الشغل أو السفر",
-    p19.svg + Z.G("translate(462 392) rotate(-75) scale(.42)", Z.brushSide(-40, 0, 260, { miswak: true, h: 50, col: "#7fc4d6" })) +
+    Z.G("translate(" + (p19.joints.wr[1][0] + 10) + " " + (p19.joints.wr[1][1] + 50) + ") rotate(-80) scale(.5)", Z.brushSide(-60, 0, 230, { miswak: true, h: 50, col: "#f2a7b6" })) + p19.svg +
     Z.box(110, 170, 160, '<rect x="-56" y="-30" width="112" height="76" rx="8" fill="#8d5d35" stroke="#2a2016" stroke-width="2"/><rect x="-22" y="-44" width="44" height="16" rx="5" fill="none" stroke="#2a2016" stroke-width="4"/>' + Z.T("الشغل", 0, 70, 17)) +
-    Z.box(110, 370, 160, Z.poly([[-60, 6], [50, -6], [62, 0], [50, 6], [-60, 8]], "#d9dde1", 2) + Z.poly([[-6, 2], [20, -36], [30, -36], [14, 2]], "#c3c9ce", 2) + Z.poly([[-50, 2], [-60, -20], [-52, -20], [-38, 2]], "#c3c9ce", 2) + Z.T("السفر", 0, 70, 17)) + Z.logo("", 540, 80, 150));
+    Z.box(110, 370, 160, Z.poly([[-60, 6], [50, -6], [62, 0], [50, 6], [-60, 8]], "#d9dde1", 2) + Z.poly([[-6, 2], [20, -36], [30, -36], [14, 2]], "#c3c9ce", 2) + Z.poly([[-50, 2], [-60, -20], [-52, -20], [-38, 2]], "#c3c9ce", 2) + Z.T("السفر", 0, 70, 17)) + Z.logo(LOGO, 510, 62, 220));
   // 20 · a kids' size and a small pocket one with a cap (real photo)
   panel("مقاس للأطفال، ونسخة صغيرة بغطا تتحط في جيبك",
-    Z.photo(PR + "pocket.jpg", 320, 380, 420, 420, 2) + Z.logo("", 540, 80, 150) + Z.tag(250, 400, "بغطا للجيب", C.ORANGE, -1, 230) + Z.chip(430, 690, "مقاس أطفال", C.OLIVE));
+    Z.photo(VF + "v25.9.jpg", 200, 330, 250, 444, -3) + Z.photo(VF + "v28.2.jpg", 450, 470, 250, 444, 3) + Z.logo(LOGO, 510, 62, 220) + Z.chip(200, 600, "بغطا للجيب", C.ORANGE) + Z.chip(450, 740, "مقاس أطفال", C.OLIVE));
+  // 18b · the real brush: soft fine bristles bend under a finger (the partner's video)
+  panel("الناعمة: الشعيرات بتنثني ومابتجرحش",
+    Z.photo(VF + "v23.5.jpg", 320, 400, 330, 586, -2) + Z.logo(LOGO, 510, 62, 220) + Z.chip(320, 740, "ناعمة", C.OLIVE));
+  // 19b · out of the house: the brush in a bag (the partner's video)
+  panel("في شنطتك، في الشغل أو السفر",
+    Z.photo(VF + "v34.2.jpg", 320, 400, 330, 586, 2) + Z.logo(LOGO, 510, 62, 220));
   // 21 · like any brush, change it every three months
   panel("وزي أي فرشاة، بتغيّرها كل تلات شهور",
     [0, 1, 2].map(function (k) { return Z.calendar(160 + k * 160, 230, 1.4, ["شهر 1", "شهر 2", "شهر 3"][k]); }).join("") + Z.arrow(110, 340, 530, 340, C.ORANGE, 4) +
-    Z.G("translate(110 560)", Z.brushSide(0, 0, 330, { miswak: true, taper: true, h: 60 })) + Z.chip(320, 700, "3 شهور", C.ORANGE) + Z.logo("", 540, 80, 150));
+    Z.G("translate(110 560)", Z.brushSide(0, 0, 330, { miswak: true, taper: true, h: 60 })) + Z.chip(320, 700, "3 شهور", C.ORANGE) + Z.logo(LOGO, 510, 62, 220));
   // 22 · recap: the miswak idea, in a brush that reaches everywhere, nothing to cut
   var a22 = Z.arch(320, 200, 190, 290, {});
   panel("فكرة المسواك نفسها، بس في فرشاة بتوصل لكل حتة",
