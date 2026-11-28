@@ -34,7 +34,7 @@ if (SHEET === 1) {
     Z.arrow(420, 600, 230, 600, C.INK, 3) + Z.T("قبل", 520, 610, 22, "#7d7364") + Z.T("دلوقتي", 160, 610, 22, "#7d7364"));
   // 3 · most of us tried it once… and threw it away after two days
   panel("أغلبنا جرّبها مرة… ورماها بعد يومين",
-    PERSON.sprite("beard-miswak-sad", 260, 770, 640) + Z.bin(520, 760, 1.1) + Z.stick(490, 680, 560, 650, 12, { dry: 1, fray: .6 }) + Z.calendar(520, 160, 1.2, "يومين"));
+    PERSON.sprite("host-miswak-sad", 270, 775, 650) + Z.bin(520, 760, 1.1) + Z.stick(490, 680, 560, 650, 12, { dry: 1, fray: .6 }) + Z.calendar(520, 160, 1.2, "يومين"));
   // 5 · the Arak shrub; the stick is a twig of it
   panel("فرع من شجرة اسمها الأراك",
     '<rect x="0" y="560" width="640" height="230" fill="#e2cf9f"/>' + Z.line([[0, 560], [640, 560]], C.INK, 2) + [[90, 610], [260, 660], [470, 620], [560, 700]].map(function (p) { return '<ellipse cx="' + p[0] + '" cy="' + p[1] + '" rx="18" ry="5" fill="#cdb682"/>'; }).join("") +
@@ -90,7 +90,7 @@ if (SHEET === 1) {
     Z.brushEnd(350, 380, 422, 530, { taper: true, miswak: true, bend: .8 }) + Z.check(390, 250, 26) + Z.chip(120, 730, "خشنة", "#6d6a64") + Z.chip(430, 730, "ناعمة", C.OLIVE));
   // 19 · use it without paste when you're out: at work or travelling
   panel("من غير معجون وانت برّه البيت، في الشغل أو السفر",
-    PERSON.sprite("c-office", 400, 770, 640) +
+    PERSON.sprite("host-show-brush", 400, 775, 650) +
     Z.box(110, 170, 160, '<rect x="-56" y="-30" width="112" height="76" rx="8" fill="#8d5d35" stroke="#2a2016" stroke-width="2"/><rect x="-22" y="-44" width="44" height="16" rx="5" fill="none" stroke="#2a2016" stroke-width="4"/>' + Z.T("الشغل", 0, 70, 17)) +
     Z.box(110, 370, 160, Z.poly([[-60, 6], [50, -6], [62, 0], [50, 6], [-60, 8]], "#d9dde1", 2) + Z.poly([[-6, 2], [20, -36], [30, -36], [14, 2]], "#c3c9ce", 2) + Z.poly([[-50, 2], [-60, -20], [-52, -20], [-38, 2]], "#c3c9ce", 2) + Z.T("السفر", 0, 70, 17)) + Z.logo(LOGO, 510, 62, 220));
   // 20 · a kids' size and a small pocket one with a cap (real photo)

@@ -29,7 +29,7 @@ PERSON.spriteNames()                                                            
 
 | set | names |
 |---|---|
-| the host (main character) | host-front, host-3q, host-side, host-back |
+| the host (main character) | host-front, host-3q, host-side, host-back, host-stand-3q · host-point-up, host-point-up2, host-miswak-sad, host-miswak-sad2, host-brushing, host-belly, host-belly-half (waist-up), host-explain, host-walk, host-sit, host-arms-crossed, host-show-brush, host-think, host-surprised, host-surprised2, host-thumbs-up |
 | first draft | tshirt-front, tshirt-3q, tshirt-side, tshirt-back |
 | hands | hand-relaxed-side, hand-relaxed-back, hand-palm, hand-back, hand-point, hand-grip-stick, hand-toothbrush, hand-fist, hand-wave, hand-thumbsup, hand-rest, hand-back-open, hand-back-open2, hand-belly |
 | poses ×3 characters | {beard,cap,curly}-point-up, -miswak-sad, -brushing, -belly, -walk, -sit, -arms-crossed, -talk; beard/curly-explain; beard-sit2, cap-sit2, curly-stand-3q |
