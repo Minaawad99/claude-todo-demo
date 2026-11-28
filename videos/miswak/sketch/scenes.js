@@ -172,8 +172,8 @@ var CLIPS = { green: 81, bend: 87, pouch: 69, pocket: 84, bag: 72, box: 90, fing
 
 // ── the host as a puppet (gemini/rig.js): poses tween, he blinks, and his mouth follows the narrator ──
 function voiceAt(t) { var i = Math.floor(t * 30); return (window.VENV && window.VENV[i]) || 0; }
-var MISWAK_P = Z.stick(40, -120, 40, 160, 30, { fray: 1 });
-var BRUSH_P = '<g transform="translate(40 0) rotate(90) scale(1.5)">' + Z.brushSide(-120, 0, 210, { miswak: true, taper: true, h: 38, col: "#9cc79a" }) + '</g>';
+var MISWAK_P = Z.stick(0, -150, 0, 110, 22, { fray: .9 });
+var BRUSH_P = '<g transform="rotate(-90) scale(.9)">' + Z.brushSide(-150, 0, 215, { miswak: true, taper: true, h: 30, col: "#9cc79a" }) + '</g>';
 function pose(name, extra) { var p = PERSON.rigPose(name); for (var k in (extra || {})) p[k] = extra[k]; return p; }
 function withProp(p, prop) { p = JSON.parse(JSON.stringify(p)); p.armN = p.armN.slice(0, 4); while (p.armN.length < 4) p.armN.push(0); p.armN.push(prop); return p; }
 // keys: [[u, pose], …] in seconds into the shot; each key eases in over 0.45 s. o.talk: lip-sync to the voice

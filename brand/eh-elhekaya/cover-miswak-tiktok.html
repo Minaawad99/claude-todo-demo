@@ -28,7 +28,7 @@
     var Z = MW, s = "";
     s += '<rect width="540" height="960" fill="#1b1d22"/><rect width="540" height="960" fill="url(#grid)" opacity=".18"/>';
     s += '<circle cx="230" cy="500" r="230" fill="#ffd27a" opacity=".35" filter="url(#soft)"/><circle cx="230" cy="500" r="130" fill="#ffe08a" opacity=".3" filter="url(#soft)"/>';
-    var brush = '<g transform="translate(40 0) rotate(90) scale(1.5)">' + Z.brushSide(-120, 0, 210, { miswak: true, taper: true, h: 38, col: "#9cc79a" }) + '</g>';
+    var brush = '<g transform="rotate(-90) scale(.9)">' + Z.brushSide(-150, 0, 215, { miswak: true, taper: true, h: 30, col: "#9cc79a" }) + '</g>';
     var p = PERSON.rigPose("show"); p.armN = [60, -100, "fist", 0, brush]; p.mouth = "smile"; p.brows = "raised";
     s += PERSON.rig(p, 200, 960, 700, .2);
     // the inset: one tooth cut from the side, the fine tips at the gum line, ringed in orange
