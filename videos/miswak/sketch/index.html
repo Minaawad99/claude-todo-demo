@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>المسواك… في فرشاة؟ — إيه الحكاية؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&family=Noto+Serif:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* «إيه الحكاية؟» — the «الرسم الهندسي» look, measured from 20 reference videos (videos/_reference/tabizzay/STYLE.md).
+     360×640 canvas (render.js SCALE 3 → 1080×1920). Reference sizes are at 720 wide, so here they are halved.
+     Phases, all driven by TIMING: intro card (hook lines) → bumper (promise line) → panel + captions → summary card → ask box. */
+  :root { --paper: #eee5d0; --ink: #2a2016; --mute: #8f8576; --orange: #bd552f; --blue: #4a6f8a; --olive: #5e653a; --tan: #ddd2b8; }
+  html, body { margin: 0; background: var(--paper); }
+  .canvas { position: relative; width: 360px; height: 640px; background: var(--paper); overflow: hidden; font-family: "Noto Sans Arabic", sans-serif; color: var(--ink); }
+  .layer { position: absolute; inset: 0; }
+  /* the main card: one 1px frame 14px in, the panel fills its top, a rule, the caption */
+  #frame { position: absolute; left: 14px; top: 14px; width: 332px; height: 612px; box-sizing: border-box; border: 1.1px solid var(--ink); }
+  .panel { position: absolute; left: 15px; top: 15px; width: 330px; height: 405px; overflow: hidden; }
+  .panel svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #rule { position: absolute; left: 32px; right: 32px; top: 431px; border-top: .6px solid var(--ink); }
+  #wm { position: absolute; left: 0; right: 0; top: 440px; text-align: center; font: 500 8.5px "Noto Sans Arabic"; color: #b3a995; }
+  #cap { position: absolute; left: 30px; right: 30px; top: 458px; text-align: center; font: 700 14px/1.75 "Noto Sans Arabic", sans-serif; }
+  .k-o { color: var(--orange); } .k-b { color: var(--blue); } .k-g { color: var(--olive); } .k-gr { color: var(--mute); }
+  .k-u { text-decoration: underline; text-decoration-thickness: 1.2px; text-underline-offset: 4px; }
+  /* cards (intro + summary): paper, double frame drawn as SVG so it can draw itself in, crop marks outside the corners */
+  .card { position: absolute; inset: 0; background: var(--paper); display: none; }
+  .card .chrome { position: absolute; inset: 0; width: 360px; height: 640px; }
+  .logo { position: absolute; right: 30px; top: 28px; display: flex; align-items: center; gap: 4px; font: 500 8px "Noto Sans Arabic"; color: #6f6556; }
+  .logo svg { width: 11px; height: 11px; }
+  #intro .cat { position: absolute; left: 0; right: 0; top: 100px; text-align: center; font: 600 8px "Noto Sans Arabic"; color: var(--orange); }
+  #intro .r { position: absolute; left: 157px; width: 46px; border-top: .6px solid var(--ink); }
+  #intro .hook { position: absolute; left: 26px; right: 26px; top: 124px; min-height: 80px; text-align: center; font: 800 17px/1.6 "Noto Sans Arabic"; }
+  #intro .hook span { transition: none; }
+  #introArt { position: absolute; left: 28px; top: 236px; width: 304px; height: 330px; }
+  #bumper { position: absolute; inset: 0; display: none; background: var(--paper); }
+  #bumper svg { position: absolute; left: 90px; top: 98px; width: 180px; height: 200px; }
+  #bumper .name { position: absolute; left: 0; right: 0; top: 310px; text-align: center; font: 700 22px "Noto Sans Arabic"; }
+  #bumper .sub { position: absolute; left: 0; right: 0; top: 352px; text-align: center; font: 600 9.5px "Noto Sans Arabic"; }
+  /* summary card */
+  #outro .q { position: absolute; left: 28px; right: 28px; top: 50px; font: 800 12.5px/1.55 "Noto Sans Arabic"; }
+  #outro .art { position: absolute; left: 28px; right: 28px; top: 98px; height: 140px; background: var(--tan); overflow: hidden; }
+  #outro .art svg { width: 100%; height: 100%; display: block; }
+  #outro .leg { position: absolute; left: 28px; right: 28px; top: 246px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font: 600 7.5px "Noto Sans Arabic"; }
+  #outro .leg b { display: inline-grid; place-items: center; width: 10px; height: 10px; border: .8px solid var(--ink); border-radius: 50%; font: 700 6px "Noto Serif"; margin-left: 4px; vertical-align: -2px; }
+  #outro .stat { position: absolute; left: 28px; right: 28px; top: 290px; display: flex; align-items: center; gap: 9px; }
+  #outro .stat .n { font: 800 34px/1 "Noto Serif", serif; color: var(--orange); direction: ltr; white-space: nowrap; }
+  #outro .stat .t { font: 700 8px/1.55 "Noto Sans Arabic"; }
+  #outro .pts { position: absolute; left: 28px; right: 28px; top: 342px; border-top: .6px solid var(--ink); padding-top: 7px; font: 600 7.5px/1.75 "Noto Sans Arabic"; }
+  #outro .more { margin-top: 5px; font: 500 6.8px/1.6 "Noto Sans Arabic"; color: var(--mute); }
+  #outro .ask { position: absolute; left: 34px; right: 34px; top: 448px; height: 120px; border: 1px solid var(--ink); text-align: center; display: none; }
+  #outro .ask::after { content: ""; position: absolute; inset: 3px; border: .5px solid var(--ink); }
+  #outro .ask .l1 { margin-top: 20px; font: 600 9px "Noto Sans Arabic"; }
+  #outro .ask .l2 { margin-top: 6px; font: 700 12px "Noto Sans Arabic"; }
+  #outro .ask .l3 { margin-top: 8px; font: 700 13px "Noto Sans Arabic"; color: var(--orange); }
+  #outro .ask .blank { display: inline-block; width: 64px; border-bottom: 1.2px solid var(--orange); margin: 0 4px; position: relative; height: 14px; vertical-align: -2px; }
+  #outro .ask .caret { position: absolute; left: 4px; bottom: 2px; width: 1.4px; height: 13px; background: var(--ink); }
+</style></head>
+<body>
+<div class="canvas">
+  <div class="layer" id="main">
+    <div class="panel"><svg id="panelA" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg><svg id="panelB" viewBox="0 0 640 786" preserveAspectRatio="xMidYMid slice"></svg></div>
+    <div id="frame"></div><div id="rule"></div><div id="wm"></div><div id="cap"></div>
+  </div>
+  <div class="card" id="intro"><svg class="chrome" id="introChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="cat">صحة وعادات</div><div class="r" style="top:118px"></div><div class="hook" id="hook"></div><div class="r" id="hookRule" style="top:214px"></div>
+    <svg id="introArt" viewBox="0 0 608 660"></svg></div>
+  <div id="bumper"><svg id="bumperArt" viewBox="0 0 180 200"></svg><div class="name">إيه الحكاية؟</div><div class="sub">هشرحهالك في <span class="k-o">دقيقة.</span></div></div>
+  <div class="card" id="outro"><svg class="chrome" id="outroChrome"></svg>
+    <div class="logo"><span>إيه الحكاية؟</span><svg viewBox="0 0 200 200"><use href="#mark"/></svg></div>
+    <div class="q">المسواك… في فرشاة؟</div><div class="art"><svg id="outroArt" viewBox="0 0 600 280"></svg></div><div class="leg"><span><b>1</b>المسواك</span><span><b>2</b>السيليكا</span><span><b>3</b>الشعيرات الرفيعة</span><span><b>4</b>خط اللثة</span></div><div class="stat"><div class="n" dir="ltr">3</div><div class="t">شهور،<br>وبعدها تغيّر الفرشاة</div></div><div class="pts">1. المسواك فرع من شجرة الأراك، وفيه سيليكا بتلمّع السنة بالراحة.<br>2. عيبه إن أليافه بتقسى بسرعة، وصعب يوصل للضروس اللي ورا.<br>3. الفرشاة بشعيرات المسواك الرفيعة بتوصل بين السنان ولحد خط اللثة.<div class="more">معلومة زيادة: كلمة «سواك» جاية من «ساك» يعني دلك.</div></div>
+    <div class="ask" id="ask"><div class="l1">قولولنا…</div><div class="l2">عايزين تعرفوا</div><div class="l3">حكاية<span class="blank"><span class="caret" id="caret"></span></span>؟</div></div>
+  </div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="mark"><rect x="84" y="4" width="32" height="10" fill="#2a2016"/><rect x="94" y="14" width="12" height="14" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" transform="translate(8 8)" fill="#2a2016"/><path d="M30 40 H182 V150 H96 L60 186 V150 H30 Z" fill="#f4ecdb" stroke="#2a2016" stroke-width="9" stroke-linejoin="round"/><text x="106" y="140" text-anchor="middle" style="font:800 120px Noto Sans Arabic;fill:#bd552f">؟</text></g>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#2a2016" stroke-width="1" opacity=".15"/></pattern>
+  <pattern id="hatchW" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V7" stroke="#fff" stroke-width="1" opacity=".25"/></pattern>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0 H0 V48" stroke="#e1d5ba" stroke-width="1.3" fill="none"/></pattern>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="paperN"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .3  0 0 0 .05 0"/></filter>
+</defs></svg>
+<script src="../timing.js"></script>
+<script>window.DATA = {"caps": [[{"f": 0.0, "h": "فيه <span class=\"k-o\">فرشاة</span> سنان"}, {"f": 0.4839, "h": "بتطلع على <span class=\"k-u\">الشجر…</span>"}], [{"f": 0.0, "h": "والناس بتستخدمها من قبل"}, {"f": 0.4068, "h": "الفرشاة اللي في حمامك"}, {"f": 0.7797, "h": "<span class=\"k-o\">بآلاف</span> السنين."}], [{"f": 0.0, "h": "ومع كده،"}, {"f": 0.2, "h": "أغلبنا جرّبها مرة…"}, {"f": 0.6222, "h": "<span class=\"k-o\">ورماها</span> بعد يومين."}], [{"f": 0.0, "h": "إيه الحكاية؟"}, {"f": 0.4194, "h": "هشرحهالك في دقيقة."}], [{"f": 0.0, "h": "الفرشاة دي هي <span class=\"k-b\">المسواك،</span>"}, {"f": 0.4792, "h": "فرع من شجرة اسمها <span class=\"k-g\">الأراك.</span>"}], [{"f": 0.0, "h": "طب إيه اللي جواه؟"}], [{"f": 0.0, "h": "فيه مواد طبيعية،"}, {"f": 0.5152, "h": "أشهرها <span class=\"k-b\">السيليكا.</span>"}], [{"f": 0.0, "h": "والسيليكا دي"}, {"f": 0.1733, "h": "حبيبات دقيقة جدًا،"}, {"f": 0.4267, "h": "<span class=\"k-o\">بتلمّع</span> سطح السنة بالراحة،"}, {"f": 0.7733, "h": "زي قماشة التلميع."}], [{"f": 0.0, "h": "<span class=\"k-g\">ومنظمة</span> <span class=\"k-g\">الصحة</span> <span class=\"k-g\">العالمية</span>"}, {"f": 0.3607, "h": "نفسها شجّعت على"}, {"f": 0.623, "h": "استخدامه من التمانينات."}], [{"f": 0.0, "h": "طب ليه بنرميه؟"}], [{"f": 0.0, "h": "لأن أليافه بعد يومين <span class=\"k-o\">بتقسى،</span>"}, {"f": 0.4242, "h": "ولازم تقص الطرف وتجدده"}, {"f": 0.7727, "h": "كل يوم تقريبًا."}], [{"f": 0.0, "h": "والشعيرات طالعة"}, {"f": 0.2388, "h": "من طرف العود،"}, {"f": 0.4478, "h": "فصعب توصل بيها"}, {"f": 0.6716, "h": "<span class=\"k-o\">للضروس</span> اللي ورا ولجوه."}], [{"f": 0.0, "h": "طب لو أخدنا المسواك"}, {"f": 0.4878, "h": "وحطيناه في شكل فرشاة؟"}], [{"f": 0.0, "h": "في <span class=\"k-g\">اليابان</span> عملوا فرشاة"}, {"f": 0.3594, "h": "شعيراتها معجونة"}, {"f": 0.6094, "h": "ببودرة <span class=\"k-b\">المسواك</span> <span class=\"k-b\">والسيليكا.</span>"}], [{"f": 0.0, "h": "والفرشاة دي بقت"}, {"f": 0.3478, "h": "موجودة في <span class=\"k-o\">مصر</span>"}, {"f": 0.6522, "h": "عند <span class=\"k-u\">سمارت</span> <span class=\"k-u\">مسواك.</span>"}], [{"f": 0.0, "h": "والشعيرات <span class=\"k-o\">رفيعة</span> جدًا من الطرف،"}, {"f": 0.7209, "h": "زي سن القلم."}], [{"f": 0.0, "h": "فبتدخل بين السنان وتوصل"}, {"f": 0.6486, "h": "لحد <span class=\"k-g\">خط</span> <span class=\"k-g\">اللثة.</span>"}], [{"f": 0.0, "h": "وناس كتير فاكرة"}, {"f": 0.3265, "h": "إن الفرشاة <span class=\"k-gr\">الخشنة</span>"}, {"f": 0.6939, "h": "بتنضف أحسن. <span class=\"k-o\">لأ.</span>"}], [{"f": 0.0, "h": "أطباء السنان"}, {"f": 0.1912, "h": "بينصحوا <span class=\"k-g\">بالناعمة،</span>"}, {"f": 0.4559, "h": "عشان الخشنة"}, {"f": 0.6324, "h": "ممكن <span class=\"k-o\">تجرح</span> اللثة مع الوقت."}], [{"f": 0.0, "h": "وكمان تقدر تستخدمها"}, {"f": 0.2941, "h": "من غير <span class=\"k-u\">معجون</span>"}, {"f": 0.4853, "h": "وانت برّه البيت،"}, {"f": 0.7353, "h": "في الشغل أو السفر."}], [{"f": 0.0, "h": "وفيه منها مقاس <span class=\"k-g\">للأطفال،</span>"}, {"f": 0.4444, "h": "ونسخة صغيرة بغطا"}, {"f": 0.7593, "h": "تتحط في <span class=\"k-g\">جيبك.</span>"}], [{"f": 0.0, "h": "وزي أي فرشاة،"}, {"f": 0.4242, "h": "بتغيّرها كل <span class=\"k-o\">3</span> <span class=\"k-o\">شهور.</span>"}], [{"f": 0.0, "h": "يعني من الآخر:"}, {"f": 0.1829, "h": "فكرة المسواك نفسها،"}, {"f": 0.4268, "h": "بس في فرشاة"}, {"f": 0.5732, "h": "بتوصل لكل حتة،"}, {"f": 0.7561, "h": "ومن غير ما تقص حاجة."}], [{"f": 0.0, "h": "والأغرب إن كلمة سواك"}, {"f": 0.42, "h": "نفسها جاية من <span class=\"k-o\">ساك،</span>"}, {"f": 0.8, "h": "يعني <span class=\"k-o\">دلَك.</span>"}], [{"f": 0.0, "h": "ودي كانت حكاية المسواك،"}, {"f": 0.25, "h": "والفيديو ده بالتعاون"}, {"f": 0.4688, "h": "مع سمارت مسواك،"}, {"f": 0.6354, "h": "ولو حابب تجربها،"}, {"f": 0.8125, "h": "اللينك في الكومنت."}], [{"f": 0.0, "h": "قولولنا، عايزين تعرفوا حكاية"}, {"f": 0.6304, "h": "إيه المرة الجاية؟"}]], "hook": [[{"w": "فيه", "c": "", "f": 0.0}, {"w": "فرشاة", "c": "k-o", "f": 0.129}, {"w": "سنان", "c": "", "f": 0.3226}, {"w": "بتطلع", "c": "", "f": 0.4839}, {"w": "على", "c": "", "f": 0.6774}, {"w": "الشجر…", "c": "k-u", "f": 0.8065}], [{"w": "والناس", "c": "", "f": 0.0}, {"w": "بتستخدمها", "c": "", "f": 0.1186}, {"w": "من", "c": "", "f": 0.2881}, {"w": "قبل", "c": "", "f": 0.339}, {"w": "الفرشاة", "c": "", "f": 0.4068}, {"w": "اللي", "c": "", "f": 0.5424}, {"w": "في", "c": "", "f": 0.6271}, {"w": "حمامك", "c": "", "f": 0.678}, {"w": "بآلاف", "c": "k-o", "f": 0.7797}, {"w": "السنين.", "c": "", "f": 0.8814}], [{"w": "ومع", "c": "", "f": 0.0}, {"w": "كده،", "c": "", "f": 0.0889}, {"w": "أغلبنا", "c": "", "f": 0.2}, {"w": "جرّبها", "c": "", "f": 0.3556}, {"w": "مرة…", "c": "", "f": 0.5111}, {"w": "ورماها", "c": "k-o", "f": 0.6222}, {"w": "بعد", "c": "", "f": 0.7778}, {"w": "يومين.", "c": "", "f": 0.8667}]], "introLines": 3, "promise": 3, "summary": 24, "cta": 25, "watermark": ""};</script>
+<script src="../../_templates/people/person.js"></script><script src="../../_templates/people/gemini/sprites.js"></script><script src="draw.js"></script>
+<script src="scenes.js"></script>
+<script src="../../_templates/sketch/engine.js"></script>
+</body></html>

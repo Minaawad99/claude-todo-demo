@@ -29,7 +29,7 @@ const TAIL = +(process.env.TAIL || 2.3);
     '-af', `apad,afade=t=out:st=${end - 0.8}:d=0.8,loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000,alimiter=limit=0.7:level=false`, '-c:a', 'aac', '-b:a', '192k', '-ar', '48000',
     '-movflags', '+faststart', out], { stdio: ['pipe', 'inherit', 'inherit'] });
   for (let i = 0; i < N; i++) {
-    await p.evaluate(t => renderAt(t), i / FPS);
+    await p.evaluate(t => renderAt(t), i / FPS); await p.evaluate(() => Promise.all([...document.querySelectorAll('image')].map(i => i.decode ? i.decode().catch(() => 0) : 0)));
     const buf = await p.screenshot({ type: 'jpeg', quality: 100 });
     if (!ff.stdin.write(buf)) await new Promise(r => ff.stdin.once('drain', r));
     if (i % 600 === 0) console.log('frame', i, '/', N);
