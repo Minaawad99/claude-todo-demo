@@ -21,7 +21,9 @@ description: >
 > other people in a story come from the outfit sets (`a-/b-/c-office`, `-doctor`, `-worker`, `-home`, `-woman-hijab`…).
 > A pose the kit lacks: write the pose-sheet prompt from that README (attach `gemini/sheets/s9-host.jpg`), ask the user to run
 > it in Gemini (or run it through the Gemini API if image quota allows), cut it with `cutout.py`, add the sprites, never
-> draw a person by code. Keep the old vector kit only when editing an episode already made with it.
+> draw a person by code. **The host must move** (the user's rule): animate him with the puppet rig `gemini/rig.js`
+> (`PERSON.rig(pose, x, feetY, h, t)`, keyed poses that tween, blinks, lip sync from the voice; see that README), not
+> a still sprite. Keep the old vector kit only when editing an episode already made with it.
 
 **Reference before every drawing (the user's rule for every skill):** before you draw any object, body part, machine, place or scene, look it up in `videos/_reference/README.md` (a subject index of the 34 reference videos and of our own episodes), open the frames that show it and see how it was cut open, labelled and framed. Then draw it in this skill's own style. Never copy a drawing.
 

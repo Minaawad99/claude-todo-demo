@@ -2,7 +2,7 @@
 CFG = {
     "title": "المسواك… في فرشاة؟",
     "category": "صحة وعادات",
-    "libs": ["../../_templates/people/gemini/sprites.js", "draw.js"],
+    "libs": ["../../_templates/people/gemini/sprites.js", "../../_templates/people/gemini/rig.js", "../voice-env.js", "draw.js"],
     "chunk": 3.5,
     "outro": '<div class="q">المسواك… في فرشاة؟</div><div class="art"><svg id="outroArt" viewBox="0 0 600 280"></svg></div>'
              '<div class="leg"><span><b>1</b>المسواك</span><span><b>2</b>السيليكا</span><span><b>3</b>الشعيرات الرفيعة</span><span><b>4</b>خط اللثة</span></div>'

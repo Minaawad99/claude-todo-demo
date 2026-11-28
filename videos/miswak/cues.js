@@ -43,7 +43,23 @@ a(L(SUMMARY) + 0.1, 'chime', 0.35); for (let k = 0; k < 5; k++) a(L(SUMMARY) + 0
 paper(L(ASK) + 0.1); a(L(ASK) + 0.3, 'pop', 0.4);                                                       // ask box
 
 // ── this episode: one or two sounds per line, matched to what moves (see videos/tides/cues.js) ──
-// e.g. lab(5, 0.4); ding(L(6) + 1.6); scribble(L(9) + 1.2); sea(L(0), L(PROMISE) - L(0) + 0.6, 0.45);
+a(L(2) + D(2) * .5 + .25, 'whoosh', 0.3); a(L(2) + D(2) * .5 + .8, 'pop', 0.35);          // he throws the miswak into the bin
+lab(4, 1.4); a(L(4) + D(4) * .5, 'pop', 0.25);                                                  // «الأراك», the berries box
+lab(6, 0.9); a(L(6) + 0.6, 'pop', 0.25);                                                        // the magnifier, «ألياف»
+a(L(7) + D(7) * .45, 'toner', 0.25, 1.6);                                                     // the miswak rubbing the tooth
+scribble(L(8) + D(8) * .5); paper(L(8) + D(8) * .6);                                           // ✓ and «التمانينات»
+a(L(10) + D(10) * .55, 'snip', 0.4); a(L(10) + D(10) * .75, 'snip', 0.35);                     // the scissors
+scribble(L(11) + D(11) * .55); scribble(L(11) + D(11) * .7);                                   // ✗ ✗ on the back teeth
+a(L(12) + 0.9, 'whoosh', 0.25); a(L(12) + D(12) * .45, 'ping', 0.25);                          // the stick becomes a brush, the idea
+paper(L(13) + 0.2); a(L(13) + D(13) * .4, 'pop', 0.3);                                         // the photo, the clip
+a(L(14) + 0.1, 'pop', 0.3); ding(L(14) + 1.2);                                                  // «متوفرة في مصر»
+lab(15, 0.5); lab(16, 1.2);
+scribble(L(17) + D(17) * .6); scribble(L(18) + 0.6);                                            // ✗ hard, ✓ soft
+a(L(18) + D(18) * .5, 'pop', 0.3);
+a(L(19) + D(19) * .55, 'pop', 0.3); a(L(20) + 0.1, 'pop', 0.3); a(L(20) + D(20) * .5, 'pop', 0.3);
+for (let k = 0; k < 3; k++) paper(L(21) + 0.2 + k * D(21) * .25); ding(L(21) + D(21) * .7);    // three months
+scribble(L(22) + D(22) * .55); scribble(L(22) + D(22) * .65); a(L(22) + D(22) * .85, 'snip', 0.3);
+paper(L(23) + 0.2); ding(L(23) + D(23) * .5);                                                   // سواك ← ساك = دلك
 
 // music plays only when sfx.py is run with --music, and that only when the user asked for music in this video
 const MUSIC = has('music-soft') ? 'music-soft' : null;

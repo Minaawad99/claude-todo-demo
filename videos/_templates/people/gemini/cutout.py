@@ -33,19 +33,22 @@ for k, s in enumerate(sizes, 1):
     if s > 400: bgmask |= hl == k
 fg = ~bgmask
 fg = nd.binary_opening(fg, iterations=1)
-cl, cn = nd.label(nd.binary_dilation(fg, iterations=6))
+cl, cn = nd.label(nd.binary_dilation(fg, iterations=int(os.environ.get("DIL", "6"))))
 objs = nd.find_objects(cl); k = 0
 alpha = nd.gaussian_filter(fg.astype(float), .6)
 os.makedirs(out, exist_ok=True); boxes = []
 for j, sl in enumerate(objs, 1):
     if sl is None: continue
     h, w = sl[0].stop - sl[0].start, sl[1].stop - sl[1].start
-    if h * w < (H * W) * .004 or h < H * .05: continue
+    if h * w < (H * W) * float(os.environ.get("MINA", ".004")) or h < H * float(os.environ.get("MINH", ".05")): continue
     m = (cl[sl] == j) & fg[sl]
     a = (alpha[sl] * m * 255).clip(0, 255).astype(np.uint8)
     rgba = np.dstack([im[sl].astype(np.uint8), a])
-    boxes.append((sl[0].start, sl[1].start, rgba))
+    boxes.append((sl[0].start, sl[1].start, rgba, sl[0].stop, sl[1].stop))
 boxes.sort(key=lambda b: (round(b[0] / (H * .12)), b[1]))
-for k, (y, x, rgba) in enumerate(boxes):
-    Image.fromarray(rgba, "RGBA").save(os.path.join(out, "%s-%02d.png" % (pre, k)))
+import json
+meta = {}
+for k, (y, x, rgba, y1, x1) in enumerate(boxes):
+    Image.fromarray(rgba, "RGBA").save(os.path.join(out, "%s-%02d.png" % (pre, k))); meta["%s-%02d" % (pre, k)] = [int(x), int(y), int(x1), int(y1)]
+json.dump(meta, open(os.path.join(out, pre + "-boxes.json"), "w"))
 print(src, len(boxes))

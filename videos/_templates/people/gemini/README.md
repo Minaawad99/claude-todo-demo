@@ -63,3 +63,21 @@ Outfits:
 ```
 Outfit sheet for the same character (use the attached image: identical face, body, proportions and style). The same front-view A-pose repeated six times on a plain cream background (#eee5d0), changing only the clothes: 1) office shirt with tie and trousers, 2) doctor's white lab coat over a shirt, 3) construction worker with hi-vis vest and hard hat, 4) cozy home sweater and sweatpants, 5) traditional Egyptian galabeya, 6) a woman version of the character in a long-sleeve top, hijab and long skirt. Show realistic fabric: shoulder seams, sleeve folds at the elbow, collar, cuffs, hems. Flat vector style, uniform dark-brown outline (#2a2016), flat colors with one soft shadow tone, no gradients, no text. High resolution, 16:9.
 ```
+
+## The host moves: the puppet rig (`rig.js`) — use it for the host in every episode
+
+The user's rule (Nov 2026): people must move, not stand as still pictures. The host is also a cut-out puppet built from
+`sheets/s12-host-rig-parts.jpg` (parts in `rig/`): head, torso, hips, upper arms, forearms, thighs, shins, six hands, and
+face parts (eyes open / half / closed / angry, brows neutral / raised / worried, seven mouths).
+
+```js
+PERSON.rig(PERSON.rigPose("explain"), x, feetY, height, t)          // presets: stand sad think pointUp explain show thumbs surprised shrug
+PERSON.rigMix(a, b, k)                                              // tween two poses
+PERSON.rigJoints(pose, x, feetY, height, t)                         // + wristN / wristF / head points, to throw or place a prop
+```
+- A pose is angles (90 = down, -90 = up): `armN` (near arm) / `armF` (far arm) = [upper arm, forearm, hand, hand offset,
+  prop svg], `legN` / `legF`, `lean`, `head`, `eyes`, `brows`, `mouth`; `talk: 0..1` picks the mouth from the voice level.
+- He blinks by himself; the episode passes the voice loudness (`voice-env.js`, `window.VENV`, 30 per second) so his mouth
+  follows the narrator. A prop held in a fist goes in `armN[4]` and is drawn under the fingers.
+- `videos/miswak/sketch/shots.js` (`puppet`, `puppetPose`, `pose`, `withProp`) shows keyed poses, a throw, a held brush.
+- The still sprites (`host-*.png`) stay for far-away figures and covers.

@@ -169,6 +169,23 @@ function tag(text, x, y, k, sz, col) { k = pop(k == null ? 1 : k); if (k <= 0) r
 // in onto a detail and back out. Life comes from the drawing: fibres sway, the host breathes, bristle tips move.
 var Z = MW, FULL = [320, 393, 1], LOGO = "../refs/product/logo.png", CLIPN2 = 0;
 var CLIPS = { green: 81, bend: 87, pouch: 69, pocket: 84, bag: 72, box: 90, finger: 60, clear: 90 };
+
+// ── the host as a puppet (gemini/rig.js): poses tween, he blinks, and his mouth follows the narrator ──
+function voiceAt(t) { var i = Math.floor(t * 30); return (window.VENV && window.VENV[i]) || 0; }
+var MISWAK_P = Z.stick(40, -120, 40, 160, 30, { fray: 1 });
+var BRUSH_P = '<g transform="translate(40 0) rotate(90) scale(1.5)">' + Z.brushSide(-120, 0, 210, { miswak: true, taper: true, h: 38, col: "#9cc79a" }) + '</g>';
+function pose(name, extra) { var p = PERSON.rigPose(name); for (var k in (extra || {})) p[k] = extra[k]; return p; }
+function withProp(p, prop) { p = JSON.parse(JSON.stringify(p)); p.armN = p.armN.slice(0, 4); while (p.armN.length < 4) p.armN.push(0); p.armN.push(prop); return p; }
+// keys: [[u, pose], …] in seconds into the shot; each key eases in over 0.45 s. o.talk: lip-sync to the voice
+function puppetPose(keys, u, t, o) {
+  o = o || {}; var p = keys[0][1];
+  for (var i = 1; i < keys.length; i++) if (u >= keys[i][0]) p = PERSON.rigMix(p, keys[i][1], ease((u - keys[i][0]) / .45));
+  p = JSON.parse(JSON.stringify(p, function (k, v) { return typeof v === "string" && v.charAt(0) === "<" ? v : v; }));
+  var sw = Math.sin(t * 1.3) * 2.5; p.armN[0] += sw; p.armF[0] -= sw * .7; p.head = (p.head || 0) + Math.sin(t * .9) * 1.5;
+  if (o.talk) { var v = voiceAt(t); p.talk = v; p.mouthRest = p.mouth; }
+  return p;
+}
+function puppet(keys, u, t, x, fy, h, o) { return PERSON.rig(puppetPose(keys, u, t, o), x, fy, h, t); }
 function host(name, x, fy, h, t, o) { return PERSON.sprite(name, x, fy, h, Object.assign({ t: t }, o || {})); }
 function brand(k) { return G("", Z.logo(LOGO, 510, 62, 220), k == null ? 1 : clamp(k)); }   // the brand corner, top right (the user's rule for the ad part)
 // a real clip in a taped frame: plays from the shot's start, holds its last frame
@@ -216,7 +233,7 @@ shot(8, fly([320, 420, 1.15], FULL, 1.8), function (u, d, t) {
     T("منظمة الصحة العالمية", 320, 230, 26, BLUE, 800) + Z.stick(210, 540, 420, 520, 18, { fray: .6 })) + check(470, 560, 1.3, at(u, d * .5, .5), OLIVE) + G("", Z.chip(320, 680, "التمانينات", ORANGE), at(u, d * .6, .3));
 });
 // 9 · so why do we throw it away? (the host, thinking)
-shot(9, still(FULL[0], FULL[1], FULL[2]), function (u, d, t) { return paper() + host("host-think", 300, 775, 650, t) + G("", T("؟", 520, 260, 140, ORANGE, 800), at(u, .3, .3)) + Z.bin(540, 760, 1.1); });
+shot(9, still(FULL[0], FULL[1], FULL[2]), function (u, d, t) { return paper() + puppet([[0, pose("think")], [d * .55, pose("shrug")]], u, t, 290, 775, 660, { talk: true }) + G("", T("؟", 520, 260, 140, ORANGE, 800), at(u, .3, .3)) + Z.bin(540, 760, 1.1); });
 // 10 · the fibres go hard after two days; you cut the end and start again every day or so
 shot(10, still(FULL[0], FULL[1], FULL[2]), function (u, d, t) { return paper() + two(t, at(u, .6, .5), 0); });
 shot([10, 2], still(FULL[0], FULL[1], FULL[2]), function (u, d, t) { var o = .5 + .5 * Math.abs(Math.sin(t * 5)); return paper() + two(t, 1, at(u, 0, .5)) + G("", Z.scissors(150, 620, .9, o, -70), at(u, .2, .3)) + label(170, 480, 300, 580, "ناشف", ORANGE, at(u, .3, .5), 20); });
@@ -225,7 +242,7 @@ shot(11, still(FULL[0], FULL[1], FULL[2]), function (u, d, t) { var a = arch11()
 shot([11, 2], still(FULL[0], FULL[1], FULL[2]), function (u, d, t) { var a = arch11(), w = 6 * Math.sin(t * 3); return paper() + a.svg + Z.stick(300 + w, 160, 160 + w, 60, 24, { fray: .9 }) + cross(a.back[-1][0], a.back[-1][1], .85, at(u, .1, .5)) + cross(a.back[1][0], a.back[1][1], .85, at(u, .4, .5)) + label(320, 380, 400, 460, "جوه", BLUE, at(u, 1, .5), 22); });
 // 12 · what if we took the miswak and made it a brush?
 shot(12, fly(FULL, [320, 380, 1.05], 1.8), function (u, d, t) {
-  var k = at(u, .8, 1.2); return paper() + G("", Z.stick(80, 250, 400, 250, 30, { fray: 1 }), 1 - .5 * k) + arrow(320, 330, 320, 430, ORANGE, 5, at(u, .5, .6)) + G("translate(120 560)", G("", Z.brushSide(0, 0, 400, { miswak: true, taper: true, h: 70 }), k)) + G("", T("؟", 560, 300, 120, ORANGE, 800), at(u, .2, .3));
+  var k = at(u, .8, 1.2); return paper() + puppet([[0, pose("think")], [d * .45, pose("pointUp", { armF: [100, 96, "relaxed"], armN: [-120, -95, "point"] })]], u, t, 100, 790, 430, { talk: true }) + G("", Z.stick(160, 250, 440, 250, 30, { fray: 1 }), 1 - .5 * k) + arrow(320, 330, 320, 430, ORANGE, 5, at(u, .5, .6)) + G("translate(120 560)", G("", Z.brushSide(0, 0, 400, { miswak: true, taper: true, h: 70 }), k)) + G("", T("؟", 560, 300, 120, ORANGE, 800), at(u, .2, .3));
 });
 // 13 · in Japan they made a brush whose bristles are kneaded with miswak powder and silica (the product photo + the real brush)
 shot(13, fly([320, 380, 1.05], FULL, 1.8), function (u, d, t) { return paper() + G("", Z.photo("../refs/product/mizuha-powder.jpg", 250, 400, 360, 360, -2), at(u, .2, .4)) + brand(at(u, .1, .4)) + G("", Z.chip(250, 640, "صنع اليابان", INK), at(u, 1, .3)); });
@@ -245,7 +262,7 @@ shot([17, 2], still(FULL[0], FULL[1], FULL[2]), function (u, d, t) { return pape
 shot(18, still(FULL[0], FULL[1], FULL[2]), function (u, d, t) { return paper() + myth(t, 1, at(u, 0, .5)) + Z.chip(120, 730, "خشنة", "#6d6a64") + cross(110, 260, 1, 1) + check(420, 260, 1.2, at(u, .6, .5), OLIVE) + G("", Z.chip(430, 730, "ناعمة", OLIVE), at(u, .6, .3)); });
 shot([18, 2], still(FULL[0], FULL[1], FULL[2]), function (u, d, t) { return paper() + brand() + vid("bend", u, 320, 400, 330, 586, -2, at(u, 0, .4)) + Z.chip(320, 740, "ناعمة", OLIVE); });
 // 19 · and you can use it without paste when you're out: at work or travelling (the host shows the brush; then the bag)
-shot(19, still(FULL[0], FULL[1], FULL[2]), function (u, d, t) { return paper() + brand() + host("host-show-brush", 420, 775, 650, t) + iconBox(110, 190, 160, '<rect x="-56" y="-30" width="112" height="76" rx="8" fill="#8d5d35" stroke="' + INK + '" stroke-width="2"/><rect x="-22" y="-44" width="44" height="16" rx="5" fill="none" stroke="' + INK + '" stroke-width="4"/>' + T("الشغل", 0, 70, 17), at(u, 1.6, .4)); });
+shot(19, still(FULL[0], FULL[1], FULL[2]), function (u, d, t) { return paper() + brand() + puppet([[0, withProp(pose("show"), BRUSH_P)], [d * .6, withProp(pose("show", { armN: [70, -70, "fist", 0], head: 4 }), BRUSH_P)]], u, t, 420, 775, 660, { talk: true }) + iconBox(110, 190, 160, '<rect x="-56" y="-30" width="112" height="76" rx="8" fill="#8d5d35" stroke="' + INK + '" stroke-width="2"/><rect x="-22" y="-44" width="44" height="16" rx="5" fill="none" stroke="' + INK + '" stroke-width="4"/>' + T("الشغل", 0, 70, 17), at(u, 1.6, .4)); });
 shot([19, 3], still(FULL[0], FULL[1], FULL[2]), function (u, d, t) { return paper() + brand() + vid("bag", u, 320, 410, 330, 586, 2, at(u, 0, .4)); });
 // 20 · a kids' size, and a small one with a cap for your pocket (the pouch, the pink pocket brush)
 shot(20, still(FULL[0], FULL[1], FULL[2]), function (u, d, t) { return paper() + brand() + vid("pouch", u, 320, 410, 330, 586, -2, at(u, 0, .4)) + G("", Z.chip(320, 740, "مقاس أطفال", OLIVE), at(u, .4, .3)); });
@@ -256,7 +273,7 @@ shot(21, still(FULL[0], FULL[1], FULL[2]), function (u, d, t) { return paper() +
 var A22 = null; function arch22() { return A22 || (A22 = Z.arch(320, 200, 190, 290, {})); }
 shot(22, still(FULL[0], FULL[1], FULL[2]), function (u, d, t) { var a = arch22(), q = (t * .25) % 1, ang = 30 + 60 * Math.sin(t * .8); return paper() + a.svg + G('translate(' + f(200 + 120 * Math.sin(t * .8)) + ' ' + f(150 + 260 * q) + ') rotate(' + f(ang) + ')', Z.brushSide(0, 0, 220, { miswak: true, taper: true, h: 36, down: true })); });
 shot([22, 3], still(FULL[0], FULL[1], FULL[2]), function (u, d, t) { var a = arch22(); return paper() + a.svg + check(a.back[-1][0], a.back[-1][1] + 70, .9, at(u, 0, .4), OLIVE) + check(a.back[1][0], a.back[1][1] + 70, .9, at(u, .3, .4), OLIVE) + check(320, 700, .9, at(u, .6, .4), OLIVE); });
-shot([22, 4], still(FULL[0], FULL[1], FULL[2]), function (u, d, t) { return paper() + host("host-thumbs-up", 320, 775, 650, t) + G("", Z.scissors(520, 200, .9, .6, -40) + cross(520, 200, 1.1, at(u, .3, .5)), at(u, 0, .3)); });
+shot([22, 4], still(FULL[0], FULL[1], FULL[2]), function (u, d, t) { return paper() + puppet([[0, pose("explain")], [.5, pose("thumbs", { armN: [70, -60, "thumbs", -40] })]], u, t, 320, 775, 660, { talk: true }) + G("", Z.scissors(520, 200, .9, .6, -40) + cross(520, 200, 1.1, at(u, .3, .5)), at(u, 0, .3)); });
 // 23 · the oddest: the word سواك comes from ساك, «to rub»
 shot(23, still(FULL[0], FULL[1], FULL[2]), function (u, d, t) {
   var w = 30 * Math.sin(t * 4);
@@ -272,7 +289,13 @@ SCENE.intro = function (svg, t, li) {
   if (li === 0) s += Z.branch([[700, 40], [560, 70], [450, 130], [370, 220], [330, 320]], { w: 10, leaf: 58, berries: true }) + Z.branch([[700, 280], [600, 280], [520, 310], [470, 370]], { w: 8, leaf: 48, ph: 2 }) +
     Z.stick(140, 540, 350, 360, 26, { fray: 1 }) + Z.line([[350, 360], [362, 342], [378, 310]], "#d6cbb0", 9);
   if (li === 1) s += G("", Z.line([[40, 430], [570, 430]], INK, 3) + Z.stick(430, 320, 580, 260, 22, { fray: .8 }) + T("آلاف السنين", 500, 500, 28, ORANGE, 800) + Z.brushSide(50, 320, 210, { col: "#7fb2d6" }) + T("فرشاتك", 140, 500, 28, INK, 800) + arrow(400, 560, 210, 560, INK, 3, k1), k1);
-  if (li >= 2) s += G("", host("host-miswak-sad", 230, 650, 620, t) + Z.bin(500, 640, 1.1) + Z.stick(470, 560, 540, 530, 12, { dry: 1, fray: .6 }) + Z.calendar(500, 120, 1.2, "يومين"), k2);
+  if (li >= 2) {
+    var u2 = t - LN[2].start, d2 = LN[2].end - LN[2].start, tw = d2 * .5, thrown = u2 > tw + .25;
+    var sad = withProp(pose("sad"), thrown ? "" : MISWAK_P), toss = pose("sad", { armN: [-10, -40, "palm", 0], eyes: "half", mouth: "frown" });
+    var p = puppetPose([[0, sad], [tw, toss]], u2, t, { talk: true }), J2 = PERSON.rigJoints(p, 230, 650, 620, t), fl = clamp((u2 - tw - .25) / .55);
+    var stickFly = thrown ? Z.stick(lerp(J2.wristN[0], 500, fl) - 30, lerp(J2.wristN[1], 560, fl) - 160 * Math.sin(fl * Math.PI) * (1 - fl * .2), lerp(J2.wristN[0], 500, fl) + 40, lerp(J2.wristN[1], 560, fl) - 160 * Math.sin(fl * Math.PI) + 10, 12, { dry: 1, fray: .6 }) : "";
+    s += G("", Z.bin(500, 640, 1.1) + J2.svg + stickFly + Z.calendar(500, 120, 1.2, "يومين"), k2);
+  }
   return s;
 };
 SCENE.bumper = function (u, t) { return Z.stick(30, 120, 170, 60, 18, { fray: 1 }); };
