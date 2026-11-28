@@ -7,6 +7,10 @@
   and side view (walking, lying flat). No other way of drawing people. **The clothes change with every topic** (doctor's lab
   coat, worker's vest and hard hat, pilot's uniform, period clothes in a story): pick an `outfit` preset or build one, and add
   any missing outfit to the kit; the body, face and hands stay the same.
+- **Exception (approved by the user, Nov 28 2026): «لو حد فقد الوعي قدامك» (`videos/fainting/`)** is drawn with
+  Gemini-generated dark medical illustrations (the user's C-section reference video), each pose checked against real
+  first-aid photos, with labels, timers and counters added in code. Its prompts are in `videos/fainting/PROMPTS.md`.
+  The person-kit rule still holds for every other video.
 - **The reference videos are the model for how anything is drawn, in every style and every skill:** before drawing any
   object or scene, look it up in `videos/_reference/README.md` (subject index of the 20 «طب إزاي؟» videos, the 14 «لو»
   videos and our own episodes; the big media sits in the private repo `Minaawad99/claude-media`), look at how it was
